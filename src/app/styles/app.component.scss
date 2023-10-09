@@ -1,0 +1,21 @@
+@import 'UI/UI.scss';
+
+.gallery-grid {
+    @include gridy(20px);
+    @include gridAuto(24%);
+    @include gaps(10px,40px);
+    grid-auto-rows: minmax(100px, auto);
+
+    div{
+        @include center;
+        @include flexy(row);
+        background-color: red;
+
+
+    }
+
+  }
+
+  mat-slide-toggle{
+    fill:red
+  }

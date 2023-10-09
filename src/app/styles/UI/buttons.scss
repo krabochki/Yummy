@@ -1,0 +1,85 @@
+@import 'palette.scss';
+
+@mixin fontSmooth {
+    -webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.btn--primary {
+    background-color: var(--color-primary);
+    color: var(--color-background);
+    border: 2px solid var(--color-primary);
+    @include fontSmooth;
+
+    &:visited {
+        color: var(--btn-primary-label);
+    }
+
+    &:hover {
+        background-color: var(--btn-primary-hover);
+    }
+
+    &:active {
+        background-color: var(--btn-primary-active);
+    }
+}
+
+
+.btn--secondary {
+      background-color: var(--color-primary-lighter);
+    color: var(--color-primary);
+    border: 2px solid var(--color-primary-lighter);
+
+    &:visited {
+        color: var(--btn-secondary-label);
+    }
+
+    &:active {
+        background-color: var(--btn-secondary-active);
+    }
+}
+
+.btn--cancel {
+    background-color: transparent;
+    color: var(--color-primary);
+    border: 2px solid var(--color-primary);
+    @include fontSmooth;
+
+    &:visited {
+        color: var(--btn-accent-label);
+    }
+
+    &:hover {
+        background-color: var(--btn-accent-hover);
+    }
+
+    &:active {
+        background-color: var(--btn-accent-active);
+    }
+}
+
+.btn--banner{
+    border: 3px solid var(--color-background);
+    background-color: rgba($color: var(--color-background), $alpha: 0.2);
+    color:var(--color-background)
+}
+
+.btn--icon-primary{
+    border-radius: 100%;
+    background-color: var(--color-primary);
+}
+.btn--icon-secondary{
+    background-color: var(--color-secondary);
+}
+
+.btn[disabled] {
+    cursor: not-allowed;
+    background-color: var(--btn-disabled-bg);
+    color: var(--btn-disabled-label);
+    box-shadow: none;
+    opacity: 0.6;
+
+    &:visited {
+        color: var(--btn-disabled-label);
+    }
+}

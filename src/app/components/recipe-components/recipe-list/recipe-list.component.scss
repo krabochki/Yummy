@@ -1,0 +1,15 @@
+.recipe-list{
+
+    margin:0 auto;
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    row-gap:0.5rem;
+    column-gap:0.5rem;
+    max-width:65vw;
+    position: relative;
+    overflow-x:scroll;
+    grid-template-rows: repeat(1, 1fr); /* Задаем две строки */
+    scroll-snap-type: x mandatory;
+    
+}

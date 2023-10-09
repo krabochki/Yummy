@@ -1,0 +1,37 @@
+ul{
+    display: flex;
+}
+
+.header{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding:2rem
+}
+
+p{
+    font-size: 1.5em;
+    font-weight: 600;
+}
+
+.role-buttons{
+
+    display: flex;
+    column-gap: 10px;
+
+    .role-btn{
+        width: 2em;
+        height: 2em;
+        border-radius: 100%;
+        background-color: rgb(120, 120, 120);
+    }
+
+    .role-btn:nth-of-type(1){
+        background-color: rgb(247, 0, 255);
+    }
+    .role-btn:nth-of-type(2){
+        background-color: rgb(255, 242, 0);
+    }
+}

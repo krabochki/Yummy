@@ -1,0 +1,760 @@
+{
+  
+    "sections": [
+      {
+        "id": 1,
+        "name": "Праздничное",
+        "categoriesId": [1, 2]
+      },
+      {
+        "id": 2,
+        "name": "Диета",
+        "categoriesId": [3, 4]
+      }
+    ],
+    "categories": [
+      {
+        "id": 1,
+        "name": "Новый Год",
+        "photoUrl": "url_1.jpg"
+
+      },
+      {
+        "id": 2,
+        "name": "Пасха",
+                "photoUrl": "url_1.jpg"
+      },
+      {
+        "id": 3,
+        "name": "Веганское",
+        "photoUrl": "url_1.jpg"
+      },
+      {
+        "id": 4,
+        "name": "Вегетарианское",
+        "photoUrl": "url_1.jpg"
+      },
+      {
+        "id": 5,
+        "name": "Пастафарианское",
+        "photoUrl": "url_1.jpg"
+      }
+    ]
+  ,
+  
+    "recipes": [
+      {
+        "id": 1,
+        "mainPhotoUrl": "url_1.jpg",
+        "name": "Рецепт 1",
+        "description": "Описание рецепта 1",
+        "preparationTime": "30 минут",
+        "servings": 4,
+        "origin": "Итальянская кухня",
+        "ingredients": [
+          {
+            "name": "Ингредиент 1",
+            "quantity": 200,
+            "unit": "г"
+          },
+          {
+            "name": "Ингредиент 2",
+            "quantity": 2,
+            "unit": "шт"
+          }
+        ],
+        "nutritionalInfo": [
+          {
+            "name": "Белки",
+            "quantity": 10,
+            "unit": "г"
+          },
+          {
+            "name": "Жиры",
+            "quantity": 5,
+            "unit": "г"
+          }
+        ],
+        "instructions": [
+          "Шаг 1: Сделайте это.",
+          "Шаг 2: Приготовьте то.",
+          "Шаг 3: Подавайте горячим."
+        ],
+        "photos": ["photo1.jpg", "photo2.jpg"],
+        "categories": [1, 2],
+        "authorId": 101,
+        "likesId": [201, 301,292,202,211,2,1,4,3],
+        "cooksId": [401],
+        "comments": [
+          {
+            "id": 1,
+            "text": "Отличный рецепт!",
+            "authorId": 401
+          }
+        ],
+        "publicationDate": "2023-03-15"
+
+        
+      },
+      {
+        "id": 2,
+        "mainPhotoUrl": "url_2.jpg",
+        "name": "Рецепт 2",
+        "description": "Описание рецепта 2",
+        "preparationTime": "45 минут",
+        "servings": 2,
+        "origin": "Французская кухня",
+        "ingredients": [
+          {
+            "name": "Ингредиент A",
+            "quantity": 300,
+            "unit": "г"
+          },
+          {
+            "name": "Ингредиент B",
+            "quantity": 3,
+            "unit": "шт"
+          }
+        ],
+        "nutritionalInfo": [
+          {
+            "name": "Белки",
+            "quantity": 15,
+            "unit": "г"
+          },
+          {
+            "name": "Жиры",
+            "quantity": 8,
+            "unit": "г"
+          }
+        ],
+        "instructions": [
+          "Шаг 1: Приготовьте это.",
+          "Шаг 2: Смешайте то.",
+          "Шаг 3: Подавайте холодным."
+        ],
+        "photos": ["photo3.jpg"],
+        "categories": [3, 4],
+        "authorId": 102,
+        "likesId": [202,301,292,202,211],
+        "cooksId": [402, 403],
+        "comments": [
+          {
+            "id": 2,
+            "text": "Отличный рецепт 2!",
+            "authorId": 402
+          }
+        ],
+        "publicationDate": "2023-03-14"
+      },
+      {
+        "id": 3,
+        "mainPhotoUrl": "url_3.jpg",
+        "name": "Рецепт 3",
+        "description": "Описание рецепта 3",
+        "preparationTime": "60 минут",
+        "servings": 6,
+        "origin": "Индийская кухня",
+        "ingredients": [
+          {
+            "name": "Ингредиент X",
+            "quantity": 500,
+            "unit": "г"
+          },
+          {
+            "name": "Ингредиент Y",
+            "quantity": 4,
+            "unit": "шт"
+          }
+        ],
+        "nutritionalInfo": [
+          {
+            "name": "Белки",
+            "quantity": 20,
+            "unit": "г"
+          },
+          {
+            "name": "Жиры",
+            "quantity": 10,
+            "unit": "г"
+          }
+        ],
+        "instructions": [
+          "Шаг 1: Приготовьте это.",
+          "Шаг 2: Смешайте то.",
+          "Шаг 3: Подавайте горячим."
+        ],
+        "photos": ["photo4.jpg"],
+        "categories": [5, 6,301,292,202],
+        "authorId": 103,
+        "likesId": [],
+        "cooksId": [],
+        "comments": [],
+        "publicationDate": "2023-03-13"
+      },
+      {
+        "id": 4,
+        "mainPhotoUrl": "url_1.jpg",
+        "name": "Рецепт 1",
+        "description": "Описание рецепта 1",
+        "preparationTime": "30 минут",
+        "servings": 4,
+        "origin": "Итальянская кухня",
+        "ingredients": [
+          {
+            "name": "Ингредиент 1",
+            "quantity": 200,
+            "unit": "г"
+          },
+          {
+            "name": "Ингредиент 2",
+            "quantity": 2,
+            "unit": "шт"
+          }
+        ],
+        "nutritionalInfo": [
+          {
+            "name": "Белки",
+            "quantity": 10,
+            "unit": "г"
+          },
+          {
+            "name": "Жиры",
+            "quantity": 5,
+            "unit": "г"
+          }
+        ],
+        "instructions": [
+          "Шаг 1: Сделайте это.",
+          "Шаг 2: Приготовьте то.",
+          "Шаг 3: Подавайте горячим."
+        ],
+        "photos": ["photo1.jpg", "photo2.jpg"],
+        "categories": [1, 2],
+        "authorId": 101,
+        "likesId": [201, 301],
+        "cooksId": [401],
+        "comments": [
+          {
+            "id": 1,
+            "text": "Отличный рецепт!",
+            "authorId": 401
+          }
+        ]
+        ,
+        "publicationDate": "2023-03-12"
+      },
+      {
+        "id": 5,
+        "mainPhotoUrl": "url_1.jpg",
+        "name": "Рецепт 1",
+        "description": "Описание рецепта 1",
+        "preparationTime": "30 минут",
+        "servings": 4,
+        "origin": "Итальянская кухня",
+        "ingredients": [
+          {
+            "name": "Ингредиент 1",
+            "quantity": 200,
+            "unit": "г"
+          },
+          {
+            "name": "Ингредиент 2",
+            "quantity": 2,
+            "unit": "шт"
+          }
+        ],
+        "nutritionalInfo": [
+          {
+            "name": "Белки",
+            "quantity": 10,
+            "unit": "г"
+          },
+          {
+            "name": "Жиры",
+            "quantity": 5,
+            "unit": "г"
+          }
+        ],
+        "instructions": [
+          "Шаг 1: Сделайте это.",
+          "Шаг 2: Приготовьте то.",
+          "Шаг 3: Подавайте горячим."
+        ],
+        "photos": ["photo1.jpg", "photo2.jpg"],
+        "categories": [1, 2],
+        "authorId": 101,
+        "likesId": [201, 300, 301,292,202,211,2,1,4,3, 32,43],
+        "cooksId": [401],
+        "comments": [
+          {
+            "id": 1,
+            "text": "Отличный рецепт!",
+            "authorId": 401
+          }
+        ], 
+        "publicationDate": "2023-03-11"
+      }
+      ,
+      {
+        "id": 6,
+        "mainPhotoUrl": "url_1.jpg",
+        "name": "Рецепт 1",
+        "description": "Описание рецепта 1",
+        "preparationTime": "30 минут",
+        "servings": 4,
+        "origin": "Итальянская кухня",
+        "ingredients": [
+          {
+            "name": "Ингредиент 1",
+            "quantity": 200,
+            "unit": "г"
+          },
+          {
+            "name": "Ингредиент 2",
+            "quantity": 2,
+            "unit": "шт"
+          }
+        ],
+        "nutritionalInfo": [
+          {
+            "name": "Белки",
+            "quantity": 10,
+            "unit": "г"
+          },
+          {
+            "name": "Жиры",
+            "quantity": 5,
+            "unit": "г"
+          }
+        ],
+        "instructions": [
+          "Шаг 1: Сделайте это.",
+          "Шаг 2: Приготовьте то.",
+          "Шаг 3: Подавайте горячим."
+        ],
+        "photos": ["photo1.jpg", "photo2.jpg"],
+        "categories": [1, 2],
+        "authorId": 101,
+        "likesId": [201, 301],
+        "cooksId": [401],
+        "comments": [
+          {
+            "id": 1,
+            "text": "Отличный рецепт!",
+            "authorId": 401
+          }
+        ],
+        "publicationDate": "2023-03-20"
+      },
+      {
+        "id": 7,
+        "mainPhotoUrl": "url_1.jpg",
+        "name": "Рецепт 1",
+        "description": "Описание рецепта 1",
+        "preparationTime": "30 минут",
+        "servings": 4,
+        "origin": "Итальянская кухня",
+        "ingredients": [
+          {
+            "name": "Ингредиент 1",
+            "quantity": 200,
+            "unit": "г"
+          },
+          {
+            "name": "Ингредиент 2",
+            "quantity": 2,
+            "unit": "шт"
+          }
+        ],
+        "nutritionalInfo": [
+          {
+            "name": "Белки",
+            "quantity": 10,
+            "unit": "г"
+          },
+          {
+            "name": "Жиры",
+            "quantity": 5,
+            "unit": "г"
+          }
+        ],
+        "instructions": [
+          "Шаг 1: Сделайте это.",
+          "Шаг 2: Приготовьте то.",
+          "Шаг 3: Подавайте горячим."
+        ],
+        "photos": ["photo1.jpg", "photo2.jpg"],
+        "categories": [1, 2],
+        "authorId": 101,
+        "likesId": [201, 301],
+        "cooksId": [401],
+        "comments": [
+          {
+            "id": 1,
+            "text": "Отличный рецепт!",
+            "authorId": 401
+          }
+        ],
+        "publicationDate": "2023-03-21"
+      },
+      {
+        "id": 8,
+        "mainPhotoUrl": "url_1.jpg",
+        "name": "Рецепт 1",
+        "description": "Описание рецепта 1",
+        "preparationTime": "30 минут",
+        "servings": 4,
+        "origin": "Итальянская кухня",
+        "ingredients": [
+          {
+            "name": "Ингредиент 1",
+            "quantity": 200,
+            "unit": "г"
+          },
+          {
+            "name": "Ингредиент 2",
+            "quantity": 2,
+            "unit": "шт"
+          }
+        ],
+        "nutritionalInfo": [
+          {
+            "name": "Белки",
+            "quantity": 10,
+            "unit": "г"
+          },
+          {
+            "name": "Жиры",
+            "quantity": 5,
+            "unit": "г"
+          }
+        ],
+        "instructions": [
+          "Шаг 1: Сделайте это.",
+          "Шаг 2: Приготовьте то.",
+          "Шаг 3: Подавайте горячим."
+        ],
+        "photos": ["photo1.jpg", "photo2.jpg"],
+        "categories": [1, 2],
+        "authorId": 101,
+        "likesId": [201, 301],
+        "cooksId": [401],
+        "comments": [
+          {
+            "id": 1,
+            "text": "Отличный рецепт!",
+            "authorId": 401
+          }
+        ],
+        "publicationDate": "2023-03-22"
+      },
+      {
+        "id": 9,
+        "mainPhotoUrl": "url_1.jpg",
+        "name": "Рецепт 1",
+        "description": "Описание рецепта 1",
+        "preparationTime": "30 минут",
+        "servings": 4,
+        "origin": "Итальянская кухня",
+        "ingredients": [
+          {
+            "name": "Ингредиент 1",
+            "quantity": 200,
+            "unit": "г"
+          },
+          {
+            "name": "Ингредиент 2",
+            "quantity": 2,
+            "unit": "шт"
+          }
+        ],
+        "nutritionalInfo": [
+          {
+            "name": "Белки",
+            "quantity": 10,
+            "unit": "г"
+          },
+          {
+            "name": "Жиры",
+            "quantity": 5,
+            "unit": "г"
+          }
+        ],
+        "instructions": [
+          "Шаг 1: Сделайте это.",
+          "Шаг 2: Приготовьте то.",
+          "Шаг 3: Подавайте горячим."
+        ],
+        "photos": ["photo1.jpg", "photo2.jpg"],
+        "categories": [1, 2],
+        "authorId": 101,
+        "likesId": [201, 301],
+        "cooksId": [401],
+        "comments": [
+          {
+            "id": 1,
+            "text": "Отличный рецепт!",
+            "authorId": 401
+          }
+        ],
+        "publicationDate": "2023-03-23"
+      },
+      {
+        "id":10,
+        "mainPhotoUrl": "url_1.jpg",
+        "name": "Рецепт 1",
+        "description": "Описание рецепта 1",
+        "preparationTime": "30 минут",
+        "servings": 4,
+        "origin": "Итальянская кухня",
+        "ingredients": [
+          {
+            "name": "Ингредиент 1",
+            "quantity": 200,
+            "unit": "г"
+          },
+          {
+            "name": "Ингредиент 2",
+            "quantity": 2,
+            "unit": "шт"
+          }
+        ],
+        "nutritionalInfo": [
+          {
+            "name": "Белки",
+            "quantity": 10,
+            "unit": "г"
+          },
+          {
+            "name": "Жиры",
+            "quantity": 5,
+            "unit": "г"
+          }
+        ],
+        "instructions": [
+          "Шаг 1: Сделайте это.",
+          "Шаг 2: Приготовьте то.",
+          "Шаг 3: Подавайте горячим."
+        ],
+        "photos": ["photo1.jpg", "photo2.jpg"],
+        "categories": [1, 2],
+        "authorId": 101,
+        "likesId": [201, 301],
+        "cooksId": [401],
+        "comments": [
+          {
+            "id": 1,
+            "text": "Отличный рецепт!",
+            "authorId": 401
+          }
+        ],
+        "publicationDate": "2023-03-24"
+      },
+      {
+        "id": 11,
+        "mainPhotoUrl": "url_1.jpg",
+        "name": "Рецепт 1",
+        "description": "Описание рецепта 1",
+        "preparationTime": "30 минут",
+        "servings": 4,
+        "origin": "Итальянская кухня",
+        "ingredients": [
+          {
+            "name": "Ингредиент 1",
+            "quantity": 200,
+            "unit": "г"
+          },
+          {
+            "name": "Ингредиент 2",
+            "quantity": 2,
+            "unit": "шт"
+          }
+        ],
+        "nutritionalInfo": [
+          {
+            "name": "Белки",
+            "quantity": 10,
+            "unit": "г"
+          },
+          {
+            "name": "Жиры",
+            "quantity": 5,
+            "unit": "г"
+          }
+        ],
+        "instructions": [
+          "Шаг 1: Сделайте это.",
+          "Шаг 2: Приготовьте то.",
+          "Шаг 3: Подавайте горячим."
+        ],
+        "photos": ["photo1.jpg", "photo2.jpg"],
+        "categories": [1, 2],
+        "authorId": 101,
+        "likesId": [201, 301],
+        "cooksId": [401],
+        "comments": [
+          {
+            "id": 1,
+            "text": "Отличный рецепт!",
+            "authorId": 401
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "mainPhotoUrl": "url_1.jpg",
+        "name": "Рецепт 1",
+        "description": "Описание рецепта 1",
+        "preparationTime": "30 минут",
+        "servings": 4,
+        "origin": "Итальянская кухня",
+        "ingredients": [
+          {
+            "name": "Ингредиент 1",
+            "quantity": 200,
+            "unit": "г"
+          },
+          {
+            "name": "Ингредиент 2",
+            "quantity": 2,
+            "unit": "шт"
+          }
+        ],
+        "nutritionalInfo": [
+          {
+            "name": "Белки",
+            "quantity": 10,
+            "unit": "г"
+          },
+          {
+            "name": "Жиры",
+            "quantity": 5,
+            "unit": "г"
+          }
+        ],
+        "instructions": [
+          "Шаг 1: Сделайте это.",
+          "Шаг 2: Приготовьте то.",
+          "Шаг 3: Подавайте горячим."
+        ],
+        "photos": ["photo1.jpg", "photo2.jpg"],
+        "categories": [1, 2],
+        "authorId": 101,
+        "likesId": [201, 301],
+        "cooksId": [401],
+        "comments": [
+          {
+            "id": 1,
+            "text": "Отличный рецепт!",
+            "authorId": 401
+          }
+        ]
+      }
+    ],
+    "users":[
+    {
+      "id": 1,
+      "username": "user1",
+      "avatarUrl": "https://example.com/avatar1.jpg",
+      "description": "Профессиональный повар",
+      "quote": "Вкусная еда - это искусство!",
+      "email": "user1@example.com",
+      "fullName": "Иван Петров",
+      "followersIds": [2, 3],
+      "socialNetworks": [
+        {
+          "name": "Instagram",
+          "link": "https://www.instagram.com/user1/"
+        },
+        {
+          "name": "Facebook",
+          "link": "https://www.facebook.com/user1/"
+        }
+      ],
+      "personalWebsite": "https://www.user1.com/",
+      "location": "Москва, Россия",
+      "registrationDate": "2023-03-15",
+      "profileViews": 150
+    },
+    {
+      "id": 2,
+      "username": "user2",
+      "avatarUrl": "https://example.com/avatar2.jpg",
+      "description": "Люблю готовить домашнюю пиццу",
+      "quote": "Поделитесь вашими любимыми рецептами!",
+      "email": "user2@example.com",
+      "fullName": "Анна Иванова",
+      "followersIds": [1, 3],
+      "socialNetworks": [
+        {
+          "name": "Instagram",
+          "link": "https://www.instagram.com/user2/"
+        }
+      ],
+      "personalWebsite": "",
+      "location": "Санкт-Петербург, Россия",
+      "registrationDate": "2023-04-10",
+      "profileViews": 80
+    },
+    {
+      "id": 3,
+      "username": "user3",
+      "avatarUrl": "https://example.com/avatar3.jpg",
+      "description": "Веган-кулинар",
+      "quote": "Здоровье начинается с питания",
+      "email": "user3@example.com",
+      "fullName": "Ольга Смирнова",
+      "followersIds": [1, 2],
+      "socialNetworks": [
+        {
+          "name": "Instagram",
+          "link": "https://www.instagram.com/user3/"
+        },
+        {
+          "name": "Twitter",
+          "link": "https://twitter.com/user3/"
+        }
+      ],
+      "personalWebsite": "https://www.user3.com/",
+      "location": "Киев, Украина",
+      "registrationDate": "2023-02-20",
+      "profileViews": 200
+    },
+    {
+      "id": 4,
+      "username": "user4",
+      "avatarUrl": "https://example.com/avatar4.jpg",
+      "description": "Любитель выпечки",
+      "quote": "Сладости делают жизнь ярче!",
+      "email": "user4@example.com",
+      "fullName": "Мария Ковалева",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "Краснодар, Россия",
+      "registrationDate": "2023-05-05",
+      "profileViews": 45
+    },
+    {
+      "id": 5,
+      "username": "user5",
+      "avatarUrl": "https://example.com/avatar5.jpg",
+      "description": "Аматор гастрономии",
+      "quote": "Попробуйте что-то новое каждый день!",
+      "email": "user5@example.com",
+      "fullName": "Дмитрий Соколов",
+      "followersIds": [],
+      "socialNetworks": [
+        {
+          "name": "Facebook",
+          "link": "https://www.facebook.com/user5/"
+        }
+      ],
+      "personalWebsite": "https://www.user5.com/",
+      "location": "Новосибирск, Россия",
+      "registrationDate": "2023-06-15",
+      "profileViews": 30
+    }
+  ]
+  }

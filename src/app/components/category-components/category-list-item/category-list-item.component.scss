@@ -1,0 +1,19 @@
+
+
+.category{
+    background-color: gray;
+
+    scroll-snap-align: start;
+
+   backdrop-filter: blur(12px) brightness(105%);
+   padding: 1rem 1.5rem;
+   overflow-x: hidden;
+   width:10rem;
+   align-items: center;
+   justify-content: center;
+   border-radius: 100%;
+  height:10em;
+  flex-direction: column;
+  display: flex;
+
+}

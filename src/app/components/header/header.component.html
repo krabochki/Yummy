@@ -1,0 +1,19 @@
+
+
+<div class="header">
+    <p>{{'yummy'|titlecase}}</p>
+    
+    <ul>
+        <li><a routerLink="">Main Page</a></li>
+        <li><a routerLink="your-recipes">Your recipes</a></li>
+        <li><a routerLink="admin-panel">Admin panel</a></li>
+        <li><a routerLink="moderator-panel">Moderator panel</a></li>
+    </ul>
+
+    <div class="role-buttons">
+        <button class="role-btn" (click)="authService.role='admin'"></button>
+        <button  class="role-btn"  (click)="authService.role='moderator'"></button>
+        <button class="role-btn"  (click)="authService.role='user'"></button>
+    </div>
+    <p>Your role is {{authService.role}}</p>
+</div>

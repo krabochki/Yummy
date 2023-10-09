@@ -1,0 +1,35 @@
+
+
+.recipe{
+    background-color: gray;
+
+    scroll-snap-align: start;
+
+   backdrop-filter: blur(12px) brightness(105%);
+   padding: 1rem 1.5rem;
+   overflow-x: hidden;
+   width:12.5rem;
+  height:12em;
+  flex-direction: column;
+  display: flex;
+
+    .rate-panel{
+        display: flex;
+        
+        column-gap: 5px;
+
+
+        .rate-item{
+            background-color: white;
+            width:1.8em;
+            letter-spacing: -2px;
+            font-size: 0.8em;
+            height:1.8em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 100%;
+
+        }
+    }
+}

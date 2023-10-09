@@ -1,0 +1,5 @@
+<div class="category-list" [ngStyle]="{'grid-template-rows':(categories!.length>=8?'repeat(2, 1fr)':' 1fr')}"> 
+    
+
+    <app-category-list-item    *ngFor="let item of categories, let i=index" [category]="categories?categories[i]:undefined"></app-category-list-item></div>
+

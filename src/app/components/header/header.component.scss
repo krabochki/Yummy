@@ -1,14 +1,60 @@
-ul{
-    display: flex;
+@import '../../styles/UI/layout.scss';
+@import '../../styles/UI/buttons.scss';
+@import '../../styles/UI/typography.scss';
+
+.menu-items{
+    display: grid;
+    grid-template-columns: repeat(3,9em);
+    
 }
 
+label{
+    font-size: var(--font-xl);
+    font-family: var(--font-family-accent);
+}
 .header{
+    z-index: 40;
+
     width: 100%;
-    display: flex;
-    flex-direction: column;
+    justify-content:space-between;
     align-items: center;
-    justify-content: center;
-    padding:2rem
+    display: grid;
+    padding-top: var(--space-xl);
+    padding-bottom: var(--space-xl);
+
+    padding-right: calc((18vw  / 1.25) + ((10 / 1.25) - (10  / 1.25)) * ((100vw - 768px) / (1920 - 1160)));
+    padding-left: calc((18vw  / 1.25) + ((10 / 1.25) - (10  / 1.25)) * ((100vw - 768px) / (1920 - 1160)));
+
+
+    grid-template-columns: repeat(3,max-content);
+    background-color:var(--color-background-deeper-unactive);
+    position: fixed;
+
+}
+
+.svg-button{
+    @include flexy(row);
+    @include center;
+    @include btn-icon-secondary;
+    width: var(--font-2xl);
+    height: var(--font-2xl);
+    padding: 0.5em;
+ 
+}
+svg{
+    
+    fill:var(--color-background);
+    width: var(--font-m);
+    margin-right:3px;
+    height: var(--font-m);
+
+}
+.cook-plan{
+    text-align: center;
+
+}
+.dsl{
+    color:var( --color-foreground-unactive)
 }
 
 p{
@@ -16,22 +62,137 @@ p{
     font-weight: 600;
 }
 
-.role-buttons{
 
-    display: flex;
-    column-gap: 10px;
 
-    .role-btn{
-        width: 2em;
-        height: 2em;
-        border-radius: 100%;
-        background-color: rgb(120, 120, 120);
+@media (max-width:900px){
+
+    .header{
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-xl) 0;
+        grid-template-columns: repeat(1,max-content);
+        row-gap: var(--space-s);
+         label{
+            text-align: center;
+            margin: 0 auto;
+            font-size: 1.75em;
+        }
+
+        .svg-button{
+            position: absolute;
+            top:0; bottom:0; margin: auto 0;right:0;
+            margin-right: calc((38px  / 1.25) + ((70 / 1.25) - (38  / 1.25)) * ((100vw - 480px) / (900 - 480)));
+
+        }
+    }
+}
+
+
+
+@media (max-width:480px){
+
+
+    .header label{
+        font-size: var(--font-l);
+        font-family: var(--font-family-accent);
     }
 
-    .role-btn:nth-of-type(1){
-        background-color: rgb(247, 0, 255);
+    .menu-mobile{
+        position: fixed;
+        top:0;
+        left:0;
+        width:100vw;
+        height:100vh;
+        background-color: rgba($color: #000000, $alpha: 0.5);
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        @include adaptive-font(26,20);
+
+        backdrop-filter: blur(6px);
+
+       
+    
     }
-    .role-btn:nth-of-type(2){
-        background-color: rgb(255, 242, 0);
+    .menu-mobile-links{
+        display: grid;
+        align-items: center;
+        justify-content: center;
+        row-gap: var(--space-s);
+        
+
+        grid-template-rows: (3,1fr);
     }
+
+    .cook-plan{
+        text-align: left;
+        
+    }
+    .menu-mobile-cont{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        row-gap: var(--space-m);
+
+        border-radius: var(--space-m);
+        width:fit-content;
+        padding: var(--space-xl);
+        height:fit-content;
+
+        background:var(--color-background-deeper-unactive);
+
+      
+    }
+
+    .auth{
+        @include btn-primary;   
+        @include flexy(row);
+        @include center; 
+        font-weight: 600;
+        line-height: 1;
+        scale: 0.8;
+        padding: var(--space-s) var(--space-m);
+        border-radius: calc(var(--space-s) - 1px);
+    }
+
+    .hamburger{
+        z-index: 150;
+        width:var(--font-l);
+        height:calc(var(--font-l) - 5px);
+        display: grid;
+    grid-template-rows: (3,1fr);
+    row-gap:6px;
+    }
+    .hamburger div{
+        background-color: black;
+        
+    }
+    .header{
+        display: flex;
+        justify-content: space-between;
+        padding-right: calc((38px  / 1.25) + ((70 / 1.25) - (38  / 1.25)) * ((100vw - 320px) / (480 - 320)));
+        padding-left: calc((38px  / 1.25) + ((70 / 1.25) - (38  / 1.25)) * ((100vw - 320px) / (480 - 320)));
+
+        .svg-button{
+            position:static;
+            top:0; bottom:0; margin: auto 0;right:0;
+        }  
+
+        
+
+        label,.svg-button{
+            margin:0;
+        }
+        .menu-items{
+            display: none;
+            flex-direction: column;
+            row-gap: var(--space-s);
+            grid-template-columns: repeat(3,9em);
+            
+        }
+
+    
+}
 }

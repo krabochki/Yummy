@@ -40,6 +40,7 @@ $yummy-theme: mat.define-light-theme((
 	margin: 0px;
 	border: none;
     outline: none;
+    color:var(--color-foreground);
     font-family: var(--font-family-main);
 }
 
@@ -125,5 +126,4 @@ label {
 legend {
 	display: block;
 }
-html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

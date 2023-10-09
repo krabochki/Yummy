@@ -13,7 +13,12 @@ import { MainPageComponent } from './components/main-page/main-page.component';
 import { HttpClientModule } from '@angular/common/http';
 import { CategoryListItemComponent } from './components/category-components/category-list-item/category-list-item.component';
 import { CategoryListComponent } from './components/category-components/category-list/category-list.component';
-import { ModeratorPageComponent } from './components/moderator-page/moderator-page.component';
+import { AuthGuard } from './guards/auth.guard';
+import { AdminGuard } from './guards/admin.guard';
+import { ModeratorGuard } from './guards/moderator.guard';
+import {MatSelectModule} from '@angular/material/select';
+import { SelectComponent } from './components/UI/select/select.component';
+import { ControlDashboardComponent } from './components/control-dashboard/control-dashboard.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -23,16 +28,18 @@ import { ModeratorPageComponent } from './components/moderator-page/moderator-pa
     MainPageComponent,
     CategoryListItemComponent,
     CategoryListComponent,
-    ModeratorPageComponent
+    SelectComponent,
+    ControlDashboardComponent
   ],
   imports: [
     MatSlideToggleModule,
+    MatSelectModule,
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [AuthGuard, AdminGuard, ModeratorGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

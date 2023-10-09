@@ -5,7 +5,7 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
-.btn--primary {
+@mixin btn-primary{
     background-color: var(--color-primary);
     color: var(--color-background);
     border: 2px solid var(--color-primary);
@@ -68,7 +68,8 @@
     border-radius: 100%;
     background-color: var(--color-primary);
 }
-.btn--icon-secondary{
+@mixin btn-icon-secondary{
+    border-radius: 100%;
     background-color: var(--color-secondary);
 }
 

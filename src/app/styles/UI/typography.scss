@@ -2,6 +2,7 @@
 
 :root {
 
+    --font-2xl:2.25em;
     --font-xxl:2em;
     --font-xl:1.6em;
     --font-l:1.45em;
@@ -14,6 +15,8 @@
 	--font-family-accent: 'Appetite new';
    
 }
+
+
 
 
 $maxWidth: 1280;
@@ -31,9 +34,27 @@ $maxWidth: 1280;
 
 }
 
+@media (max-width:900px){
+    :root{
+
+    @include adaptive-font(26,10);
+    }
+
+    }
+
+
+    @media (max-width:480px){
+
+        :root{
+
+            @include adaptive-font(26,14);
+            }}
+
 @mixin contrast-font{
 	color: var(--color-background)
 }
+
+
 
 
 

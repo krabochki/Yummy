@@ -4,12 +4,12 @@ import { MainPageComponent } from './components/main-page/main-page.component';
 import { AuthGuard } from './guards/auth.guard';
 import { AdminGuard } from './guards/admin.guard';
 import { ModeratorGuard } from './guards/moderator.guard';
-import { ModeratorPageComponent } from './components/moderator-page/moderator-page.component';
 
+import { ControlDashboardComponent } from './components/control-dashboard/control-dashboard.component';
 const routes: Routes = [
   { path: '', component: MainPageComponent },
-  { path: 'admin-panel', canActivate: [AdminGuard],component: ModeratorPageComponent },
-  { path: 'moderator-panel', canActivate: [ModeratorGuard],component: ModeratorPageComponent },
+  { path: 'admin-panel', canActivate: [AdminGuard],component: ControlDashboardComponent },
+  { path: 'moderator-panel', canActivate: [ModeratorGuard],component: ControlDashboardComponent },
   { path: 'your-recipes',  canActivate: [AuthGuard],component: MainPageComponent },
   { path: 'favourite-recipes', component: MainPageComponent },
   { path: 'all-recipes', component: MainPageComponent },

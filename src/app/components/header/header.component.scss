@@ -1,6 +1,4 @@
-@import '../../styles/UI/layout.scss';
-@import '../../styles/UI/buttons.scss';
-@import '../../styles/UI/typography.scss';
+@import '../../../tools/UI/UI.scss';
 
 .menu-items{
     display: grid;
@@ -39,6 +37,12 @@ label{
     width: var(--font-2xl);
     height: var(--font-2xl);
     padding: 0.5em;
+    transition: 0.3s ease-in-out;
+
+    &:hover{
+         scale: 1.2;
+
+    }
  
 }
 svg{
@@ -67,6 +71,7 @@ p{
 @media (max-width:900px){
 
     .header{
+
         align-items: center;
         justify-content: center;
         padding: var(--space-xl) 0;
@@ -98,19 +103,26 @@ p{
     }
 
     .menu-mobile{
+        *{
+                                @include adaptive-font(26,18);
+
+        }
+
+        label{
+    font-size:1.5em
+}
         position: fixed;
         top:0;
         left:0;
         width:100vw;
         height:100vh;
-        background-color: rgba($color: #000000, $alpha: 0.5);
+        background-color: var(--modal);
         z-index: 50;
         display: flex;
         align-items: center;
         justify-content: center;
         @include adaptive-font(26,20);
 
-        backdrop-filter: blur(6px);
 
        
     
@@ -131,17 +143,30 @@ p{
     }
     .menu-mobile-cont{
         display: flex;
-        align-items: center;
-        justify-content: center;
+        align-items: left;
+        justify-content: left;
         flex-direction: column;
         row-gap: var(--space-m);
 
         border-radius: var(--space-m);
         width:fit-content;
         padding: var(--space-xl);
+              
+
         height:fit-content;
 
         background:var(--color-background-deeper-unactive);
+        position: relative;
+
+        .close{
+            position: absolute;
+            right:0;
+            font-size: var(--font-s);
+            top:0;
+            margin-top: calc( var(--space-xl) + var(--font-m) );
+            margin-right: calc( var(--space-xl)  );
+        }
+
 
       
     }
@@ -163,13 +188,16 @@ p{
         height:calc(var(--font-l) - 5px);
         display: grid;
     grid-template-rows: (3,1fr);
-    row-gap:6px;
+    row-gap: 4px;
     }
     .hamburger div{
         background-color: black;
+        height:2px;
         
     }
     .header{
+        padding-top: var(--space-m);
+        padding-bottom: var(--space-m);
         display: flex;
         justify-content: space-between;
         padding-right: calc((38px  / 1.25) + ((70 / 1.25) - (38  / 1.25)) * ((100vw - 320px) / (480 - 320)));

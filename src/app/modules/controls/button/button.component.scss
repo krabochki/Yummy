@@ -1,0 +1,79 @@
+
+@import '../../../../tools/UI/UI.scss';
+button.prim{
+    background: var(--color-primary);
+    border: 3px solid var(--color-primary);
+
+}
+button.sec{
+    background: var(--color-secondary);
+    border: 3px solid var(--color-secondary);
+
+}
+button.filled-min.prim{
+    border: 3px solid var(--color-primary-lighter);
+
+    background: var(--color-primary-lighter);
+    color:var(--color-primary)
+}
+button.filled-min.sec{
+    border: 3px solid var(--color-secondary-lighter);
+
+    background: var(--color-secondary-lighter);
+    color:var(--color-secondary)
+}
+
+button{
+    padding: var(--space-s) var(--space-m);
+    font-weight: 700;
+    min-width: 9em;
+    color:var(--color-background);
+    position: relative;
+    overflow: hidden;
+    transition:0.3s;
+
+    &::before{
+        width: 0px;
+        height:0px;
+        position: absolute;
+        margin: auto; top:0;bottom:0; right:0;left:0;
+        background-color: rgba($color: #ff0000, $alpha: 0.3);
+        content: "";
+        border-radius: 100%;
+        transition:0.3s ease-in-out
+
+    }
+
+    &:hover{
+        scale:1.05
+    }
+}
+
+
+
+button.outlined{
+    background: none;
+}
+.outlined.prim{
+    border: 3px solid var(--color-primary);
+    color: var(--color-primary);
+}
+.outlined.sec{
+    border: 3px solid var(--color-secondary);
+    color: var(--color-secondary);
+}
+
+.rounded{
+    border-radius:var(--space-l);
+
+}
+.unrounded{
+    border-radius:var(--space-s);
+}
+
+@media (max-width:480px){
+  *{
+     @include adaptive-font(26,12);
+    
+}
+}

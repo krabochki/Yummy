@@ -1,0 +1,23 @@
+<div class="container one-column">
+  
+   <div class="content">
+        <h1 class="label">Вход в аккаунт</h1>
+        <p class="tagline">Пожалуйста, введи свое имя пользователя/электронную почту и пароль, для того чтобы войти в аккаунт.</p>
+
+
+
+    <div class="form">
+             <app-input [type]="'input'" [required]="true" [mask]="loginMask" [warningText]="'Введите корректный адрес электронной почты'" placeholder="Введите почту" (inputValue)="getLogin($event)"></app-input>
+             <app-input [type]="'input'" [max]="20" [required]="true" [mask]="passMask" [warningText]="'Пароль должен содержать 8-20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'" placeholder="Введите пароль" (inputValue)="getPassword($event)" [password]="true"></app-input>
+    </div>
+
+
+               <hr>
+
+        
+       <div class="buttons">
+
+            <app-button [rounded]="true" [color]="'prim'"  [text]="'Войти'"></app-button>
+       </div>
+   </div>
+</div>

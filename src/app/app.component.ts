@@ -1,10 +1,19 @@
-import { Component } from '@angular/core';
+import {
+  Component
+} from '@angular/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./styles/app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
+
   title = 'yummy';
+
+  height = 0;
+
+  mergeHeight(height: number) {
+    this.height = height;
+  }
 }

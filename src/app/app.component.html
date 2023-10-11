@@ -1,4 +1,8 @@
+<app-header  (emitter)="mergeHeight($event)"> ></app-header>
+
+<div [ngStyle]="{'height':height+'px'}"></div>
+<router-outlet ></router-outlet>
 
 
-<app-header></app-header>
-<router-outlet></router-outlet>
+<app-footer></app-footer>
+

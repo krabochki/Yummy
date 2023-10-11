@@ -6,19 +6,19 @@ import { HttpClient } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RecipeListComponent } from './components/recipe-components/recipe-list/recipe-list.component';
-import { RecipeListItemComponent } from './components/recipe-components/recipe-list-item/recipe-list-item.component';
+import { RecipeListComponent } from './modules/recipes/components/recipes/recipe-list/recipe-list.component';
+import { RecipeListItemComponent } from './modules/recipes/components/recipes/recipe-list-item/recipe-list-item.component';
 import { HeaderComponent } from './components/header/header.component';
-import { MainPageComponent } from './components/main-page/main-page.component';
+import { MainPageComponent } from './modules/recipes/components/main-page/main-page.component';
 import { HttpClientModule } from '@angular/common/http';
-import { CategoryListItemComponent } from './components/category-components/category-list-item/category-list-item.component';
-import { CategoryListComponent } from './components/category-components/category-list/category-list.component';
-import { AuthGuard } from './guards/auth.guard';
-import { AdminGuard } from './guards/admin.guard';
-import { ModeratorGuard } from './guards/moderator.guard';
-import {MatSelectModule} from '@angular/material/select';
-import { SelectComponent } from './components/UI/select/select.component';
-import { ControlDashboardComponent } from './components/control-dashboard/control-dashboard.component';
+import { CategoryListItemComponent } from './modules/recipes/components/categories/category-list-item/category-list-item.component';
+import { CategoryListComponent } from './modules/recipes/components/categories/category-list/category-list.component';
+import { AdminGuard } from './modules/authentication/guards/admin.guard';
+import { ModeratorGuard } from './modules/authentication/guards/moderator.guard';
+import { MatSelectModule } from '@angular/material/select';
+import { ControlsModule } from './modules/controls/controls.module';
+import { FooterComponent } from './components/footer/footer.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -28,8 +28,7 @@ import { ControlDashboardComponent } from './components/control-dashboard/contro
     MainPageComponent,
     CategoryListItemComponent,
     CategoryListComponent,
-    SelectComponent,
-    ControlDashboardComponent
+    FooterComponent,
   ],
   imports: [
     MatSlideToggleModule,
@@ -37,9 +36,10 @@ import { ControlDashboardComponent } from './components/control-dashboard/contro
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    HttpClientModule
+    HttpClientModule,
+    ControlsModule,
   ],
-  providers: [AuthGuard, AdminGuard, ModeratorGuard],
-  bootstrap: [AppComponent]
+  providers: [AdminGuard, ModeratorGuard],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

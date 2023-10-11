@@ -1,0 +1,20 @@
+<div class="select">
+    <div class="head" [ngStyle]="{'z-index':open?'99':'0'}" (click)="open=!open">
+        <p>{{items[0]}}</p>
+        <svg width="11" height="7" viewBox="0 0 11 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5.22527 5.00078L9.37501 0.916016L10.3257 1.82358L5.22527 6.74506L0.124857 1.82358L1.07553 0.916016L5.22527 5.00078Z" />
+            </svg>
+            
+    </div>
+    
+    <ul class="dropdown" @select *ngIf="open" (click)="this.emitter.emit(true)">
+    <li *ngFor="let item of shiftedItems, let i = index"
+     [routerLink]="routerLinks[i]"  [ngClass]="{'dsl':(!isLoggedIn?(disabling[i]?true:false):false)}">
+
+{{item}}
+    </li>
+
+    </ul>
+</div>
+
+<div (click)="open=!open" *ngIf="open" class="disabling"></div>

@@ -1,0 +1,131 @@
+@import "../../../../tools/UI/UI.scss";
+
+
+
+input,
+textarea {
+  background-color: var(--color-background-deeper-unactive);
+  padding: var(--space-s);
+  border-radius: var(--space-s) var(--space-s) 0 0;
+  caret-color: var(--color-secondary);
+  border-bottom: 1px solid var(--color-foreground-unactive);
+  font-weight: 400;
+  width: 16em;
+  max-width: 16em;
+  min-width: 16em;
+  min-height: calc(var(--base) + var(--space-xs) + var(--space-m) + 0.5em);
+  height: calc(var(--base) + var(--space-xs) + var(--space-m) + 0.5em);
+  padding-bottom: var(--space-xs);
+  padding-top: var(--space-m);
+
+  &:focus {
+  border-bottom-width: 2px;
+  border-bottom-color: var(--color-secondary);
+}
+&.uncorrect:focus {
+  border-bottom-width: 2px;
+  border-bottom-color: var(--color-primary);
+}
+
+  &.uncorrect{
+    caret-color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+
+  }
+}
+
+
+.req {
+  color: var(--color-primary);
+  font-size: 0.7em;
+  width: 22em;
+  margin-top:0.2em;
+  line-height: 1.1;
+
+  &.match {
+    color: var(--color-foreground-unactive);
+  }
+}
+div {
+  width: fit-content;
+  position: relative;
+}
+.placeholder {
+  font-weight: 300;
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  color: var(--color-foreground-unactive);
+
+  bottom: 0;
+  height: fit-content;
+  margin: auto;
+  padding: var(--space-s);
+  transition: 0.3s ease-in-out;
+
+
+  &.up {
+    font-size: 0.7em;
+    margin: 0;
+    margin-left: 0.3em;
+    color: var(--color-secondary);
+
+    &.textarea {
+      margin-top: 0em;
+    }
+  }
+  &.sleep {
+    color: var(--color-foreground-unactive);
+  }
+  &.textarea {
+    margin-top: 0.2em;
+  }
+  &.uncorrect{
+    color:var(--color-primary)
+}
+}
+
+.eye {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  height: fit-content;
+  padding: var(--space-s);
+  cursor: pointer;
+
+ 
+
+  svg {
+    fill: var(--color-foreground);
+    width: 1em;
+
+    &.open {
+      fill: var(--color-secondary);
+    }
+     &.uncorrect{
+    fill:var(--color-primary)
+  }
+  }
+}
+
+@media (max-width:900px){
+  *{
+     @include adaptive-font(26,20);
+    
+}
+.req {
+  color: var(--color-primary);
+  font-size: 1em;}
+}
+
+@media (max-width:480px){
+  *{
+     @include adaptive-font(26,18);
+    
+}
+.req {
+  color: var(--color-primary);
+  font-size: 1.3em;}
+}

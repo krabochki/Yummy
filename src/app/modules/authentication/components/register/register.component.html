@@ -11,7 +11,7 @@
                      <app-input [type]="'input'" [required]="true" [mask]="usernameMask" [warningText]="'Имя пользователя должно содержать от 4 до 20 символов, среди которых могут быть буквы (минимум одна), цифры, а также нижние почеркивания и точки (не подряд)'" placeholder="Имя пользователя" ></app-input>
 
              <app-input [type]="'input'" [required]="true" [mask]="loginMask" [warningText]="'Введите корректный адрес электронной почты'" placeholder="Введите почту" ></app-input>
-             <app-input [type]="'input'" [max]="20" [required]="true" [mask]="passMask" [warningText]="'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'" placeholder="Введите пароль" (inputValue)="getPassword($event)" [password]="true"></app-input>
+             <app-input [type]="'input'" [max]="20" [required]="true" [mask]="passMask" [warningText]="'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'" placeholder="Введите пароль" (inputValueChange)="getPassword($event)" [password]="true"></app-input>
     </div>
 
 

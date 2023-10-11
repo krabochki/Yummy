@@ -37,7 +37,7 @@ export class HeaderComponent implements OnInit, DoCheck {
   mobile: boolean = false;
   hambOpen: boolean = false;
 
-  @Output() emitter: EventEmitter<any> = new EventEmitter();
+  @Output() headerHeightChange: EventEmitter<any> = new EventEmitter();
 
   ngOnInit() {
     if (screen.width <= 480) {
@@ -50,7 +50,7 @@ export class HeaderComponent implements OnInit, DoCheck {
     const element = document.querySelector('.header') as HTMLElement | null;
     const height = element?.offsetHeight;
 
-    this.emitter.emit(height);
+    this.headerHeightChange.emit(height);
   }
 
   closeSettings() {

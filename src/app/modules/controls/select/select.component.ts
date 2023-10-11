@@ -1,5 +1,5 @@
 import { trigger, transition, style, animate } from '@angular/animations';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AuthService } from '../../authentication/services/auth.service';
 
 @Component({
@@ -19,7 +19,7 @@ import { AuthService } from '../../authentication/services/auth.service';
     ]),
   ],
 })
-export class SelectComponent {
+export class SelectComponent implements OnInit,AfterViewInit {
   @Output() emitter: EventEmitter<boolean> = new EventEmitter();
 
   @Input() items: string[] = [];

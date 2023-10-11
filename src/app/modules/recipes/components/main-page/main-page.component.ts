@@ -30,16 +30,16 @@ export class MainPageComponent {
       .subscribe((recipesData) => {
         this.allRecipes = recipesData;
 
-        this.popularRecipes =  recipesData
-          .sort((a, b) => b.likesId.length - a.likesId.length)
+        this.popularRecipes = recipesData
+          .toSorted((a, b) => b.likesId.length - a.likesId.length)
           .slice(0, 8);
 
         this.recentRecipes = recipesData
-          .sort((a, b) => {
-            const dateA = new Date(a.publicationDate);
-            const dateB = new Date(b.publicationDate);
-            return dateB.getTime() - dateA.getTime();
-          })
+          .toSorted(
+            (a, b) =>
+              new Date(b.publicationDate).getTime() -
+              new Date(a.publicationDate).getTime(),
+          )
           .slice(0, 5);
       });
 

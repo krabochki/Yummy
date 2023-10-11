@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { passMask, loginMask } from 'src/tools/regex';
 
 @Component({
   selector: 'app-login',
@@ -6,8 +7,8 @@ import { Component } from '@angular/core';
   styleUrls: ['../../common-styles.scss'],
 })
 export class LoginComponent {
-  loginMask = /^[\w-\\.]+@([\w-]+\.)+[\w-]{2,4}$/; //маска для почты
-  passMask = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$/; //маска для пароля
+  loginMask = loginMask
+  passMask = passMask
 
   login: string = '';
   pass: string = '';

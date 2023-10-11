@@ -8,7 +8,7 @@ import { Component, ElementRef, HostListener, ViewChild , Input, Output, EventEm
 export class InputComponent {
   @ViewChild('input') myInput?: ElementRef;
 
-  @Output() inputValue = new EventEmitter<string>(); //передача значения инпут
+  @Output() inputValueChange = new EventEmitter<string>(); //передача значения инпут
 
   @Input() placeholder: string = ''; //плейсхолдер
   @Input() max: number = 1000; //макс. значение
@@ -51,7 +51,7 @@ export class InputComponent {
   //Изменение значения
   @HostListener('focus', ['$event'])
   onKeyUp(event: Event): void {
-    this.inputValue.emit(this.value);
+    this.inputValueChange.emit(this.value);
   }
 
   //Открытие/сокрытие пароля

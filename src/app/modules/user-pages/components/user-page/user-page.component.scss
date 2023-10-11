@@ -1,0 +1,71 @@
+@import '../../../../../tools/UI/UI.scss';
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-left:25vw;
+    padding-right:25vw;
+}
+
+.block {
+    border: 1px solid #ddd;
+}
+
+.row {
+    display: flex;
+}
+
+.col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+button {
+    background-color: #007BFF;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    display: inline;
+}
+
+img {
+    width: 10em;
+    border-radius: 100%;
+    height: fit-content;
+}
+
+.block1{
+
+    .main{
+        align-items: center;
+        justify-content: center;
+        column-gap: var(--space-l);
+        
+
+
+        .info{
+            row-gap: var(--space-s);
+        }
+        .name{
+            .username{
+                font-weight: 500;
+                color:var(--color-foreground-unactive)
+            }
+        h1{
+            font-family: var(--font-family-accent);
+            font-size: var(--font-m);
+        }}
+    }
+
+}

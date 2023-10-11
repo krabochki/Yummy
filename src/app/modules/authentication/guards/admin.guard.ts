@@ -8,20 +8,12 @@ import {
 import { AuthService } from '../services/auth.service';
 
 @Injectable()
-export class AdminGuard implements CanActivate, CanActivateChild {
+export class AdminGuard  {
   constructor(@Inject(AuthService) private auth: AuthService) {}
 
   canActivate(
-    next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
   ): boolean {
     return this.auth.role == 'admin';
   }
 
-  canActivateChild(
-    next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): boolean {
-    return this.auth.role == 'admin';
-  }
 }

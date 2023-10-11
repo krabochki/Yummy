@@ -3,8 +3,7 @@ import { CanActivate, CanActivateChild, ActivatedRouteSnapshot, RouterStateSnaps
 import { AuthService } from "../services/auth.service";
 
 @Injectable()
-export class ModeratorGuard
-    implements CanActivate, CanActivateChild {
+export class ModeratorGuard {
     constructor(
         @Inject(AuthService) private auth: AuthService
     ) {
@@ -13,17 +12,7 @@ export class ModeratorGuard
     }
 
     canActivate(
-        next: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot
     ): boolean {
-        return this.auth.role=='admin' || this.auth.role=='moderator';
-    }
-
-    canActivateChild(
-        next: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot
-    ): boolean {
-
         return this.auth.role=='admin' || this.auth.role=='moderator';
     }
 }

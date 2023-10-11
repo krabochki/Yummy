@@ -1,17 +1,19 @@
 export interface IUser {
-    id: number; // Уникальный идентификатор пользователя
-    username: string; // Имя пользователя
-    avatarUrl: string; // URL аватара пользователя
+    id?: number; // Уникальный идентификатор пользователя
+    username?: string; // Имя пользователя
+    avatarUrl?: string; // URL аватара пользователя
     description?: string; // Описание пользователя
     quote?: string; // Цитата пользователя
-    email?: string; // Почта пользователя
+  email?: string; // Почта пользователя
+  password?: string; //Пароль пользователя
     fullName?: string; // Полное имя пользователя
     followersIds?: number[]; // Список идентификаторов подписчиков
     socialNetworks?: SocialNetwork[]; // Список социальных сетей пользователя
     personalWebsite?: string; // Личный веб-сайт пользователя
     location?: string; // Локация пользователя
     registrationDate?: string; // Дата регистрации пользователя
-    profileViews?: number; // Количество просмотров профиля
+  profileViews?: number; // Количество просмотров профиля
+  role?: string;
   }
   
   export interface SocialNetwork {

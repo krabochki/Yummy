@@ -7,9 +7,9 @@
             
     </div>
     
-    <ul class="dropdown" @select *ngIf="open" (click)="this.emitter.emit(true)">
+    <ul class="dropdown" @select *ngIf="open" (click)="this.clickedEmit.emit(true)">
     <li *ngFor="let item of shiftedItems, let i = index"
-     [routerLink]="routerLinks[i]"  [ngClass]="{'dsl':(!isLoggedIn?(disabling[i]?true:false):false)}">
+     [routerLink]="routerLinks[i]"  [ngClass]="{'dsl':(disabling[i]?true:false)}">
 
 {{item}}
     </li>

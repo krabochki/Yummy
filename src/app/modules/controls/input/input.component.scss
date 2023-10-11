@@ -1,7 +1,10 @@
 @import "../../../../tools/UI/UI.scss";
 
 
+.input{
+    width: 16em;
 
+}
 input,
 textarea {
   background-color: var(--color-background-deeper-unactive);
@@ -38,7 +41,7 @@ textarea {
 .req {
   color: var(--color-primary);
   font-size: 0.7em;
-  width: 22em;
+  width: 100%;
   margin-top:0.2em;
   line-height: 1.1;
 
@@ -121,11 +124,6 @@ div {
 }
 
 @media (max-width:480px){
-  *{
-     @include adaptive-font(26,18);
-    
-}
-.req {
-  color: var(--color-primary);
-  font-size: 1.3em;}
+
+
 }

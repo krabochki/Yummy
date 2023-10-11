@@ -19,18 +19,15 @@ import { AuthService } from '../../authentication/services/auth.service';
     ]),
   ],
 })
-export class SelectComponent implements OnInit,AfterViewInit {
-  @Output() emitter: EventEmitter<boolean> = new EventEmitter();
+export class SelectComponent implements AfterViewInit {
+  @Output() clickedEmit: EventEmitter<boolean> = new EventEmitter();
 
   @Input() items: string[] = [];
   @Input() disabling: boolean[] = [];
   @Input() routerLinks: string[] = [];
 
-  isLoggedIn: boolean = false;
   constructor(private authService: AuthService) {}
-  ngOnInit() {
-    this.isLoggedIn = this.authService.isLoggedIn;
-  }
+
   open: boolean = false;
 
   shiftedItems?: string[];

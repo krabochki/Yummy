@@ -8,8 +8,7 @@ import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
 @Component({
   selector: 'app-main-page',
   templateUrl: './main-page.component.html',
-  styleUrls: ['./main-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./main-page.component.scss']
 })
 export class MainPageComponent {
   allRecipes: IRecipe[] = [];
@@ -22,7 +21,7 @@ export class MainPageComponent {
   constructor(
     private recipeService: RecipeService,
     private categoryService: CategoryService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.recipesSubscription = this.recipeService
@@ -30,23 +29,21 @@ export class MainPageComponent {
       .subscribe((recipesData) => {
         this.allRecipes = recipesData;
 
-        this.popularRecipes = recipesData
-          .toSorted((a, b) => b.likesId.length - a.likesId.length)
-          .slice(0, 8);
+        console.log(recipesData)
 
-        this.recentRecipes = recipesData
-          .toSorted(
-            (a, b) =>
-              new Date(b.publicationDate).getTime() -
-              new Date(a.publicationDate).getTime(),
-          )
-          .slice(0, 5);
-      });
 
-    this.categoriesSubscription = this.categoryService
-      .getCategories()
-      .subscribe((recipesData) => {
-        this.allCategories = recipesData;
-      });
+        this.popularRecipes = this.recipeService.getPopularRecipes(recipesData).slice(0, 4);
+
+        this.recentRecipes = this.recipeService.getRecentRecipes(recipesData).slice(0, 6);
+
+        this.categoriesSubscription = this.categoryService
+          .getCategories()
+          .subscribe((recipesData) => {
+            this.allCategories = recipesData;
+          });
+    
+      
+      })
   }
+
 }

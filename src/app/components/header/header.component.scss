@@ -6,6 +6,12 @@
     
 }
 
+
+.buttons{
+    display: flex;
+    column-gap: var(--space-m);
+}
+
 label{
     font-size: var(--font-xl);
     font-family: var(--font-family-accent);
@@ -37,11 +43,31 @@ label{
     width: var(--font-2xl);
     height: var(--font-2xl);
     padding: 0.5em;
+    position: relative;
     transition: 0.3s ease-in-out;
 
     &:hover{
          scale: 1.2;
 
+    }
+
+    .notifications{
+        background-color: var(--color-primary);
+        position: absolute;
+        top:0;right:0;
+        width:1.2rem;
+        margin-right: calc(-1 * var(--space-s));
+        margin-top:calc(-1 * var(--space-xs));
+        display: flex;
+        flex-direction: column;
+        line-height: 1;
+        align-items: center;
+        justify-content: center;
+        border-radius: 100%;
+        height:1.2rem;
+        font-weight: 600;
+        color:var(--color-background);
+        font-size: var(--font-xs);
     }
  
 }
@@ -49,8 +75,11 @@ svg{
     
     fill:var(--color-background);
     width: var(--font-m);
-    margin-right:3px;
     height: var(--font-m);
+     &.center{
+            margin-right:3px;
+
+    }
 
 }
 .cook-plan{
@@ -85,9 +114,16 @@ p{
 
         .svg-button{
             position: absolute;
-            top:0; bottom:0; margin: auto 0;right:0;
-            margin-right: calc((38px  / 1.25) + ((70 / 1.25) - (38  / 1.25)) * ((100vw - 480px) / (900 - 480)));
+            top:0; bottom:0; margin: auto 0;left:0;
+            margin-left: calc((38px  / 1.25) + ((70 / 1.25) - (38  / 1.25)) * ((100vw - 480px) / (900 - 480)));
 
+            
+            &:last-of-type{
+                left:unset;
+                            margin-right: calc((38px  / 1.25) + ((70 / 1.25) - (38  / 1.25)) * ((100vw - 480px) / (900 - 480)));
+                right:0;
+
+            }
         }
     }
 }

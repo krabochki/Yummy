@@ -11,7 +11,8 @@ export class ButtonComponent {
   @Input() style:'filled'|'filled-min'|'outlined'|'banner'|undefined;
   @Input() color:'prim'|'sec'|undefined;
   @Input() rounded:boolean|undefined;
-  @Input() text:string = 'Button';
+  @Input() text: string = 'Button';
+  @Input() disabled: boolean = true;
 
   getClass(){
 
@@ -51,6 +52,10 @@ export class ButtonComponent {
         case false:
           styleClasses.push('unrounded');
           break;
+    }
+
+    if(!this.disabled){
+      styleClasses.push('disabled');
     }
   
     return styleClasses;

@@ -12,7 +12,11 @@ import { ControlsModule } from '../controls/controls.module';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { AuthGuard } from './guards/auth.guard';
+import { OnlyNoAuthGuard } from './guards/only-no-auth.guard';
+import { ModeratorGuard } from './guards/moderator.guard';
+import { AdminGuard } from './guards/admin.guard';
 @NgModule({
   declarations: [
 
@@ -33,6 +37,8 @@ import {MatFormFieldModule} from '@angular/material/form-field';
     MatInputModule,
     MatIconModule,
     MatButtonModule
-  ]
+  ],
+  providers: [AuthGuard, AdminGuard, ModeratorGuard, OnlyNoAuthGuard]
+
 })
 export class AuthenticationModule { }

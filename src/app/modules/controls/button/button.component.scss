@@ -4,23 +4,53 @@ button.prim{
     background: var(--color-primary);
     border: 3px solid var(--color-primary);
 
+    &.disabled{
+  background: var(--color-foreground-unactive);
+    border-color: var(----color-foreground-unactive)
+    }
+
+}
+
+.disabled{
+    pointer-events: none;
 }
 button.sec{
     background: var(--color-secondary);
     border: 3px solid var(--color-secondary);
+     &.disabled{
+  background: var(--color-foreground-unactive);
+    border-color: var(----color-foreground-unactive)
+    }
 
 }
+
+
 button.filled-min.prim{
     border: 3px solid var(--color-primary-lighter);
 
     background: var(--color-primary-lighter);
-    color:var(--color-primary)
+    color:var(--color-primary);
+
+     &.disabled{
+                    color:var(--color-background);
+
+  background: var(--color-foreground-unactive-lighter);
+    border-color: var(--color-foreground-unactive-lighter)
+    }
 }
 button.filled-min.sec{
     border: 3px solid var(--color-secondary-lighter);
 
     background: var(--color-secondary-lighter);
-    color:var(--color-secondary)
+    color:var(--color-secondary);
+
+
+     &.disabled{
+            color:var(--color-background);
+
+  background: var(--color-foreground-unactive-lighter);
+    border-color: var(--color-foreground-unactive-lighter)
+    }
 }
 
 button{
@@ -44,7 +74,7 @@ button{
 
     }
 
-    &:hover{
+    &:hover:not(.disabled){
         scale:1.05
     }
 }
@@ -53,14 +83,27 @@ button{
 
 button.outlined{
     background: none;
+
+    
 }
 .outlined.prim{
     border: 3px solid var(--color-primary);
     color: var(--color-primary);
+         &.disabled{
+                color: var(--color-foreground-unactive);
+
+border-color: var(--color-foreground-unactive);
+    }
 }
 .outlined.sec{
     border: 3px solid var(--color-secondary);
     color: var(--color-secondary);
+
+        &.disabled{
+                color: var(--color-foreground-unactive);
+
+border-color: var(--color-foreground-unactive);
+    }
 }
 
 .rounded{
@@ -71,9 +114,3 @@ button.outlined{
     border-radius:var(--space-s);
 }
 
-@media (max-width:480px){
-  *{
-     @include adaptive-font(26,12);
-    
-}
-}

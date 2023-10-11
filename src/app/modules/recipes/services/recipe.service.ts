@@ -29,4 +29,23 @@ export class RecipeService {
   updateProduct(recipe: IRecipe) {
     return this.http.put<IRecipe>(`${this.url}/${recipe.id}`, recipe);
   }
+
+  getPopularRecipes(recipes: IRecipe[]) {
+    return recipes.sort((a, b) => b.likesId.length - a.likesId.length);
+  }
+  getRecentRecipes(recipes: IRecipe[]) {
+    return recipes.sort((a, b) => {
+      const dateA = new Date(a.publicationDate);
+      const dateB = new Date(b.publicationDate);
+      return dateB.getTime() - dateA.getTime();
+    });
+  }
+
+  getRecipesByCategory(recipes: IRecipe[], categoryId: number) {
+    return recipes.filter((recipe) => recipe.categories.includes(categoryId));
+  }
+  getRecipesByUser(recipes: IRecipe[], userId: number): IRecipe[] {
+
+    return recipes.filter((recipe) => recipe.authorId == userId);
+  }
 }

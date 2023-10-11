@@ -1,1 +1,97 @@
-<p>user-page works!</p>
+
+    <div class="container">
+        <div class="block block1">
+            <div class="row main">
+                    <img src="../../../../../assets/images/userpic.png" alt="User Photo">
+                <div class="col info">
+                    <div class="col name">
+                        <h1>{{user?.fullName}}</h1>
+                        <p class="username">{{'@'+user?.username}}</p>
+                    </div>
+
+                    <p class="quote">{{user?.quote}}</p>
+
+                    <app-button [color]="'prim'" [style]="userService.isUserSubscriber(user, currentUser?.id)||myPage?'outlined':'filled'" [rounded]="true" [text]="this.myPage?'Изменить профиль':(userService.isUserSubscriber(user, currentUser?.id)?'Отписаться':'Подписаться')"></app-button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <p><span>{{userRecipes.length}}
+                        
+                    </span>
+                    
+                       
+                    <span appPluralRu="" [value]="userRecipes.length" [arVariants]="['рецепт', 'рецепта', 'рецептов']"></span>
+
+
+
+                    
+                    </p>
+                </div>
+                <div class="col">
+                    <p>{{user?.followersIds?user?.followersIds?.length:'0'}} подписчиков</p>
+                </div>
+                <div class="col">
+                    <p>100 подписок</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="block block2">
+                <button (click)="recipesEnabled=true; moreInfoEnabled=false">Рецепты</button>
+                <button (click)="recipesEnabled=false; moreInfoEnabled=true">Подробнее</button>
+        </div>
+
+        <ng-template #recipes> 
+            <ng-template #noRecipes >У этого кулинара пока нет своих рецептов</ng-template>
+        <app-recipe-list *ngIf="userRecipes.length>0;else noRecipes" [recipes]="userRecipes"></app-recipe-list>
+
+        </ng-template>
+
+        <div class="block block3" *ngIf="moreInfoEnabled; else recipes">
+            <div class="col">
+                <h2>Описание</h2>
+                <p>Текст описания</p>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h3>Социальные сети</h3>
+                    <ul class="col">
+                        <li class="row">
+                            <a href="#"><img src="facebook-icon.svg" alt="Facebook"></a>
+                        </li>
+                        <li class="row">
+                            <a href="#"><img src="twitter-icon.svg" alt="Twitter"></a>
+                        </li>
+                        <li class="row">
+                            <a href="#"><img src="instagram-icon.svg" alt="Instagram"></a>
+                        </li>
+                        <li class="row">
+                            <a href="#"><img src="linkedin-icon.svg" alt="LinkedIn"></a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col">
+                    <h3>Доп. сведения</h3>
+                    <ul>
+                        <li class="row">
+                            <img src="info-icon1.svg" alt="Info 1">
+                            <p>Текст 1</p>
+                        </li>
+                        <li class="row">
+                            <img src="info-icon2.svg" alt="Info 2">
+                            <p>Текст 2</p>
+                        </li>
+                        <li class="row">
+                            <img src="info-icon3.svg" alt="Info 3">
+                            <p>Текст 3</p>
+                        </li>
+                        <li class="row">
+                            <img src="info-icon4.svg" alt="Info 4">
+                            <p>Текст 4</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>

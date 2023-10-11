@@ -65,6 +65,7 @@ padding-bottom:var(--space-xl);
 
                              li{
                 line-height: 1;
+                text-decoration: underline;
             }
             }
            
@@ -107,6 +108,12 @@ padding-bottom:var(--space-xl);
 svg{
     width:var(--space-xl);
     fill: var(--color-foreground);
+    border-radius: 100%;
+
+    transition: 0.3s ease-in-out;
+    &:hover{
+        scale: 1.2;
+    }
 }
 
 
@@ -116,12 +123,12 @@ svg{
 .footer{
 
 
+    font-size: 0.9em;
     row-gap:var(--space-xl);
 
 
     .quote{
         font-weight: 200;
-        font-size: 1em;
         margin-top:var(--space-xxs)
         
     }
@@ -158,7 +165,7 @@ svg{
             
             grid-template-columns: 1fr 1fr 1fr;
             flex-direction: row;
-            column-gap: var(--space-l);
+            column-gap: var(--space-m);
 
             & div:nth-of-type(1){
                 text-align: right;
@@ -181,6 +188,42 @@ svg{
 }
 
 @media(max-width:480px){
+    
+    .footer .main-info .sections{
+        display: flex;
+        flex-direction: column;
+        row-gap: 1.5em;
+    }
+
+     .footer .main-info .sections ul{
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    .footer .main-info .sections div p{
+        margin-bottom: 0;
+    }
+
+      .footer .main-info .sections div {
+        row-gap: 1em;
+            font-size: 1.1em;
+
+        p{
+            font-size: var(--font-m);
+        }
+    }
+
+    .footer .main-info .sections  div:nth-of-type(3), .footer .main-info .sections  div:nth-of-type(1){
+        text-align: center;
+    }
+   .footer .links{
+        display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+
+                row-gap: var(--space-xs);
+        grid-template-rows: 1fr 1fr;
+    }
     .quote{
         display: none;
     }

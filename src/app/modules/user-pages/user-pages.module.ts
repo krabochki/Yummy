@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { UserPagesRoutingModule } from './user-pages-routing.module';
 import { UserPagesComponent } from './user-pages.component';
 import { UserPageComponent } from './components/user-page/user-page.component';
@@ -11,7 +10,12 @@ import { FollowersAndFollowingComponent } from './components/followers-and-follo
 import { CommentComponent } from './components/comments/comment/comment.component';
 import { CommentsListComponent } from './components/comments/comments-list/comments-list.component';
 import { SettingsComponent } from './components/settings/settings.component';
-
+import { ControlsModule } from '../controls/controls.module';
+import { UsersPageComponent } from './components/users-page/users-page.component';
+import { UsersListComponent } from './components/users-list/users-list.component';
+import { UsersListItemComponent } from './components/users-list-item/users-list-item.component';
+import { AuthGuard } from '../authentication/guards/auth.guard';
+import { RecipesModule } from '../recipes/recipes.module';
 
 @NgModule({
   declarations: [
@@ -23,11 +27,20 @@ import { SettingsComponent } from './components/settings/settings.component';
     FollowersAndFollowingComponent,
     CommentComponent,
     CommentsListComponent,
-    SettingsComponent
+    SettingsComponent,
+    UsersPageComponent,
+    UsersListComponent,
+    UsersListItemComponent
+
   ],
   imports: [
     CommonModule,
-    UserPagesRoutingModule
+    UserPagesRoutingModule,
+    ControlsModule
+    ,RecipesModule
+  ],
+  providers: [
+    AuthGuard
   ]
 })
 export class UserPagesModule { }

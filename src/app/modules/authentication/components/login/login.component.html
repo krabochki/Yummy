@@ -7,17 +7,23 @@
 
 
     <div class="form">
-             <app-input [type]="'input'" [required]="true" [mask]="loginMask" [warningText]="'Введите корректный адрес электронной почты'" placeholder="Введите почту" (inputValueChange)="getLogin($event)"></app-input>
+             <app-input  [type]="'input'" [required]="true" [mask]="loginMask" [warningText]="'Введите корректный логин или электронную почту'" placeholder="Введите логин или почту" (inputValueChange)="getLogin($event)"></app-input>
              <app-input [type]="'input'" [max]="20" [required]="true" [mask]="passMask" [warningText]="'Пароль должен содержать 8-20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'" placeholder="Введите пароль" (inputValueChange)="getPassword($event)" [password]="true"></app-input>
     </div>
 
 
                <hr>
 
+          <a [routerLink]="'/password-recovery'">Восстановление пароля</a>
         
        <div class="buttons">
 
-            <app-button [rounded]="true" [color]="'prim'"  [text]="'Войти'"></app-button>
+            <app-button  [ngStyle]="{'pointer-events':(loginMask.test(login) && passMask.test(pass))?'all':'none'}" (click)="loginUser()" [disabled]="loginMask.test(login) && passMask.test(pass)" [rounded]="true" [color]="'prim'"  [text]="'Войти'"></app-button>
        </div>
    </div>
 </div>
+
+
+
+<app-modal *ngIf="modalShow"  [style]="'sec'" [title]="'Успешный вход!'" [type]="'Ok'" (resultEmit)="handleModalResult($event)" [buttonsText]="['На главную']" [description]="'Вы успешно вошли в свой аккаунт!'"></app-modal>
+<app-modal *ngIf="modalErrorShow" [style]="'prim'" [title]="'Неудачная попытка входа'" [type]="'Ok'" (resultEmit)="handleModalErrorResult($event)" [buttonsText]="['Хорошо']" [description]="failText"></app-modal>

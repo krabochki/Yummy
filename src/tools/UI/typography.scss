@@ -9,7 +9,7 @@
     --font-m:1.27em;
     --base:1em;
     --font-s:0.83em;
-    --font-xs:0.5em;
+    --font-xs:0.6em;
 
 	--font-family-main: 'URW Geometric';
 	--font-family-accent: 'Appetite new';
@@ -37,11 +37,12 @@ $maxWidth: 1280;
 @media (max-width:900px){
     :root{
 
-    @include adaptive-font(26,10);
+    @include adaptive-font(22,15);
     }
 
     }
 
+ 
 
 
 @mixin contrast-font{

@@ -1,6 +1,8 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, DoCheck, EventEmitter, HostListener, OnInit, Output } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
+import { IUser } from 'src/app/modules/user-pages/models/users';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -36,6 +38,13 @@ export class HeaderComponent implements OnInit, DoCheck {
 
   mobile: boolean = false;
   hambOpen: boolean = false;
+  currentUserSubscription?: Subscription ;
+  currentUser?: IUser | null;
+
+
+  role: string | undefined = 'user';
+
+  notificationsCount = 10;
 
   @Output() headerHeightChange: EventEmitter<any> = new EventEmitter();
 
@@ -45,6 +54,17 @@ export class HeaderComponent implements OnInit, DoCheck {
     } else {
       this.mobile = false;
     }
+
+
+     this.currentUserSubscription = this.authService
+       .getCurrentUser().subscribe((data) => {
+
+         
+         this.currentUser = data;
+
+         this.role = this.currentUser?.role;
+         
+       });
   }
   ngDoCheck() {
     const element = document.querySelector('.header') as HTMLElement | null;
@@ -69,7 +89,7 @@ export class HeaderComponent implements OnInit, DoCheck {
 
     const height = element?.offsetHeight;
 
-    this.emitter.emit(height);
+    this.headerHeightChange.emit(height);
   }
 
   constructor(public authService: AuthService) {}

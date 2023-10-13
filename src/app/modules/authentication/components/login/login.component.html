@@ -25,5 +25,5 @@
 
 
 
-<app-modal *ngIf="modalShow"  [style]="'sec'" [title]="'Успешный вход!'" [type]="'Ok'" (resultEmit)="handleModalResult($event)" [buttonsText]="['На главную']" [description]="'Вы успешно вошли в свой аккаунт!'"></app-modal>
-<app-modal *ngIf="modalErrorShow" [style]="'prim'" [title]="'Неудачная попытка входа'" [type]="'Ok'" (resultEmit)="handleModalErrorResult($event)" [buttonsText]="['Хорошо']" [description]="failText"></app-modal>
+<app-modal @modal *ngIf="modalShow"  [style]="'sec'" [title]="'Успешный вход!'" [type]="'Ok'" (resultEmit)="handleModalResult($event)" [buttonsText]="['На главную']" [description]="'Вы успешно вошли в свой аккаунт!'"></app-modal>
+<app-modal @modal *ngIf="modalErrorShow" [style]="'prim'" [title]="'Неудачная попытка входа'" [type]="'Ok'" (resultEmit)="handleModalErrorResult($event)" [buttonsText]="['Хорошо']" [description]="failText"></app-modal>

@@ -1,16 +1,27 @@
+import { animate, style, transition, trigger } from '@angular/animations';
 import { Component } from '@angular/core';
-import { FormControl, Validators, FormGroup } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { IUser } from 'src/app/modules/user-pages/models/users';
-import { passMask, loginMask, usernameMask } from 'src/tools/regex';
-import { AuthService } from '../../services/auth.service';
-import { Subscription } from '@supabase/supabase-js';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
+import { loginMask, passMask, usernameMask } from 'src/tools/regex';
+import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['../../common-styles.scss'],
+  animations: [
+    trigger('modal', [
+      transition(':enter', [
+        style({ opacity: '0' }),
+        animate('300ms ease-out', style({ opacity: '1' })),
+      ]),
+      transition(':leave', [
+        style({ opacity: '1' }),
+        animate('300ms ease-in', style({ opacity: '0' })),
+      ]),
+    ]),
+  ],
 })
 export class RegisterComponent {
   emailMask = loginMask; //маска для почты
@@ -50,7 +61,7 @@ export class RegisterComponent {
     }
     this.modalSuccessShow = false;
   }
-  handleFailModalResult(result: boolean) {
+  handleFailModalResult(result:boolean) {
     this.modalFailShow = false;
   }
 
@@ -90,26 +101,26 @@ export class RegisterComponent {
             localStorage.setItem('currentUser', JSON.stringify(userExists));
             this.authService.setCurrentUser(userExists);
             this.modalSuccessShow = true;
-          } 
+          }
         },
         (error) => {
           console.error('Ошибка подписки', error);
         },
       );
     } else {
-       if (emailExists) {
-         this.failText =
-           'Регистрация невозможна, так как пользователь с данной электронной почтой уже существует.';
-       }
-       if (usernameExists) {
-         this.failText =
-           'Регистрация невозможна, так как пользователь с данным именем пользователя уже существует.';
+      if (emailExists) {
+        this.failText =
+          'Регистрация невозможна, так как пользователь с данной электронной почтой уже существует.';
+      }
+      if (usernameExists) {
+        this.failText =
+          'Регистрация невозможна, так как пользователь с данным именем пользователя уже существует.';
       }
       if (usernameExists && emailExists) {
-         this.failText =
-           'Регистрация невозможна, так как пользователь(-и) с данной электронной почтой и именем пользователя уже существует.';
-       }
-       this.modalFailShow = true;
+        this.failText =
+          'Регистрация невозможна, так как пользователь(-и) с данной электронной почтой и именем пользователя уже существует.';
+      }
+      this.modalFailShow = true;
     }
   }
 }

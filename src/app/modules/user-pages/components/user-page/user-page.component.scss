@@ -1,17 +1,35 @@
 @import '../../../../../tools/UI/UI.scss';
 
+
+
+.skeleton{
+    animation: 1s blink infinite;
+    
+}
+@keyframes blink{
+    to{
+        opacity: 0;
+    }
+}
+*{
+    line-height: 1;
+}
 .container {
+      margin: var(--space-xl) 0;
+
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-left:25vw;
-    padding-right:25vw;
+    
+    row-gap: var(--space-unit);
+
+    padding: 0 14.4vw;
 }
 
-.block {
-    border: 1px solid #ddd;
+.showFollowers{
+    cursor: pointer;
+    text-decoration: underline;
 }
-
 .row {
     display: flex;
 }
@@ -22,12 +40,28 @@
     flex-direction: column;
 }
 
+.block2{
+    display: flex;
+    
+    column-gap: var(--space-m);
+}
 button {
-    background-color: #007BFF;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
+    border-bottom:3px var(--color-foreground-unactive) solid;
+    color: var(--color-foreground-unactive);
+    letter-spacing: 2px;
+    padding: var(--space-s) var(--space-m);
+    width: 10em;
+    font-weight: 500;
+    font-size: var(--font-m);
     cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+.active-button{
+    font-weight: 700;
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+        letter-spacing: 5px;
+
 }
 
 ul {
@@ -45,7 +79,106 @@ img {
     height: fit-content;
 }
 
+.center{
+    display: flex;
+        align-items: start;
+                column-gap: var(--space-xs);
+
+
+
+}
+
+
+.additional ul{
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.5em;
+
+    a{
+        color:var(--color-primary);
+    font-weight: 600;
+    text-decoration: underline;
+    }
+}
+.noRecipes{
+    height: 5.5em;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.socialAndAdd{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.links
+{
+
+
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.5em;
+
+    a{
+        
+
+        
+    span{
+    color:var(--color-primary);
+    font-weight: 600;
+    text-decoration: underline;
+
+    }}
+}
+svg{
+   height:1em;
+   width: 2em;
+    fill: var(--color-primary);
+}
+.svg-additional,.svg-link{
+        height:1em;
+        width: 1.2em;
+
+        fill: var(--color-foreground);
+        
+
+}
+.svg-link{
+            fill: var(--color-primary);
+
+}
+
+
+.block3{
+
+    display: flex;
+    flex-direction: column;
+    row-gap:  var(--space-l);;
+
+    h3{
+        margin-bottom:var(--space-s);
+        font-weight: 700;    font-size: var(--font-m);
+
+    }
+}
+
 .block1{
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--space-m);
+    
+    .statistics{
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+
+        p span:first-of-type{
+            font-weight: 600;
+        }
+    }
 
     .main{
         align-items: center;
@@ -57,6 +190,7 @@ img {
         .info{
             row-gap: var(--space-s);
         }
+      
         .name{
             .username{
                 font-weight: 500;
@@ -65,7 +199,60 @@ img {
         h1{
             font-family: var(--font-family-accent);
             font-size: var(--font-m);
+            margin-bottom: var(--space-xxs);
         }}
     }
 
+}
+
+
+@media (max-width:900px){
+    .container{
+                padding: 0 14.4vw;
+zoom:0.9;
+
+    }
+}
+
+@media (max-width:540px){
+    .container{
+                padding: 0 14.4vw;
+zoom:0.9;
+
+    }
+    .block1 
+    
+    {
+        .statistics{
+            display: flex;
+            flex-direction: column;
+            row-gap: 1em;
+        }
+        .main{
+        flex-direction: column;
+        row-gap: 2em;
+
+        .info{
+            *{
+                margin: 0 auto;
+                text-align: center;
+                max-width: fit-content;
+            }
+        }
+    }}
+    
+    .socialAndAdd{
+        flex-direction: column-reverse;
+        align-items: start;
+        row-gap: var(--space-l);
+    }
+
+    .block2 {
+        zoom: 0.8;
+        button{
+            padding-left: 0em;
+        padding-right: 0em;
+        width: 8.5em;
+        }
+}
 }

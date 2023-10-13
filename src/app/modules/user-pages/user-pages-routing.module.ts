@@ -5,12 +5,12 @@ import { UserPageComponent } from './components/user-page/user-page.component';
 import { UsersPageComponent } from './components/users-page/users-page.component';
 import { SomeRecipesPageComponent } from '../recipes/components/recipes/some-recipes-page/some-recipes-page.component';
 import { UserResolver } from './services/user.resolver';
-import { AuthGuard } from '../authentication/guards/auth.guard';
+import { CustomPreloadingService } from 'src/app/custom-preloading.service';
 const routes: Routes = [
   {
     path: '',
     component: UserPagesComponent,
-  
+
     children: [
       {
         path: 'cooks',
@@ -25,13 +25,13 @@ const routes: Routes = [
         component: UserPageComponent,
         resolve: { user: UserResolver },
       },
-      
+
       {
         path: 'cooks/updates',
         component: SomeRecipesPageComponent,
       },
-    ]
-  }
+    ],
+  },
 ];
 
 @NgModule({

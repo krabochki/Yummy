@@ -1,71 +1,120 @@
-
-
 <div class="header">
+  <label routerLink="">{{ "yummy" | titlecase }}</label>
 
-    <label routerLink="">{{'yummy'|titlecase}}</label>
-    
-    <div *ngIf="!mobile" class="menu-items">
-        <app-select [items]="recipeSelectItems"  [disabling]="!this.currentUser? [true,false,false,true,false] :[false,false,false,false,false] " [routerLinks]="['recipes/yours','recipes','categories','recipes/favorite','recipes/match']"></app-select>
-        <app-select [items]="cooksSelectItems" [disabling]="!this.currentUser? [true,false,false] : [false,false,false]" [routerLinks]="['cooks/list/'+currentUser?.id,'cooks','updates']"></app-select>
-        <a routerLink="cooking-plan" class="cook-plan" [ngClass]="{'dsl':!this.currentUser?true:false}">План готовки</a>
-    </div>
+  <div *ngIf="!mobile" class="menu-items">
+    <app-select
+      [items]="recipeSelectItems"
+      [disabling]="
+        !this.currentUser
+          ? [true, false, false, true, false]
+          : [false, false, false, false, false]
+      "
+      [routerLinks]="[
+        'recipes/yours',
+        'recipes',
+        'categories',
+        'recipes/favorite',
+        'recipes/match'
+      ]"
+    ></app-select>
+    <app-select
+      [items]="cooksSelectItems"
+      [disabling]="
+        !this.currentUser ? [true, false, false] : [false, false, false]
+      "
+      [routerLinks]="['cooks/list/' + currentUser?.id, 'cooks', 'updates']"
+    ></app-select>
+    <a
+      routerLink="cooking-plan"
+      class="cook-plan"
+      [ngClass]="{ dsl: !this.currentUser ? true : false }"
+      >План готовки</a
+    >
+  </div>
 
+  <div class="buttons" *ngIf="!mobile">
+    <button
+      routerLink="authentication/greetings"
+      *ngIf="currentUser"
+      class="svg-button"
+    >
+      <svg-icon
+        [src]="'../../../assets/images/svg/bell.svg'"
+        [class]="'svg'"
+        >></svg-icon
+      >
 
-    <div class="buttons" *ngIf="!mobile">
+      <div class="notifications" *ngIf="notificationsCount > 0">
+        {{ notificationsCount }}
+      </div>
+    </button>
 
+    <button
+      [routerLink]="
+        !currentUser ? 'greetings' : 'cooks/list/' + currentUser.id
+      "
+      class="svg-button"
+    >
+      <ng-template #account>
+        <svg-icon
+          [src]="'../../../assets/images/svg/account.svg'"
+          [class]="'svg'"
+          >></svg-icon
+        >
+      </ng-template>
+      <svg-icon 
+        *ngIf="!currentUser; else account"
+        [src]="'../../../assets/images/svg/enter.svg'"
+        [class]="'svg'"
+        >></svg-icon
+      >
+    </button>
+  </div>
 
-        <button routerLink="authentication/greetings" *ngIf="currentUser" class="svg-button">
-            
-            
-          <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 19 23" >
-<path d="M2.21282 19.2928C1.86261 19.2928 1.56706 19.1727 1.32617 18.9326C1.08529 18.6924 0.964844 18.3978 0.964844 18.0486C0.964844 17.6995 1.08529 17.4049 1.32617 17.1647C1.56706 16.9246 1.86261 16.8045 2.21282 16.8045H3.08036V9.37058C3.08036 7.80089 3.5495 6.40091 4.4878 5.17064C5.4261 3.94037 6.65288 3.1364 8.16816 2.75873V2.04544C8.16816 1.54793 8.34282 1.12505 8.69214 0.776796C9.04146 0.428528 9.46563 0.254395 9.96467 0.254395C10.4637 0.254395 10.8879 0.428528 11.2372 0.776796C11.5865 1.12505 11.7612 1.54793 11.7612 2.04544V2.75873C13.2808 3.1364 14.5087 3.93928 15.4448 5.16736C16.3809 6.39545 16.849 7.79653 16.849 9.37058V16.8045H17.7165C18.0667 16.8045 18.3623 16.9246 18.6032 17.1647C18.844 17.4049 18.9645 17.6995 18.9645 18.0486C18.9645 18.3978 18.844 18.6924 18.6032 18.9326C18.3623 19.1727 18.0667 19.2928 17.7165 19.2928H2.21282ZM9.97122 22.646C9.34617 22.646 8.81108 22.4247 8.36597 21.9823C7.92088 21.5398 7.69833 21.0079 7.69833 20.3866H12.2376C12.2376 21.0099 12.0157 21.5423 11.5718 21.9838C11.128 22.4252 10.5945 22.646 9.97122 22.646ZM5.57626 16.8045H14.3531V9.37058C14.3531 8.16746 13.9234 7.13751 13.064 6.28074C12.2046 5.42397 11.1715 4.99558 9.96467 4.99558C8.75785 4.99558 7.72475 5.42397 6.86536 6.28074C6.00596 7.13751 5.57626 8.16746 5.57626 9.37058V16.8045Z"/>
-</svg>
-<div class="notifications" *ngIf="notificationsCount>0">{{notificationsCount}}</div>
-
-                </button>
-            
-    
-        <button [routerLink]="!currentUser?'greetings':'cooks/list/'+currentUser?.id"  class="svg-button">
-            
-            <ng-template #account>
-                <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 20 20" >
-<path d="M9.82483 9.87939C8.49379 9.87939 7.35434 9.42041 6.40648 8.50244C5.45861 7.58447 4.98468 6.48096 4.98468 5.19189C4.98468 3.90283 5.45861 2.79932 6.40648 1.88135C7.35434 0.963379 8.49379 0.504395 9.82483 0.504395C11.1559 0.504395 12.2953 0.963379 13.2432 1.88135C14.1911 2.79932 14.665 3.90283 14.665 5.19189C14.665 6.48096 14.1911 7.58447 13.2432 8.50244C12.2953 9.42041 11.1559 9.87939 9.82483 9.87939ZM0.144531 16.9106V15.9731C0.144531 15.3091 0.320995 14.6987 0.673923 14.1421C1.02685 13.5854 1.49574 13.1606 2.08059 12.8677C3.33096 12.2622 4.6015 11.8081 5.89221 11.5054C7.18292 11.2026 8.49379 11.0513 9.82483 11.0513C11.1559 11.0513 12.4668 11.2026 13.7575 11.5054C15.0482 11.8081 16.3187 12.2622 17.5691 12.8677C18.1539 13.1606 18.6228 13.5854 18.9757 14.1421C19.3287 14.6987 19.5051 15.3091 19.5051 15.9731V16.9106C19.5051 17.5552 19.2682 18.1069 18.7942 18.5659C18.3203 19.0249 17.7506 19.2544 17.0851 19.2544H2.56461C1.89909 19.2544 1.32936 19.0249 0.855429 18.5659C0.381497 18.1069 0.144531 17.5552 0.144531 16.9106ZM2.56461 16.9106H17.0851V15.9731C17.0851 15.7583 17.0296 15.563 16.9187 15.3872C16.8078 15.2114 16.6615 15.0747 16.48 14.9771C15.391 14.4497 14.2919 14.0542 13.1827 13.7905C12.0735 13.5269 10.9542 13.395 9.82483 13.395C8.69547 13.395 7.57618 13.5269 6.46698 13.7905C5.35778 14.0542 4.25866 14.4497 3.16963 14.9771C2.98812 15.0747 2.84191 15.2114 2.73099 15.3872C2.62007 15.563 2.56461 15.7583 2.56461 15.9731V16.9106ZM9.82483 7.53564C10.4904 7.53564 11.0601 7.30615 11.534 6.84717C12.0079 6.38818 12.2449 5.83643 12.2449 5.19189C12.2449 4.54736 12.0079 3.99561 11.534 3.53662C11.0601 3.07764 10.4904 2.84814 9.82483 2.84814C9.15931 2.84814 8.58959 3.07764 8.11566 3.53662C7.64172 3.99561 7.40476 4.54736 7.40476 5.19189C7.40476 5.83643 7.64172 6.38818 8.11566 6.84717C8.58959 7.30615 9.15931 7.53564 9.82483 7.53564Z" />
-</svg>
-
-            </ng-template>
-            <svg class="center" xmlns="http://www.w3.org/2000/svg" *ngIf="!currentUser; else account" viewBox="0 0 20 20" >
-            <path d="M11.4443 19.6658C11.0765 19.6658 10.7639 19.5371 10.5066 19.2798C10.2492 19.0224 10.1205 18.7098 10.1205 18.342C10.1205 17.9742 10.2492 17.6616 10.5066 17.4042C10.7639 17.1468 11.0765 17.0181 11.4443 17.0181H17.0579V3.36915H11.4443C11.0765 3.36915 10.7639 3.24046 10.5066 2.98307C10.2492 2.72569 10.1205 2.41309 10.1205 2.04528C10.1205 1.67749 10.2492 1.36489 10.5066 1.1075C10.7639 0.850123 11.0765 0.721436 11.4443 0.721436H17.0579C17.7957 0.721436 18.4214 0.978279 18.9351 1.49196C19.4488 2.00565 19.7056 2.63138 19.7056 3.36915V17.0181C19.7056 17.7559 19.4488 18.3816 18.9351 18.8953C18.4214 19.409 17.7957 19.6658 17.0579 19.6658H11.4443ZM8.30788 11.5175H2.08508C1.71728 11.5175 1.40469 11.3888 1.14729 11.1314C0.889918 10.874 0.76123 10.5614 0.76123 10.1936C0.76123 9.82584 0.889918 9.51324 1.14729 9.25585C1.40469 8.99846 1.71728 8.86976 2.08508 8.86976H8.30788L6.75923 7.32113C6.51018 7.07207 6.38565 6.76726 6.38565 6.40671C6.38565 6.04614 6.51018 5.73771 6.75923 5.48141C7.0083 5.21569 7.31438 5.08103 7.67748 5.07741C8.04056 5.07378 8.35496 5.20483 8.62068 5.47055L12.4185 9.26834C12.6748 9.53406 12.8029 9.84249 12.8029 10.1936C12.8029 10.5448 12.6748 10.8532 12.4185 11.1189L8.62068 14.9167C8.36439 15.1824 8.05415 15.3135 7.68997 15.3098C7.32578 15.3062 7.01554 15.1716 6.75923 14.9059C6.51018 14.6496 6.38746 14.3393 6.39107 13.9751C6.39469 13.611 6.52103 13.3043 6.77009 13.0553L8.30788 11.5175Z" fill="white"/>
-            </svg>
-        
-        
-        </button>
-    </div>
-        
-
-        <div (click)="hambOpen=!hambOpen" *ngIf="mobile" class="hamburger">
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-
+  <div (click)="hambOpen = !hambOpen" *ngIf="mobile" class="hamburger">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
 </div>
 
 <div *ngIf="hambOpen" class="menu-mobile" @settingsMobile>
+  <div class="menu-mobile-cont">
+    <div class="close" (click)="hambOpen = !hambOpen">✕</div>
+    <label>Меню</label>
 
-    
-
-    <div class="menu-mobile-cont" >
-
-        <div class="close" (click)="hambOpen=!hambOpen">✕</div>
-        <label>Меню</label>
-
-        <div class="menu-mobile-links">
-                  <app-select [items]="recipeSelectItems"  [disabling]="!this.currentUser? [true,false,false,true,false] :[false,false,false,false,false] " [routerLinks]="['recipes/yours','recipes','categories','recipes/favorite','recipes/match']"></app-select>
-        <app-select [items]="cooksSelectItems" [disabling]="!this.currentUser? [true,false,false] : [false,false,false]" [routerLinks]="['cooks/'+currentUser?.id,'cooks','updates']"></app-select>
-        <a routerLink="cooking-plan" class="cook-plan" [ngClass]="{'dsl':!this.currentUser?true:false}">План готовки</a>
-        </div>
-        <button class="auth" routerLink="authentication/greetings">Авторизация</button>
-    
+    <div class="menu-mobile-links">
+      <app-select
+        [items]="recipeSelectItems"
+        [disabling]="
+          !this.currentUser
+            ? [true, false, false, true, false]
+            : [false, false, false, false, false]
+        "
+        [routerLinks]="[
+          'recipes/yours',
+          'recipes',
+          'categories',
+          'recipes/favorite',
+          'recipes/match'
+        ]"
+      ></app-select>
+      <app-select
+        [items]="cooksSelectItems"
+        [disabling]="
+          !this.currentUser ? [true, false, false] : [false, false, false]
+        "
+        [routerLinks]="['cooks/' + currentUser?.id, 'cooks', 'updates']"
+      ></app-select>
+      <a
+        routerLink="cooking-plan"
+        class="cook-plan"
+        [ngClass]="{ dsl: !this.currentUser ? true : false }"
+        >План готовки</a
+      >
     </div>
-   
+    <button class="auth" routerLink="authentication/greetings">
+      Авторизация
+    </button>
+  </div>
 </div>

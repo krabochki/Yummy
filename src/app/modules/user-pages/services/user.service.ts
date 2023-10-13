@@ -14,16 +14,65 @@ export class UserService {
 
   url: string = 'http://localhost:3000/users';
 
-  isUserSubscriber(user: any,userId: any) {
-      return user?.followersIds?.includes(userId);
+  isUserSubscriber(user: any, userId: any) {
+    if (!user) return false;
+    return user?.followersIds?.includes(userId);
+  }
+  getFollowers(users: any, userId: number): IUser[] | null {
+    const user = users.find((user: IUser) => user.id == userId);
+    const followersIds = user.followersIds;
 
+    if (followersIds) {
+      const followers = users.filter((user: IUser) =>
+        followersIds.includes(user.id),
+      );
+      return followers;
+    } else {
+      return [];
+    }
+  }
+  getFollowing(users: any, userId: number): IUser[] | null {
+    const following: IUser[] = [];
+    users.forEach((user: IUser) => {
+      user.followersIds?.forEach((follower: number) => {
+        if (follower == userId) {
+          following.push(user);
+        }
+      });
+    });
+
+    return following;
   }
 
   getUsers() {
     return this.http.get<IUser[]>(this.url);
   }
 
-  getUser(id: number) {
+
+
+  getUser(id: any) {
     return this.http.get<IUser>(`${this.url}/${id}`);
+  }
+  addFollower(user: IUser, followerId: any) {
+    if (user && user.followersIds) {
+      if (!user.followersIds.includes(followerId)) {
+        user.followersIds.push(followerId);
+        return user;
+      }
+    }
+    return;
+  }
+  removeFollower(user: IUser, followerId: any) {
+    if (user && user.followersIds) {
+      const followerIndex = user.followersIds.indexOf(followerId);
+      if (followerIndex !== -1) {
+        user.followersIds.splice(followerIndex, 1);
+      }
+    }
+    return user;
+  }
+
+  updateUser(user: IUser) {
+    return this.http.put<IUser>(`${this.url}/${user.id}`, user);
   }
 }

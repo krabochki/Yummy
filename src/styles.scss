@@ -98,3 +98,18 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;
 
 overflow-y: scroll;
 }
+
+
+body::-webkit-scrollbar {
+
+  width: 16px;               
+}
+body::-webkit-scrollbar-track {
+      border-radius: 20px;     
+  background:   var(--scroll-body);       
+}
+body::-webkit-scrollbar-thumb {
+  background-color: var(--scroll-thumb); 
+  border-radius: 20px;      
+  border: 3px solid   var(--scroll-body);  
+}

@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserPagesRoutingModule } from './user-pages-routing.module';
 import { UserPagesComponent } from './user-pages.component';
@@ -16,7 +16,8 @@ import { UsersListComponent } from './components/users-list/users-list.component
 import { UsersListItemComponent } from './components/users-list-item/users-list-item.component';
 import { AuthGuard } from '../authentication/guards/auth.guard';
 import { RecipesModule } from '../recipes/recipes.module';
-
+import { AngularSvgIconModule, SvgIconComponent, provideAngularSvgIcon } from 'angular-svg-icon';
+import { FormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     UserPagesComponent,
@@ -30,17 +31,22 @@ import { RecipesModule } from '../recipes/recipes.module';
     SettingsComponent,
     UsersPageComponent,
     UsersListComponent,
-    UsersListItemComponent
-
+    UsersListItemComponent,
+    
   ],
   imports: [
     CommonModule,
     UserPagesRoutingModule,
-    ControlsModule
-    ,RecipesModule
+    ControlsModule,
+    RecipesModule,
+    SvgIconComponent,
+    FormsModule,
   ],
+
   providers: [
-    AuthGuard
-  ]
+
+    AuthGuard,
+    provideAngularSvgIcon(),
+  ],
 })
-export class UserPagesModule { }
+export class UserPagesModule {}

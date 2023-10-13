@@ -17,7 +17,6 @@ label{
     font-family: var(--font-family-accent);
 }
 .header{
-    z-index: 40;
 
     width: 100%;
     justify-content:space-between;
@@ -42,7 +41,6 @@ label{
     @include btn-icon-secondary;
     width: var(--font-2xl);
     height: var(--font-2xl);
-    padding: 0.5em;
     position: relative;
     transition: 0.3s ease-in-out;
 
@@ -71,21 +69,19 @@ label{
     }
  
 }
-svg{
+.svg{
     
     fill:var(--color-background);
     width: var(--font-m);
     height: var(--font-m);
-     &.center{
+
+    &.center{
             margin-right:3px;
 
     }
 
 }
-.cook-plan{
-    text-align: center;
 
-}
 .dsl{
     color:var( --color-foreground-unactive)
 }

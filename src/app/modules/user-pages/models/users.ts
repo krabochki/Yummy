@@ -13,10 +13,10 @@ export interface IUser {
     location?: string; // Локация пользователя
     registrationDate?: string; // Дата регистрации пользователя
   profileViews?: number; // Количество просмотров профиля
-  role?: string;
+  role?: 'admin'|'moderator'|'user';
   }
   
   export interface SocialNetwork {
-    name: string; // Название социальной сети
+    name: 'ВКонтакте'|'twitter'|'youtube'|'instagram'|'pinterest'|'facebook'; // Название социальной сети
     link: string; // Ссылка на профиль пользователя в социальной сети
   }

@@ -1,6 +1,8 @@
 :root{
     --color-primary: #F5484A;
+    --color-primary-focus: #ff1b1f;
     --color-secondary:#FF9800;
+    --color-secondary-focus:#ff8400;
 
     --color-foreground:#212121;
     --color-background:#FFF;
@@ -11,6 +13,9 @@
     --color-background-deeper-unactive:#F4F4F4;
     --color-foreground-unactive:#808080;
     --color-foreground-unactive-lighter:#a1a1a1;
+
+    --scroll-thumb:#cccccc;
+    --scroll-body:#eeeeee;
 
     --color-admin:#D659F6;
     --color-moderator:#F8E641;

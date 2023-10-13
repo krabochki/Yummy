@@ -35,9 +35,9 @@
         </div>
 </div>
 
-<app-modal  [style]="'prim'" *ngIf="modalShow" [title]="'Подтвердите регистрацию'" [type]="'yesOrNo'" (resultEmit)="handleModalResult($event)" [buttonsText]="['Да','Нет']" [description]="'Вы уверены, что хотите зарегистрироваться с введенными данными?'"></app-modal>
+<app-modal @modal  [style]="'prim'" *ngIf="modalShow" [title]="'Подтвердите регистрацию'" [type]="'yesOrNo'" (resultEmit)="handleModalResult($event)" [buttonsText]="['Да','Нет']" [description]="'Вы уверены, что хотите зарегистрироваться с введенными данными?'"></app-modal>
 
 
-<app-modal [style]="'sec'" [style]="'prim'" *ngIf="modalFailShow" [title]="'Неудачная попытка регистрации'" [type]="'Ok'" (resultEmit)="handleFailModalResult($event)" [buttonsText]="['Хорошо']" [description]="failText"></app-modal>
+<app-modal @modal [style]="'sec'" [style]="'prim'" *ngIf="modalFailShow" [title]="'Неудачная попытка регистрации'" [type]="'Ok'" (resultEmit)="handleFailModalResult($event)" [buttonsText]="['Хорошо']" [description]="failText"></app-modal>
 
-<app-modal [style]="'sec'" *ngIf="modalSuccessShow" [title]="'Успешная регистрация!'" [type]="'Ok'" (resultEmit)="handleSuccessModalResult($event)" [buttonsText]="['На главную']" [description]="'Регистрация с введенными данными прошла успешно. Вы можете пользоваться всеми функциями сайта.'"></app-modal>
+<app-modal [style]="'sec'" @modal *ngIf="modalSuccessShow" [title]="'Успешная регистрация!'" [type]="'Ok'" (resultEmit)="handleSuccessModalResult($event)" [buttonsText]="['На главную']" [description]="'Регистрация с введенными данными прошла успешно. Вы можете пользоваться всеми функциями сайта.'"></app-modal>

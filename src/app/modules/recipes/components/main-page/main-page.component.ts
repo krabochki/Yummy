@@ -4,6 +4,7 @@ import { ICategory } from 'src/app/modules/recipes/models/categories';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 import { CategoryService } from 'src/app/modules/recipes/services/category.service';
 import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-main-page',
@@ -21,7 +22,10 @@ export class MainPageComponent {
   constructor(
     private recipeService: RecipeService,
     private categoryService: CategoryService,
-  ) { }
+    private titleService: Title
+  ) {
+    this.titleService.setTitle('Yummy')
+   }
 
   ngOnInit(): void {
     this.recipesSubscription = this.recipeService

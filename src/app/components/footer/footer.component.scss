@@ -107,12 +107,13 @@ padding-bottom:var(--space-xl);
 }
 svg{
     width:var(--space-xl);
+    height:var(--space-xl);
     fill: var(--color-foreground);
     border-radius: 100%;
 
     transition: 0.3s ease-in-out;
     &:hover{
-        scale: 1.2;
+        scale: 1.1;
     }
 }
 

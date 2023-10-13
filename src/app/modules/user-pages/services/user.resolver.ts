@@ -20,7 +20,7 @@ export class UserResolver {
 
      currentUser?: IUser | null ;
 
-  resolve(
+  resolve (
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot,
   ): Observable<IUser> {

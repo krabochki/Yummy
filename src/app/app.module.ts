@@ -10,21 +10,20 @@ import { AdminGuard } from './modules/authentication/guards/admin.guard';
 import { ModeratorGuard } from './modules/authentication/guards/moderator.guard';
 import { ControlsModule } from './modules/controls/controls.module';
 import { FooterComponent } from './components/footer/footer.component';
+import { AngularSvgIconModule, SvgIconComponent } from 'angular-svg-icon';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HeaderComponent,
-    FooterComponent,
-  ],
+  declarations: [AppComponent, HeaderComponent, FooterComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
     ControlsModule,
+    AngularSvgIconModule.forRoot(),
   ],
   providers: [AdminGuard, ModeratorGuard],
   bootstrap: [AppComponent],
+  exports: [SvgIconComponent]
 })
 export class AppModule {}

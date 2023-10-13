@@ -1,4 +1,4 @@
-import { animate, style, transition, trigger } from '@angular/animations';
+import { trigger } from '@angular/animations';
 import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
@@ -6,22 +6,12 @@ import { IUser } from 'src/app/modules/user-pages/models/users';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { loginMask, passMask, usernameMask } from 'src/tools/regex';
 import { AuthService } from '../../services/auth.service';
+import { modal } from 'src/tools/animations';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['../../common-styles.scss'],
-  animations: [
-    trigger('modal', [
-      transition(':enter', [
-        style({ opacity: '0' }),
-        animate('300ms ease-out', style({ opacity: '1' })),
-      ]),
-      transition(':leave', [
-        style({ opacity: '1' }),
-        animate('300ms ease-in', style({ opacity: '0' })),
-      ]),
-    ]),
-  ],
+  animations: [ trigger('modal', modal())],
 })
 export class RegisterComponent {
   emailMask = loginMask; //маска для почты
@@ -61,7 +51,7 @@ export class RegisterComponent {
     }
     this.modalSuccessShow = false;
   }
-  handleFailModalResult(result:boolean) {
+  handleFailModalResult(result: boolean) {
     this.modalFailShow = false;
   }
 

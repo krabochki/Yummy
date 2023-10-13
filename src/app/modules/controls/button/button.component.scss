@@ -46,6 +46,8 @@ button.filled-min.prim {
 
   &:focus {
     background-color: var(--color-primary-focus);
+        color: var(--color-background);
+
     border-color: var(--color-primary-focus);
   }
 }
@@ -64,7 +66,7 @@ button.filled-min.sec {
   &:focus {
     background-color: var(--color-secondary-focus);
     border-color: var(--color-secpndary-focus);
-    color: var(--color-foreground);
+    color: var(--color-background);
   }
 }
 

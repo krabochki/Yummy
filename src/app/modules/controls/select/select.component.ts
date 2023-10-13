@@ -10,11 +10,11 @@ import { AuthService } from '../../authentication/services/auth.service';
     trigger('select', [
       transition(':enter', [
         style({ height: '0' }),
-        animate('800ms ease-out', style({ height: '*' })),
+        animate('300ms ease-out', style({ height: '*' })),
       ]),
       transition(':leave', [
         style({ height: '*' }),
-        animate('800ms ease-in', style({ height: '0' })),
+        animate('300ms ease-in', style({ height: '0' })),
       ]),
     ]),
   ],

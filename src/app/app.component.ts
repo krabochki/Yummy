@@ -9,11 +9,16 @@ import {
 })
 export class AppComponent {
 
+
+
   title = 'yummy';
 
   height = 0;
 
   mergeHeight(height: number) {
+    this.height = height;
+  }
+  mergeFooterHeight(height: number) {
     this.height = height;
   }
 }

@@ -5,22 +5,17 @@ import { ActivatedRoute, Data } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
-import { fadeIn,modal } from './simpleFadeInAnimation';
+import { fadeIn,modal } from 'src/tools/animations';
 import {
-  animate,
-  state,
-  style,
-  transition,
   trigger,
 } from '@angular/animations';
 import { Title } from '@angular/platform-browser';
 @Component({
   selector: 'app-user-page',
   templateUrl: './user-page.component.html',
-  styleUrls: ['./user-page.component.scss'],
+  styleUrls: ['./user-page.component.scss', './skeleton.scss'],
   animations: [
     trigger('fadeIn', fadeIn()),
-    //!!!!!!!!!!!!!!!!!!1 загрузить потом так везде анимации
     trigger('modal', modal()),
   ],
 })

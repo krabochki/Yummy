@@ -13,7 +13,7 @@
 
       <div class="svg-button">
         <svg-icon
-          (click)="closeEmitter.emit(true)"
+          (click)="searchOnOff();closeEmitter.emit(true)"
           src="../../../../../assets/images/svg/go-back.svg"
           class="svg"
           [applyClass]="true"
@@ -43,14 +43,14 @@
       <div class="button-row">
         <app-button 
           [color]="'prim'"
-          (click)="object = 'followers'"
+          (click)="searchMode?searchOnOff():null;object = 'followers'"
           [text]="'Подписчики'"
           [style]="object === 'followers' ? 'filled' : 'outlined'"
           [rounded]="true"
         ></app-button>
         <app-button
           [color]="'prim'"
-          (click)="object = 'following'"
+          (click)="searchMode?searchOnOff():null;object = 'following'"
           [text]="'Подписки'"
           [style]="object === 'following' ? 'filled' : 'outlined'"
           [rounded]="true"
@@ -63,7 +63,19 @@
       <ng-template #followingBlock>
         <div class="template">
           <div *ngIf="following.length == 0" class="nofollow">
-            Этот кулинар пока ни на кого не подписался :(
+            <p>Этот кулинар пока ни на кого не подписался :(</p>
+
+                     <svg-icon
+                [src]="
+                  '../../../../../assets/images/svg/sad-cook.svg'
+                "
+               [svgStyle]="{
+                
+                'height.em': '9', 'width.em':'9',
+                fill: 'var(--color-foreground)'
+              }"
+                >></svg-icon
+              >
           </div>
 
           <div
@@ -72,6 +84,18 @@
           >
             Подписок по вашему запросу не найдено :( <br />
             Попробуйте изменить параметры поиска
+
+                    <svg-icon
+                [src]="
+                  '../../../../../assets/images/svg/sad-cook.svg'
+                "
+               [svgStyle]="{
+                
+                'height.em': '9', 'width.em':'9',
+                fill: 'var(--color-foreground)'
+              }"
+                >></svg-icon
+              >
           </div>
           <div class="row" *ngFor="let follower of followingDisplay">
             <div class="column">
@@ -116,14 +140,42 @@
       <div *ngIf="object === 'followers'; else followingBlock">
         <div class="template">
           <div *ngIf="followers.length == 0" class="nofollow">
-            У этого кулинара пока нет подписчиков :(
+           <p> У этого кулинара пока нет подписчиков :(</p>
+
+           
+                     <svg-icon
+                [src]="
+                  '../../../../../assets/images/svg/sad-cook.svg'
+                "
+               [svgStyle]="{
+                
+                'height.em': '9', 'width.em':'9',
+                fill: 'var(--color-foreground)'
+              }"
+                >></svg-icon
+              >
           </div>
           <div
             class="nofollow"
             *ngIf="followers.length > 0 && followersDisplay.length == 0"
           >
-            Подписчиков по вашему запросу не найдено :( <br />
-            Попробуйте изменить параметры поиска
+           <p>
+              Подписчиков по вашему запросу не найдено :( <br />
+              Попробуйте изменить параметры поиска
+           </p>
+
+            
+                     <svg-icon
+                [src]="
+                  '../../../../../assets/images/svg/sad-cook.svg'
+                "
+               [svgStyle]="{
+                
+                'height.em': '9', 'width.em':'9',
+                fill: 'var(--color-foreground)'
+              }"
+                >></svg-icon
+              >
           </div>
           <div class="row" *ngFor="let follower of followersDisplay">
             <div class="column">

@@ -115,6 +115,8 @@ hr {
   .nofollow {
     height: 40vh;
     width: 95%;
+    flex-direction: column;
+    row-gap: 1em;
     margin: 0 auto;
     text-align: center;
     display: flex;

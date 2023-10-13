@@ -2,20 +2,11 @@
 
 
 
-.skeleton{
-    animation: 1s blink infinite;
-    
-}
-@keyframes blink{
-    to{
-        opacity: 0;
-    }
-}
+
 *{
     line-height: 1;
 }
 .container {
-      margin: var(--space-xl) 0;
 
     display: flex;
     flex-direction: column;
@@ -23,7 +14,15 @@
     
     row-gap: var(--space-unit);
 
-    padding: 0 14.4vw;
+    margin: var(--space-xl) auto;
+    width: 60vw;
+
+    .block1,.block2,.block3{
+        width:100%
+    }
+    .block2{
+        justify-content: center;
+    }
 }
 
 .showFollowers{
@@ -101,7 +100,9 @@ img {
     }
 }
 .noRecipes{
-    height: 5.5em;
+    flex-direction: column;
+    row-gap: 1em;
+    margin-top: var(--space-s);
     align-items: center;
     display: flex;
     justify-content: center;
@@ -110,7 +111,7 @@ img {
 .socialAndAdd{
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
 }
 .links
 {
@@ -136,6 +137,7 @@ svg{
    width: 2em;
     fill: var(--color-primary);
 }
+
 .svg-additional,.svg-link{
         height:1em;
         width: 1.2em;
@@ -174,6 +176,11 @@ svg{
         text-align: center;
         align-items: center;
         justify-content: center;
+        column-gap: var(--space-m);
+
+        p{
+            margin: 0 auto;
+        }
 
         p span:first-of-type{
             font-weight: 600;
@@ -207,17 +214,33 @@ svg{
 
 
 @media (max-width:900px){
+
+    a{
+
+    text-overflow: ellipsis;
+    word-wrap: nowrap;
+    overflow: hidden;
+
+}
+
     .container{
-                padding: 0 14.4vw;
+                   width: 80vw;
+
 zoom:0.9;
 
+.socialAndAdd{
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
     }
 }
 
 @media (max-width:540px){
     .container{
-                padding: 0 14.4vw;
+                   width: 90vw;
+
 zoom:0.9;
+
 
     }
     .block1 
@@ -241,8 +264,9 @@ zoom:0.9;
         }
     }}
     
-    .socialAndAdd{
+    .container .socialAndAdd{
         flex-direction: column-reverse;
+        display: flex;
         align-items: start;
         row-gap: var(--space-l);
     }

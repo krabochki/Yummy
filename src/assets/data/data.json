@@ -1067,6 +1067,13 @@
       "registrationDate": "2023-10-19",
       "profileViews": 2350,
       "role": "user"
+    },
+    {
+      "email": "",
+      "password": "",
+      "username": "",
+      "role": "user",
+      "id": 11
     }
   ]
 }

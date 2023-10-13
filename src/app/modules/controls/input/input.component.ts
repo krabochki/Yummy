@@ -25,7 +25,11 @@ export class InputComponent {
   isSleep: boolean = false; //подсвечивается ли плейсхолдер
   isFocused = false; //есть ли фокус в инпуте (нужно ли подсвечивать плейсхолдер)
 
+
+  warningShow = false;
+
   //Появление фокуса
+
   @HostListener('focus', ['$event'])
   onFocus(event: Event): void {
     setTimeout(() => {
@@ -36,6 +40,7 @@ export class InputComponent {
     });
     this.isSleep = false;
     this.isFocused = true;
+ 
   }
 
   //Исчезновение фокуса
@@ -52,6 +57,10 @@ export class InputComponent {
   @HostListener('focus', ['$event'])
   onKeyUp(event: Event): void {
     this.inputValueChange.emit(this.value);
+
+       if (this.required && !this.warningShow) {
+         this.warningShow = true;
+       }
   }
 
   //Открытие/сокрытие пароля

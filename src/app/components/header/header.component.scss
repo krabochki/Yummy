@@ -17,7 +17,7 @@ label{
     font-family: var(--font-family-accent);
 }
 .header{
-
+z-index: 1;
     width: 100%;
     justify-content:space-between;
     align-items: center;
@@ -89,6 +89,10 @@ label{
 p{
     font-size: 1.5em;
     font-weight: 600;
+}
+
+.cook-plan{
+    text-align: center;
 }
 
 
@@ -170,7 +174,7 @@ p{
     }
 
     .cook-plan{
-        text-align: left;
+        text-align: center;
         
     }
     .menu-mobile-cont{

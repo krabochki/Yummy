@@ -27,7 +27,12 @@
 
                 <div class="buttons" >
 
-                        <app-button  (click)="modalShow=true"
+                        <app-button  
+                        
+                        [ngStyle]="{'pointer-events':(this.emailMask.test(this.email) &&
+      this.usernameMask.test(this.username) &&
+      this.passMask.test(this.pass))?'all':'none'}"
+                        (click)="modalShow=true"
                         [disabled]="this.emailMask.test(this.email) &&
       this.usernameMask.test(this.username) &&
       this.passMask.test(this.pass)"  [rounded]="true" [color]="'prim'" [text]="'Регистрация'"></app-button>

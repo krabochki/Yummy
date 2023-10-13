@@ -1,6 +1,9 @@
 <div class="input">
  <div>
     <textarea
+    autocomplete="off"
+        readonly
+    onfocus="this.removeAttribute('readonly')"
       [maxlength]="max"
       [(ngModel)]="value"
       (focus)="onFocus($event)"
@@ -9,6 +12,9 @@
       *ngIf="this.type === 'textarea'"
     ></textarea>
     <input
+        readonly
+    onfocus="this.removeAttribute('readonly')"
+
       [maxlength]="max"
       *ngIf="this.type === 'input'"
       (keyup)="onKeyUp($event)"
@@ -17,7 +23,7 @@
       type="text"
       #input
       [ngClass]="{
-          uncorrect:required && !testMask()
+          uncorrect:warningShow && !testMask()
       }"
       [type]="this.password ? (this.showPassword ? 'password' : 'text') : 'text'"
       [(ngModel)]="value"
@@ -28,7 +34,7 @@
     <p
       class="placeholder"
       [ngClass]="{
-        uncorrect: required && !testMask(),
+        uncorrect: warningShow && !testMask(),
         up: this.isFocused,
         sleep: this.isSleep,
         textarea: this.type === 'textarea'
@@ -39,7 +45,7 @@
   
     <span class="eye" *ngIf="password"  (click)="eye()">
       <svg
-      [ngClass]="{uncorrect:this.required&&!this.testMask()}"
+      [ngClass]="{uncorrect:this.warningShow&&!this.testMask()}"
         *ngIf="!this.showPassword"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 20 18"
@@ -49,7 +55,7 @@
         />
       </svg>
       <svg
-      [ngClass]="{uncorrect:this.required&&!this.testMask()}"
+      [ngClass]="{uncorrect:this.warningShow&&!this.testMask()}"
         class="open"
         *ngIf="this.showPassword"
         xmlns="http://www.w3.org/2000/svg"
@@ -62,7 +68,7 @@
     </span>
   
  </div>
-  <p class="req" *ngIf="this.required" [ngClass]="{ match: testMask() }">
+  <p class="req" *ngIf="this.warningShow" [ngClass]="{ match: testMask() }">
   {{ !testMask() ? warningText : "Значение соответствует требованиям!" }}
 </p>
 

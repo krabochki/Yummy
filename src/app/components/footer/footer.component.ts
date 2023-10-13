@@ -54,7 +54,6 @@ export class FooterComponent implements OnInit {
     this.noAccessModalShow = false;
   }
   scrollTop() {
-    console.log('clicked')
           window.scrollTo(0,0)
   }
 }

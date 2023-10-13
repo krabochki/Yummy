@@ -1,3 +1,5 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <ng-template #skeleton>
 
   <div class="container skeleton" @fadeIn>
@@ -106,6 +108,15 @@
 </ng-template>
 
 <div class="container" *ngIf="dataLoaded; else skeleton">
+
+      <div class="svg-button" *ngIf="!(this.router.url === this.routerEventsService.previousRoutePath.value)"  (click)="onSkipHandler()">
+        <svg-icon [applyClass]="true" class="svg"
+        
+          src="../../../../../assets/images/svg/go-back.svg"
+        >
+        </svg-icon>
+      </div>
+
   <div class="block block1">
     <div class="row main">
       <img

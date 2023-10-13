@@ -1,23 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IUser } from '../../models/users';
-import { ActivatedRoute, Data } from '@angular/router';
+import {
+  ActivatedRoute,
+  Data,
+  Router,
+  RoutesRecognized,
+} from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
-import { fadeIn,modal } from 'src/tools/animations';
-import {
-  trigger,
-} from '@angular/animations';
+import { fadeIn, modal } from 'src/tools/animations';
+import { trigger } from '@angular/animations';
 import { Title } from '@angular/platform-browser';
+import { RouteEventsService } from 'src/app/modules/controls/route-events.service';
 @Component({
   selector: 'app-user-page',
   templateUrl: './user-page.component.html',
   styleUrls: ['./user-page.component.scss', './skeleton.scss'],
-  animations: [
-    trigger('fadeIn', fadeIn()),
-    trigger('modal', modal()),
-  ],
+  animations: [trigger('fadeIn', fadeIn()), trigger('modal', modal())],
 })
 export class UserPageComponent implements OnInit {
   recipesEnabled: boolean = false;
@@ -26,7 +27,6 @@ export class UserPageComponent implements OnInit {
   obj: 'following' | 'followers' = 'followers';
 
   dataLoaded = false;
-
 
   showFollows = false;
 
@@ -40,6 +40,8 @@ export class UserPageComponent implements OnInit {
     public userService: UserService,
     private recipeService: RecipeService,
     private titleService: Title,
+    public router: Router,
+    public routerEventsService:RouteEventsService
   ) {}
 
   currentUser: IUser = {
@@ -61,6 +63,8 @@ export class UserPageComponent implements OnInit {
   cooks: number = 0;
   comments: number = 0;
   profileViews: number = 0;
+
+
   ngOnInit() {
     this.route.params.subscribe((params: Data) => {
       this.userId = params['id'];
@@ -106,13 +110,14 @@ export class UserPageComponent implements OnInit {
         this.comments += recipe.comments.length;
       });
 
-
       setTimeout(() => {
-                    this.dataLoaded = true;
-
-      }, 1000);
-
+        this.dataLoaded = true;
+      }, 800);
     });
+  }
+
+  onSkipHandler() {
+    this.router.navigate([this.routerEventsService.previousRoutePath.value]);
   }
 
   username: string = 'username';

@@ -11,6 +11,7 @@ import { ModeratorGuard } from './modules/authentication/guards/moderator.guard'
 import { ControlsModule } from './modules/controls/controls.module';
 import { FooterComponent } from './components/footer/footer.component';
 import { AngularSvgIconModule, SvgIconComponent } from 'angular-svg-icon';
+import { RouteEventsService } from './modules/controls/route-events.service';
 
 @NgModule({
   declarations: [AppComponent, HeaderComponent, FooterComponent],
@@ -22,8 +23,8 @@ import { AngularSvgIconModule, SvgIconComponent } from 'angular-svg-icon';
     ControlsModule,
     AngularSvgIconModule.forRoot(),
   ],
-  providers: [AdminGuard, ModeratorGuard],
+  providers: [AdminGuard, ModeratorGuard, RouteEventsService],
   bootstrap: [AppComponent],
-  exports: [SvgIconComponent]
+  exports: [SvgIconComponent],
 })
 export class AppModule {}

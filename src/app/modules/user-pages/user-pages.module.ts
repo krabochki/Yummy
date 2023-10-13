@@ -18,6 +18,7 @@ import { AuthGuard } from '../authentication/guards/auth.guard';
 import { RecipesModule } from '../recipes/recipes.module';
 import { AngularSvgIconModule, SvgIconComponent, provideAngularSvgIcon } from 'angular-svg-icon';
 import { FormsModule } from '@angular/forms';
+import { RouteEventsService } from '../controls/route-events.service';
 @NgModule({
   declarations: [
     UserPagesComponent,
@@ -32,7 +33,6 @@ import { FormsModule } from '@angular/forms';
     UsersPageComponent,
     UsersListComponent,
     UsersListItemComponent,
-    
   ],
   imports: [
     CommonModule,
@@ -43,10 +43,7 @@ import { FormsModule } from '@angular/forms';
     FormsModule,
   ],
 
-  providers: [
-
-    AuthGuard,
-    provideAngularSvgIcon(),
-  ],
+  providers: [AuthGuard, provideAngularSvgIcon(), RouteEventsService],
 })
-export class UserPagesModule {}
+export class UserPagesModule {
+}

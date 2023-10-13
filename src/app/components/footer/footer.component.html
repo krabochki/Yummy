@@ -1,8 +1,10 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <div class="footer">
 
     <div class="main-info">
         <div>
-            <p class="label">Yummy</p>
+            <p class="label" (click)="scrollTop()" routerLink="/">Yummy</p>
             <p class="quote">«Повара — это художники, рабочим материалом для которых является еда.
                 Кулинария — это искусство использования цветов, вкусов, запахов и форм для создания изысканного блюда».
             </p>
@@ -11,26 +13,26 @@
             <div>
                 <p>Рецепты</p>
                 <ul>
-                    <li><a routerLink="recipes/yours">Ваши рецепты</a></li>
-                    <li routerLink="recipes">Все рецепты</li>
+                    <li (click)="linkClick()" [ngClass]="{'disabling':!currentUser}" routerLink="recipes/yours">Ваши рецепты</li>
+                    <li  routerLink="recipes">Все рецепты</li>
                     <li routerLink="categories">Все категории</li>
-                    <li routerLink="recipes/favorite">Закладки</li>
-                    <li routerLink="recipes/match">Подбор рецептов</li>
+                    <li (click)="linkClick()" [ngClass]="{'disabling':!currentUser}" routerLink="recipes/favorite">Закладки</li>
+                    <li  routerLink="recipes/match">Подбор рецептов</li>
                 </ul>
             </div>
             <div>
                 <p>Кулинары</p>
                 <ul>
-                    <li>Ваш профиль</li>
-                    <li>Все кулинары</li>
-                    <li>Обновления</li>
+                    <li (click)="linkClick()" [ngClass]="{'disabling':!currentUser}" [routerLink]="'cooks/list/'+currentUser?.id">Ваш профиль</li>
+                    <li routerLink="cooks">Все кулинары</li>
+                    <li routerLink="cooks/updates">Обновления</li>
                 </ul>
             </div>
             <div>
                 <p>Другое</p>
                 <ul>
-                    <li>План готовки</li>
-                    <li>Об этом сайте</li>
+                    <li routerLink="plan" (click)="linkClick()"  [ngClass]="{'disabling':!currentUser}">План готовки</li>
+                    <li routerLink="about">Об этом сайте</li>
                 </ul>
             </div>
         </div>
@@ -40,7 +42,7 @@
 
      
     <div class="other-info">
-        <p class="copyright">© 2023 Yummy. Все права защищены</p>
+        <p class="copyright">© 2023 Yummy. Никакие права не защищены</p>
 
         <ul class="links">
             <li *ngFor="let link of links, let i=index">
@@ -54,3 +56,14 @@
         </ul>
     </div>
 </div>
+
+<app-modal
+  @modal
+  *ngIf="noAccessModalShow"
+  [style]="'prim'"
+  [title]="'Доступ к разделу ограничен'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleNoAccessModal($event)"
+  [buttonsText]="['Давайте','Не сейчас']"
+  [description]="'Этот раздел могут просматривать только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'"
+></app-modal>

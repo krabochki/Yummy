@@ -7,7 +7,7 @@
     top: var(--space-xl);
     left:0;right:0; margin:0 auto;
     font-size: var(--font-s);
-    z-index: 111;
+    z-index: 10;
     overflow: hidden;
     display: flex;
     font-weight: 500;
@@ -53,7 +53,7 @@
     
 }
 .disabling{
-    z-index: 98;
+    z-index: 8;
     position: absolute;
     width:100%;
     top:0;left:0;
@@ -104,4 +104,9 @@ svg{
        
         top: var(--space-l);
     }
+}
+
+app-modal{
+    z-index: 11;
+    position: fixed;
 }

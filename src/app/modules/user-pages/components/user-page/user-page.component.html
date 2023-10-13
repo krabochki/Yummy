@@ -1,5 +1,4 @@
 <ng-template #skeleton>
-  <!--доделать!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! потом и футер тоже внизу прикрепить потом /сделать картинки для нет рецептов  инет подписчиков-->
 
   <div class="container skeleton" @fadeIn>
     <div class="block block1">
@@ -7,11 +6,11 @@
         <img src="../../../../../assets/images/userpic.png" alt="User Photo" />
         <div class="col info">
           <div class="col name">
-            <h1>Полина Кузьменок</h1>
-            <p class="username">@krabochki</p>
+            <h1>Загружаем пользователя...</h1>
+            <p class="username">@load_username</p>
           </div>
 
-          <p class="quote">как говорила коко шанель я подумаю об этом завтра</p>
+          <p class="quote">Загружаем цитату пользователя...</p>
 
           <app-button
             [disabled]="false"
@@ -24,13 +23,13 @@
       </div>
       <div class="row" class="statistics">
         <div class="col">
-          <p>20 рецептов</p>
+          <p>0 рецептов...</p>
         </div>
         <div class="col">
-          <p class="showFollowers">20 подписчкиов</p>
+          <p class="showFollowers">0 подписчкиов...</p>
         </div>
         <div class="col">
-          <p class="showFollowers">20 подписок</p>
+          <p class="showFollowers">0 подписок...</p>
         </div>
       </div>
     </div>
@@ -44,8 +43,7 @@
       <div class="col">
         <h3>Описание</h3>
         <p>
-          Тут будет очень душераздирающее описание, которое тронет сердце любого
-          человека
+          После загрузки тут будет описание пользователя... (или не будет)
         </p>
       </div>
       <div class="row" class="socialAndAdd">
@@ -82,7 +80,7 @@
           <h3>Доп. сведения</h3>
           <ul>
             <li class="row center">
-              <a> http://the-best-website</a>
+              <a> http://loading-website</a>
             </li>
             <li class="row center">
               <p>Гродно, Беларусь</p>
@@ -92,12 +90,12 @@
             </li>
             <li class="row center">
               <p>
-                20 просмотров профиля,
+                0 просмотров профиля,
                 <br />
-                100 оценок «Мне нравится», <br />
-                100 подписчиков
+                0 оценок «Мне нравится», <br />
+                0 подписчиков
                 <br />
-                30 рецептов приготовлено
+              0 рецептов приготовлено
               </p>
             </li>
           </ul>

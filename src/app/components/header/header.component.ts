@@ -1,13 +1,17 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, DoCheck, EventEmitter, HostListener, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IUser } from 'src/app/modules/user-pages/models/users';
+import { modal } from 'src/tools/animations';
+modal
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
   animations: [
+    trigger('modal', modal()),
     trigger('settingsMobile', [
       transition(':enter', [
         style({ opacity: '0' }),
@@ -38,9 +42,8 @@ export class HeaderComponent implements OnInit, DoCheck {
 
   mobile: boolean = false;
   hambOpen: boolean = false;
-  currentUserSubscription?: Subscription ;
+  currentUserSubscription?: Subscription;
   currentUser?: IUser | null;
-
 
   role: string | undefined = 'user';
 
@@ -55,16 +58,13 @@ export class HeaderComponent implements OnInit, DoCheck {
       this.mobile = false;
     }
 
+    this.currentUserSubscription = this.authService
+      .getCurrentUser()
+      .subscribe((data) => {
+        this.currentUser = data;
 
-     this.currentUserSubscription = this.authService
-       .getCurrentUser().subscribe((data) => {
-
-         
-         this.currentUser = data;
-
-         this.role = this.currentUser?.role;
-         
-       });
+        this.role = this.currentUser?.role;
+      });
   }
   ngDoCheck() {
     const element = document.querySelector('.header') as HTMLElement | null;
@@ -92,5 +92,27 @@ export class HeaderComponent implements OnInit, DoCheck {
     this.headerHeightChange.emit(height);
   }
 
-  constructor(public authService: AuthService) {}
+  constructor(
+    public authService: AuthService,
+    private router: Router,
+  ) {}
+
+  noAccessModalShow = false;
+
+  linkClick() {
+
+    if (!this.currentUser) {
+      this.noAccessModalShow = true;
+    }
+  }
+  handleNoAccessModal(event: boolean) {
+    if (event) {
+      this.scrollTop();
+      this.router.navigateByUrl('/greetings');
+    }
+    this.noAccessModalShow = false;
+  }
+  scrollTop() {
+            window.scrollTo(0, 0);
+  }
 }

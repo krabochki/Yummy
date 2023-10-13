@@ -110,7 +110,7 @@ export class UserPageComponent implements OnInit {
       setTimeout(() => {
                     this.dataLoaded = true;
 
-      }, 3000);
+      }, 1000);
 
     });
   }

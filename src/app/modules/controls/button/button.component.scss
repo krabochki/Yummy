@@ -45,10 +45,10 @@ button.filled-min.prim {
   }
 
   &:focus {
-    background-color: var(--color-primary-focus);
-        color: var(--color-background);
+    background-color: var(--color-primary-lighter-focus);
+        color: var(--color-primary-focus);
 
-    border-color: var(--color-primary-focus);
+    border-color: var(--color-primary-lighter-focus);
   }
 }
 button.filled-min.sec {
@@ -64,9 +64,9 @@ button.filled-min.sec {
     border-color: var(--color-foreground-unactive-lighter);
   }
   &:focus {
-    background-color: var(--color-secondary-focus);
-    border-color: var(--color-secpndary-focus);
-    color: var(--color-background);
+    background-color: var(--color-secondary-lighter-focus);
+    border-color: var(--color-secpndary-lighter-focus);
+    color: var(--color-secondary-focus);
   }
 }
 

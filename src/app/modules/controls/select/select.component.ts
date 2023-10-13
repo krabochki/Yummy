@@ -1,12 +1,16 @@
 import { trigger, transition, style, animate } from '@angular/animations';
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AuthService } from '../../authentication/services/auth.service';
+import { modal } from 'src/tools/animations';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-select',
   templateUrl: './select.component.html',
   styleUrls: ['./select.component.scss'],
   animations: [
+    trigger('modal', modal()),
     trigger('select', [
       transition(':enter', [
         style({ height: '0' }),
@@ -26,7 +30,9 @@ export class SelectComponent implements AfterViewInit {
   @Input() disabling: boolean[] = [];
   @Input() routerLinks: string[] = [];
 
-  constructor(private authService: AuthService) {}
+  noAccessModalShow = false;
+
+  constructor(private router: Router) {}
 
   open: boolean = false;
 
@@ -37,4 +43,22 @@ export class SelectComponent implements AfterViewInit {
     this.shiftedItems = [...this.items];
     this.shiftedItems.shift();
   }
+
+  linkClick(disable: boolean) {
+    if (disable) {
+      this.noAccessModalShow = true;
+    }
+
+  }
+  handleNoAccessModal(event: boolean) {
+    if (event) {
+      this.router.navigateByUrl('/greetings');
+        window.scrollTo(0, 0);
+      this.open = false;
+    }
+    this.noAccessModalShow = false;
+  }
 }
+
+
+

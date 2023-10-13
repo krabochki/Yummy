@@ -12,8 +12,9 @@
     column-gap: var(--space-m);
 }
 
-label{
+.label{
     font-size: var(--font-xl);
+    cursor: pointer;
     font-family: var(--font-family-accent);
 }
 .header{
@@ -22,11 +23,7 @@ z-index: 1;
     justify-content:space-between;
     align-items: center;
     display: grid;
-    padding-top: var(--space-xl);
-    padding-bottom: var(--space-xl);
-
-    padding-right: calc((18vw  / 1.25) + ((10 / 1.25) - (10  / 1.25)) * ((100vw - 768px) / (1920 - 1160)));
-    padding-left: calc((18vw  / 1.25) + ((10 / 1.25) - (10  / 1.25)) * ((100vw - 768px) / (1920 - 1160)));
+    padding: 1.7em calc((18vw  / 1.25) + ((10 / 1.25) - (10  / 1.25)) * ((100vw - 768px) / (1920 - 1160)));
 
 
     grid-template-columns: repeat(3,max-content);
@@ -106,7 +103,7 @@ p{
         padding: var(--space-xl) 0;
         grid-template-columns: repeat(1,max-content);
         row-gap: var(--space-s);
-         label{
+         .label{
             text-align: center;
             margin: 0 auto;
             font-size: 1.75em;
@@ -133,7 +130,7 @@ p{
 @media (max-width:480px){
 
 
-    .header label{
+    .header .label{
         font-size: var(--font-l);
         font-family: var(--font-family-accent);
     }
@@ -144,7 +141,7 @@ p{
 
         }
 
-        label{
+        .label{
     font-size:1.5em
 }
         position: fixed;
@@ -175,6 +172,7 @@ p{
 
     .cook-plan{
         text-align: center;
+        transition: all 0s;
         
     }
     .menu-mobile-cont{
@@ -246,7 +244,8 @@ p{
 
         
 
-        label,.svg-button{
+
+        .label,.svg-button{
             margin:0;
         }
         .menu-items{
@@ -259,4 +258,9 @@ p{
 
     
 }
+}
+
+app-modal{
+    z-index:10;
+    position: fixed;
 }

@@ -1,5 +1,7 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <div class="header">
-  <label routerLink="">{{ "yummy" | titlecase }}</label>
+  <div class="label" (click)="scrollTop()" routerLink="/">{{ "yummy" | titlecase }}</div>
 
   <div *ngIf="!mobile" class="menu-items">
     <app-select
@@ -22,10 +24,13 @@
       [disabling]="
         !this.currentUser ? [true, false, false] : [false, false, false]
       "
-      [routerLinks]="['cooks/list/' + currentUser?.id, 'cooks', 'updates']"
+      [routerLinks]="['cooks/list/' + currentUser?.id, 'cooks', 'cooks/updates']"
     ></app-select>
     <a
-      routerLink="cooking-plan"
+            (click)="linkClick()"
+            @modal
+
+      routerLink="plan"
       class="cook-plan"
       [ngClass]="{ dsl: !this.currentUser ? true : false }"
       >План готовки</a
@@ -34,7 +39,7 @@
 
   <div class="buttons" *ngIf="!mobile">
     <button
-      routerLink="authentication/greetings"
+      routerLink="greetings"
       *ngIf="currentUser"
       class="svg-button"
     >
@@ -107,14 +112,26 @@
         [routerLinks]="['cooks/' + currentUser?.id, 'cooks', 'updates']"
       ></app-select>
       <a
+        (click)="linkClick()"
         routerLink="cooking-plan"
         class="cook-plan"
         [ngClass]="{ dsl: !this.currentUser ? true : false }"
         >План готовки</a
       >
     </div>
-    <button class="auth" routerLink="authentication/greetings">
+    <button class="auth" routerLink="greetings">
       Авторизация
     </button>
   </div>
 </div>
+
+<app-modal
+  @modal
+  *ngIf="noAccessModalShow"
+  [style]="'prim'"
+  [title]="'Доступ к разделу ограничен'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleNoAccessModal($event)"
+  [buttonsText]="['Давайте','Не сейчас']"
+  [description]="'Этот раздел могут просматривать только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'"
+></app-modal>

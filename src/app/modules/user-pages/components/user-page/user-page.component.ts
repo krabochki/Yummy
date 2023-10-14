@@ -76,9 +76,22 @@ export class UserPageComponent implements OnInit {
 
   ngOnInit() {
     window.scrollTo(0, 0);
-    this.route.params.subscribe((params: Data) => {
-      this.userId = params['id'];
-    });
+
+
+    this.route.data.subscribe((data: Data) => {
+           
+      console.log(data)
+
+      this.user = data['user'];
+      if(this.user?.id)
+      this.userId = this.user.id;
+
+      //this.user = data
+      
+         });
+
+
+
 
     this.authService.getCurrentUser()?.subscribe((data) => {
       this.currentUser = data!;

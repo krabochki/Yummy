@@ -9,7 +9,7 @@
   }
   row-gap: 0;
   
-  svg{
+  .svg-pic{
         max-height: 11em;
 
   }
@@ -39,7 +39,7 @@
 
 }
 
- svg {
+ .svg-pic {
     fill: var(--color-foreground);
   }
 .container {
@@ -106,7 +106,7 @@
 @media (max-width: 900px) {
 
   
-   svg {
+   .svg-pic {
       height: 20rem;
     }
 
@@ -206,6 +206,10 @@ padding: 0;
       grid-template-rows: auto;
     }
 
+    &.not-found{
+          margin: var(--space-2xl) 5em;
+
+    }
 
 
     .content {
@@ -228,9 +232,14 @@ padding: 0;
     }
   }
 }
+.svg-pic{
+  height: 20em;
+}
 
 
-
+.svg-pic{
+  width: auto;
+}
 app-modal{
   position: fixed;
   z-index: 10;

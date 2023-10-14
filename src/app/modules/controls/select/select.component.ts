@@ -1,6 +1,6 @@
 import { trigger, transition, style, animate } from '@angular/animations';
 import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
-import { modal } from 'src/tools/animations';
+import { modal, heightAnim } from 'src/tools/animations';
 import { Router } from '@angular/router';
 
 
@@ -10,17 +10,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./select.component.scss'],
   animations: [
     trigger('modal', modal()),
-    trigger('select', [
-      transition(':enter', [
-        style({ height: '0' }),
-        animate('300ms ease-out', style({ height: '*' })),
-      ]),
-      transition(':leave', [
-        style({ height: '*' }),
-        animate('300ms ease-in', style({ height: '0' })),
-      ]),
-    ]),
-  ],
+    trigger('select',heightAnim())]
 })
 export class SelectComponent implements AfterViewInit {
   @Output() clickedEmit: EventEmitter<boolean> = new EventEmitter();

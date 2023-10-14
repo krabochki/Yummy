@@ -19,16 +19,6 @@ modal;
   styleUrls: ['./header.component.scss'],
   animations: [
     trigger('modal', modal()),
-    trigger('settingsMobile', [
-      transition(':enter', [
-        style({ opacity: '0' }),
-        animate('300ms ease-out', style({ opacity: '1' })),
-      ]),
-      transition(':leave', [
-        style({ opacity: '1' }),
-        animate('300ms ease-in', style({ opacity: '0' })),
-      ]),
-    ]),
   ],
 })
 export class HeaderComponent implements OnInit, DoCheck {

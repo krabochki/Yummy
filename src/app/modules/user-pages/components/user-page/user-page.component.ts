@@ -8,9 +8,9 @@ import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
 import { fadeIn, modal } from 'src/tools/animations';
 import { trigger } from '@angular/animations';
 import { Title } from '@angular/platform-browser';
-import { RouteEventsService } from 'src/app/modules/controls/route-events.service';
 import { registerLocaleData } from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
+import { RouteEventsService } from 'src/app/modules/controls/route-events.service';
 
 @Component({
   selector: 'app-user-page',
@@ -67,11 +67,32 @@ export class UserPageComponent implements OnInit {
   cooks: number = 0;
   comments: number = 0;
   profileViews: number = 0;
-
+   users:IUser[]=[];
   ngOnInit() {
     this.route.data.subscribe((data: Data) => {
       this.user = data['user'];
       this.userId = this.user.id;
+      this.recipesEnabled = false;
+      this.moreInfoEnabled = true;
+
+            this.titleService.setTitle('@' + this.user.username);
+
+            if (this.currentUser.id === this.user.id) {
+              this.myPage = true;
+            }
+            else {
+              this.myPage = false;
+      }
+
+            this.userFollowers = this.userService.getFollowers(
+              this.users,
+              this.userId,
+            );
+
+            this.userFollowing = this.userService.getFollowing(
+              this.users,
+              this.userId,
+            );
     });
     this.router.events.subscribe(() => {
             window.scrollTo(0, 0);
@@ -87,6 +108,7 @@ export class UserPageComponent implements OnInit {
     }
 
     this.userService.getUsers().subscribe((data) => {
+      this.users = data;
       const findedUser = data.find((user) => user.id === this.userId);
 
       if (findedUser) this.user = findedUser;

@@ -67,3 +67,14 @@ export function heightAnim() {
     ]),
   ];
 }
+
+export function widthAnim() {
+  return  [transition(':enter', [
+        style({ opacity: '0', width: '0' }),
+        animate('500ms ease-out', style({ opacity: '1', width: '*' })),
+      ]),
+      transition(':leave', [
+        style({ opacity: '1', width: '*' }),
+        animate('500ms ease-in', style({ opacity: '0', width: '0' })),
+      ])]
+}

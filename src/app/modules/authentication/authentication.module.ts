@@ -13,6 +13,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { OnlyNoAuthGuard } from './guards/only-no-auth.guard';
 import { ModeratorGuard } from './guards/moderator.guard';
 import { AdminGuard } from './guards/admin.guard';
+import { SvgIconComponent, provideAngularSvgIcon } from 'angular-svg-icon';
 @NgModule({
   declarations: [
 
@@ -23,14 +24,16 @@ import { AdminGuard } from './guards/admin.guard';
     EmailConfirmationComponent,
     GreetingsComponent,
     ControlDashboardComponent,
+    
 
   ],
   imports: [
     CommonModule,
     AuthenticationRoutingModule,
     ControlsModule,
+    SvgIconComponent
   ],
-  providers: [AuthGuard, AdminGuard, ModeratorGuard, OnlyNoAuthGuard]
+  providers: [provideAngularSvgIcon(),AuthGuard, AdminGuard, ModeratorGuard, OnlyNoAuthGuard]
 
 })
 export class AuthenticationModule { }

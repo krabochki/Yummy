@@ -11,6 +11,7 @@ import { PluralRuDirective } from './directives/plural-ru.directive';
 import { ToogleSwitchComponent } from './toogle-switch/toogle-switch.component';
 import { ShareButtonsModule } from 'ngx-sharebuttons/buttons';
 import { ShareIconsModule } from 'ngx-sharebuttons/icons';
+import { SvgIconComponent,provideAngularSvgIcon } from 'angular-svg-icon';
 
 import { SocialButtonComponent } from './social-button/social-button.component';
 @NgModule({
@@ -23,13 +24,15 @@ import { SocialButtonComponent } from './social-button/social-button.component';
     PluralRuDirective,
     ToogleSwitchComponent,
     SocialButtonComponent,
+    
   ],
   imports: [
     CommonModule,
     RouterModule,
     FormsModule,
     ShareButtonsModule,
-    ShareIconsModule
+    ShareIconsModule,
+    SvgIconComponent
   ],
   exports: [
     ButtonComponent,
@@ -40,5 +43,8 @@ import { SocialButtonComponent } from './social-button/social-button.component';
     PluralRuDirective,
     SocialButtonComponent,
   ],
+  providers: [
+    provideAngularSvgIcon()
+  ]
 })
 export class ControlsModule {}

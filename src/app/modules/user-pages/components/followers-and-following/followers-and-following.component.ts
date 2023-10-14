@@ -16,22 +16,14 @@ import {
   animate,
   state,
 } from '@angular/animations';
+import { widthAnim } from 'src/tools/animations';
 
 @Component({
   selector: 'app-followers-and-following',
   templateUrl: './followers-and-following.component.html',
   styleUrls: ['./followers-and-following.component.scss'],
   animations: [
-    trigger('search', [
-      transition(':enter', [
-        style({ opacity: '0', width: '0' }),
-        animate('500ms ease-out', style({ opacity: '1', width: '*' })),
-      ]),
-      transition(':leave', [
-        style({ opacity: '1', width: '*' }),
-        animate('500ms ease-in', style({ opacity: '0', width: '0' })),
-      ]),
-    ]),
+    trigger('search', widthAnim()),
 
     trigger('magnifier', [
       state(

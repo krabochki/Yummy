@@ -8,8 +8,9 @@ import { FormsModule } from '@angular/forms';
 import { ModalComponent } from './modal/modal.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { PluralRuDirective } from './directives/plural-ru.directive';
+import { ToogleSwitchComponent } from './toogle-switch/toogle-switch.component';
 @NgModule({
-  declarations: [ButtonComponent, SelectComponent, InputComponent, ModalComponent, PageNotFoundComponent, PluralRuDirective],
+  declarations: [ButtonComponent, SelectComponent, InputComponent, ModalComponent, PageNotFoundComponent, PluralRuDirective, ToogleSwitchComponent],
   imports: [
     CommonModule, RouterModule,FormsModule
   ],
@@ -18,6 +19,7 @@ import { PluralRuDirective } from './directives/plural-ru.directive';
     SelectComponent,
     InputComponent,
     ModalComponent,
+    ToogleSwitchComponent,
     PluralRuDirective
   ]
 })

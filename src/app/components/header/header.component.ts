@@ -115,4 +115,5 @@ export class HeaderComponent implements OnInit, DoCheck {
   scrollTop() {
             window.scrollTo(0, 0);
   }
+
 }

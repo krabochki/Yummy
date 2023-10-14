@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IUser } from '../../user-pages/models/users';
 import { BehaviorSubject, Observable, map } from 'rxjs';
+import { RecipeService } from '../../recipes/services/recipe.service';
+import { UserService } from '../../user-pages/services/user.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +16,7 @@ export class AuthService {
 
   usersUrl = 'http://localhost:3000/users';
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private recipeService:RecipeService, private userService:UserService) {
     const savedUser = localStorage.getItem('currentUser');
 
     if (savedUser) {
@@ -23,8 +25,8 @@ export class AuthService {
       this.setCurrentUser(currentUser);
       console.log(
         'Автоматический вход в аккаунт пользователя ' +
-        currentUser.username +
-        ' выполнен успешно!',
+          currentUser.username +
+          ' выполнен успешно!',
       );
     } else {
       console.log('Пользователь не найден');
@@ -37,6 +39,15 @@ export class AuthService {
 
   getCurrentUser(): Observable<IUser | null> {
     return this.currentUserSubject.asObservable();
+  }
+
+  deleteUser(userId: number) //: Observable<any> {
+  {
+    const url = `${this.usersUrl}/${userId}`;
+    this.recipeService.deleteDataAboutDeletingUser(userId);
+    this.userService.deleteDataAboutDeletingUser(userId);
+
+    return this.http.delete(url);
   }
 
   logoutUser() {

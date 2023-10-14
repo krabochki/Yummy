@@ -1,4 +1,4 @@
-:root{
+body{
     --color-primary: #F5484A;
     --color-primary-focus: #ee0000;
     --color-secondary:#FF9800;
@@ -6,7 +6,7 @@
 
     --color-foreground:#212121;
     --color-background:#FFF;
-    --color-background-deeper:#EBEBEB;
+    --color-background-deeper:rgb(235, 235, 235);
     --color-primary-lighter:#FFD3D3;
     --color-primary-lighter-focus:#ff9191;
     --color-secondary-lighter:#ffe6c1;
@@ -22,23 +22,43 @@
     --color-admin:#D659F6;
     --color-moderator:#F8E641;
 
-    --modal: rgba(33,33,33,0.5)
+    --modal: rgba(33,33,33,0.5);
+    --modal-black: rgba(33,33,33,0.5);
+    --modal-sett: rgba(33,33,33,0.2);
 }
 
 
 
 .dark-mode{
-    --color-primary: #FF7577;
+    --color-primary: #fe6668;
     --color-secondary:#FFB446;
 
-    --color-foreground:#FFF;
-    --color-background:#404040;
-    --color-background-deeper:#888;
-    --color-primary-lighter:#FFE7E7;
+    --color-foreground:#e3e3e3;
+    --color-background:#272727;
+    --color-background-deeper:#313131;
+    --color-primary-lighter:#ffafaf;
 
-    --color-background-deeper-unactive:#606060;
-    --color-foreground-unactive:#CDCDCD;
+    --color-background-deeper-unactive:#363636;
+    --color-foreground-unactive:#a1a1a1;
 
     --color-admin:#E88BFF;
     --color-moderator:#F6E761;
+
+
+    --color-primary-focus: #ff4b4b;
+    --color-secondary-focus:#ff8d14;
+
+    --color-primary-lighter-focus:#ff9191;
+    --color-secondary-lighter:#ffe6c1;
+    --color-secondary-lighter-focus:#ffc876;
+
+    --color-foreground-unactive-lighter:#a1a1a1;
+
+    --scroll-thumb:#717171;
+    --scroll-body:#535353;
+    --modal-black: rgba(0, 0, 0, 0.5);
+
+
+    --modal: rgba(217, 217, 217, 0.5);
+    --modal-sett: rgba(217,217,217,0.2);
 }

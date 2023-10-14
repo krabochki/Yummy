@@ -1,7 +1,6 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <ng-template #skeleton>
-
   <div class="container skeleton" @fadeIn>
     <div class="block block1">
       <div class="row main">
@@ -44,35 +43,33 @@
     <div class="block block3">
       <div class="col">
         <h3>Описание</h3>
-        <p>
-          После загрузки тут будет описание пользователя... (или не будет)
-        </p>
+        <p>После загрузки тут будет описание пользователя... (или не будет)</p>
       </div>
       <div class="row" class="socialAndAdd">
         <div class="col">
           <h3>Социальные сети</h3>
           <ul class="col" class="links">
             <li class="link" class="row">
-              <a href="" style="margin-right:0.5em">Ico</a>
-               <a> Facebook</a>
+              <a href="" style="margin-right: 0.5em">Ico</a>
+              <a> Facebook</a>
             </li>
-             <li class="link" class="row">
-                            <a href="" style="margin-right:0.5em">Ico</a>
+            <li class="link" class="row">
+              <a href="" style="margin-right: 0.5em">Ico</a>
 
               <a> Instagram</a>
             </li>
-             <li class="link" class="row">
-                            <a href="" style="margin-right:0.5em">Ico</a>
+            <li class="link" class="row">
+              <a href="" style="margin-right: 0.5em">Ico</a>
 
               <a> ВКонтакте</a>
             </li>
-             <li class="link" class="row">
-                            <a href="" style="margin-right:0.5em">Ico</a>
+            <li class="link" class="row">
+              <a href="" style="margin-right: 0.5em">Ico</a>
 
               <a> Pinterest</a>
             </li>
-             <li class="link" class="row">
-                            <a href="" style="margin-right:0.5em">Ico</a>
+            <li class="link" class="row">
+              <a href="" style="margin-right: 0.5em">Ico</a>
 
               <a> Youtube</a>
             </li>
@@ -97,7 +94,7 @@
                 0 оценок «Мне нравится», <br />
                 0 подписчиков
                 <br />
-              0 рецептов приготовлено
+                0 рецептов приготовлено
               </p>
             </li>
           </ul>
@@ -108,14 +105,41 @@
 </ng-template>
 
 <div class="container" *ngIf="dataLoaded; else skeleton">
+  <div
+    class="svg-button exit"
+    *ngIf="
+      !(this.router.url === this.routerEventsService.previousRoutePath.value)
+    "
+    (click)="onSkipHandler()"
+  >
+    <svg-icon 
+      [applyClass]="true"
+      class="svg"
+      [src]="'../../../../../assets/images/svg/go-back.svg'"
+    >
+    </svg-icon>
+  </div>
+  <div
+    class="svg-button settings"
+    *ngIf="
+      myPage
+    "
+    
+  >
 
-      <div class="svg-button" *ngIf="!(this.router.url === this.routerEventsService.previousRoutePath.value)"  (click)="onSkipHandler()">
-        <svg-icon [applyClass]="true" class="svg"
-        
-          src="../../../../../assets/images/svg/go-back.svg"
-        >
-        </svg-icon>
-      </div>
+
+    <svg-icon 
+
+    (click)="settingsShow=!settingsShow"
+    
+      [applyClass]="true"
+      class="svg"
+      [src]="'../../../../../assets/images/svg/settings.svg'"
+    >
+    </svg-icon>
+  </div>
+  <app-settings (closeEmitter)="settingsClose($event)" @modal *ngIf="settingsShow" [user]="currentUser"/>
+    
 
   <div class="block block1">
     <div class="row main">
@@ -162,7 +186,7 @@
           <span
             appPluralRu=""
             [value]="userRecipes.length"
-            [arVariants]="['рецепт', 'рецепта', 'рецептов']"
+            [arVariants]="['рецептов', 'рецепт', 'рецепта']"
           ></span>
         </p>
       </div>
@@ -214,20 +238,18 @@
 
   <ng-template #recipes>
     <ng-template #noRecipes
-      ><div class="noRecipes" >
-       <p> У этого кулинара пока нет своих рецептов :(</p>
+      ><div class="noRecipes">
+        <p>У этого кулинара пока нет своих рецептов :(</p>
 
-         <svg-icon
-                [src]="
-                  '../../../../../assets/images/svg/sad-cook.svg'
-                "
-               [svgStyle]="{
-                
-                'height.em': '12', 'width.em':'12',
-                fill: 'var(--color-foreground)'
-              }"
-                >></svg-icon
-              >
+        <svg-icon
+          [src]="'../../../../../assets/images/svg/sad-cook.svg'"
+          [svgStyle]="{
+            'height.em': '12',
+            'width.em': '12',
+            fill: 'var(--color-foreground)'
+          }"
+          >></svg-icon
+        >
       </div></ng-template
     >
     <app-recipe-list
@@ -237,11 +259,11 @@
   </ng-template>
 
   <div class="block block3" *ngIf="moreInfoEnabled; else recipes">
-    <div class="col" *ngIf="user?.description">
+    <div class="col description" *ngIf="user?.description">
       <h3>Описание</h3>
       <p>{{ user?.description }}</p>
     </div>
-    <div class="row" class="socialAndAdd">
+    <div class="row" class="socialAndAdd" [ngStyle]="{ 'width': user?.socialNetworks?.length!>0 ? null : '100%', 'grid-template-columns': user?.socialNetworks?.length!>0 ? '1fr 1fr' : '1fr' }">
       <div class="col" *ngIf="user?.socialNetworks?.length! > 0">
         <h3>Социальные сети</h3>
         <ul class="col" class="links">
@@ -254,7 +276,7 @@
               <svg-icon
                 [src]="
                   '../../../../../assets/images/svg/non-fill-' +
-                  (social.name == 'ВКонтакте' ? 'vkontakte' : social.name) +
+                  (social.name == 'ВКонтакте' ? 'vko===========ntakte' : social.name) +
                   '.svg'
                 "
                 [class]="'svg'"
@@ -343,19 +365,19 @@
                 [arVariants]="['оценка', 'оценки', 'оценок']"
               ></span>
               «Мне нравится», <br />
-              {{ comments }}
-              <span
+                        {{ comments }}
+  <span
                 appPluralRu=""
                 [value]="comments"
-                [arVariants]="['подписчик', 'подписчика', 'подписчиков']"
-              ></span
-              >,
+                [arVariants]="['комментарий', 'комментария', 'комментариев']"
+              ></span>,
+
               <br />
               {{ cooks }}
               <span
                 appPluralRu=""
                 [value]="cooks"
-                [arVariants]="['рецепт', 'рецепта', 'рецепта']"
+                [arVariants]="['рецепт', 'рецепта', 'рецептов']"
               >
               </span>
               <span

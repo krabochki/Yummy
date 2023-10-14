@@ -1,22 +1,5 @@
 {
-  "sections": [
-    {
-      "id": 1,
-      "name": "Праздничное",
-      "categoriesId": [
-        1,
-        2
-      ]
-    },
-    {
-      "id": 2,
-      "name": "Диета",
-      "categoriesId": [
-        3,
-        4
-      ]
-    }
-  ],
+  "sections": [],
   "categories": [
     {
       "id": 1,
@@ -867,7 +850,8 @@
       "fullName": "Максим Иванов",
       "followersIds": [
         1,
-        2
+        2,
+        5
       ],
       "socialNetworks": [
         {
@@ -935,7 +919,8 @@
         2,
         4,
         9,
-        10
+        10,
+        5
       ],
       "socialNetworks": [
         {
@@ -993,7 +978,8 @@
       "followersIds": [
         4,
         7,
-        9
+        9,
+        5
       ],
       "socialNetworks": [
         {
@@ -1069,10 +1055,20 @@
       "role": "user"
     },
     {
-      "email": "",
-      "password": "",
-      "username": "",
+      "email": "fdfddff@mailr.udf",
+      "password": "fdssds2gG",
+      "username": "krabochkiIs",
       "role": "user",
+      "avatarUrl": "",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "Sat Oct 14 2023",
+      "profileViews": 0,
       "id": 11
     }
   ]

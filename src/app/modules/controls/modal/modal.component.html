@@ -1,4 +1,6 @@
-<div class="modal-dialog" >
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="modal-dialog" (click)="clickBackgroundNotContent($event)">
   <div class="modal-content">
     <div class="modal-header">
       <h4 [ngStyle]="{'color':this.style==='prim'?'var(--color-primary)':'var(--color-secondary)'}">{{ title }}</h4>

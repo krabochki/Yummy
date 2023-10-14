@@ -1,5 +1,5 @@
 import { trigger } from '@angular/animations';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { IUser } from 'src/app/modules/user-pages/models/users';
@@ -11,9 +11,10 @@ import { modal } from 'src/tools/animations';
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['../../common-styles.scss'],
-  animations: [ trigger('modal', modal())],
+  animations: [trigger('modal', modal())],
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit{
+  
   emailMask = loginMask; //маска для почты
   passMask = passMask; //маска для пароля
   usernameMask = usernameMask;
@@ -60,7 +61,12 @@ export class RegisterComponent {
     private titleService: Title,
     private router: Router,
     private usersService: UserService,
+    
   ) {
+   
+     router.events.subscribe((val) => {
+       window.scrollTo(0,0)
+     });
     this.titleService.setTitle('Регистрация');
   }
 
@@ -77,6 +83,16 @@ export class RegisterComponent {
       password: this.pass,
       username: this.username,
       role: 'user',
+      avatarUrl: '',
+      description: '',
+      quote: '',
+      fullName: '',
+      followersIds: [],
+      socialNetworks: [],
+      personalWebsite: '',
+      location: '',
+      registrationDate: new Date().toDateString(),
+      profileViews: 0,
     };
 
     const emailExists = this.users.find((u) => u.email === user.email);

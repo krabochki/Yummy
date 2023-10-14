@@ -48,7 +48,22 @@ export class UserService {
     return this.http.get<IUser[]>(this.url);
   }
 
+  deleteDataAboutDeletingUser(deletingId: number) {
+    let users: IUser[] = [];
+    this.getUsers().subscribe((data) => {
+      users = data;
 
+      users.forEach((user) => {
+        const before = user.followersIds;
+        user.followersIds = user.followersIds?.filter(
+          (element) => element != deletingId,
+        );
+        if (before !== user.followersIds) {
+          this.updateUser(user).subscribe();
+        }
+      });
+    });
+  }
 
   getUser(id: any) {
     return this.http.get<IUser>(`${this.url}/${id}`);

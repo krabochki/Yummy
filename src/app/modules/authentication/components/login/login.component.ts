@@ -40,6 +40,10 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private usersService: UserService,
   ) {
+   
+     router.events.subscribe((val) => {
+       window.scrollTo(0,0)
+     });
     this.titleService.setTitle('Вход');
   }
 
@@ -65,6 +69,7 @@ export class LoginComponent implements OnInit {
   users: IUser[] = [];
 
   ngOnInit(): void {
+    
     this.usersService.getUsers().subscribe((data: IUser[]) => {
       this.users = data;
     });

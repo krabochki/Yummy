@@ -41,12 +41,14 @@ export class UserPageComponent implements OnInit {
     private recipeService: RecipeService,
     private titleService: Title,
     public router: Router,
-    public routerEventsService:RouteEventsService
+    public routerEventsService: RouteEventsService,
   ) {}
 
   currentUser: IUser = {
     id: 0,
   };
+  settingsShow = false;
+
   user: IUser | undefined = undefined;
   userId: number = 0;
 
@@ -64,8 +66,8 @@ export class UserPageComponent implements OnInit {
   comments: number = 0;
   profileViews: number = 0;
 
-
   ngOnInit() {
+    window.scrollTo(0, 0);
     this.route.params.subscribe((params: Data) => {
       this.userId = params['id'];
     });
@@ -105,9 +107,12 @@ export class UserPageComponent implements OnInit {
       );
 
       this.userRecipes.forEach((recipe) => {
-        this.cooks += recipe.cooksId.length;
-        this.likes += recipe.likesId.length;
-        this.comments += recipe.comments.length;
+        this.cooks += recipe.cooksId?.length;
+        this.likes += recipe.likesId?.length;
+        this.comments += recipe.comments?.length;
+        if (!this.cooks) this.cooks = 0;
+        if (!this.likes) this.likes = 0;
+        if (!this.comments) this.comments = 0;
       });
 
       setTimeout(() => {
@@ -118,6 +123,10 @@ export class UserPageComponent implements OnInit {
 
   onSkipHandler() {
     this.router.navigate([this.routerEventsService.previousRoutePath.value]);
+  }
+
+  settingsClose(event:boolean) {
+    this.settingsShow = false;
   }
 
   username: string = 'username';

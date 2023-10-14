@@ -21,3 +21,35 @@ export function modal() {
     ]),
   ];
 }
+
+
+export function slide() {
+  return [
+   transition(':enter', [
+        style({transform: 'translateX(-140%)'}),
+        animate('500ms ease-in', style({transform: 'translateX(0%)'}))
+      ]),
+      transition(':leave', [
+        animate('500ms ease-in', style({transform: 'translateX(-100%)'})),
+      ]),
+
+];
+
+    
+
+}
+
+
+export function slideReverse() {
+  return [
+    transition(':enter', [
+      style({ transform: 'translateX(140%)' }),
+      animate('600ms ease-in', style({ transform: 'translateX(0%)' }))
+    ]),
+    transition(':leave', [
+      animate('400ms ease-in', style({ transform: 'translateX(100%)' })),
+    ]),
+
+  ];
+
+}

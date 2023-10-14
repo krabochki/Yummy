@@ -26,7 +26,16 @@
       </div>
       <div>
         <p (click)="currentPage = 2">О сайте ></p>
-        <p>Пригласите друзей ></p>
+        <p  (click)="showSocialShare=!showSocialShare">Пригласите друзей <span>{{showSocialShare?'<':'>'}}</span></p>
+        <div @heightAnim *ngIf="showSocialShare" class="socials">
+
+          <app-social-button [url]="location" ></app-social-button>
+          <app-social-button [url]="location" [social]="'pinterest'"></app-social-button>
+          <app-social-button [url]="location" [social]="'vk'"></app-social-button>
+          <app-social-button [url]="location" [social]="'twitter'"></app-social-button>
+          <app-social-button [url]="location" [social]="'facebook'"></app-social-button>
+        </div>
+
       </div>
 
       <p class="exit" (click)="exitModalShow = true">Выйти из аккаунта</p>
@@ -227,10 +236,8 @@
       <div>
         <p><a href="https://pinterest.com">Pinterest</a></p>
         <p><a href="https://facebook.com">Facebook</a></p>
-        <p><a href="https://instagram.com">Instagram</a></p>
         <p><a href="https://vk.com">ВКонтакте</a></p>
         <p><a href="https://twitter.com">Twitter</a></p>
-        <p><a href="https://youtube.com">YouTube</a></p>
       </div>
     </div>
   </div>

@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { RouteEventsService } from '../controls/route-events.service';
 
 @Component({
   selector: 'app-user-pages',
@@ -7,7 +6,4 @@ import { RouteEventsService } from '../controls/route-events.service';
   styleUrls: ['./user-pages.component.scss']
 })
 export class UserPagesComponent {
-  constructor(
-    private routeEventsService: RouteEventsService
-  ){}
 }

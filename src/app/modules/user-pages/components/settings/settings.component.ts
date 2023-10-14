@@ -1,9 +1,11 @@
 import { trigger } from '@angular/animations';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { slide, slideReverse,modal } from 'src/tools/animations';
+import { slide, slideReverse,modal, heightAnim } from 'src/tools/animations';
 import { IUser } from '../../models/users';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { Router } from '@angular/router';
+import localeRu from '@angular/common/locales/ru';
+
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
@@ -12,6 +14,7 @@ import { Router } from '@angular/router';
     trigger('slide', slide()),
     trigger('slideReverse', slideReverse()),
     trigger('modal', modal()),
+    trigger('heightAnim', heightAnim()),
   ],
 })
 export class SettingsComponent {
@@ -20,11 +23,17 @@ export class SettingsComponent {
   currentPage: number = 0;
   exitModalShow: boolean = false;
   deleteModalShow: boolean = false;
+  location = '';
 
   constructor(
     private authService: AuthService,
     private router: Router,
-  ) {}
+  ) { 
+    console.log(window.location.host)
+    this.location = 'https://'+ window.location.host;
+  }
+  
+
 
   @Input() user: IUser = {};
 
@@ -63,8 +72,12 @@ export class SettingsComponent {
   }
 
   clickBackgroundNotContent(elem: Event) {
-  //обработка нажатия на фон настроек, но не на блок с настройками
-  if (elem.target !== elem.currentTarget) return;
-  this.closeEmitter.emit(true)
+    //обработка нажатия на фон настроек, но не на блок с настройками
+    if (elem.target !== elem.currentTarget) return;
+    this.closeEmitter.emit(true);
+  }
+
+  showSocialShare = false;
 }
-}
+
+

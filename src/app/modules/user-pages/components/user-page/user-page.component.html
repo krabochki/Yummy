@@ -290,9 +290,7 @@
       </div>
       <div
         class="col additional"
-        [ngStyle]="{
-          'max-width': !user?.socialNetworks ? 'fit-content' : 'unset'
-        }"
+  
       >
         <h3
           [ngStyle]="{
@@ -335,7 +333,7 @@
               }"
               >></svg-icon
             >
-            <p>{{ user?.registrationDate | date: "fullDate" }}</p>
+            <p>Аккаунт создан {{ user?.registrationDate | date  }}</p>
           </li>
           <li class="row center">
             <svg-icon
@@ -394,7 +392,22 @@
         </ul>
       </div>
     </div>
+  
+  <div>
+        <h3>Поделиться этим аккаунтом</h3>
+<div class="row social">
+  
+                  <app-social-button [url]="linkForSocials"></app-social-button>
+                  <app-social-button [url]="linkForSocials" [social]="'pinterest'"></app-social-button>
+                  <app-social-button [url]="linkForSocials" [social]="'vk'"></app-social-button>
+                  <app-social-button [url]="linkForSocials" [social]="'twitter'"></app-social-button>
+  
+                  <app-social-button [url]="linkForSocials" [social]="'facebook'"></app-social-button>
+</div>
   </div>
+  </div>
+
+
 </div>
 
 <app-followers-and-following

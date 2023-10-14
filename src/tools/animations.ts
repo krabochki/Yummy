@@ -53,3 +53,17 @@ export function slideReverse() {
   ];
 
 }
+
+
+
+export function heightAnim() {
+  return [
+    transition(':enter', [
+      style({ height: '0',opacity:'0' }),
+      animate('300ms ease-in', style({ height: '*',opacity:'1' })),
+    ]),
+    transition(':leave', [
+      animate('300ms ease-in', style({ height: '0' , opacity:'0'})),
+    ]),
+  ];
+}

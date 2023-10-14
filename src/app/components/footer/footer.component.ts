@@ -19,8 +19,6 @@ export class FooterComponent implements OnInit {
   links = [
     ['pinterest', 'http://pinterest.com'],
     ['vkontakte', 'http://vk.com'],
-    ['youtube', 'http://youtube.com'],
-    ['instagram', 'http://instagram.com'],
     ['twitter', 'http://twitter.com'],
     ['facebook', 'http://facebook.com'],
   ];

@@ -13,6 +13,7 @@ import { FooterComponent } from './components/footer/footer.component';
 import { AngularSvgIconModule, SvgIconComponent } from 'angular-svg-icon';
 import { RouteEventsService } from './modules/controls/route-events.service';
 
+
 @NgModule({
   declarations: [AppComponent, HeaderComponent, FooterComponent],
   imports: [
@@ -26,5 +27,6 @@ import { RouteEventsService } from './modules/controls/route-events.service';
   providers: [AdminGuard, ModeratorGuard, RouteEventsService],
   bootstrap: [AppComponent],
   exports: [SvgIconComponent],
+
 })
 export class AppModule {}

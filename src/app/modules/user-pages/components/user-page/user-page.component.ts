@@ -14,6 +14,9 @@ import { fadeIn, modal } from 'src/tools/animations';
 import { trigger } from '@angular/animations';
 import { Title } from '@angular/platform-browser';
 import { RouteEventsService } from 'src/app/modules/controls/route-events.service';
+import { registerLocaleData } from '@angular/common';
+import localeRu from '@angular/common/locales/ru';
+
 @Component({
   selector: 'app-user-page',
   templateUrl: './user-page.component.html',
@@ -34,6 +37,7 @@ export class UserPageComponent implements OnInit {
     this.showFollows = false;
   }
 
+  linkForSocials: string = '';
   constructor(
     private authService: AuthService,
     private route: ActivatedRoute,
@@ -42,7 +46,11 @@ export class UserPageComponent implements OnInit {
     private titleService: Title,
     public router: Router,
     public routerEventsService: RouteEventsService,
-  ) {}
+  ) {
+      registerLocaleData(localeRu);
+
+    this.linkForSocials = window.location.href;
+  }
 
   currentUser: IUser = {
     id: 0,

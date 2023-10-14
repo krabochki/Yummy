@@ -9,18 +9,36 @@ import { ModalComponent } from './modal/modal.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { PluralRuDirective } from './directives/plural-ru.directive';
 import { ToogleSwitchComponent } from './toogle-switch/toogle-switch.component';
+import { ShareButtonsModule } from 'ngx-sharebuttons/buttons';
+import { ShareIconsModule } from 'ngx-sharebuttons/icons';
+
+import { SocialButtonComponent } from './social-button/social-button.component';
 @NgModule({
-  declarations: [ButtonComponent, SelectComponent, InputComponent, ModalComponent, PageNotFoundComponent, PluralRuDirective, ToogleSwitchComponent],
-  imports: [
-    CommonModule, RouterModule,FormsModule
+  declarations: [
+    ButtonComponent,
+    SelectComponent,
+    InputComponent,
+    ModalComponent,
+    PageNotFoundComponent,
+    PluralRuDirective,
+    ToogleSwitchComponent,
+    SocialButtonComponent,
   ],
-  exports:[
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    ShareButtonsModule,
+    ShareIconsModule
+  ],
+  exports: [
     ButtonComponent,
     SelectComponent,
     InputComponent,
     ModalComponent,
     ToogleSwitchComponent,
-    PluralRuDirective
-  ]
+    PluralRuDirective,
+    SocialButtonComponent,
+  ],
 })
-export class ControlsModule { }
+export class ControlsModule {}

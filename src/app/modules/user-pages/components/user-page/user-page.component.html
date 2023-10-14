@@ -7,11 +7,11 @@
         <img src="../../../../../assets/images/userpic.png" alt="User Photo" />
         <div class="col info">
           <div class="col name">
-            <h1>Загружаем пользователя...</h1>
-            <p class="username">@load_username</p>
+            <h1>Loading FullName</h1>
+            <p class="username">@loadusername</p>
           </div>
 
-          <p class="quote">Загружаем цитату пользователя...</p>
+          <p class="quote">Loading big deep quote of loading user</p>
 
           <app-button
             [disabled]="false"
@@ -24,13 +24,19 @@
       </div>
       <div class="row" class="statistics">
         <div class="col">
-          <p>0 рецептов...</p>
+          <p>
+            0 рецептов
+          </p>
         </div>
         <div class="col">
-          <p class="showFollowers">0 подписчкиов...</p>
+          <p>
+            0 подписчиков
+          </p>
         </div>
         <div class="col">
-          <p class="showFollowers">0 подписок...</p>
+          <p>
+0 подписок
+          </p>
         </div>
       </div>
     </div>
@@ -41,37 +47,37 @@
     </div>
 
     <div class="block block3">
-      <div class="col">
+      <div class="col description">
         <h3>Описание</h3>
-        <p>После загрузки тут будет описание пользователя... (или не будет)</p>
+        <p>
+          There will be very long and deep description of lifeway loading
+          user... We believe he is interesting person
+        </p>
       </div>
-      <div class="row" class="socialAndAdd">
+      <div
+        class="row"
+        class="socialAndAdd"
+        [ngStyle]="{
+          'grid-template-columns': '1fr 1fr'
+        }"
+      >
         <div class="col">
           <h3>Социальные сети</h3>
           <ul class="col" class="links">
             <li class="link" class="row">
-              <a href="" style="margin-right: 0.5em">Ico</a>
-              <a> Facebook</a>
+              <a class="center">Social Media</a>
             </li>
             <li class="link" class="row">
-              <a href="" style="margin-right: 0.5em">Ico</a>
-
-              <a> Instagram</a>
+              <a class="center">Social Media</a>
             </li>
             <li class="link" class="row">
-              <a href="" style="margin-right: 0.5em">Ico</a>
-
-              <a> ВКонтакте</a>
+              <a class="center">Social Media</a>
             </li>
             <li class="link" class="row">
-              <a href="" style="margin-right: 0.5em">Ico</a>
-
-              <a> Pinterest</a>
+              <a class="center">Social Media</a>
             </li>
             <li class="link" class="row">
-              <a href="" style="margin-right: 0.5em">Ico</a>
-
-              <a> Youtube</a>
+              <a class="center">Social Media</a>
             </li>
           </ul>
         </div>
@@ -79,25 +85,33 @@
           <h3>Доп. сведения</h3>
           <ul>
             <li class="row center">
-              <a> http://loading-website</a>
+              <a>User personal website</a>
             </li>
             <li class="row center">
-              <p>Гродно, Беларусь</p>
+              <p>Location</p>
             </li>
             <li class="row center">
-              <p>{{ "01.01.2001" | date: "fullDate" }}</p>
+              <p>Аккаунт создан 01.01.2000</p>
             </li>
             <li class="row center">
               <p>
-                0 просмотров профиля,
-                <br />
-                0 оценок «Мне нравится», <br />
-                0 подписчиков
-                <br />
-                0 рецептов приготовлено
+                0 просмотров профиля, <br />
+                0 отметок «Мне нравится», <br />
+                0 комментариев, <br />0 рецептов приготовлено
               </p>
             </li>
           </ul>
+        </div>
+      </div>
+
+      <div>
+        <h3>Поделиться этим аккаунтом</h3>
+        <div class="row social">
+          <div class="social-btn"></div>
+             <div class="social-btn"></div>
+                <div class="social-btn"></div>
+                   <div class="social-btn"></div>
+                      <div class="social-btn"></div>
         </div>
       </div>
     </div>
@@ -112,52 +126,46 @@
     "
     (click)="onSkipHandler()"
   >
-    <svg-icon 
+    <svg-icon
       [applyClass]="true"
       class="svg"
       [src]="'../../../../../assets/images/svg/go-back.svg'"
     >
     </svg-icon>
   </div>
-  <div
-    class="svg-button settings"
-    *ngIf="
-      myPage
-    "
-    
-  >
-
-
-    <svg-icon 
-
-    (click)="settingsShow=!settingsShow"
-    
+  <div class="svg-button settings" *ngIf="myPage">
+    <svg-icon
+      (click)="settingsShow = !settingsShow"
       [applyClass]="true"
       class="svg"
       [src]="'../../../../../assets/images/svg/settings.svg'"
     >
     </svg-icon>
   </div>
-  <app-settings (closeEmitter)="settingsClose($event)" @modal *ngIf="settingsShow" [user]="currentUser"/>
-    
+  <app-settings
+    (closeEmitter)="settingsClose($event)"
+    @modal
+    *ngIf="settingsShow"
+    [user]="currentUser"
+  />
 
   <div class="block block1">
     <div class="row main">
       <img
         [src]="
-          user?.avatarUrl
-            ? user?.avatarUrl
+          user.avatarUrl
+            ? user.avatarUrl
             : '../../../../../assets/images/userpic.png'
         "
         alt="User Photo"
       />
       <div class="col info">
         <div class="col name">
-          <h1>{{ user?.fullName }}</h1>
-          <p class="username">{{ "@" + user?.username }}</p>
+          <h1>{{ user.fullName }}</h1>
+          <p class="username">{{ "@" + user.username }}</p>
         </div>
 
-        <p class="quote" *ngIf="user?.quote">{{ user?.quote }}</p>
+        <p class="quote" *ngIf="user?.quote">{{ user.quote }}</p>
 
         <app-button
           [disabled]="!(currentUser.id === 0)"
@@ -261,9 +269,17 @@
   <div class="block block3" *ngIf="moreInfoEnabled; else recipes">
     <div class="col description" *ngIf="user?.description">
       <h3>Описание</h3>
-      <p>{{ user?.description }}</p>
+      <p>{{ user.description }}</p>
     </div>
-    <div class="row" class="socialAndAdd" [ngStyle]="{ 'width': user?.socialNetworks?.length!>0 ? null : '100%', 'grid-template-columns': user?.socialNetworks?.length!>0 ? '1fr 1fr' : '1fr' }">
+    <div
+      class="row"
+      class="socialAndAdd"
+      [ngStyle]="{
+        width: user.socialNetworks.length > 0 ? null : '100%',
+        'grid-template-columns':
+          user.socialNetworks.length > 0 ? '1fr 1fr' : '1fr'
+      }"
+    >
       <div class="col" *ngIf="user?.socialNetworks?.length! > 0">
         <h3>Социальные сети</h3>
         <ul class="col" class="links">
@@ -276,7 +292,7 @@
               <svg-icon
                 [src]="
                   '../../../../../assets/images/svg/non-fill-' +
-                  (social.name == 'ВКонтакте' ? 'vko===========ntakte' : social.name) +
+                  (social.name === 'ВКонтакте' ? 'vkontakte' : social.name) +
                   '.svg'
                 "
                 [class]="'svg'"
@@ -288,13 +304,10 @@
           </li>
         </ul>
       </div>
-      <div
-        class="col additional"
-  
-      >
+      <div class="col additional">
         <h3
           [ngStyle]="{
-            'text-align': !user?.socialNetworks ? 'center' : 'left'
+            'text-align': !user.socialNetworks ? 'center' : 'left'
           }"
         >
           Доп. сведения
@@ -310,7 +323,7 @@
               }"
               >></svg-icon
             >
-            <a [href]="user?.personalWebsite"> {{ user?.personalWebsite }}</a>
+            <a [href]="user.personalWebsite"> {{ user.personalWebsite }}</a>
           </li>
           <li class="row center" *ngIf="user?.location">
             <svg-icon
@@ -321,7 +334,7 @@
                 fill: 'var(--color-foreground)'
               }"
             ></svg-icon>
-            <p>{{ user?.location }}</p>
+            <p>{{ user.location }}</p>
           </li>
           <li class="row center" *ngIf="user?.registrationDate">
             <svg-icon
@@ -333,7 +346,7 @@
               }"
               >></svg-icon
             >
-            <p>Аккаунт создан {{ user?.registrationDate | date  }}</p>
+            <p>Аккаунт создан {{ user.registrationDate | date }}</p>
           </li>
           <li class="row center">
             <svg-icon
@@ -363,12 +376,13 @@
                 [arVariants]="['оценка', 'оценки', 'оценок']"
               ></span>
               «Мне нравится», <br />
-                        {{ comments }}
-  <span
+              {{ comments }}
+              <span
                 appPluralRu=""
                 [value]="comments"
                 [arVariants]="['комментарий', 'комментария', 'комментариев']"
-              ></span>,
+              ></span
+              >,
 
               <br />
               {{ cooks }}
@@ -392,22 +406,31 @@
         </ul>
       </div>
     </div>
-  
-  <div>
-        <h3>Поделиться этим аккаунтом</h3>
-<div class="row social">
-  
-                  <app-social-button [url]="linkForSocials"></app-social-button>
-                  <app-social-button [url]="linkForSocials" [social]="'pinterest'"></app-social-button>
-                  <app-social-button [url]="linkForSocials" [social]="'vk'"></app-social-button>
-                  <app-social-button [url]="linkForSocials" [social]="'twitter'"></app-social-button>
-  
-                  <app-social-button [url]="linkForSocials" [social]="'facebook'"></app-social-button>
-</div>
-  </div>
-  </div>
 
+    <div>
+      <h3>Поделиться этим аккаунтом</h3>
+      <div class="row social">
+        <app-social-button [url]="linkForSocials"></app-social-button>
+        <app-social-button
+          [url]="linkForSocials"
+          [social]="'pinterest'"
+        ></app-social-button>
+        <app-social-button
+          [url]="linkForSocials"
+          [social]="'vk'"
+        ></app-social-button>
+        <app-social-button
+          [url]="linkForSocials"
+          [social]="'twitter'"
+        ></app-social-button>
 
+        <app-social-button
+          [url]="linkForSocials"
+          [social]="'facebook'"
+        ></app-social-button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <app-followers-and-following

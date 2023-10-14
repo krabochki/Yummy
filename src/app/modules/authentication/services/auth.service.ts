@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { IUser } from '../../user-pages/models/users';
+import { IUser, nullUser } from '../../user-pages/models/users';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { RecipeService } from '../../recipes/services/recipe.service';
 import { UserService } from '../../user-pages/services/user.service';
@@ -11,12 +11,16 @@ import { UserService } from '../../user-pages/services/user.service';
 export class AuthService {
   role = 'user';
 
-  private currentUserSubject: BehaviorSubject<IUser | null> =
-    new BehaviorSubject<IUser | null>(null);
+  private currentUserSubject: BehaviorSubject<IUser> =
+    new BehaviorSubject<IUser>(nullUser);
 
   usersUrl = 'http://localhost:3000/users';
 
-  constructor(private http: HttpClient, private recipeService:RecipeService, private userService:UserService) {
+  constructor(
+    private http: HttpClient,
+    private recipeService: RecipeService,
+    private userService: UserService,
+  ) {
     const savedUser = localStorage.getItem('currentUser');
 
     if (savedUser) {
@@ -33,28 +37,28 @@ export class AuthService {
     }
   }
 
-  setCurrentUser(user: IUser | null) {
+  setCurrentUser(user: IUser) {
     this.currentUserSubject.next(user);
   }
 
-  getCurrentUser(): Observable<IUser | null> {
+  getCurrentUser(): Observable<IUser> {
     return this.currentUserSubject.asObservable();
   }
 
-  deleteUser(userId: number) //: Observable<any> {
-  {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  deleteUser(userId: number): Observable<any> {
     const url = `${this.usersUrl}/${userId}`;
     this.recipeService.deleteDataAboutDeletingUser(userId);
     this.userService.deleteDataAboutDeletingUser(userId);
-
     return this.http.delete(url);
   }
 
   logoutUser() {
-    this.setCurrentUser(null);
+    this.setCurrentUser(nullUser);
     localStorage.removeItem('currentUser');
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   registerUser(newUser: IUser): Observable<any> {
     return this.http.post(this.usersUrl, newUser);
   }
@@ -67,7 +71,8 @@ export class AuthService {
             (u.email === user.email && u.password === user.password) ||
             (u.username === user.username && u.password === user.password),
         );
-        return foundUser || null;
+        if(!foundUser) return null
+        return foundUser ;
       }),
     );
   }

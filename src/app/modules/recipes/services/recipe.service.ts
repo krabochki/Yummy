@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { IRecipe } from '../models/recipes';
-import { switchMap, forkJoin } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +16,7 @@ export class RecipeService {
       recipes = data;
 
       recipes.forEach((recipe) => {
-        if (recipe.authorId == authorId) {
+        if (recipe.authorId === authorId) {
           this.deleteRecipe(recipe.id).subscribe();
         } else {
           const before = recipe;
@@ -76,6 +75,6 @@ export class RecipeService {
     return recipes.filter((recipe) => recipe.categories.includes(categoryId));
   }
   getRecipesByUser(recipes: IRecipe[], userId: number): IRecipe[] {
-    return recipes.filter((recipe) => recipe.authorId == userId);
+    return recipes.filter((recipe) => recipe.authorId === userId);
   }
 }

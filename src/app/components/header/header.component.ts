@@ -1,11 +1,18 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, DoCheck, EventEmitter, HostListener, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  DoCheck,
+  EventEmitter,
+  HostListener,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
-import { IUser } from 'src/app/modules/user-pages/models/users';
+import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { modal } from 'src/tools/animations';
-modal
+modal;
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -43,13 +50,13 @@ export class HeaderComponent implements OnInit, DoCheck {
   mobile: boolean = false;
   hambOpen: boolean = false;
   currentUserSubscription?: Subscription;
-  currentUser?: IUser | null;
+  currentUser: IUser = nullUser;
 
-  role: string | undefined = 'user';
+  role: string = 'user';
 
   notificationsCount = 10;
 
-  @Output() headerHeightChange: EventEmitter<any> = new EventEmitter();
+  @Output() headerHeightChange: EventEmitter<number> = new EventEmitter();
 
   ngOnInit() {
     if (screen.width <= 480) {
@@ -78,6 +85,7 @@ export class HeaderComponent implements OnInit, DoCheck {
   }
 
   @HostListener('window:resize', ['$event'])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onResize(event: any) {
     if (event.target.innerWidth <= 480) {
       this.mobile = true;
@@ -100,8 +108,7 @@ export class HeaderComponent implements OnInit, DoCheck {
   noAccessModalShow = false;
 
   linkClick() {
-
-    if (!this.currentUser) {
+    if (this.currentUser.id === 0) {
       this.noAccessModalShow = true;
     }
   }
@@ -113,7 +120,6 @@ export class HeaderComponent implements OnInit, DoCheck {
     this.noAccessModalShow = false;
   }
   scrollTop() {
-            window.scrollTo(0, 0);
+    window.scrollTo(0, 0);
   }
-
 }

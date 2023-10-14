@@ -2,7 +2,7 @@ import { trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { IUser } from 'src/app/modules/user-pages/models/users';
+import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { loginMask, passMask, usernameMask } from 'src/tools/regex';
 import { AuthService } from '../../services/auth.service';
@@ -52,6 +52,7 @@ export class RegisterComponent implements OnInit{
     }
     this.modalSuccessShow = false;
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleFailModalResult(result: boolean) {
     this.modalFailShow = false;
   }
@@ -64,43 +65,33 @@ export class RegisterComponent implements OnInit{
     
   ) {
    
-     router.events.subscribe((val) => {
+     router.events.subscribe(() => {
        window.scrollTo(0,0)
      });
     this.titleService.setTitle('Регистрация');
   }
 
   ngOnInit() {
-    this.usersService.getUsers().subscribe((users: any) => {
+    this.usersService.getUsers().subscribe((users: IUser[]) => {
       this.users = users;
     });
   }
 
   users: IUser[] = [];
   registration() {
-    const user: IUser = {
-      email: this.email,
-      password: this.pass,
-      username: this.username,
-      role: 'user',
-      avatarUrl: '',
-      description: '',
-      quote: '',
-      fullName: '',
-      followersIds: [],
-      socialNetworks: [],
-      personalWebsite: '',
-      location: '',
-      registrationDate: new Date().toDateString(),
-      profileViews: 0,
-    };
+    const user = nullUser;
+    user.email = this.email;
+    user.password = this.pass;
+    user.username = this.username;
+
+      const maxId = Math.max(...this.users.map((u) => u.id));
+  user.id = maxId + 1;
+
 
     const emailExists = this.users.find((u) => u.email === user.email);
     const usernameExists = this.users.find((u) => u.username === user.username);
 
-    console.log(emailExists);
-    console.log(usernameExists);
-    if (emailExists == undefined && usernameExists == undefined) {
+    if (emailExists === undefined && usernameExists === undefined) {
       this.authService.registerUser(user).subscribe(
         (userExists) => {
           if (userExists) {

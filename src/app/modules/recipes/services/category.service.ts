@@ -19,7 +19,7 @@ export class CategoryService {
   }
 
   deleteCategory(id: number) {
-    return this.http.delete<any>(`${this.url}/${id}`);
+    return this.http.delete<ICategory>(`${this.url}/${id}`);
   }
 
   postCategory(recipe: ICategory) {

@@ -1,12 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
-import { IUser } from '../../models/users';
-import {
-  ActivatedRoute,
-  Data,
-  Router,
-  RoutesRecognized,
-} from '@angular/router';
+import { IUser, nullUser } from '../../models/users';
+import { ActivatedRoute, Data, Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
@@ -33,6 +28,7 @@ export class UserPageComponent implements OnInit {
 
   showFollows = false;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
   closeFollows(event: any) {
     this.showFollows = false;
   }
@@ -47,25 +43,23 @@ export class UserPageComponent implements OnInit {
     public router: Router,
     public routerEventsService: RouteEventsService,
   ) {
-      registerLocaleData(localeRu);
-
+    registerLocaleData(localeRu);
     this.linkForSocials = window.location.href;
   }
 
-  currentUser: IUser = {
-    id: 0,
-  };
+  currentUser: IUser = nullUser;
   settingsShow = false;
 
-  user: IUser | undefined = undefined;
+  user: IUser = nullUser;
+
   userId: number = 0;
 
   userRecipes: IRecipe[] = [];
 
   allRecipes: IRecipe[] = [];
 
-  userFollowers: IUser[] | null = [];
-  userFollowing: IUser[] | null = [];
+  userFollowers: IUser[] = [];
+  userFollowing: IUser[] = [];
 
   myPage: boolean = false;
 
@@ -75,42 +69,31 @@ export class UserPageComponent implements OnInit {
   profileViews: number = 0;
 
   ngOnInit() {
-    window.scrollTo(0, 0);
-
-
     this.route.data.subscribe((data: Data) => {
-           
-      console.log(data)
-
       this.user = data['user'];
-      if(this.user?.id)
       this.userId = this.user.id;
-
-      //this.user = data
-      
-         });
-
+    });
+    this.router.events.subscribe(() => {
+            window.scrollTo(0, 0);
 
 
+    });
 
     this.authService.getCurrentUser()?.subscribe((data) => {
-      this.currentUser = data!;
+      this.currentUser = data;
     });
     if (!this.currentUser) {
-      this.currentUser = {
-        id: 0,
-      };
+      this.currentUser = nullUser;
     }
 
     this.userService.getUsers().subscribe((data) => {
-      this.user = data.find((user) => user.id == this.userId);
+      const findedUser = data.find((user) => user.id === this.userId);
 
-      if (this.user?.profileViews) this.profileViews = this.user?.profileViews;
+      if (findedUser) this.user = findedUser;
 
-      if (this.user?.username)
-        this.titleService.setTitle('@' + this.user.username);
+      this.titleService.setTitle('@' + this.user.username);
 
-      if (this.currentUser?.id == this.user?.id) {
+      if (this.currentUser.id === this.user.id) {
         this.myPage = true;
       }
 
@@ -146,7 +129,8 @@ export class UserPageComponent implements OnInit {
     this.router.navigate([this.routerEventsService.previousRoutePath.value]);
   }
 
-  settingsClose(event:boolean) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  settingsClose(event: boolean) {
     this.settingsShow = false;
   }
 

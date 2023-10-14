@@ -7,12 +7,28 @@ export class OnlyNoAuthGuard {
   constructor(@Inject(AuthService) private auth: AuthService) {}
 
   canActivate(): boolean {
-    let user: IUser | null = null;
+    let user: IUser = {
+      email: '',
+      password: '',
+      username: '',
+      role: 'user',
+      avatarUrl: '',
+      description: '',
+      quote: '',
+      fullName: '',
+      followersIds: [],
+      socialNetworks: [],
+      personalWebsite: '',
+      location: '',
+      registrationDate: '',
+      profileViews: 0,
+      id: 0,
+    };
     this.auth.getCurrentUser().subscribe(
       (data) => {
         user = data;
       }
     )
-    return user == null;
+    return user.id === 0;
   }
 }

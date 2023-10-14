@@ -7,7 +7,7 @@
     <app-select
       [items]="recipeSelectItems"
       [disabling]="
-        !this.currentUser
+        this.currentUser.id===0
           ? [true, false, false, true, false]
           : [false, false, false, false, false]
       "
@@ -22,9 +22,9 @@
     <app-select
       [items]="cooksSelectItems"
       [disabling]="
-        !this.currentUser ? [true, false, false] : [false, false, false]
+        this.currentUser.id===0 ? [true, false, false] : [false, false, false]
       "
-      [routerLinks]="['cooks/list/' + currentUser?.id, 'cooks', 'cooks/updates']"
+      [routerLinks]="['cooks/list/' + currentUser.id, 'cooks', 'cooks/updates']"
     ></app-select>
     <a
             (click)="linkClick()"
@@ -32,7 +32,7 @@
 
       routerLink="plan"
       class="cook-plan"
-      [ngClass]="{ dsl: !this.currentUser ? true : false }"
+      [ngClass]="{ dsl: this.currentUser.id===0 ? true : false }"
       >План готовки</a
     >
   </div>
@@ -40,7 +40,7 @@
   <div class="buttons" *ngIf="!mobile">
     <button
       routerLink="greetings"
-      *ngIf="currentUser"
+      *ngIf="this.currentUser.id!==0"
       class="svg-button"
     >
       <svg-icon
@@ -56,7 +56,7 @@
 
     <button 
       [routerLink]="
-        !currentUser ? 'greetings' : 'cooks/list/' + currentUser.id
+        this.currentUser.id===0 ? 'greetings' : 'cooks/list/' + currentUser.id
       "
       class="svg-button"
     >
@@ -68,7 +68,7 @@
         >
       </ng-template>
       <svg-icon 
-        *ngIf="!currentUser; else account"
+        *ngIf="this.currentUser.id===0; else account"
         [src]="'../../../assets/images/svg/enter.svg'"
         [class]="'svg'"
         >></svg-icon
@@ -86,13 +86,13 @@
 <div *ngIf="hambOpen" class="menu-mobile" @settingsMobile>
   <div class="menu-mobile-cont">
     <div class="close" (click)="hambOpen = !hambOpen">✕</div>
-    <label>Меню</label>
+    <div class="label">Меню</div>
 
     <div class="menu-mobile-links">
       <app-select
         [items]="recipeSelectItems"
         [disabling]="
-          !this.currentUser
+          this.currentUser.id===0
             ? [true, false, false, true, false]
             : [false, false, false, false, false]
         "
@@ -107,15 +107,15 @@
       <app-select
         [items]="cooksSelectItems"
         [disabling]="
-          !this.currentUser ? [true, false, false] : [false, false, false]
+          this.currentUser.id===0 ? [true, false, false] : [false, false, false]
         "
-        [routerLinks]="['cooks/' + currentUser?.id, 'cooks', 'updates']"
+        [routerLinks]="['cooks/' + currentUser.id, 'cooks', 'updates']"
       ></app-select>
       <a
         (click)="linkClick()"
         routerLink="cooking-plan"
         class="cook-plan"
-        [ngClass]="{ dsl: !this.currentUser ? true : false }"
+        [ngClass]="{ dsl: this.currentUser.id===0  ? true : false }"
         >План готовки</a
       >
     </div>

@@ -902,7 +902,17 @@
       "password": "Krabochki0",
       "username": "krabochki",
       "id": 5,
-      "role": "admin"
+      "role": "admin",
+      "avatarUrl": "",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-10-10",
+      "profileViews": 0
     },
     {
       "id": 6,
@@ -1055,9 +1065,10 @@
       "role": "user"
     },
     {
-      "email": "fdfddff@mailr.udf",
-      "password": "fdssds2gG",
-      "username": "krabochkiIs",
+      "id": 11,
+      "email": "krab@krab.com",
+      "password": "krabKrabRka0",
+      "username": "krab",
       "role": "user",
       "avatarUrl": "",
       "description": "",
@@ -1067,9 +1078,8 @@
       "socialNetworks": [],
       "personalWebsite": "",
       "location": "",
-      "registrationDate": "Sat Oct 14 2023",
-      "profileViews": 0,
-      "id": 11
+      "registrationDate": "",
+      "profileViews": 0
     }
   ]
 }

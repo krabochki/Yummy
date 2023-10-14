@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
-import { IUser } from 'src/app/modules/user-pages/models/users';
+import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { modal } from 'src/tools/animations';
 
 @Component({
@@ -14,7 +14,7 @@ import { modal } from 'src/tools/animations';
 })
 export class FooterComponent implements OnInit {
   currentUserSubscription: Subscription = new Subscription();
-  currentUser: IUser | null = null;
+  currentUser: IUser  = nullUser;
 
   links = [
     ['pinterest', 'http://pinterest.com'],
@@ -39,7 +39,7 @@ export class FooterComponent implements OnInit {
   noAccessModalShow = false;
 
   linkClick() {
-    if (!this.currentUser) {
+    if (this.currentUser.id===0) {
       this.noAccessModalShow = true;
     }
   }

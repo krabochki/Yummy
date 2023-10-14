@@ -3,19 +3,15 @@ import { passMask, emailOrUsernameMask } from 'src/tools/regex';
 import { AuthService } from '../../services/auth.service';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { IUser } from 'src/app/modules/user-pages/models/users';
+import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
-import { trigger} from '@angular/animations';
+import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['../../common-styles.scss'],
-  animations: [
-    trigger('modal', modal()),
-  
-    
-  ],
+  animations: [trigger('modal', modal())],
 })
 export class LoginComponent implements OnInit {
   loginMask = emailOrUsernameMask;
@@ -40,10 +36,9 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private usersService: UserService,
   ) {
-   
-     router.events.subscribe((val) => {
-       window.scrollTo(0,0)
-     });
+    router.events.subscribe(() => {
+      window.scrollTo(0, 0);
+    });
     this.titleService.setTitle('Вход');
   }
 
@@ -60,6 +55,7 @@ export class LoginComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleModalErrorResult(result: boolean) {
     this.modalErrorShow = false;
   }
@@ -69,18 +65,19 @@ export class LoginComponent implements OnInit {
   users: IUser[] = [];
 
   ngOnInit(): void {
-    
     this.usersService.getUsers().subscribe((data: IUser[]) => {
       this.users = data;
     });
   }
 
   loginUser() {
-    const user: IUser = {
-      email: this.login,
-      password: this.pass,
-      username: this.login,
-    };
+   
+    const user = nullUser;
+    user.email = this.login;
+    user.password = this.pass;
+    user.username = this.login;
+     
+    
 
     this.authService.loginUser(user).subscribe(
       (userExists) => {

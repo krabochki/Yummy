@@ -25,7 +25,7 @@
         </div>
       </div>
       <div>
-        <p (click)="currentPage = 2">О сайте ></p>
+        <p routerLink="/about">О сайте...</p>
         <p  (click)="showSocialShare=!showSocialShare">Пригласите друзей <span>{{showSocialShare?'<':'>'}}</span></p>
         <div @heightAnim *ngIf="showSocialShare" class="socials">
 
@@ -219,27 +219,7 @@
       <p class="exit" (click)="deleteModalShow = true">Удалить аккаунт</p>
     </div>
 
-    <div @slideReverse class="second" *ngIf="currentPage === 2">
-      <div class="title-block">
-        <span (click)="currentPage = 0"><</span>
-        <h1>О сайте</h1>
-      </div>
-      <h2 class="title">Yummy v. 1.0.0</h2>
-      <div>
-        <p class="not-link">
-          Создатель: <a href="https://krabochki.github.io/Resume">krabochki</a>
-        </p>
-        <p class="not-link">Дата рождения: Soon...</p>
-      </div>
-      <h2 class="title">Yummy в соцсетях</h2>
-
-      <div>
-        <p><a href="https://pinterest.com">Pinterest</a></p>
-        <p><a href="https://facebook.com">Facebook</a></p>
-        <p><a href="https://vk.com">ВКонтакте</a></p>
-        <p><a href="https://twitter.com">Twitter</a></p>
-      </div>
-    </div>
+   
   </div>
 </div>
 

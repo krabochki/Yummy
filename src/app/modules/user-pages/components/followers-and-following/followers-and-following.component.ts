@@ -1,8 +1,21 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
-import { IUser } from '../../models/users';
-import { ActivatedRoute, Router } from '@angular/router';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+} from '@angular/core';
+import { IUser, nullUser } from '../../models/users';
+import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
-import { trigger, transition, style, animate, state } from '@angular/animations';
+import {
+  trigger,
+  transition,
+  style,
+  animate,
+  state,
+} from '@angular/animations';
 
 @Component({
   selector: 'app-followers-and-following',
@@ -21,7 +34,6 @@ import { trigger, transition, style, animate, state } from '@angular/animations'
     ]),
 
     trigger('magnifier', [
-      // ...
       state(
         'open',
         style({
@@ -37,13 +49,13 @@ import { trigger, transition, style, animate, state } from '@angular/animations'
 })
 export class FollowersAndFollowingComponent implements OnInit, OnChanges {
   //ввод
-  @Input() userPage?: IUser | null;
-  @Input() currentUser?: IUser | null;
-  @Input() followers?: any;
-  @Input() following?: any;
+  @Input() userPage: IUser = nullUser;
+  @Input() currentUser: IUser = nullUser;
+  @Input() followers: IUser[] = [];
+  @Input() following: IUser[] = [];
 
-  followersDisplay?: any;
-  followingDisplay?: any;
+  followersDisplay: IUser[] = [];
+  followingDisplay: IUser[] = [];
 
   //вывод: для закрытия окна
   @Output() closeEmitter: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -51,25 +63,19 @@ export class FollowersAndFollowingComponent implements OnInit, OnChanges {
   //что смотрим
   @Input() object: 'followers' | 'following' = 'followers';
   searchMode: boolean = false;
-  currentUserFollowingIds: any = []; //подписки авторизованного пользователя, если они есть
+  currentUserFollowingIds: number[] = []; //подписки авторизованного пользователя
   searchQuery: string = '';
   constructor(
     private router: Router,
     public userService: UserService,
   ) {}
   ngOnChanges(): void {
+    if (this.following) this.followingDisplay = this.following;
 
-    if (this.following) 
-      this.followingDisplay = this.following;
-    
-    if(this.followers)
-    this.followersDisplay = this.followers;
-
+    if (this.followers) this.followersDisplay = this.followers;
   }
 
   ngOnInit(): void {
-    
-
     this.userService.getUsers().subscribe((data) => {
       if (this.currentUser?.id) {
         const currentUserFollowing = this.userService.getFollowing(
@@ -91,10 +97,9 @@ export class FollowersAndFollowingComponent implements OnInit, OnChanges {
     //обновляем список подписок авторизованного пользователя
     this.currentUserFollowingIds?.push(user?.id);
 
-    if (this.userPage?.id == this.currentUser?.id) {
+    if (this.userPage?.id === this.currentUser?.id) {
       this.following?.push(user);
       this.followingDisplay?.push(user);
-      
     }
   }
 
@@ -103,41 +108,38 @@ export class FollowersAndFollowingComponent implements OnInit, OnChanges {
     this.userService.removeFollower(user, this.currentUser?.id);
     this.updateUser(user);
     //обновляем список подписок авторизованного пользователя
-    let indexToDelete: number | undefined =
-      this.currentUserFollowingIds?.findIndex((us: any) => us == user.id);
+    let indexToDelete: number  =
+      this.currentUserFollowingIds?.findIndex((us: number) => us === user.id);
     if (indexToDelete !== -1 && indexToDelete) {
       this.currentUserFollowingIds?.splice(indexToDelete, 1);
     }
 
+    if (this.userPage?.id === this.currentUser?.id) {
+      indexToDelete = this.following?.findIndex((us: IUser) => us.id === user.id);
 
-    if (this.userPage?.id == this.currentUser?.id) {
-      indexToDelete = this.following?.findIndex((us: any) => us.id == user.id);
-
-
-      this.following?.splice(indexToDelete, 1);
-      this.followingDisplay?.splice(indexToDelete, 1);
+      this.following.splice(indexToDelete, 1);
+      this.followingDisplay.splice(indexToDelete, 1);
     }
   }
-
 
   searchOnOff() {
     this.searchMode = !this.searchMode;
     this.followingDisplay = this.following;
-    this.followersDisplay = this.followers; 
-    this.searchQuery=''
+    this.followersDisplay = this.followers;
+    this.searchQuery = '';
   }
 
   updateUser(user: IUser) {
     this.userService.updateUser(user).subscribe((updatingUser) => {
-      this.followers = this.followers?.map((follower: any) => {
-        if (follower.id == updatingUser.id) {
+      this.followers = this.followers?.map((follower: IUser) => {
+        if (follower.id === updatingUser.id) {
           follower = updatingUser;
           return updatingUser;
         } else return follower;
       });
 
-      this.following = this.following?.map((follower: any) => {
-        if (follower.id == updatingUser.id) return updatingUser;
+      this.following = this.following?.map((follower: IUser) => {
+        if (follower.id === updatingUser.id) return updatingUser;
         else return follower;
       });
     });
@@ -145,16 +147,15 @@ export class FollowersAndFollowingComponent implements OnInit, OnChanges {
 
   //переход по ссылке на человека
   goToFollowerAccount(uri: string) {
-    this.router
-      .navigateByUrl('/', { skipLocationChange: true })
-      .then(() => this.router.navigate([uri]));
+    this.router.navigateByUrl(uri);
+    this.closeEmitter.emit(true)
   }
 
   filter() {
-    if (this.object == 'followers') {
+    if (this.object === 'followers') {
       if (this.searchQuery) {
         this.followersDisplay = this.followers.filter(
-          (follower: any) =>
+          (follower: IUser) =>
             follower.fullName
               .toLowerCase()
               .includes(this.searchQuery.toLowerCase()) ||
@@ -165,18 +166,18 @@ export class FollowersAndFollowingComponent implements OnInit, OnChanges {
       } else {
         this.followersDisplay = this.followers; // Если поле поиска пустое, показать всех подписчиков
       }
+    } else {
+      if (this.searchQuery) {
+        this.followingDisplay = this.following.filter(
+          (follower: IUser) =>
+            follower.fullName
+              .toLowerCase()
+              .includes(this.searchQuery.toLowerCase()) ||
+            follower.username.toLowerCase().includes(this.searchQuery),
+        );
+      } else {
+        this.followingDisplay = this.following; // Если поле поиска пустое, показать всех подписчиков
+      }
     }
-    else {
-        if (this.searchQuery) {
-          this.followingDisplay = this.following.filter((follower: any) =>
-            follower.fullName.toLowerCase().includes(this.searchQuery.toLowerCase())
-                      || follower.username.toLowerCase().includes(this.searchQuery))
-          
-        } else {
-          this.followingDisplay = this.following; // Если поле поиска пустое, показать всех подписчиков
-        }
-
-    }
-    
   }
 }

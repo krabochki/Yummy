@@ -1,10 +1,9 @@
 import { trigger } from '@angular/animations';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { slide, slideReverse,modal, heightAnim } from 'src/tools/animations';
-import { IUser } from '../../models/users';
+import { IUser, nullUser } from '../../models/users';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { Router } from '@angular/router';
-import localeRu from '@angular/common/locales/ru';
 
 @Component({
   selector: 'app-settings',
@@ -28,14 +27,12 @@ export class SettingsComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
-  ) { 
-    console.log(window.location.host)
-    this.location = 'https://'+ window.location.host;
+  ) {
+    console.log(window.location.host);
+    this.location = 'https://' + window.location.host;
   }
-  
 
-
-  @Input() user: IUser = {};
+  @Input() user: IUser = nullUser;
 
   nightMode = false;
 

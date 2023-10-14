@@ -13,17 +13,17 @@
             <div>
                 <p>Рецепты</p>
                 <ul>
-                    <li (click)="linkClick()" [ngClass]="{'disabling':!currentUser}" routerLink="recipes/yours">Ваши рецепты</li>
+                    <li (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" routerLink="recipes/yours">Ваши рецепты</li>
                     <li  routerLink="recipes">Все рецепты</li>
                     <li routerLink="categories">Все категории</li>
-                    <li (click)="linkClick()" [ngClass]="{'disabling':!currentUser}" routerLink="recipes/favorite">Закладки</li>
+                    <li (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" routerLink="recipes/favorite">Закладки</li>
                     <li  routerLink="recipes/match">Подбор рецептов</li>
                 </ul>
             </div>
             <div>
                 <p>Кулинары</p>
                 <ul>
-                    <li (click)="linkClick()" [ngClass]="{'disabling':!currentUser}" [routerLink]="'cooks/list/'+currentUser?.id">Ваш профиль</li>
+                    <li (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" [routerLink]="'cooks/list/'+currentUser.id">Ваш профиль</li>
                     <li routerLink="cooks">Все кулинары</li>
                     <li routerLink="cooks/updates">Обновления</li>
                 </ul>
@@ -31,8 +31,8 @@
             <div>
                 <p>Другое</p>
                 <ul>
-                    <li routerLink="plan" (click)="linkClick()"  [ngClass]="{'disabling':!currentUser}">План готовки</li>
-                    <li routerLink="about">Об этом сайте</li>
+                    <li routerLink="plan" (click)="linkClick()"  [ngClass]="{'disabling':currentUser.id===0}">План готовки</li>
+                    <li routerLink="about">О сайте</li>
                 </ul>
             </div>
         </div>

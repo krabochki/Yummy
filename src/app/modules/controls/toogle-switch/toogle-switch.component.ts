@@ -8,7 +8,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 export class ToogleSwitchComponent implements OnInit {
   ngOnInit(): void {
     if (this.nightMode) {
-      if (localStorage.getItem('theme') == 'dark') {
+      if (localStorage.getItem('theme') === 'dark') {
         this.checked = true;
       }
     }

@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import { IRecipe } from '../../recipes/models/recipes';
-import { RecipeService } from '../../recipes/services/recipe.service';
 import { IUser } from '../models/users';
 import { HttpClient } from '@angular/common/http';
 
@@ -14,13 +12,13 @@ export class UserService {
 
   url: string = 'http://localhost:3000/users';
 
-  isUserSubscriber(user: any, userId: any) {
+  isUserSubscriber(user: IUser, userId: number) {
     if (!user) return false;
     return user?.followersIds?.includes(userId);
   }
-  getFollowers(users: any, userId: number): IUser[] | null {
-    const user = users.find((user: IUser) => user.id == userId);
-    const followersIds = user.followersIds;
+  getFollowers(users: IUser[], userId: number): IUser[] {
+    const user = users.find((user: IUser) => user.id === userId);
+    const followersIds = user?.followersIds;
 
     if (followersIds) {
       const followers = users.filter((user: IUser) =>
@@ -31,11 +29,11 @@ export class UserService {
       return [];
     }
   }
-  getFollowing(users: any, userId: number): IUser[] | null {
+  getFollowing(users: IUser[], userId: number): IUser[]  {
     const following: IUser[] = [];
     users.forEach((user: IUser) => {
       user.followersIds?.forEach((follower: number) => {
-        if (follower == userId) {
+        if (follower === userId) {
           following.push(user);
         }
       });
@@ -65,10 +63,10 @@ export class UserService {
     });
   }
 
-  getUser(id: any) {
+  getUser(id: number) {
     return this.http.get<IUser>(`${this.url}/${id}`);
   }
-  addFollower(user: IUser, followerId: any) {
+  addFollower(user: IUser, followerId: number) {
     if (user && user.followersIds) {
       if (!user.followersIds.includes(followerId)) {
         user.followersIds.push(followerId);
@@ -77,7 +75,7 @@ export class UserService {
     }
     return;
   }
-  removeFollower(user: IUser, followerId: any) {
+  removeFollower(user: IUser, followerId: number) {
     if (user && user.followersIds) {
       const followerIndex = user.followersIds.indexOf(followerId);
       if (followerIndex !== -1) {

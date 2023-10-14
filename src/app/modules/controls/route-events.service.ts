@@ -23,6 +23,7 @@ export class RouteEventsService {
         filter((e) => e instanceof RoutesRecognized),
         pairwise(),
       )
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .subscribe((event: any[]) => {
         this.previousRoutePath.next(event[0].urlAfterRedirects);
       });

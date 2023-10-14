@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 export class GreetingsComponent {
 
   constructor(private titleService: Title,private router: Router) {
-     router.events.subscribe((val) => {
+     router.events.subscribe(() => {
        window.scrollTo(0,0)
      });
   

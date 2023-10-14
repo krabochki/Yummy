@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Component, ElementRef, HostListener, ViewChild , Input, Output, EventEmitter} from '@angular/core';
 
 @Component({
@@ -57,7 +58,6 @@ export class InputComponent {
   @HostListener('focus', ['$event'])
   onKeyUp(event: Event): void {
     this.inputValueChange.emit(this.value);
-
        if (this.required && !this.warningShow) {
          this.warningShow = true;
        }

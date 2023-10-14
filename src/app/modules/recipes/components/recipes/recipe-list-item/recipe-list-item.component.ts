@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 
 @Component({
@@ -6,7 +6,7 @@ import { IRecipe } from 'src/app/modules/recipes/models/recipes';
   templateUrl: './recipe-list-item.component.html',
   styleUrls: ['./recipe-list-item.component.scss'],
 })
-export class RecipeListItemComponent {
+export class RecipeListItemComponent implements OnInit {
   @Input() recipe?: IRecipe | undefined;
 
   likes?: number = 0;

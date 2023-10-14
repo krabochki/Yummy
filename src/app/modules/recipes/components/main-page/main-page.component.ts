@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ICategory } from 'src/app/modules/recipes/models/categories';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
@@ -11,7 +11,7 @@ import { Title } from '@angular/platform-browser';
   templateUrl: './main-page.component.html',
   styleUrls: ['./main-page.component.scss']
 })
-export class MainPageComponent {
+export class MainPageComponent implements OnInit {
   allRecipes: IRecipe[] = [];
   allCategories: ICategory[] = [];
   popularRecipes: IRecipe[] = [];

@@ -1,10 +1,9 @@
 import {
   Router,
-  RouterStateSnapshot,
   ActivatedRouteSnapshot,
 } from '@angular/router';
 import { Injectable } from '@angular/core';
-import { Observable, of, catchError, EMPTY } from 'rxjs';
+import { Observable, catchError, EMPTY } from 'rxjs';
 import { IRecipe } from '../models/recipes';
 import { RecipeService } from './recipe.service';
 
@@ -17,7 +16,6 @@ export class RecipeResolver {
 
   resolve(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot,
   ): Observable<IRecipe> {
     return this.recipeService.getRecipe(route.params?.['id']).pipe(
       catchError(() => {

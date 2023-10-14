@@ -1,3 +1,5 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <div class="container">
   <div class="content">
     <div class="block-1">
@@ -24,8 +26,8 @@
         class="search-button"
         [ngClass]="{
           disabled:
-            (this.object === 'followers' && followers.length == 0) ||
-            (this.object === 'following' && following.length == 0)
+            (this.object === 'followers' && followers.length === 0) ||
+            (this.object === 'following' && following.length === 0)
         }"
         [@magnifier]="searchMode ? 'open' : 'closed'"
         (click)="searchOnOff()"
@@ -62,7 +64,7 @@
       <hr />
       <ng-template #followingBlock>
         <div class="template">
-          <div *ngIf="following.length == 0" class="nofollow">
+          <div *ngIf="following.length === 0" class="nofollow">
             <p>Этот кулинар пока ни на кого не подписался :(</p>
 
                      <svg-icon
@@ -80,7 +82,7 @@
 
           <div
             class="nofollow"
-            *ngIf="following.length > 0 && followingDisplay.length == 0"
+            *ngIf="following.length > 0 && followingDisplay.length === 0"
           >
             Подписок по вашему запросу не найдено :( <br />
             Попробуйте изменить параметры поиска
@@ -112,8 +114,8 @@
               <p>{{ "@" + follower.username }}</p>
             </div>
             <div class="column">
-              <app-button [disabled]="!(this.currentUser?.id===0)"
-                *ngIf="follower.id != currentUser?.id"
+              <app-button [disabled]="!(this.currentUser.id===0)"
+                *ngIf="follower.id !== currentUser?.id"
                 (click)="
                   currentUserFollowingIds.includes(follower.id)
                     ? unfollow(follower)
@@ -121,12 +123,12 @@
                 "
                 [color]="'prim'"
                 [text]="
-                  currentUserFollowingIds?.includes(follower.id)
+                  currentUserFollowingIds.includes(follower.id)
                     ? 'Отписаться'
                     : 'Подписаться'
                 "
                 [style]="
-                  currentUserFollowingIds?.includes(follower.id)
+                  currentUserFollowingIds.includes(follower.id)
                     ? 'outlined'
                     : 'filled'
                 "
@@ -139,7 +141,7 @@
       </ng-template>
       <div *ngIf="object === 'followers'; else followingBlock">
         <div class="template">
-          <div *ngIf="followers.length == 0" class="nofollow">
+          <div *ngIf="followers.length === 0" class="nofollow">
            <p> У этого кулинара пока нет подписчиков :(</p>
 
            
@@ -157,7 +159,7 @@
           </div>
           <div
             class="nofollow"
-            *ngIf="followers.length > 0 && followersDisplay.length == 0"
+            *ngIf="followers.length > 0 && followersDisplay.length === 0"
           >
            <p>
               Подписчиков по вашему запросу не найдено :( <br />
@@ -192,8 +194,8 @@
               <p>{{ "@" + follower.username }}</p>
             </div>
             <div class="column">
-              <app-button [disabled]="!(this.currentUser?.id===0)"
-                *ngIf="follower.id != currentUser?.id"
+              <app-button [disabled]="!(this.currentUser.id===0)"
+                *ngIf="follower.id !== currentUser?.id"
                 (click)="
                   currentUserFollowingIds.includes(follower.id)
                     ? unfollow(follower)
@@ -201,12 +203,12 @@
                 "
                 [color]="'prim'"
                 [text]="
-                  currentUserFollowingIds?.includes(follower.id)
+                  currentUserFollowingIds.includes(follower.id)
                     ? 'Отписаться'
                     : 'Подписаться'
                 "
                 [style]="
-                  currentUserFollowingIds?.includes(follower.id)
+                  currentUserFollowingIds.includes(follower.id)
                     ? 'outlined'
                     : 'filled'
                 "

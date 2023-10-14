@@ -12,14 +12,13 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
   
-    if (localStorage.getItem('theme') =='dark') {
+    if (localStorage.getItem('theme') ==='dark') {
           document.body.classList.add('dark-mode');
         } else {
           localStorage.setItem('theme', 'light');
         }
 
 }
-  title = 'yummy';
 
   height = 0;
 

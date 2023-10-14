@@ -1,6 +1,5 @@
 import { trigger, transition, style, animate } from '@angular/animations';
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { AuthService } from '../../authentication/services/auth.service';
+import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
 import { modal } from 'src/tools/animations';
 import { Router } from '@angular/router';
 

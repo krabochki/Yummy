@@ -1,12 +1,8 @@
-import { trigger, transition, style, animate } from '@angular/animations';
 import {
   Component,
-  ComponentFactoryResolver,
-  ComponentRef,
   EventEmitter,
   Input,
   Output,
-  ViewContainerRef,
 } from '@angular/core';
 
 @Component({

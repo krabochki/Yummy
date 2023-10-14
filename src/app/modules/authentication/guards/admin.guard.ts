@@ -1,10 +1,4 @@
 import { Injectable, Inject } from '@angular/core';
-import {
-  CanActivate,
-  CanActivateChild,
-  ActivatedRouteSnapshot,
-  RouterStateSnapshot,
-} from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 @Injectable()
@@ -13,7 +7,7 @@ export class AdminGuard  {
 
   canActivate(
   ): boolean {
-    return this.auth.role == 'admin';
+    return this.auth.role === 'admin';
   }
 
 }

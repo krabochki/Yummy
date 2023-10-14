@@ -1,6 +1,4 @@
-import { IUser } from '../../user-pages/models/users';
 import { IComment } from 'src/app/modules/user-pages/models/comments';
-import { ICategory } from './categories';
 
 export interface IRecipe {
   id: number; // Уникальный идентификатор рецепта

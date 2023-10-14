@@ -1,7 +1,5 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
-import { Subscription } from 'rxjs';
-import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
 
 @Component({
   selector: 'app-recipe-list',
@@ -11,6 +9,4 @@ import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
 })
 export class RecipeListComponent {
   @Input() recipes?: IRecipe[];
-
-  constructor() {}
 }

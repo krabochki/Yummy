@@ -73,7 +73,7 @@ const routes: Routes = [
         component: SomeRecipesPageComponent,
       },
       {
-        path: 'recipes/match',
+        path: 'match',
         component: MatchRecipesComponent,
       },
     ],

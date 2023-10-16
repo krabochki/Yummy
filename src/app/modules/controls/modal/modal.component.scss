@@ -1,4 +1,4 @@
-@import '../../../../tools/UI/UI.scss';
+@import "../../../../tools/UI/UI.scss";
 .modal-dialog {
   display: flex;
   justify-content: center;
@@ -12,7 +12,7 @@
   z-index: 9999;
 }
 
-hr{
+hr {
   height: 1px;
   background-color: var(--modal);
   opacity: 0.2;
@@ -21,25 +21,23 @@ hr{
 .modal-content {
   background: var(--color-background);
   max-width: 30em;
- 
+
   border-radius: var(--space-m);
   box-shadow: 0 3px 8px var(--modal-black);
   text-align: center;
   display: flex;
   flex-direction: column;
-    row-gap: var(--space-m);
+  row-gap: var(--space-m);
 
-    padding:var(--space-xxl) var(--space-xxl);
+  padding: var(--space-xxl) var(--space-xxl);
 
   h4 {
-  font-size: var(--font-l);
+    font-size: var(--font-l);
     line-height: 1;
 
-  font-family: var(--font-family-accent);
+    font-family: var(--font-family-accent);
+  }
 }
-}
-
-
 
 .modal-body {
   line-height: 1;
@@ -47,47 +45,37 @@ hr{
 
 .modal-footer {
   display: flex;
+  align-items: center;
   column-gap: var(--space-m);
   justify-content: center;
 }
 
-@media(max-width:768px){
-
-  .modal-content{
-      max-width: 25em;
-
+@media (max-width: 768px) {
+  .modal-content {
+    max-width: 25em;
   }
 }
-@media(max-width:480px){
-
-  
-
- 
-
+@media (max-width: 480px) {
   .modal-footer {
-    flex-direction: column;
-  row-gap: var(--space-s);
-}
+    column-gap: var(--space-s);
+  }
   .modal-dialog {
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--modal);
-  z-index: 9999;
-}
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--modal);
+    z-index: 9999;
+  }
 
-  .modal-content{
-      max-width: 100%;
-          padding:var(--space-xxl) var(--space-xxl);
+  .modal-content {
+    max-width: 100%;
+    padding: var(--space-xxl) var(--space-xxl);
 
-  border-radius: var(--space-2xl) var(--space-2xl) 0 0;
-
-
-
+    border-radius: var(--space-2xl) var(--space-2xl) 0 0;
   }
 }

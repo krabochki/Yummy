@@ -7,8 +7,8 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
+import { Subscription, filter } from 'rxjs';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { modal } from 'src/tools/animations';
@@ -77,7 +77,7 @@ export class HeaderComponent implements OnInit, DoCheck {
   @HostListener('window:resize', ['$event'])
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onResize(event: any) {
-    if (event.target.innerWidth <= 480) {
+    if (event.target.innerWidth <= 481) {
       this.mobile = true;
     } else {
       this.mobile = false;
@@ -90,10 +90,36 @@ export class HeaderComponent implements OnInit, DoCheck {
     this.headerHeightChange.emit(height);
   }
 
+
+  activePage: 'cooks' | 'recipes' | 'match' | 'main' = 'main';
   constructor(
     public authService: AuthService,
     private router: Router,
-  ) {}
+  ) {
+
+     this.router.events
+       .pipe(filter((event) => event instanceof NavigationEnd))
+       .subscribe(() => {
+         const currentUrl = this.router.url;
+         if (currentUrl.includes('recipes')) {
+           this.activePage = 'recipes';
+         } else if (currentUrl.includes('cooks')) {
+           this.activePage = 'cooks';
+         } else if (currentUrl.includes('match')) {
+           this.activePage = 'match';
+         }
+         else if (currentUrl.includes('plan')) {
+           this.activePage = 'recipes';
+
+           }
+         else if (currentUrl === '/') {
+           this.activePage = 'main';
+         }
+       });
+  }
+  updateImageSrc() {
+    throw new Error('Method not implemented.');
+  }
 
   noAccessModalShow = false;
 

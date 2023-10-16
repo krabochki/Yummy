@@ -1,12 +1,59 @@
-h3{
-    text-align: center;
-    font-weight: 600;
-    font-size: 1.5em;
-    margin-bottom: 1em;
+@import '../../../../../tools/UI/UI.scss';
 
+h3 {
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.5em;
+  margin-bottom: 1em;
 }
-h1{
-    text-align: center;
-    font-weight: 800;
-    font-size: 2em;
+
+
+.recipes {
+  padding: 1.7em calc(14.4vw + 0 * (100vw - 768px) / 760);
+
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  ::after {
+    margin: 1.7em calc(14.4vw + 0 * (100vw - 768px) / 760);
+
+    height: 15em;
+    width: 15%;
+    background: linear-gradient(to right, transparent, var(--color-background));
+
+    right: 0;
+    top: 0;
+    content: "";
+    position: absolute;
+    pointer-events: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .recipes {
+    ::after {
+      width: 33%;
+      height: 13em;
+      right: 0;
+      top: 0;
+      content: "";
+      position: absolute;
+      pointer-events: none;
+    }
+  }
+}
+
+@media (max-width: 700px) {
+  .recipes {
+    ::after {
+      all: unset;
+    }
+  }
+}
+
+@media (max-width: 530px) {
+  .recipes {
+    padding: calc(10.4px + 25.6 * (100vw - 320px) / 160);
+    padding-right: 0;
+  }
 }

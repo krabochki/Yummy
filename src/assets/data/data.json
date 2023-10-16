@@ -31,7 +31,7 @@
     {
       "id": 1,
       "mainPhotoUrl": "url_1.jpg",
-      "name": "Рецепт 1",
+      "name": "Экзотический фруктовый салат",
       "description": "Описание рецепта 1",
       "preparationTime": "30 минут",
       "servings": 4,
@@ -81,7 +81,6 @@
         202,
         211,
         2,
-        1,
         4,
         3
       ],
@@ -95,12 +94,15 @@
           "authorId": 401
         }
       ],
-      "publicationDate": "2023-03-15"
+      "publicationDate": "2023-03-15",
+      "favoritesId": [
+        1
+      ]
     },
     {
       "id": 2,
       "mainPhotoUrl": "url_2.jpg",
-      "name": "Рецепт 2",
+      "name": "Сочный стейк по-американски с добавлением куркумы и перца",
       "description": "Описание рецепта 2",
       "preparationTime": "45 минут",
       "servings": 2,
@@ -143,15 +145,15 @@
       ],
       "authorId": 6,
       "likesId": [
-        202,
-        301,
-        292,
-        202,
-        211
+        2,
+        3,
+        5,
+        1
       ],
       "cooksId": [
         402,
-        403
+        403,
+        2
       ],
       "comments": [
         {
@@ -160,7 +162,8 @@
           "authorId": 402
         }
       ],
-      "publicationDate": "2023-03-14"
+      "publicationDate": "2023-03-14",
+      "favoritesId": []
     },
     {
       "id": 3,
@@ -213,7 +216,8 @@
       "likesId": [],
       "cooksId": [],
       "comments": [],
-      "publicationDate": "2023-03-13"
+      "publicationDate": "2023-03-13",
+      "favoritesId": []
     },
     {
       "id": 4,
@@ -275,7 +279,8 @@
           "authorId": 401
         }
       ],
-      "publicationDate": "2023-03-12"
+      "publicationDate": "2023-03-12",
+      "favoritesId": []
     },
     {
       "id": 5,
@@ -331,14 +336,15 @@
         202,
         211,
         2,
-        1,
         4,
         3,
         32,
-        43
+        43,
+        1
       ],
       "cooksId": [
-        401
+        401,
+        1
       ],
       "comments": [
         {
@@ -347,7 +353,8 @@
           "authorId": 401
         }
       ],
-      "publicationDate": "2023-03-11"
+      "publicationDate": "2023-03-11",
+      "favoritesId": []
     },
     {
       "id": 6,
@@ -409,7 +416,8 @@
           "authorId": 401
         }
       ],
-      "publicationDate": "2023-03-20"
+      "publicationDate": "2023-03-20",
+      "favoritesId": []
     },
     {
       "id": 7,
@@ -471,7 +479,8 @@
           "authorId": 401
         }
       ],
-      "publicationDate": "2023-03-21"
+      "publicationDate": "2023-03-21",
+      "favoritesId": []
     },
     {
       "id": 8,
@@ -524,7 +533,8 @@
         301
       ],
       "cooksId": [
-        401
+        401,
+        1
       ],
       "comments": [
         {
@@ -533,7 +543,8 @@
           "authorId": 401
         }
       ],
-      "publicationDate": "2023-03-22"
+      "publicationDate": "2023-03-22",
+      "favoritesId": []
     },
     {
       "id": 9,
@@ -595,7 +606,10 @@
           "authorId": 401
         }
       ],
-      "publicationDate": "2023-03-23"
+      "publicationDate": "2023-03-23",
+      "favoritesId": [
+        1
+      ]
     },
     {
       "id": 10,
@@ -657,7 +671,8 @@
           "authorId": 401
         }
       ],
-      "publicationDate": "2023-03-24"
+      "publicationDate": "2023-03-24",
+      "favoritesId": []
     },
     {
       "id": 11,
@@ -718,7 +733,8 @@
           "text": "Отличный рецепт!",
           "authorId": 401
         }
-      ]
+      ],
+      "favoritesId": []
     },
     {
       "id": 12,
@@ -779,7 +795,8 @@
           "text": "Отличный рецепт!",
           "authorId": 401
         }
-      ]
+      ],
+      "favoritesId": []
     }
   ],
   "users": [
@@ -789,7 +806,7 @@
       "description": "Всем привет. Я журналист, телеведущий, шеф-повар, автор ТВ-программы «Готовим с Алексеем Зиминым», куратор гастрономического фестиваля «Праздник Еды», главный редактор русскоязычного журнала ZIMA Magazine, автор бестселлеров «Единицы условности», «Кухня супермаркета», «Кухня рынка» и «Кухня навсегда». Буду рад видеть вас у себя в подписчиках.",
       "quote": "Когда вы допустили столько же ошибок, сколько и я, вы можете быть так же хороши, как и я.",
       "email": "alexey@example.com",
-      "password": "password1",
+      "password": "Password300",
       "fullName": "Алексей Зимин",
       "followersIds": [
         2,

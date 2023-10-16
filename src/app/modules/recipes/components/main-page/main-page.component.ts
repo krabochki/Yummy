@@ -9,7 +9,7 @@ import { Title } from '@angular/platform-browser';
 @Component({
   selector: 'app-main-page',
   templateUrl: './main-page.component.html',
-  styleUrls: ['./main-page.component.scss']
+  styleUrls: ['./main-page.component.scss'],
 })
 export class MainPageComponent implements OnInit {
   allRecipes: IRecipe[] = [];
@@ -22,10 +22,10 @@ export class MainPageComponent implements OnInit {
   constructor(
     private recipeService: RecipeService,
     private categoryService: CategoryService,
-    private titleService: Title
+    private titleService: Title,
   ) {
-    this.titleService.setTitle('Yummy')
-   }
+    this.titleService.setTitle('Yummy');
+  }
 
   ngOnInit(): void {
     this.recipesSubscription = this.recipeService
@@ -33,21 +33,21 @@ export class MainPageComponent implements OnInit {
       .subscribe((recipesData) => {
         this.allRecipes = recipesData;
 
-        console.log(recipesData)
+        console.log(recipesData);
 
+        this.popularRecipes = this.recipeService
+          .getPopularRecipes(recipesData)
+          .slice(0, 10);
 
-        this.popularRecipes = this.recipeService.getPopularRecipes(recipesData).slice(0, 4);
-
-        this.recentRecipes = this.recipeService.getRecentRecipes(recipesData).slice(0, 6);
+        this.recentRecipes = this.recipeService
+          .getRecentRecipes(recipesData)
+          .slice(0, 10);
 
         this.categoriesSubscription = this.categoryService
           .getCategories()
           .subscribe((recipesData) => {
             this.allCategories = recipesData;
           });
-    
-      
-      })
+      });
   }
-
 }

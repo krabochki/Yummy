@@ -1,15 +1,110 @@
-.recipe-list{
+@import "../../../../../../tools/UI/UI.scss";
 
-    margin:0 auto;
-    display: grid;
-    grid-auto-flow: column;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    row-gap:0.5rem;
-    column-gap:0.5rem;
-    max-width:65vw;
-    position: relative;
-    overflow-x:scroll;
-    grid-template-rows: repeat(1, 1fr); /* Задаем две строки */
-    scroll-snap-type: x mandatory;
-    
+.recipe-list {
+  margin: 0 auto;
+  display: grid;
+  grid-auto-flow: column;
+  row-gap: 1rem;
+  column-gap: 1rem;
+  width: 100%;
+  position: relative;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  padding-bottom: 0.5em;
+  scroll-snap-type: x mandatory;
+  grid-auto-flow: column;
+  display: grid;
+  grid-template-rows: 1fr;
+
+  grid-auto-columns: calc(25% - 0.85em);
+
+  scroll-behavior: smooth;
+  &::-webkit-scrollbar {
+    width: 12px;
+  }
+  &::-webkit-scrollbar-track {
+    border-radius: 20px;
+    background: var(--scroll-body);
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--scroll-thumb);
+    border-radius: 20px;
+    border: 3px solid var(--scroll-body);
+  }
+}
+
+.svg-arrow {
+  height: 3em;
+  margin-right: 0.7em;
+  width: 2em;
+  pointer-events: all;
+
+  stroke-width: 2em;
+  display: block;
+  stroke: var(--scroll-thumb);
+}
+
+.right {
+  margin-right: 0.2em;
+}
+
+.wrap {
+  position: relative;
+
+  .scroll-left {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    height: fit-content;
+    margin: auto;
+    right: -3em;
+
+    pointer-events: none;
+    z-index: 1;
+  }
+  .scroll-right {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    left: -3em;
+    pointer-events: none;
+
+    transform: scale(-1, -1);
+
+    z-index: 1;
+  }
+}
+
+app-recipe-list-item {
+  scroll-snap-align: start;
+}
+
+@media (max-width: 1200px) {
+  .recipe-list {
+    grid-auto-columns: calc(33.3% - 0.3em);
+    column-gap: 0.5rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .recipe-list {
+    grid-auto-columns: calc(50% - 0.3em);
+    column-gap: 0.5rem;
+    grid-template-rows: 1fr 1fr;
+  }
+}
+
+@media (max-width: 530px) {
+  .recipe-list {
+    grid-auto-columns: unset;
+
+    padding-right: calc(10.4px + 25.6 * (100vw - 320px) / 160);
+
+    column-gap: 0.5rem;
+    grid-template-rows: 1fr;
+    &::-webkit-scrollbar {
+      display: none; /* Safari and Chrome */
+    }
+  }
 }

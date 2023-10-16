@@ -1,9 +1,61 @@
-<div class="recipe">
-    <h4>{{recipe?.name}}</h4>
-    
-    
-   <div class="rate-panel"> <p class="rate-item">{{cooks}}</p><p class="rate-item">{{likes}} ♡</p></div>
-
-   <h4>{{recipe?.publicationDate}}</h4>
-
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="recipe" [title]="recipe.name">
+  <div class="top">
+    <div (click)="makeThisRecipeFavorite()" class="fav">
+      <svg-icon
+        [src]="
+          '../../../../../assets/images/svg/' +
+          (isRecipeFavorite ? 'fav-fill' : 'fav') +
+          '.svg'
+        "
+        [applyClass]="true"
+        class="fav-icon"
+      ></svg-icon>
+    </div>
+  </div>
+  <div class="bottom">
+    <div class="title">
+      <h1 [routerLink]="'/recipes/list/'+recipe.id">{{ recipe.name }}</h1>
+    </div>
+    <div class="rate-panel">
+      <div class="rate-item likes" (click)="likeThisRecipe()">
+        <svg-icon
+          [src]="
+            '../../../../../assets/images/svg/' +
+            (isRecipeLiked ? 'like-fill' : 'like') +
+            '.svg'
+          "
+          [applyClass]="true"
+          [class]="isRecipeLiked ? 'like-icon liked' : 'like-icon'"
+        ></svg-icon>
+        <span [ngClass]="{ 'liked': isRecipeLiked }">{{ recipe.likesId.length }}</span>
+      </div>
+      <div  class="rate-item cooks" (click)="cookThisRecipe()">
+        <svg-icon 
+          [src]="
+            '../../../../../assets/images/svg/' +
+            (isRecipeCooked ? 'cook-fill' : 'cook') +
+            '.svg'
+          "
+          [applyClass]="true"
+          [class]="isRecipeCooked ? 'cook-icon cooked' : 'cook-icon'"
+        ></svg-icon>
+        <span [ngClass]="{ 'cooked': isRecipeCooked }">{{  recipe.cooksId.length }}</span>
+      </div>
+    </div>
+  </div>
 </div>
+
+
+
+<app-modal
+  @modal
+  *ngIf="noAccessModalShow"
+  [style]="'prim'"
+  [title]="'Доступ к функции ограничен'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleNoAccessModal($event)"
+  [buttonsText]="['Давайте','Не сейчас']"
+  [description]="'Взаимодействовать с рецептами могут только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'"
+></app-modal>

@@ -1,35 +1,182 @@
+@import "../../../../../../tools/UI/UI.scss";
 
+.recipe {
+  background-image: url("../../../../../../assets/images/svg/pancakes.png");
 
-.recipe{
-    background-color: gray;
+  box-shadow: inset 0 -7em 4em rgba($color: #000000, $alpha: 0.7);
+  scroll-snap-align: start;
+  padding: 1rem 1rem;
+  overflow-x: hidden;
+  background-size: cover;
+  height: 15em;
+  border-radius: 1.5em;
+  align-items: stretch;
+  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%; /* 4 колонки внутри грида */
+  * {
+    color: #fff;
+  }
 
-    scroll-snap-align: start;
+  .bottom {
+    width: 100%;
+    justify-self: flex-end;
+    align-self: flex-end;
+  }
 
-   backdrop-filter: blur(12px) brightness(105%);
-   padding: 1rem 1.5rem;
-   overflow-x: hidden;
-   width:12.5rem;
-  height:12em;
-  flex-direction: column;
-  display: flex;
+  .top {
+    justify-self: flex-end;
+    align-self: start;
+    width: 100%;
+  }
+  .fav {
+    border-radius: 100%;
+    margin-left: auto;
 
-    .rate-panel{
-        display: flex;
-        
-        column-gap: 5px;
+    background-color: var(--color-primary);
+    height: 2em;
+    width: 2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 
-
-        .rate-item{
-            background-color: white;
-            width:1.8em;
-            letter-spacing: -2px;
-            font-size: 0.8em;
-            height:1.8em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 100%;
-
-        }
+    .fav-icon {
+      fill: white;
+      height: 1.3em;
     }
+  }
+  .rate-panel {
+    display: flex;
+    z-index: 100;
+    column-gap: 1em;
+
+    span {
+      &.cooked {
+        color: var(--color-secondary);
+        font-weight: 700;
+      }
+
+      &.liked {
+        color: var(--color-primary);
+        font-weight: 700;
+      }
+    }
+    .rate-item {
+      cursor: pointer;
+      display: flex;
+
+      column-gap: 0.5em;
+      justify-content: center;
+      border-radius: 100%;
+
+      align-items: flex-end;
+      line-height: 1;
+    }
+    .like-icon {
+      fill: white;
+      transition: 0.3s ease-in-out;
+      height: 1em;
+      margin-bottom: 0.04em;
+      &.liked {
+        fill: var(--color-primary);
+      }
+    }
+    .cook-icon {
+      fill: white;
+      height: 1.1em;
+
+      &.cooked {
+        fill: var(--color-secondary);
+      }
+    }
+  }
+
+  .title {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 0.75em;
+  }
+  h1 {
+    cursor: pointer;
+
+    font-size: var(--font-m);
+    line-height: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 600;
+    padding-bottom: 0.2em;
+  }
+}
+
+@keyframes myAnimation {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(0.9);
+  }
+  75% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+app-modal {
+  position: fixed;
+  z-index: 20;
+}
+
+@media (max-width: 900px) {
+  .recipe {
+    box-shadow: inset 0 -7em 4em rgba($color: #000000, $alpha: 0.5);
+
+    height: 13em;
+    h1 {
+      font-size: 1.1em;
+      padding-bottom: 0.2em;
+    }
+    .rate-panel,
+    .fav {
+      zoom: 0.9;
+    }
+    .title {
+      margin-bottom: 0.4em;
+    }
+  }
+}
+
+@media (max-width: 700px) {
+  .recipe {
+    box-shadow: inset 0 -7em 4em rgba($color: #000000, $alpha: 0.5);
+
+    height: 14em;
+    h1 {
+      font-size: 1.3em;
+
+      padding-bottom: 0.2em;
+    }
+    .rate-panel,
+    .fav {
+      zoom: 1;
+    }
+    .title {
+      margin-bottom: 0.4em;
+    }
+  }
+}
+
+@media (max-width: 530px) {
+  .recipe {
+    width: 12em;
+  }
 }

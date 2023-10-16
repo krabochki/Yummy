@@ -15,6 +15,8 @@ import { MainPageComponent } from './components/main-page/main-page.component';
 import { CategoryListComponent } from './components/categories/category-list/category-list.component';
 import { CategoryListItemComponent } from './components/categories/category-list-item/category-list-item.component';
 import { RecipeListItemComponent } from './components/recipes/recipe-list-item/recipe-list-item.component';
+import { SvgIconComponent, provideAngularSvgIcon } from 'angular-svg-icon';
+import { ControlsModule } from '../controls/controls.module';
 @NgModule({
   declarations: [
     RecipesComponent,
@@ -33,8 +35,9 @@ import { RecipeListItemComponent } from './components/recipes/recipe-list-item/r
 
 
   ],
-  imports: [CommonModule, RecipesRoutingModule],
-  providers: [AuthGuard],
-  exports:[RecipeListComponent]
+  imports: [CommonModule, RecipesRoutingModule, SvgIconComponent, ControlsModule],
+  providers: [AuthGuard, provideAngularSvgIcon()],
+  exports: [RecipeListComponent]
+  
 })
 export class RecipesModule {}

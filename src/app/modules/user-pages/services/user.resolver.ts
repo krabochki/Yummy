@@ -4,7 +4,7 @@ import {
 } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, EMPTY } from 'rxjs';
-import { IUser } from '../models/users';
+import { IUser, nullUser } from '../models/users';
 import { UserService } from './user.service';
 
 @Injectable({ providedIn: 'root' })
@@ -15,7 +15,7 @@ export class UserResolver {
   ) {}
 
 
-     currentUser?: IUser | null ;
+     currentUser: IUser = nullUser  ;
 
   resolve (
     route: ActivatedRouteSnapshot,
@@ -23,7 +23,7 @@ export class UserResolver {
 
     
 
-    if (route.params?.['id'] === 'null') {
+    if (route.params?.['id'] === '0') {
              return EMPTY;
       
     }

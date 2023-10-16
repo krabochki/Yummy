@@ -1,10 +1,17 @@
 
+<app-banner [notMain]="false"  [background]="'main-banner-background'"  [link]="'recipes/match'" [label]="'Готовьте с радостью\nЕшьте с удовольствием'" [buttonText]="'Подобрать рецепт'"></app-banner>
 
 <div class="recipes"><app-recipe-list [context]="'popular'" [recipes]="popularRecipes"></app-recipe-list></div>
+
+<app-category-list  [categories]="allCategories"></app-category-list>
+
+
+<app-banner  *ngIf="currentUser.id === 0" [link]="'greetings'" [info]="'Получи преимущества и расширенные функции зарегистрированных кулинаров'" [label]="'Откроем мир вкуса вместе'" [buttonText]="'Создать аккаунт'" [background]="'reg-banner-background'"></app-banner>
+
+<app-banner  *ngIf="currentUser.id !== 0" [link]="'recipes/add'" [info]="'Добавляйте подробные проверенные временем рецептом и делитесь опытом с другими кулинарами'" [label]="'Добавляйте рецепты и делитесь ими'" [buttonText]="'Создать рецепт'" [background]="'share-recipes-banner-background'"></app-banner>
+
 
 <div class="recipes">
     <app-recipe-list  [context]="'recent'" [recipes]="recentRecipes"></app-recipe-list>
     
 </div>
-<h3>Категории</h3>
-<app-category-list  [categories]="allCategories"></app-category-list>

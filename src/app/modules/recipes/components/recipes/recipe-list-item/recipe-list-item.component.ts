@@ -23,6 +23,8 @@ export class RecipeListItemComponent implements OnInit {
   isRecipeLiked: boolean = false;
   isRecipeCooked: boolean = false;
 
+  dataLoaded = false;
+
   currentUserId = 0;
 
   constructor(
@@ -52,6 +54,9 @@ export class RecipeListItemComponent implements OnInit {
               );
             }
           }
+
+          
+          this.dataLoaded = true;
         });
         //
       });

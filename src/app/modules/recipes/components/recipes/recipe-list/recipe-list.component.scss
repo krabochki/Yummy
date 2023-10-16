@@ -96,6 +96,9 @@ app-recipe-list-item {
 }
 
 @media (max-width: 530px) {
+  .scroll-left,.scroll-right{
+    display: none;
+  }
   .recipe-list {
     grid-auto-columns: unset;
 

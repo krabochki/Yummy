@@ -1,6 +1,13 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<div class="recipe" [title]="recipe.name">
+
+
+<ng-template #sceleton >
+
+  <div class="recipe sceleton" ></div>
+
+</ng-template>
+<div  *ngIf="dataLoaded; else sceleton"  class="recipe" [title]="recipe.name">
   <div class="top">
     <div (click)="makeThisRecipeFavorite()" class="fav">
       <svg-icon

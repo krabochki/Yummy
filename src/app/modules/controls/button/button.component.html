@@ -1,3 +1,4 @@
 <button  [ngClass]="getClass()" [disabled]="!disabled">
     {{text}}
+    <svg-icon *ngIf="style==='banner'" class="svg-arrow" [applyClass]="true" [src]="'../../../../../assets/images/svg/banner-button-arrow.svg'"></svg-icon>
 </button>

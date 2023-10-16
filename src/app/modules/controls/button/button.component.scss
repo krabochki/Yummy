@@ -71,6 +71,10 @@ button.filled-min.sec {
 }
 
 button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 0.7em;
   padding: var(--space-s) var(--space-m);
   font-weight: 700;
   min-width: 9em;
@@ -130,3 +134,34 @@ button.outlined {
   border-radius: var(--space-s);
 }
 
+
+
+button.banner{
+
+
+  min-width: fit-content;
+  
+
+ 
+    padding: 0.65em 1em;
+
+    border: 4px solid white;
+    line-height: 1;
+    font-size: var(--font-l);
+    background-color: rgba($color: white, $alpha: 0.1);
+    font-weight: 900; 
+    letter-spacing: 2px;
+    transition: letter-spacing 0.3s ease-in-out;
+
+    &:hover{
+      scale: 1;
+      letter-spacing: 3px;
+      background-color: rgba($color: white, $alpha: 0.15);
+    }
+
+}
+
+.svg-arrow{
+  fill: white;
+  width:0.8em;
+}

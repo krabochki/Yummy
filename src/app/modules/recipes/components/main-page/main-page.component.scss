@@ -30,6 +30,7 @@ h3 {
 }
 
 @media (max-width: 900px) {
+
   .recipes {
     ::after {
       width: 33%;
@@ -52,6 +53,8 @@ h3 {
 }
 
 @media (max-width: 530px) {
+
+
   .recipes {
     padding: calc(10.4px + 25.6 * (100vw - 320px) / 160);
     padding-right: 0;

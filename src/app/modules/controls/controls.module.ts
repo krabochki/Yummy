@@ -14,6 +14,7 @@ import { ShareIconsModule } from 'ngx-sharebuttons/icons';
 import { SvgIconComponent,provideAngularSvgIcon } from 'angular-svg-icon';
 
 import { SocialButtonComponent } from './social-button/social-button.component';
+import { BannerComponent } from './banner/banner.component';
 @NgModule({
   declarations: [
     ButtonComponent,
@@ -24,6 +25,7 @@ import { SocialButtonComponent } from './social-button/social-button.component';
     PluralRuDirective,
     ToogleSwitchComponent,
     SocialButtonComponent,
+    BannerComponent,
     
   ],
   imports: [
@@ -42,6 +44,7 @@ import { SocialButtonComponent } from './social-button/social-button.component';
     ToogleSwitchComponent,
     PluralRuDirective,
     SocialButtonComponent,
+    BannerComponent
   ],
   providers: [
     provideAngularSvgIcon()

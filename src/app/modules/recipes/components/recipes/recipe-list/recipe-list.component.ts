@@ -15,6 +15,8 @@ export class RecipeListComponent {
   @ViewChild('list')
   list: ElementRef | null = null;
 
+  
+
   scrollLeft() {
     if (this.list)
       this.list.nativeElement.scrollLeft -=

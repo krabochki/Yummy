@@ -1,0 +1,13 @@
+
+<div class="banner" [class.not-main]="notMain" [style.background-image]="'url(../../../../assets/images/' + background +'.jpg)'">
+    
+    
+   <div class="content" >
+        <div class="wrap">
+            <p class="label" [innerHTML]="formattedLabel"></p>
+            <p class="info" *ngIf="info">{{info}}</p>
+            
+            <app-button [routerLink]="link?link:null" [text]="buttonText" [rounded]="false" [style]="'banner'"></app-button>
+        </div>
+   </div>
+</div>

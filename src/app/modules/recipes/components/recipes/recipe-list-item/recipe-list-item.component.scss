@@ -1,5 +1,16 @@
 @import "../../../../../../tools/UI/UI.scss";
 
+
+@keyframes loading {
+    0% {
+      background-position: -100px;
+    }
+  
+    100% {
+  background-position: 200px;
+    }
+  }
+
 .recipe {
   background-image: url("../../../../../../assets/images/svg/pancakes.png");
 
@@ -15,6 +26,25 @@
   display: grid;
   grid-template-columns: 1fr;
   width: 100%; /* 4 колонки внутри грида */
+
+  &.sceleton{
+
+    box-shadow: none;
+
+                animation: loading 1.7s infinite linear;
+            background: #dedfe1;
+        background-image: -webkit-linear-gradient(to right, #dedfe1 0%, #f2f3f5 20%, #dedfe1 40%, #dedfe1 100%);
+        background-image: linear-gradient(to right, #dedfe1 0%, #f2f3f5 20%, #dedfe1 40%, #dedfe1 100%);
+        background-repeat: no-repeat;
+
+        color:transparent !important;
+
+    }
+
+
+
+
+  
   * {
     color: #fff;
   }

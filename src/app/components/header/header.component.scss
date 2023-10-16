@@ -101,26 +101,21 @@ p {
       font-size: 1.75em;
     }
 
-    .svg-button {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      margin: auto 0;
-      left: 0;
-      margin-left: calc(
-        (38px / 1.25) + ((70 / 1.25) - (38 / 1.25)) *
-          ((100vw - 480px) / (900 - 480))
-      );
+    .buttons{
+      pointer-events: none;
+      margin: auto;
+      align-items: center;
 
-      &:last-of-type {
-        left: unset;
-        margin-right: calc(
-          (38px / 1.25) + ((70 / 1.25) - (38 / 1.25)) *
-            ((100vw - 480px) / (900 - 480))
-        );
-        right: 0;
+      top:2.5em;
+      right:0;left:0;
+      width: 22.5em;
+      position: absolute;
+      justify-content: space-between;
+      button{
+        pointer-events: all;
       }
     }
+   
   }
 }
 

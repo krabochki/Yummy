@@ -29,7 +29,7 @@ import { widthAnim } from 'src/tools/animations';
       state(
         'open',
         style({
-          'margin-right': '21.2em',
+          'margin-right': '20.9em',
           'margin-left': 0,
         }),
       ),
@@ -87,17 +87,14 @@ export class FollowersAndFollowingComponent implements OnInit, OnChanges {
     this.userService.addFollower(user, this.currentUser?.id);
     this.updateUser(user);
 
-
-        this.currentUserFollowingIds?.push(user?.id);
+    this.currentUserFollowingIds?.push(user?.id);
 
     if (this.userPage?.id === this.currentUser?.id) {
       this.following?.push(user);
       this.followingDisplay?.push(user);
-    } 
- 
-    //обновляем список подписок авторизованного пользователя
+    }
 
-    
+    //обновляем список подписок авторизованного пользователя
   }
 
   //отписка текущего пользователя от людей в списке
@@ -105,22 +102,22 @@ export class FollowersAndFollowingComponent implements OnInit, OnChanges {
     this.userService.removeFollower(user, this.currentUser?.id);
     this.updateUser(user);
     //обновляем список подписок авторизованного пользователя
-   
-    let indexToDelete: number =0;
+
+    let indexToDelete: number = 0;
     if (this.userPage?.id === this.currentUser?.id) {
-      indexToDelete = this.following?.findIndex((us: IUser) => us.id === user.id);
+      indexToDelete = this.following?.findIndex(
+        (us: IUser) => us.id === user.id,
+      );
 
       this.following.splice(indexToDelete, 1);
-      this.followingDisplay.splice(indexToDelete, 1);
-    }
-
-    else {
-        indexToDelete = this.currentUserFollowingIds?.findIndex(
-         (us: number) => us === user.id,
-       );
-       if (indexToDelete !== -1 && indexToDelete) {
-         this.currentUserFollowingIds?.splice(indexToDelete, 1);
-       }
+      this.followingDisplay = this.following;
+    } else {
+      indexToDelete = this.currentUserFollowingIds?.findIndex(
+        (us: number) => us === user.id,
+      );
+      if (indexToDelete !== -1 && indexToDelete) {
+        this.currentUserFollowingIds?.splice(indexToDelete, 1);
+      }
     }
   }
 
@@ -150,7 +147,7 @@ export class FollowersAndFollowingComponent implements OnInit, OnChanges {
   //переход по ссылке на человека
   goToFollowerAccount(uri: string) {
     this.router.navigateByUrl(uri);
-    this.closeEmitter.emit(true)
+    this.closeEmitter.emit(true);
   }
 
   filter() {

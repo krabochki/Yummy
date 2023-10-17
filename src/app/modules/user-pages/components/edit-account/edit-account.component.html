@@ -3,7 +3,7 @@
 <div class="edit-cont">
   <div class="content">
     <h1>
-      <div (click)="closeModal = true" class="exit">
+      <div (click)="(!areObjectsEqual(this.editableUser,this.newUser))? closeModal = true:this.closeEmitter.emit(true)" class="exit">
         <svg-icon
           [applyClass]="true"
           class="svg"

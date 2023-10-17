@@ -71,8 +71,7 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
   }
 
   ngOnInit() {
-    console.log(this.editableUser);
-    this.newUser = this.editableUser;
+    this.newUser = {... this.editableUser };
   }
   checkData(): boolean {
     const pinterestProfile = this.newUser.socialNetworks.find(
@@ -108,10 +107,32 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
     if (!usernameMask.test(this.newUser.username)) {
       return false;
     }
+    if (this.areObjectsEqual(this.newUser,this.editableUser)) {
+      return false;
+    }
 
     return true;
   }
 
+
+  //проверяем равны ли все поля в обьектах
+  areObjectsEqual(obj1: any, obj2: any): boolean {
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
+
+  // Проверка на количество полей
+  if (keys1.length !== keys2.length) {
+    return false;
+  }
+
+  for (const key of keys1) {
+    if (obj1[key] !== obj2[key]) {
+      return false;
+    }
+  }
+
+  return true;
+}
 
   updateUser() {
     this.updatedUser.emit(this.newUser);
@@ -134,7 +155,6 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
     if (answer) {
       this.closeEmitter.emit(true);
     }
-
     this.closeModal = false;
   }
 

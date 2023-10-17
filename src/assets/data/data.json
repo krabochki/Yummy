@@ -895,8 +895,7 @@
       "fullName": "Ольга Смирнова",
       "followersIds": [
         2,
-        6,
-        5
+        6
       ],
       "socialNetworks": [
         {
@@ -929,7 +928,7 @@
       "personalWebsite": "https://angular.io/errors/",
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 18
+      "profileViews": 66
     },
     {
       "id": 6,
@@ -946,8 +945,7 @@
         2,
         4,
         9,
-        10,
-        11
+        10
       ],
       "socialNetworks": [
         {
@@ -1005,8 +1003,7 @@
       "followersIds": [
         4,
         7,
-        9,
-        5
+        9
       ],
       "socialNetworks": [
         {
@@ -1035,9 +1032,7 @@
       "followersIds": [
         4,
         8,
-        10,
-        11,
-        5
+        10
       ],
       "socialNetworks": [
         {
@@ -1065,8 +1060,7 @@
       "fullName": "Мария Смирнова",
       "followersIds": [
         6,
-        9,
-        5
+        9
       ],
       "socialNetworks": [
         {
@@ -1083,25 +1077,6 @@
       "registrationDate": "2023-10-19",
       "profileViews": 2350,
       "role": "user"
-    },
-    {
-      "id": 11,
-      "email": "krab@krab.com",
-      "password": "krabKrabRka0",
-      "username": "krab",
-      "role": "user",
-      "avatarUrl": "",
-      "description": "",
-      "quote": "",
-      "fullName": "",
-      "followersIds": [
-        5
-      ],
-      "socialNetworks": [],
-      "personalWebsite": "",
-      "location": "",
-      "registrationDate": "",
-      "profileViews": 0
     }
   ]
 }

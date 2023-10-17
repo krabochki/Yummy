@@ -15,6 +15,15 @@
     </h1>
 
     <div class="section">
+
+    <div class="image">
+        <input type="file"   (change)="onChangeInput($event)" accept="image/*">
+  
+        <div class="delete" *ngIf="myImage!==defaultImage" (click)="myImage=defaultImage"><svg-icon [applyClass]="true" class="svgTrash" [src]="'../../../../../assets/images/svg/trash.svg'"></svg-icon></div>
+                <div  class="userpic" [ngStyle]="{'background-image': 'url('+ myImage+')'}" alt="User Photo" > </div>
+    </div>
+
+
       <h2>Основная информация</h2>
 
       <div class="section-content">

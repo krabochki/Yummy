@@ -71,7 +71,8 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
   }
 
   ngOnInit() {
-    this.newUser = {... this.editableUser };
+    this.myImage = this.defaultImage;
+    this.newUser = { ...this.editableUser };
   }
   checkData(): boolean {
     const pinterestProfile = this.newUser.socialNetworks.find(
@@ -107,32 +108,50 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
     if (!usernameMask.test(this.newUser.username)) {
       return false;
     }
-    if (this.areObjectsEqual(this.newUser,this.editableUser)) {
+    if (this.areObjectsEqual(this.newUser, this.editableUser)) {
       return false;
     }
 
     return true;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onChangeInput(event: any) {
+    const selectedFile = event.target.files[0]; // Первый выбранный файл
+
+    if (selectedFile) {
+      const objectURL = URL.createObjectURL(selectedFile);
+      this.myImage = '';
+      this.myImage = objectURL;
+
+      // const formData = new FormData();
+      // formData.append('userpic', file, file.name);
+      // this.http.post(this.url, formData).subscribe((response) => {
+      //   });
+    }
+
+  }
+  myImage: string = '';
+  defaultImage: string = '../../../../../assets/images/add-userpic.png';
 
   //проверяем равны ли все поля в обьектах
   areObjectsEqual(obj1: any, obj2: any): boolean {
-  const keys1 = Object.keys(obj1);
-  const keys2 = Object.keys(obj2);
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
 
-  // Проверка на количество полей
-  if (keys1.length !== keys2.length) {
-    return false;
-  }
-
-  for (const key of keys1) {
-    if (obj1[key] !== obj2[key]) {
+    // Проверка на количество полей
+    if (keys1.length !== keys2.length) {
       return false;
     }
-  }
 
-  return true;
-}
+    for (const key of keys1) {
+      if (obj1[key] !== obj2[key]) {
+        return false;
+      }
+    }
+
+    return true;
+  }
 
   updateUser() {
     this.updatedUser.emit(this.newUser);

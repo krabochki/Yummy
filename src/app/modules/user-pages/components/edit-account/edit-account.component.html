@@ -1,1 +1,180 @@
-<p>edit-account works!</p>
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="edit-cont">
+  <div class="content">
+    <h1>
+      <div (click)="closeModal = true" class="exit">
+        <svg-icon
+          [applyClass]="true"
+          class="svg"
+          [src]="'../../../../../assets/images/svg/go-back.svg'"
+        >
+        </svg-icon>
+      </div>
+      Изменение аккаунта
+    </h1>
+
+    <div class="section">
+      <h2>Основная информация</h2>
+
+      <div class="section-content">
+        <app-input
+          (inputValueChange)="getUsername($event)"
+          [fitWidth]="true"
+          [max]="20"
+          [required]="true"
+          [value]="editableUser.username"
+          [mask]="usernameMask"
+          [warningText]="
+            'Имя пользователя должно содержать от 4 до 20 символов, среди которых могут быть буквы (минимум одна), цифры, а также нижние почеркивания и точки (не подряд)'
+          "
+          [placeholder]="'Имя пользователя'"
+        ></app-input>
+        <app-input
+          (inputValueChange)="getFullname($event)"
+          [value]="editableUser.fullName"
+          [fitWidth]="true"
+          [max]="40"
+          [placeholder]="'Полное имя'"
+        ></app-input>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Содержание профиля</h2>
+
+      <div class="section-content">
+        <app-input
+          (inputValueChange)="getQuote($event)"
+          [value]="editableUser.quote"
+          [fitWidth]="true"
+          [max]="500"
+          [type]="'textarea'"
+          [placeholder]="'Личная цитата'"
+        ></app-input>
+        <app-input
+          (inputValueChange)="getDescription($event)"
+          [value]="editableUser.description"
+          [fitWidth]="true"
+          [type]="'textarea'"
+          [placeholder]="'Описание'"
+          [max]="2000"
+        ></app-input>
+        <app-input
+          (inputValueChange)="getWebsite($event)"
+          [value]="editableUser.personalWebsite"
+          [fitWidth]="true"
+          [warningText]="
+            'Введенное значение не является корректной ссылкой на сайт в интернете. Пример: https://krabochki.com'
+          "
+          [mask]="siteMask"
+          [required]="false"
+          [placeholder]="'Личный сайт'"
+        ></app-input>
+        <app-input
+          (inputValueChange)="getLocation($event)"
+          [value]="editableUser.location"
+          [fitWidth]="true"
+          [placeholder]="'Место проживания'"
+          [max]="100"
+        ></app-input>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Социальные сети</h2>
+
+      <div class="section-content">
+        <app-input
+          (inputValueChange)="getPinterest($event)"
+          [warningText]="
+            'Введенное значение не является корректной ссылкой на аккаунт пользователя в Pintreset. Пример: https://pinterest.com/krabochki'
+          "
+          [value]="pinterestLink"
+          [required]="false"
+          [mask]="pinterestMask"
+          [placeholder]="'Ссылка на Pinterest'"
+          [fitWidth]="true"
+        ></app-input>
+        <app-input
+          [value]="vkLink"
+          [mask]="vkMask"
+          (inputValueChange)="getVk($event)"
+          [warningText]="
+            'Введенное значение не является корректной ссылкой на аккаунт пользователя во ВКонтакте. Пример: https://vk.com/nanananana_come_on'
+          "
+          [required]="false"
+          [placeholder]="'Ссылка на ВКонтакте'"
+          [fitWidth]="true"
+        ></app-input>
+        <app-input
+          [warningText]="
+            'Введенное значение не является корректной ссылкой на аккаунт пользователя в Twitter. Пример: https://twitter.com/krabochki'
+          "
+          (inputValueChange)="getTwitter($event)"
+          [value]="twitterLink"
+          [required]="false"
+          [mask]="twitterMask"
+          [placeholder]="'Ссылка на Twitter'"
+          [fitWidth]="true"
+        ></app-input>
+        <app-input
+          [warningText]="
+            'Введенное значение не является корректной ссылкой на аккаунт пользователя в Facebook. Пример: https://facebook.com/krabochki'
+          "
+          [value]="facebookLink"
+          (inputValueChange)="getFacebook($event)"
+          [required]="false"
+          [mask]="facebookMask"
+          [placeholder]="'Ссылка на Facebook'"
+          [fitWidth]="true"
+        ></app-input>
+      </div>
+    </div>
+    <app-button
+      [disabled]="checkData()"
+      (click)="checkData() ? (saveModal = true) : null"
+      [text]="'Сохранить'"
+      [style]="'filled'"
+      [color]="'prim'"
+      [rounded]="true"
+    ></app-button>
+  </div>
+</div>
+
+<app-modal
+  *ngIf="closeModal"
+  @modal
+  [style]="'prim'"
+  [title]="'Закрытие окна'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleCloseModal($event)"
+  [buttonsText]="['Да', 'Нет']"
+  [description]="
+    'Вы уверены, что хотите вернуться к просмотру аккаунта и не сохранять изменения?'
+  "
+>
+</app-modal>
+
+<app-modal
+  @modal
+  *ngIf="saveModal"
+  [style]="'prim'"
+  [title]="'Изменение аккаунта'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleSaveModal($event)"
+  [buttonsText]="['Да', 'Нет']"
+  [description]="
+    'Вы уверены, что хотите сохранить изменения и обновить свой аккаунт?'
+  "
+></app-modal>
+
+<app-modal
+  @modal
+  *ngIf="successModal"
+  [style]="'sec'"
+  [title]="'Аккаунт успешно изменен'"
+  [type]="'Ok'"
+  (resultEmit)="handleSuccessModal($event)"
+  [buttonsText]="['Хорошо']"
+  [description]="'Изменения вашего аккаунта успешно сохранены!'"
+></app-modal>

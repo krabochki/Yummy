@@ -66,8 +66,7 @@ export class UserPageComponent implements OnInit {
   likes: number = 0;
   cooks: number = 0;
   comments: number = 0;
-  profileViews: number = 0;
-   users:IUser[]=[];
+  users: IUser[] = [];
   ngOnInit() {
     this.route.data.subscribe((data: Data) => {
       this.user = data['user'];
@@ -75,29 +74,26 @@ export class UserPageComponent implements OnInit {
       this.recipesEnabled = false;
       this.moreInfoEnabled = true;
 
-            this.titleService.setTitle('@' + this.user.username);
+      this.titleService.setTitle('@' + this.user.username);
 
-            if (this.currentUser.id === this.user.id) {
-              this.myPage = true;
-            }
-            else {
-              this.myPage = false;
+      if (this.currentUser.id === this.user.id) {
+        this.myPage = true;
+      } else {
+        this.myPage = false;
       }
 
-            this.userFollowers = this.userService.getFollowers(
-              this.users,
-              this.userId,
-            );
+      this.userFollowers = this.userService.getFollowers(
+        this.users,
+        this.userId,
+      );
 
-            this.userFollowing = this.userService.getFollowing(
-              this.users,
-              this.userId,
-            );
+      this.userFollowing = this.userService.getFollowing(
+        this.users,
+        this.userId,
+      );
     });
     this.router.events.subscribe(() => {
-            window.scrollTo(0, 0);
-
-
+      window.scrollTo(0, 0);
     });
 
     this.authService.getCurrentUser()?.subscribe((data) => {
@@ -118,6 +114,15 @@ export class UserPageComponent implements OnInit {
       if (this.currentUser.id === this.user.id) {
         this.myPage = true;
       }
+
+      this.user.profileViews++;
+      if (this.myPage) {
+        this.currentUser.profileViews++;
+      }
+
+      this.authService.setCurrentUser(this.currentUser);
+
+      this.updateUser();
 
       this.userFollowers = this.userService.getFollowers(data, this.userId);
 
@@ -156,5 +161,58 @@ export class UserPageComponent implements OnInit {
     this.settingsShow = false;
   }
 
+  //подписка текущего пользователя на людей в списке
+  follow() {
+    this.user = this.userService.addFollower(this.user, this.currentUser.id);
+    this.updateUser();
+
+    this.userFollowers.push(this.currentUser);
+  }
+
+  unfollow() {
+    this.user = this.userService.removeFollower(this.user, this.currentUser.id);
+    this.updateUser();
+
+    let indexToDelete: number = 0;
+
+    indexToDelete = this.userFollowers.findIndex(
+      (us: IUser) => us.id === this.currentUser.id,
+    );
+    if (indexToDelete !== -1 && indexToDelete) {
+      this.userFollowers.splice(indexToDelete, 1);
+    }
+  }
+
+  updateUser() {
+    this.userService.updateUser(this.user).subscribe();
+  }
+
   username: string = 'username';
+
+  edit() {
+    this.editModalShow = !this.editModalShow;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+  closeEdit(answer: any) {
+    this.editModalShow = false;
+  }
+  updateCurrentUser(updatedUser: IUser) {
+    if (this.user.id === this.currentUser.id) {
+      this.user = updatedUser;
+      this.currentUser = updatedUser;
+    }
+    this.updateUser();
+    this.titleService.setTitle('@' + this.user.username);
+
+    this.authService.loginUser(this.currentUser).subscribe((userExists) => {
+      if (userExists) {
+        localStorage.setItem('currentUser', JSON.stringify(userExists));
+        this.authService.setCurrentUser(userExists);
+      }
+    });
+
+    window.scrollTo(0, 0);
+  }
+  editModalShow: boolean = false;
 }

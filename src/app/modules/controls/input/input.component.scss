@@ -2,8 +2,10 @@
 
 
 .input{
-    width: 16em;
 
+    &.fit-content{
+      width: 100%;
+    }
 }
 input:focus{
   background-color:  var(--color-background-deeper);
@@ -25,6 +27,11 @@ textarea {
   padding-top: var(--space-m);
   transition: background-color 0.2s ease-in-out;
 
+      &.fit-content{
+      width: 100%;
+      max-width: 100%;
+      min-width: 100%;
+    }
   &:focus {
   border-bottom-width: 2px;
   border-bottom-color: var(--color-secondary);
@@ -54,7 +61,6 @@ textarea {
   }
 }
 div {
-  width: fit-content;
   position: relative;
 }
 .placeholder {

@@ -867,8 +867,7 @@
       "fullName": "Максим Иванов",
       "followersIds": [
         1,
-        2,
-        5
+        2
       ],
       "socialNetworks": [
         {
@@ -896,7 +895,8 @@
       "fullName": "Ольга Смирнова",
       "followersIds": [
         2,
-        6
+        6,
+        5
       ],
       "socialNetworks": [
         {
@@ -911,25 +911,25 @@
       "personalWebsite": "https://www.cookingadventures.com/",
       "location": "Лондон, Великобритания",
       "registrationDate": "2023-04-02",
-      "profileViews": 4900,
+      "profileViews": 4901,
       "role": "user"
     },
     {
       "email": "polinaa.kuzmenokk@gmail.com",
       "password": "Krabochki0",
-      "username": "krabochki",
+      "username": "krabochka",
       "id": 5,
       "role": "admin",
       "avatarUrl": "",
-      "description": "",
-      "quote": "",
-      "fullName": "",
+      "description": "Хиханьки-хаханьки",
+      "quote": "Один в поле не в поле и не один",
+      "fullName": "Полинка",
       "followersIds": [],
       "socialNetworks": [],
-      "personalWebsite": "",
-      "location": "",
+      "personalWebsite": "https://angular.io/errors/",
+      "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 0
+      "profileViews": 18
     },
     {
       "id": 6,
@@ -947,7 +947,6 @@
         4,
         9,
         10,
-        5,
         11
       ],
       "socialNetworks": [
@@ -963,7 +962,7 @@
       "personalWebsite": "https://www.healthandnutrition.com/",
       "location": "Сидней, Австралия",
       "registrationDate": "2023-06-18",
-      "profileViews": 4300,
+      "profileViews": 4301,
       "role": "user"
     },
     {
@@ -992,7 +991,7 @@
       "personalWebsite": "",
       "location": "Лиссабон, Португалия",
       "registrationDate": "2023-07-24",
-      "profileViews": 3850,
+      "profileViews": 3931,
       "role": "user"
     },
     {
@@ -1037,7 +1036,8 @@
         4,
         8,
         10,
-        11
+        11,
+        5
       ],
       "socialNetworks": [
         {
@@ -1065,7 +1065,8 @@
       "fullName": "Мария Смирнова",
       "followersIds": [
         6,
-        9
+        9,
+        5
       ],
       "socialNetworks": [
         {
@@ -1093,7 +1094,9 @@
       "description": "",
       "quote": "",
       "fullName": "",
-      "followersIds": [],
+      "followersIds": [
+        5
+      ],
       "socialNetworks": [],
       "personalWebsite": "",
       "location": "",

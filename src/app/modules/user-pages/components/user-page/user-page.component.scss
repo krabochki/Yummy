@@ -279,6 +279,12 @@ svg {
   }
 }
 
+
+app-edit-account{
+  z-index: 10;
+  position: fixed;
+}
+
 app-followers-and-following,app-settings {
   z-index: 10;
   position: fixed;

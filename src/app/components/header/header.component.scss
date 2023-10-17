@@ -270,14 +270,8 @@ p {
     padding-bottom: var(--space-m);
     display: flex;
     justify-content: space-between;
-    padding-right: calc(
-      (38px / 1.25) + ((70 / 1.25) - (38 / 1.25)) *
-        ((100vw - 320px) / (480 - 320))
-    );
-    padding-left: calc(
-      (38px / 1.25) + ((70 / 1.25) - (38 / 1.25)) *
-        ((100vw - 320px) / (480 - 320))
-    );
+    padding-right:6%;
+    padding-left: 6%;
 
     .label,
     .svg-button {

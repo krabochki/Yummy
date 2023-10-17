@@ -168,6 +168,8 @@
         <p class="quote" *ngIf="user?.quote">{{ user.quote }}</p>
 
         <app-button
+
+        (click)="currentUser.id ===0 ? null: myPage? edit() :       (userService.isUserSubscriber(user, currentUser.id) ? unfollow() : follow())"
           [disabled]="!(currentUser.id === 0)"
           [color]="'prim'"
           [style]="
@@ -360,10 +362,10 @@
             </svg-icon>
 
             <p>
-              {{ profileViews }}
+              {{ user.profileViews }}
               <span
                 appPluralRu=""
-                [value]="profileViews"
+                [value]="user.profileViews"
                 [arVariants]="['просмотр', 'просмотра', 'просмотров']"
               ></span>
               профиля,
@@ -444,3 +446,6 @@
   l
   (closeEmitter)="closeFollows($event)"
 ></app-followers-and-following>
+
+
+<app-edit-account @modal (closeEmitter)="closeEdit($event)" (updatedUser)="updateCurrentUser($event)" [editableUser]="currentUser" *ngIf="editModalShow"></app-edit-account>

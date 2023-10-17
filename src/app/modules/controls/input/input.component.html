@@ -12,10 +12,14 @@
       (blur)="onBlur($event)"
       (keyup)="onKeyUp($event)"
       *ngIf="this.type === 'textarea'"
-    ></textarea>
+       [class.fit-content]="fitWidth"
+
+      ></textarea>
     <input
-        readonly
-    onfocus="this.removeAttribute('readonly')"
+
+    [class.fit-content]="fitWidth"
+    readonly
+      onfocus="this.removeAttribute('readonly')"
 
       [maxlength]="max"
       *ngIf="this.type === 'input'"

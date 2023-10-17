@@ -26,7 +26,9 @@ export class AuthService {
     if (savedUser) {
       const currentUser: IUser = JSON.parse(savedUser);
 
-      this.setCurrentUser(currentUser);
+      if (this.loginUser(currentUser)) {
+        this.setCurrentUser(currentUser);
+      }
       console.log(
         'Автоматический вход в аккаунт пользователя ' +
           currentUser.username +
@@ -71,8 +73,8 @@ export class AuthService {
             (u.email === user.email && u.password === user.password) ||
             (u.username === user.username && u.password === user.password),
         );
-        if(!foundUser) return null
-        return foundUser ;
+        if (!foundUser) return null;
+        return foundUser;
       }),
     );
   }

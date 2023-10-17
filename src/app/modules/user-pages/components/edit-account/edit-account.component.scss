@@ -1,0 +1,92 @@
+@import "../../../../../tools/UI/UI.scss";
+
+.edit-cont {
+  background-color: var(--modal-black);
+  width: 100vw;
+  height: 100vh;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  .svg{
+    fill:var(--color-foreground);
+    width: 2em;
+    height: 2em;
+  }
+  .content {
+    padding: var(--space-xxl) 6em;
+    border-radius: var(--space-l) 0  0 var(--space-l);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    row-gap: 2em;
+    width:40rem;
+
+
+    max-height: 80vh;
+    overflow-y: scroll;
+    background-color: var(--color-background);
+
+      &::-webkit-scrollbar {
+      width: 12px;
+    }
+    &::-webkit-scrollbar-track {
+      border-radius: 20px;
+      background: var(--scroll-body);
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--scroll-thumb);
+      border-radius: 20px;
+      border: 3px solid var(--scroll-body);
+    }
+  }
+  h1 {
+    text-align: center;
+    font-family: var(--font-family-accent);
+    font-size: var(--font-xxl);
+    position: relative;
+  }
+
+.exit{
+  cursor: pointer;
+  position: absolute;
+  top:0;
+  left:-2.5em;
+  height: 100%;
+
+  .svg{
+    fill:var(--color-foreground);
+    height: 100%;
+    width: 1em;
+  }
+}
+  h2 {
+    font-size: var(--font-m);
+    font-weight: 700;
+  }
+  .section {
+        width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    row-gap: 1.25em;
+    .section-content {
+          width: 100%;
+
+      display: flex;
+      flex-direction: column;
+      row-gap: 0.75em;
+    }
+  }
+}
+
+
+app-modal{
+  z-index: 12;
+  position: fixed;
+}

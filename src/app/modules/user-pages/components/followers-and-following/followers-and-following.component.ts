@@ -86,13 +86,18 @@ export class FollowersAndFollowingComponent implements OnInit, OnChanges {
   follow(user: IUser) {
     this.userService.addFollower(user, this.currentUser?.id);
     this.updateUser(user);
-    //обновляем список подписок авторизованного пользователя
-    this.currentUserFollowingIds?.push(user?.id);
+
+
+        this.currentUserFollowingIds?.push(user?.id);
 
     if (this.userPage?.id === this.currentUser?.id) {
       this.following?.push(user);
       this.followingDisplay?.push(user);
-    }
+    } 
+ 
+    //обновляем список подписок авторизованного пользователя
+
+    
   }
 
   //отписка текущего пользователя от людей в списке
@@ -100,17 +105,22 @@ export class FollowersAndFollowingComponent implements OnInit, OnChanges {
     this.userService.removeFollower(user, this.currentUser?.id);
     this.updateUser(user);
     //обновляем список подписок авторизованного пользователя
-    let indexToDelete: number  =
-      this.currentUserFollowingIds?.findIndex((us: number) => us === user.id);
-    if (indexToDelete !== -1 && indexToDelete) {
-      this.currentUserFollowingIds?.splice(indexToDelete, 1);
-    }
-
+   
+    let indexToDelete: number =0;
     if (this.userPage?.id === this.currentUser?.id) {
       indexToDelete = this.following?.findIndex((us: IUser) => us.id === user.id);
 
       this.following.splice(indexToDelete, 1);
       this.followingDisplay.splice(indexToDelete, 1);
+    }
+
+    else {
+        indexToDelete = this.currentUserFollowingIds?.findIndex(
+         (us: number) => us === user.id,
+       );
+       if (indexToDelete !== -1 && indexToDelete) {
+         this.currentUserFollowingIds?.splice(indexToDelete, 1);
+       }
     }
   }
 

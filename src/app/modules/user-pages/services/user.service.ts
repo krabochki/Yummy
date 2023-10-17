@@ -29,7 +29,7 @@ export class UserService {
       return [];
     }
   }
-  getFollowing(users: IUser[], userId: number): IUser[]  {
+  getFollowing(users: IUser[], userId: number): IUser[] {
     const following: IUser[] = [];
     users.forEach((user: IUser) => {
       user.followersIds?.forEach((follower: number) => {
@@ -66,14 +66,13 @@ export class UserService {
   getUser(id: number) {
     return this.http.get<IUser>(`${this.url}/${id}`);
   }
-  addFollower(user: IUser, followerId: number) {
+  addFollower(user: IUser, followerId: number): IUser {
     if (user && user.followersIds) {
       if (!user.followersIds.includes(followerId)) {
         user.followersIds.push(followerId);
-        return user;
       }
     }
-    return;
+    return user;
   }
   removeFollower(user: IUser, followerId: number) {
     if (user && user.followersIds) {

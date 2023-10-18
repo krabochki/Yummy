@@ -56,6 +56,7 @@ hr {
   }
 }
 @media (max-width: 480px) {
+ 
   .modal-footer {
     column-gap: var(--space-s);
   }
@@ -74,8 +75,13 @@ hr {
 
   .modal-content {
     max-width: 100%;
-    padding: var(--space-xxl) var(--space-xxl);
+    width: 100%;
+     h4{
+    font-size: 1.35em;
+  }
+    padding:var(--space-xl) 3em;
+    padding-top: var(--space-xxl);
 
-    border-radius: var(--space-2xl) var(--space-2xl) 0 0;
+    border-radius: 4em 4em 0 0;
   }
 }

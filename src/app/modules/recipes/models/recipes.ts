@@ -42,7 +42,7 @@ export const nullRecipe: IRecipe = {
 };
 export interface Ingredient {
   name: string; // Название ингредиента
-  quantity: number; // Количество
+  quantity: string; // Количество
   unit: string; // Единица измерения
 }
 export interface Instruction {
@@ -51,6 +51,6 @@ export interface Instruction {
 }
 export interface Nutrition {
   name: string; // Название пищевой ценности
-  quantity: number; // Количество
+  quantity: string; // Количество
   unit: string; // Единица измерения
 }

@@ -104,15 +104,16 @@ export class RecipeCreatingComponent implements OnInit {
 
   currentUserSubscription?: Subscription;
   ngOnInit(): void {
+        this.router.events.subscribe(() => {
+          window.scrollTo(0, 0);
+        });
     this.currentUserSubscription = this.authService
       .getCurrentUser()
       .subscribe((data) => {
         this.currentUser = data;
       });
 
-    this.router.events.subscribe(() => {
-      window.scrollTo(0, 0);
-    });
+
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -201,9 +202,6 @@ export class RecipeCreatingComponent implements OnInit {
           '',
           [
             Validators.minLength(1),
-
-            Validators.required,
-            Validators.pattern(/^\d{1,4}(\.\d{1,3})?$/), // Паттерн для числа с 4 цифрами и опционально 3 цифры после запятой]
           ],
         ],
         unit: ['', Validators.maxLength(10)],
@@ -229,10 +227,7 @@ export class RecipeCreatingComponent implements OnInit {
         amount: [
           '',
           [
-            Validators.minLength(1),
-
-            Validators.required,
-            Validators.pattern(/^\d{1,4}(\.\d{1,3})?$/),
+            Validators.minLength(1)
           ],
         ],
         unit: ['', Validators.maxLength(10)],

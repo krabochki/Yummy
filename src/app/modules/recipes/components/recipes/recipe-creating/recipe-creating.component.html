@@ -2,7 +2,7 @@
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 
 <div class="cont">
-  <form [formGroup]="form" (ngSubmit)="submitForm()" class="recipe-form">
+  <form [formGroup]="form"  class="recipe-form">
 
   
 
@@ -175,14 +175,14 @@
               type="text"
               id="nutritionName{{ i }}"
               formControlName="name"
-              [placeholder]="'Название нутриента'"
+              [placeholder]="'Название'"
               required
             ></app-usual-input>
   
             <app-usual-input 
               id="nutritionAmount{{ i }}"
               formControlName="amount"
-              [placeholder]="'Количество'"
+              [placeholder]="'Кол-во'"
               [inputRequired]="true"
               [showError]="false"
               [error]="
@@ -192,7 +192,6 @@
                   ? 'error'
                   : ''
               "
-              [max]="4"
             ></app-usual-input>
   
             <app-usual-input
@@ -289,14 +288,14 @@
               type="text"
               id="ingredientName{{ i }}"
               formControlName="name"
-              [placeholder]="'Название ингредиента'"
+              [placeholder]="'Название'"
               required
             ></app-usual-input>
   
             <app-usual-input 
               id="ingredientAmount{{ i }}"
               formControlName="amount"
-              [placeholder]="'Количество'"
+              [placeholder]="'Кол-во'"
               [inputRequired]="true"
               [showError]="false"
               [error]="
@@ -306,7 +305,6 @@
                   ? 'error'
                   : ''
               "
-              [max]="4"
             ></app-usual-input>
   
             <app-usual-input
@@ -497,7 +495,7 @@
       ></app-button>
       <app-button
         class="main"
-        type="submit"
+        (click)="form.valid?submitForm():null"
         [text]="'Сохранить'"
         [color]="'prim'"
         [disabled]="form.valid"
@@ -528,19 +526,19 @@
 ></app-modal>
 <app-modal
   @modal
-  *ngIf="exitModalShow"
+  *ngIf="successModalShow"
   [style]="'sec'"
   [title]="'Рецепт успешно сохранен'"
   [type]="'Ok'"
-  (resultEmit)="handleExitModal($event)"
+  (resultEmit)="handleSuccessModal($event)"
   [buttonsText]="['Хорошо']"
   [description]="'Ваш рецепт успешно сохранен в ваших личной коллекции'"
 ></app-modal>
 
 <app-modal
   @modal
-  *ngIf="exitModalShow"
-  [style]="'sec'"
+  *ngIf="createModalShow"
+  [style]="'prim'"
   [title]="'Подтвердите создание рецепта'"
   [type]="'yesOrNo'"
   (resultEmit)="handleCreateRecipeModal($event)"

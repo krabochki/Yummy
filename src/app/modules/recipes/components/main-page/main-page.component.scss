@@ -14,7 +14,7 @@ h3 {
   width: 100%;
   margin: 0 auto;
   position: relative;
-  ::after {
+  &.horizontal::after {
     margin: 1.7em calc(14.4vw + 0 * (100vw - 768px) / 760);
 
     height: 15em;
@@ -32,9 +32,9 @@ h3 {
 @media (max-width: 900px) {
 
   .recipes {
-    ::after {
+    &.horizontal::after {
       width: 33%;
-      height: 13em;
+      height: 15em;
       right: 0;
       top: 0;
       content: "";
@@ -44,9 +44,9 @@ h3 {
   }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 768px) {
   .recipes {
-    ::after {
+    &.horizontal::after { 
       all: unset;
     }
   }
@@ -55,8 +55,8 @@ h3 {
 @media (max-width: 530px) {
 
 
-  .recipes {
-    padding: calc(10.4px + 25.6 * (100vw - 320px) / 160);
+  .recipes  {
+    padding-left: 6%;
     padding-right: 0;
   }
 }

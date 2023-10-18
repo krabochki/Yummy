@@ -1,13 +1,12 @@
-<div class="wrap" [ngClass]="{'vertical':orientation==='vertical', 'horizontal':orientation==='horizontal'}">
-  <div [ngStyle]="{'grid-template-columns': orientation==='vertical'?'repeat( '+ cols +',1fr)':''}"  class="recipe-list" #list>
+<div class="wrap" >
+  <div   class="recipe-list" #list>
     <app-recipe-list-item
       class="content"
-      [context]="context"
       *ngFor="let item of recipes; let i = index"
       [recipe]="recipes[i]"
     ></app-recipe-list-item>
   </div>
-  <button class="scroll-left" *ngIf="orientation==='horizontal'">
+  <button class="scroll-left" >
     <svg-icon
       class="svg-arrow"
       (click)="scrollRight()"
@@ -16,7 +15,7 @@
     >
     </svg-icon>
   </button>
-  <button class="scroll-right" *ngIf="orientation==='horizontal'">
+  <button class="scroll-right">
     <svg-icon
       class="svg-arrow right"
       (click)="scrollLeft()"

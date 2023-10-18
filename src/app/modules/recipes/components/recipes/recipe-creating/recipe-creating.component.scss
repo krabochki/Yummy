@@ -1,0 +1,268 @@
+@import "../../../../../../tools/UI/UI.scss";
+
+.cont {
+  display: block;
+  width: 50vw;
+  padding: var(--space-xl) 0;
+  margin: auto;
+
+  h1 {
+    font-size: var(--font-xxl);
+    font-family: var(--font-family-accent);
+    text-align: center;
+  }
+
+  label {
+    font-size: var(--font-m);
+    margin-bottom: 0.5em;
+    font-weight: 700;
+    display: block;
+  }
+
+  hr {
+    height: 1px;
+    margin: 2em 0;
+    height: 1px;
+    background-color: var(--color-foreground);
+    opacity: 0.2;
+  }
+
+  app-button {
+    display: flex;
+    justify-content: center;
+  }
+
+  .buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 2em;
+
+    .main {
+      zoom: 1.3;
+    }
+  }
+}
+
+.instruction {
+  grid-template-columns: 1fr;
+  grid-template-rows: max-content 10em;
+  row-gap: 0.3em;
+
+  .instruction-text {
+    align-items: center;
+    justify-content: center;
+    column-gap: 1em;
+    display: grid;
+    grid-template-columns: 2em 2em 1fr 2em;
+  }
+
+  label {
+    height: 2em;
+    line-height: 1;
+  }
+}
+
+
+.remove-button {
+      cursor: pointer;
+      width: 1.5em;
+      height: 1.5em;
+
+      .svg-trash {
+        fill: var(--color-primary);
+        height: 100%;
+        height: 0.9em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+  .boundary {
+    margin-bottom: 1em;
+  }
+
+.instructions,
+.ingredients {
+  margin: 2em 0;
+
+
+  label {
+    text-align: center;
+  }
+
+  .no-content {
+    text-align: center;
+    margin-bottom: 1em;
+  }
+
+  
+}
+
+.instruction,
+  .ingredient {
+    padding: 0.5em;
+    width: 100%;
+
+    
+
+    .num {
+      background-color: var(--color-primary-lighter);
+      color: var(--color-primary);
+      font-weight: 700;
+      font-size: 0.9em;
+      width: 1.5em;
+      height: 1.5em;
+      border-radius: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    app-usual-input,
+    app-expanding-input {
+      zoom: 0.85;
+    }
+
+    background-color: var(--color-background);
+    position: relative;
+
+    display: grid;
+    align-items: center;
+    justify-content: center;
+
+    .instruction-images {
+      width: 100%;
+      padding: 0 3em 0 6em;
+      display: grid;
+      align-items: center;
+      justify-content: space-between;
+      grid-template-columns: 1fr 1fr 1fr;
+      column-gap: 2em;
+
+      .instruction-image {
+        position: relative;
+        height: 10em;
+        background-size: cover;
+        background-position: center;
+        border-radius: var(--space-m);
+
+        input {
+          position: absolute;
+          width: 100%;
+          cursor: pointer;
+          height: 100%;
+          top: 0;
+          left: 0;
+          opacity: 0;
+        }
+      }
+    }
+  }
+
+
+.ingredient {
+  column-gap: 1em;
+  grid-template-columns: 2em 2em 4fr 2fr 2fr 2em;
+
+  label {
+    height: 2em;
+    line-height: 1;
+  }
+}
+
+.delete {
+  z-index: 1;
+  position: absolute;
+  cursor: pointer;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  right: 0;
+  padding: 0.3em;
+  margin: 0.5em;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 100%;
+  background-color: var(--color-primary);
+
+  .svg-trash {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    fill: var(--color-background);
+  }
+}
+
+.drag {
+  cursor: grabbing;
+  width: 1.5em;
+  height: 1.5em;
+
+  .svg-drag {
+    fill: var(--color-foreground);
+    height: 100%;
+    width: 0.9em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.instruction-image {
+  position: relative;
+}
+
+.photo {
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+
+  .input-image {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  width: 16em;
+  height: 10em;
+  border-radius: 0 2em 0 2em;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  opacity: 0.5;
+  box-shadow:
+    0 5px 5px -3px rgba(0, 0, 0, 0.1),
+    0 8px 10px 1px rgba(0, 0, 0, 0.1),
+    0 3px 14px 2px rgba(0, 0, 0, 0.1);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}

@@ -1,1 +1,165 @@
-<p>recipe-creating works!</p>
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+
+<div class="cont">
+  <form [formGroup]="form" (ngSubmit)="submitForm()" class="recipe-form">
+    <h1>Создание рецепта</h1>
+
+    <div class="photo" [ngStyle]="{ 'background-image': 'url(' + mainImage + ')' }">
+      <input type="file" class="input-image" id="image" name="image" accept="image/*" (change)="mainPhotoChange($event)"
+        formControlName="image" />
+
+      <div class="delete" *ngIf="mainImage !== defaultImage" (click)="mainImage = defaultImage">
+        <svg-icon [applyClass]="true" class="svg-trash" [src]="'../../../../../assets/images/svg/trash.svg'"></svg-icon>
+      </div>
+    </div>
+
+    <label for="recipeName">Название рецепта</label>
+    <app-usual-input [max]="40" type="text" id="recipeName" formControlName="recipeName"
+      [placeholder]="'Введите название рецепта'" required [error]="
+        form.get('recipeName')?.invalid &&
+        (form.get('recipeName')?.dirty || form.get('recipeName')?.touched)
+          ? 'Название рецепта должно быть от 5 до 40 символов'
+          : ''
+      "></app-usual-input>
+
+    <label for="description">Описание</label>
+    <app-expanding-input [max]="200" type="text" id="description" formControlName="description"
+      [placeholder]="'Введите описание рецепта'" required [error]="
+        form.get('description')?.invalid && form.get('description')?.touched
+          ? 'Описание рецепта не должно превышать 200 символов'
+          : ''
+      "></app-expanding-input>
+
+    <label for="preparationTime">Время приготовления</label>
+
+
+    <app-usual-input [max]="50" type="text" id="preparationTime" formControlName="preparationTime"
+      [placeholder]="'Введите время приготовления рецепта'" required [error]="
+        form.get('preparationTime')?.invalid &&  form.get('preparationTime')?.touched
+          ? 'Значение времени приготовления не должно превышать 50 символов'
+          : ''
+      "></app-usual-input>
+
+
+    <label for="portions" >Порции</label>
+    <app-count-input [min]="1" [max]="100" [readonly]="true" id="portions" formControlName="portions"></app-count-input>
+
+    <label for="origin">Происхождение</label>
+
+
+    <app-usual-input [max]="50" type="text" id="origin" formControlName="origin"
+      [placeholder]="'Введите место происхождения рецепта'" required [error]="
+        form.get('origin')?.invalid &&  form.get('origin')?.touched
+          ? 'Значение места происхождения не должно превышать 50 символов'
+          : ''
+      "></app-usual-input>
+
+
+    <div cdkDropList (cdkDropListDropped)="drop($event)" id="ingredients" class="ingredients"
+      formArrayName="ingredients">
+      <label for="ingredients">Ингредиенты</label>
+      <p class="no-content" *ngIf="ingredients.controls.length===0">Ингредиентов пока нет</p>
+
+      <div class="boundary">
+        <div  cdkDrag *ngFor="let ingredient of ingredients.controls; let i = index"
+          [formGroupName]="i" class="ingredient" cdkDragBoundary=".boundary">
+            <div tabindex="-1" class="drag"  cdkDragHandle>
+              <svg-icon [applyClass]="true" class="svg-drag" [src]="'../../../../../assets/images/svg/drag.svg'">
+              </svg-icon>
+            </div>
+            <div class="num">{{ i + 1 }}</div>
+  
+            <app-usual-input [max]="50" type="text" id="ingredientName{{ i }}" formControlName="name"
+              [placeholder]="'Название ингредиента'" required [error]="
+                ingredient.get('name')?.invalid &&
+                (ingredient.get('name')?.dirty || ingredient.get('name')?.touched)
+                  ? 'Название рецепта должно содержать менее 5 и не более 50 символов'
+                  : ''
+              "></app-usual-input>
+  
+            <app-count-input  [min]="1" [max]="9999" id="ingredientAmount{{ i }}" formControlName="amount"></app-count-input>
+  
+
+            
+            <app-usual-input type="text"  id="ingredientUnit{{ i }}" formControlName="unit"
+              [placeholder]="'Ед. изм.'"></app-usual-input>
+  
+            <button type="button" tabindex="-1" (click)="removeIngredient(i)" class="remove-button">
+              <svg-icon [applyClass]="true" class="svg-trash" [src]="'../../../../../assets/images/svg/trash.svg'">
+              </svg-icon>
+            </button>
+          </div>
+      </div>
+      <app-button (click)="!(ingredients.controls.length>=6)?addIngredient():null" [disabled]="!(ingredients.controls.length>=6)" [text]="'Добавить ингредиент'" [color]="'prim'" [style]="'filled-min'"
+        [rounded]="true">
+      </app-button>
+    </div>
+
+    <div formArrayName="instructions" id="instructions" cdkDropList (cdkDropListDropped)="dropInstructions($event)"
+      class="instructions">
+
+      <label for="instructions">Инструкции</label>
+      <p class="no-content" *ngIf="instructions.controls.length===0">Инструкций пока нет</p>
+
+      <div class="boundary">
+        <div cdkDragBoundary=".boundary" cdkDrag [formGroupName]="i" class="instruction"
+          *ngFor="let instruction of instructions.controls; let i = index" [formGroupName]="i">
+          <div class="instruction-text">
+            <div tabindex="-1" class="drag" cdkDragHandle>
+              <svg-icon [applyClass]="true" class="svg-drag" [src]="'../../../../../assets/images/svg/drag.svg'">
+              </svg-icon>
+            </div>
+            <div class="num">{{ i + 1 }}</div>
+
+            <app-expanding-input [max]="1000" type="text" id="name" formControlName="name"
+              [placeholder]="'Содержание (максимум 1000 символов)'" required [error]="
+                form.get('name')?.invalid && form.get('name')?.touched
+                  ? 'Содержание инструкции не должно превышать 1000 символов'
+                  : ''
+              "></app-expanding-input>
+
+            <button type="button" tabindex="-1" (click)="removeInstruction(i)" class="remove-button">
+              <svg-icon [applyClass]="true" class="svg-trash" [src]="'../../../../../assets/images/svg/trash.svg'">
+              </svg-icon>
+            </button>
+          </div>
+
+          <div tabindex="-1" formArrayName="images" class="instruction-images">
+            <div class="add-image" *ngFor="let image of getImages(i); let j = index" [formGroupName]="j">
+
+              <div class="instruction-image" [ngStyle]="{ 'background-image': 'url(' + getInstructionPhotoURL(i,j) + ' )' }"
+                alt="User Photo">
+                <div tabindex="-1" class="delete" *ngIf="getInstructionPhotoURL(i,j) !== defaultInstructionImage" (click)="removeInstructionPhoto(i,j)">
+                  <svg-icon [applyClass]="true" class="svg-trash"
+                    [src]="'../../../../../assets/images/svg/trash.svg'"></svg-icon>
+                </div>
+                <input tabindex="-1" accept="image/*" type="file" id="image{{ i }}-{{ j }}" name="image"
+                  (change)="instuctionImageChange($event, i, j)" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <app-button (click)="addInstruction()" [text]="'Добавить инструкцию'" [color]="'prim'" [style]="'filled-min'"
+        [rounded]="true">
+      </app-button>
+    </div>
+
+    <hr>
+
+    <div class="buttons">
+      <app-button type="submit" [text]="'Опубликовать'" [color]="'prim'" [style]="'outlined'"
+        [rounded]="true"></app-button>
+      <app-button class="main" type="submit" [text]="'Сохранить'" [color]="'prim'" [style]="'filled'"
+        [rounded]="true"></app-button>
+      <app-button type="submit" [text]="'Отменить'" [color]="'prim'" [style]="'outlined'" [rounded]="true"></app-button>
+    </div>
+
+  </form>
+
+  <pre class="form-values">
+      {{ form.value | json }}
+  </pre>
+
+</div>

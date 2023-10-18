@@ -1,0 +1,3 @@
+<button tabindex="-1" class="modify decrease" (click)="decrease()" [ngClass]="{'disabled':min?val<=min:false}" [disabled]="disabled">−</button>
+<input type="text" (blur)="value===''||value==='0'?value='1':null" [readOnly]="readonly" (keyup)="input();this.onChange(this.value)" [(ngModel)]="value"  [value]="value"  [disabled]="disabled" />
+<button  tabindex="-1" class="modify increase" [ngClass]="{'disabled':max?val>=max:false}"  (click)="increase()" [disabled]="disabled">+</button>

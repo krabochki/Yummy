@@ -18,6 +18,8 @@ import {
   pinterestMask,
   anySiteMask,
 } from 'src/tools/regex';
+import { UserService } from '../../services/user.service';
+import { FormArray } from '@angular/forms';
 
 @Component({
   selector: 'app-edit-account',
@@ -51,7 +53,10 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
     this.cdr.detectChanges();
   }
 
-  constructor(private cdr: ChangeDetectorRef) {
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private userService: UserService,
+  ) {
     const pinterestProfile = this.newUser.socialNetworks.find(
       (network) => network.name === 'pinterest',
     );
@@ -71,6 +76,9 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
   }
 
   ngOnInit() {
+    this.userService.getUsers().subscribe((data: IUser[]) => {
+      this.users = data;
+    });
     this.myImage = this.defaultImage;
     this.newUser = { ...this.editableUser };
   }
@@ -111,6 +119,25 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
     if (this.areObjectsEqual(this.newUser, this.editableUser)) {
       return false;
     }
+    if (this.ifUsernameExists()) {
+      console.log('пользователь существует')
+      return false;
+    }
+
+    return true;
+  }
+
+  users: IUser[] = [];
+
+  ifUsernameExists():boolean {
+    const usernameExists = this.users.find(
+      (u) => u.username === this.newUser.username,
+    );
+
+    if (usernameExists === undefined) {
+      console.log('все норм');
+      return false;
+    }
 
     return true;
   }
@@ -129,7 +156,6 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
       // this.http.post(this.url, formData).subscribe((response) => {
       //   });
     }
-
   }
   myImage: string = '';
   defaultImage: string = '../../../../../assets/images/add-userpic.png';

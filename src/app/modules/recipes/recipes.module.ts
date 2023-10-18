@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgFor } from '@angular/common';
 
 import { RecipesRoutingModule } from './recipes-routing.module';
 import { RecipesComponent } from './recipes.component';
@@ -17,27 +17,50 @@ import { CategoryListItemComponent } from './components/categories/category-list
 import { RecipeListItemComponent } from './components/recipes/recipe-list-item/recipe-list-item.component';
 import { SvgIconComponent, provideAngularSvgIcon } from 'angular-svg-icon';
 import { ControlsModule } from '../controls/controls.module';
+import {
+  CdkDropList,
+  CdkDragHandle,
+  CdkDrag,
+  moveItemInArray,
+  CdkDragDrop,
+} from '@angular/cdk/drag-drop';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 @NgModule({
   declarations: [
     RecipesComponent,
     RecipePageComponent,
-    RecipeCreatingComponent,
     MatchRecipesComponent,
     CategoryCreatingComponent,
     SomeRecipesPageComponent,
     CategoriesPageComponent,
-    RecipeListComponent
-    , MainPageComponent,
+    RecipeListComponent,
+    MainPageComponent,
     CategoryListComponent,
     CategoryListItemComponent,
-    RecipeListItemComponent
-    
-
-
+    RecipeListItemComponent,
+    RecipeCreatingComponent,
   ],
-  imports: [CommonModule, RecipesRoutingModule, SvgIconComponent, ControlsModule],
+  imports: [
+    CommonModule,
+    NgFor,
+    ControlsModule,
+    RecipesRoutingModule,
+    SvgIconComponent,
+    ControlsModule,
+    ControlsModule,
+    CommonModule,
+    CdkDropList,
+    CdkDragHandle,
+    CdkDropList,
+    CdkDrag,
+    CdkDragHandle,
+    NgFor,
+    CdkDrag,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
   providers: [AuthGuard, provideAngularSvgIcon()],
-  exports: [RecipeListComponent]
-  
+  exports: [RecipeListComponent],
 })
 export class RecipesModule {}

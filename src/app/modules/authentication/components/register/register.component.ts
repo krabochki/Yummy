@@ -13,8 +13,7 @@ import { modal } from 'src/tools/animations';
   styleUrls: ['../../common-styles.scss'],
   animations: [trigger('modal', modal())],
 })
-export class RegisterComponent implements OnInit{
-  
+export class RegisterComponent implements OnInit {
   emailMask = loginMask; //маска для почты
   passMask = passMask; //маска для пароля
   usernameMask = usernameMask;
@@ -62,12 +61,10 @@ export class RegisterComponent implements OnInit{
     private titleService: Title,
     private router: Router,
     private usersService: UserService,
-    
   ) {
-   
-     router.events.subscribe(() => {
-       window.scrollTo(0,0)
-     });
+    router.events.subscribe(() => {
+      window.scrollTo(0, 0);
+    });
     this.titleService.setTitle('Регистрация');
   }
 
@@ -84,9 +81,8 @@ export class RegisterComponent implements OnInit{
     user.password = this.pass;
     user.username = this.username;
 
-      const maxId = Math.max(...this.users.map((u) => u.id));
-  user.id = maxId + 1;
-
+    const maxId = Math.max(...this.users.map((u) => u.id));
+    user.id = maxId + 1;
 
     const emailExists = this.users.find((u) => u.email === user.email);
     const usernameExists = this.users.find((u) => u.username === user.username);

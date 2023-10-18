@@ -1,6 +1,6 @@
 import { CommonModule, Location } from '@angular/common';
 import { LOCALE_ID, NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   SvgIconComponent,
   provideAngularSvgIcon
@@ -34,9 +34,9 @@ import { UserPagesComponent } from './user-pages.component';
     CommentComponent,
     CommentsListComponent,
     SettingsComponent,
-    UsersPageComponent,
     UsersListComponent,
     UsersListItemComponent,
+    UsersPageComponent
   ],
   imports: [
     CommonModule,
@@ -45,6 +45,7 @@ import { UserPagesComponent } from './user-pages.component';
     RecipesModule,
     SvgIconComponent,
     FormsModule,
+    ReactiveFormsModule
   ],
 
   providers: [

@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 import { filter, pairwise } from 'rxjs/operators';
 import { Location } from '@angular/common';
 
+
 @Injectable({
   providedIn: 'root',
 })

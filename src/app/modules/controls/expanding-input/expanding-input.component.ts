@@ -3,6 +3,7 @@ import {
   ElementRef,
   HostListener,
   Input,
+  OnInit,
   ViewChild,
   forwardRef,
 } from '@angular/core';
@@ -20,22 +21,28 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
     },
   ],
 })
-export class ExpandingInputComponent {
+export class ExpandingInputComponent implements OnInit {
   disabled = false;
   @ViewChild('input') input?: ElementRef;
   @Input() placeholder: string = '';
   @Input() error: string = '';
   @Input() max: number | undefined = undefined;
+  @Input() showError = true;
 
   value = '';
 
   isSleep: boolean = false; //подсвечивается ли плейсхолдер
   isFocused = false; //есть ли фокус в инпуте (нужно ли подсвечивать плейсхолдер)
+  @Input() inputRequired: boolean = false;
 
   change() {
     this.onChange(this.value);
   }
-
+  ngOnInit() {
+    if (this.inputRequired === true) {
+      this.placeholder = this.placeholder + '*';
+    }
+  }
   //Появление фокуса
   focus() {
     setTimeout(() => {

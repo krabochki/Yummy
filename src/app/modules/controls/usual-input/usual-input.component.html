@@ -28,5 +28,5 @@
       {{ placeholder }}
     </p>
   </div>
-  <div class="error">{{ error }}</div>
+  <div *ngIf="showError" class="error">{{ error }}</div>
 </div>

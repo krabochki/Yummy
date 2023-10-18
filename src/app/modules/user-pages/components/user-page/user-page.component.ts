@@ -3,7 +3,7 @@ import { AuthService } from 'src/app/modules/authentication/services/auth.servic
 import { IUser, nullUser } from '../../models/users';
 import { ActivatedRoute, Data, Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
-import { IRecipe } from 'src/app/modules/recipes/models/recipes';
+import { IRecipe, nullRecipe } from 'src/app/modules/recipes/models/recipes';
 import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
 import { fadeIn, modal } from 'src/tools/animations';
 import { trigger } from '@angular/animations';
@@ -45,6 +45,10 @@ export class UserPageComponent implements OnInit {
   ) {
     registerLocaleData(localeRu);
     this.linkForSocials = window.location.href;
+  }
+
+  onSkipHandler() {
+    this.router.navigate([this.routerEventsService.previousRoutePath.value]);
   }
 
   currentUser: IUser = nullUser;
@@ -136,7 +140,7 @@ export class UserPageComponent implements OnInit {
         this.allRecipes,
         this.userId,
       );
-
+      
       this.userRecipes.forEach((recipe) => {
         this.cooks += recipe.cooksId?.length;
         this.likes += recipe.likesId?.length;
@@ -146,16 +150,23 @@ export class UserPageComponent implements OnInit {
         if (!this.comments) this.comments = 0;
       });
 
+      this.displayRecipes = [...this.userRecipes];
+
+      if (this.displayRecipes.length == 2) {
+        this.displayRecipes.push(nullRecipe);
+      }
+      if (this.displayRecipes.length == 1) {
+        this.displayRecipes.push(nullRecipe);
+        this.displayRecipes.push(nullRecipe);
+      }
+
       setTimeout(() => {
         this.dataLoaded = true;
       }, 800);
     });
   }
 
-  onSkipHandler() {
-    this.router.navigate([this.routerEventsService.previousRoutePath.value]);
-  }
-
+  displayRecipes:IRecipe[]=[]
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   settingsClose(event: boolean) {
     this.settingsShow = false;

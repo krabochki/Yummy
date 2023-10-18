@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Input, ViewChild, forwardRef } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit, ViewChild, forwardRef } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
@@ -13,18 +13,26 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
     },
   ],
 })
-export class UsualInputComponent {
+export class UsualInputComponent implements OnInit {
   disabled = false;
   @ViewChild('input') input?: ElementRef;
   @Input() placeholder: string = '';
   @Input() error: string = '';
   @Input() max: number | undefined = undefined;
+  @Input() showError = true;
 
   value = '';
+
+  @Input()  inputRequired:boolean = false;
 
   isSleep: boolean = false; //подсвечивается ли плейсхолдер
   isFocused = false; //есть ли фокус в инпуте (нужно ли подсвечивать плейсхолдер)
 
+  ngOnInit() {
+    if (this.inputRequired===true) {
+      this.placeholder=this.placeholder+'*'
+    }
+  }
   change() {
     this.onChange(this.value);
   }

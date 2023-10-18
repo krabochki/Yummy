@@ -1,27 +1,39 @@
-import {
-  AfterContentChecked,
-  AfterContentInit,
-  ChangeDetectorRef,
-  Component,
-} from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { Router } from '@angular/router';
+import { trigger } from '@angular/animations';
+import { modal } from 'src/tools/animations';
+import { IRecipe } from '../../../models/recipes';
+import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
+import { RecipeService } from '../../../services/recipe.service';
+import { AuthService } from 'src/app/modules/authentication/services/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-recipe-creating',
   templateUrl: './recipe-creating.component.html',
   styleUrls: ['./recipe-creating.component.scss'],
+  animations: [trigger('modal', modal())],
 })
-export class RecipeCreatingComponent {
-
-
+export class RecipeCreatingComponent implements OnInit {
   defaultImage: string = '../../../../../assets/images/add-main-photo.png';
   defaultInstructionImage: string =
     '../../../../../assets/images/add-photo.png';
 
+  currentUser: IUser = nullUser;
+
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(
       this.ingredients.controls,
+      event.previousIndex,
+      event.currentIndex,
+    );
+  }
+
+  dropNutritions(event: CdkDragDrop<string[]>) {
+    moveItemInArray(
+      this.nutritions.controls,
       event.previousIndex,
       event.currentIndex,
     );
@@ -37,8 +49,33 @@ export class RecipeCreatingComponent {
 
   form: FormGroup;
 
+  createModalShow = false;
+  handleCreateRecipeModal(answer: boolean) {
+    if (answer) {
+      this.createRecipe();
+    }
+    this.createModalShow = false;
+  }
+
+  exitModalShow = false;
+  handleExitModal(answer: boolean) {
+    if (answer) {
+      this.router.navigateByUrl('recipes');
+    }
+    this.exitModalShow = false;
+  }
+  successModalShow = false;
+  handleSuccessModal(answer: boolean) {
+    this.router.navigateByUrl('recipes/list/' + this.recipeId);
+    this.successModalShow = false;
+  }
+  recipeId = 0;
+
   constructor(
+    private authService: AuthService,
+    private recipeService: RecipeService,
     private fb: FormBuilder,
+    public router: Router,
   ) {
     this.mainImage = this.defaultImage;
     this.form = this.fb.group({
@@ -50,10 +87,14 @@ export class RecipeCreatingComponent {
           Validators.maxLength(40),
         ],
       ],
-      description: ['', [Validators.maxLength(200)]],
+
+      description: ['', Validators.maxLength(5000)],
+      history: ['', [Validators.maxLength(5000)]],
       preparationTime: ['', [Validators.maxLength(200)]],
       portions: [1],
       origin: ['', [Validators.maxLength(50)]],
+      nutritions: this.fb.array([]),
+
       ingredients: this.fb.array([]),
       instructions: this.fb.array([]),
       categories: this.fb.array([]),
@@ -61,9 +102,24 @@ export class RecipeCreatingComponent {
     });
   }
 
+  currentUserSubscription?: Subscription;
+  ngOnInit(): void {
+    this.currentUserSubscription = this.authService
+      .getCurrentUser()
+      .subscribe((data) => {
+        this.currentUser = data;
+      });
+
+    this.router.events.subscribe(() => {
+      window.scrollTo(0, 0);
+    });
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   mainPhotoChange(event: any) {
     const selectedFile = event.target.files[0]; // Первый выбранный файл
+    const image = this.form.get('image');
+    image?.setValue(selectedFile);
     if (selectedFile) {
       const objectURL = URL.createObjectURL(selectedFile);
       this.mainImage = objectURL;
@@ -76,7 +132,8 @@ export class RecipeCreatingComponent {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     event: any,
     instructionIndex: number,
-    imageIndex: number) {
+    imageIndex: number,
+  ) {
     const file = event.target.files[0];
     if (file) {
       const instructionsArray = this.form.get('instructions') as FormArray;
@@ -88,6 +145,9 @@ export class RecipeCreatingComponent {
       imageControl?.patchValue({
         file: file,
       });
+
+      const objectURL = URL.createObjectURL(file);
+      this.images[instructionIndex][imageIndex] = objectURL;
     }
   }
 
@@ -99,26 +159,23 @@ export class RecipeCreatingComponent {
     ) as FormGroup;
     const imagesArray = instructionGroup.get('images') as FormArray;
     imagesArray.at(imageIndex).get('file')?.setValue(null);
+    this.images[instructionIndex][imageIndex] = '';
   }
+
+  images: string[][] = [['']];
 
   //получаем url загруженного фото инструкции для вывода в background-image
   getInstructionPhotoURL(instructionIndex: number, imageIndex: number): string {
-    const instructionsArray = this.form.get('instructions') as FormArray;
-    const instructionGroup = instructionsArray.at(
-      instructionIndex,
-    ) as FormGroup;
-    const imagesArray = instructionGroup.get('images') as FormArray;
-    const imageControl = Object.assign(
-      {},
-      imagesArray.at(imageIndex).get('file'),
-    );
-    const value = imageControl?.value;
-    if (value && (value instanceof Blob || value instanceof File)) {
-      const objectURL = URL.createObjectURL(value);
-      return objectURL;
-    }
-
-    return this.defaultInstructionImage;
+    if (this.images) {
+      if (this.images[instructionIndex]) {
+        if (
+          this.images[instructionIndex][imageIndex] &&
+          this.images[instructionIndex][imageIndex] !== ''
+        ) {
+          return this.images[instructionIndex][imageIndex];
+        } else return this.defaultInstructionImage;
+      } else return this.defaultInstructionImage;
+    } else return this.defaultInstructionImage;
   }
 
   //--------------------
@@ -136,18 +193,55 @@ export class RecipeCreatingComponent {
           '',
           [
             Validators.required,
-            Validators.minLength(5),
-            Validators.maxLength(50),
+            Validators.minLength(2),
+            Validators.maxLength(100),
           ],
         ],
-        amount: [1],
-        unit: [''],
+        amount: [
+          '',
+          [
+            Validators.minLength(1),
+
+            Validators.required,
+            Validators.pattern(/^\d{1,4}(\.\d{1,3})?$/), // Паттерн для числа с 4 цифрами и опционально 3 цифры после запятой]
+          ],
+        ],
+        unit: ['', Validators.maxLength(10)],
       }),
     );
   }
 
   removeIngredient(index: number) {
     this.ingredients.removeAt(index);
+  }
+
+  addNutrition() {
+    this.nutritions.push(
+      this.fb.group({
+        name: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(2),
+            Validators.maxLength(100),
+          ],
+        ],
+        amount: [
+          '',
+          [
+            Validators.minLength(1),
+
+            Validators.required,
+            Validators.pattern(/^\d{1,4}(\.\d{1,3})?$/),
+          ],
+        ],
+        unit: ['', Validators.maxLength(10)],
+      }),
+    );
+  }
+
+  removeNutrition(index: number) {
+    this.nutritions.removeAt(index);
   }
 
   addInstruction() {
@@ -180,6 +274,10 @@ export class RecipeCreatingComponent {
     return this.form.get('ingredients') as FormArray;
   }
 
+  get nutritions() {
+    return this.form.get('nutritions') as FormArray;
+  }
+
   get instructions() {
     return this.form.get('instructions') as FormArray;
   }
@@ -201,12 +299,46 @@ export class RecipeCreatingComponent {
     return imagesArray.controls;
   }
 
-  //обработчик отправки формы
   submitForm() {
+    this.createModalShow = true;
+  }
+
+  //обработчик отправки формы
+  createRecipe() {
     if (this.form.valid) {
-      console.log(this.form.value);
-    } else {
-      // сообщение об ошибках
+      this.recipeService.getRecipes().subscribe((data) => {
+        const recipes: IRecipe[] = data;
+        const maxId = Math.max(...recipes.map((u) => u.id));
+        this.recipeId = maxId;
+        const recipeData: IRecipe = {
+          name: this.form.value.recipeName,
+          ingredients: this.form.value.ingredients,
+          instructions: this.form.value.instructions,
+          mainPhotoUrl: this.form.value.image,
+          description: this.form.value.description,
+          history: this.form.value.history,
+          preparationTime: this.form.value.preparationTime,
+          origin: this.form.value.origin,
+          nutritions: this.form.value.nutritions,
+          servings: this.form.value.portions,
+          authorId: this.currentUser.id,
+          categories: [],
+          cooksId: [],
+          likesId: [],
+          favoritesId: [],
+          id: maxId + 1,
+          comments: [],
+          publicationDate: '',
+        };
+        this.recipeService.postRecipe(recipeData).subscribe(
+          (response) => {
+            this.successModalShow = true;
+          },
+          (error) => {
+            
+          },
+        );
+      });
     }
   }
 }

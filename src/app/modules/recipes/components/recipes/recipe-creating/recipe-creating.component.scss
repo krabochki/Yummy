@@ -1,5 +1,40 @@
 @import "../../../../../../tools/UI/UI.scss";
 
+app-count-input{
+  display: flex;
+  justify-content: start;
+}
+.exit{
+  position: absolute;
+  fill: var(--color-foreground);
+  top: 0;
+  bottom:0; margin: auto;
+width: 0.75em;
+    height: 0.75em;
+  cursor: pointer;
+  left: 0;
+  opacity: 0.5;
+  transition: opacity 0.3s ease-in-out;
+  &:hover {
+    opacity: 1;
+  }
+}
+
+app-modal{
+position: fixed;
+z-index: 10;
+}
+svg-icon{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+width: 0.75em;
+    height: 0.75em;
+}
+
+
+
+
 .cont {
   display: block;
   width: 50vw;
@@ -10,11 +45,17 @@
     font-size: var(--font-xxl);
     font-family: var(--font-family-accent);
     text-align: center;
+    margin-bottom: 1em;
+      position: relative;
+
+    line-height: 1;
   }
 
   label {
+    cursor: unset;
     font-size: var(--font-m);
     margin-bottom: 0.5em;
+    margin-top: 0.75em;
     font-weight: 700;
     display: block;
   }
@@ -26,6 +67,7 @@
     background-color: var(--color-foreground);
     opacity: 0.2;
   }
+
 
   app-button {
     display: flex;
@@ -46,7 +88,7 @@
 
 .instruction {
   grid-template-columns: 1fr;
-  grid-template-rows: max-content 10em;
+  grid-template-rows: max-content max-content;
   row-gap: 0.3em;
 
   .instruction-text {
@@ -88,7 +130,7 @@
   }
 
 .instructions,
-.ingredients {
+.ingredients, .nutritions {
   margin: 2em 0;
 
 
@@ -103,10 +145,12 @@
 
   
 }
+.ingredient-cont,.instruction-cont,.nutrition-cont{
+  padding: 0.5em;
+}
 
 .instruction,
-  .ingredient {
-    padding: 0.5em;
+  .ingredient,.nutrition {
     width: 100%;
 
     
@@ -143,11 +187,11 @@
       align-items: center;
       justify-content: space-between;
       grid-template-columns: 1fr 1fr 1fr;
-      column-gap: 2em;
+      column-gap: 0.5em;
 
       .instruction-image {
         position: relative;
-        height: 10em;
+        height: 7em;
         background-size: cover;
         background-position: center;
         border-radius: var(--space-m);
@@ -166,7 +210,7 @@
   }
 
 
-.ingredient {
+.ingredient,.nutrition {
   column-gap: 1em;
   grid-template-columns: 2em 2em 4fr 2fr 2fr 2em;
 
@@ -174,6 +218,13 @@
     height: 2em;
     line-height: 1;
   }
+}
+
+.error{
+  line-height: 1;
+  margin-top: 0.2em;
+  color:var(--color-primary);
+  font-size: 0.8em;
 }
 
 .delete {
@@ -265,4 +316,14 @@
 
 .cdk-drag-animating {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+
+@media(max-width:900px){
+  .cont{
+    width: 100%;
+        padding-left: calc(14.4vw + 0 * (100vw - 768px) / 760);
+    padding-right: calc(14.4vw + 0 * (100vw - 768px) / 760);
+
+  }
 }

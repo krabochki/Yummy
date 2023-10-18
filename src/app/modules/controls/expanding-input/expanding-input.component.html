@@ -1,6 +1,6 @@
 <div class="input" 
 >
-  <div class="input-cont" [ngClass]="{'active':!isSleep && isFocused}">
+  <div class="input-cont" [ngClass]="{'active':!isSleep && isFocused, 'uncorrect': error!==''}">
 
         <textarea
 
@@ -26,5 +26,5 @@
       {{ placeholder }}
     </p>
   </div>
-  <div class="error">{{ error }}</div>
+  <div  *ngIf="showError" class="error">{{ error }}</div>
 </div>

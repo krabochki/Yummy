@@ -53,7 +53,7 @@ import { ExpandingInputComponent } from './expanding-input/expanding-input.compo
     BannerComponent,
     CountInputComponent,
     UsualInputComponent,
-    ExpandingInputComponent
+    ExpandingInputComponent,
   ],
   providers: [
     provideAngularSvgIcon()

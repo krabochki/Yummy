@@ -81,5 +81,9 @@ textarea {
     border-bottom-width: 2px;
     border-bottom-color: var(--color-secondary);
   }
+
+  &.uncorrect{
+    border-color: var(--color-primary);
+  }
 }
 

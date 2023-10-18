@@ -8,8 +8,10 @@ import { HostListener } from '@angular/core';
   styleUrls: ['./recipe-list.component.scss'],
 })
 export class RecipeListComponent {
+  @Input() orientation: 'vertical'|'horizontal'='horizontal'
   @Input() context: string = '';
   @Input() recipes: IRecipe[] = [];
+  @Input() cols: number = 4;
 
   @HostListener('scroll', ['$event'])
   @ViewChild('list')

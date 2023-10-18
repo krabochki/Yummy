@@ -1,7 +1,7 @@
 
 <app-banner [notMain]="false"  [background]="'main-banner-background'"  [link]="'match'" [label]="'Готовьте с радостью\nЕшьте с удовольствием'" [buttonText]="'Подобрать рецепт'"></app-banner>
 
-<div class="recipes"><app-recipe-list [context]="'popular'" [recipes]="popularRecipes"></app-recipe-list></div>
+<div class="recipes"><app-recipe-list [orientation]="'horizontal'" [context]="'popular'" [recipes]="popularRecipes"></app-recipe-list></div>
 
 <app-category-list  [categories]="allCategories"></app-category-list>
 
@@ -14,6 +14,6 @@
 
 
 <div class="recipes">
-    <app-recipe-list  [context]="'recent'" [recipes]="recentRecipes"></app-recipe-list>
+    <app-recipe-list [orientation]="'vertical'"  [context]="'recent'" [recipes]="recentRecipes"></app-recipe-list>
     
 </div>

@@ -263,8 +263,10 @@
       </div></ng-template
     >
     <app-recipe-list
+    [orientation]="'vertical'"
+    [cols]="3"
       *ngIf="userRecipes.length > 0; else noRecipes"
-      [recipes]="userRecipes"
+      [recipes]="displayRecipes"
     ></app-recipe-list>
   </ng-template>
 

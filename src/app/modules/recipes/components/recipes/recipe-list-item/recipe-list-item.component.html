@@ -2,12 +2,25 @@
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 
 
-<ng-template #sceleton >
+
+<ng-template #nullRecipe >
+
+  <div class="recipe sceleton null" *ngIf="dataLoaded; else sceleton">
+
+
+    <p>Здесь могла быть <br> ваша реклама</p>
+    <svg-icon [applyClass]="true" class="no-recipe-svg" [src]="'../../../../../assets/images/svg/no-recipe.svg'"></svg-icon>
+  </div>
+
+  <ng-template #sceleton >
+
 
   <div class="recipe sceleton" ></div>
 
 </ng-template>
-<div  *ngIf="dataLoaded; else sceleton"  class="recipe" [title]="recipe.name">
+
+</ng-template>
+<div  *ngIf="dataLoaded && recipe.id!==0; else nullRecipe"  class="recipe" [title]="recipe.name">
   <div class="top">
     <div (click)="makeThisRecipeFavorite()" class="fav">
       <svg-icon

@@ -82,7 +82,6 @@
                 padding: 5em 0;
 
                 * {
-                    zoom: 0.85;
                 }
             }
 
@@ -123,12 +122,12 @@
                 padding: 4em 0;
 
                 .label {
-                    font-size: 1.8em;
                     zoom: 0.8;
+                    width: 80%;
                 }
 
                 app-button {
-                    zoom: 0.8
+                    zoom: 0.93
                 }
 
                 

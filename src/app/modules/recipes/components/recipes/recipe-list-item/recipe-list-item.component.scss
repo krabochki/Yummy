@@ -28,11 +28,39 @@
   width: 100%; /* 4 колонки внутри грида */
 
   &.sceleton{
+display: flex;
+align-items: center;
+justify-content: center;
+flex-direction: column;
 
+    &.null{
+
+      p{
+        opacity: 0.5;
+        font-size: 1em;
+        text-align: center;
+        line-height: 1;
+                color: var(--color-foreground-unactive);
+                margin-bottom: 0.75em;
+                font-weight: 600;
+                cursor: default;
+
+      }
+      .no-recipe-svg{
+        width: 100%;
+                opacity: 0.65;
+
+        fill: var(--color-foreground-unactive);
+      }
+                      animation: none;
+                      background-image: none;
+        background-image: linear-gradient(to right, transparent, var(--color-background-deeper-unactive) 100%);
+
+    }
     box-shadow: none;
 
                 animation: loading 1.7s infinite linear;
-            background: #dedfe1;
+            background: var(--color-background-deeper);
         background-image: -webkit-linear-gradient(to right, #dedfe1 0%, #f2f3f5 20%, #dedfe1 40%, #dedfe1 100%);
         background-image: linear-gradient(to right, #dedfe1 0%, #f2f3f5 20%, #dedfe1 40%, #dedfe1 100%);
         background-repeat: no-repeat;

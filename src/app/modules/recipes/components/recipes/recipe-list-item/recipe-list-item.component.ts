@@ -27,15 +27,11 @@ export class RecipeListItemComponent implements OnInit {
 
   currentUserId = 0;
 
-
-
-
   constructor(
     private recipeService: RecipeService,
     private authService: AuthService,
     private router: Router,
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     this.authService.getCurrentUser().subscribe((currentUser) => {
@@ -44,7 +40,6 @@ export class RecipeListItemComponent implements OnInit {
       if (currentUser.role !== 'user') {
         this.moderMode = true;
       }
-      
 
       this.recipeService.recipes$.subscribe((recipes) => {
         recipes.forEach((element) => {

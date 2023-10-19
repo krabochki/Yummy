@@ -1,7 +1,4 @@
-import {
-  Router,
-  ActivatedRouteSnapshot,
-} from '@angular/router';
+import { Router, ActivatedRouteSnapshot } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, EMPTY } from 'rxjs';
 import { IRecipe } from '../models/recipes';
@@ -14,9 +11,10 @@ export class RecipeResolver {
     private router: Router,
   ) {}
 
-  resolve(
-    route: ActivatedRouteSnapshot,
-  ): Observable<IRecipe> {
+  resolve(route: ActivatedRouteSnapshot): Observable<IRecipe> {
+    if (route.params?.['id'] === '0') {
+      return EMPTY;
+    }
     return this.recipeService.getRecipe(route.params?.['id']).pipe(
       catchError(() => {
         this.router.navigate(['recipes']);

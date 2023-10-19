@@ -140,17 +140,25 @@ export class UserPageComponent implements OnInit {
         this.allRecipes,
         this.userId,
       );
-      if (!this.myPage && (this.currentUser.role === 'admin' || this.currentUser.role === 'moderator')) {
-         this.userRecipes = this.recipeService.getNotPrivateRecipes(
-           this.userRecipes,
-         );
+      if (
+        !this.myPage &&
+        (this.currentUser.role === 'admin' ||
+          this.currentUser.role === 'moderator')
+      ) {
+        this.userRecipes = this.recipeService.getNotPrivateRecipes(
+          this.userRecipes,
+        );
       }
-      if (!this.myPage && this.currentUser.role!=='admin' && this.currentUser.role!=='moderator') {
+      if (
+        !this.myPage &&
+        this.currentUser.role !== 'admin' &&
+        this.currentUser.role !== 'moderator'
+      ) {
         this.userRecipes = this.recipeService.getPublicRecipes(
           this.userRecipes,
         );
       }
-      
+
       this.userRecipes.forEach((recipe) => {
         this.cooks += recipe.cooksId?.length;
         this.likes += recipe.likesId?.length;
@@ -176,7 +184,7 @@ export class UserPageComponent implements OnInit {
     });
   }
 
-  displayRecipes:IRecipe[]=[]
+  displayRecipes: IRecipe[] = [];
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   settingsClose(event: boolean) {
     this.settingsShow = false;

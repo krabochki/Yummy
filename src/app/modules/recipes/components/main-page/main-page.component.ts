@@ -24,14 +24,11 @@ export class MainPageComponent implements OnInit {
   currentUserSubscription?: Subscription;
   currentUser: IUser = nullUser;
 
-
-
-
   constructor(
     private recipeService: RecipeService,
     private categoryService: CategoryService,
     private titleService: Title,
-    private authService:AuthService
+    private authService: AuthService,
   ) {
     this.titleService.setTitle('Yummy');
   }
@@ -40,9 +37,7 @@ export class MainPageComponent implements OnInit {
     this.recipesSubscription = this.recipeService
       .getRecipes()
       .subscribe((recipesData) => {
-
-        this.allRecipes= this.recipeService.getPublicRecipes(recipesData)
-
+        this.allRecipes = this.recipeService.getPublicRecipes(recipesData);
 
         this.popularRecipes = this.recipeService
           .getPopularRecipes(this.allRecipes)
@@ -58,11 +53,11 @@ export class MainPageComponent implements OnInit {
             this.allCategories = recipesData;
           });
       });
-  
-   this.currentUserSubscription = this.authService
-     .getCurrentUser()
-     .subscribe((data) => {
-       this.currentUser = data;
-     });
+
+    this.currentUserSubscription = this.authService
+      .getCurrentUser()
+      .subscribe((data) => {
+        this.currentUser = data;
+      });
   }
 }

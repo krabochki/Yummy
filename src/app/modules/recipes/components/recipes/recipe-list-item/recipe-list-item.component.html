@@ -71,7 +71,7 @@
             '../../../../../assets/images/svg/'+(recipe.status==='awaits'?'awaits':'private')+'.svg'
           "
           [applyClass]="true"
-          [class]="isRecipeLiked ? 'like-icon liked' : 'like-icon'"
+          class="like-icon"
         ></svg-icon>
         <span >{{recipe.status==='private'?'Не опубликован':'Ожидает проверки'}}</span>
       </div>

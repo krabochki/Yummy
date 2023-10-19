@@ -21,42 +21,42 @@ export class ControlDashboardComponent implements OnInit {
   currentUserSubscription?: Subscription;
   recipesSubscription?: Subscription;
   currentUser: IUser = nullUser;
-  awaitingRecipes: IRecipe[] = []
-  
+  awaitingRecipes: IRecipe[] = [];
+
   getModeratorAction(action: number[]) {
     if (action[1] === 1) {
-      this.approveRecipe(action[0])
+      this.approveRecipe(action[0]);
     }
     if (action[1] === 0) {
-      this.notApproveRecipe(action[0])
+      this.notApproveRecipe(action[0]);
     }
   }
 
-  notApproveRecipe(id:number) {
-     const approvedRecipe: IRecipe | undefined = this.awaitingRecipes.find(
-       (recipe: IRecipe) => recipe.id === id,
-     );
+  notApproveRecipe(id: number) {
+    const approvedRecipe: IRecipe | undefined = this.awaitingRecipes.find(
+      (recipe: IRecipe) => recipe.id === id,
+    );
 
-     if (approvedRecipe) {
-       approvedRecipe.status = 'private';
-       this.recipeService.updateRecipe(approvedRecipe);
-       this.awaitingRecipes = this.awaitingRecipes.filter(
-         (recipe) => recipe.id !== id,
-       );
-     }
+    if (approvedRecipe) {
+      approvedRecipe.status = 'private';
+      this.recipeService.updateRecipe(approvedRecipe);
+      this.awaitingRecipes = this.awaitingRecipes.filter(
+        (recipe) => recipe.id !== id,
+      );
+    }
   }
   approveRecipe(id: number) {
-    
-    const approvedRecipe: IRecipe | undefined = this.awaitingRecipes.find((recipe: IRecipe) => recipe.id === id);
+    const approvedRecipe: IRecipe | undefined = this.awaitingRecipes.find(
+      (recipe: IRecipe) => recipe.id === id,
+    );
 
     if (approvedRecipe) {
       approvedRecipe.status = 'public';
       this.recipeService.updateRecipe(approvedRecipe);
-      this.awaitingRecipes = this.awaitingRecipes.filter((recipe) => recipe.id !== id);
-
+      this.awaitingRecipes = this.awaitingRecipes.filter(
+        (recipe) => recipe.id !== id,
+      );
     }
-
-
   }
 
   ngOnInit(): void {

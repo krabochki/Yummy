@@ -87,3 +87,10 @@ textarea {
   }
 }
 
+
+@media(max-width:480px){
+  *{
+    line-height: 1;
+    font-size: 0.95em;
+  }
+}

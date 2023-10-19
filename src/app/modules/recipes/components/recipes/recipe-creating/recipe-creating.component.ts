@@ -72,20 +72,16 @@ export class RecipeCreatingComponent implements OnInit {
   approveModalShow = false;
   handleApproveModal(answer: boolean) {
     if (answer) {
-              this.isAwaitingApprove = true;
+      this.isAwaitingApprove = true;
 
-       this.createRecipe()
-     }
-     this.approveModalShow = false;
+      this.createRecipe();
+    }
+    this.approveModalShow = false;
   }
 
-
   isAwaitingApprove = false;
-  
+
   recipeId = 0;
-
-
- 
 
   constructor(
     private authService: AuthService,
@@ -135,7 +131,10 @@ export class RecipeCreatingComponent implements OnInit {
   mainPhotoChange(event: any) {
     const selectedFile = event.target.files[0]; // Первый выбранный файл
     const image = this.form.get('image');
-    image?.setValue(selectedFile);
+    const formData = new FormData();
+    formData.append('mainPhotoURL', selectedFile);
+
+    image?.setValue(formData);
     if (selectedFile) {
       const objectURL = URL.createObjectURL(selectedFile);
       this.mainImage = objectURL;
@@ -152,6 +151,9 @@ export class RecipeCreatingComponent implements OnInit {
   ) {
     const file = event.target.files[0];
     if (file) {
+      const formData = new FormData();
+      formData.append('instuctionPhoto', file);
+
       const instructionsArray = this.form.get('instructions') as FormArray;
       const instructionGroup = instructionsArray.at(
         instructionIndex,
@@ -159,7 +161,7 @@ export class RecipeCreatingComponent implements OnInit {
       const imagesArray = instructionGroup.get('images') as FormArray;
       const imageControl = imagesArray.at(imageIndex);
       imageControl?.patchValue({
-        file: file,
+        file: formData,
       });
 
       const objectURL = URL.createObjectURL(file);
@@ -251,7 +253,7 @@ export class RecipeCreatingComponent implements OnInit {
           '',
           [
             Validators.required,
-            Validators.minLength(5),
+            Validators.minLength(2),
             Validators.maxLength(1000),
           ],
         ],
@@ -309,7 +311,7 @@ export class RecipeCreatingComponent implements OnInit {
       this.recipeService.getRecipes().subscribe((data) => {
         const recipes: IRecipe[] = data;
         const maxId = Math.max(...recipes.map((u) => u.id));
-        this.recipeId = maxId;
+        this.recipeId = maxId+1;
         const recipeData: IRecipe = {
           name: this.form.value.recipeName,
           ingredients: this.form.value.ingredients,
@@ -327,7 +329,7 @@ export class RecipeCreatingComponent implements OnInit {
           cooksId: [],
           likesId: [],
           favoritesId: [],
-          id: maxId + 1,
+          id: this.recipeId,
           comments: [],
           publicationDate: '',
           status: this.isAwaitingApprove ? 'awaits' : 'private',

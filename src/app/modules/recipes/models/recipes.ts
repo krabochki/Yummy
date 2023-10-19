@@ -2,7 +2,7 @@ import { IComment } from 'src/app/modules/user-pages/models/comments';
 
 export interface IRecipe {
   id: number; // Уникальный идентификатор рецепта
-  mainPhotoUrl: string; // URL основного фото рецепта
+  mainPhotoUrl: any; // URL основного фото рецепта
   name: string; // Название рецепта
   description: string; // Описание рецепта
   preparationTime: string; // Время приготовления
@@ -24,7 +24,7 @@ export interface IRecipe {
 }
 export const nullRecipe: IRecipe = {
   id: 0,
-  mainPhotoUrl: '',
+  mainPhotoUrl: null,
   name: '',
   description: '',
   cookingTime: '',
@@ -50,8 +50,8 @@ export interface Ingredient {
   unit: string; // Единица измерения
 }
 export interface Instruction {
-  content: string; // Название ингредиента
-  photos: string[3]; // Единица измерения
+  name: string; // Название ингредиента
+  images: any[3]; // Единица измерения
 }
 export interface Nutrition {
   name: string; // Название пищевой ценности

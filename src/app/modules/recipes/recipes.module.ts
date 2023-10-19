@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { CommonModule, NgFor } from '@angular/common';
 import { RecipesRoutingModule } from './recipes-routing.module';
 import { RecipesComponent } from './recipes.component';
@@ -54,7 +54,11 @@ import { VerticalRecipeListComponent } from './components/recipes/vertical-recip
     FormsModule,
     ReactiveFormsModule,
   ],
-  providers: [AuthGuard, provideAngularSvgIcon()],
+  providers: [
+    AuthGuard,
+    provideAngularSvgIcon(),
+    { provide: LOCALE_ID, useValue: 'ru' },
+  ],
   exports: [HorizontalRecipeListComponent, VerticalRecipeListComponent],
 })
 export class RecipesModule {}

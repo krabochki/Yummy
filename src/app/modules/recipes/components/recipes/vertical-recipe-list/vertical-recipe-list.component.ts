@@ -1,4 +1,11 @@
-import { Component, EventEmitter, HostListener, Input, OnChanges, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnChanges,
+  Output,
+} from '@angular/core';
 import { IRecipe, nullRecipe } from '../../../models/recipes';
 
 @Component({
@@ -17,8 +24,8 @@ export class VerticalRecipeListComponent implements OnChanges {
   }
   @Output() moderatorAction = new EventEmitter<number[]>();
 
-  getModeratorAction(action:number[]) {
-    this.moderatorAction.emit(action)
+  getModeratorAction(action: number[]) {
+    this.moderatorAction.emit(action);
   }
   @Input() cols: number = 4;
 

@@ -622,7 +622,7 @@
       ]
     },
     {
-      "status": "public",
+      "status": "private",
       "id": 10,
       "mainPhotoUrl": "url_1.jpg",
       "name": "Рецепт 1",
@@ -667,7 +667,7 @@
         1,
         2
       ],
-      "authorId": 101,
+      "authorId": 1,
       "likesId": [
         201,
         301
@@ -1237,7 +1237,7 @@
       "personalWebsite": "https://www.chefalexeyzimin.com/",
       "location": "Москва, Россия",
       "registrationDate": "2023-01-15",
-      "profileViews": 7522,
+      "profileViews": 7548,
       "role": "admin"
     },
     {
@@ -1321,7 +1321,7 @@
       "personalWebsite": "https://www.cookingadventures.com/",
       "location": "Лондон, Великобритания",
       "registrationDate": "2023-04-02",
-      "profileViews": 4907,
+      "profileViews": 4908,
       "role": "user"
     },
     {
@@ -1339,7 +1339,7 @@
       "personalWebsite": "https://angular.io/errors/",
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 971
+      "profileViews": 983
     },
     {
       "id": 6,
@@ -1371,7 +1371,7 @@
       "personalWebsite": "https://www.healthandnutrition.com/",
       "location": "Сидней, Австралия",
       "registrationDate": "2023-06-18",
-      "profileViews": 4327,
+      "profileViews": 4328,
       "role": "user"
     },
     {

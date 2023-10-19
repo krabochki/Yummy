@@ -89,6 +89,9 @@ export class RecipeService {
   getAwaitingRecipes(recipes: IRecipe[]) {
     return recipes.filter((recipe) => recipe.status === 'awaits');
   }
+  getNotPrivateRecipes(recipes: IRecipe[]) {
+    return recipes.filter((recipe) => recipe.status !== 'private');
+  }
   getRecentRecipes(recipes: IRecipe[]) {
     return recipes.sort((a, b) => {
       const dateA = new Date(a.publicationDate);

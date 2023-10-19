@@ -140,6 +140,11 @@ export class UserPageComponent implements OnInit {
         this.allRecipes,
         this.userId,
       );
+      if (!this.myPage && (this.currentUser.role === 'admin' || this.currentUser.role === 'moderator')) {
+         this.userRecipes = this.recipeService.getNotPrivateRecipes(
+           this.userRecipes,
+         );
+      }
       if (!this.myPage && this.currentUser.role!=='admin' && this.currentUser.role!=='moderator') {
         this.userRecipes = this.recipeService.getPublicRecipes(
           this.userRecipes,

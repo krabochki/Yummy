@@ -22,7 +22,7 @@
 </ng-template>
 <div  *ngIf="dataLoaded && recipe.id!==0; else nullRecipe"  class="recipe" [title]="recipe.name">
   <div class="top">
-    <div *ngIf="!moderMode " (click)="recipe.status==='public'?makeThisRecipeFavorite():null" class="fav">
+    <div *ngIf="recipe.authorId===currentUserId || recipe.status==='public'" (click)="recipe.status==='public'?makeThisRecipeFavorite():null" class="fav">
       <svg-icon 
         [src]="
           '../../../../../assets/images/svg/' +
@@ -38,7 +38,7 @@
     <div class="title">
       <h1 [routerLink]="'/recipes/list/'+recipe.id">{{ recipe.name }}</h1>
     </div>
-    <div class="rate-panel" *ngIf="!moderMode && (recipe.status==='public')">
+    <div class="rate-panel" *ngIf="!moderMode || (recipe.status==='public')">
       <div class="rate-item likes" (click)="likeThisRecipe()">
         <svg-icon
           [src]="
@@ -79,7 +79,7 @@
     </div>
   </div>
   
-  <div *ngIf="moderMode" class="moder-buttons">
+  <div *ngIf="moderMode && recipe.status==='awaits'" class="moder-buttons" >
   <button (click)="approve()">✓</button>
   <button (click)="notApprove()">✗</button>
 </div>

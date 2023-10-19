@@ -9,8 +9,42 @@
     background-position: 200px;
   }
 }
+.moder-buttons{
+  position: absolute;
+  top:0;
+  
+  left:0;
+  right: 0;
+  
+
+  padding: 1em 1em;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
+  width: 100%;
+  button{
+    display: flex;
+    width: 2em;
+  height: 2em;
+    align-items: center;
+    justify-content: center;
+    padding:0.5em;
+    border-radius: 100%;
+  }
+
+  button:first-of-type{
+    background-color: rgb(247, 107, 107);
+  }
+    button:last-of-type{
+    background-color: rgb(103, 211, 125);
+  }
+
+}
 
 .recipe {
+  position: relative;
   background-image: url("../../../../../../assets/images/svg/pancakes.png");
 
   box-shadow: inset 0 -7em 4em rgba($color: #000000, $alpha: 0.7);

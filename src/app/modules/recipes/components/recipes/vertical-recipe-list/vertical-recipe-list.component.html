@@ -3,7 +3,7 @@
 
     <div class="inner">
         
-        <app-recipe-list-item [recipe]="block">
+        <app-recipe-list-item (moderatorAction)="getModeratorAction($event)" [moderMode]="moderMode" [recipe]="block">
 
         </app-recipe-list-item>
     </div>

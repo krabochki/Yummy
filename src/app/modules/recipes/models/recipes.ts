@@ -6,6 +6,7 @@ export interface IRecipe {
   name: string; // Название рецепта
   description: string; // Описание рецепта
   preparationTime: string; // Время приготовления
+  cookingTime:string,
   servings: number; // Количество порций
   origin: string; // Происхождение рецепта
   ingredients: Ingredient[]; // Список ингредиентов
@@ -18,14 +19,16 @@ export interface IRecipe {
   history:string,
   comments: IComment[]; // Список комментариев
   publicationDate: string; // Дата регистрации пользователя
-  favoritesId: number[]
+  favoritesId: number[],
+  status: 'awaits' | 'private' | 'public';
 }
 export const nullRecipe: IRecipe = {
   id: 0,
   mainPhotoUrl: '',
   name: '',
   description: '',
-  preparationTime: '',
+  cookingTime: '',
+  preparationTime:'',
   servings: 0,
   origin: '',
   ingredients: [],
@@ -39,6 +42,7 @@ export const nullRecipe: IRecipe = {
   comments: [],
   favoritesId: [],
   publicationDate: '01-01-2000',
+  status: 'private'
 };
 export interface Ingredient {
   name: string; // Название ингредиента

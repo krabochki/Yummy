@@ -1,4 +1,8 @@
 
-
-<h1>admin panel</h1>
-<p>ура вы {{ authService.role | uppercase}}  !!!!!!!!!!!!!!! поздравляю</p>
+<div class="main">
+    
+ <h1>Админ-панель</h1>
+    
+    <app-vertical-recipe-list (moderatorAction)="getModeratorAction($event)" [moderMode]="true" [blocks]="awaitingRecipes"></app-vertical-recipe-list>
+    
+</div>

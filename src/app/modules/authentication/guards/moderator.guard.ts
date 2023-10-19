@@ -6,6 +6,10 @@ export class ModeratorGuard {
   constructor(@Inject(AuthService) private auth: AuthService) {}
 
   canActivate(): boolean {
-    return this.auth.role === 'admin' || this.auth.role === 'moderator';
+    let role = 'user';
+    this.auth.getCurrentUser().subscribe((data) => {
+      role = data.role;
+    });
+    return role === 'admin' || role === 'moderator';
   }
 }

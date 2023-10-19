@@ -6,12 +6,10 @@ import { BehaviorSubject } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class RecipeService  {
+export class RecipeService {
   private recipesSubject = new BehaviorSubject<IRecipe[]>([]);
   recipes$ = this.recipesSubject.asObservable();
 
-
-  
   url: string = 'http://localhost:3000/recipes';
 
   constructor(private http: HttpClient) {
@@ -44,7 +42,6 @@ export class RecipeService  {
             );
           if (before !== recipe) {
             this.updateRecipe(recipe);
-
           }
         }
       });
@@ -68,31 +65,29 @@ export class RecipeService  {
   }
 
   updateRecipe(recipe: IRecipe) {
-        const url = `${this.url}/${recipe.id}`;
+    const url = `${this.url}/${recipe.id}`;
 
-        return this.http
-          .put<IRecipe>(url, recipe)
-          .subscribe((updatedRecipe) => {
-            // Получите текущие рецепты из BehaviorSubject
-            const currentRecipes = this.recipesSubject.value;
+    return this.http.put<IRecipe>(url, recipe).subscribe((updatedRecipe) => {
+      const currentRecipes = this.recipesSubject.value;
 
-            // Найдите индекс обновляемого рецепта в массиве
-            const index = currentRecipes.findIndex(
-              (r) => r.id === updatedRecipe.id,
-            );
+      const index = currentRecipes.findIndex((r) => r.id === updatedRecipe.id);
 
-            // Если рецепт найден, замените его на обновленный рецепт
-            if (index !== -1) {
-              const updatedRecipes = [...currentRecipes]; // Клонируйте текущий массив
-              updatedRecipes[index] = updatedRecipe; // Замените рецепт
-              this.recipesSubject.next(updatedRecipes); // Обновите данные в BehaviorSubject
-            }
-          });
-
+      if (index !== -1) {
+        const updatedRecipes = [...currentRecipes];
+        updatedRecipes[index] = updatedRecipe;
+        this.recipesSubject.next(updatedRecipes);
+      }
+    });
   }
 
   getPopularRecipes(recipes: IRecipe[]) {
     return recipes.sort((a, b) => b.likesId.length - a.likesId.length);
+  }
+  getPublicRecipes(recipes: IRecipe[]) {
+    return recipes.filter((recipe) => recipe.status === 'public');
+  }
+  getAwaitingRecipes(recipes: IRecipe[]) {
+    return recipes.filter((recipe) => recipe.status === 'awaits');
   }
   getRecentRecipes(recipes: IRecipe[]) {
     return recipes.sort((a, b) => {

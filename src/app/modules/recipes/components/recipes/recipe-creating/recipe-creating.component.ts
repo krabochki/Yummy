@@ -69,7 +69,23 @@ export class RecipeCreatingComponent implements OnInit {
     this.router.navigateByUrl('recipes/list/' + this.recipeId);
     this.successModalShow = false;
   }
+  approveModalShow = false;
+  handleApproveModal(answer: boolean) {
+    if (answer) {
+              this.isAwaitingApprove = true;
+
+       this.createRecipe()
+     }
+     this.approveModalShow = false;
+  }
+
+
+  isAwaitingApprove = false;
+  
   recipeId = 0;
+
+
+ 
 
   constructor(
     private authService: AuthService,
@@ -84,13 +100,14 @@ export class RecipeCreatingComponent implements OnInit {
         [
           Validators.required,
           Validators.minLength(5),
-          Validators.maxLength(40),
+          Validators.maxLength(100),
         ],
       ],
 
       description: ['', Validators.maxLength(5000)],
       history: ['', [Validators.maxLength(5000)]],
       preparationTime: ['', [Validators.maxLength(200)]],
+      cookingTime: ['', [Validators.maxLength(200)]],
       portions: [1],
       origin: ['', [Validators.maxLength(50)]],
       nutritions: this.fb.array([]),
@@ -104,16 +121,14 @@ export class RecipeCreatingComponent implements OnInit {
 
   currentUserSubscription?: Subscription;
   ngOnInit(): void {
-        this.router.events.subscribe(() => {
-          window.scrollTo(0, 0);
-        });
+    this.router.events.subscribe(() => {
+      window.scrollTo(0, 0);
+    });
     this.currentUserSubscription = this.authService
       .getCurrentUser()
       .subscribe((data) => {
         this.currentUser = data;
       });
-
-
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -198,12 +213,7 @@ export class RecipeCreatingComponent implements OnInit {
             Validators.maxLength(100),
           ],
         ],
-        amount: [
-          '',
-          [
-            Validators.minLength(1),
-          ],
-        ],
+        amount: ['', [Validators.minLength(1)]],
         unit: ['', Validators.maxLength(10)],
       }),
     );
@@ -224,12 +234,7 @@ export class RecipeCreatingComponent implements OnInit {
             Validators.maxLength(100),
           ],
         ],
-        amount: [
-          '',
-          [
-            Validators.minLength(1)
-          ],
-        ],
+        amount: ['', [Validators.minLength(1)]],
         unit: ['', Validators.maxLength(10)],
       }),
     );
@@ -313,6 +318,7 @@ export class RecipeCreatingComponent implements OnInit {
           description: this.form.value.description,
           history: this.form.value.history,
           preparationTime: this.form.value.preparationTime,
+          cookingTime: this.form.value.cookingTime,
           origin: this.form.value.origin,
           nutritions: this.form.value.nutritions,
           servings: this.form.value.portions,
@@ -324,14 +330,13 @@ export class RecipeCreatingComponent implements OnInit {
           id: maxId + 1,
           comments: [],
           publicationDate: '',
+          status: this.isAwaitingApprove ? 'awaits' : 'private',
         };
         this.recipeService.postRecipe(recipeData).subscribe(
           (response) => {
             this.successModalShow = true;
           },
-          (error) => {
-            
-          },
+          (error) => {},
         );
       });
     }

@@ -1,4 +1,4 @@
-import { Component, HostListener, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnChanges, Output } from '@angular/core';
 import { IRecipe, nullRecipe } from '../../../models/recipes';
 
 @Component({
@@ -6,22 +6,26 @@ import { IRecipe, nullRecipe } from '../../../models/recipes';
   templateUrl: './vertical-recipe-list.component.html',
   styleUrls: ['./vertical-recipe-list.component.scss'],
 })
-export class VerticalRecipeListComponent implements OnInit {
+export class VerticalRecipeListComponent implements OnChanges {
   @Input() blocks: IRecipe[] = []; // Передаваемый массив блоков
 
   nullRecipe: IRecipe = nullRecipe;
 
-  ngOnInit() {
+  @Input() moderMode = false;
+  ngOnChanges() {
     this.onResize();
   }
+  @Output() moderatorAction = new EventEmitter<number[]>();
 
+  getModeratorAction(action:number[]) {
+    this.moderatorAction.emit(action)
+  }
   @Input() cols: number = 4;
 
   @HostListener('window:resize', ['$event'])
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onResize() {
-    console.log('resize');
-    const event = screen.width;
+    const event = window.innerWidth;
 
     if (this.cols === 4) {
       if (event <= 1200) {

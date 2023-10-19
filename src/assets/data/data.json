@@ -216,7 +216,7 @@
         292,
         202
       ],
-      "authorId": 103,
+      "authorId": 1,
       "likesId": [],
       "cooksId": [],
       "comments": [],
@@ -269,7 +269,7 @@
         1,
         2
       ],
-      "authorId": 101,
+      "authorId": 1,
       "likesId": [
         201,
         301
@@ -333,7 +333,7 @@
         1,
         2
       ],
-      "authorId": 101,
+      "authorId": 1,
       "likesId": [
         201,
         300,
@@ -408,7 +408,7 @@
         1,
         2
       ],
-      "authorId": 101,
+      "authorId": 1,
       "likesId": [
         201,
         301
@@ -472,7 +472,7 @@
         1,
         2
       ],
-      "authorId": 101,
+      "authorId": 1,
       "likesId": [
         201,
         301
@@ -536,7 +536,7 @@
         1,
         2
       ],
-      "authorId": 101,
+      "authorId": 1,
       "likesId": [
         201,
         301
@@ -601,7 +601,7 @@
         1,
         2
       ],
-      "authorId": 101,
+      "authorId": 1,
       "likesId": [
         201,
         301
@@ -1237,7 +1237,7 @@
       "personalWebsite": "https://www.chefalexeyzimin.com/",
       "location": "Москва, Россия",
       "registrationDate": "2023-01-15",
-      "profileViews": 7520,
+      "profileViews": 7522,
       "role": "admin"
     },
     {
@@ -1339,7 +1339,7 @@
       "personalWebsite": "https://angular.io/errors/",
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 855
+      "profileViews": 971
     },
     {
       "id": 6,
@@ -1371,7 +1371,7 @@
       "personalWebsite": "https://www.healthandnutrition.com/",
       "location": "Сидней, Австралия",
       "registrationDate": "2023-06-18",
-      "profileViews": 4326,
+      "profileViews": 4327,
       "role": "user"
     },
     {
@@ -1400,7 +1400,7 @@
       "personalWebsite": "",
       "location": "Лиссабон, Португалия",
       "registrationDate": "2023-07-24",
-      "profileViews": 3937,
+      "profileViews": 3938,
       "role": "user"
     },
     {
@@ -1429,7 +1429,7 @@
       "personalWebsite": "https://www.interiordesignsbyvictoria.com/",
       "location": "Милан, Италия",
       "registrationDate": "2023-08-12",
-      "profileViews": 3200,
+      "profileViews": 3201,
       "role": "user"
     },
     {
@@ -1458,7 +1458,7 @@
       "personalWebsite": "https://www.techenthusiast.com/",
       "location": "Сан-Франциско, США",
       "registrationDate": "2023-09-03",
-      "profileViews": 2750,
+      "profileViews": 2751,
       "role": "user"
     },
     {
@@ -1486,7 +1486,7 @@
       "personalWebsite": "",
       "location": "Лондон, Великобритания",
       "registrationDate": "2023-10-19",
-      "profileViews": 2350,
+      "profileViews": 2352,
       "role": "user"
     }
   ]

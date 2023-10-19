@@ -134,12 +134,17 @@ export class UserPageComponent implements OnInit {
     });
 
     this.recipeService.getRecipes()?.subscribe((data) => {
-      this.allRecipes = data;
+      this.allRecipes = this.recipeService.getPopularRecipes(data);
 
       this.userRecipes = this.recipeService.getRecipesByUser(
         this.allRecipes,
         this.userId,
       );
+      if (!this.myPage && this.currentUser.role!=='admin' && this.currentUser.role!=='moderator') {
+        this.userRecipes = this.recipeService.getPublicRecipes(
+          this.userRecipes,
+        );
+      }
       
       this.userRecipes.forEach((recipe) => {
         this.cooks += recipe.cooksId?.length;

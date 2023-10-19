@@ -141,8 +141,28 @@ padding: 2em;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    transition: 0.3s ease-in-out;
+    position: relative;
 
+    overflow: hidden;
+    &::before{
+      position: absolute;
+      top:0;bottom:0;right:0;left:0;margin:auto;
+      content: '';
+      background-color: rgb(255, 48, 48);
+      height: 0px;
+      width: 0px;
+      border-radius: 100%;
+      z-index: 0;
+      transition: 0.2s ease-in-out;
+    }
+
+    &:hover::before{
+      height:100%;
+      width: 100%;
+    }
     .fav-icon {
+      z-index: 1;
       fill: white;
       height: 1.3em;
     }

@@ -4,6 +4,7 @@
   line-height: 1;
 }
 
+
 .container {
   display: flex;
   flex-direction: column;
@@ -259,11 +260,7 @@ svg {
 
 @media (max-width: 540px) {
 
-  app-recipes-list{
-      width:100%;
-      padding: 0;
-  padding-left: 6%;
-  }
+ 
   .container {
 
   }
@@ -353,6 +350,11 @@ app-followers-and-following,app-settings {
 
 
 @media (max-width:480px){
+   app-vertical-recipe-list{
+      width:100%;
+      padding: 0;
+  padding-left: 6%;
+  }
 
   .block2{
     button{

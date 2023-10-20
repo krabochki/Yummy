@@ -130,10 +130,10 @@
   <div class="block block1">
      <div
     class="svg-button exit"
-    *ngIf="
-      !(this.router.url === this.routerEventsService.previousRoutePath.value)
-    "
-    (click)="onSkipHandler()"
+    [ngClass]="{'no-path':
+      (this.router.url === this.routerEventsService.previousRoutePath.value)
+  }"
+    (click)="(this.router.url === this.routerEventsService.previousRoutePath.value)?null:onSkipHandler()"
   >
     <svg-icon
       [applyClass]="true"

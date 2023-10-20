@@ -1,11 +1,45 @@
-.wrap{
-    padding: 1.7em calc(14.4vw + 0 * (100vw - 768px) / 760);
+@import '../../../../../../tools/UI/UI.scss';
+h1{
+  line-height: 1;
+  font-weight: 600;
+  font-size: var(--font-xxl);
+  text-align: center;
+  margin-bottom: 1em;
+  font-family: var(--font-family-accent);
+
+
 }
 
-@media(max-width:480px){
-    .wrap{
-        padding-left: 6%;
-        padding-right: 6%;
-    }
 
+
+app-button{
+    margin: 0 auto;
+        margin-top: 2em;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+}
+
+
+.main {
+  padding: 0 calc(14.4vw + 0 * (100vw - 768px) / 760);
+
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+
+    margin: var(--space-xl) 0;
+}
+
+
+
+@media (max-width: 480px) {
+
+
+  .main  {
+    padding-left: 6%;
+    padding-right: 0;
+  }
 }

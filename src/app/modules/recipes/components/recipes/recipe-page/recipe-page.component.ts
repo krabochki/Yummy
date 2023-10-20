@@ -9,6 +9,7 @@ import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { registerLocaleData } from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
+import { RouteEventsService } from 'src/app/modules/controls/route-events.service';
 
 @Component({
   selector: 'app-recipe-page',
@@ -22,11 +23,18 @@ export class RecipePageComponent implements OnInit {
     private recipeService: RecipeService,
     private authService: AuthService,
     private userService: UserService,
-    private router: Router,
+    public router: Router,
+    public routerEventsService: RouteEventsService,
   ) {}
   dataLoaded = false;
 
+  onSkipHandler() {
+    this.router.navigate([this.routerEventsService.previousRoutePath.value]);
+  }
+  
   recipe: IRecipe = nullRecipe;
+
+  readingTimeInMinutes: number = 0;
 
   currentUserSubscription?: Subscription;
   currentUser: IUser = nullUser;
@@ -81,21 +89,34 @@ export class RecipePageComponent implements OnInit {
             recipes.forEach((recipe) => {
               if (recipe.id === this.recipe.id) {
                 this.recipe = recipe;
+
+                const combinedText = [
+                  recipe.history,
+                  recipe.description,
+                  ...recipe.instructions.map((instruction) => instruction.name),
+                ].join(' ');
+
+                const wordsPerMinute = 200;
+                const recipeText = combinedText;
+                const words = recipeText.split(/\s+/);
+                const wordCount = words.length;
+                this.readingTimeInMinutes = wordCount / wordsPerMinute;
+                this.readingTimeInMinutes = Math.round(
+                  this.readingTimeInMinutes,
+                );
+
                 if (this.currentUser.id !== 0) {
                   this.isRecipeLiked = this.recipe.likesId.includes(
                     this.currentUser.id,
                   );
-                  console.log(this.isRecipeLiked);
 
                   this.isRecipeCooked = this.recipe.cooksId.includes(
                     this.currentUser.id,
                   );
-                  console.log(this.isRecipeCooked);
 
                   this.isRecipeFavorite = this.recipe.favoritesId.includes(
                     this.currentUser.id,
                   );
-                  console.log(this.isRecipeFavorite);
                 }
               }
             });

@@ -1,8 +1,31 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <div class="cont column">
-    <h1>{{ recipe.name }}</h1>
-
+    <div class="header row">
+        <div
+    class="exit-button"
+    
+    [ngClass]="{'no-path':(this.router.url === this.routerEventsService.previousRoutePath.value)}"
+    (click)="!(this.router.url === this.routerEventsService.previousRoutePath.value)?onSkipHandler():null"
+  >
+    <svg-icon
+      [applyClass]="true"
+      class="exit"
+      [src]="'../../../../../assets/images/svg/go-back.svg'"
+    >
+    </svg-icon>
+  </div>
+       <div>
+            <h1>{{ recipe.name }}</h1>
+        
+            <p class="reading-time">
+                  <svg-icon class="read-icon" [applyClass]="true"
+                            [src]="'../../../../../assets/images/svg/reading.svg'"></svg-icon>
+                Чтение займет приблизительно {{readingTimeInMinutes}}<span style="margin-left: -0.2em;" appPluralRu=""
+                    [value]="readingTimeInMinutes"
+                    [arVariants]="['минуту', 'минуты', 'минут']">порций</span></p>
+       </div>
+    </div>
     <div class="head row">
         <div class="column">
             <div class="row" class="short-info row">
@@ -128,15 +151,8 @@
                 <p class="num">{{ i + 1 }}</p>
                 <p>{{ instruction.name }}</p>
             </div>
-        </div>
-        <div class="column ads">
-            <h2>Новинки</h2>
 
-            <app-recipe-list-item *ngFor="let recentRecipe of recentRecipes"
-                [recipe]="recentRecipe"></app-recipe-list-item>
-        </div>
-    </div>
-
+            
     <div class="row buttons">
         <div class="fav-button" (click)="makeThisRecipeFavorite()"><svg-icon class="fav-icon" [applyClass]="true" [src]="
           '../../../../../assets/images/svg/' +
@@ -162,7 +178,7 @@
         <div></div>
     </div>
 
-    <div class="column">
+      <div class="column">
         <div>
             <h2>Комментарии ({{ recipe.comments.length }})</h2>
             <div>
@@ -213,6 +229,21 @@
             </div>
         </div>
     </div>
+        </div>
+
+        <div class="column ads">
+            <h2>Новинки</h2>
+
+            <app-recipe-list-item *ngFor="let recentRecipe of recentRecipes"
+                [recipe]="recentRecipe"></app-recipe-list-item>
+
+
+        </div>
+        
+    </div>
+
+
+  
 </div>
 
 

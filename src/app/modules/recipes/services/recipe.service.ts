@@ -80,6 +80,9 @@ export class RecipeService {
     });
   }
 
+  getFavoriteRecipesByUser(recipes: IRecipe[], user: number) {
+    return (recipes.filter((recipe) => recipe.favoritesId.includes(user)))
+  }
   getPopularRecipes(recipes: IRecipe[]) {
     return recipes.sort((a, b) => b.likesId.length - a.likesId.length);
   }

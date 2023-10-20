@@ -1,1 +1,14 @@
-some recipe page
+<div class="main">
+    
+    
+    <div class="block" >
+        <h1>{{h1}}</h1>
+        
+        <div class="recipes">
+            <app-vertical-recipe-list [blocks]="recipesToShow" [cols]="4"></app-vertical-recipe-list>
+        </div>
+      
+    </div>
+      <app-button [text]="'Загрузить еще...'" (click)="loadMoreRecipes()" *ngIf="allRecipes.length > recipesToShow.length" [rounded]="true" [style]="'outlined'" [color]="'prim'"></app-button>
+</div>
+

@@ -29,122 +29,6 @@
   ],
   "recipes": [
     {
-      "id": 0,
-      "mainPhotoUrl": null,
-      "comments": [],
-      "name": "velit elit pariatur",
-      "description": "Ad irure aliquip elit proident laboris aliquip eu minim sit cillum incididunt. Mollit sit culpa cillum sunt irure aliqua ex. Officia enim eiusmod sunt proident ea incididunt ut cillum labore aliqua fugiat Lorem. Dolor consequat amet qui commodo nisi nulla sit. Consectetur ad officia exercitation in aliqua duis incididunt amet id eiusmod. Deserunt non est non anim labore elit pariatur labore consequat ad. Adipisicing eiusmod ex mollit mollit sunt ex commodo nisi.\r\nFugiat laboris velit in deserunt elit aliquip aute proident qui dolor dolore dolor. Voluptate fugiat eu reprehenderit qui reprehenderit ullamco cillum amet velit adipisicing officia. Sunt Lorem aute aute nisi velit labore pariatur veniam reprehenderit excepteur do fugiat consequat aute. Incididunt enim mollit reprehenderit fugiat veniam velit incididunt velit officia. Proident ad duis do consectetur labore ea dolor qui aute do pariatur.\r\nId quis amet voluptate exercitation sunt est elit. Adipisicing do incididunt quis sit amet et dolor ea. Aute duis eiusmod eiusmod proident nisi. Irure est exercitation culpa consectetur minim excepteur labore in nostrud ex proident cupidatat dolor minim. Nisi deserunt proident dolore reprehenderit in aute nostrud. Sit officia laboris sit ad aute in tempor pariatur ea sit nisi consequat veniam aliqua. Reprehenderit id qui cillum quis deserunt dolor eu cillum ut elit.\r\n",
-      "history": "Laboris do ad et et id aliquip quis velit cupidatat ea deserunt eiusmod consectetur. Est magna tempor ex dolor sit amet cillum veniam sit esse. Ullamco enim adipisicing duis velit ad elit eiusmod veniam ut esse. Pariatur amet ut proident irure aliquip fugiat est laborum officia ut exercitation anim laborum. Cillum duis duis sunt laborum minim duis dolore. Labore esse ex duis deserunt dolor do dolor voluptate magna deserunt aliqua velit. Occaecat ex velit eu voluptate minim eu officia ullamco et sint.\r\nMagna incididunt commodo sint magna aliqua aute incididunt dolore in quis. Reprehenderit eiusmod deserunt reprehenderit sunt. Duis et duis magna reprehenderit et ipsum exercitation proident nulla duis. Ea amet ex culpa sint enim. Et dolor sit excepteur eiusmod. Anim irure ipsum nulla cillum culpa in. Irure sit fugiat amet duis reprehenderit.\r\n",
-      "preparationTime": "anim laborum adipisicing ut pariatur",
-      "cookingTime": "laboris tempor aliqua officia reprehenderit",
-      "servings": 14,
-      "authorId": 5,
-      "cooksId": [
-        10,
-        9
-      ],
-      "favoritesId": [
-        5,
-        6
-      ],
-      "likesId": [
-        7,
-        8,
-        9,
-        4,
-        6
-      ],
-      "status": "private",
-      "origin": "Dominica",
-      "publicationDate": "2016-03-22",
-      "instuctions": [
-        "proident",
-        "dolore",
-        "sunt",
-        "commodo",
-        "laborum",
-        "commodo",
-        "laboris"
-      ],
-      "instructions": [
-        {
-          "images": [],
-          "name": "Est mollit velit proident elit. Sint voluptate fugiat qui occaecat eiusmod non ex incididunt. Duis elit est esse ad incididunt excepteur occaecat id culpa deserunt.\r\n"
-        },
-        {
-          "images": [],
-          "name": "Laboris sunt non velit officia dolore voluptate aliquip ipsum est. Cupidatat anim nostrud est aliqua laboris. Duis nisi fugiat dolore amet labore amet. Officia et ut id elit. Tempor reprehenderit do amet cupidatat commodo elit id ut amet anim magna aliqua ullamco. Esse aute labore est sit incididunt aliquip nulla nisi.\r\n"
-        },
-        {
-          "images": [],
-          "name": "Anim mollit velit eu culpa deserunt amet elit fugiat laborum eu eu laborum. Ad fugiat fugiat pariatur enim sunt eiusmod excepteur et proident minim. Nisi esse pariatur commodo dolore sint esse nulla velit velit ipsum excepteur. Commodo mollit in excepteur eiusmod sunt labore est. Pariatur eiusmod excepteur velit irure commodo. Qui elit irure magna elit magna aliqua ut reprehenderit. Ullamco elit tempor culpa officia veniam exercitation elit dolore irure ullamco eiusmod incididunt amet.\r\n"
-        },
-        {
-          "images": [],
-          "name": "Proident elit consectetur tempor cupidatat do enim incididunt cillum nulla laborum et laborum est. Laboris irure ex culpa ut laborum ad anim culpa et pariatur irure id. Eiusmod quis magna officia do voluptate et. Ex mollit laborum non veniam anim in laboris sit officia veniam laborum. Sit duis dolore enim esse veniam reprehenderit irure nisi ex sunt proident eu.\r\n"
-        }
-      ],
-      "nutritions": [
-        {
-          "name": "do",
-          "quantity": 34,
-          "unit": "quis"
-        },
-        {
-          "name": "pariatur",
-          "quantity": 9,
-          "unit": "dolore"
-        },
-        {
-          "name": "tempor",
-          "quantity": 41,
-          "unit": "officia"
-        },
-        {
-          "name": "nisi",
-          "quantity": 5,
-          "unit": "occaecat"
-        },
-        {
-          "name": "irure",
-          "quantity": 3,
-          "unit": "duis"
-        }
-      ],
-      "ingredients": [
-        {
-          "name": "reprehenderit",
-          "quantity": 50,
-          "unit": "mollit"
-        },
-        {
-          "name": "officia",
-          "quantity": 8,
-          "unit": "sint"
-        },
-        {
-          "name": "irure",
-          "quantity": 35,
-          "unit": "eu"
-        },
-        {
-          "name": "minim",
-          "quantity": 47,
-          "unit": "aliqua"
-        },
-        {
-          "name": "voluptate",
-          "quantity": 6,
-          "unit": "proident"
-        },
-        {
-          "name": "eu",
-          "quantity": 31,
-          "unit": "ea"
-        }
-      ]
-    },
-    {
       "id": 1,
       "mainPhotoUrl": null,
       "comments": [],
@@ -294,7 +178,7 @@
         6,
         10
       ],
-      "status": "awaits",
+      "status": "public",
       "origin": "Tonga",
       "publicationDate": "2018-04-30",
       "instuctions": [
@@ -426,7 +310,7 @@
         7,
         9
       ],
-      "status": "awaits",
+      "status": "public",
       "origin": "Canada",
       "publicationDate": "2017-11-10",
       "instuctions": [
@@ -534,7 +418,7 @@
         9,
         7
       ],
-      "status": "awaits",
+      "status": "public",
       "origin": "Marshall Islands",
       "publicationDate": "2021-06-20",
       "instuctions": [
@@ -761,7 +645,7 @@
         4,
         2
       ],
-      "status": "awaits",
+      "status": "public",
       "origin": "Chad",
       "publicationDate": "2019-02-10",
       "instuctions": [
@@ -1251,22 +1135,9 @@
       "cookingTime": "dolor duis cupidatat ex id",
       "servings": 5,
       "authorId": 1,
-      "cooksId": [
-        10,
-        4
-      ],
-      "favoritesId": [
-        3,
-        5,
-        1,
-        7,
-        6
-      ],
-      "likesId": [
-        1,
-        4,
-        7
-      ],
+      "cooksId": [],
+      "favoritesId": [],
+      "likesId": [],
       "status": "private",
       "origin": "Suriname",
       "publicationDate": "2019-03-18",
@@ -1409,7 +1280,8 @@
         1,
         3,
         7,
-        4
+        4,
+        5
       ],
       "status": "public",
       "origin": "Haiti",
@@ -1505,19 +1377,9 @@
       "cookingTime": "ipsum et id in mollit",
       "servings": 11,
       "authorId": 7,
-      "cooksId": [
-        7,
-        8
-      ],
-      "favoritesId": [
-        9
-      ],
-      "likesId": [
-        4,
-        8,
-        2,
-        3
-      ],
+      "cooksId": [],
+      "favoritesId": [],
+      "likesId": [],
       "status": "private",
       "origin": "Paraguay",
       "publicationDate": "2017-12-22",
@@ -1640,7 +1502,7 @@
         3,
         7
       ],
-      "status": "awaits",
+      "status": "public",
       "origin": "Nepal",
       "publicationDate": "2016-10-10",
       "instuctions": [
@@ -1876,7 +1738,7 @@
         6,
         8
       ],
-      "status": "awaits",
+      "status": "public",
       "origin": "Slovenia",
       "publicationDate": "2016-08-26",
       "instuctions": [
@@ -2000,7 +1862,7 @@
         1,
         6
       ],
-      "status": "awaits",
+      "status": "public",
       "origin": "Sweden",
       "publicationDate": "2023-07-21",
       "instuctions": [
@@ -2248,7 +2110,7 @@
         7,
         6
       ],
-      "status": "awaits",
+      "status": "public",
       "origin": "Portugal",
       "publicationDate": "2017-03-08",
       "instuctions": [
@@ -2363,7 +2225,7 @@
         1,
         7
       ],
-      "status": "awaits",
+      "status": "public",
       "origin": "Guatemala",
       "publicationDate": "2017-07-03",
       "instuctions": [
@@ -2678,23 +2540,9 @@
       "cookingTime": "sint occaecat eiusmod adipisicing elit",
       "servings": 12,
       "authorId": 4,
-      "cooksId": [
-        2,
-        6,
-        9
-      ],
-      "favoritesId": [
-        6,
-        7,
-        9
-      ],
-      "likesId": [
-        8,
-        9,
-        4,
-        3,
-        10
-      ],
+      "cooksId": [],
+      "favoritesId": [],
+      "likesId": [],
       "status": "private",
       "origin": "Cote D'Ivoire (Ivory Coast)",
       "publicationDate": "2018-05-12",
@@ -2819,18 +2667,9 @@
       "cookingTime": "aliquip excepteur est eu veniam",
       "servings": 5,
       "authorId": 5,
-      "cooksId": [
-        7,
-        8,
-        3,
-        6
-      ],
-      "favoritesId": [
-        9
-      ],
-      "likesId": [
-        10
-      ],
+      "cooksId": [],
+      "favoritesId": [],
+      "likesId": [],
       "status": "private",
       "origin": "Moldova",
       "publicationDate": "2020-07-14",
@@ -3059,24 +2898,9 @@
       "cookingTime": "ipsum aliquip ullamco magna nostrud",
       "servings": 7,
       "authorId": 6,
-      "cooksId": [
-        8,
-        2,
-        3,
-        10,
-        9,
-        1
-      ],
-      "favoritesId": [
-        5,
-        3,
-        7,
-        4
-      ],
-      "likesId": [
-        7,
-        4
-      ],
+      "cooksId": [],
+      "favoritesId": [],
+      "likesId": [],
       "status": "private",
       "origin": "Bouvet Island",
       "publicationDate": "2020-06-05",
@@ -3311,29 +3135,9 @@
       "cookingTime": "veniam laborum dolore adipisicing ex",
       "servings": 13,
       "authorId": 9,
-      "cooksId": [
-        8,
-        10,
-        5,
-        6,
-        2,
-        7
-      ],
-      "favoritesId": [
-        3,
-        8
-      ],
-      "likesId": [
-        10,
-        5,
-        10,
-        4,
-        2,
-        8,
-        6,
-        1,
-        4
-      ],
+      "cooksId": [],
+      "favoritesId": [],
+      "likesId": [],
       "status": "private",
       "origin": "Argentina",
       "publicationDate": "2018-09-29",
@@ -3543,26 +3347,9 @@
       "cookingTime": "est deserunt qui exercitation eu",
       "servings": 9,
       "authorId": 8,
-      "cooksId": [
-        7,
-        5,
-        10,
-        1
-      ],
-      "favoritesId": [
-        2,
-        9,
-        7,
-        3
-      ],
-      "likesId": [
-        1,
-        5,
-        10,
-        4,
-        2,
-        3
-      ],
+      "cooksId": [],
+      "favoritesId": [],
+      "likesId": [],
       "status": "private",
       "origin": "Russian Federation",
       "publicationDate": "2014-01-21",
@@ -3706,7 +3493,7 @@
       "personalWebsite": "https://www.chefalexeyzimin.com/",
       "location": "Москва, Россия",
       "registrationDate": "2023-01-15",
-      "profileViews": 7558,
+      "profileViews": 7575,
       "role": "admin"
     },
     {
@@ -3808,7 +3595,7 @@
       "personalWebsite": "https://angular.io/errors/",
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 1078
+      "profileViews": 1191
     },
     {
       "id": 6,
@@ -3840,7 +3627,7 @@
       "personalWebsite": "https://www.healthandnutrition.com/",
       "location": "Сидней, Австралия",
       "registrationDate": "2023-06-18",
-      "profileViews": 4328,
+      "profileViews": 4330,
       "role": "user"
     },
     {
@@ -3898,7 +3685,7 @@
       "personalWebsite": "https://www.interiordesignsbyvictoria.com/",
       "location": "Милан, Италия",
       "registrationDate": "2023-08-12",
-      "profileViews": 3201,
+      "profileViews": 3213,
       "role": "user"
     },
     {

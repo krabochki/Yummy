@@ -32,6 +32,59 @@
   position: fixed;
 }
 
+.admin-panel{
+  @include flexy(row);
+  @include center;
+
+  &.admin{
+  background-color: var(--color-admin);
+
+  }
+    &.moder{
+  background-color: var(--color-moderator);
+
+  }
+  width: var(--font-2xl);
+  height: var(--font-2xl);
+  position: relative;
+  transition: 0.3s ease-in-out;
+  border-radius: 100%;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  &::after{
+    width: 0px;
+    height: 0px;
+    content: "";
+    border-radius: 100%;
+    position: absolute;
+      transition: 0.3s ease-in-out;
+
+  }
+  &.admin::after{
+        background-color: var(--color-admin-focus);
+
+  }
+    &.moder::after{
+        background-color: var(--color-moderator-focus);
+
+  }
+    transition: 0.3s ease-in-out;
+&:hover::after{
+  height: 100%;
+  width: 100%;
+}
+  &:hover{
+    scale: 1.2;
+  }
+}
+.admin-svg{
+  z-index: 1;
+    fill: var(--color-background);
+  width: var(--font-m);
+  height: var(--font-m);
+}
+
 .svg-button {
   @include flexy(row);
   @include center;
@@ -40,11 +93,23 @@
   height: var(--font-2xl);
   position: relative;
   transition: 0.3s ease-in-out;
+&::after{
+    width: 0px;
+    height: 0px;
+    content: "";
+    border-radius: 100%;
+    position: absolute;
+      transition: 0.3s ease-in-out;
 
+    background-color: var(--color-secondary-focus);
+  }
   &:hover {
     scale: 1.2;
   }
-
+&:hover::after{
+  height: 100%;
+  width: 100%;
+}
   .notifications {
     background-color: var(--color-primary);
     position: absolute;
@@ -63,11 +128,13 @@
     font-weight: 600;
     color: var(--color-background);
     font-size: var(--font-xs);
+    z-index: 1;
   }
 }
 .svg {
   fill: var(--color-background);
   width: var(--font-m);
+  z-index: 1;
   height: var(--font-m);
 
   &.center {
@@ -89,6 +156,12 @@ p {
 }
 
 @media (max-width: 900px) {
+  .admin-panel{
+    right: 0;
+    position: absolute;
+    margin:0 -4em;
+    margin-bottom: -2.5em;
+  }
   .header {
     align-items: center;
     justify-content: center;
@@ -207,7 +280,7 @@ p {
       }
     }
 
-    & > div {
+    & > div:not(.admin-panel) {
       background-color: var(--color-secondary);
       width: 2em;
 
@@ -237,7 +310,7 @@ p {
         background-color: var(--color-primary);
       }
 
-      &:first-of-type {
+      &:nth-of-type(2) {
         margin-right: 0.5em;
         background-color: var(--color-primary);
       }
@@ -248,6 +321,24 @@ p {
         width: 100%;
       }
     }
+  }
+
+  .admin-svg{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .admin-panel{
+    position: static;
+    margin: 0;
+    margin-right: 0.5em;
+
+      width: 2em;
+
+      padding: 0.45em;
+ 
+      height: 2em;
+
   }
 
   .header-svg {

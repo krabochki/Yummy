@@ -20,7 +20,9 @@ body {
   --scroll-body: #eeeeee;
 
   --color-admin: #d659f6;
-  --color-moderator: #f8e641;
+  --color-admin-focus: #c826f0;
+  --color-moderator: #5dedb8;
+  --color-moderator-focus: #16e79b;
 
   --modal: rgba(33, 33, 33, 0.5);
   --modal-black: rgba(33, 33, 33, 0.5);
@@ -54,10 +56,12 @@ body {
   --color-foreground-unactive: #a1a1a1;
 
   --color-admin: #e88bff;
-  --color-moderator: #f6e761;
+  --color-admin-focus: #da56fb;
+  --color-moderator: #4ad4a1;
+  --color-moderator-focus: #00d184;
 
   --color-primary-focus: #ff4b4b;
-  --color-secondary-focus: #ff8d14;
+  --color-secondary-focus: #ff9c33;
 
   --color-primary-lighter-focus: #ff9191;
   --color-secondary-lighter: #ffe6c1;

@@ -7,4 +7,7 @@ import { Component } from '@angular/core';
 })
 export class PageNotFoundComponent {
 
+  ngOnInit() {
+    window.scrollTo(0,0)
+  }
 }

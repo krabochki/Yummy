@@ -1,10 +1,15 @@
 
 <app-banner [notMain]="false"  [background]="'main-banner-background'"  [link]="'match'" [label]="'Готовьте с радостью\nЕшьте с удовольствием'" [buttonText]="'Подобрать рецепт'"></app-banner>
 
-<div class="admin-panel" routerLink="/control-dashboard" *ngIf="currentUser.role==='admin'||currentUser.role==='moderator'">★</div>
 
-<div class="recipes horizontal">
-    <app-horizontal-recipe-list  [recipes]="popularRecipes"></app-horizontal-recipe-list>
+<div class="block" >
+    <div routerLink="/recipes/best" class="head"><h2>Популярные рецепты</h2>
+    
+        <svg-icon class="arrow-svg" [applyClass]="true" [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
+    </div>
+    <div class="recipes horizontal">
+        <app-horizontal-recipe-list  [recipes]="popularRecipes"></app-horizontal-recipe-list>
+    </div>
 </div>
 
 <app-category-list style="display:none" [categories]="allCategories"></app-category-list>
@@ -15,7 +20,13 @@
 <app-banner  *ngIf="currentUser.id !== 0" [link]="'recipes/add'" [info]="'Добавляйте подробные проверенные временем рецепты и делитесь опытом с другими кулинарами'" [label]="'Добавляйте рецепты и делитесь ими'" [buttonText]="'Создать рецепт'" [background]="'share-recipes-banner-background'"></app-banner>
 
 
-    <div class="recipes"><app-vertical-recipe-list [cols]="4" [blocks]="recentRecipes"></app-vertical-recipe-list></div>
+<div class="block">
+    <div routerLink="/recipes/recent" class="head"><h2>Недавние рецепты</h2>
     
+        <svg-icon class="arrow-svg" [applyClass]="true" [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
+    </div>
+        <div class="recipes"><app-vertical-recipe-list [cols]="4" [blocks]="recentRecipes"></app-vertical-recipe-list></div>
+    
+</div>    
 <app-banner  *ngIf="currentUser.id !== 0" [link]="'cooks'" [info]="'Посмотрите профили кулинаров и подчерпните идеи для ведения собственного профиля и рецептов!'" [label]="'Находите вдохновение совсем рядом'" [buttonText]="'Все кулинары'" [background]="'inspiration-banner-background'"></app-banner>
 

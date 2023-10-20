@@ -75,36 +75,32 @@ export class RecipePageComponent implements OnInit {
             if (findedUser) {
               this.author = findedUser;
             }
-
-           
           });
 
+          this.recipeService.recipes$.subscribe((recipes) => {
+            recipes.forEach((recipe) => {
+              if (recipe.id === this.recipe.id) {
+                this.recipe = recipe;
+                if (this.currentUser.id !== 0) {
+                  this.isRecipeLiked = this.recipe.likesId.includes(
+                    this.currentUser.id,
+                  );
+                  console.log(this.isRecipeLiked);
 
-           this.recipeService.recipes$.subscribe((recipes) => {
-              recipes.forEach((recipe) => {
-                if (recipe.id === this.recipe.id) {
-                  this.recipe = recipe;
-                  if (this.currentUser.id !== 0) {
-                    this.isRecipeLiked = this.recipe.likesId.includes(
-                      this.currentUser.id,
-                    );
-                    console.log(this.isRecipeLiked);
+                  this.isRecipeCooked = this.recipe.cooksId.includes(
+                    this.currentUser.id,
+                  );
+                  console.log(this.isRecipeCooked);
 
-                    this.isRecipeCooked = this.recipe.cooksId.includes(
-                      this.currentUser.id,
-                    );
-                    console.log(this.isRecipeCooked);
-
-                    this.isRecipeFavorite = this.recipe.favoritesId.includes(
-                      this.currentUser.id,
-                    );
-                    console.log(this.isRecipeFavorite);
-                  }
+                  this.isRecipeFavorite = this.recipe.favoritesId.includes(
+                    this.currentUser.id,
+                  );
+                  console.log(this.isRecipeFavorite);
                 }
+              }
+            });
+          });
 
-              });
-           });
-          
           this.recipeService.getRecipes().subscribe((data) => {
             this.recentRecipes = this.recipeService.getPublicRecipes(data);
             this.recentRecipes = this.recipeService
@@ -195,6 +191,47 @@ export class RecipePageComponent implements OnInit {
     }
 
     this.recipeService.updateRecipe(updatedRecipe);
+  }
+
+  decreasePortions() {
+    if (this.recipe.servings > 1) {
+      this.recipe.servings--; // Уменьшаем количество порций
+
+      // Пересчитываем количество ингредиентов
+      this.recipe.ingredients.forEach((ingredient) => {
+        // Пробуем преобразовать количество в число
+        const quantityAsNumber = parseFloat(ingredient.quantity);
+
+        // Проверяем, успешно ли преобразование
+        if (!isNaN(quantityAsNumber)) {
+          // Если успешно, производим пересчет
+          ingredient.quantity = (
+            (quantityAsNumber / (this.recipe.servings + 1)) *
+            this.recipe.servings
+          ).toString();
+        }
+      });
+    }
+  }
+
+  // Метод для увеличения порций и пересчета ингредиентов
+  increasePortions() {
+    this.recipe.servings++; // Уменьшаем количество порций
+
+    // Пересчитываем количество ингредиентов
+    this.recipe.ingredients.forEach((ingredient) => {
+      // Пробуем преобразовать количество в число
+      const quantityAsNumber = parseFloat(ingredient.quantity);
+
+      // Проверяем, успешно ли преобразование
+      if (!isNaN(quantityAsNumber)) {
+        // Если успешно, производим пересчет
+        ingredient.quantity = (
+          (parseFloat(ingredient.quantity) / (this.recipe.servings - 1)) *
+          this.recipe.servings
+        ).toString();
+      }
+    });
   }
 
   recentRecipes: IRecipe[] = [];

@@ -85,8 +85,14 @@
             <img class="main-photo" src="../../../../../../assets/images/no-recipe-photo.png" alt="" />
 
             <div class="ingredients">
-                <h2>Ингредиенты</h2>
-                <button [ngClass]="{ 'basket-mode': basketMode }" (click)="basketMode = !basketMode">
+              <h2>Ингредиенты</h2>
+             <div class="servings">
+                  <button (click)="decreasePortions()">−</button>  <p >на {{recipe.servings}} <span  appPluralRu=""
+                [value]="recipe.servings"
+                [arVariants]="['порцию', 'порции', 'порций']">порций</span></p>
+                <button (click)="increasePortions()">+</button>
+             </div>
+                <button class="basket-open-button" [ngClass]="{ 'basket-mode': basketMode }" (click)="basketMode = !basketMode">
                     <svg-icon class="basket-icon" [applyClass]="true"
                         [class]="basketMode ? 'basket-icon basket-mode' : 'basket-icon'"
                         [src]="'../../../../../assets/images/svg/basket.svg'"></svg-icon>

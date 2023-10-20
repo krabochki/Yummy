@@ -46,7 +46,10 @@ h2 {
 }
 
 .ingredients {
-  button {
+  h2{
+    margin: 0;
+  }
+  .basket-open-button {
     margin-bottom: 1em;
     .basket-icon {
       fill: var(--color-secondary);
@@ -485,7 +488,7 @@ h1 {
             h2{
                 text-align: center;
             }
-            button{
+            .basket-open-button{
                 margin-left: auto;
                 margin-right: auto;
             }
@@ -495,6 +498,14 @@ h1 {
 .nutritions ul {
     padding-left: 0.5em;
 }
+}
+.servings{
+  font-weight: 300;
+  display: flex;
+  margin-bottom: 0.75em;
+  align-items: center;
+  column-gap: 1em;
+  justify-content: start;
 }
 
 

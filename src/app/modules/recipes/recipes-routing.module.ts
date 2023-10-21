@@ -11,6 +11,7 @@ import { AuthGuard } from '../authentication/guards/auth.guard';
 import { RecipeResolver } from './services/recipe.resolver';
 import { RecipeAccessGuard } from './guards/recipe-access.guard';
 import { RecipeCreateClosingGuard } from './guards/recipe-create-closing.guard';
+import { CategoryResolver } from './services/category.resolver';
 const routes: Routes = [
   {
     path: '',
@@ -84,6 +85,7 @@ const routes: Routes = [
       {
         path: 'categories/list/:id',
         data: { filter: 'category-recipes' },
+        resolve: {CategoryResolver},
 
         component: SomeRecipesPageComponent,
       },

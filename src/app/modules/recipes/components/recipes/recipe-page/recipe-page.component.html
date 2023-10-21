@@ -43,7 +43,7 @@
     </div>
   </div>
   <div class="head row">
-    <div class="column">
+    <div class="column main-info">
       <div class="row" class="short-info row">
         <div class="row user-info" [routerLink]="'/cooks/list/' + author.id">
           <img
@@ -114,7 +114,7 @@
          <ul *ngIf="categories.length>0" class="categories">
         <li class="row" *ngFor="let category of categories" [routerLink]="'/categories/list/'+category.id">{{(category.name)}} </li>
       </ul>
-      <p class="description">{{ recipe.description }}</p>
+      <p *ngIf="recipe.description!==''" class="description">{{ recipe.description }}</p>
       <div class="row cards">
         <span *ngIf="recipe.preparationTime !== ''">
           <p class="about">Время подготовки</p>

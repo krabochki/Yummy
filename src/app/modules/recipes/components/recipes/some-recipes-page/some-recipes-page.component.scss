@@ -1,5 +1,37 @@
 @import '../../../../../../tools/UI/UI.scss';
-h1{
+
+
+
+
+
+
+.fridge{
+  height: 11em;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+
+  fill: var(--color-foreground);
+}
+.main {
+  padding: 0 calc(14.4vw + 0 * (100vw - 768px) / 760);
+
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+
+    margin: 1.7em 0;
+
+    app-button{
+    margin: 0 auto;
+        margin-top: 2em;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+}
+    h1{
   line-height: 1;
   font-weight: 600;
   font-size: var(--font-xxl);
@@ -9,29 +41,16 @@ h1{
 
 
 }
-
-
-
-app-button{
-    margin: 0 auto;
-        margin-top: 2em;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-}
-
-
-.main {
-  padding: 0 calc(14.4vw + 0 * (100vw - 768px) / 760);
-
-  width: 100%;
-  margin: 0 auto;
-  position: relative;
-
-    margin: 1.7em 0;
     
+}
+.no-recipes{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  p{
+    font-size: 1.5em;
+  }
 }
 
 

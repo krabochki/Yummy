@@ -1,14 +1,37 @@
-<div class="main">
+<div class="main" *ngIf="this.recipesToShow.length>0; else noRecipes">
     
     
     <div class="block" >
         <h1>{{h1}}</h1>
         
-        <div class="recipes">
+        <div class="recipes" >
             <app-vertical-recipe-list [blocks]="recipesToShow" [cols]="4"></app-vertical-recipe-list>
         </div>
+  
       
     </div>
       <app-button [text]="'Загрузить еще...'" (click)="loadMoreRecipes()" *ngIf="allRecipes.length > recipesToShow.length" [rounded]="true" [style]="'outlined'" [color]="'prim'"></app-button>
 </div>
 
+      <ng-template #noRecipes [ngOutletContext]="context">
+            <div class="container one-column not-found">
+        <div class="image">
+
+            <svg-icon [applyClass]="true" class="fridge" [src]="'../../../../../assets/images/svg/fridge.svg'"></svg-icon>
+           
+
+        </div>
+       <div class="content">
+            <h1 class="label">Рецептов пока <span class="title">нет</span></h1>
+            <p  class="tagline ">{{noRecipesH1}}</p>
+    
+            <hr>
+           <div class="buttons">
+                <app-button [routerLink]="noRecipesRouterLink" [rounded]="true" [color]="'prim'" [text]="noRecipesButtonText"></app-button>
+           </div>
+       </div>
+    </div>
+
+
+
+        </ng-template>

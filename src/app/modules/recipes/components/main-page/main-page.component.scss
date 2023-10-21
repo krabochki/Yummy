@@ -43,7 +43,7 @@ h2{
   &.horizontal::after {
     margin: 0 calc(14.4vw + 0 * (100vw - 768px) / 760);
 
-    height: 15em;
+    height: calc(100% - 1.3em);
     width: 15%;
     background: linear-gradient(to right, transparent, var(--color-background));
 
@@ -56,20 +56,7 @@ h2{
   }
 }
 
-@media (max-width: 900px) {
 
-  .recipes {
-    &.horizontal::after {
-      width: 33%;
-      height: 15em;
-      right: 0;
-      top: 0;
-      content: "";
-      position: absolute;
-      pointer-events: none;
-    }
-  }
-}
 
 @media (max-width: 768px) {
   .recipes {
@@ -80,7 +67,9 @@ h2{
 }
 
 @media (max-width: 480px) {
-
+.head{
+  padding: 0 6%;
+}
 
   .recipes  {
     padding-left: 6%;

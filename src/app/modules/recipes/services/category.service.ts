@@ -1,32 +1,69 @@
 import { Injectable } from '@angular/core';
-import { ICategory } from '../models/categories';
+import { ICategory, ISection } from '../models/categories';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CategoryService {
-  url: string = 'http://localhost:3000/categories';
+  urlCategories: string = 'http://localhost:3000/categories';
+  urlSections: string = 'http://localhost:3000/sections';
 
   constructor(private http: HttpClient) {}
 
   getCategories() {
-    return this.http.get<ICategory[]>(this.url);
+    return this.http.get<ICategory[]>(this.urlCategories);
   }
 
   getCategory(id: number) {
-    return this.http.get<ICategory>(`${this.url}/${id}`);
+    return this.http.get<ICategory>(`${this.urlCategories}/${id}`);
   }
 
   deleteCategory(id: number) {
-    return this.http.delete<ICategory>(`${this.url}/${id}`);
+    return this.http.delete<ICategory>(`${this.urlCategories}/${id}`);
   }
 
-  postCategory(recipe: ICategory) {
-    return this.http.post<ICategory>(this.url, recipe);
+  postCategory(category: ICategory) {
+    return this.http.post<ICategory>(this.urlCategories, category);
   }
 
-  updateCategory(recipe: ICategory) {
-    return this.http.put<ICategory>(`${this.url}/${recipe.id}`, recipe);
+  getSections() {
+    return this.http.get<ISection[]>(this.urlSections);
+  }
+
+  getSection(id: number) {
+    return this.http.get<ISection>(`${this.urlSections}/${id}`);
+  }
+
+  deleteSection(id: number) {
+    return this.http.delete<ISection>(`${this.urlSections}/${id}`);
+  }
+
+  postSection(category: ISection) {
+    return this.http.post<ISection>(this.urlSections, category);
+  }
+
+  getCategoriesBySection(
+    section: ISection,
+    categories: ICategory[],
+  ): ICategory[] {
+    const findedCategories = categories.filter((cat) => {
+      section.categoriesId.includes(cat.id);
+    });
+    if (findedCategories) return findedCategories;
+    else return [];
+  }
+
+  updateCategory(category: ICategory) {
+    return this.http.put<ICategory>(
+      `${this.urlCategories}/${category.id}`,
+      category,
+    );
+  }
+  updateSection(section: ISection) {
+    return this.http.put<ICategory>(
+      `${this.urlCategories}/${section.id}`,
+      section,
+    );
   }
 }

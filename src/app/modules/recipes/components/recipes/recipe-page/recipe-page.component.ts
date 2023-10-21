@@ -52,9 +52,13 @@ export class RecipePageComponent implements OnInit {
     this.basket[i] = false;
   }
   ngOnInit() {
-    this.router.events.subscribe(() => {
-      window.scrollTo(0, 0);
-    });
+      this.router.events.subscribe((ev: any) => {
+        
+          window.scrollTo(0, 0);
+        
+      });
+    
+   
 
     registerLocaleData(localeRu);
 
@@ -227,8 +231,9 @@ export class RecipePageComponent implements OnInit {
         if (!isNaN(quantityAsNumber)) {
           // Если успешно, производим пересчет
           ingredient.quantity = (
-            (quantityAsNumber / (this.recipe.servings + 1)) *
-            this.recipe.servings
+            Number(( (quantityAsNumber / (this.recipe.servings + 1)) *
+            this.recipe.servings).toFixed(1))
+           
           ).toString();
         }
       });
@@ -247,9 +252,11 @@ export class RecipePageComponent implements OnInit {
       // Проверяем, успешно ли преобразование
       if (!isNaN(quantityAsNumber)) {
         // Если успешно, производим пересчет
-        ingredient.quantity = (
-          (parseFloat(ingredient.quantity) / (this.recipe.servings - 1)) *
-          this.recipe.servings
+        ingredient.quantity = Number(
+          (
+            (quantityAsNumber / (this.recipe.servings - 1)) *
+            this.recipe.servings
+          ).toFixed(1),
         ).toString();
       }
     });

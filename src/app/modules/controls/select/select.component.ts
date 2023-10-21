@@ -1,5 +1,5 @@
 import { trigger } from '@angular/animations';
-import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { modal, heightAnim } from 'src/tools/animations';
 import { Router } from '@angular/router';
 
@@ -8,12 +8,12 @@ import { Router } from '@angular/router';
   selector: 'app-select',
   templateUrl: './select.component.html',
   styleUrls: ['./select.component.scss'],
-  animations: [
-    trigger('modal', modal()),
-    trigger('select',heightAnim())]
+  animations: [trigger('modal', modal()), trigger('select', heightAnim())],
 })
 export class SelectComponent implements AfterViewInit {
   @Output() clickedEmit: EventEmitter<boolean> = new EventEmitter();
+
+  @Output() optionClick: EventEmitter<string> = new EventEmitter();
 
   @Input() items: string[] = [];
   @Input() disabling: boolean[] = [];
@@ -21,7 +21,9 @@ export class SelectComponent implements AfterViewInit {
 
   noAccessModalShow = false;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+  ) {}
 
   open: boolean = false;
 
@@ -30,6 +32,12 @@ export class SelectComponent implements AfterViewInit {
   bodyHeight: number | undefined = 0;
   ngAfterViewInit() {
     this.shiftedItems = [...this.items];
+
+    this.shiftedItems.shift();
+  }
+  ngAfterViewChecked() {
+    this.shiftedItems = [...this.items];
+
     this.shiftedItems.shift();
   }
 
@@ -37,12 +45,11 @@ export class SelectComponent implements AfterViewInit {
     if (disable) {
       this.noAccessModalShow = true;
     }
-
   }
   handleNoAccessModal(event: boolean) {
     if (event) {
       this.router.navigateByUrl('/greetings');
-        window.scrollTo(0, 0);
+      window.scrollTo(0, 0);
       this.open = false;
     }
     this.noAccessModalShow = false;

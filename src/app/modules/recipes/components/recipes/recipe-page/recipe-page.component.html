@@ -21,9 +21,11 @@
             <p class="reading-time">
                   <svg-icon class="read-icon" [applyClass]="true"
                             [src]="'../../../../../assets/images/svg/reading.svg'"></svg-icon>
-                Чтение займет приблизительно {{readingTimeInMinutes}}<span style="margin-left: -0.2em;" appPluralRu=""
-                    [value]="readingTimeInMinutes"
-                    [arVariants]="['минуту', 'минуты', 'минут']">порций</span></p>
+                <span style="display:inline">
+                    Чтение займет приблизительно {{readingTimeInMinutes}}<span appPluralRu=""
+                        [value]="readingTimeInMinutes"
+                        [arVariants]="[' минуту', ' минуты', ' минут']">порций</span>
+                </span></p>
        </div>
     </div>
     <div class="head row">
@@ -33,25 +35,41 @@
                     <img class="userpic" src="../../../../../../assets/images/userpic.png" alt="Фото пользователя" />
                     <p>{{ author.fullName }}</p>
                 </div>
-                <div class="row date">
+                <div class="row date" *ngIf="this.recipe.status!=='public'">
+<ng-container *ngIf="this.recipe.status==='private';else awaiting">
+                          <svg-icon class="head-icon" [applyClass]="true"
+                            [src]="'../../../../../assets/images/svg/private.svg'"></svg-icon>
+                        
+                       <p> Приватный рецепт</p>
+</ng-container>
+<ng-template #awaiting>
+ <svg-icon class="head-icon" [applyClass]="true"
+                            [src]="'../../../../../assets/images/svg/awaits.svg'"></svg-icon>
+                        
+                       <p> Рецепт на проверке</p>
+
+</ng-template>
+                
+                </div>
+                <div class="row date" *ngIf="this.recipe.status==='public'">
                     <svg-icon class="head-icon" [applyClass]="true"
                         [src]="'../../../../../assets/images/svg/calendar.svg'"></svg-icon>
                     <p>{{ recipe.publicationDate | date: "shortDate" }}</p>
                 </div>
-                <div class="row likes">
+                <div class="row likes" *ngIf="this.recipe.status==='public'">
                     <svg-icon class="head-icon" [applyClass]="true"
                         [src]="'../../../../../assets/images/svg/like.svg'"></svg-icon>
 
                     <p>{{ recipe.likesId.length }}</p>
                 </div>
 
-                <div class="row cooks">
+                <div class="row cooks" *ngIf="this.recipe.status==='public'">
                     <svg-icon class="head-icon" [applyClass]="true"
                         [src]="'../../../../../assets/images/svg/cook.svg'"></svg-icon>
 
                     <p>{{ recipe.cooksId.length }}</p>
                 </div>
-                <div class="row comments">
+                <div class="row comments" *ngIf="this.recipe.status==='public'">
                     <svg-icon class="head-icon" [applyClass]="true"
                         [src]="'../../../../../assets/images/svg/comment.svg'"></svg-icon>
 
@@ -60,7 +78,7 @@
             </div>
             <p class="description">{{ recipe.description }}</p>
             <div class="row cards">
-                <span>
+                <span *ngIf="recipe.preparationTime!==''">
                     <p class="about">Время подготовки</p>
                     <div title="Время подготовки">
                         <svg-icon class="card-icon" [applyClass]="true"
@@ -69,7 +87,7 @@
                         <p>{{ recipe.preparationTime }}</p>
                     </div>
                 </span>
-                <span>
+                <span *ngIf="recipe.cookingTime!==''">
                     <p class="about">Время приготовления</p>
 
                     <div title="Время приготовления">
@@ -78,7 +96,7 @@
                         <p>{{ recipe.cookingTime }}</p>
                     </div>
                 </span>
-                <span>
+                <span  *ngIf="recipe.origin!==''">
                     <p class="about">Страна происхождения</p>
                     <div>
                         <svg-icon class="card-icon" [applyClass]="true"
@@ -89,7 +107,7 @@
             </div>
         </div>
 
-        <div class="nutritions column">
+        <div class="nutritions column" *ngIf="recipe.nutritions.length>0">
             <h2>Пищевая ценность</h2>
             <ul>
                 <li class="row" *ngFor="let nutrient of recipe.nutritions">
@@ -107,7 +125,7 @@
         <div class="row center">
             <img class="main-photo" src="../../../../../../assets/images/no-recipe-photo.png" alt="" />
 
-            <div class="ingredients">
+            <div class="ingredients" *ngIf="recipe.ingredients.length>0">
               <h2>Ингредиенты</h2>
              <div class="servings">
                   <button (click)="decreasePortions()">−</button>  <p >на {{recipe.servings}} <span  appPluralRu=""
@@ -145,15 +163,15 @@
     </div>
 
     <div class="row all">
-        <div class="instructions">
-            <h2>Инструкции</h2>
+        <div class="instructions"  *ngIf="this.recipe.instructions.length>0">
+            <h2  >Инструкции</h2>
             <div class="row instruction" *ngFor="let instruction of recipe.instructions; let i = index">
                 <p class="num">{{ i + 1 }}</p>
                 <p>{{ instruction.name }}</p>
             </div>
 
             
-    <div class="row buttons">
+    <div class="row buttons" *ngIf="this.recipe.status==='public'">
         <div class="fav-button" (click)="makeThisRecipeFavorite()"><svg-icon class="fav-icon" [applyClass]="true" [src]="
           '../../../../../assets/images/svg/' +
           (recipe.status==='public'?(isRecipeFavorite ? 'fav-fill' : 'fav'):'pen') +
@@ -178,7 +196,7 @@
         <div></div>
     </div>
 
-      <div class="column">
+      <div class="column" *ngIf="this.recipe.status==='public'">
         <div>
             <h2>Комментарии ({{ recipe.comments.length }})</h2>
             <div>
@@ -204,7 +222,7 @@
                 </div>
             </div>
 
-            <div class="column i-comment">
+            <div class="column i-comment" >
                 <div class="policy">
                     <svg-icon [src]="'../../../../../assets/images/svg/community.svg'" [applyClass]="true"
                         class="community"></svg-icon>
@@ -231,7 +249,7 @@
     </div>
         </div>
 
-        <div class="column ads">
+        <div class="column ads" *ngIf="this.recipe.status==='public'" >
             <h2>Новинки</h2>
 
             <app-recipe-list-item *ngFor="let recentRecipe of recentRecipes"

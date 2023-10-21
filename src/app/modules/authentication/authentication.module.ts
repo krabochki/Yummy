@@ -35,7 +35,7 @@ import { RecipesModule } from '../recipes/recipes.module';
     SvgIconComponent,
     RecipesModule
   ],
-  providers: [provideAngularSvgIcon(),AuthGuard, AdminGuard, ModeratorGuard, OnlyNoAuthGuard]
+  providers: [  provideAngularSvgIcon(),AuthGuard, AdminGuard, ModeratorGuard, OnlyNoAuthGuard]
 
 })
 export class AuthenticationModule { }

@@ -5,6 +5,9 @@ import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
 import { Subscription } from 'rxjs';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
+import { ISection } from 'src/app/modules/recipes/models/categories';
+import { CategoryService } from 'src/app/modules/recipes/services/category.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-control-dashboard',
   templateUrl: './control-dashboard.component.html',
@@ -15,14 +18,17 @@ export class ControlDashboardComponent implements OnInit {
     private recipeService: RecipeService,
     private titleService: Title,
     private authService: AuthService,
+    private categoryService: CategoryService,
+    private router:Router
   ) {
-    this.titleService.setTitle('Панель модератора');
   }
   currentUserSubscription?: Subscription;
   recipesSubscription?: Subscription;
+  categoriesSubscription?: Subscription;
   currentUser: IUser = nullUser;
   awaitingRecipes: IRecipe[] = [];
 
+  sections: ISection[] = [];
   getModeratorAction(action: number[]) {
     if (action[1] === 1) {
       this.approveRecipe(action[0]);
@@ -58,8 +64,13 @@ export class ControlDashboardComponent implements OnInit {
       );
     }
   }
+  
 
   ngOnInit(): void {
+     this.router.events.subscribe(() => {
+      window.scrollTo(0, 0);
+     });
+    
     this.recipesSubscription = this.recipeService
       .getRecipes()
       .subscribe((recipesData) => {
@@ -70,6 +81,16 @@ export class ControlDashboardComponent implements OnInit {
       .getCurrentUser()
       .subscribe((data) => {
         this.currentUser = data;
+
+        if (this.currentUser.role === 'moderator')
+          this.titleService.setTitle('Панель модератора');
+        else 
+          this.titleService.setTitle('Панель администратора');
+
       });
+
+    this.categoriesSubscription = this.categoryService.getSections().subscribe((data) => {
+      this.sections = data;
+    });
   }
 }

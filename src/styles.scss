@@ -1,4 +1,153 @@
 
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$yummy-primary: mat.define-palette(mat.$indigo-palette);
+$yummy-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$yummy-warn: mat.define-palette(mat.$red-palette);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as "color" or "typography".
+$yummy-theme: mat.define-light-theme((
+  color: (
+    primary: $yummy-primary,
+    accent: $yummy-accent,
+    warn: $yummy-warn,
+  )
+));
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include mat.all-component-themes($yummy-theme);
+
+
+
+form{
+  .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    max-width: 15em;
+background-color: var(--color-background-deeper-unactive);
+border-radius: var(--space-s) var(--space-s) 0 0;
+
+
+
+}
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled):not(.mdc-text-field--focused):hover .mdc-line-ripple::before{
+  border-bottom-color:var(--color-foreground-unactive)
+}
+.mat-mdc-text-field-wrapper:not(.mdc-text-field--outlined) .mat-mdc-form-field-infix {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-text-field__input{
+margin-top:0 !important
+}
+
+
+
+
+
+.mat-mdc-form-field-infix {
+width: unset;
+height: calc(var(--base) + var(--space-xs) + var(--space-m) + 0.5em);
+}
+.mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-text-field__input {margin-top: 0.5em;
+
+    color: var(--color-foreground);
+    height: auto;
+    margin: auto;
+    padding-top: 1.5em;
+}
+.mat-mdc-text-field-wrapper .mat-mdc-form-field-flex .mat-mdc-floating-label {
+    top: 50%;    
+    mat-label{
+      color: var(--color-foreground-unactive);
+      font-weight: 300;
+    }
+}
+ 
+.mdc-text-field--filled:not(.mdc-text-field--disabled).mdc-text-field--focused .mdc-floating-label, .mdc-text-field--filled:not(.mdc-text-field--disabled).mdc-text-field--focused .mdc-floating-label--float-above mat-label{
+    color: var(--color-secondary) !important
+}
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-text-field__input {
+    caret-color: var(--color-secondary);
+}
+.mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-line-ripple::after {
+    border-bottom-color: var(--color-secondary);
+}
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-line-ripple::before {
+    border-bottom-color: var(--color-foreground-unactive);
+}
+}
+
+
+.cdk-overlay-container div.mat-mdc-autocomplete-panel { 
+background-color: var(--color-background-deeper);
+border-radius: var(--space-s) ;
+
+ &::-webkit-scrollbar {
+      width: 12px;
+    }
+    &::-webkit-scrollbar-track {
+      border-radius: 20px;
+      background: var(--scroll-body);
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--scroll-thumb);
+      border-radius: 20px;
+      border: 3px solid var(--scroll-body);
+    }
+
+    .mat-mdc-optgroup-label {
+    
+    padding-left: 0;
+    padding-right: 0;
+    font-weight: 600;
+    min-height: unset;
+    margin-bottom: 0.5em;
+
+    padding: 0 1em;
+      margin-top: 1em;
+
+   
+    
+}
+
+.mat-mdc-optgroup .mat-mdc-option:not(.mat-mdc-option-multiple) {
+
+}
+
+
+.mat-mdc-option {
+
+    padding-left: 0;
+    padding-right: 0;
+            padding: 0.2em 1em 0.2em 2em;
+
+
+    min-height: unset;
+}
+}
+.mat-mdc-autocomplete-panel > mat-optgroup:first-of-type .mat-mdc-optgroup-label {
+  margin-top: 0;
+      }
+
 @import 'tools/UI/UI.scss';
 
 * {
@@ -114,3 +263,6 @@ body::-webkit-scrollbar-thumb {
   border: 3px solid   var(--scroll-body);  
 }
 
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

@@ -1,19 +1,46 @@
+.category {
+  background-color: rgb(153, 153, 153);
 
+  scroll-snap-align: start;
 
-.category{
-    background-color: gray;
+  backdrop-filter: blur(12px) brightness(105%);
+  padding: 1rem 1rem;
+  width: 100%; /* 4 колонки внутри грида */
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2em;
+  cursor: pointer;
 
-    scroll-snap-align: start;
-
-   backdrop-filter: blur(12px) brightness(105%);
-   padding: 1rem 1.5rem;
-   overflow-x: hidden;
-   width:10rem;
-   align-items: center;
-   justify-content: center;
-   border-radius: 100%;
-  height:10em;
+  border-radius: 100%;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1;
+  height: 12vw;
+  width: 12vw;
   flex-direction: column;
   display: flex;
+  overflow: hidden;
+}
 
+p {  
+ cursor: pointer;
+
+   
+    overflow: hidden;
+    text-overflow: ellipsis;
+  max-width: 100%;
+   
+}
+
+@media (max-width:900px){
+  .category{
+    height: 17vmax;
+    width: 17vmax;
+  }
+}
+@media (max-width:480px){
+  .category{
+    height: 23vmax;
+    width: 23vmax;
+  }
 }

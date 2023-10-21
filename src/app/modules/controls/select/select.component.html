@@ -11,7 +11,7 @@
     </div>
     
     <ul class="dropdown" @select *ngIf="open" (click)="this.clickedEmit.emit(true)">
-    <li (click)="linkClick(disabling[i])" *ngFor="let item of shiftedItems, let i = index"
+    <li (click)="routerLinks.length!==0?linkClick(disabling[i]):this.optionClick.emit(item);open=false" *ngFor="let item of shiftedItems, let i = index"
      [routerLink]="routerLinks[i]"  [ngClass]="{'dsl':(disabling[i]?true:false)}">
 
 {{item}}

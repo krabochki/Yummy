@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { IRecipe } from '../models/recipes';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -61,8 +61,16 @@ export class RecipeService {
   }
 
   postRecipe(recipe: IRecipe) {
-    return this.http.post<IRecipe>(this.url, recipe);
-  }
+  return this.http.post<IRecipe>(this.url, recipe).pipe(
+    tap((newRecipe:IRecipe) => {
+      // Добавляем новый рецепт в общий массив
+      const currentRecipes = this.recipesSubject.value;
+      const updatedRecipes = [...currentRecipes, newRecipe];
+      this.recipesSubject.next(updatedRecipes);
+    })
+  );
+}
+  
 
   updateRecipe(recipe: IRecipe) {
     const url = `${this.url}/${recipe.id}`;

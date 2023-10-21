@@ -1,3 +1,19 @@
+@import '../../../../../tools/UI/UI.scss';
+
 .main{
     padding: 1.7em calc(14.4vw + 0 * (100vw - 768px) / 760);
+}
+h1{
+    line-height: 1;
+    font-size: var(--font-xxl);
+    text-align: center;
+    font-family: var(--font-family-accent);
+    margin-bottom: 1em;
+}
+
+h2{
+  line-height: 1;
+  font-weight: 600;
+  font-size: 1.5em;
+
 }

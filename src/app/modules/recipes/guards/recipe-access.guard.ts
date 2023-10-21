@@ -35,10 +35,13 @@ export class RecipeAccessGuard implements CanActivate {
     this.recipeService.recipes$.subscribe((data) => {
       recipes = data;
     });
+    console.log(recipes)
     const recipe: IRecipe | undefined = recipes.find(
       (recipe) => recipe.id == recipeId,
     );
 
+    console.log(recipe?.authorId)
+    console.log(user.id);
     if (recipe)
       if (
         recipe.authorId === user.id ||
@@ -46,13 +49,13 @@ export class RecipeAccessGuard implements CanActivate {
         user.role === 'admin' ||
         recipe.status === 'public'
       ) {
+        
+        console.log(true)
         return true;
       } else {
-        this.router.navigateByUrl('/not-found');
         return false;
       }
     else {
-      this.router.navigateByUrl('/not-found');
 
       return false;
     }

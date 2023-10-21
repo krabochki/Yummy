@@ -18,7 +18,15 @@ import { SvgIconComponent, provideAngularSvgIcon } from 'angular-svg-icon';
 import { ControlsModule } from '../controls/controls.module';
 import { CdkDropList, CdkDragHandle, CdkDrag } from '@angular/cdk/drag-drop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatInputModule } from '@angular/material/input';
+import { AsyncPipe } from '@angular/common';
+   
+
 import { VerticalRecipeListComponent } from './components/recipes/vertical-recipe-list/vertical-recipe-list.component';
+
+
 @NgModule({
   declarations: [
     RecipesComponent,
@@ -44,6 +52,8 @@ import { VerticalRecipeListComponent } from './components/recipes/vertical-recip
     ControlsModule,
     ControlsModule,
     CommonModule,
+    MatFormFieldModule,
+    MatAutocompleteModule,MatInputModule,AsyncPipe,
     CdkDropList,
     CdkDragHandle,
     CdkDropList,
@@ -59,6 +69,6 @@ import { VerticalRecipeListComponent } from './components/recipes/vertical-recip
     provideAngularSvgIcon(),
     { provide: LOCALE_ID, useValue: 'ru' },
   ],
-  exports: [HorizontalRecipeListComponent, VerticalRecipeListComponent],
+  exports: [HorizontalRecipeListComponent, CategoryListComponent, VerticalRecipeListComponent],
 })
 export class RecipesModule {}

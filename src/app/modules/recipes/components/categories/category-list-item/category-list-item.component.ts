@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { ICategory } from 'src/app/modules/recipes/models/categories';
+import { ICategory, ISection, nullCategory } from 'src/app/modules/recipes/models/categories';
 
 @Component({
   selector: 'app-category-list-item',
@@ -8,5 +8,5 @@ import { ICategory } from 'src/app/modules/recipes/models/categories';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CategoryListItemComponent {
-  @Input() category?: ICategory;
+  @Input() category: ICategory | ISection = nullCategory;
 }

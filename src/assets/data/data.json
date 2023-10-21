@@ -1,5 +1,71 @@
 {
-  "sections": [],
+  "sections": [
+    {
+      "id": 1,
+      "name": "Праздники",
+      "photoUrl": "",
+      "categoriesId": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Системы питания",
+      "photoUrl": "",
+      "categoriesId": [
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Контроль веса",
+      "photoUrl": "",
+      "categoriesId": [
+        6,
+        7,
+        8
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Типы блюд",
+      "photoUrl": "",
+      "categoriesId": []
+    },
+    {
+      "id": 4,
+      "name": "Кухни мира",
+      "photoUrl": "",
+      "categoriesId": []
+    },
+    {
+      "id": 5,
+      "name": "Сезонные",
+      "photoUrl": "",
+      "categoriesId": []
+    },
+    {
+      "id": 6,
+      "name": "По времени",
+      "photoUrl": "",
+      "categoriesId": []
+    },
+    {
+      "id": 7,
+      "name": "Экзотика",
+      "photoUrl": "",
+      "categoriesId": []
+    },
+    {
+      "id": 8,
+      "name": "Сладости и десерты",
+      "photoUrl": "",
+      "categoriesId": []
+    }
+  ],
   "categories": [
     {
       "id": 1,
@@ -24,6 +90,21 @@
     {
       "id": 5,
       "name": "Пастафарианское",
+      "photoUrl": "url_1.jpg"
+    },
+    {
+      "id": 6,
+      "name": "Полезное питание",
+      "photoUrl": "url_1.jpg"
+    },
+    {
+      "id": 7,
+      "name": "Набор массы",
+      "photoUrl": "url_1.jpg"
+    },
+    {
+      "id": 8,
+      "name": "Похудение",
       "photoUrl": "url_1.jpg"
     }
   ],
@@ -2667,9 +2748,13 @@
       "cookingTime": "aliquip excepteur est eu veniam",
       "servings": 5,
       "authorId": 5,
-      "cooksId": [],
+      "cooksId": [
+        5
+      ],
       "favoritesId": [],
-      "likesId": [],
+      "likesId": [
+        5
+      ],
       "status": "private",
       "origin": "Moldova",
       "publicationDate": "2020-07-14",
@@ -3337,22 +3422,22 @@
       ]
     },
     {
-      "id": 29,
+      "id": 30,
       "mainPhotoUrl": null,
       "comments": [],
       "name": "excepteur ipsum exercitation",
-      "description": "Enim aute cillum in mollit ea aliqua consequat culpa culpa ex aute excepteur. Aute consectetur occaecat reprehenderit labore ipsum tempor. Consectetur nisi consequat consequat sint sit adipisicing veniam ex dolore esse culpa consectetur consequat. Ad Lorem nulla magna aliqua eiusmod deserunt proident ipsum aute enim. Cupidatat Lorem duis eu ex excepteur commodo commodo ipsum do ullamco. Consequat pariatur ut deserunt do minim tempor.\r\nMollit adipisicing occaecat sit culpa velit nulla id. Exercitation amet occaecat incididunt ad. Officia consectetur elit dolore est nulla laboris incididunt amet sit tempor. Sint Lorem laboris dolor magna ad aliqua mollit eu minim esse dolor excepteur ut est. Labore excepteur ipsum nostrud quis enim ipsum.\r\nVoluptate occaecat consectetur culpa sit. Mollit consequat reprehenderit occaecat sint. Deserunt amet nostrud duis cupidatat laborum excepteur eu ut laboris veniam. Tempor quis veniam commodo dolor culpa aliqua aute veniam. Veniam adipisicing consectetur aute aliquip do id ea ad tempor adipisicing aliqua. Dolor pariatur proident dolor ullamco minim deserunt.\r\n",
-      "history": "Officia et ullamco officia aute cillum id. Aliquip elit occaecat ipsum esse pariatur aute adipisicing excepteur et. Nisi eu irure Lorem qui dolore ad ad est anim Lorem magna tempor deserunt nostrud. Consectetur excepteur consequat voluptate tempor do ullamco ex eiusmod. Qui ex velit minim Lorem deserunt non eiusmod labore consectetur aliqua non. Incididunt amet elit enim laborum cupidatat excepteur consequat consectetur id.\r\nConsequat est in mollit aliquip officia ex sunt proident proident labore Lorem est. Qui cillum excepteur nostrud sunt reprehenderit nulla anim ut laboris nulla quis. Qui cupidatat tempor amet est voluptate do eiusmod magna adipisicing dolore. Aliquip velit pariatur ad deserunt. Quis culpa et sit consequat. Eu eiusmod deserunt velit aliqua excepteur pariatur occaecat id exercitation nostrud eu.\r\n",
-      "preparationTime": "eiusmod magna aliqua laboris deserunt",
-      "cookingTime": "est deserunt qui exercitation eu",
-      "servings": 9,
-      "authorId": 8,
+      "description": "Простой рецепт приготовления любимого многими слоёного салата \"Сельдь под шубой\", со свёклой, картофелем, морковью и луком.",
+      "history": "История селедки под шубой уходит далеко от нашей страны в северные скандинавские края, которые всегда славились избытком вкуснейшей рыбы. Изначально быть может, да, под шубою скрывалась не селедка. Но в кулинарных книгах Норвегии 1851 года можно найти схожий рецепт под названием Sillsallad, что в переводе и означает «селедочный салат». Существует и английский аналог. У нас же блюдо появилось лишь в 1960-х годах прошлого века. Однако, согласитесь, менее вкусным от этого оно не стало.",
+      "preparationTime": "10 минут",
+      "cookingTime": "1 день",
+      "servings": "10",
+      "authorId": 5,
       "cooksId": [],
       "favoritesId": [],
       "likesId": [],
       "status": "private",
-      "origin": "Russian Federation",
-      "publicationDate": "2014-01-21",
+      "origin": "Россия",
+      "publicationDate": "",
       "instuctions": [
         "exercitation",
         "voluptate",
@@ -3380,33 +3465,7 @@
           "name": "Sint non ad esse exercitation. Eiusmod voluptate eu qui ullamco exercitation duis aliquip aliquip irure sit occaecat nostrud cillum ea. Occaecat officia consequat eiusmod ad veniam deserunt id officia consequat pariatur veniam. Amet id Lorem exercitation ullamco est proident laboris. Ullamco laboris Lorem adipisicing aliquip labore non anim esse ipsum.\r\n"
         }
       ],
-      "nutritions": [
-        {
-          "name": "anim",
-          "quantity": 29,
-          "unit": "commodo"
-        },
-        {
-          "name": "occaecat",
-          "quantity": 2,
-          "unit": "eiusmod"
-        },
-        {
-          "name": "tempor",
-          "quantity": 33,
-          "unit": "ut"
-        },
-        {
-          "name": "qui",
-          "quantity": 31,
-          "unit": "dolore"
-        },
-        {
-          "name": "ad",
-          "quantity": 38,
-          "unit": "magna"
-        }
-      ],
+      "nutritions": [],
       "ingredients": [
         {
           "name": "voluptate",
@@ -3463,7 +3522,170 @@
           "quantity": 46,
           "unit": "proident"
         }
+      ],
+      "categories": [
+        1
       ]
+    },
+    {
+      "name": "Салат с крабовыми палочками",
+      "ingredients": [
+        {
+          "name": "Крабовые палочки",
+          "quantity": "240",
+          "unit": "г"
+        },
+        {
+          "name": "Огурец свежий",
+          "quantity": "3-4",
+          "unit": "шт"
+        },
+        {
+          "name": "Яйцо куриное",
+          "quantity": "3-4",
+          "unit": "шт"
+        },
+        {
+          "name": "Кукуруза консервированная",
+          "quantity": "140",
+          "unit": "г"
+        },
+        {
+          "name": "Соль",
+          "quantity": "по вкусу",
+          "unit": ""
+        },
+        {
+          "name": "Перец черный молотый",
+          "quantity": "по вкусу",
+          "unit": ""
+        },
+        {
+          "name": "Майонез ",
+          "quantity": "3",
+          "unit": "ст. л"
+        }
+      ],
+      "instructions": [
+        {
+          "name": "Подготовьте необходимые продукты для крабового салата с кукурузой и огурцами. Яйца отварите 8 минут, остудите в холодной воде, очистите от скорлупы. Слейте воду с кукурузы. Огурцы, при желании, можно очистить от кожуры.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "\nКак приготовить салат из крабовых палочек с кукурузой и огурцами:\n\nНарежьте огурцы мелким кубиком, переложите в глубокую посуду, добавьте кукурузу.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Крабовые палочки разморозьте предварительно, нарежьте мелким кубиком, добавьте к овощам.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Нарубите куриные яйца или измельчите их с помощью специальной нарезки, добавьте в салат.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Посолите салат, поперчите, добавьте майонез.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Перемешайте салат, попробуйте на вкус, если все устраивает по соли и перцу, переложите салат в блюдо для подачи.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Подавайте салат сразу же после приготовления. Если планируете подавать салат позже, тогда заправляйте его перед самой подачей.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        }
+      ],
+      "mainPhotoUrl": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "10 минут",
+      "origin": "",
+      "nutritions": [],
+      "servings": "2",
+      "authorId": 5,
+      "categories": [
+        1,
+        4
+      ],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 31,
+      "comments": [],
+      "publicationDate": "",
+      "status": "awaits"
     }
   ],
   "users": [
@@ -3493,7 +3715,7 @@
       "personalWebsite": "https://www.chefalexeyzimin.com/",
       "location": "Москва, Россия",
       "registrationDate": "2023-01-15",
-      "profileViews": 7575,
+      "profileViews": 7578,
       "role": "admin"
     },
     {
@@ -3549,7 +3771,7 @@
       "personalWebsite": "https://www.travelandeat.com/",
       "location": "Нью-Йорк, США",
       "registrationDate": "2023-05-10",
-      "profileViews": 5802,
+      "profileViews": 5803,
       "role": "user"
     },
     {
@@ -3577,7 +3799,7 @@
       "personalWebsite": "https://www.cookingadventures.com/",
       "location": "Лондон, Великобритания",
       "registrationDate": "2023-04-02",
-      "profileViews": 4908,
+      "profileViews": 4911,
       "role": "user"
     },
     {
@@ -3595,7 +3817,7 @@
       "personalWebsite": "https://angular.io/errors/",
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 1191
+      "profileViews": 1536
     },
     {
       "id": 6,
@@ -3627,7 +3849,7 @@
       "personalWebsite": "https://www.healthandnutrition.com/",
       "location": "Сидней, Австралия",
       "registrationDate": "2023-06-18",
-      "profileViews": 4330,
+      "profileViews": 4337,
       "role": "user"
     },
     {
@@ -3656,7 +3878,7 @@
       "personalWebsite": "",
       "location": "Лиссабон, Португалия",
       "registrationDate": "2023-07-24",
-      "profileViews": 3938,
+      "profileViews": 3942,
       "role": "user"
     },
     {

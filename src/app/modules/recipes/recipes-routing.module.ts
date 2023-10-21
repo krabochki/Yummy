@@ -32,16 +32,19 @@ const routes: Routes = [
         canActivate: [AuthGuard],
       },
       {
-        path: 'recipes', data: { filter: 'all' } ,
+        path: 'recipes',
+        data: { filter: 'all' },
         component: SomeRecipesPageComponent,
       },
       {
-        path: 'recipes/yours',data: { filter: 'my-recipes' },
+        path: 'recipes/yours',
+        data: { filter: 'my-recipes' },
         component: SomeRecipesPageComponent,
         canActivate: [AuthGuard],
       },
       {
-        path: 'recipes/favorite',data: { filter: 'favorite' },
+        path: 'recipes/favorite',
+        data: { filter: 'favorite' },
         component: SomeRecipesPageComponent,
         canActivate: [AuthGuard],
       },
@@ -55,7 +58,8 @@ const routes: Routes = [
         canActivate: [AuthGuard],
       },
       {
-        path: 'recipes/following',data: { filter: 'following' },
+        path: 'recipes/following',
+        data: { filter: 'following' },
         component: SomeRecipesPageComponent,
         canActivate: [AuthGuard],
       },
@@ -64,12 +68,14 @@ const routes: Routes = [
         component: SomeRecipesPageComponent,
       },
       {
-        path: 'recipes/best',data: { filter: 'popular' } ,
+        path: 'recipes/best',
+        data: { filter: 'popular' },
         component: SomeRecipesPageComponent,
       },
 
       {
-        path: 'recipes/recent', data: { filter: 'recent' } ,
+        path: 'recipes/recent',
+        data: { filter: 'recent' },
         component: SomeRecipesPageComponent,
       },
 

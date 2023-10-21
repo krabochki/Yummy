@@ -231,6 +231,7 @@ h2 {
 }
 
 h1 {
+
   font-size: var(--font-xxl);
   font-family: var(--font-family-accent);
 }
@@ -575,6 +576,13 @@ h1 {
 }
 @media(max-width:480px){
 
+  h1{
+    line-height: 1;
+    margin-bottom: 0.5em;
+  }
+    .exit-button{
+     display: none;
+    }
     .cont{
     padding: var(--space-xl) 6%;
 }
@@ -615,6 +623,7 @@ h1 {
     }
 
    
+  
 
     
 }

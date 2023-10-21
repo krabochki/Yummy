@@ -80,6 +80,10 @@ export class UserPageComponent implements OnInit {
 
       this.titleService.setTitle('@' + this.user.username);
 
+      this.authService.getCurrentUser().subscribe((data) => {
+        this.currentUser = data;
+      });
+
       if (this.currentUser.id === this.user.id) {
         this.myPage = true;
       } else {
@@ -96,94 +100,88 @@ export class UserPageComponent implements OnInit {
         this.userId,
       );
 
-       this.authService.getCurrentUser()?.subscribe((data) => {
-         this.currentUser = data;
-       });
-       if (!this.currentUser) {
-         this.currentUser = nullUser;
-       }
+      this.userService.getUsers().subscribe((data) => {
+        this.users = data;
+        const findedUser = data.find((user) => user.id === this.userId);
 
-       this.userService.getUsers().subscribe((data) => {
-         this.users = data;
-         const findedUser = data.find((user) => user.id === this.userId);
+        if (findedUser) this.user = findedUser;
 
-         if (findedUser) this.user = findedUser;
+        this.titleService.setTitle('@' + this.user.username);
 
-         this.titleService.setTitle('@' + this.user.username);
+        if (this.currentUser.id === this.user.id) {
+          this.myPage = true;
+        }
 
-         if (this.currentUser.id === this.user.id) {
-           this.myPage = true;
-         }
+        this.user.profileViews++;
+        if (this.myPage) {
+          this.currentUser.profileViews++;
+        }
 
-         this.user.profileViews++;
-         if (this.myPage) {
-           this.currentUser.profileViews++;
-         }
+        this.authService.setCurrentUser(this.currentUser);
 
-         this.authService.setCurrentUser(this.currentUser);
+        this.updateUser();
 
-         this.updateUser();
+        this.userFollowers = this.userService.getFollowers(data, this.userId);
 
-         this.userFollowers = this.userService.getFollowers(data, this.userId);
+        this.userFollowing = this.userService.getFollowing(data, this.userId);
+      });
 
-         this.userFollowing = this.userService.getFollowing(data, this.userId);
-       });
+      this.recipeService.getRecipes()?.subscribe((data) => {
+        this.allRecipes = this.recipeService.getPopularRecipes(data);
 
-       this.recipeService.getRecipes()?.subscribe((data) => {
-         this.allRecipes = this.recipeService.getPopularRecipes(data);
+        this.userRecipes = this.recipeService.getRecipesByUser(
+          this.allRecipes,
+          this.userId,
+        );
+        if (
+          !this.myPage &&
+          (this.currentUser.role === 'admin' ||
+            this.currentUser.role === 'moderator')
+        ) {
+          console.log('Я админ или модер и это не моя страница');
 
-         this.userRecipes = this.recipeService.getRecipesByUser(
-           this.allRecipes,
-           this.userId,
-         );
-         if (
-           !this.myPage &&
-           (this.currentUser.role === 'admin' ||
-             this.currentUser.role === 'moderator')
-         ) {
-           this.userRecipes = this.recipeService.getNotPrivateRecipes(
-             this.userRecipes,
-           );
-         }
-         if (
-           !this.myPage &&
-           this.currentUser.role !== 'admin' &&
-           this.currentUser.role !== 'moderator'
-         ) {
-           this.userRecipes = this.recipeService.getPublicRecipes(
-             this.userRecipes,
-           );
-         }
+          this.userRecipes = this.recipeService.getNotPrivateRecipes(
+            this.userRecipes,
+          );
+        } else if (
+          !this.myPage &&
+          this.currentUser.role !== 'admin' &&
+          this.currentUser.role !== 'moderator'
+        ) {
+          console.log('Я  не админ и не модер и это не моя страница');
 
-         this.userRecipes.forEach((recipe) => {
-           this.cooks += recipe.cooksId?.length;
-           this.likes += recipe.likesId?.length;
-           this.comments += recipe.comments?.length;
-           if (!this.cooks) this.cooks = 0;
-           if (!this.likes) this.likes = 0;
-           if (!this.comments) this.comments = 0;
-         });
+          this.userRecipes = this.recipeService.getPublicRecipes(
+            this.userRecipes,
+          );
+        }
 
-         this.displayRecipes = [...this.userRecipes];
+        this.userRecipes.forEach((recipe) => {
+          this.cooks += recipe.cooksId?.length;
+          this.likes += recipe.likesId?.length;
+          this.comments += recipe.comments?.length;
+          if (!this.cooks) this.cooks = 0;
+          if (!this.likes) this.likes = 0;
+          if (!this.comments) this.comments = 0;
+        });
 
-         if (this.displayRecipes.length == 2) {
-           this.displayRecipes.push(nullRecipe);
-         }
-         if (this.displayRecipes.length == 1) {
-           this.displayRecipes.push(nullRecipe);
-           this.displayRecipes.push(nullRecipe);
-         }
+        this.displayRecipes = [...this.userRecipes];
 
-         setTimeout(() => {
-           this.dataLoaded = true;
-         }, 800);
-       });
+        if (this.displayRecipes.length == 2) {
+          this.displayRecipes.push(nullRecipe);
+        }
+        if (this.displayRecipes.length == 1) {
+          this.displayRecipes.push(nullRecipe);
+          this.displayRecipes.push(nullRecipe);
+        }
+
+        setTimeout(() => {
+          this.dataLoaded = true;
+        }, 700);
+      });
     });
     this.router.events.subscribe(() => {
       window.scrollTo(0, 0);
     });
-
-   
   }
 
   displayRecipes: IRecipe[] = [];

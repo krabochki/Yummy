@@ -33,6 +33,9 @@ export class SomeRecipesPageComponent implements OnInit {
      if (this.filter === 'favorite') {
        return 'Сохраненные рецепты';
      }
+     if (this.filter === 'category-recipes') {
+       return 'Рецепты по категории';
+     }
     
      if (this.filter === 'all') {
        return 'Все рецепты';

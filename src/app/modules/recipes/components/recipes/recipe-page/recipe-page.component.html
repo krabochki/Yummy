@@ -1,270 +1,395 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <div class="cont column">
-    <div class="header row">
-        <div
-    class="exit-button"
-    
-    [ngClass]="{'no-path':(this.router.url === this.routerEventsService.previousRoutePath.value)}"
-    (click)="!(this.router.url === this.routerEventsService.previousRoutePath.value)?onSkipHandler():null"
-  >
-    <svg-icon
-      [applyClass]="true"
-      class="exit"
-      [src]="'../../../../../assets/images/svg/go-back.svg'"
+  <div class="header row">
+    <div
+      class="exit-button"
+      [ngClass]="{
+        'no-path':
+          this.router.url === this.routerEventsService.previousRoutePath.value
+      }"
+      (click)="
+        !(this.router.url === this.routerEventsService.previousRoutePath.value)
+          ? onSkipHandler()
+          : null
+      "
     >
-    </svg-icon>
+      <svg-icon
+        [applyClass]="true"
+        class="exit"
+        [src]="'../../../../../assets/images/svg/go-back.svg'"
+      >
+      </svg-icon>
+    </div>
+    <div>
+      <h1>{{ recipe.name }}</h1>
+
+      <p class="reading-time">
+        <svg-icon
+          class="read-icon"
+          [applyClass]="true"
+          [src]="'../../../../../assets/images/svg/reading.svg'"
+        ></svg-icon>
+        <span style="display: inline">
+          Чтение займет приблизительно {{ readingTimeInMinutes
+          }}<span
+            appPluralRu=""
+            [value]="readingTimeInMinutes"
+            [arVariants]="[' минуту', ' минуты', ' минут']"
+            >порций</span
+          >
+        </span>
+      </p>
+    </div>
   </div>
-       <div>
-            <h1>{{ recipe.name }}</h1>
+  <div class="head row">
+    <div class="column">
+      <div class="row" class="short-info row">
+        <div class="row user-info" [routerLink]="'/cooks/list/' + author.id">
+          <img
+            class="userpic"
+            src="../../../../../../assets/images/userpic.png"
+            alt="Фото пользователя"
+          />
+          <p>{{ author.fullName }}</p>
+        </div>
+        <div class="row date" *ngIf="this.recipe.status !== 'public'">
+          <ng-container *ngIf="this.recipe.status === 'private'; else awaiting">
+            <svg-icon
+              class="head-icon"
+              [applyClass]="true"
+              [src]="'../../../../../assets/images/svg/private.svg'"
+            ></svg-icon>
+
+            <p>Приватный рецепт</p>
+          </ng-container>
+          <ng-template #awaiting>
+            <svg-icon
+              class="head-icon"
+              [applyClass]="true"
+              [src]="'../../../../../assets/images/svg/awaits.svg'"
+            ></svg-icon>
+
+            <p>Рецепт на проверке</p>
+          </ng-template>
+        </div>
+        <div class="row date" *ngIf="this.recipe.status === 'public'">
+          <svg-icon
+            class="head-icon"
+            [applyClass]="true"
+            [src]="'../../../../../assets/images/svg/calendar.svg'"
+          ></svg-icon>
+          <p>{{ recipe.publicationDate | date: "shortDate" }}</p>
+        </div>
+        <div class="row likes" *ngIf="this.recipe.status === 'public'">
+          <svg-icon
+            class="head-icon"
+            [applyClass]="true"
+            [src]="'../../../../../assets/images/svg/like.svg'"
+          ></svg-icon>
+
+          <p>{{ recipe.likesId.length }}</p>
+        </div>
+
+        <div class="row cooks" *ngIf="this.recipe.status === 'public'">
+          <svg-icon
+            class="head-icon"
+            [applyClass]="true"
+            [src]="'../../../../../assets/images/svg/cook.svg'"
+          ></svg-icon>
+
+          <p>{{ recipe.cooksId.length }}</p>
+        </div>
+        <div class="row comments" *ngIf="this.recipe.status === 'public'">
+          <svg-icon
+            class="head-icon"
+            [applyClass]="true"
+            [src]="'../../../../../assets/images/svg/comment.svg'"
+          ></svg-icon>
+
+          <p>{{ recipe.comments.length }}</p>
+        </div>
         
-            <p class="reading-time">
-                  <svg-icon class="read-icon" [applyClass]="true"
-                            [src]="'../../../../../assets/images/svg/reading.svg'"></svg-icon>
-                <span style="display:inline">
-                    Чтение займет приблизительно {{readingTimeInMinutes}}<span appPluralRu=""
-                        [value]="readingTimeInMinutes"
-                        [arVariants]="[' минуту', ' минуты', ' минут']">порций</span>
-                </span></p>
-       </div>
-    </div>
-    <div class="head row">
-        <div class="column">
-            <div class="row" class="short-info row">
-                <div class="row user-info" [routerLink]="'/cooks/list/' + author.id">
-                    <img class="userpic" src="../../../../../../assets/images/userpic.png" alt="Фото пользователя" />
-                    <p>{{ author.fullName }}</p>
-                </div>
-                <div class="row date" *ngIf="this.recipe.status!=='public'">
-<ng-container *ngIf="this.recipe.status==='private';else awaiting">
-                          <svg-icon class="head-icon" [applyClass]="true"
-                            [src]="'../../../../../assets/images/svg/private.svg'"></svg-icon>
-                        
-                       <p> Приватный рецепт</p>
-</ng-container>
-<ng-template #awaiting>
- <svg-icon class="head-icon" [applyClass]="true"
-                            [src]="'../../../../../assets/images/svg/awaits.svg'"></svg-icon>
-                        
-                       <p> Рецепт на проверке</p>
+      </div>
+         <ul *ngIf="categories.length>0" class="categories">
+        <li class="row" *ngFor="let category of categories" [routerLink]="'/categories/list/'+category.id">{{(category.name)}} </li>
+      </ul>
+      <p class="description">{{ recipe.description }}</p>
+      <div class="row cards">
+        <span *ngIf="recipe.preparationTime !== ''">
+          <p class="about">Время подготовки</p>
+          <div title="Время подготовки">
+            <svg-icon
+              class="card-icon"
+              [applyClass]="true"
+              [src]="'../../../../../assets/images/svg/preparation.svg'"
+            ></svg-icon>
 
-</ng-template>
-                
-                </div>
-                <div class="row date" *ngIf="this.recipe.status==='public'">
-                    <svg-icon class="head-icon" [applyClass]="true"
-                        [src]="'../../../../../assets/images/svg/calendar.svg'"></svg-icon>
-                    <p>{{ recipe.publicationDate | date: "shortDate" }}</p>
-                </div>
-                <div class="row likes" *ngIf="this.recipe.status==='public'">
-                    <svg-icon class="head-icon" [applyClass]="true"
-                        [src]="'../../../../../assets/images/svg/like.svg'"></svg-icon>
+            <p>{{ recipe.preparationTime }}</p>
+          </div>
+        </span>
+        <span *ngIf="recipe.cookingTime !== ''">
+          <p class="about">Время приготовления</p>
 
-                    <p>{{ recipe.likesId.length }}</p>
-                </div>
-
-                <div class="row cooks" *ngIf="this.recipe.status==='public'">
-                    <svg-icon class="head-icon" [applyClass]="true"
-                        [src]="'../../../../../assets/images/svg/cook.svg'"></svg-icon>
-
-                    <p>{{ recipe.cooksId.length }}</p>
-                </div>
-                <div class="row comments" *ngIf="this.recipe.status==='public'">
-                    <svg-icon class="head-icon" [applyClass]="true"
-                        [src]="'../../../../../assets/images/svg/comment.svg'"></svg-icon>
-
-                    <p>{{ recipe.comments.length }}</p>
-                </div>
-            </div>
-            <p class="description">{{ recipe.description }}</p>
-            <div class="row cards">
-                <span *ngIf="recipe.preparationTime!==''">
-                    <p class="about">Время подготовки</p>
-                    <div title="Время подготовки">
-                        <svg-icon class="card-icon" [applyClass]="true"
-                            [src]="'../../../../../assets/images/svg/preparation.svg'"></svg-icon>
-
-                        <p>{{ recipe.preparationTime }}</p>
-                    </div>
-                </span>
-                <span *ngIf="recipe.cookingTime!==''">
-                    <p class="about">Время приготовления</p>
-
-                    <div title="Время приготовления">
-                        <svg-icon class="card-icon" [applyClass]="true"
-                            [src]="'../../../../../assets/images/svg/time.svg'"></svg-icon>
-                        <p>{{ recipe.cookingTime }}</p>
-                    </div>
-                </span>
-                <span  *ngIf="recipe.origin!==''">
-                    <p class="about">Страна происхождения</p>
-                    <div>
-                        <svg-icon class="card-icon" [applyClass]="true"
-                            [src]="'../../../../../assets/images/svg/origin.svg'"></svg-icon>
-                        <p>{{ recipe.origin }}</p>
-                    </div>
-                </span>
-            </div>
-        </div>
-
-        <div class="nutritions column" *ngIf="recipe.nutritions.length>0">
-            <h2>Пищевая ценность</h2>
-            <ul>
-                <li class="row" *ngFor="let nutrient of recipe.nutritions">
-                    <p class="name">{{ nutrient.name }}</p>
-                    <div class="row count">
-                        <p *ngIf="nutrient.quantity">{{ nutrient.quantity }}</p>
-                        <p *ngIf="nutrient.unit">{{ nutrient.unit }}</p>
-                    </div>
-                </li>
-            </ul>
-        </div>
+          <div title="Время приготовления">
+            <svg-icon
+              class="card-icon"
+              [applyClass]="true"
+              [src]="'../../../../../assets/images/svg/time.svg'"
+            ></svg-icon>
+            <p>{{ recipe.cookingTime }}</p>
+          </div>
+        </span>
+        <span *ngIf="recipe.origin !== ''">
+          <p class="about">Страна происхождения</p>
+          <div>
+            <svg-icon
+              class="card-icon"
+              [applyClass]="true"
+              [src]="'../../../../../assets/images/svg/origin.svg'"
+            ></svg-icon>
+            <p>{{ recipe.origin }}</p>
+          </div>
+        </span>
+      </div>
+    
     </div>
 
-    <div class="column main">
-        <div class="row center">
-            <img class="main-photo" src="../../../../../../assets/images/no-recipe-photo.png" alt="" />
-
-            <div class="ingredients" *ngIf="recipe.ingredients.length>0">
-              <h2>Ингредиенты</h2>
-             <div class="servings">
-                  <button (click)="decreasePortions()">−</button>  <p >на {{recipe.servings}} <span  appPluralRu=""
-                [value]="recipe.servings"
-                [arVariants]="['порцию', 'порции', 'порций']">порций</span></p>
-                <button (click)="increasePortions()">+</button>
-             </div>
-                <button class="basket-open-button" [ngClass]="{ 'basket-mode': basketMode }" (click)="basketMode = !basketMode">
-                    <svg-icon class="basket-icon" [applyClass]="true"
-                        [class]="basketMode ? 'basket-icon basket-mode' : 'basket-icon'"
-                        [src]="'../../../../../assets/images/svg/basket.svg'"></svg-icon>
-                    Составить список покупок
-                </button>
-                <ul>
-                    <li class="row ingredient" [ngClass]="{ 'i-have': iHaveIndgredient[i] }"
-                        *ngFor="let ingredient of recipe.ingredients; let i = index">
-                        <div class="checkbox" (click)="iHaveIndgredient[i] = !iHaveIndgredient[i]">
-                            <svg-icon *ngIf="iHaveIndgredient[i]" class="checkbox-icon" [applyClass]="true"
-                                [src]="'../../../../../assets/images/svg/checkbox.svg'"></svg-icon>
-                        </div>
-                        <p class="name">{{ ingredient.name }}</p>
-                        <div class="row count">
-                            <p>{{ ingredient.quantity }}</p>
-                            <p>{{ ingredient.unit }}</p>
-                        </div>
-
-                        <div [ngClass]="{ minus: basket[i] }" (click)="basket[i] ? removeFromBasket(i) : addToBasket(i)"
-                            class="basket-button" *ngIf="basketMode">
-                            {{ basket[i] ? "−" : "+" }}
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
+    <div class="nutritions column" *ngIf="recipe.nutritions.length > 0">
+      <h2>Пищевая ценность</h2>
+      <ul class="nutritions-ul">
+        <li class="row" *ngFor="let nutrient of recipe.nutritions">
+          <p class="name">{{ nutrient.name }}</p>
+          <div class="row count">
+            <p *ngIf="nutrient.quantity">{{ nutrient.quantity }}</p>
+            <p *ngIf="nutrient.unit">{{ nutrient.unit }}</p>
+          </div>
+        </li>
+      </ul>
+     
     </div>
+  </div>
 
-    <div class="row all">
-        <div class="instructions"  *ngIf="this.recipe.instructions.length>0">
-            <h2  >Инструкции</h2>
-            <div class="row instruction" *ngFor="let instruction of recipe.instructions; let i = index">
-                <p class="num">{{ i + 1 }}</p>
-                <p>{{ instruction.name }}</p>
+  <div class="column main">
+    <div class="row center">
+      <img
+        class="main-photo"
+        src="../../../../../../assets/images/no-recipe-photo.png"
+        alt=""
+      />
+
+      <div class="ingredients" *ngIf="recipe.ingredients.length > 0">
+        <h2>Ингредиенты</h2>
+        <div class="servings">
+          <button (click)="decreasePortions()">−</button>
+          <p>
+            на {{ recipe.servings }}
+            <span
+              appPluralRu=""
+              [value]="recipe.servings"
+              [arVariants]="['порцию', 'порции', 'порций']"
+              >порций</span
+            >
+          </p>
+          <button (click)="increasePortions()">+</button>
+        </div>
+        <button
+          class="basket-open-button"
+          [ngClass]="{ 'basket-mode': basketMode }"
+          (click)="basketMode = !basketMode"
+        >
+          <svg-icon
+            class="basket-icon"
+            [applyClass]="true"
+            [class]="basketMode ? 'basket-icon basket-mode' : 'basket-icon'"
+            [src]="'../../../../../assets/images/svg/basket.svg'"
+          ></svg-icon>
+          Составить список покупок
+        </button>
+        <ul>
+          <li
+            class="row ingredient"
+            [ngClass]="{ 'i-have': iHaveIndgredient[i] }"
+            *ngFor="let ingredient of recipe.ingredients; let i = index"
+          >
+            <div
+              class="checkbox"
+              (click)="iHaveIndgredient[i] = !iHaveIndgredient[i]"
+            >
+              <svg-icon
+                *ngIf="iHaveIndgredient[i]"
+                class="checkbox-icon"
+                [applyClass]="true"
+                [src]="'../../../../../assets/images/svg/checkbox.svg'"
+              ></svg-icon>
+            </div>
+            <p class="name">{{ ingredient.name }}</p>
+            <div class="row count">
+              <p>{{ ingredient.quantity }}</p>
+              <p>{{ ingredient.unit }}</p>
             </div>
 
-            
-    <div class="row buttons" *ngIf="this.recipe.status==='public'">
-        <div class="fav-button" (click)="makeThisRecipeFavorite()"><svg-icon class="fav-icon" [applyClass]="true" [src]="
-          '../../../../../assets/images/svg/' +
-          (recipe.status==='public'?(isRecipeFavorite ? 'fav-fill' : 'fav'):'pen') +
-          '.svg'
-        "></svg-icon></div>
+            <div
+              [ngClass]="{ minus: basket[i] }"
+              (click)="basket[i] ? removeFromBasket(i) : addToBasket(i)"
+              class="basket-button"
+              *ngIf="basketMode"
+            >
+              {{ basket[i] ? "−" : "+" }}
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="row all">
+    <div class="instructions" *ngIf="this.recipe.instructions.length > 0">
+      <h2>Инструкции</h2>
+      <div
+        class="row instruction"
+        *ngFor="let instruction of recipe.instructions; let i = index"
+      >
+        <p class="num">{{ i + 1 }}</p>
+        <p>{{ instruction.name }}</p>
+      </div>
+
+      <div class="row buttons" *ngIf="this.recipe.status === 'public'">
+        <div class="fav-button" (click)="makeThisRecipeFavorite()">
+          <svg-icon
+            class="fav-icon"
+            [applyClass]="true"
+            [src]="
+              '../../../../../assets/images/svg/' +
+              (recipe.status === 'public'
+                ? isRecipeFavorite
+                  ? 'fav-fill'
+                  : 'fav'
+                : 'pen') +
+              '.svg'
+            "
+          ></svg-icon>
+        </div>
         <div class="row" (click)="likeThisRecipe()">
-            <svg-icon           [class]="isRecipeLiked ? 'like-icon liked' : 'like-icon'"
- [applyClass]="true" [src]="
-            '../../../../../assets/images/svg/' +
-            (isRecipeLiked ? 'like-fill' : 'like') +
-            '.svg'"></svg-icon>
-            <p [ngClass]="{'liked':isRecipeLiked}">{{ recipe.likesId.length }}</p>
+          <svg-icon
+            [class]="isRecipeLiked ? 'like-icon liked' : 'like-icon'"
+            [applyClass]="true"
+            [src]="
+              '../../../../../assets/images/svg/' +
+              (isRecipeLiked ? 'like-fill' : 'like') +
+              '.svg'
+            "
+          ></svg-icon>
+          <p [ngClass]="{ liked: isRecipeLiked }">
+            {{ recipe.likesId.length }}
+          </p>
         </div>
         <div class="row" (click)="cookThisRecipe()">
-            <svg-icon    [class]="isRecipeCooked ? 'cook-icon cooked' : 'cook-icon'" [applyClass]="true" [src]="
-            '../../../../../assets/images/svg/' +
-            (isRecipeCooked ? 'cook-fill' : 'cook') +
-            '.svg'
-          "></svg-icon>
-            <p [ngClass]="{'cooked':isRecipeCooked}">{{ recipe.cooksId.length }}</p>
+          <svg-icon
+            [class]="isRecipeCooked ? 'cook-icon cooked' : 'cook-icon'"
+            [applyClass]="true"
+            [src]="
+              '../../../../../assets/images/svg/' +
+              (isRecipeCooked ? 'cook-fill' : 'cook') +
+              '.svg'
+            "
+          ></svg-icon>
+          <p [ngClass]="{ cooked: isRecipeCooked }">
+            {{ recipe.cooksId.length }}
+          </p>
         </div>
         <div></div>
-    </div>
+      </div>
 
-      <div class="column" *ngIf="this.recipe.status==='public'">
+      <div class="column" *ngIf="this.recipe.status === 'public'">
         <div>
-            <h2>Комментарии ({{ recipe.comments.length }})</h2>
-            <div>
-                <div *ngFor="let comment of recipe.comments">
-                    <div class="column">
-                        <div>{{ comment.authorId }}</div>
-                        <div>{{ comment.date }}</div>
-                        <div>{{ comment.text }}</div>
-                        <div class="row">
-                            <div>
-                                <div>{{ comment.likesId.length }}</div>
-                            </div>
-                            <div>
-                                <div>{{ comment.dislikesId.length }}</div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <button>Копировать</button>
-                            <button>Жалоба</button>
-                        </div>
-                    </div>
+          <h2>Комментарии ({{ recipe.comments.length }})</h2>
+          <div>
+            <div *ngFor="let comment of recipe.comments">
+              <div class="column">
+                <div>{{ comment.authorId }}</div>
+                <div>{{ comment.date }}</div>
+                <div>{{ comment.text }}</div>
+                <div class="row">
+                  <div>
+                    <div>{{ comment.likesId.length }}</div>
+                  </div>
+                  <div>
+                    <div>{{ comment.dislikesId.length }}</div>
+                  </div>
                 </div>
+
+                <div class="row">
+                  <button>Копировать</button>
+                  <button>Жалоба</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="column i-comment">
+            <div class="policy">
+              <svg-icon
+                [src]="'../../../../../assets/images/svg/community.svg'"
+                [applyClass]="true"
+                class="community"
+              ></svg-icon>
+              <p>
+                Дорогие кулинары, не забывайте, пожалуйста, про
+                <span routerLink="/user-policy"
+                  >пользовательское соглашение</span
+                >
+                при написании комментариев
+              </p>
+            </div>
+            <div class="row input-area">
+              <img
+                src="../../../../../../assets/images/userpic.png"
+                class="userpic"
+                alt=""
+              />
+              <app-expanding-input
+                type="text"
+                [placeholder]="
+                  recipe.comments.length === 0
+                    ? 'Будьте первым...'
+                    : 'Напишите комментарий...'
+                "
+              >
+              </app-expanding-input>
             </div>
 
-            <div class="column i-comment" >
-                <div class="policy">
-                    <svg-icon [src]="'../../../../../assets/images/svg/community.svg'" [applyClass]="true"
-                        class="community"></svg-icon>
-                    <p>
-                        Дорогие кулинары, не забывайте, пожалуйста, про
-                        <span routerLink="/user-policy">пользовательское соглашение</span>
-                        при написании комментариев
-                    </p>
-                </div>
-                <div class="row input-area">
-                    <img src="../../../../../../assets/images/userpic.png" class="userpic" alt="" />
-                    <app-expanding-input type="text" [placeholder]="
-              recipe.comments.length === 0
-                ? 'Будьте первым...'
-                : 'Напишите комментарий...'
-            ">
-                    </app-expanding-input>
-                </div>
-
-                <app-button [style]="'filled'" [rounded]="false" [color]="'prim'"
-                    [text]="'Опубликовать комментарий'"></app-button>
-            </div>
+            <app-button
+              [style]="'filled'"
+              [rounded]="false"
+              [color]="'prim'"
+              [text]="'Опубликовать комментарий'"
+            ></app-button>
+          </div>
         </div>
-    </div>
-        </div>
-
-        <div class="column ads" *ngIf="this.recipe.status==='public'" >
-            <h2>Новинки</h2>
-
-            <app-recipe-list-item *ngFor="let recentRecipe of recentRecipes"
-                [recipe]="recentRecipe"></app-recipe-list-item>
-
-
-        </div>
-        
+      </div>
     </div>
 
+    <div class="column ads" *ngIf="this.recipe.status === 'public'">
+      <h2>Новинки</h2>
 
-  
+      <app-recipe-list-item
+        *ngFor="let recentRecipe of recentRecipes"
+        [recipe]="recentRecipe"
+      ></app-recipe-list-item>
+    </div>
+  </div>
 </div>
 
-
-<app-modal @modal *ngIf="noAccessModalShow" [style]="'prim'" [title]="'Доступ к функции ограничен'" [type]="'yesOrNo'"
-    (resultEmit)="handleNoAccessModal($event)" [buttonsText]="['Давайте','Не сейчас']"
-    [description]="'Взаимодействовать с рецептами могут только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'"></app-modal>
+<app-modal
+  @modal
+  *ngIf="noAccessModalShow"
+  [style]="'prim'"
+  [title]="'Доступ к функции ограничен'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleNoAccessModal($event)"
+  [buttonsText]="['Давайте', 'Не сейчас']"
+  [description]="
+    'Взаимодействовать с рецептами могут только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'
+  "
+></app-modal>

@@ -26,7 +26,7 @@ const routes: Routes = [
         path: 'recipes/add',
         component: RecipeCreatingComponent,
         canActivate: [AuthGuard],
-        canDeactivate: [RecipeCreateClosingGuard]
+        canDeactivate: [RecipeCreateClosingGuard],
       },
       {
         path: 'recipes/edit',
@@ -82,7 +82,9 @@ const routes: Routes = [
       },
 
       {
-        path: 'categories/:id',
+        path: 'categories/list/:id',
+        data: { filter: 'category-recipes' },
+
         component: SomeRecipesPageComponent,
       },
       {

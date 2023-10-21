@@ -54,6 +54,15 @@
       "categoriesId": []
     },
     {
+      "id": 9,
+      "name": "По ингредиентам",
+      "photoUrl": "",
+      "categoriesId": [
+        11,
+        9
+      ]
+    },
+    {
       "id": 7,
       "name": "Экзотика",
       "photoUrl": "",
@@ -63,7 +72,9 @@
       "id": 8,
       "name": "Сладости и десерты",
       "photoUrl": "",
-      "categoriesId": []
+      "categoriesId": [
+        10
+      ]
     }
   ],
   "categories": [
@@ -100,6 +111,21 @@
     {
       "id": 7,
       "name": "Набор массы",
+      "photoUrl": "url_1.jpg"
+    },
+    {
+      "id": 11,
+      "name": "С мукой",
+      "photoUrl": "url_1.jpg"
+    },
+    {
+      "id": 9,
+      "name": "С ягодами",
+      "photoUrl": "url_1.jpg"
+    },
+    {
+      "id": 10,
+      "name": "Пироги",
       "photoUrl": "url_1.jpg"
     },
     {
@@ -2854,6 +2880,11 @@
     },
     {
       "id": 24,
+      "categories": [
+        11,
+        9,
+        10
+      ],
       "mainPhotoUrl": null,
       "comments": [],
       "name": "Чизкейк с клубникой",
@@ -3817,7 +3848,7 @@
       "personalWebsite": "https://angular.io/errors/",
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 1537
+      "profileViews": 1558
     },
     {
       "id": 6,

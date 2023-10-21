@@ -10,6 +10,8 @@ import { registerLocaleData } from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { RouteEventsService } from 'src/app/modules/controls/route-events.service';
+import { CategoryService } from '../../../services/category.service';
+import { ICategory } from '../../../models/categories';
 
 @Component({
   selector: 'app-recipe-page',
@@ -25,13 +27,15 @@ export class RecipePageComponent implements OnInit {
     private userService: UserService,
     public router: Router,
     public routerEventsService: RouteEventsService,
+    private categoryService:CategoryService
+  
   ) {}
   dataLoaded = false;
 
   onSkipHandler() {
     this.router.navigate([this.routerEventsService.previousRoutePath.value]);
   }
-  
+
   recipe: IRecipe = nullRecipe;
 
   readingTimeInMinutes: number = 0;
@@ -51,16 +55,11 @@ export class RecipePageComponent implements OnInit {
   removeFromBasket(i: number) {
     this.basket[i] = false;
   }
+  categories: ICategory[] = [];
   ngOnInit() {
-      this.router.events.subscribe((ev: any) => {
-        
-          window.scrollTo(0, 0);
-        
-      });
-    
-   
-
     registerLocaleData(localeRu);
+
+  
 
     this.currentUserSubscription = this.authService
       .getCurrentUser()
@@ -93,6 +92,15 @@ export class RecipePageComponent implements OnInit {
             recipes.forEach((recipe) => {
               if (recipe.id === this.recipe.id) {
                 this.recipe = recipe;
+
+                  this.categoryService
+                    .getCategories()
+                    .subscribe((allCategories) => {
+                      this.categories = allCategories.filter((element) =>
+                        this.recipe.categories.includes(element.id),
+                      );
+                      console.log(this.categories);
+                    });
 
                 const combinedText = [
                   recipe.history,
@@ -136,6 +144,11 @@ export class RecipePageComponent implements OnInit {
       });
   }
 
+
+
+
+
+
   makeThisRecipeFavorite() {
     if (this.currentUser.id === 0) {
       this.noAccessModalShow = true;
@@ -163,7 +176,6 @@ export class RecipePageComponent implements OnInit {
 
   handleNoAccessModal(result: boolean) {
     if (result) {
-      window.scrollTo(0, 0);
       this.router.navigateByUrl('/greetings');
     }
     this.noAccessModalShow = false;
@@ -230,10 +242,11 @@ export class RecipePageComponent implements OnInit {
         // Проверяем, успешно ли преобразование
         if (!isNaN(quantityAsNumber)) {
           // Если успешно, производим пересчет
-          ingredient.quantity = (
-            Number(( (quantityAsNumber / (this.recipe.servings + 1)) *
-            this.recipe.servings).toFixed(1))
-           
+          ingredient.quantity = Number(
+            (
+              (quantityAsNumber / (this.recipe.servings + 1)) *
+              this.recipe.servings
+            ).toFixed(1),
           ).toString();
         }
       });

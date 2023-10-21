@@ -14,20 +14,16 @@ import { CategoryService } from '../../../services/category.service';
 import { Observable } from 'rxjs';
 import { startWith, map, find } from 'rxjs/operators';
 
-export interface SectionGroup{
+export interface SectionGroup {
   section: string;
   categories: string[];
-
 }
-
 
 export const _filter = (opt: string[], value: string): string[] => {
   const filterValue = value.toLowerCase();
 
   return opt.filter((item) => item.toLowerCase().includes(filterValue));
 };
-
-
 
 @Component({
   selector: 'app-recipe-creating',
@@ -108,7 +104,6 @@ export class RecipeCreatingComponent implements OnInit {
         this.allSections = data;
 
         this.allSections.forEach((section) => {
-
           if (section.categoriesId.length > 0) {
             const sectionGroup: SectionGroup = {
               section: '',
@@ -124,8 +119,6 @@ export class RecipeCreatingComponent implements OnInit {
             this.sectionGroups.push(sectionGroup);
           }
         });
-
-        console.log(this.sectionGroups);
       });
     });
   }
@@ -169,7 +162,7 @@ export class RecipeCreatingComponent implements OnInit {
           this.selectedCategories.push(findCategory);
       }
     }
-    this.input?.nativeElement.blur()
+    this.input?.nativeElement.blur();
     this.category = '';
   }
   category: string = '';
@@ -370,7 +363,6 @@ export class RecipeCreatingComponent implements OnInit {
         const recipes: IRecipe[] = data;
         const maxId = Math.max(...recipes.map((u) => u.id));
         this.recipeId = maxId + 1;
-        console.log(this.recipeId);
         const recipeData: IRecipe = {
           name: this.form.value.recipeName,
           ingredients: this.form.value.ingredients,
@@ -393,12 +385,10 @@ export class RecipeCreatingComponent implements OnInit {
           publicationDate: '',
           status: this.isAwaitingApprove ? 'awaits' : 'private',
         };
-        console.log(recipeData);
         this.recipeService.postRecipe(recipeData).subscribe(
-          (response) => {
+          () => {
             this.successModalShow = true;
-          },
-          (error) => {},
+          }
         );
       });
     }
@@ -451,5 +441,42 @@ export class RecipeCreatingComponent implements OnInit {
       this.createRecipe();
     }
     this.approveModalShow = false;
+  }
+
+  isFormEdited(): boolean {
+    const formFields = [
+      'recipeName',
+      'origin',
+      'description',
+      'history',
+      'preparationTime',
+      'cookingTime',
+      'portions',
+      'origin',
+      'nutritions',
+      'ingredients',
+      'instructions',
+      'categories',
+      'image' /* другие поля вашей формы */,
+    ];
+
+    let isEdited = false;
+    formFields.forEach((formField) => {
+      if (
+        this.form.get(formField)?.value !== '' &&
+        this.form.get(formField)?.value !== ' ' &&
+        this.form.get(formField)?.value !== null &&
+        this.form.get(formField)?.value !== 0 &&
+        this.form.get(formField)?.value !== 1 &&
+        this.form.get(formField)?.value !== undefined &&
+        this.form.get(formField)?.value !== this.fb.array([]) &&
+        this.form.get(formField)?.value !== this.defaultImage &&
+        this.form.get(formField)?.value.length !== 0
+      ) {
+        isEdited = true;
+      }
+    });
+
+    return isEdited;
   }
 }

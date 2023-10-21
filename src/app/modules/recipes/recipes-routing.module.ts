@@ -10,6 +10,7 @@ import { CategoryCreatingComponent } from './components/categories/category-crea
 import { AuthGuard } from '../authentication/guards/auth.guard';
 import { RecipeResolver } from './services/recipe.resolver';
 import { RecipeAccessGuard } from './guards/recipe-access.guard';
+import { RecipeCreateClosingGuard } from './guards/recipe-create-closing.guard';
 const routes: Routes = [
   {
     path: '',
@@ -25,6 +26,7 @@ const routes: Routes = [
         path: 'recipes/add',
         component: RecipeCreatingComponent,
         canActivate: [AuthGuard],
+        canDeactivate: [RecipeCreateClosingGuard]
       },
       {
         path: 'recipes/edit',

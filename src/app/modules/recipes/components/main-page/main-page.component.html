@@ -16,12 +16,12 @@
 
 <div class="block">
    <div routerLink="/categories" class="head">
-        <h2>Категории</h2>
+        <h2>Разделы</h2>
 
         <svg-icon class="arrow-svg" [applyClass]="true"
             [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
     </div>
-   <div class="recipes horizontal"> <app-category-list  [categories]="allCategories"></app-category-list></div>
+   <div class="recipes horizontal"> <app-category-list [context]="'section'"   [categories]="allSections"></app-category-list></div>
 
 </div>
 

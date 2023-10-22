@@ -138,7 +138,6 @@ export class UserPageComponent implements OnInit {
           (this.currentUser.role === 'admin' ||
             this.currentUser.role === 'moderator')
         ) {
-          console.log('Я админ или модер и это не моя страница');
 
           this.userRecipes = this.recipeService.getNotPrivateRecipes(
             this.userRecipes,
@@ -148,7 +147,6 @@ export class UserPageComponent implements OnInit {
           this.currentUser.role !== 'admin' &&
           this.currentUser.role !== 'moderator'
         ) {
-          console.log('Я  не админ и не модер и это не моя страница');
 
           this.userRecipes = this.recipeService.getPublicRecipes(
             this.userRecipes,
@@ -179,9 +177,7 @@ export class UserPageComponent implements OnInit {
         }, 700);
       });
     });
-    this.router.events.subscribe(() => {
-      window.scrollTo(0, 0);
-    });
+
   }
 
   displayRecipes: IRecipe[] = [];

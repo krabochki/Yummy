@@ -19,7 +19,6 @@ export class ControlDashboardComponent implements OnInit {
     private titleService: Title,
     private authService: AuthService,
     private categoryService: CategoryService,
-    private router:Router
   ) {
   }
   currentUserSubscription?: Subscription;
@@ -67,9 +66,6 @@ export class ControlDashboardComponent implements OnInit {
   
 
   ngOnInit(): void {
-     this.router.events.subscribe(() => {
-      window.scrollTo(0, 0);
-     });
     
     this.recipesSubscription = this.recipeService
       .getRecipes()

@@ -7,7 +7,7 @@ import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { ICategory, nullCategory } from '../../../models/categories';
 import { CategoryService } from '../../../services/category.service';
 import { Title } from '@angular/platform-browser';
-
+import { nullRecipe } from '../../../models/recipes';
 @Component({
   selector: 'app-some-recipes-page',
   templateUrl: './some-recipes-page.component.html',
@@ -23,8 +23,20 @@ export class SomeRecipesPageComponent implements OnInit {
     private authService: AuthService,
     private categoryService: CategoryService,
     private title: Title,
-  ) {}
+  ) {
 
+    this.myNullRecipe.id=-1
+    this.nullRecipes= [this.myNullRecipe]
+
+  }
+  
+
+  myNullRecipe = JSON.parse(JSON.stringify(nullRecipe
+  ));
+
+  
+  nullRecipes: IRecipe[] = [];
+  dataLoad: boolean = false;
   filter: string = '';
   recipesToShow: IRecipe[] = [];
   allRecipes: IRecipe[] = [];
@@ -92,6 +104,7 @@ export class SomeRecipesPageComponent implements OnInit {
 
   currentUser: IUser = nullUser;
   category: ICategory = nullCategory;
+  
   ngOnInit(): void {
     this.route.data.subscribe((data) => {
       this.filter = data['filter'];
@@ -105,6 +118,7 @@ export class SomeRecipesPageComponent implements OnInit {
           );
           this.recipesToShow = this.allRecipes.slice(0, 8);
           this.title.setTitle(this.h1);
+          this.dataLoad = true;
         });
       } else {
         this.authService.getCurrentUser().subscribe((user: IUser) => {
@@ -151,6 +165,8 @@ export class SomeRecipesPageComponent implements OnInit {
             }
 
             this.title.setTitle(this.h1);
+          this.dataLoad = true;
+
           });
         });
       }

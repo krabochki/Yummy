@@ -51,7 +51,6 @@ export class SettingsComponent {
     if (event) {
       this.authService.logoutUser();
       this.router.navigateByUrl('/');
-      window.scrollTo(0, 0);
     }
     this.exitModalShow = false;
   }
@@ -62,7 +61,6 @@ export class SettingsComponent {
         this.authService.deleteUser(this.user.id).subscribe(); //удаляем человека
         this.authService.logoutUser(); //выходим из аккаунта
         this.router.navigateByUrl('/');
-        window.scrollTo(0, 0);
       }
     }
     this.deleteModalShow = false;

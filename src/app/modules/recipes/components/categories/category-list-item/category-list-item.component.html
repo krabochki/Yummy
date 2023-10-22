@@ -1,5 +1,14 @@
-<div class="category" [title]="category.name" [routerLink]="'categories/list/'+category.id">
-
-    <p >{{category.name}}</p>
-    
+<div class="category-cont"  [title]="category.name" [routerLink]="context==='category'?'/categories/list/'+category.id:null" *ngIf="category.id>0; else nullCategory" >
+  <div class="category"  [ngStyle]="{'cursor':context==='section'?'default':null}" *ngIf="category.id>0; else nullCategory" >
+  
+      
+  </div>
+      <p ><span  [ngStyle]="{'cursor':context==='section'?'default':null}">{{category.name}}</span> <sup *ngIf="showRecipesNumber">({{recipesNumber}})</sup></p>
 </div>
+
+<ng-template #nullCategory  >
+  <div class="category null">
+        <p> Скоро...</p>
+    <svg-icon [applyClass]="true" class="svg" [src]="'../../../../../assets/images/svg/no-category.svg'"></svg-icon>
+    </div>
+</ng-template>

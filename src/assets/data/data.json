@@ -6,7 +6,11 @@
       "photoUrl": "",
       "categoriesId": [
         1,
-        2
+        2,
+        12,
+        13,
+        14,
+        15
       ]
     },
     {
@@ -132,6 +136,36 @@
       "id": 8,
       "name": "Похудение",
       "photoUrl": "url_1.jpg"
+    },
+    {
+      "id": 12,
+      "name": "День благодарения",
+      "photoUrl": ""
+    },
+    {
+      "id": 13,
+      "name": "День Валентина",
+      "photoUrl": ""
+    },
+    {
+      "id": 14,
+      "name": "День святого Патрика",
+      "photoUrl": ""
+    },
+    {
+      "id": 15,
+      "name": "Halloween",
+      "photoUrl": ""
+    },
+    {
+      "id": 16,
+      "name": "Рождество",
+      "photoUrl": ""
+    },
+    {
+      "id": 15,
+      "name": "День рождения",
+      "photoUrl": ""
     }
   ],
   "recipes": [
@@ -280,7 +314,8 @@
         10,
         2,
         1,
-        8
+        8,
+        5
       ],
       "likesId": [
         9,
@@ -412,7 +447,8 @@
       "favoritesId": [
         4,
         6,
-        2
+        2,
+        5
       ],
       "likesId": [
         4,
@@ -632,12 +668,12 @@
         3
       ],
       "likesId": [
-        5,
         9,
         8,
         2,
         7,
-        1
+        1,
+        5
       ],
       "status": "public",
       "origin": "Ukraine",
@@ -1385,7 +1421,8 @@
         9
       ],
       "favoritesId": [
-        10
+        10,
+        5
       ],
       "likesId": [
         9,
@@ -1980,7 +2017,8 @@
         2,
         9,
         1,
-        6
+        6,
+        5
       ],
       "status": "public",
       "origin": "Sweden",
@@ -3768,7 +3806,7 @@
       "personalWebsite": "https://www.chefalexeyzimin.com/",
       "location": "Москва, Россия",
       "registrationDate": "2023-01-15",
-      "profileViews": 7578,
+      "profileViews": 7601,
       "role": "admin"
     },
     {
@@ -3870,7 +3908,7 @@
       "personalWebsite": "https://angular.io/errors/",
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 1565
+      "profileViews": 1617
     },
     {
       "id": 6,
@@ -3902,7 +3940,7 @@
       "personalWebsite": "https://www.healthandnutrition.com/",
       "location": "Сидней, Австралия",
       "registrationDate": "2023-06-18",
-      "profileViews": 4337,
+      "profileViews": 4341,
       "role": "user"
     },
     {
@@ -3931,7 +3969,7 @@
       "personalWebsite": "",
       "location": "Лиссабон, Португалия",
       "registrationDate": "2023-07-24",
-      "profileViews": 3942,
+      "profileViews": 3943,
       "role": "user"
     },
     {
@@ -3989,7 +4027,7 @@
       "personalWebsite": "https://www.techenthusiast.com/",
       "location": "Сан-Франциско, США",
       "registrationDate": "2023-09-03",
-      "profileViews": 2751,
+      "profileViews": 2755,
       "role": "user"
     },
     {
@@ -4017,7 +4055,7 @@
       "personalWebsite": "",
       "location": "Лондон, Великобритания",
       "registrationDate": "2023-10-19",
-      "profileViews": 2352,
+      "profileViews": 2360,
       "role": "user"
     }
   ]

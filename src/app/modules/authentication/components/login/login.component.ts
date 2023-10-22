@@ -33,12 +33,10 @@ export class LoginComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private titleService: Title,
-    private router: Router,
     private usersService: UserService,
+    private router:Router
   ) {
-    router.events.subscribe(() => {
-      window.scrollTo(0, 0);
-    });
+   
     this.titleService.setTitle('Вход');
   }
 

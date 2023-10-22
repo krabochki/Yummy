@@ -18,6 +18,8 @@ export class VerticalRecipeListComponent implements OnChanges {
 
   nullRecipe: IRecipe = nullRecipe;
 
+  @Input() rowsNumberMobile = 1;
+
   @Input() moderMode = false;
   ngOnChanges() {
     this.onResize();
@@ -29,71 +31,50 @@ export class VerticalRecipeListComponent implements OnChanges {
   }
   @Input() cols: number = 4;
 
+  filter() {
+    this.blocks = this.blocks.filter((block) => block.id !== 0);
+  }
+  blockScheme(blocksInRow: number) {
+    this.filter();
+    if (this.blocks.length % blocksInRow !== 0) {
+      while (this.blocks.length % blocksInRow !== 0) {
+        this.blocks.push(nullRecipe);
+      }
+    }
+  }
+
+  width:number =0
   @HostListener('window:resize', ['$event'])
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onResize() {
     const event = window.innerWidth;
+    this.width=event
 
     if (this.cols === 4) {
-      if (event <= 1200) {
-        this.blocks = this.blocks.filter((block) => block.id !== 0);
-
-        if (this.blocks.length % 3 !== 0) {
-          while (this.blocks.length % 3 !== 0) {
-            this.blocks.push(nullRecipe);
-          }
-        }
-      }
-      if (event <= 768) {
-        this.blocks = this.blocks.filter((block) => block.id !== 0);
-
-        if (this.blocks.length % 2 !== 0) {
-          while (this.blocks.length % 2 !== 0) {
-            this.blocks.push(nullRecipe);
-          }
-        }
-      }
-      if (event > 1200) {
-        this.blocks = this.blocks.filter((block) => block.id !== 0);
-
-        if (this.blocks.length % 4 !== 0) {
-          while (this.blocks.length % 4 !== 0) {
-            this.blocks.push(nullRecipe);
-          }
-        }
-      }
-      if (event > 768) {
-        while (this.blocks.length === 2) this.blocks.push(nullRecipe);
-      }
-      if (event < 480) {
-        this.blocks = this.blocks.filter((block) => block.id !== 0);
+      if (event <= 768 && event > 480) {
+        this.blockScheme(2);
+        return;
+      } else if (event > 1200) {
+        this.blockScheme(4);
+        return;
+      } else if (event > 768 && event <= 1200) {
+        this.blockScheme(3);
+        return;
+      } else if (event <= 480) {
+        this.filter();
 
         if (this.blocks.length === 1) {
           this.blocks.push(nullRecipe);
         }
+        return;
       }
     } else {
-      if (event <= 900) {
-        this.blocks = this.blocks.filter((block) => block.id !== 0);
-
-        if (this.blocks.length % 2 !== 0) {
-          while (this.blocks.length % 2 !== 0) {
-            this.blocks.push(nullRecipe);
-          }
-        }
-      }
-
-      if (event > 900) {
-        this.blocks = this.blocks.filter((block) => block.id !== 0);
-
-        if (this.blocks.length % 3 !== 0) {
-          while (this.blocks.length % 3 !== 0) {
-            this.blocks.push(nullRecipe);
-          }
-        }
-      }
-
-      if (event < 480) {
+      if (event <= 900 && event > 380) {
+        this.blockScheme(2);
+        return;
+      } else if (event > 900) {
+        this.blockScheme(3);
+        return;
+      } else if (event <= 480) {
         this.blocks = this.blocks.filter((block) => block.id !== 0);
 
         if (this.blocks.length === 1) {

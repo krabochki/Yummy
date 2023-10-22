@@ -1,5 +1,5 @@
-<div class="container" [ngClass]="{'three-cols':cols===3, 'four-cols':cols===4}">
-  <div class="block"  *ngFor="let block of blocks" [ngClass]="{'null-block':block.id===0}">
+<div class="container" [ngStyle]="{'grid-template-rows':width<=480?'repeat('+rowsNumberMobile+',1fr)':null}"  [ngClass]="{'three-cols':cols===3, 'four-cols':cols===4}">
+  <div class="block" *ngFor="let block of blocks" [ngClass]="{'null-block':block.id===0}">
 
     <div class="inner">
         

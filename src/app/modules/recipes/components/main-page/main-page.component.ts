@@ -15,7 +15,7 @@ import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 })
 export class MainPageComponent implements OnInit {
   allRecipes: IRecipe[] = [];
-  allCategories: ICategory[] = [];
+  allSections: ICategory[] = [];
   popularRecipes: IRecipe[] = [];
   recentRecipes: IRecipe[] = [];
   recipesSubscription!: Subscription;
@@ -61,12 +61,10 @@ export class MainPageComponent implements OnInit {
            .getRecipesByUser(recipesData, this.currentUser.id)
            .slice(0, 8);
          
-         console.log(this.userRecipes)
-
          this.categoriesSubscription = this.categoryService
-           .getCategories()
-           .subscribe((recipesData) => {
-             this.allCategories = recipesData;
+           .getSections()
+           .subscribe((data) => {
+             this.allSections = data;
            });
        });
   }

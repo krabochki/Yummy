@@ -25,6 +25,7 @@ import { AsyncPipe } from '@angular/common';
    
 
 import { VerticalRecipeListComponent } from './components/recipes/vertical-recipe-list/vertical-recipe-list.component';
+import { VerticalCategoryListComponent } from './components/categories/vertical-category-list/vertical-category-list.component';
 
 
 @NgModule({
@@ -42,6 +43,7 @@ import { VerticalRecipeListComponent } from './components/recipes/vertical-recip
     RecipeCreatingComponent,
     HorizontalRecipeListComponent,
     VerticalRecipeListComponent,
+    VerticalCategoryListComponent,
   ],
   imports: [
     CommonModule,
@@ -69,6 +71,6 @@ import { VerticalRecipeListComponent } from './components/recipes/vertical-recip
     provideAngularSvgIcon(),
     { provide: LOCALE_ID, useValue: 'ru' },
   ],
-  exports: [HorizontalRecipeListComponent, CategoryListComponent, VerticalRecipeListComponent],
+  exports: [HorizontalRecipeListComponent,VerticalCategoryListComponent, CategoryListComponent, VerticalRecipeListComponent],
 })
 export class RecipesModule {}

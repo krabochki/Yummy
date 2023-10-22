@@ -3,24 +3,22 @@
 
 
 
-<ng-template #nullRecipe >
 
-  <div class="recipe sceleton null" *ngIf="dataLoaded; else sceleton">
+
+
+  <ng-template #sceleton >
+
+
+    <div class="recipe sceleton null" *ngIf="dataLoaded; else sceleton">
 
 
     <p>Здесь могла быть <br> ваша реклама</p>
     <svg-icon [applyClass]="true" class="no-recipe-svg" [src]="'../../../../../assets/images/svg/no-recipe.svg'"></svg-icon>
   </div>
 
-  <ng-template #sceleton >
-
-
-  <div class="recipe sceleton" ></div>
 
 </ng-template>
-
-</ng-template>
-<div  *ngIf="dataLoaded && recipe.id!==0; else nullRecipe"  class="recipe" [title]="recipe.name">
+<div  *ngIf="dataLoaded && recipe.id>0; else sceleton"  class="recipe" [title]="recipe.name">
   <div class="top">
     <div *ngIf="recipe.authorId===currentUserId || recipe.status==='public'" (click)="recipe.status==='public'?makeThisRecipeFavorite():null" class="fav">
       <svg-icon 

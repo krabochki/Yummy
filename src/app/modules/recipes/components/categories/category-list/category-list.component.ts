@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild } from '@angular/core';
-import { ICategory } from 'src/app/modules/recipes/models/categories';
+import { ICategory, ISection } from 'src/app/modules/recipes/models/categories';
 
 @Component({
   selector: 'app-category-list',
@@ -8,11 +8,11 @@ import { ICategory } from 'src/app/modules/recipes/models/categories';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CategoryListComponent {
-  @Input() categories: ICategory[] = [];
-
+  @Input() categories: ICategory[]|ISection[] = [];
 
   @ViewChild('list')
   list: ElementRef | null = null;
+  @Input() context: 'category' | 'section' = 'category';
 
   scrollLeft() {
     if (this.list)
@@ -25,5 +25,4 @@ export class CategoryListComponent {
       this.list.nativeElement.scrollLeft +=
         this.list.nativeElement.scrollWidth / this.categories.length;
   }
-
 }

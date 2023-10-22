@@ -49,7 +49,6 @@ export class SelectComponent implements AfterViewInit {
   handleNoAccessModal(event: boolean) {
     if (event) {
       this.router.navigateByUrl('/greetings');
-      window.scrollTo(0, 0);
       this.open = false;
     }
     this.noAccessModalShow = false;

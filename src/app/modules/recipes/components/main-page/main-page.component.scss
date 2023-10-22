@@ -45,7 +45,7 @@ h2{
 
     height: calc(100% - 1.3em);
     width: 15%;
-    background: linear-gradient(to right, transparent, var(--color-background));
+    background: linear-gradient(to right, transparent 0%,var(--color-background));
 
     z-index: 1;
     right: 0;

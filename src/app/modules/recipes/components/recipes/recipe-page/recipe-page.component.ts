@@ -19,7 +19,7 @@ import { heightAnim } from 'src/tools/animations';
   selector: 'app-recipe-page',
   templateUrl: './recipe-page.component.html',
   styleUrls: ['./recipe-page.component.scss'],
-  animations: [trigger('history',heightAnim())]
+  animations: [trigger('history', heightAnim())],
 })
 export class RecipePageComponent implements OnInit {
   constructor(
@@ -30,8 +30,7 @@ export class RecipePageComponent implements OnInit {
     private userService: UserService,
     public router: Router,
     public routerEventsService: RouteEventsService,
-    private categoryService:CategoryService
-  
+    private categoryService: CategoryService,
   ) {}
   dataLoaded = false;
 
@@ -45,11 +44,11 @@ export class RecipePageComponent implements OnInit {
   readingTimeInMinutes: number = 0;
 
   currentUserSubscription?: Subscription;
-  currentUser: IUser = nullUser;
+  currentUser: IUser = {...nullUser};
 
   basketMode = false;
 
-  author: IUser = nullUser;
+  author: IUser = {...nullUser};
   iHaveIndgredient: boolean[] = [];
   basket: boolean[] = [];
 
@@ -62,8 +61,6 @@ export class RecipePageComponent implements OnInit {
   categories: ICategory[] = [];
   ngOnInit() {
     registerLocaleData(localeRu);
-
-  
 
     this.currentUserSubscription = this.authService
       .getCurrentUser()
@@ -83,7 +80,7 @@ export class RecipePageComponent implements OnInit {
             () => false,
           );
 
-          this.userService.getUsers().subscribe((data) => {
+          this.userService.users$.subscribe((data) => {
             const findedUser = data.find(
               (user) => user.id === this.recipe.authorId,
             );
@@ -93,18 +90,21 @@ export class RecipePageComponent implements OnInit {
           });
 
           this.recipeService.recipes$.subscribe((recipes) => {
+            this.recentRecipes = this.recipeService.getPublicRecipes(recipes);
+            this.recentRecipes = this.recipeService
+              .getRecentRecipes(this.recentRecipes)
+              .slice(0, 3);
             recipes.forEach((recipe) => {
               if (recipe.id === this.recipe.id) {
                 this.recipe = recipe;
 
-                  this.categoryService
-                    .getCategories()
-                    .subscribe((allCategories) => {
-                      this.categories = allCategories.filter((element) =>
-                        this.recipe.categories.includes(element.id),
-                      );
-                      console.log(this.categories);
-                    });
+                this.categoryService
+                  .categories$
+                  .subscribe((allCategories) => {
+                    this.categories = allCategories.filter((element) =>
+                      this.recipe.categories.includes(element.id),
+                    );
+                  });
 
                 const combinedText = [
                   recipe.history,
@@ -138,20 +138,11 @@ export class RecipePageComponent implements OnInit {
             });
           });
 
-          this.recipeService.getRecipes().subscribe((data) => {
-            this.recentRecipes = this.recipeService.getPublicRecipes(data);
-            this.recentRecipes = this.recipeService
-              .getRecentRecipes(this.recentRecipes)
-              .slice(0, 3);
+            
           });
         });
-      });
+      
   }
-
-
-
-
-
 
   makeThisRecipeFavorite() {
     if (this.currentUser.id === 0) {

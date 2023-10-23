@@ -7,7 +7,11 @@ export class AdminGuard  {
 
   canActivate(
   ): boolean {
-    return this.auth.role === 'admin';
+     let role = 'user';
+     this.auth.currentUser$.subscribe((data) => {
+       role = data.role;
+     });
+     return role === 'admin';
   }
 
 }

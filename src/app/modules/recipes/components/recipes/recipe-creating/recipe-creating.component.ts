@@ -37,7 +37,7 @@ export class RecipeCreatingComponent implements OnInit {
     '../../../../../assets/images/add-photo.png';
   mainImage: string = '';
 
-  currentUser: IUser = nullUser;
+  currentUser: IUser = {...nullUser};
   currentUserSubscription?: Subscription;
 
   form: FormGroup;
@@ -86,8 +86,7 @@ export class RecipeCreatingComponent implements OnInit {
 
   ngOnInit(): void {
     this.sectionGroupOptions = this.sectionForm
-      .get('sectionGroup')!
-      .valueChanges.pipe(
+      .get('sectionGroup')?.valueChanges.pipe(
         startWith(''),
         map((value) => this._filterGroup(value || '')),
       );
@@ -443,40 +442,4 @@ export class RecipeCreatingComponent implements OnInit {
     this.approveModalShow = false;
   }
 
-  isFormEdited(): boolean {
-    const formFields = [
-      'recipeName',
-      'origin',
-      'description',
-      'history',
-      'preparationTime',
-      'cookingTime',
-      'portions',
-      'origin',
-      'nutritions',
-      'ingredients',
-      'instructions',
-      'categories',
-      'image' /* другие поля вашей формы */,
-    ];
-
-    let isEdited = false;
-    formFields.forEach((formField) => {
-      if (
-        this.form.get(formField)?.value !== '' &&
-        this.form.get(formField)?.value !== ' ' &&
-        this.form.get(formField)?.value !== null &&
-        this.form.get(formField)?.value !== 0 &&
-        this.form.get(formField)?.value !== 1 &&
-        this.form.get(formField)?.value !== undefined &&
-        this.form.get(formField)?.value !== this.fb.array([]) &&
-        this.form.get(formField)?.value !== this.defaultImage &&
-        this.form.get(formField)?.value.length !== 0
-      ) {
-        isEdited = true;
-      }
-    });
-
-    return isEdited;
-  }
 }

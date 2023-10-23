@@ -1,6 +1,6 @@
 import { Router, ActivatedRouteSnapshot } from '@angular/router';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, EMPTY } from 'rxjs';
+import { Observable, catchError, EMPTY, map } from 'rxjs';
 import { IRecipe } from '../models/recipes';
 import { RecipeService } from './recipe.service';
 
@@ -12,12 +12,29 @@ export class RecipeResolver {
   ) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<IRecipe> {
-    if (route.params?.['id'] === '0') {
+ 
+
+    const recipeId = Number(route.params['id']);
+
+    if (recipeId <= 0) {
+      this.router.navigate(['cooks']);
       return EMPTY;
     }
-    return this.recipeService.getRecipe(route.params?.['id']).pipe(
+
+    return this.recipeService.recipes$.pipe(
+      map((recipes: IRecipe[]) => {
+        const foundRecipe = recipes.find((recipe) => {
+          if (recipe.id === recipeId) return true;
+          else return false;
+        });
+        if (foundRecipe) {
+          return foundRecipe;
+        } else {
+          throw new Error('Рецепт не найден');
+        }
+      }),
       catchError(() => {
-        this.router.navigate(['recipes']);
+        this.router.navigate(['cooks']);
         return EMPTY;
       }),
     );

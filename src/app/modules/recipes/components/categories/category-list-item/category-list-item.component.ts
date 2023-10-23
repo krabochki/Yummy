@@ -16,26 +16,24 @@ export class CategoryListItemComponent implements OnInit {
   @Input() category: any = null;
 
   @Input() showRecipesNumber: boolean = false;
-  @Input() context: 'section' |'category' = 'category';
+  @Input() context: 'section' | 'category' = 'category';
 
   recipesNumber = 0;
   constructor(private recipeService: RecipeService) {}
   ngOnInit() {
     if (this.showRecipesNumber)
-      this.recipeService.getRecipes().subscribe((data) => {
-        if(this.context === 'category')
-        this.recipesNumber = this.recipeService.getRecipesByCategory(
-          data,
-          this.category.id,
-        ).length;
+      this.recipeService.recipes$.subscribe((data) => {
+        if (this.context === 'category')
+          this.recipesNumber = this.recipeService.getRecipesByCategory(
+            data,
+            this.category.id,
+          ).length;
         else {
-        
           this.category.categoriesId.forEach((element: number) => {
-
-              this.recipesNumber += this.recipeService.getRecipesByCategory(
-                data,
-                element,
-              ).length;
+            this.recipesNumber += this.recipeService.getRecipesByCategory(
+              data,
+              element,
+            ).length;
           });
         }
       });

@@ -7,7 +7,7 @@ export class ModeratorGuard {
 
   canActivate(): boolean {
     let role = 'user';
-    this.auth.getCurrentUser().subscribe((data) => {
+    this.auth.currentUser$.subscribe((data) => {
       role = data.role;
     });
     return role === 'admin' || role === 'moderator';

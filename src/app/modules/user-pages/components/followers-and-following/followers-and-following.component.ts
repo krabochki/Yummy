@@ -39,12 +39,12 @@ import { widthAnim } from 'src/tools/animations';
     ]),
   ],
 })
-export class FollowersAndFollowingComponent implements OnInit, OnChanges {
+export class FollowersAndFollowingComponent implements OnInit {
   //ввод
-  @Input() userPage: IUser = nullUser;
-  @Input() currentUser: IUser = nullUser;
-  @Input() followers: IUser[] = [];
-  @Input() following: IUser[] = [];
+  @Input() userPage: IUser = {...nullUser};
+  @Input() currentUser: IUser = {...nullUser};
+   followers: IUser[] = [];
+  following: IUser[] = [];
 
   followersDisplay: IUser[] = [];
   followingDisplay: IUser[] = [];
@@ -57,25 +57,26 @@ export class FollowersAndFollowingComponent implements OnInit, OnChanges {
   searchMode: boolean = false;
   currentUserFollowingIds: number[] = []; //подписки авторизованного пользователя
   searchQuery: string = '';
+  @Input() user: IUser = {...nullUser};
   constructor(
     private router: Router,
     public userService: UserService,
   ) {}
-  ngOnChanges(): void {
-    if (this.following) this.followingDisplay = this.following;
 
-    if (this.followers) this.followersDisplay = this.followers;
-  }
 
   ngOnInit(): void {
-    this.userService.getUsers().subscribe((data) => {
-      if (this.currentUser?.id) {
+    this.userService.users$.subscribe((data) => {
+      this.following = this.userService.getFollowing(data, this.user.id);
+      this.followers = this.userService.getFollowers(data, this.user.id);
+      this.followingDisplay = this.following;
+      this.followersDisplay = this.followers;
+      if (this.currentUser.id!==0) {
         const currentUserFollowing = this.userService.getFollowing(
           data,
           this.currentUser?.id,
         );
-
-        currentUserFollowing?.forEach((currFollowing) => {
+        this.currentUserFollowingIds = [];
+        currentUserFollowing.forEach((currFollowing) => {
           this.currentUserFollowingIds.push(currFollowing.id);
         });
       }
@@ -86,39 +87,12 @@ export class FollowersAndFollowingComponent implements OnInit, OnChanges {
   follow(user: IUser) {
     this.userService.addFollower(user, this.currentUser?.id);
     this.updateUser(user);
-
-    this.currentUserFollowingIds?.push(user?.id);
-
-    if (this.userPage?.id === this.currentUser?.id) {
-      this.following?.push(user);
-      this.followingDisplay?.push(user);
-    }
-
-    //обновляем список подписок авторизованного пользователя
   }
 
   //отписка текущего пользователя от людей в списке
   unfollow(user: IUser) {
     this.userService.removeFollower(user, this.currentUser?.id);
     this.updateUser(user);
-    //обновляем список подписок авторизованного пользователя
-
-    let indexToDelete: number = 0;
-    if (this.userPage?.id === this.currentUser?.id) {
-      indexToDelete = this.following?.findIndex(
-        (us: IUser) => us.id === user.id,
-      );
-
-      this.following.splice(indexToDelete, 1);
-      this.followingDisplay = this.following;
-    } else {
-      indexToDelete = this.currentUserFollowingIds?.findIndex(
-        (us: number) => us === user.id,
-      );
-      if (indexToDelete !== -1 && indexToDelete) {
-        this.currentUserFollowingIds?.splice(indexToDelete, 1);
-      }
-    }
   }
 
   searchOnOff() {
@@ -129,19 +103,7 @@ export class FollowersAndFollowingComponent implements OnInit, OnChanges {
   }
 
   updateUser(user: IUser) {
-    this.userService.updateUser(user).subscribe((updatingUser) => {
-      this.followers = this.followers?.map((follower: IUser) => {
-        if (follower.id === updatingUser.id) {
-          follower = updatingUser;
-          return updatingUser;
-        } else return follower;
-      });
-
-      this.following = this.following?.map((follower: IUser) => {
-        if (follower.id === updatingUser.id) return updatingUser;
-        else return follower;
-      });
-    });
+    this.userService.updateUsers(user);
   }
 
   //переход по ссылке на человека

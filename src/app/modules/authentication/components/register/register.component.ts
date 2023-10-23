@@ -1,5 +1,5 @@
 import { trigger } from '@angular/animations';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
@@ -7,53 +7,33 @@ import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { loginMask, passMask, usernameMask } from 'src/tools/regex';
 import { AuthService } from '../../services/auth.service';
 import { modal } from 'src/tools/animations';
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['../../common-styles.scss'],
   animations: [trigger('modal', modal())],
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements OnInit, OnDestroy {
   emailMask = loginMask; //маска для почты
   passMask = passMask; //маска для пароля
   usernameMask = usernameMask;
-
   email: string = '';
   pass: string = '';
   username: string = '';
-
-  //данные от app-input
-  getEmail(eventData: string) {
-    this.email = eventData;
-  }
-  getPassword(eventData: string) {
-    this.pass = eventData;
-  }
-
-  getUsername(eventData: string) {
-    this.username = eventData;
-  }
-
-  modalShow: boolean = false;
+  modalAreYouSureShow: boolean = false;
   modalSuccessShow: boolean = false;
   modalFailShow: boolean = false;
-
   failText: string = '';
-  handleModalResult(result: boolean) {
-    if (result) {
-      this.registration();
-    }
-    this.modalShow = false;
-  }
-  handleSuccessModalResult(result: boolean) {
-    if (result) {
-      this.router.navigate(['/']);
-    }
-    this.modalSuccessShow = false;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  handleFailModalResult(result: boolean) {
-    this.modalFailShow = false;
+  users: IUser[] = [];
+  usersSubscription?: Subscription;
+
+  get testUserData() {
+    return (
+      this.emailMask.test(this.email) &&
+      this.usernameMask.test(this.username) &&
+      this.passMask.test(this.pass)
+    );
   }
 
   constructor(
@@ -62,42 +42,50 @@ export class RegisterComponent implements OnInit {
     private router: Router,
     private usersService: UserService,
   ) {
- 
     this.titleService.setTitle('Регистрация');
   }
 
   ngOnInit() {
-    this.usersService.getUsers().subscribe((users: IUser[]) => {
-      this.users = users;
-    });
+    this.usersSubscription = this.usersService.users$.subscribe(
+      (users: IUser[]) => {
+        this.users = users;
+      },
+    );
   }
 
-  users: IUser[] = [];
+  //данные от app-input
+  getEmail(eventData: string) {
+    this.email = eventData;
+  }
+  getPassword(eventData: string) {
+    this.pass = eventData;
+  }
+  getUsername(eventData: string) {
+    this.username = eventData;
+  }
+
   registration() {
-    const user = nullUser;
-    user.email = this.email;
-    user.password = this.pass;
-    user.username = this.username;
+    const user = {
+      ...nullUser,
+      email: this.email,
+      password: this.pass,
+      username: this.username,
+    };
 
     const maxId = Math.max(...this.users.map((u) => u.id));
     user.id = maxId + 1;
 
-    const emailExists = this.users.find((u) => u.email === user.email);
-    const usernameExists = this.users.find((u) => u.username === user.username);
+    const emailExists = this.authService.isEmailExist(this.users, user.email);
+    const usernameExists = this.authService.isUsernameExist(
+      this.users,
+      user.username,
+    );
 
-    if (emailExists === undefined && usernameExists === undefined) {
-      this.authService.registerUser(user).subscribe(
-        (userExists) => {
-          if (userExists) {
-            localStorage.setItem('currentUser', JSON.stringify(userExists));
-            this.authService.setCurrentUser(userExists);
-            this.modalSuccessShow = true;
-          }
-        },
-        (error) => {
-          console.error('Ошибка подписки', error);
-        },
-      );
+    if (!emailExists && !usernameExists) {
+      this.usersService.postUser(user);
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      this.authService.setCurrentUser(user);
+      this.modalSuccessShow = true;
     } else {
       if (emailExists) {
         this.failText =
@@ -109,9 +97,27 @@ export class RegisterComponent implements OnInit {
       }
       if (usernameExists && emailExists) {
         this.failText =
-          'Регистрация невозможна, так как пользователь(-и) с данной электронной почтой и именем пользователя уже существует.';
+          'Регистрация невозможна, так как пользователь с данной электронной почтой и именем пользователя уже существует.';
       }
       this.modalFailShow = true;
     }
+  }
+
+  handleAreYouSureModalResult(result: boolean) {
+    if (result) {
+      this.registration();
+    }
+    this.modalAreYouSureShow = false;
+  }
+  handleSuccessModalResult() {
+    this.router.navigate(['/']);
+    this.modalSuccessShow = false;
+  }
+  handleFailModalResult() {
+    this.modalFailShow = false;
+  }
+
+  ngOnDestroy() {
+    this.usersSubscription?.unsubscribe();
   }
 }

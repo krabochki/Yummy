@@ -549,18 +549,21 @@
       "servings": 8,
       "authorId": 4,
       "cooksId": [
-        2
+        2,
+        13
       ],
       "favoritesId": [
         1,
-        6
+        6,
+        13
       ],
       "likesId": [
         6,
         1,
         8,
         9,
-        7
+        7,
+        13
       ],
       "status": "public",
       "origin": "Marshall Islands",
@@ -670,8 +673,7 @@
         8,
         2,
         7,
-        1,
-        5
+        1
       ],
       "status": "public",
       "origin": "Ukraine",
@@ -786,10 +788,10 @@
         2
       ],
       "likesId": [
-        5,
         6,
         4,
-        2
+        2,
+        5
       ],
       "status": "public",
       "origin": "Chad",
@@ -1156,7 +1158,8 @@
       "cooksId": [
         10,
         1,
-        9
+        9,
+        13
       ],
       "favoritesId": [
         9
@@ -1164,7 +1167,8 @@
       "likesId": [
         9,
         5,
-        2
+        2,
+        13
       ],
       "status": "public",
       "origin": "Swaziland",
@@ -1416,7 +1420,8 @@
       "authorId": 5,
       "cooksId": [
         10,
-        9
+        9,
+        5
       ],
       "favoritesId": [
         10
@@ -1429,8 +1434,7 @@
         1,
         3,
         7,
-        4,
-        5
+        4
       ],
       "status": "public",
       "origin": "Haiti",
@@ -1882,15 +1886,16 @@
       "cooksId": [
         9,
         2,
-        3
+        3,
+        5
       ],
       "favoritesId": [
         7
       ],
       "likesId": [
-        5,
         6,
-        8
+        8,
+        5
       ],
       "status": "public",
       "origin": "Slovenia",
@@ -2003,12 +2008,14 @@
         8,
         9,
         1,
-        6
+        6,
+        13
       ],
       "favoritesId": [
         10,
         9,
-        3
+        3,
+        13
       ],
       "likesId": [
         10,
@@ -2016,7 +2023,7 @@
         9,
         1,
         6,
-        5
+        13
       ],
       "status": "public",
       "origin": "Sweden",
@@ -2137,11 +2144,11 @@
         8
       ],
       "likesId": [
-        5,
         4,
         1,
         6,
-        8
+        8,
+        5
       ],
       "status": "public",
       "origin": "Latvia",
@@ -2255,18 +2262,21 @@
         5,
         4,
         6,
-        10
+        10,
+        13
       ],
       "favoritesId": [
         9,
         2,
-        1
+        1,
+        13
       ],
       "likesId": [
         4,
         3,
         7,
-        6
+        6,
+        13
       ],
       "status": "public",
       "origin": "Portugal",
@@ -3826,7 +3836,7 @@
       "personalWebsite": "https://www.chefalexeyzimin.com/",
       "location": "Москва, Россия",
       "registrationDate": "2023-01-15",
-      "profileViews": 7601,
+      "profileViews": 7602,
       "role": "admin"
     },
     {
@@ -3854,7 +3864,7 @@
       "personalWebsite": "",
       "location": "Санкт-Петербург, Россия",
       "registrationDate": "2023-03-20",
-      "profileViews": 6421,
+      "profileViews": 6475,
       "role": "user"
     },
     {
@@ -3882,7 +3892,7 @@
       "personalWebsite": "https://www.travelandeat.com/",
       "location": "Нью-Йорк, США",
       "registrationDate": "2023-05-10",
-      "profileViews": 5803,
+      "profileViews": 5805,
       "role": "user"
     },
     {
@@ -3911,7 +3921,7 @@
       "personalWebsite": "https://www.cookingadventures.com/",
       "location": "Лондон, Великобритания",
       "registrationDate": "2023-04-02",
-      "profileViews": 4921,
+      "profileViews": 4928,
       "role": "user"
     },
     {
@@ -3929,7 +3939,7 @@
       "personalWebsite": "https://angular.io/errors/",
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 1647
+      "profileViews": 1768
     },
     {
       "id": 6,
@@ -3962,7 +3972,7 @@
       "personalWebsite": "https://www.healthandnutrition.com/",
       "location": "Сидней, Австралия",
       "registrationDate": "2023-06-18",
-      "profileViews": 4345,
+      "profileViews": 4350,
       "role": "user"
     },
     {
@@ -4020,7 +4030,7 @@
       "personalWebsite": "https://www.interiordesignsbyvictoria.com/",
       "location": "Милан, Италия",
       "registrationDate": "2023-08-12",
-      "profileViews": 3217,
+      "profileViews": 3218,
       "role": "user"
     },
     {
@@ -4050,7 +4060,7 @@
       "personalWebsite": "https://www.techenthusiast.com/",
       "location": "Сан-Франциско, США",
       "registrationDate": "2023-09-03",
-      "profileViews": 2775,
+      "profileViews": 2779,
       "role": "user"
     },
     {
@@ -4078,7 +4088,7 @@
       "personalWebsite": "",
       "location": "Лондон, Великобритания",
       "registrationDate": "2023-10-19",
-      "profileViews": 2362,
+      "profileViews": 2363,
       "role": "user"
     }
   ]

@@ -11,8 +11,8 @@ export class AuthGuard
 
     canActivate(
     ): boolean {
-      let user: IUser = nullUser;
-        this.auth.getCurrentUser().subscribe((data) => {
+      let user: IUser = {...nullUser};
+        this.auth.currentUser$.subscribe((data) => {
           user = data;
         });
         return user.id !== 0;

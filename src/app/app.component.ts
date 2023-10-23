@@ -1,6 +1,4 @@
-import {
-  Component, OnInit
-} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -8,24 +6,17 @@ import {
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-
-
   ngOnInit() {
-  
-    if (localStorage.getItem('theme') ==='dark') {
-          document.body.classList.add('dark-mode');
-        } else {
-          localStorage.setItem('theme', 'light');
-        }
-
-}
-
-  height = 0;
-
-  mergeHeight(height: number) {
-    this.height = height;
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark-mode');
+    } else {
+      localStorage.setItem('theme', 'light');
+    }
   }
-  mergeFooterHeight(height: number) {
-    this.height = height;
+
+  spaceUnderHeaderHeight: number = 0;
+
+  getHeaderHeight(headerHeight: number) {
+    this.spaceUnderHeaderHeight = headerHeight;
   }
 }

@@ -41,6 +41,12 @@ sup {
 p{
     position: relative;
 text-align: center;margin-top: 0.5em;
+overflow: hidden;
+  max-width: 12vw;
+text-overflow: ellipsis;
+
+  margin: 0 auto;
+  margin-top: 0.5em;
 
 }
 span {
@@ -49,14 +55,9 @@ span {
   color: var(--color-foreground);
   line-height: 1.1;
   min-width: 8em;
-  word-wrap: break-word;
   font-size: 1.2em;
-  margin: 0 auto;
-  max-width: 12vw;
   text-align: center;
 
-  text-overflow: ellipsis;
-  overflow: hidden;
 
   
 }

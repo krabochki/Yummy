@@ -6,7 +6,6 @@ import { Component } from '@angular/core';
   styleUrls: ['../../authentication/common-styles.scss']
 })
 export class PageNotFoundComponent {
-
   ngOnInit() {
     window.scrollTo(0,0)
   }

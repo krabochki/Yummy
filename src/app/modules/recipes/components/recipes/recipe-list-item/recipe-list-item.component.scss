@@ -13,6 +13,7 @@
 
 .no-author{margin-bottom: 0.4em;}
 .author{
+  cursor: pointer;
   font-size: 0.9em;
   margin-bottom: 0.4em;
 }
@@ -263,21 +264,7 @@ app-modal {
 }
 
 @media (max-width: 900px) {
-  .recipe {
-    box-shadow: inset 0 -7em 4em rgba($color: #000000, $alpha: 0.5);
 
-    h1 {
-      font-size: 1.1em;
-      padding-bottom: 0.2em;
-    }
-    .rate-panel,
-    .fav {
-      zoom: 0.9;
-    }
-    .title {
-      margin-bottom: 0.4em;
-    }
-  }
 
   .recipe {
     box-shadow: inset 0 -7em 4em rgba($color: #000000, $alpha: 0.5);
@@ -287,11 +274,7 @@ app-modal {
 
       padding-bottom: 0.2em;
     }
-    .rate-panel,
-    .fav {
-      zoom: 1;
-    }
-    .title {
+    .no-author.title {
       margin-bottom: 0.4em;
     }
   }

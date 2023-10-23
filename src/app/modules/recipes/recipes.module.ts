@@ -11,7 +11,7 @@ import { CategoriesPageComponent } from './components/categories/categories-page
 import { AuthGuard } from '../authentication/guards/auth.guard';
 import { HorizontalRecipeListComponent } from './components/recipes/horizontal-recipe-list/horizontal-recipe-list.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
-import { CategoryListComponent } from './components/categories/category-list/category-list.component';
+import { HorizontalCategoryListComponent } from './components/categories/horizontal-category-list/horizontal-category-list.component';
 import { CategoryListItemComponent } from './components/categories/category-list-item/category-list-item.component';
 import { RecipeListItemComponent } from './components/recipes/recipe-list-item/recipe-list-item.component';
 import { SvgIconComponent, provideAngularSvgIcon } from 'angular-svg-icon';
@@ -37,13 +37,13 @@ import { VerticalCategoryListComponent } from './components/categories/vertical-
     SomeRecipesPageComponent,
     CategoriesPageComponent,
     MainPageComponent,
-    CategoryListComponent,
     CategoryListItemComponent,
     RecipeListItemComponent,
     RecipeCreatingComponent,
     HorizontalRecipeListComponent,
     VerticalRecipeListComponent,
     VerticalCategoryListComponent,
+    HorizontalCategoryListComponent
   ],
   imports: [
     CommonModule,
@@ -71,6 +71,6 @@ import { VerticalCategoryListComponent } from './components/categories/vertical-
     provideAngularSvgIcon(),
     { provide: LOCALE_ID, useValue: 'ru' },
   ],
-  exports: [HorizontalRecipeListComponent,VerticalCategoryListComponent, CategoryListComponent, VerticalRecipeListComponent],
+  exports: [HorizontalRecipeListComponent,VerticalCategoryListComponent, HorizontalCategoryListComponent, VerticalRecipeListComponent],
 })
 export class RecipesModule {}

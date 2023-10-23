@@ -4,6 +4,7 @@ import {
   DoCheck,
   EventEmitter,
   HostListener,
+  OnDestroy,
   OnInit,
   Output,
 } from '@angular/core';
@@ -17,11 +18,9 @@ modal;
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
-  animations: [
-    trigger('modal', modal()),
-  ],
+  animations: [trigger('modal', modal())],
 })
-export class HeaderComponent implements OnInit, DoCheck {
+export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   recipeSelectItems: string[] = [
     'Рецепты',
     'Ваши рецепты',
@@ -38,15 +37,40 @@ export class HeaderComponent implements OnInit, DoCheck {
   ];
 
   mobile: boolean = false;
-  hambOpen: boolean = false;
   currentUserSubscription?: Subscription;
-  currentUser: IUser = nullUser;
+  currentUser: IUser = { ...nullUser };
+  notificationsCount: number = 10;
+  noAccessModalShow: boolean = false;
+  activePage: 'cooks' | 'recipes' | 'match' | 'main' = 'main';
+  @Output() headerHeight: EventEmitter<number> = new EventEmitter();
 
-  role: string = 'user';
-
-  notificationsCount = 10;
-
-  @Output() headerHeightChange: EventEmitter<number> = new EventEmitter();
+  constructor(
+    public authService: AuthService,
+    private router: Router,
+  ) {
+    //узнаем на какой странице сейчас пользователь для навигации на мобильной версии
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        const currentUrl = this.router.url;
+        switch (true) {
+          case currentUrl.includes('recipes'):
+            this.activePage = 'recipes';
+            break;
+          case currentUrl.includes('cooks'):
+            this.activePage = 'cooks';
+            break;
+          case currentUrl.includes('match'):
+            this.activePage = 'match';
+            break;
+          case currentUrl.includes('plan'):
+            this.activePage = 'recipes';
+            break;
+          default:
+            this.activePage = 'main';
+        }
+      });
+  }
 
   ngOnInit() {
     if (screen.width <= 480) {
@@ -54,24 +78,15 @@ export class HeaderComponent implements OnInit, DoCheck {
     } else {
       this.mobile = false;
     }
-
-    this.currentUserSubscription = this.authService
-      .getCurrentUser()
-      .subscribe((data) => {
+    this.currentUserSubscription = this.authService.currentUser$.subscribe(
+      (data) => {
         this.currentUser = data;
-
-        this.role = this.currentUser?.role;
-      });
+      },
+    );
   }
+
   ngDoCheck() {
-    const element = document.querySelector('.header') as HTMLElement | null;
-    const height = element?.offsetHeight;
-
-    this.headerHeightChange.emit(height);
-  }
-
-  closeSettings() {
-    this.hambOpen = false;
+    this.headerHeightChange();
   }
 
   @HostListener('window:resize', ['$event'])
@@ -82,56 +97,29 @@ export class HeaderComponent implements OnInit, DoCheck {
     } else {
       this.mobile = false;
     }
+    this.headerHeightChange();
+  }
 
+  headerHeightChange() {
     const element = document.querySelector('.header') as HTMLElement | null;
-
     const height = element?.offsetHeight;
-
-    this.headerHeightChange.emit(height);
+    this.headerHeight.emit(height);
   }
-
-
-  activePage: 'cooks' | 'recipes' | 'match' | 'main' = 'main';
-  constructor(
-    public authService: AuthService,
-    private router: Router,
-  ) {
-
-     this.router.events
-       .pipe(filter((event) => event instanceof NavigationEnd))
-       .subscribe(() => {
-         const currentUrl = this.router.url;
-         if (currentUrl.includes('recipes')) {
-           this.activePage = 'recipes';
-         } else if (currentUrl.includes('cooks')) {
-           this.activePage = 'cooks';
-         } else if (currentUrl.includes('match')) {
-           this.activePage = 'match';
-         }
-         else if (currentUrl.includes('plan')) {
-           this.activePage = 'recipes';
-
-           }
-         else if (currentUrl === '/') {
-           this.activePage = 'main';
-         }
-       });
-  }
-  updateImageSrc() {
-    throw new Error('Method not implemented.');
-  }
-
-  noAccessModalShow = false;
 
   linkClick() {
     if (this.currentUser.id === 0) {
       this.noAccessModalShow = true;
     }
   }
+
   handleNoAccessModal(event: boolean) {
     if (event) {
       this.router.navigateByUrl('/greetings');
     }
     this.noAccessModalShow = false;
+  }
+
+  ngOnDestroy() {
+    this.currentUserSubscription?.unsubscribe();
   }
 }

@@ -37,10 +37,10 @@
       <app-button
         [ngStyle]="{
           'pointer-events':
-            loginMask.test(login) && passMask.test(pass) ? 'all' : 'none'
+            testUserData ? 'all' : 'none'
         }"
         (click)="loginUser()"
-        [disabled]="loginMask.test(login) && passMask.test(pass)"
+        [disabled]="testUserData"
         [rounded]="true"
         [color]="'prim'"
         [text]="'Войти'"
@@ -52,22 +52,22 @@
 <app-modal 
   [ngStyle]="{'z-index':100}"
   @modal
-  *ngIf="modalShow"
+  *ngIf="successModalShow"
   [style]="'sec'"
   [title]="'Успешный вход!'"
   [type]="'Ok'"
-  (resultEmit)="handleModalResult($event)"
+  (resultEmit)="handleSuccessModalResult()"
   [buttonsText]="['На главную']"
   [description]="'Вы успешно вошли в свой аккаунт!'"
 ></app-modal>
 <app-modal
   @modal
 
-  *ngIf="modalErrorShow"
+  *ngIf="errorModalShow"
   [style]="'prim'"
   [title]="'Неудачная попытка входа'"
   [type]="'Ok'"
-  (resultEmit)="handleModalErrorResult($event)"
+  (resultEmit)="handleErrorModalResult()"
   [buttonsText]="['Хорошо']"
   [description]="failText"
 ></app-modal>

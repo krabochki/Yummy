@@ -24,11 +24,7 @@ export class VerticalRecipeListComponent implements OnChanges {
   ngOnChanges() {
     this.onResize();
   }
-  @Output() moderatorAction = new EventEmitter<number[]>();
 
-  getModeratorAction(action: number[]) {
-    this.moderatorAction.emit(action);
-  }
   @Input() cols: number = 4;
   @Input() showAuthor: boolean = true;
 
@@ -47,42 +43,46 @@ export class VerticalRecipeListComponent implements OnChanges {
   width: number = 0;
   @HostListener('window:resize', ['$event'])
   onResize() {
-    const event = window.innerWidth;
-    this.width = event;
+  const event = window.innerWidth;
+  this.width = event;
 
-    if (this.cols === 4) {
-      if (event <= 768 && event > 480) {
-        this.blockScheme(2);
-        return;
-      } else if (event > 1200) {
-        this.blockScheme(4);
-        return;
-      } else if (event > 768 && event <= 1200) {
-        this.blockScheme(3);
-        return;
-      } else if (event <= 480) {
-        this.filter();
-
-        if (this.blocks.length === 1) {
-          this.blocks.push(nullRecipe);
-        }
-        return;
+  switch (this.cols) {
+    case 4:
+      switch (true) {
+        case event <= 768 && event > 480:
+          this.blockScheme(2);
+          break;
+        case event > 1200:
+          this.blockScheme(4);
+          break;
+        case event > 768 && event <= 1200:
+          this.blockScheme(3);
+          break;
+        case event <= 480:
+          this.filter();
+          if (this.blocks.length === 1) {
+            this.blocks.push(nullRecipe);
+          }
+          break;
       }
-    } else {
-      if (event <= 900 && event > 480) {
-        this.blockScheme(2);
-        return;
-      } else if (event > 900) {
-        this.blockScheme(3);
-        return;
-      } else if (event <= 480) {
-        this.filter();
-
-        if (this.blocks.length === 1) {
-          this.blocks.push(nullRecipe);
-        }
-        return;
+      break;
+    default:
+      switch (true) {
+        case event <= 900 && event > 480:
+          this.blockScheme(2);
+          break;
+        case event > 900:
+          this.blockScheme(3);
+          break;
+        case event <= 480:
+          this.filter();
+          if (this.blocks.length === 1) {
+            this.blocks.push(nullRecipe);
+          }
+          break;
       }
-    }
+      break;
   }
+}
+  
 }

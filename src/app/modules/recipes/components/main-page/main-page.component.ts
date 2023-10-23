@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription, map } from 'rxjs';
 import { ICategory } from 'src/app/modules/recipes/models/categories';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 import { CategoryService } from 'src/app/modules/recipes/services/category.service';
@@ -13,7 +13,7 @@ import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
   templateUrl: './main-page.component.html',
   styleUrls: ['./main-page.component.scss'],
 })
-export class MainPageComponent implements OnInit {
+export class MainPageComponent implements OnInit, OnDestroy {
   allRecipes: IRecipe[] = [];
   allSections: ICategory[] = [];
   popularRecipes: IRecipe[] = [];
@@ -22,7 +22,7 @@ export class MainPageComponent implements OnInit {
   categoriesSubscription!: Subscription;
 
   currentUserSubscription?: Subscription;
-  currentUser: IUser = nullUser;
+  currentUser: IUser = {...nullUser};
 
   constructor(
     private recipeService: RecipeService,
@@ -35,37 +35,37 @@ export class MainPageComponent implements OnInit {
 
   userRecipes:IRecipe [] =[]
   ngOnInit(): void {
-   
+    this.currentUserSubscription = this.authService.currentUser$.subscribe(
+      (currentUser) => {
+        this.currentUser = currentUser;
+        if (currentUser.id !== 0) {
+          this.userRecipes = this.recipeService
+            .getRecipesByUser(this.allRecipes, currentUser.id)
+            .slice(0, 8);
+        }
+      },
+    );
+    this.recipesSubscription = this.recipeService.recipes$.subscribe(
+      (recipes) => {
+        this.allRecipes = this.recipeService.getPublicRecipes(recipes);
+        this.popularRecipes = this.recipeService
+          .getPopularRecipes(this.allRecipes)
+          .slice(0, 8);
+        this.recentRecipes = this.recipeService
+          .getRecentRecipes(this.allRecipes)
+          .slice(0, 8);
 
-    this.currentUserSubscription = this.authService
-      .getCurrentUser()
-      .subscribe((data) => {
-        this.currentUser = data;
-      });
-    
-    
-     this.recipesSubscription = this.recipeService
-       .getRecipes()
-       .subscribe((recipesData) => {
-         this.allRecipes = this.recipeService.getPublicRecipes(recipesData);
+        this.categoriesSubscription = this.categoryService
+          .sections$
+          .subscribe((data) => {
+            this.allSections = data;
+          });
+      },
+    );
+  }
 
-         this.popularRecipes = this.recipeService
-           .getPopularRecipes(this.allRecipes)
-           .slice(0, 8);
-
-         this.recentRecipes = this.recipeService
-           .getRecentRecipes(this.allRecipes)
-           .slice(0, 8);
-
-         this.userRecipes = this.recipeService
-           .getRecipesByUser(recipesData, this.currentUser.id)
-           .slice(0, 8);
-         
-         this.categoriesSubscription = this.categoryService
-           .getSections()
-           .subscribe((data) => {
-             this.allSections = data;
-           });
-       });
+  ngOnDestroy() {
+    this.currentUserSubscription?.unsubscribe();
+    this.recipesSubscription.unsubscribe();
   }
 }

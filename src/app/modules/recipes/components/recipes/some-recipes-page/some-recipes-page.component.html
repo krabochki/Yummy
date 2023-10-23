@@ -6,7 +6,7 @@
 <div *ngIf="dataLoad; else skeleton">
     <div class="main" *ngIf="this.recipesToShow.length > 0; else noRecipes">
         <div class="block">
-            <h1>{{ h1 }}</h1>
+            <h1>{{ getTitleByRecipeType(recipeType) }}</h1>
 
             <div class="search-block">
                 <div class="search">
@@ -35,7 +35,7 @@
 
                         </div>
                         <li *ngFor="let item of autocomplete" [routerLink]="'/recipes/list/' + item.id">
-                            <p> {{ item.name }}</p> <span>{{getUser(item.authorId).fullName}}</span>
+                            <p> {{ item.name }}</p> <span *ngIf="filter!=='my-recipes'">{{getUser(item.authorId).fullName}}</span>
                         </li>
                     </ul>
                 </div>
@@ -119,12 +119,12 @@
             </div>
             <div class="content">
                 <h1 class="label">Рецептов пока <span class="title">нет</span></h1>
-                <p class="tagline">{{ noRecipesH1 }}</p>
+                <p class="tagline">{{ getNoRecipesTextByRecipetype(recipeType) }}</p>
 
                 <hr />
                 <div class="buttons">
-                    <app-button [routerLink]="noRecipesRouterLink" [rounded]="true" [color]="'prim'"
-                        [text]="noRecipesButtonText"></app-button>
+                    <app-button [routerLink]="getNoRecipesRouterLinkTextByRecipetype(recipeType)" [rounded]="true" [color]="'prim'"
+                        [text]="getNoRecipesButtonTextByRecipetype(recipeType)"></app-button>
                 </div>
             </div>
         </div>

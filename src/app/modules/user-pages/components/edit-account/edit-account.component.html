@@ -94,7 +94,7 @@
 
       <div class="section-content">
         <app-input
-          (inputValueChange)="getPinterest($event)"
+          (inputValueChange)="getSocialMedia('pinterest',$event)"
           [warningText]="
             'Введенное значение не является корректной ссылкой на аккаунт пользователя в Pintreset. Пример: https://pinterest.com/krabochki'
           "
@@ -107,7 +107,7 @@
         <app-input
           [value]="vkLink"
           [mask]="vkMask"
-          (inputValueChange)="getVk($event)"
+          (inputValueChange)="getSocialMedia('ВКонтакте',$event)"
           [warningText]="
             'Введенное значение не является корректной ссылкой на аккаунт пользователя во ВКонтакте. Пример: https://vk.com/nanananana_come_on'
           "
@@ -119,7 +119,7 @@
           [warningText]="
             'Введенное значение не является корректной ссылкой на аккаунт пользователя в Twitter. Пример: https://twitter.com/krabochki'
           "
-          (inputValueChange)="getTwitter($event)"
+          (inputValueChange)="getSocialMedia('twitter',$event)"
           [value]="twitterLink"
           [required]="false"
           [mask]="twitterMask"
@@ -131,7 +131,7 @@
             'Введенное значение не является корректной ссылкой на аккаунт пользователя в Facebook. Пример: https://facebook.com/krabochki'
           "
           [value]="facebookLink"
-          (inputValueChange)="getFacebook($event)"
+          (inputValueChange)="getSocialMedia('facebook',$event)"
           [required]="false"
           [mask]="facebookMask"
           [placeholder]="'Ссылка на Facebook'"

@@ -267,7 +267,7 @@
     
     <app-vertical-recipe-list *ngIf="userRecipes.length > 0; else noRecipes"
       [cols]="3" 
-      [blocks]="displayRecipes" [showAuthor]="false"></app-vertical-recipe-list>
+      [blocks]="userRecipes" [showAuthor]="false"></app-vertical-recipe-list>
    
   </ng-template>
 
@@ -442,12 +442,11 @@
   @modal
   [userPage]="user"
   [currentUser]="currentUser"
-  [followers]="userFollowers"
-  [following]="userFollowing"
+  [user]="user"
   *ngIf="showFollows"
   [object]="obj"
   l
-  (closeEmitter)="closeFollows($event)"
+  (closeEmitter)="closeFollows()"
 ></app-followers-and-following>
 
 

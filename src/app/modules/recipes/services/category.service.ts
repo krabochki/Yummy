@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ICategory, ISection } from '../models/categories';
 import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +10,20 @@ export class CategoryService {
   urlCategories: string = 'http://localhost:3000/categories';
   urlSections: string = 'http://localhost:3000/sections';
 
-  constructor(private http: HttpClient) {}
+  private categoriesSubject = new BehaviorSubject<ICategory[]>([]);
+  categories$ = this.categoriesSubject.asObservable();
+  private sectionsSubject = new BehaviorSubject<ISection[]>([]);
+  sections$ = this.sectionsSubject.asObservable();
+
+  constructor(private http: HttpClient) {
+
+      this.getSections().subscribe((data) => {
+        this.sectionsSubject.next(data);
+      });
+       this.getCategories().subscribe((data) => {
+         this.categoriesSubject.next(data);
+       });
+  }
 
   getCategories() {
     return this.http.get<ICategory[]>(this.urlCategories);

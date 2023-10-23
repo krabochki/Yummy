@@ -14,7 +14,7 @@ import { modal } from 'src/tools/animations';
 })
 export class FooterComponent implements OnInit {
   currentUserSubscription: Subscription = new Subscription();
-  currentUser: IUser  = nullUser;
+  currentUser: IUser  = {...nullUser};
 
   links = [
     ['pinterest', 'http://pinterest.com'],
@@ -30,7 +30,7 @@ export class FooterComponent implements OnInit {
 
   ngOnInit() {
     this.currentUserSubscription = this.authService
-      .getCurrentUser()
+      .currentUser$
       .subscribe((receivedUser) => {
         this.currentUser = receivedUser;
       });

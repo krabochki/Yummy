@@ -1,14 +1,13 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { ICategory, ISection } from 'src/app/modules/recipes/models/categories';
 
 @Component({
   selector: 'app-category-list',
-  templateUrl: './category-list.component.html',
-  styleUrls: ['./category-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './horizontal-category-list.component.html',
+  styleUrls: ['./horizontal-category-list.component.scss'],
 })
-export class CategoryListComponent {
-  @Input() categories: ICategory[]|ISection[] = [];
+export class HorizontalCategoryListComponent {
+  @Input() categories: ICategory[] | ISection[] = [];
 
   @ViewChild('list')
   list: ElementRef | null = null;

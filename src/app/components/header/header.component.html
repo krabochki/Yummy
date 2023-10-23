@@ -4,23 +4,49 @@
   <div class="label" routerLink="/">
     {{ "yummy" | titlecase }}
   </div>
-
   <div *ngIf="!mobile" class="menu-items">
-    <app-select [items]="recipeSelectItems" [disabling]="
-        this.currentUser.id === 0
-          ? [true, false, false, true, false]
-          : [false, false, false, false, false]
-      " [routerLinks]="[
-        'recipes/yours',
-        'recipes',
-        'categories',
-        'recipes/favorite',
-        'match'
-      ]"></app-select>
-    <app-select [items]="cooksSelectItems" [disabling]="
-        this.currentUser.id === 0 ? [true, false, false] : [false, false, false]
-      " [routerLinks]="['cooks/list/' + currentUser.id, 'cooks', 'cooks/updates']"></app-select>
-    <a (click)="linkClick()" @modal routerLink="plan" class="cook-plan"
+    <app-select [items]="recipeSelectItems" 
+      [routes]="[{
+        routeLink: '/recipes/yours',
+        disabled: this.currentUser.id === 0
+          ?true:false
+      },
+      {
+        routeLink: '/recipes',
+        disabled: false
+      },
+      {
+        routeLink: '/categories',
+        disabled: false
+      },
+      {
+        routeLink: '/recipes/favorite',
+        disabled: this.currentUser.id === 0
+          ?true:false
+      },
+      {
+        routeLink: 'match',
+        disabled: false
+      }]"
+        
+      ></app-select>
+    <app-select [items]="cooksSelectItems" 
+     [routes]="[{
+        routeLink: '/cooks/list/' + currentUser.id,
+        disabled: this.currentUser.id === 0
+          ?true:false
+      },
+      {
+        routeLink: '/cooks',
+        disabled: false
+      },
+      {
+        routeLink: '/cooks/updates',
+        disabled: this.currentUser.id === 0 ?true:false
+      }
+    ]"
+></app-select>
+    <a (click)="linkClick()"  routerLink="plan" class="cook-plan"
       [ngClass]="{ dsl: this.currentUser.id === 0 ? true : false }">План готовки</a>
   </div>
 

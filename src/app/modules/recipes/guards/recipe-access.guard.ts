@@ -34,9 +34,7 @@ export class RecipeAccessGuard implements CanActivate {
     this.auth.currentUser$.subscribe((data) => (user = data));
     let recipes: IRecipe[] = [];
 
-    this.recipeService.recipes$.subscribe((data) => {
-      recipes = data;
-    });
+    recipes = this.recipeService.recipesSubject.getValue()
     const recipe: IRecipe | undefined = recipes.find(
       (recipe) => recipe.id == recipeId,
     );

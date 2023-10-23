@@ -75,14 +75,14 @@
           : ''
       "></app-usual-input>
 
-    <div cdkDropList (cdkDropListDropped)="dropNutritions($event)" id="nutritions" class="nutritions" formArrayName="nutritions">
+    <div cdkDropList (cdkDropListDropped)="drop('nutritions',$event)" id="nutritions" class="nutritions" formArrayName="nutritions">
       <label for="nutritions">Нутриенты</label>
-      <p class="no-content" *ngIf="nutritions.controls.length === 0">
+      <p class="no-content" *ngIf="f('nutritions').controls.length === 0">
         Нутриентов пока нет
       </p>
 
       <div class="boundary">
-        <div cdkDrag *ngFor="let nutrition of nutritions.controls; let i = index" [formGroupName]="i"
+        <div cdkDrag *ngFor="let nutrition of f('nutritions').controls; let i = index" [formGroupName]="i"
           class="nutrition-cont" cdkDragBoundary=".boundary">
           <div class="nutrition">
             <div tabindex="-1" class="drag" cdkDragHandle>
@@ -135,20 +135,20 @@
           </div>
         </div>
       </div>
-      <app-button (click)="!(nutritions.controls.length >= 100) ? addNutrition() : null"
-        [disabled]="!(nutritions.controls.length >= 100)" [text]="'Добавить нутриент'" [color]="'prim'"
+      <app-button (click)="!(f('nutritions').controls.length >= 100) ? addNutrition() : null"
+        [disabled]="!(f('nutritions').controls.length >= 100)" [text]="'Добавить нутриент'" [color]="'prim'"
         [style]="'filled-min'" [rounded]="true">
       </app-button>
     </div>
-    <div cdkDropList (cdkDropListDropped)="dropIngredients($event)" id="ingredients" class="ingredients"
+    <div cdkDropList (cdkDropListDropped)="drop('ingredients',$event)" id="ingredients" class="ingredients"
       formArrayName="ingredients">
       <label for="ingredients">Ингредиенты</label>
-      <p class="no-content" *ngIf="ingredients.controls.length === 0">
+      <p class="no-content" *ngIf="f('ingredients').controls.length === 0">
         Ингредиентов пока нет
       </p>
 
       <div class="boundary">
-        <div cdkDrag *ngFor="let ingredient of ingredients.controls; let i = index" [formGroupName]="i"
+        <div cdkDrag *ngFor="let ingredient of f('ingredients').controls; let i = index" [formGroupName]="i"
           class="ingredient-cont" cdkDragBoundary=".boundary">
           <div class="ingredient">
             <div tabindex="-1" class="drag" cdkDragHandle>
@@ -203,22 +203,22 @@
           </div>
         </div>
       </div>
-      <app-button (click)="!(ingredients.controls.length >= 100) ? addIngredient() : null"
-        [disabled]="!(ingredients.controls.length >= 100)" [text]="'Добавить ингредиент'" [color]="'prim'"
+      <app-button (click)="!(f('ingredients').controls.length >= 100) ? addIngredient() : null"
+        [disabled]="!(f('ingredients').controls.length >= 100)" [text]="'Добавить ингредиент'" [color]="'prim'"
         [style]="'filled-min'" [rounded]="true">
       </app-button>
     </div>
 
-    <div formArrayName="instructions" id="instructions" cdkDropList (cdkDropListDropped)="dropInstructions($event)"
+    <div formArrayName="instructions" id="instructions" cdkDropList (cdkDropListDropped)="drop('instructions',$event)"
       class="instructions">
       <label for="instructions">Инструкции</label>
-      <p class="no-content" *ngIf="instructions.controls.length === 0">
+      <p class="no-content" *ngIf="f('instructions').controls.length === 0">
         Инструкций пока нет
       </p>
 
       <div class="boundary">
         <div class="instruction-cont" cdkDragBoundary=".boundary" cdkDrag [formGroupName]="i"
-          *ngFor="let instruction of instructions.controls; let i = index" [formGroupName]="i">
+          *ngFor="let instruction of f('instructions').controls; let i = index" [formGroupName]="i">
           <div class="instruction">
             <div class="instruction-text">
               <div tabindex="-1" class="drag" cdkDragHandle>
@@ -271,8 +271,8 @@
         </div>
       </div>
       <app-button (click)="
-          !(instructions.controls.length >= 100) ? addInstruction() : null
-        " [disabled]="!(instructions.controls.length >= 100)" [text]="'Добавить инструкцию'" [color]="'prim'"
+          !(f('instructions').controls.length >= 100) ? addInstruction() : null
+        " [disabled]="!(f('instructions').controls.length >= 100)" [text]="'Добавить инструкцию'" [color]="'prim'"
         [style]="'filled-min'" [rounded]="true">
       </app-button>
     </div>

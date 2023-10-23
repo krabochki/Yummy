@@ -7,7 +7,7 @@ import { BehaviorSubject, catchError, map, switchMap, take, tap, throwError } fr
   providedIn: 'root',
 })
 export class RecipeService {
-  private recipesSubject = new BehaviorSubject<IRecipe[]>([]);
+   recipesSubject = new BehaviorSubject<IRecipe[]>([]);
   recipes$ = this.recipesSubject.asObservable();
 
   url: string = 'http://localhost:3000/recipes';

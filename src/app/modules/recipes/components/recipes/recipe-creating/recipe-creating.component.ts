@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray, AbstractControl } from '@angular/forms';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Router } from '@angular/router';
 import { trigger } from '@angular/animations';
@@ -32,12 +32,15 @@ export const _filter = (opt: string[], value: string): string[] => {
   animations: [trigger('modal', modal())],
 })
 export class RecipeCreatingComponent implements OnInit {
+  @ViewChild('input', { static: false })
+  input: ElementRef | undefined;
+
   defaultImage: string = '../../../../../assets/images/add-main-photo.png';
   defaultInstructionImage: string =
     '../../../../../assets/images/add-photo.png';
   mainImage: string = '';
 
-  currentUser: IUser = {...nullUser};
+  currentUser: IUser = { ...nullUser };
   currentUserSubscription?: Subscription;
 
   form: FormGroup;
@@ -45,10 +48,22 @@ export class RecipeCreatingComponent implements OnInit {
   isAwaitingApprove = false;
   recipeId = 0;
 
+  successModalShow = false;
+  approveModalShow = false;
+  exitModalShow = false;
+  createModalShow = false;
+  sectionGroupOptions?: Observable<SectionGroup[]>;
+  images: string[][] = [['']];
+  category: string = '';
   sectionGroups: SectionGroup[] = [];
   allSections: ISection[] = [];
   allCategories: ICategory[] = [];
   selectedCategories: ICategory[] = [];
+
+ 
+ f(field: string): FormArray {
+    return this.form.get(field)! as FormArray; 
+  }
 
   constructor(
     private _formBuilder: FormBuilder,
@@ -86,20 +101,21 @@ export class RecipeCreatingComponent implements OnInit {
 
   ngOnInit(): void {
     this.sectionGroupOptions = this.sectionForm
-      .get('sectionGroup')?.valueChanges.pipe(
+      .get('sectionGroup')
+      ?.valueChanges.pipe(
         startWith(''),
         map((value) => this._filterGroup(value || '')),
       );
 
-    this.currentUserSubscription = this.authService
-      .getCurrentUser()
-      .subscribe((data) => {
+    this.currentUserSubscription = this.authService.currentUser$.subscribe(
+      (data) => {
         this.currentUser = data;
-      });
+      },
+    );
 
-    this.categoryService.getCategories().subscribe((data) => {
+    this.categoryService.categories$.subscribe((data) => {
       this.allCategories = data;
-      this.categoryService.getSections().subscribe((data) => {
+      this.categoryService.sections$.subscribe((data) => {
         this.allSections = data;
 
         this.allSections.forEach((section) => {
@@ -123,29 +139,14 @@ export class RecipeCreatingComponent implements OnInit {
   }
 
   //drag&drop
-  dropIngredients(event: CdkDragDrop<string[]>) {
+  drop(context:string,event: CdkDragDrop<string[]>) {
     moveItemInArray(
-      this.ingredients.controls,
+      this.f(context).controls,
       event.previousIndex,
       event.currentIndex,
     );
   }
-  dropNutritions(event: CdkDragDrop<string[]>) {
-    moveItemInArray(
-      this.nutritions.controls,
-      event.previousIndex,
-      event.currentIndex,
-    );
-  }
-  dropInstructions(event: CdkDragDrop<string[]>) {
-    moveItemInArray(
-      this.instructions.controls,
-      event.previousIndex,
-      event.currentIndex,
-    );
-  }
-  @ViewChild('input', { static: false })
-  input: ElementRef | undefined;
+ 
 
   //Работа с категориями
   addCategory() {
@@ -164,7 +165,7 @@ export class RecipeCreatingComponent implements OnInit {
     this.input?.nativeElement.blur();
     this.category = '';
   }
-  category: string = '';
+
   removeCategory(category: ICategory) {
     const x = this.selectedCategories.findIndex(
       (element) => element.id === category.id,
@@ -187,20 +188,13 @@ export class RecipeCreatingComponent implements OnInit {
     this.images[instructionIndex][imageIndex] = '';
   }
 
-  images: string[][] = [['']];
-
   //получаем url загруженного фото инструкции для вывода в background-image
   getInstructionPhotoURL(instructionIndex: number, imageIndex: number): string {
-    if (this.images) {
-      if (this.images[instructionIndex]) {
-        if (
-          this.images[instructionIndex][imageIndex] &&
-          this.images[instructionIndex][imageIndex] !== ''
-        ) {
-          return this.images[instructionIndex][imageIndex];
-        } else return this.defaultInstructionImage;
-      } else return this.defaultInstructionImage;
-    } else return this.defaultInstructionImage;
+    return this.images &&
+      this.images[instructionIndex] &&
+      this.images[instructionIndex][imageIndex]
+      ? this.images[instructionIndex][imageIndex]
+      : this.defaultInstructionImage;
   }
 
   instuctionImageChange(
@@ -251,7 +245,7 @@ export class RecipeCreatingComponent implements OnInit {
   }
 
   addIngredient() {
-    this.ingredients.push(
+    this.f('ingredients').push(
       this.fb.group({
         name: [
           '',
@@ -268,11 +262,11 @@ export class RecipeCreatingComponent implements OnInit {
   }
 
   removeIngredient(index: number) {
-    this.ingredients.removeAt(index);
+    this.f('ingredients').removeAt(index);
   }
 
   addNutrition() {
-    this.nutritions.push(
+    this.f('nutritions').push(
       this.fb.group({
         name: [
           '',
@@ -289,11 +283,11 @@ export class RecipeCreatingComponent implements OnInit {
   }
 
   removeNutrition(index: number) {
-    this.nutritions.removeAt(index);
+    this.f('nutritions').removeAt(index);
   }
 
   addInstruction() {
-    this.instructions.push(
+    this.f('instructions').push(
       this.fb.group({
         name: [
           '',
@@ -314,32 +308,11 @@ export class RecipeCreatingComponent implements OnInit {
   }
 
   removeInstruction(index: number) {
-    this.instructions.removeAt(index);
-  }
-
-  //для удобства доступа к полям
-  get ingredients() {
-    return this.form.get('ingredients') as FormArray;
-  }
-
-  get nutritions() {
-    return this.form.get('nutritions') as FormArray;
-  }
-
-  get instructions() {
-    return this.form.get('instructions') as FormArray;
-  }
-
-  get photos() {
-    return this.form.get('photos') as FormArray;
-  }
-
-  get categories() {
-    return this.form.get('categories') as FormArray;
+    this.f('instructions').removeAt(index);
   }
 
   getImages(instructionIndex: number) {
-    const instructionsArray = this.form.get('instructions') as FormArray;
+    const instructionsArray = this.f('instructions');
     const instructionGroup = instructionsArray.at(
       instructionIndex,
     ) as FormGroup;
@@ -384,11 +357,9 @@ export class RecipeCreatingComponent implements OnInit {
           publicationDate: '',
           status: this.isAwaitingApprove ? 'awaits' : 'private',
         };
-        this.recipeService.postRecipe(recipeData).subscribe(
-          () => {
-            this.successModalShow = true;
-          }
-        );
+        this.recipeService.postRecipe(recipeData).subscribe(() => {
+          this.successModalShow = true;
+        });
       });
     }
   }
@@ -398,7 +369,6 @@ export class RecipeCreatingComponent implements OnInit {
     sectionGroup: '',
   });
 
-  sectionGroupOptions?: Observable<SectionGroup[]>;
   private _filterGroup(value: string): SectionGroup[] {
     if (value) {
       return this.sectionGroups
@@ -413,26 +383,23 @@ export class RecipeCreatingComponent implements OnInit {
   }
 
   //модальные окна
-  createModalShow = false;
   handleCreateRecipeModal(answer: boolean) {
     if (answer) {
       this.createRecipe();
     }
     this.createModalShow = false;
   }
-  exitModalShow = false;
+
   handleExitModal(answer: boolean) {
     if (answer) {
       this.router.navigateByUrl('recipes');
     }
     this.exitModalShow = false;
   }
-  successModalShow = false;
   handleSuccessModal() {
     this.router.navigateByUrl('/recipes/list/' + this.recipeId);
     this.successModalShow = false;
   }
-  approveModalShow = false;
   handleApproveModal(answer: boolean) {
     if (answer) {
       this.isAwaitingApprove = true;
@@ -441,5 +408,4 @@ export class RecipeCreatingComponent implements OnInit {
     }
     this.approveModalShow = false;
   }
-
 }

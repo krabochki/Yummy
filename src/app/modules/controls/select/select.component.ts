@@ -1,9 +1,7 @@
 import { trigger } from '@angular/animations';
-import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
 import { modal, heightAnim } from 'src/tools/animations';
 import { Router } from '@angular/router';
-
-
 @Component({
   selector: 'app-select',
   templateUrl: './select.component.html',
@@ -16,14 +14,12 @@ export class SelectComponent implements AfterViewInit {
   @Output() optionClick: EventEmitter<string> = new EventEmitter();
 
   @Input() items: string[] = [];
-  @Input() disabling: boolean[] = [];
-  @Input() routerLinks: string[] = [];
+
+  @Input() routes: { routeLink: string; disabled: boolean }[] = [];
 
   noAccessModalShow = false;
 
-  constructor(
-    private router: Router,
-  ) {}
+  constructor(private router: Router) {}
 
   open: boolean = false;
 
@@ -31,11 +27,6 @@ export class SelectComponent implements AfterViewInit {
 
   bodyHeight: number | undefined = 0;
   ngAfterViewInit() {
-    this.shiftedItems = [...this.items];
-
-    this.shiftedItems.shift();
-  }
-  ngAfterViewChecked() {
     this.shiftedItems = [...this.items];
 
     this.shiftedItems.shift();

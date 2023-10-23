@@ -2,11 +2,13 @@ import { trigger } from '@angular/animations';
 import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
 import { modal, heightAnim } from 'src/tools/animations';
 import { Router } from '@angular/router';
+import { ChangeDetectionStrategy } from '@angular/core';
 @Component({
   selector: 'app-select',
   templateUrl: './select.component.html',
   styleUrls: ['./select.component.scss'],
   animations: [trigger('modal', modal()), trigger('select', heightAnim())],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SelectComponent implements AfterViewInit {
   @Output() clickedEmit: EventEmitter<boolean> = new EventEmitter();

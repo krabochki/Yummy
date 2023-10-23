@@ -198,6 +198,7 @@ export class SomeRecipesPageComponent implements OnInit {
                   this.currentUser.id,
                 );
                 this.currentUserFollowing.forEach((following) => {
+                  this.followingRecipes=[]
                   const foundRecipes = this.recipeService.getRecipesByUser(
                     this.recentRecipes,
                     following.id,

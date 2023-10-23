@@ -1,5 +1,6 @@
 import { trigger } from '@angular/animations';
 import {
+  ChangeDetectorRef,
   Component,
   DoCheck,
   EventEmitter,
@@ -80,7 +81,8 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     }
     this.currentUserSubscription = this.authService.currentUser$.subscribe(
       (data) => {
-        this.currentUser = data;
+        this.currentUser = data;         
+
       },
     );
   }

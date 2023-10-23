@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IUser, nullUser } from '../../models/users';
 import { ActivatedRoute, Data, Router } from '@angular/router';
@@ -11,12 +11,14 @@ import { Title } from '@angular/platform-browser';
 import { registerLocaleData } from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
 import { RouteEventsService } from 'src/app/modules/controls/route-events.service';
+import { ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-user-page',
   templateUrl: './user-page.component.html',
   styleUrls: ['./user-page.component.scss', './skeleton.scss'],
   animations: [trigger('fadeIn', fadeIn()), trigger('modal', modal())],
+  changeDetection:ChangeDetectionStrategy.OnPush
 })
 export class UserPageComponent implements OnInit {
   recipesEnabled: boolean = true;
@@ -37,6 +39,7 @@ export class UserPageComponent implements OnInit {
     private recipeService: RecipeService,
     private titleService: Title,
     public router: Router,
+    private cd:ChangeDetectorRef,
     public routerEventsService: RouteEventsService,
   ) {
     registerLocaleData(localeRu);
@@ -76,6 +79,7 @@ export class UserPageComponent implements OnInit {
 
       this.authService.currentUser$.subscribe((data) => {
         this.currentUser = data;
+
       });
 
       if (this.currentUser.id === this.user.id) {
@@ -136,12 +140,12 @@ export class UserPageComponent implements OnInit {
             if (!this.comments) this.comments = 0;
           });
 
+          this.cd.markForCheck();
           this.dataLoaded = true;
         });
       });
-      this.user.profileViews++;
-      if (this.myPage) {
-        this.currentUser.profileViews++;
+      if (!this.myPage) {
+          this.user.profileViews++;
       }
       this.userService.updateUsers(this.user);
     });

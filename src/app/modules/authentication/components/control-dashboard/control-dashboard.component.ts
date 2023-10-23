@@ -7,10 +7,12 @@ import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 import { ISection } from 'src/app/modules/recipes/models/categories';
 import { CategoryService } from 'src/app/modules/recipes/services/category.service';
+import { ChangeDetectionStrategy } from '@angular/core';
 @Component({
   selector: 'app-control-dashboard',
   templateUrl: './control-dashboard.component.html',
   styleUrls: ['./control-dashboard.component.scss'],
+  changeDetection:ChangeDetectionStrategy.OnPush
 })
 export class ControlDashboardComponent implements OnInit, OnDestroy {
   currentUserSubscription?: Subscription;

@@ -1,10 +1,11 @@
-import { Component, HostListener, Input, OnChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, Input, OnChanges } from '@angular/core';
 import { ICategory, nullCategory } from '../../../models/categories';
 
 @Component({
   selector: 'app-vertical-category-list',
   templateUrl: './vertical-category-list.component.html',
   styleUrls: ['./vertical-category-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VerticalCategoryListComponent implements OnChanges {
   @Input() categories: ICategory[] = [];

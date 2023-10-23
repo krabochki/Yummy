@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Data, Router } from '@angular/router';
 import { IRecipe, nullRecipe } from '../../../models/recipes';
 import { Title } from '@angular/platform-browser';
@@ -20,6 +20,7 @@ import { heightAnim } from 'src/tools/animations';
   templateUrl: './recipe-page.component.html',
   styleUrls: ['./recipe-page.component.scss'],
   animations: [trigger('history', heightAnim())],
+  changeDetection:ChangeDetectionStrategy.OnPush
 })
 export class RecipePageComponent implements OnInit {
   constructor(
@@ -109,6 +110,8 @@ export class RecipePageComponent implements OnInit {
                 const combinedText = [
                   recipe.history,
                   recipe.description,
+                  ...recipe.ingredients.map((ingredient) => ingredient.name),
+
                   ...recipe.instructions.map((instruction) => instruction.name),
                 ].join(' ');
 
@@ -161,7 +164,7 @@ export class RecipePageComponent implements OnInit {
         this.recipe,
       );
     }
-    this.recipeService.updateRecipe(this.recipe);
+    this.recipeService.updateRecipe(this.recipe).subscribe();
   }
 
   isRecipeFavorite: boolean = false;
@@ -197,7 +200,7 @@ export class RecipePageComponent implements OnInit {
         this.recipe,
       );
     }
-    this.recipeService.updateRecipe(updatedRecipe);
+    this.recipeService.updateRecipe(updatedRecipe).subscribe();
   }
   //готовим рецепт
   cookThisRecipe() {
@@ -222,7 +225,7 @@ export class RecipePageComponent implements OnInit {
       );
     }
 
-    this.recipeService.updateRecipe(updatedRecipe);
+    this.recipeService.updateRecipe(updatedRecipe).subscribe();
   }
 
   decreasePortions() {

@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { CategoryService } from '../../../services/category.service';
 import { ICategory, ISection } from '../../../models/categories';
 import { Subscription } from 'rxjs';
@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
   selector: 'app-categories-page',
   templateUrl: './categories-page.component.html',
   styleUrls: ['./categories-page.component.scss'],
+  changeDetection:ChangeDetectionStrategy.OnPush
 })
 export class CategoriesPageComponent implements OnInit, OnDestroy {
   constructor(private categoryService: CategoryService) {}

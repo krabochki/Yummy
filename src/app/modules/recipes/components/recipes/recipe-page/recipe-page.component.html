@@ -257,8 +257,8 @@
     </div>
   </div>
 
-  <div class="row all">
-    <div class="instructions" *ngIf="this.recipe.instructions.length > 0">
+  <div class="row all" style="overflow: visible;">
+    <div style="overflow: visible;" class="instructions" *ngIf="this.recipe.instructions.length > 0">
       <h2>Инструкции</h2>
       <div
         class="row instruction"
@@ -315,8 +315,8 @@
         <div></div>
       </div>
 
-      <div class="column" *ngIf="this.recipe.status === 'public'">
-        <div>
+      <div class="column" style="overflow: visible;" *ngIf="this.recipe.status === 'public'">
+        <div style="overflow: visible;">
           <h2>Комментарии ({{ recipe.comments.length }})</h2>
           <div>
             <div *ngFor="let comment of recipe.comments">

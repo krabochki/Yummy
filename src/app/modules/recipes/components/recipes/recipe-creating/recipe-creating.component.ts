@@ -1,5 +1,18 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray, AbstractControl } from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import {
+  FormGroup,
+  FormBuilder,
+  Validators,
+  FormArray,
+  AbstractControl,
+} from '@angular/forms';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Router } from '@angular/router';
 import { trigger } from '@angular/animations';
@@ -9,10 +22,10 @@ import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { RecipeService } from '../../../services/recipe.service';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { Subscription } from 'rxjs';
-import { ICategory, ISection, nullCategory } from '../../../models/categories';
+import { ICategory, ISection } from '../../../models/categories';
 import { CategoryService } from '../../../services/category.service';
 import { Observable } from 'rxjs';
-import { startWith, map, find } from 'rxjs/operators';
+import { startWith, map } from 'rxjs/operators';
 
 export interface SectionGroup {
   section: string;
@@ -30,6 +43,7 @@ export const _filter = (opt: string[], value: string): string[] => {
   templateUrl: './recipe-creating.component.html',
   styleUrls: ['./recipe-creating.component.scss'],
   animations: [trigger('modal', modal())],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecipeCreatingComponent implements OnInit {
   @ViewChild('input', { static: false })
@@ -60,12 +74,12 @@ export class RecipeCreatingComponent implements OnInit {
   allCategories: ICategory[] = [];
   selectedCategories: ICategory[] = [];
 
- 
- f(field: string): FormArray {
-    return this.form.get(field)! as FormArray; 
+  f(field: string): FormArray {
+    return this.form.get(field) as FormArray;
   }
 
   constructor(
+    private cd: ChangeDetectorRef,
     private _formBuilder: FormBuilder,
     private authService: AuthService,
     private categoryService: CategoryService,
@@ -139,14 +153,13 @@ export class RecipeCreatingComponent implements OnInit {
   }
 
   //drag&drop
-  drop(context:string,event: CdkDragDrop<string[]>) {
+  drop(context: string, event: CdkDragDrop<string[]>) {
     moveItemInArray(
       this.f(context).controls,
       event.previousIndex,
       event.currentIndex,
     );
   }
- 
 
   //Работа с категориями
   addCategory() {
@@ -359,6 +372,7 @@ export class RecipeCreatingComponent implements OnInit {
         };
         this.recipeService.postRecipe(recipeData).subscribe(() => {
           this.successModalShow = true;
+          this.cd.markForCheck();
         });
       });
     }

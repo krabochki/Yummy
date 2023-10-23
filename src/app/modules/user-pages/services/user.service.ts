@@ -153,6 +153,7 @@ export class UserService {
         const currentUsers = this.usersSubject.value;
         const updatedUsers = [...currentUsers, newUser];
         this.usersSubject.next(updatedUsers);
+
       }),
     ).subscribe();
   }

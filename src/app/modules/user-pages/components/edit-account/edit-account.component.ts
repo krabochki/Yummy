@@ -1,5 +1,6 @@
 import {
   AfterContentChecked,
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   EventEmitter,
@@ -26,6 +27,7 @@ import { FormArray } from '@angular/forms';
   templateUrl: './edit-account.component.html',
   styleUrls: ['./edit-account.component.scss'],
   animations: [trigger('modal', modal())],
+  changeDetection:ChangeDetectionStrategy.OnPush
 })
 export class EditAccountComponent implements OnInit, AfterContentChecked {
   @Input() editableUser: IUser = { ...nullUser };

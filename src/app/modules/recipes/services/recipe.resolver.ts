@@ -17,7 +17,7 @@ export class RecipeResolver {
     const recipeId = Number(route.params['id']);
 
     if (recipeId <= 0) {
-      this.router.navigate(['cooks']);
+      this.router.navigate(['recipes']);
       return EMPTY;
     }
 
@@ -34,7 +34,7 @@ export class RecipeResolver {
         }
       }),
       catchError(() => {
-        this.router.navigate(['cooks']);
+        this.router.navigate(['recipes']);
         return EMPTY;
       }),
     );

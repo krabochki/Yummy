@@ -1,5 +1,5 @@
 import { trigger } from '@angular/animations';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
@@ -13,6 +13,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './register.component.html',
   styleUrls: ['../../common-styles.scss'],
   animations: [trigger('modal', modal())],
+  changeDetection:ChangeDetectionStrategy.OnPush
 })
 export class RegisterComponent implements OnInit, OnDestroy {
   emailMask = loginMask; //маска для почты
@@ -82,10 +83,14 @@ export class RegisterComponent implements OnInit, OnDestroy {
     );
 
     if (!emailExists && !usernameExists) {
-      this.usersService.postUser(user);
+       this.usersService.postUser(user);
+    this.authService.loginUser(user).subscribe(
+      () => {
       localStorage.setItem('currentUser', JSON.stringify(user));
       this.authService.setCurrentUser(user);
       this.modalSuccessShow = true;
+      })
+     
     } else {
       if (emailExists) {
         this.failText =

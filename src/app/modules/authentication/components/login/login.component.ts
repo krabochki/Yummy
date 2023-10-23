@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { passMask, emailOrUsernameMask } from 'src/tools/regex';
 import { AuthService } from '../../services/auth.service';
 import { Title } from '@angular/platform-browser';
@@ -13,6 +13,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './login.component.html',
   styleUrls: ['../../common-styles.scss'],
   animations: [trigger('modal', modal())],
+  changeDetection:ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent implements OnInit, OnDestroy {
   loginMask = emailOrUsernameMask;

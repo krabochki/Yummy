@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IRecipe, nullRecipe } from 'src/app/modules/recipes/models/recipes';
 import { RecipeService } from '../../../services/recipe.service';
@@ -13,6 +13,7 @@ import { UserService } from 'src/app/modules/user-pages/services/user.service';
   templateUrl: './recipe-list-item.component.html',
   styleUrls: ['./recipe-list-item.component.scss'],
   animations: [trigger('modal', modal())],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RecipeListItemComponent implements OnInit {
   @Input() recipe: IRecipe = nullRecipe;

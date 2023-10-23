@@ -448,6 +448,7 @@ h1 {
 
 .i-comment {
   row-gap: 1em;
+    overflow: visible;
 
   app-expanding-input {
     width: 100%;
@@ -455,15 +456,15 @@ h1 {
 
   app-button {
     margin-left: auto;
+    overflow: visible;
   }
 
   .input-area {
-    column-gap: 1em;
   }
 
   .userpic {
     border-radius: 100%;
-    width: 2em;
+    min-width: 2em;margin-right: 1em;
     height: 2em;
   }
 

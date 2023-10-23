@@ -1,16 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
-import {
-  ICategory,
-  ISection,
-  nullCategory,
-  nullSection,
-} from 'src/app/modules/recipes/models/categories';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+
 import { RecipeService } from '../../../services/recipe.service';
 
 @Component({
   selector: 'app-category-list-item',
   templateUrl: './category-list-item.component.html',
   styleUrls: ['./category-list-item.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CategoryListItemComponent implements OnInit {
   @Input() category: any = null;

@@ -1,10 +1,11 @@
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 
 @Component({
   selector: 'app-horizontal-recipe-list',
   templateUrl: './horizontal-recipe-list.component.html',
   styleUrls: ['./horizontal-recipe-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HorizontalRecipeListComponent {
   @Input() recipes: IRecipe[] = [];

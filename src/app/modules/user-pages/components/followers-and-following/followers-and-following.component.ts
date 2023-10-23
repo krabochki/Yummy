@@ -1,4 +1,6 @@
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -38,6 +40,7 @@ import { widthAnim } from 'src/tools/animations';
       transition('closed => open', [animate('0.4s')]),
     ]),
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FollowersAndFollowingComponent implements OnInit {
   //ввод
@@ -59,6 +62,7 @@ export class FollowersAndFollowingComponent implements OnInit {
   searchQuery: string = '';
   @Input() user: IUser = {...nullUser};
   constructor(
+    private cd:ChangeDetectorRef,
     private router: Router,
     public userService: UserService,
   ) {}
@@ -78,7 +82,7 @@ export class FollowersAndFollowingComponent implements OnInit {
         this.currentUserFollowingIds = [];
         currentUserFollowing.forEach((currFollowing) => {
           this.currentUserFollowingIds.push(currFollowing.id);
-        });
+        }); this.cd.detectChanges();
       }
     });
   }
@@ -92,7 +96,8 @@ export class FollowersAndFollowingComponent implements OnInit {
   //отписка текущего пользователя от людей в списке
   unfollow(user: IUser) {
     this.userService.removeFollower(user, this.currentUser?.id);
-    this.updateUser(user);
+    this.updateUser(user);   
+
   }
 
   searchOnOff() {

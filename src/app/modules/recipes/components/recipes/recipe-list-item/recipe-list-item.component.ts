@@ -5,6 +5,8 @@ import { RecipeService } from '../../../services/recipe.service';
 import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
 import { Router } from '@angular/router';
+import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
+import { UserService } from 'src/app/modules/user-pages/services/user.service';
 
 @Component({
   selector: 'app-recipe-list-item',
@@ -26,44 +28,55 @@ export class RecipeListItemComponent implements OnInit {
   dataLoaded = false;
 
   currentUserId = 0;
+  author: IUser = nullUser;
 
   constructor(
     private recipeService: RecipeService,
     private authService: AuthService,
+    private userService: UserService,
     private router: Router,
   ) {}
 
+  @Input()  showAuthor: boolean = true;
+
   ngOnInit() {
-    this.authService.getCurrentUser().subscribe((currentUser) => {
-      this.currentUserId = currentUser.id;
 
-      if (currentUser.role !== 'user') {
-        this.moderMode = true;
-      }
+    this.recipeService.recipes$.subscribe((recipes) => {
+      recipes.forEach((element) => {
+        if (element.id === this.recipe.id) {
+          this.recipe = element;
 
-      this.recipeService.recipes$.subscribe((recipes) => {
-        recipes.forEach((element) => {
-          if (element.id === this.recipe.id) {
-            this.recipe = element;
-
-            if (this.currentUserId !== 0) {
-              this.isRecipeLiked = this.recipe.likesId.includes(
-                this.currentUserId,
-              );
-              this.isRecipeCooked = this.recipe.cooksId.includes(
-                this.currentUserId,
-              );
-              this.isRecipeFavorite = this.recipe.favoritesId.includes(
-                this.currentUserId,
-              );
-            }
+          if (this.currentUserId !== 0) {
+            this.isRecipeLiked = this.recipe.likesId.includes(
+              this.currentUserId,
+            );
+            this.isRecipeCooked = this.recipe.cooksId.includes(
+              this.currentUserId,
+            );
+            this.isRecipeFavorite = this.recipe.favoritesId.includes(
+              this.currentUserId,
+            );
           }
+        }
 
-          this.dataLoaded = true;
-        });
-        //
+        this.dataLoaded = true;
       });
+      //
     });
+
+    if (this.showAuthor)
+          if (this.recipe.authorId !== 0)
+            this.userService
+              .getUser(this.recipe.authorId)
+              .subscribe((data) => (this.author = data));
+
+        this.authService.getCurrentUser().subscribe((currentUser) => {
+          this.currentUserId = currentUser.id;
+
+          if (currentUser.role !== 'user') {
+            this.moderMode = true;
+          }
+        });
   }
 
   //добавляем рецепт в избранное
@@ -155,5 +168,4 @@ export class RecipeListItemComponent implements OnInit {
     }
     this.noAccessModalShow = false;
   }
-
 }

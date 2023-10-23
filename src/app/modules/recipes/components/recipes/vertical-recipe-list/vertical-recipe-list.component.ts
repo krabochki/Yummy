@@ -30,6 +30,7 @@ export class VerticalRecipeListComponent implements OnChanges {
     this.moderatorAction.emit(action);
   }
   @Input() cols: number = 4;
+  @Input() showAuthor: boolean = true;
 
   filter() {
     this.blocks = this.blocks.filter((block) => block.id !== 0);
@@ -43,11 +44,11 @@ export class VerticalRecipeListComponent implements OnChanges {
     }
   }
 
-  width:number =0
+  width: number = 0;
   @HostListener('window:resize', ['$event'])
   onResize() {
     const event = window.innerWidth;
-    this.width=event
+    this.width = event;
 
     if (this.cols === 4) {
       if (event <= 768 && event > 480) {
@@ -68,18 +69,19 @@ export class VerticalRecipeListComponent implements OnChanges {
         return;
       }
     } else {
-      if (event <= 900 && event > 380) {
+      if (event <= 900 && event > 480) {
         this.blockScheme(2);
         return;
       } else if (event > 900) {
         this.blockScheme(3);
         return;
       } else if (event <= 480) {
-        this.blocks = this.blocks.filter((block) => block.id !== 0);
+        this.filter();
 
         if (this.blocks.length === 1) {
           this.blocks.push(nullRecipe);
         }
+        return;
       }
     }
   }

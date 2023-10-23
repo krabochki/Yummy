@@ -1,5 +1,6 @@
 @import "../../../../../../tools/UI/UI.scss";
 
+
 @keyframes loading {
   0% {
     background-position: -100px;
@@ -8,6 +9,12 @@
   100% {
     background-position: 200px;
   }
+}
+
+.no-author{margin-bottom: 0.4em;}
+.author{
+  font-size: 0.9em;
+  margin-bottom: 0.4em;
 }
 .moder-buttons{
   position: absolute;
@@ -149,7 +156,7 @@ padding: 2em;
       position: absolute;
       top:0;bottom:0;right:0;left:0;margin:auto;
       content: '';
-      background-color: rgb(255, 48, 48);
+      background-color: var(--color-primary-focus);
       height: 0px;
       width: 0px;
       border-radius: 100%;
@@ -216,7 +223,6 @@ padding: 2em;
   .title {
     display: flex;
     align-items: flex-end;
-    margin-bottom: 0.75em;
   }
   h1 {
     cursor: pointer;

@@ -2,8 +2,8 @@
   <div class="block" *ngFor="let block of blocks" [ngClass]="{'null-block':block.id===0}">
 
     <div class="inner">
-        
-        <app-recipe-list-item (moderatorAction)="getModeratorAction($event)" [moderMode]="moderMode" [recipe]="block">
+         
+        <app-recipe-list-item  (moderatorAction)="getModeratorAction($event)" [showAuthor]="showAuthor" [moderMode]="moderMode" [recipe]="block">
 
         </app-recipe-list-item>
     </div>

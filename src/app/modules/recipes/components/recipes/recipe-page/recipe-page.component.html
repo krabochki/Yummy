@@ -44,77 +44,91 @@
   </div>
   <div class="head row">
     <div class="column main-info">
-      <div class="row" class="short-info row">
-        <div class="row user-info" [routerLink]="'/cooks/list/' + author.id">
-          <img
-            class="userpic"
-            src="../../../../../../assets/images/userpic.png"
-            alt="Фото пользователя"
-          />
-          <p>{{ author.fullName }}</p>
-        </div>
-        <div class="row date" *ngIf="this.recipe.status !== 'public'">
-          <ng-container *ngIf="this.recipe.status === 'private'; else awaiting">
+     <div class="full-user-info column">
+        <div class="row" class="short-info row">
+          <div class="row user-info" [routerLink]="'/cooks/list/' + author.id">
+            <img
+              class="userpic"
+              src="../../../../../../assets/images/userpic.png"
+              alt="Фото пользователя"
+            />
+            <p>{{ author.fullName }}</p>
+          </div>
+          <div class="row date" *ngIf="this.recipe.status === 'public'">
             <svg-icon
               class="head-icon"
               [applyClass]="true"
-              [src]="'../../../../../assets/images/svg/private.svg'"
+              [src]="'../../../../../assets/images/svg/calendar.svg'"
             ></svg-icon>
-
-            <p>Приватный рецепт</p>
-          </ng-container>
-          <ng-template #awaiting>
+            <p>{{ recipe.publicationDate | date: "shortDate" }}</p>
+          </div>
+          <div class="row date" *ngIf="this.recipe.status !== 'public'">
+            <ng-container *ngIf="this.recipe.status === 'private'; else awaiting">
+              <svg-icon
+                class="head-icon"
+                [applyClass]="true"
+                [src]="'../../../../../assets/images/svg/private.svg'"
+              ></svg-icon>
+  
+              <p>Приватно</p>
+            </ng-container>
+            <ng-template #awaiting>
+              <svg-icon
+                class="head-icon"
+                [applyClass]="true"
+                [src]="'../../../../../assets/images/svg/awaits.svg'"
+              ></svg-icon>
+  
+              <p>На проверке</p>
+            </ng-template>
+          </div>
+          
+          
+        </div>
+        <div class="short-info row" *ngIf="this.recipe.status === 'public'">
+          <div class="row likes" >
             <svg-icon
               class="head-icon"
               [applyClass]="true"
-              [src]="'../../../../../assets/images/svg/awaits.svg'"
+              [src]="'../../../../../assets/images/svg/like.svg'"
             ></svg-icon>
-
-            <p>Рецепт на проверке</p>
-          </ng-template>
-        </div>
-        <div class="row date" *ngIf="this.recipe.status === 'public'">
-          <svg-icon
-            class="head-icon"
-            [applyClass]="true"
-            [src]="'../../../../../assets/images/svg/calendar.svg'"
-          ></svg-icon>
-          <p>{{ recipe.publicationDate | date: "shortDate" }}</p>
-        </div>
-        <div class="row likes" *ngIf="this.recipe.status === 'public'">
-          <svg-icon
-            class="head-icon"
-            [applyClass]="true"
-            [src]="'../../../../../assets/images/svg/like.svg'"
-          ></svg-icon>
-
-          <p>{{ recipe.likesId.length }}</p>
-        </div>
-
-        <div class="row cooks" *ngIf="this.recipe.status === 'public'">
-          <svg-icon
-            class="head-icon"
-            [applyClass]="true"
-            [src]="'../../../../../assets/images/svg/cook.svg'"
-          ></svg-icon>
-
-          <p>{{ recipe.cooksId.length }}</p>
-        </div>
-        <div class="row comments" *ngIf="this.recipe.status === 'public'">
-          <svg-icon
-            class="head-icon"
-            [applyClass]="true"
-            [src]="'../../../../../assets/images/svg/comment.svg'"
-          ></svg-icon>
-
-          <p>{{ recipe.comments.length }}</p>
-        </div>
-        
-      </div>
+  
+            <p>{{ recipe.likesId.length }}</p>
+          </div>
+  
+          <div class="row cooks">
+            <svg-icon
+              class="head-icon"
+              [applyClass]="true"
+              [src]="'../../../../../assets/images/svg/cook.svg'"
+            ></svg-icon>
+  
+            <p>{{ recipe.cooksId.length }}</p>
+          </div>
+          <div class="row comments">
+            <svg-icon
+              class="head-icon"
+              [applyClass]="true"
+              [src]="'../../../../../assets/images/svg/comment.svg'"
+            ></svg-icon>
+  
+            <p>{{ recipe.comments.length }}</p>
+          </div></div>
+     </div>
          <ul *ngIf="categories.length>0" class="categories">
         <li class="row" *ngFor="let category of categories" [routerLink]="'/categories/list/'+category.id">{{(category.name)}} </li>
       </ul>
+    
       <p *ngIf="recipe.description!==''" class="description">{{ recipe.description }}</p>
+        <div *ngIf="recipe.history!==''">
+
+
+        <button class="history-open"  (click)="showHistory=!showHistory">
+          <svg-icon [src]="'../../../../../assets/images/svg/history.svg'" [applyClass]="true" class="history-svg" ></svg-icon>
+          История рецепта</button>
+              <p *ngIf="showHistory" class="history" @history>{{recipe.history}}</p>
+
+      </div>
       <div class="row cards">
         <span *ngIf="recipe.preparationTime !== ''">
           <p class="about">Время подготовки</p>
@@ -154,20 +168,20 @@
       </div>
     
     </div>
-
-    <div class="nutritions column" *ngIf="recipe.nutritions.length > 0">
-      <h2>Пищевая ценность</h2>
-      <ul class="nutritions-ul">
-        <li class="row" *ngFor="let nutrient of recipe.nutritions">
-          <p class="name">{{ nutrient.name }}</p>
-          <div class="row count">
-            <p *ngIf="nutrient.quantity">{{ nutrient.quantity }}</p>
-            <p *ngIf="nutrient.unit">{{ nutrient.unit }}</p>
-          </div>
-        </li>
-      </ul>
+     <div class="column nutr" *ngIf="recipe.nutritions.length>0">
+        <h2>Пищевая ценность</h2>
+  
+      <div class="nutrients"  >
+          <ng-container *ngFor="let nutrient of recipe.nutritions">
+                <p class="name">{{ nutrient.name }}</p>
+                <div class="row count">
+                  <p *ngIf="nutrient.quantity" >{{ nutrient.quantity }}</p>
+                  <p *ngIf="nutrient.unit">{{ nutrient.unit }}</p>
+                </div>
+          </ng-container>
+        </div>
+     </div>
      
-    </div>
   </div>
 
   <div class="column main">
@@ -204,18 +218,14 @@
             [class]="basketMode ? 'basket-icon basket-mode' : 'basket-icon'"
             [src]="'../../../../../assets/images/svg/basket.svg'"
           ></svg-icon>
-          Составить список покупок
+          {{!basketMode?'Составить':'Убрать'}} список покупок
         </button>
-        <ul>
-          <li
-            class="row ingredient"
-            [ngClass]="{ 'i-have': iHaveIndgredient[i] }"
-            *ngFor="let ingredient of recipe.ingredients; let i = index"
-          >
+        <ul class="recipe-ingredients" >
+          <ng-container
+            *ngFor="let ingredient of recipe.ingredients; let i = index">
             <div
               class="checkbox"
-              (click)="iHaveIndgredient[i] = !iHaveIndgredient[i]"
-            >
+              (click)="iHaveIndgredient[i] = !iHaveIndgredient[i]">
               <svg-icon
                 *ngIf="iHaveIndgredient[i]"
                 class="checkbox-icon"
@@ -223,9 +233,9 @@
                 [src]="'../../../../../assets/images/svg/checkbox.svg'"
               ></svg-icon>
             </div>
-            <p class="name">{{ ingredient.name }}</p>
-            <div class="row count">
-              <p>{{ ingredient.quantity }}</p>
+            <p [ngClass]="{ 'i-have': iHaveIndgredient[i] }" class="name">{{ ingredient.name }}</p>
+            <div [ngClass]="{ 'i-have': iHaveIndgredient[i] }" class="row count">
+              <p class="quantity"> {{ ingredient.quantity }}</p>
               <p>{{ ingredient.unit }}</p>
             </div>
 
@@ -237,9 +247,13 @@
             >
               {{ basket[i] ? "−" : "+" }}
             </div>
-          </li>
+            <div *ngIf="!basketMode"></div>
+          </ng-container>
         </ul>
       </div>
+
+
+      
     </div>
   </div>
 

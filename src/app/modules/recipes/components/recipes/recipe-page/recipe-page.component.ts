@@ -12,11 +12,14 @@ import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { RouteEventsService } from 'src/app/modules/controls/route-events.service';
 import { CategoryService } from '../../../services/category.service';
 import { ICategory } from '../../../models/categories';
+import { trigger } from '@angular/animations';
+import { heightAnim } from 'src/tools/animations';
 
 @Component({
   selector: 'app-recipe-page',
   templateUrl: './recipe-page.component.html',
   styleUrls: ['./recipe-page.component.scss'],
+  animations: [trigger('history',heightAnim())]
 })
 export class RecipePageComponent implements OnInit {
   constructor(
@@ -32,6 +35,7 @@ export class RecipePageComponent implements OnInit {
   ) {}
   dataLoaded = false;
 
+  showHistory = false;
   onSkipHandler() {
     this.router.navigate([this.routerEventsService.previousRoutePath.value]);
   }

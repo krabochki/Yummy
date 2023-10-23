@@ -156,6 +156,8 @@ border-radius: var(--space-s) ;
 	border: none;
     outline: none;
     color:var(--color-foreground);
+        font-variant-ligatures: none;
+
     font-family: var(--font-family-main);
 }
 

@@ -314,8 +314,7 @@
         10,
         2,
         1,
-        8,
-        5
+        8
       ],
       "likesId": [
         9,
@@ -447,8 +446,7 @@
       "favoritesId": [
         4,
         6,
-        2,
-        5
+        2
       ],
       "likesId": [
         4,
@@ -1421,8 +1419,7 @@
         9
       ],
       "favoritesId": [
-        10,
-        5
+        10
       ],
       "likesId": [
         9,
@@ -1781,7 +1778,8 @@
       "servings": 6,
       "authorId": 7,
       "cooksId": [
-        9
+        9,
+        5
       ],
       "favoritesId": [
         2
@@ -3777,6 +3775,28 @@
       "comments": [],
       "publicationDate": "",
       "status": "awaits"
+    },
+    {
+      "name": "Рикотта в сливочном соусе",
+      "ingredients": [],
+      "instructions": [],
+      "mainPhotoUrl": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 5,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 32,
+      "comments": [],
+      "publicationDate": "",
+      "status": "awaits"
     }
   ],
   "users": [
@@ -3875,7 +3895,8 @@
       "fullName": "Ольга Смирнова",
       "followersIds": [
         2,
-        6
+        6,
+        5
       ],
       "socialNetworks": [
         {
@@ -3890,7 +3911,7 @@
       "personalWebsite": "https://www.cookingadventures.com/",
       "location": "Лондон, Великобритания",
       "registrationDate": "2023-04-02",
-      "profileViews": 4911,
+      "profileViews": 4921,
       "role": "user"
     },
     {
@@ -3908,7 +3929,7 @@
       "personalWebsite": "https://angular.io/errors/",
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 1617
+      "profileViews": 1647
     },
     {
       "id": 6,
@@ -3925,7 +3946,8 @@
         2,
         4,
         9,
-        10
+        10,
+        5
       ],
       "socialNetworks": [
         {
@@ -3940,7 +3962,7 @@
       "personalWebsite": "https://www.healthandnutrition.com/",
       "location": "Сидней, Австралия",
       "registrationDate": "2023-06-18",
-      "profileViews": 4341,
+      "profileViews": 4345,
       "role": "user"
     },
     {
@@ -3998,7 +4020,7 @@
       "personalWebsite": "https://www.interiordesignsbyvictoria.com/",
       "location": "Милан, Италия",
       "registrationDate": "2023-08-12",
-      "profileViews": 3213,
+      "profileViews": 3217,
       "role": "user"
     },
     {
@@ -4012,7 +4034,8 @@
       "followersIds": [
         4,
         8,
-        10
+        10,
+        5
       ],
       "socialNetworks": [
         {
@@ -4027,7 +4050,7 @@
       "personalWebsite": "https://www.techenthusiast.com/",
       "location": "Сан-Франциско, США",
       "registrationDate": "2023-09-03",
-      "profileViews": 2755,
+      "profileViews": 2775,
       "role": "user"
     },
     {
@@ -4055,7 +4078,7 @@
       "personalWebsite": "",
       "location": "Лондон, Великобритания",
       "registrationDate": "2023-10-19",
-      "profileViews": 2360,
+      "profileViews": 2362,
       "role": "user"
     }
   ]

@@ -9,7 +9,7 @@
   <ng-template #sceleton >
 
 
-    <div class="recipe sceleton null" *ngIf="dataLoaded; else sceleton">
+    <div class="recipe sceleton null">
 
 
     <p>Здесь могла быть <br> ваша реклама</p>
@@ -20,6 +20,8 @@
 </ng-template>
 <div  *ngIf="dataLoaded && recipe.id>0; else sceleton"  class="recipe" [title]="recipe.name">
   <div class="top">
+    <div>   
+</div>
     <div *ngIf="recipe.authorId===currentUserId || recipe.status==='public'" (click)="recipe.status==='public'?makeThisRecipeFavorite():null" class="fav">
       <svg-icon 
         [src]="
@@ -33,9 +35,12 @@
     </div>
   </div>
   <div class="bottom">
-    <div class="title">
-      <h1 [routerLink]="'/recipes/list/'+recipe.id">{{ recipe.name }}</h1>
+    <div class="title" [ngClass]="{'no-author':!showAuthor}">
+      <h1  [routerLink]="'/recipes/list/'+recipe.id">{{ recipe.name }}</h1>
     </div>
+        <div  *ngIf="showAuthor" class="author"> 
+          {{author.fullName}}</div>
+
     <div class="rate-panel" *ngIf="!moderMode || (recipe.status==='public')">
       <div class="rate-item likes" (click)="likeThisRecipe()">
         <svg-icon

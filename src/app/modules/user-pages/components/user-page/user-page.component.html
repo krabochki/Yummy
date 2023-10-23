@@ -106,12 +106,12 @@
 
       <div>
         <h3>Поделиться этим аккаунтом</h3>
-        <div class="row social">
-          <div class="social-btn"></div>
-             <div class="social-btn"></div>
-                <div class="social-btn"></div>
-                   <div class="social-btn"></div>
-                      <div class="social-btn"></div>
+        <div >
+          <div ></div>
+             <div ></div>
+                <div ></div>
+                   <div></div>
+                      <div ></div>
         </div>
       </div>
     </div>
@@ -267,7 +267,7 @@
     
     <app-vertical-recipe-list *ngIf="userRecipes.length > 0; else noRecipes"
       [cols]="3" 
-      [blocks]="displayRecipes"></app-vertical-recipe-list>
+      [blocks]="displayRecipes" [showAuthor]="false"></app-vertical-recipe-list>
    
   </ng-template>
 

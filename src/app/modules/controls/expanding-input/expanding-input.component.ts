@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  HostListener,
   Input,
   OnInit,
   ViewChild,
@@ -66,8 +66,12 @@ export class ExpandingInputComponent implements OnInit {
     }
   }
 
-  onChange: any = () => {};
-  onTouched: any = () => {};
+  onChange: any = () => {
+//
+  };
+  onTouched: any = () => {
+//
+  };
   writeValue(value: string): void {
     this.value = value;
   }

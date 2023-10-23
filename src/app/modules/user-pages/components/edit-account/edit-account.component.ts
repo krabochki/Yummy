@@ -20,7 +20,6 @@ import {
   anySiteMask,
 } from 'src/tools/regex';
 import { UserService } from '../../services/user.service';
-import { FormArray } from '@angular/forms';
 
 @Component({
   selector: 'app-edit-account',
@@ -175,6 +174,7 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
   }
 
   //проверяем равны ли все поля в обьектах
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   areObjectsEqual(obj1: any, obj2: any): boolean {
     const keys1 = Object.keys(obj1);
     const keys2 = Object.keys(obj2);

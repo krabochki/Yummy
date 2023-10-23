@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { IUser } from '../models/users';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, catchError, map, of, switchMap, take, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, map, switchMap, take, tap, throwError } from 'rxjs';
 import { RecipeService } from '../../recipes/services/recipe.service';
 
 @Injectable({
@@ -126,7 +126,7 @@ export class UserService {
     return this.http.put<IUser>(`${this.url}/${user.id}`, user);
   }
 
-  deleteUser(deletableUser: IUser) {
+  deleteUser() {
 
     //исправить: не удаляет юзера и выдает ошибки если у него более 1 своего рецепта
 

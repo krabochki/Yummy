@@ -4,11 +4,7 @@ import { IUser, nullUser } from '../../user-pages/models/users';
 import {
   BehaviorSubject,
   Observable,
-  catchError,
   map,
-  of,
-  switchMap,
-  throwError,
 } from 'rxjs';
 import { RecipeService } from '../../recipes/services/recipe.service';
 import { UserService } from '../../user-pages/services/user.service';

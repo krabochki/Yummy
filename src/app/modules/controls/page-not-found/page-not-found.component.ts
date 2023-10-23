@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-page-not-found',
@@ -6,7 +6,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   styleUrls: ['../../authentication/common-styles.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PageNotFoundComponent {
+export class PageNotFoundComponent implements OnInit {
   ngOnInit() {
     window.scrollTo(0, 0);
   }

@@ -9,6 +9,7 @@ import { RecipeService } from '../../../services/recipe.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CategoryListItemComponent implements OnInit {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @Input() category: any = null;
 
   @Input() showRecipesNumber: boolean = false;

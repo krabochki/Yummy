@@ -1,6 +1,5 @@
 import { trigger } from '@angular/animations';
 import {
-  ChangeDetectorRef,
   Component,
   DoCheck,
   EventEmitter,

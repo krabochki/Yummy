@@ -60,7 +60,7 @@ export class SettingsComponent {
     if (event) {
       if (this.user.id) {
         // this.authService.logoutUser(); //выходим из аккаунта
-        this.userService.deleteUser(this.user); //удаляем человека
+        this.userService.deleteUser(); //удаляем человека
         // this.router.navigateByUrl('/');
       }
     }

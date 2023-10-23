@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IRecipe, nullRecipe } from 'src/app/modules/recipes/models/recipes';
 import { RecipeService } from '../../../services/recipe.service';

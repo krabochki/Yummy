@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChangeDetectionStrategy, Component, Input, forwardRef } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
@@ -20,8 +21,12 @@ export class CountInputComponent {
   @Input() readonly: boolean = false;
   disabled = false;
   value: string = '';
-  onChange: any = () => {};
-  onTouched: any = () => {};
+  onChange: any = () => {
+    //
+  };
+  onTouched: any = () => {
+    //
+  };
 
   get val() {
     return Number(this.value);

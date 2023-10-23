@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Router } from '@angular/router';
 @Component({
   selector: 'app-greetings',
   templateUrl: './greetings.component.html',

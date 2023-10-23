@@ -2,6 +2,7 @@ import { IComment } from 'src/app/modules/user-pages/models/comments';
 
 export interface IRecipe {
   id: number; // Уникальный идентификатор рецепта
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   mainPhotoUrl: any; // URL основного фото рецепта
   name: string; // Название рецепта
   description: string; // Описание рецепта
@@ -51,6 +52,7 @@ export interface Ingredient {
 }
 export interface Instruction {
   name: string; // Название ингредиента
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   images: any[3]; // Единица измерения
 }
 export interface Nutrition {

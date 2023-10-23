@@ -72,7 +72,7 @@ export class RecipeService {
   return this.http
     .delete(`${this.url}/${id}`)
     .pipe(
-      tap((answer) =>
+      tap(() =>
         this.recipesSubject.next(
           this.recipesSubject.value.filter((recipe) => recipe.id !== id),
         ),

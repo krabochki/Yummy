@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription, map } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { ICategory } from 'src/app/modules/recipes/models/categories';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 import { CategoryService } from 'src/app/modules/recipes/services/category.service';

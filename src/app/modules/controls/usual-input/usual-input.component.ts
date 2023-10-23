@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild, forwardRef } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
@@ -59,8 +60,12 @@ export class UsualInputComponent implements OnInit {
     }
   }
 
-  onChange: any = () => {};
-  onTouched: any = () => {};
+  onChange: any = () => {
+//
+  };
+  onTouched: any = () => {
+//
+  };
   writeValue(value: string): void {
     this.value = value;
   }

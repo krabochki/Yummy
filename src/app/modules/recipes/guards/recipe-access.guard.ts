@@ -2,15 +2,12 @@ import { Inject, Injectable } from '@angular/core';
 import {
   CanActivate,
   ActivatedRouteSnapshot,
-  RouterStateSnapshot,
-  Router,
 } from '@angular/router';
-import { map } from 'rxjs';
 
 import { AuthService } from '../../authentication/services/auth.service';
 import { RecipeService } from '../services/recipe.service';
 import { IUser, nullUser } from '../../user-pages/models/users';
-import { IRecipe, nullRecipe } from '../models/recipes';
+import { IRecipe } from '../models/recipes';
 
 
 @Injectable({
@@ -20,12 +17,10 @@ export class RecipeAccessGuard implements CanActivate {
   constructor(
     @Inject(AuthService) private auth: AuthService,
     @Inject(RecipeService) private recipeService: RecipeService,
-    private router: Router,
   ) {}
 
   canActivate(
     route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot,
   ): boolean {
     
     const recipeId = route.params?.['id'];

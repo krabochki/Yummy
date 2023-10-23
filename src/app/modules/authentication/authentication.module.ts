@@ -9,10 +9,11 @@ import { EmailConfirmationComponent } from './components/email-confirmation/emai
 import { GreetingsComponent } from './components/greetings/greetings.component';
 import { ControlDashboardComponent } from './components/control-dashboard/control-dashboard.component';
 import { ControlsModule } from '../controls/controls.module';
-import {MatIconModule} from '@angular/material/icon';
-import {MatButtonModule} from '@angular/material/button';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
+import { AuthGuard } from './guards/auth.guard';
+import { OnlyNoAuthGuard } from './guards/only-no-auth.guard';
+import { ModeratorGuard } from './guards/moderator.guard';
+import { AdminGuard } from './guards/admin.guard';
+import { SvgIconComponent, provideAngularSvgIcon } from 'angular-svg-icon';
 @NgModule({
   declarations: [
 
@@ -23,16 +24,16 @@ import {MatFormFieldModule} from '@angular/material/form-field';
     EmailConfirmationComponent,
     GreetingsComponent,
     ControlDashboardComponent,
+    
 
   ],
   imports: [
     CommonModule,
     AuthenticationRoutingModule,
     ControlsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    MatButtonModule
-  ]
+    SvgIconComponent
+  ],
+  providers: [provideAngularSvgIcon(),AuthGuard, AdminGuard, ModeratorGuard, OnlyNoAuthGuard]
+
 })
 export class AuthenticationModule { }

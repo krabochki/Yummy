@@ -1,12 +1,19 @@
 
-<h1>Hello everybody</h1>
-<p>It is very good website</p>
+<app-banner [notMain]="false"  [background]="'main-banner-background'"  [link]="'match'" [label]="'Готовьте с радостью\nЕшьте с удовольствием'" [buttonText]="'Подобрать рецепт'"></app-banner>
 
-<h3>Популярные рецепты</h3>
-<app-recipe-list [recipes]="popularRecipes"></app-recipe-list>
+<div class="recipes"><app-recipe-list [context]="'popular'" [recipes]="popularRecipes"></app-recipe-list></div>
 
-<h3>Недавние рецепты</h3>
-<app-recipe-list [recipes]="recentRecipes"></app-recipe-list>
+<app-category-list  [categories]="allCategories"></app-category-list>
 
-<h3>Категории</h3>
-<app-category-list [categories]="allCategories"></app-category-list>
+
+<app-banner  *ngIf="currentUser.id === 0" [link]="'greetings'" [info]="'Получи преимущества и расширенные функции зарегистрированных кулинаров'" [label]="'Откроем мир вкуса вместе'" [buttonText]="'Создать аккаунт'" [background]="'reg-banner-background'"></app-banner>
+
+<app-banner  *ngIf="currentUser.id !== 0" [link]="'recipes/add'" [info]="'Добавляйте подробные проверенные временем рецептом и делитесь опытом с другими кулинарами'" [label]="'Добавляйте рецепты и делитесь ими'" [buttonText]="'Создать рецепт'" [background]="'share-recipes-banner-background'"></app-banner>
+
+<app-banner  *ngIf="currentUser.id !== 0" [link]="'cooks'" [info]="'Посмотрите профили кулинаров и подчерпните идеи для ведения собственного профиля и рецептов!'" [label]="'Находите вдохновение совсем рядом'" [buttonText]="'Все кулинары'" [background]="'inspiration-banner-background'"></app-banner>
+
+
+<div class="recipes">
+    <app-recipe-list  [context]="'recent'" [recipes]="recentRecipes"></app-recipe-list>
+    
+</div>

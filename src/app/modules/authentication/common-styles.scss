@@ -1,13 +1,24 @@
 @import "../../../tools/UI/UI.scss";
 
-.one-column {
+.container.one-column {
+
   hr,
   .tagline {
     width: 62%;
     margin: 0 auto;
   }
   row-gap: 0;
+  
+  .svg-pic{
+        max-height: 11em;
 
+  }
+  .image{
+    display: flex;
+    justify-content: center;
+  }
+
+  
   .form {
     display: flex;
     flex-direction: column;
@@ -24,8 +35,15 @@
   .buttons {
     margin: 0 auto;
   }
+    row-gap: var(--space-s);
+
 }
+
+ .svg-pic {
+    fill: var(--color-foreground);
+  }
 .container {
+
   padding-left: calc(14.4vw + 0 * (100vw - 768px) / 760);
   padding-right: calc(14.4vw + 0 * (100vw - 768px) / 760);
 
@@ -43,11 +61,17 @@
     grid-template-columns: 11em 32em;
   }
 
-  svg {
-    fill: var(--color-foreground);
+  a{
+    color:var(--color-primary);
+    text-decoration: underline;
+    font-weight: 700;
+    text-align: center;
   }
 
+ 
+
   .content {
+ 
     @include flexy(column);
     row-gap: var(--space-m);
 
@@ -81,7 +105,14 @@
 
 @media (max-width: 900px) {
 
-  
+  a{
+  font-size: 1.4rem;
+ }
+
+   .svg-pic {
+      height: 20rem;
+    }
+
 .one-column {
   padding: 0;
   hr,
@@ -114,15 +145,11 @@
 
   .container {
     zoom: 0.7;
-  }
-
-  .container {
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     row-gap: var(--space-xl);
-
     margin: var(--space-2xl) 10em;
 
     &.img-container {
@@ -131,9 +158,7 @@
       grid-template-rows: auto;
     }
 
-    svg {
-      height: 20rem;
-    }
+   
 
     .content {
       .tagline {
@@ -157,10 +182,18 @@
 }
 
 
+@media(max-width:768px){
+  .container{
+    margin: var(--space-2xl) 7em;
+  }
+  .container.one-column .tagline{
+    width: 90%;
+  }
+}
+
 @media (max-width: 480px) {
 
  
-
 
 
   .container {
@@ -175,9 +208,11 @@ padding: 0;
       grid-template-rows: auto;
     }
 
-    svg {
-      height: 20rem;
+    &.not-found{
+          margin: var(--space-2xl) 5em;
+
     }
+
 
     .content {
       .tagline {
@@ -198,4 +233,16 @@ padding: 0;
       }
     }
   }
+}
+.svg-pic{
+  height: 20em;
+}
+
+
+.svg-pic{
+  width: auto;
+}
+app-modal{
+  position: fixed;
+  z-index: 10;
 }

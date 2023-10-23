@@ -1,14 +1,55 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { IRecipe } from '../models/recipes';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-export class RecipeService {
+export class RecipeService  {
+  private recipesSubject = new BehaviorSubject<IRecipe[]>([]);
+  recipes$ = this.recipesSubject.asObservable();
+
+
+  
   url: string = 'http://localhost:3000/recipes';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.getRecipes().subscribe((data) => {
+      this.recipesSubject.next(data);
+    });
+  }
+
+  deleteDataAboutDeletingUser(authorId: number) {
+    let recipes: IRecipe[] = [];
+    this.getRecipes().subscribe((data) => {
+      recipes = data;
+
+      recipes.forEach((recipe) => {
+        if (recipe.authorId === authorId) {
+          this.deleteRecipe(recipe.id).subscribe();
+        } else {
+          const before = recipe;
+          if (recipe.likesId)
+            recipe.likesId = recipe.likesId.filter(
+              (element) => element !== authorId,
+            );
+          if (recipe.cooksId)
+            recipe.cooksId = recipe.cooksId.filter(
+              (element) => element !== authorId,
+            );
+          if (recipe.comments)
+            recipe.comments = recipe.comments.filter(
+              (element) => element.id !== authorId,
+            );
+          if (before !== recipe) {
+            this.updateRecipe(recipe);
+
+          }
+        }
+      });
+    });
+  }
 
   getRecipes() {
     return this.http.get<IRecipe[]>(this.url);
@@ -19,14 +60,94 @@ export class RecipeService {
   }
 
   deleteRecipe(id: number) {
-    return this.http.delete<any>(`${this.url}/${id}`);
+    return this.http.delete<IRecipe>(`${this.url}/${id}`);
   }
 
   postRecipe(recipe: IRecipe) {
     return this.http.post<IRecipe>(this.url, recipe);
   }
 
-  updateProduct(recipe: IRecipe) {
-    return this.http.put<IRecipe>(`${this.url}/${recipe.id}`, recipe);
+  updateRecipe(recipe: IRecipe) {
+        const url = `${this.url}/${recipe.id}`;
+
+        return this.http
+          .put<IRecipe>(url, recipe)
+          .subscribe((updatedRecipe) => {
+            // Получите текущие рецепты из BehaviorSubject
+            const currentRecipes = this.recipesSubject.value;
+
+            // Найдите индекс обновляемого рецепта в массиве
+            const index = currentRecipes.findIndex(
+              (r) => r.id === updatedRecipe.id,
+            );
+
+            // Если рецепт найден, замените его на обновленный рецепт
+            if (index !== -1) {
+              const updatedRecipes = [...currentRecipes]; // Клонируйте текущий массив
+              updatedRecipes[index] = updatedRecipe; // Замените рецепт
+              this.recipesSubject.next(updatedRecipes); // Обновите данные в BehaviorSubject
+            }
+          });
+
+  }
+
+  getPopularRecipes(recipes: IRecipe[]) {
+    return recipes.sort((a, b) => b.likesId.length - a.likesId.length);
+  }
+  getRecentRecipes(recipes: IRecipe[]) {
+    return recipes.sort((a, b) => {
+      const dateA = new Date(a.publicationDate);
+      const dateB = new Date(b.publicationDate);
+      return dateB.getTime() - dateA.getTime();
+    });
+  }
+
+  getRecipesByCategory(recipes: IRecipe[], categoryId: number) {
+    return recipes.filter((recipe) => recipe.categories.includes(categoryId));
+  }
+  getRecipesByUser(recipes: IRecipe[], userId: number): IRecipe[] {
+    return recipes.filter((recipe) => recipe.authorId === userId);
+  }
+
+  addRecipeToFavorites(userId: number, recipe: IRecipe): IRecipe {
+    if (!recipe.favoritesId.includes(userId)) {
+      recipe.favoritesId.push(userId);
+    }
+    return recipe;
+  }
+  removeRecipeFromFavorites(userId: number, recipe: IRecipe): IRecipe {
+    if (recipe.favoritesId.includes(userId)) {
+      recipe.favoritesId = recipe.favoritesId.filter(
+        (favorite) => favorite !== userId,
+      );
+    }
+
+    return recipe;
+  }
+
+  likeRecipe(userId: number, recipe: IRecipe): IRecipe {
+    if (!recipe.likesId.includes(userId)) {
+      recipe.likesId.push(userId);
+    }
+    return recipe;
+  }
+  unlikeRecipe(userId: number, recipe: IRecipe): IRecipe {
+    if (recipe.likesId.includes(userId)) {
+      recipe.likesId = recipe.likesId.filter((liked) => liked !== userId);
+    }
+    return recipe;
+  }
+
+  cookRecipe(userId: number, recipe: IRecipe): IRecipe {
+    if (!recipe.cooksId.includes(userId)) {
+      recipe.cooksId.push(userId);
+    }
+    return recipe;
+  }
+  uncookRecipe(userId: number, recipe: IRecipe): IRecipe {
+    if (recipe.cooksId.includes(userId)) {
+      recipe.cooksId = recipe.cooksId.filter((cooked) => cooked !== userId);
+    }
+    return recipe;
   }
 }

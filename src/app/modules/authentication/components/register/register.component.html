@@ -1,26 +1,48 @@
 <div class="container one-column">
-  
-   <div class="content">
-        <h1 class="label">Регистрация</h1>
-        <p class="tagline">Введи свою почту, а также придумай имя пользователя и пароль.
-Если ты забудешь пароль, ты всегда сможешь восстановить его.</p>
+
+        <div class="content">
+                <h1 class="label">Регистрация</h1>
+                <p class="tagline">Введи свою почту, а также придумай имя пользователя и пароль.
+                        Если ты забудешь пароль, ты всегда сможешь восстановить его.</p>
 
 
 
-    <div class="form">
-                     <app-input [type]="'input'" [required]="true" [mask]="usernameMask" [warningText]="'Имя пользователя должно содержать от 4 до 20 символов, среди которых могут быть буквы (минимум одна), цифры, а также нижние почеркивания и точки (не подряд)'" placeholder="Имя пользователя" ></app-input>
+                <div class="form">
+                        <app-input [type]="'input'" [required]="true" (inputValueChange)="getUsername($event)" [mask]="usernameMask"
+                                [warningText]="'Имя пользователя должно содержать от 4 до 20 символов, среди которых могут быть буквы (минимум одна), цифры, а также нижние почеркивания и точки (не подряд)'"
+                                placeholder="Имя пользователя"></app-input>
 
-             <app-input [type]="'input'" [required]="true" [mask]="loginMask" [warningText]="'Введите корректный адрес электронной почты'" placeholder="Введите почту" ></app-input>
-             <app-input [type]="'input'" [max]="20" [required]="true" [mask]="passMask" [warningText]="'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'" placeholder="Введите пароль" (inputValueChange)="getPassword($event)" [password]="true"></app-input>
-    </div>
+                        <app-input [type]="'input'" (inputValueChange)="getEmail($event)" [required]="true" [mask]="emailMask"
+                                [warningText]="'Введите корректный адрес электронной почты'"
+                                placeholder="Введите почту"></app-input>
+                        <app-input [type]="'input'" [max]="20" [required]="true" [mask]="passMask"
+                                [warningText]="'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'"
+                                placeholder="Введите пароль" (inputValueChange)="getPassword($event)"
+                                [password]="true"></app-input>
+                </div>
 
 
-               <hr>
+                <hr>
 
-        
-       <div class="buttons">
 
-            <app-button [rounded]="true" [color]="'prim'"  [text]="'Регистрация'"></app-button>
-       </div>
-   </div>
+                <div class="buttons" >
+
+                        <app-button  
+                        
+                        [ngStyle]="{'pointer-events':(this.emailMask.test(this.email) &&
+      this.usernameMask.test(this.username) &&
+      this.passMask.test(this.pass))?'all':'none'}"
+                        (click)="modalShow=true"
+                        [disabled]="this.emailMask.test(this.email) &&
+      this.usernameMask.test(this.username) &&
+      this.passMask.test(this.pass)"  [rounded]="true" [color]="'prim'" [text]="'Регистрация'"></app-button>
+                </div>
+        </div>
 </div>
+
+<app-modal @modal  [style]="'prim'" *ngIf="modalShow" [title]="'Подтвердите регистрацию'" [type]="'yesOrNo'" (resultEmit)="handleModalResult($event)" [buttonsText]="['Да','Нет']" [description]="'Вы уверены, что хотите зарегистрироваться с введенными данными?'"></app-modal>
+
+
+<app-modal @modal [style]="'sec'" [style]="'prim'" *ngIf="modalFailShow" [title]="'Неудачная попытка регистрации'" [type]="'Ok'" (resultEmit)="handleFailModalResult($event)" [buttonsText]="['Хорошо']" [description]="failText"></app-modal>
+
+<app-modal [style]="'sec'" @modal *ngIf="modalSuccessShow" [title]="'Успешная регистрация!'" [type]="'Ok'" (resultEmit)="handleSuccessModalResult($event)" [buttonsText]="['На главную']" [description]="'Регистрация с введенными данными прошла успешно. Вы можете пользоваться всеми функциями сайта.'"></app-modal>

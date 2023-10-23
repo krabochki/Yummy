@@ -1,44 +1,195 @@
-
-
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <div class="header">
+  <div class="label" (click)="scrollTop()" routerLink="/">
+    {{ "yummy" | titlecase }}
+  </div>
 
-    <label routerLink="">{{'yummy'|titlecase}}</label>
-    
-    <div *ngIf="!mobile" class="menu-items">
-        <app-select [items]="recipeSelectItems" [disabling]="[true,false,false,true,false]" [routerLinks]="['my-recipes','all-recipes','all-categories','favorite-recipes','recipe-definition']"></app-select>
-        <app-select [items]="cooksSelectItems" [disabling]="[true,false,false]" [routerLinks]="['my-profile','all-cooks','updates']"></app-select>
-        <a routerLink="cooking-plan" class="cook-plan" [ngClass]="{'dsl':!authService.isLoggedIn?true:false}">План готовки</a>
+  <div *ngIf="!mobile" class="menu-items">
+    <app-select
+      [items]="recipeSelectItems"
+      [disabling]="
+        this.currentUser.id === 0
+          ? [true, false, false, true, false]
+          : [false, false, false, false, false]
+      "
+      [routerLinks]="[
+        'recipes/yours',
+        'recipes',
+        'categories',
+        'recipes/favorite',
+        'match'
+      ]"
+    ></app-select>
+    <app-select
+      [items]="cooksSelectItems"
+      [disabling]="
+        this.currentUser.id === 0 ? [true, false, false] : [false, false, false]
+      "
+      [routerLinks]="['cooks/list/' + currentUser.id, 'cooks', 'cooks/updates']"
+    ></app-select>
+    <a
+      (click)="linkClick()"
+      @modal
+      routerLink="plan"
+      class="cook-plan"
+      [ngClass]="{ dsl: this.currentUser.id === 0 ? true : false }"
+      >План готовки</a
+    >
+  </div>
+
+  <div class="buttons" *ngIf="!mobile">
+    <button
+      routerLink="greetings"
+      *ngIf="this.currentUser.id !== 0"
+      class="svg-button">
+      <svg-icon [src]="'../../../assets/images/svg/bell.svg'" [class]="'svg'"
+        >></svg-icon
+      >
+
+      <div class="notifications" *ngIf="notificationsCount > 0">
+        {{ notificationsCount }}
+      </div>
+    </button>
+
+    <button
+      [routerLink]="
+        this.currentUser.id === 0 ? 'greetings' : 'cooks/list/' + currentUser.id
+      "
+      class="svg-button">
+      <ng-template #account>
+        <svg-icon
+          [src]="'../../../assets/images/svg/account.svg'"
+          [class]="'svg'"
+          >></svg-icon
+        >
+      </ng-template>
+      <svg-icon
+        *ngIf="this.currentUser.id === 0; else account"
+        [src]="'../../../assets/images/svg/enter.svg'"
+        [class]="'svg'"
+        >></svg-icon
+      >
+    </button>
+  </div>
+  <div
+    [class.unactive]="currentUser.id === 0"
+    *ngIf="mobile"
+    class="mobile-buttons-panel"
+  >
+    <div
+      (click)="currentUser.id === 0 ? (noAccessModalShow = true) : null"
+      [routerLink]="
+        currentUser.id === 0 ? null : '/cooks/list/' + currentUser.id
+      "
+    >
+      <svg-icon
+        class="header-top-svg"
+        [applyClass]="true"
+        [src]="'../../../../../assets/images/svg/header/account.svg'"
+      ></svg-icon>
     </div>
 
-    <button routerLink="authentication/greetings" *ngIf="!mobile" class="svg-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
-        <path d="M11.4443 19.6658C11.0765 19.6658 10.7639 19.5371 10.5066 19.2798C10.2492 19.0224 10.1205 18.7098 10.1205 18.342C10.1205 17.9742 10.2492 17.6616 10.5066 17.4042C10.7639 17.1468 11.0765 17.0181 11.4443 17.0181H17.0579V3.36915H11.4443C11.0765 3.36915 10.7639 3.24046 10.5066 2.98307C10.2492 2.72569 10.1205 2.41309 10.1205 2.04528C10.1205 1.67749 10.2492 1.36489 10.5066 1.1075C10.7639 0.850123 11.0765 0.721436 11.4443 0.721436H17.0579C17.7957 0.721436 18.4214 0.978279 18.9351 1.49196C19.4488 2.00565 19.7056 2.63138 19.7056 3.36915V17.0181C19.7056 17.7559 19.4488 18.3816 18.9351 18.8953C18.4214 19.409 17.7957 19.6658 17.0579 19.6658H11.4443ZM8.30788 11.5175H2.08508C1.71728 11.5175 1.40469 11.3888 1.14729 11.1314C0.889918 10.874 0.76123 10.5614 0.76123 10.1936C0.76123 9.82584 0.889918 9.51324 1.14729 9.25585C1.40469 8.99846 1.71728 8.86976 2.08508 8.86976H8.30788L6.75923 7.32113C6.51018 7.07207 6.38565 6.76726 6.38565 6.40671C6.38565 6.04614 6.51018 5.73771 6.75923 5.48141C7.0083 5.21569 7.31438 5.08103 7.67748 5.07741C8.04056 5.07378 8.35496 5.20483 8.62068 5.47055L12.4185 9.26834C12.6748 9.53406 12.8029 9.84249 12.8029 10.1936C12.8029 10.5448 12.6748 10.8532 12.4185 11.1189L8.62068 14.9167C8.36439 15.1824 8.05415 15.3135 7.68997 15.3098C7.32578 15.3062 7.01554 15.1716 6.75923 14.9059C6.51018 14.6496 6.38746 14.3393 6.39107 13.9751C6.39469 13.611 6.52103 13.3043 6.77009 13.0553L8.30788 11.5175Z" fill="white"/>
-        </svg></button>
-        
-
-        <div (click)="hambOpen=!hambOpen" *ngIf="mobile" class="hamburger">
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-
-</div>
-
-<div *ngIf="hambOpen" class="menu-mobile" @settingsMobile>
-
-    
-
-    <div class="menu-mobile-cont" >
-
-        <div class="close" (click)="hambOpen=!hambOpen">✕</div>
-        <label>Меню</label>
-
-        <div class="menu-mobile-links">
-            <app-select (emitter)="closeSettings()" [items]="recipeSelectItems" [disabling]="[true,false,false,true,false]" [routerLinks]="['my-recipes','all-recipes','all-categories','favorite-recipes','recipe-definition']"></app-select>
-            <app-select (emitter)="closeSettings()"  [items]="cooksSelectItems" [disabling]="[true,false,false]" [routerLinks]="['my-profile','all-cooks','updates']"></app-select>
-            <a routerLink="cooking-plan" class="cook-plan" [ngClass]="{'dsl':!authService.isLoggedIn?true:false}">План готовки</a>
-        </div>
-        <button class="auth" routerLink="authentication/greetings">Авторизация</button>
-    
+    <div (click)="currentUser.id === 0 ? (noAccessModalShow = true) : null">
+      <div class="count">10</div>
+      <svg-icon
+        class="header-top-svg"
+        [applyClass]="true"
+        [src]="'../../../../../assets/images/svg/header/notification.svg'"
+      ></svg-icon>
     </div>
-   
+    <div
+      (click)="currentUser.id === 0 ? (noAccessModalShow = true) : null"
+      [routerLink]="currentUser.id === 0 ? null : '/plan'"
+    >
+      <svg-icon
+        class="header-top-svg"
+        [applyClass]="true"
+        [src]="'../../../../../assets/images/svg/header/calendar.svg'"
+      ></svg-icon>
+    </div>
+  </div>
 </div>
+
+<div *ngIf="mobile" class="menu-bottom">
+  <div class="item-cont">
+    <div class="item" [routerLink]="''">
+      <svg-icon
+        [class]="activePage === 'main' ? 'header-svg active' : 'header-svg'"
+        [applyClass]="true"
+        [src]="
+          '../../../../../assets/images/svg/header/home' +
+          (activePage === 'main' ? '-active' : '') +
+          '.svg'
+        "
+      ></svg-icon>
+      <p [class.active]="activePage === 'main'">Главная</p>
+    </div>
+    <div class="item" [routerLink]="'/recipes'">
+      <svg-icon
+        [class]="activePage === 'recipes' ? 'header-svg active' : 'header-svg'"
+        [applyClass]="true"
+        [src]="
+          '../../../../../assets/images/svg/header/recipes' +
+          (activePage === 'recipes' ? '-active' : '') +
+          '.svg'
+        "
+      ></svg-icon>
+      <p [class.active]="activePage === 'recipes'">Рецепты</p>
+    </div>
+    <div class="item">
+      <!---->
+      <div
+        class="main-button"
+        [routerLink]="currentUser.id === 0 ? '/greetings' : '/recipes/add'"
+      >
+        <svg-icon
+          class="header-svg"
+          [applyClass]="true"
+          [src]="
+            '../../../../../assets/images/svg/header/' +
+            (currentUser.id === 0 ? 'login' : 'add') +
+            '.svg'
+          "
+        ></svg-icon>
+      </div>
+    </div>
+    <div class="item" [routerLink]="'/cooks'">
+      <svg-icon
+        [class]="activePage === 'cooks' ? 'header-svg active' : 'header-svg'"
+        [applyClass]="true"
+        [src]="
+          '../../../../../assets/images/svg/header/profiles' +
+          (activePage === 'cooks' ? '-active' : '') +
+          '.svg'
+        "
+      ></svg-icon>
+      <p [class.active]="activePage === 'cooks'">Кулинары</p>
+    </div>
+    <div class="item" [routerLink]="'/match'">
+      <svg-icon
+        [class]="activePage === 'match' ? 'header-svg active' : 'header-svg'"
+        [applyClass]="true"
+        [src]="
+          '../../../../../assets/images/svg/header/match' +
+          (activePage === 'match' ? '-active' : '') +
+          '.svg'
+        "
+      ></svg-icon>
+      <p [class.active]="activePage === 'match'">Подбор</p>
+    </div>
+  </div>
+</div>
+
+<app-modal
+  @modal
+  *ngIf="noAccessModalShow"
+  [style]="'prim'"
+  [title]="'Доступ к разделу ограничен'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleNoAccessModal($event)"
+  [buttonsText]="['Давайте', 'Не сейчас']"
+  [description]="
+    'Этот раздел могут просматривать только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'
+  "
+></app-modal>

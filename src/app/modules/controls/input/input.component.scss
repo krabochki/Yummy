@@ -1,7 +1,15 @@
 @import "../../../../tools/UI/UI.scss";
 
 
+.input{
 
+    &.fit-content{
+      width: 100%;
+    }
+}
+input:focus{
+  background-color:  var(--color-background-deeper);
+}
 input,
 textarea {
   background-color: var(--color-background-deeper-unactive);
@@ -17,7 +25,13 @@ textarea {
   height: calc(var(--base) + var(--space-xs) + var(--space-m) + 0.5em);
   padding-bottom: var(--space-xs);
   padding-top: var(--space-m);
+  transition: background-color 0.2s ease-in-out;
 
+      &.fit-content{
+      width: 100%;
+      max-width: 100%;
+      min-width: 100%;
+    }
   &:focus {
   border-bottom-width: 2px;
   border-bottom-color: var(--color-secondary);
@@ -38,7 +52,7 @@ textarea {
 .req {
   color: var(--color-primary);
   font-size: 0.7em;
-  width: 22em;
+  width: 100%;
   margin-top:0.2em;
   line-height: 1.1;
 
@@ -47,7 +61,6 @@ textarea {
   }
 }
 div {
-  width: fit-content;
   position: relative;
 }
 .placeholder {
@@ -95,20 +108,25 @@ div {
   padding: var(--space-s);
   cursor: pointer;
 
- 
+
+}
 
   svg {
-    fill: var(--color-foreground);
     width: 1em;
+    fill: var(--color-foreground);
 
-    &.open {
-      fill: var(--color-secondary);
-    }
-     &.uncorrect{
+    
+    
+  }
+ .uncorrect{
     fill:var(--color-primary)
   }
+  .correct{
+          fill: var(--color-secondary);
+
   }
-}
+
+
 
 @media (max-width:900px){
   *{
@@ -121,11 +139,6 @@ div {
 }
 
 @media (max-width:480px){
-  *{
-     @include adaptive-font(26,18);
-    
-}
-.req {
-  color: var(--color-primary);
-  font-size: 1.3em;}
+
+
 }

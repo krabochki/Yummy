@@ -1,1 +1,451 @@
-<p>user-page works!</p>
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<ng-template #skeleton>
+  <div class="container skeleton" @fadeIn>
+    <div class="block block1">
+      <div class="row main">
+        <img src="../../../../../assets/images/userpic.png" alt="User Photo" />
+        <div class="col info">
+          <div class="col name">
+            <h1>Loading FullName</h1>
+            <p class="username">@loadusername</p>
+          </div>
+
+          <p class="quote">Loading big deep quote of loading user</p>
+
+          <app-button
+            [disabled]="false"
+            [color]="'prim'"
+            [style]="'filled'"
+            [rounded]="true"
+            [text]="'Подписаться'"
+          ></app-button>
+        </div>
+      </div>
+      <div class="row" class="statistics">
+        <div class="col">
+          <p>
+            0 рецептов
+          </p>
+        </div>
+        <div class="col">
+          <p>
+            0 подписчиков
+          </p>
+        </div>
+        <div class="col">
+          <p>
+0 подписок
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="block block2">
+      <button>Рецепты</button>
+      <button>Подробнее</button>
+    </div>
+
+    <div class="block block3">
+      <div class="col description">
+        <h3>Описание</h3>
+        <p>
+          There will be very long and deep description of lifeway loading
+          user... We believe he is interesting person
+        </p>
+      </div>
+      <div
+        class="row"
+        class="socialAndAdd"
+        [ngStyle]="{
+          'grid-template-columns': '1fr 1fr'
+        }"
+      >
+        <div class="col">
+          <h3>Социальные сети</h3>
+          <ul class="col" class="links">
+            <li class="link" class="row">
+              <a class="center">Social Media</a>
+            </li>
+            <li class="link" class="row">
+              <a class="center">Social Media</a>
+            </li>
+            <li class="link" class="row">
+              <a class="center">Social Media</a>
+            </li>
+            <li class="link" class="row">
+              <a class="center">Social Media</a>
+            </li>
+            <li class="link" class="row">
+              <a class="center">Social Media</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col additional">
+          <h3>Доп. сведения</h3>
+          <ul>
+            <li class="row center">
+              <a>User personal website</a>
+            </li>
+            <li class="row center">
+              <p>Location</p>
+            </li>
+            <li class="row center">
+              <p>Аккаунт создан 01.01.2000</p>
+            </li>
+            <li class="row center">
+              <p>
+                0 просмотров профиля, <br />
+                0 отметок «Мне нравится», <br />
+                0 комментариев, <br />0 рецептов приготовлено
+              </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div>
+        <h3>Поделиться этим аккаунтом</h3>
+        <div class="row social">
+          <div class="social-btn"></div>
+             <div class="social-btn"></div>
+                <div class="social-btn"></div>
+                   <div class="social-btn"></div>
+                      <div class="social-btn"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<div class="container" *ngIf="dataLoaded; else skeleton">
+  <div
+    class="svg-button exit"
+    *ngIf="
+      !(this.router.url === this.routerEventsService.previousRoutePath.value)
+    "
+    (click)="onSkipHandler()"
+  >
+    <svg-icon
+      [applyClass]="true"
+      class="svg"
+      [src]="'../../../../../assets/images/svg/go-back.svg'"
+    >
+    </svg-icon>
+  </div>
+  <div class="svg-button settings" *ngIf="myPage">
+    <svg-icon
+      (click)="settingsShow = !settingsShow"
+      [applyClass]="true"
+      class="svg"
+      [src]="'../../../../../assets/images/svg/settings.svg'"
+    >
+    </svg-icon>
+  </div>
+  <app-settings
+    (closeEmitter)="settingsClose($event)"
+    @modal
+    *ngIf="settingsShow"
+    [user]="currentUser"
+  />
+
+  <div class="block block1">
+    <div class="row main">
+      <img
+        [src]="
+          user.avatarUrl
+            ? user.avatarUrl
+            : '../../../../../assets/images/userpic.png'
+        "
+        alt="User Photo"
+      />
+      <div class="col info">
+        <div class="col name">
+          <h1>{{ user.fullName }}</h1>
+          <p class="username">{{ "@" + user.username }}</p>
+        </div>
+
+        <p class="quote" *ngIf="user?.quote">{{ user.quote }}</p>
+
+        <app-button
+
+        (click)="currentUser.id ===0 ? null: myPage? edit() :       (userService.isUserSubscriber(user, currentUser.id) ? unfollow() : follow())"
+          [disabled]="!(currentUser.id === 0)"
+          [color]="'prim'"
+          [style]="
+            userService.isUserSubscriber(user, currentUser.id) || myPage
+              ? 'outlined'
+              : 'filled'
+          "
+          [rounded]="true"
+          [text]="
+            this.myPage
+              ? 'Изменить профиль'
+              : userService.isUserSubscriber(user, currentUser.id)
+              ? 'Отписаться'
+              : 'Подписаться'
+          "
+        ></app-button>
+      </div>
+    </div>
+    <div class="row" class="statistics">
+      <div class="col">
+        <p>
+          <span>{{ userRecipes.length }} </span>
+
+          <span
+            appPluralRu=""
+            [value]="userRecipes.length"
+            [arVariants]="['рецептов', 'рецепт', 'рецепта']"
+          ></span>
+        </p>
+      </div>
+      <div class="col">
+        <p
+          class="showFollowers"
+          (click)="obj = 'followers'; showFollows = true"
+        >
+          <span>{{ userFollowers!.length }} </span>
+
+          <span
+            appPluralRu=""
+            [value]="userFollowers!.length"
+            [arVariants]="['подписчик', 'подписчика', 'подписчиков']"
+          ></span>
+        </p>
+      </div>
+      <div class="col">
+        <p
+          class="showFollowers"
+          (click)="obj = 'following'; showFollows = true"
+        >
+          <span>{{ userFollowing!.length }} </span>
+
+          <span
+            appPluralRu=""
+            [value]="userFollowing!.length"
+            [arVariants]="['подписка', 'подписки', 'подписок']"
+          ></span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="block block2">
+    <button
+      [ngClass]="{ 'active-button': recipesEnabled }"
+      (click)="recipesEnabled = true; moreInfoEnabled = false"
+    >
+      Рецепты
+    </button>
+    <button
+      [ngClass]="{ 'active-button': !recipesEnabled }"
+      (click)="recipesEnabled = false; moreInfoEnabled = true"
+    >
+      Подробнее
+    </button>
+  </div>
+
+  <ng-template #recipes>
+    <ng-template #noRecipes
+      ><div class="noRecipes">
+        <p>У этого кулинара пока нет своих рецептов :(</p>
+
+        <svg-icon
+          [src]="'../../../../../assets/images/svg/sad-cook.svg'"
+          [svgStyle]="{
+            'height.em': '12',
+            'width.em': '12',
+            fill: 'var(--color-foreground)'
+          }"
+          >></svg-icon
+        >
+      </div></ng-template
+    >
+    <app-recipe-list
+      *ngIf="userRecipes.length > 0; else noRecipes"
+      [recipes]="userRecipes"
+    ></app-recipe-list>
+  </ng-template>
+
+  <div class="block block3" *ngIf="moreInfoEnabled; else recipes">
+    <div class="col description" *ngIf="user?.description">
+      <h3>Описание</h3>
+      <p>{{ user.description }}</p>
+    </div>
+    <div
+      class="row"
+      class="socialAndAdd"
+      [ngStyle]="{
+        width: user.socialNetworks.length > 0 ? null : '100%',
+        'grid-template-columns':
+          user.socialNetworks.length > 0 ? '1fr 1fr' : '1fr'
+      }"
+    >
+      <div class="col" *ngIf="user?.socialNetworks?.length! > 0">
+        <h3>Социальные сети</h3>
+        <ul class="col" class="links">
+          <li
+            class="link"
+            class="row"
+            *ngFor="let social of user?.socialNetworks"
+          >
+            <a [href]="social.link" class="center">
+              <svg-icon
+                [src]="
+                  '../../../../../assets/images/svg/non-fill-' +
+                  (social.name === 'ВКонтакте' ? 'vkontakte' : social.name) +
+                  '.svg'
+                "
+                [class]="'svg'"
+                >></svg-icon
+              >
+
+              <span>{{ social.name | titlecase }}</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="col additional">
+        <h3
+          [ngStyle]="{
+            'text-align': !user.socialNetworks ? 'center' : 'left'
+          }"
+        >
+          Доп. сведения
+        </h3>
+        <ul>
+          <li class="row center" *ngIf="user?.personalWebsite">
+            <svg-icon
+              [src]="'../../../../../assets/images/svg/planet.svg'"
+              [svgStyle]="{
+                'width.em': '1.2',
+                'height.em': '1',
+                fill: 'var(--color-primary)'
+              }"
+              >></svg-icon
+            >
+            <a [href]="user.personalWebsite"> {{ user.personalWebsite }}</a>
+          </li>
+          <li class="row center" *ngIf="user?.location">
+            <svg-icon
+              [src]="'../../../../../assets/images/svg/geo.svg'"
+              [svgStyle]="{
+                'width.em': '1.2',
+                'height.em': '1',
+                fill: 'var(--color-foreground)'
+              }"
+            ></svg-icon>
+            <p>{{ user.location }}</p>
+          </li>
+          <li class="row center" *ngIf="user?.registrationDate">
+            <svg-icon
+              [src]="'../../../../../assets/images/svg/info.svg'"
+              [svgStyle]="{
+                'width.em': '1.2',
+                'height.em': '1',
+                fill: 'var(--color-foreground)'
+              }"
+              >></svg-icon
+            >
+            <p>Аккаунт создан {{ user.registrationDate | date }}</p>
+          </li>
+          <li class="row center">
+            <svg-icon
+              [src]="'../../../../../assets/images/svg/analytics.svg'"
+              [svgStyle]="{
+                'width.em': '1.2',
+                'height.em': '1',
+                fill: 'var(--color-foreground)'
+              }"
+            >
+            </svg-icon>
+
+            <p>
+              {{ user.profileViews }}
+              <span
+                appPluralRu=""
+                [value]="user.profileViews"
+                [arVariants]="['просмотр', 'просмотра', 'просмотров']"
+              ></span>
+              профиля,
+              <br />
+              {{ likes }}
+
+              <span
+                appPluralRu=""
+                [value]="likes"
+                [arVariants]="['оценка', 'оценки', 'оценок']"
+              ></span>
+              «Мне нравится», <br />
+              {{ comments }}
+              <span
+                appPluralRu=""
+                [value]="comments"
+                [arVariants]="['комментарий', 'комментария', 'комментариев']"
+              ></span
+              >,
+
+              <br />
+              {{ cooks }}
+              <span
+                appPluralRu=""
+                [value]="cooks"
+                [arVariants]="['рецепт', 'рецепта', 'рецептов']"
+              >
+              </span>
+              <span
+                appPluralRu=""
+                [value]="cooks"
+                [arVariants]="[
+                  ' приготовлен',
+                  ' приготовлено',
+                  ' приготовлено'
+                ]"
+              ></span>
+            </p>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div>
+      <h3>Поделиться этим аккаунтом</h3>
+      <div class="row social">
+        <app-social-button [url]="linkForSocials"></app-social-button>
+        <app-social-button
+          [url]="linkForSocials"
+          [social]="'pinterest'"
+        ></app-social-button>
+        <app-social-button
+          [url]="linkForSocials"
+          [social]="'vk'"
+        ></app-social-button>
+        <app-social-button
+          [url]="linkForSocials"
+          [social]="'twitter'"
+        ></app-social-button>
+
+        <app-social-button
+          [url]="linkForSocials"
+          [social]="'facebook'"
+        ></app-social-button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-followers-and-following
+  @modal
+  [userPage]="user"
+  [currentUser]="currentUser"
+  [followers]="userFollowers"
+  [following]="userFollowing"
+  *ngIf="showFollows"
+  [object]="obj"
+  l
+  (closeEmitter)="closeFollows($event)"
+></app-followers-and-following>
+
+
+<app-edit-account @modal (closeEmitter)="closeEdit($event)" (updatedUser)="updateCurrentUser($event)" [editableUser]="currentUser" *ngIf="editModalShow"></app-edit-account>

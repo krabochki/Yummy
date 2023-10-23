@@ -1,0 +1,41 @@
+
+.skeleton  {
+
+
+  *{
+    pointer-events: none;
+  }
+    p,a,h3,h1, img , .social-btn {
+                animation: loading 1.7s infinite linear;
+            background: #dedfe1;
+        background-image: -webkit-linear-gradient(to right, #dedfe1 0%, #f2f3f5 20%, #dedfe1 40%, #dedfe1 100%);
+        background-image: linear-gradient(to right, #dedfe1 0%, #f2f3f5 20%, #dedfe1 40%, #dedfe1 100%);
+        background-repeat: no-repeat;
+
+        color:transparent !important;
+
+    }
+
+    .social-btn{
+        width: 2em;
+    height:2em;
+    border-radius: 100%;
+    }
+p,h3,h1{
+    width: fit-content;
+}
+    img{
+          object-position: -99999px 99999px;
+
+    }
+}
+
+@keyframes loading {
+    0% {
+      background-position: -100px;
+    }
+  
+    100% {
+  background-position: 200px;
+    }
+  }

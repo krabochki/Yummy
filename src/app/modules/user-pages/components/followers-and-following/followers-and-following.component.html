@@ -1,1 +1,224 @@
-<p>followers-and-following works!</p>
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="container">
+  <div class="content">
+    <div class="block-1">
+      
+      <input
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="filter()"
+        class="search-div"
+        @search
+        *ngIf="searchMode"
+        placeholder="Начните вводить запрос"
+      />
+
+      <div class="svg-button">
+        <svg-icon
+          (click)="searchOnOff();closeEmitter.emit(true)"
+          src="../../../../../assets/images/svg/go-back.svg"
+          class="svg"
+          [applyClass]="true"
+        >
+        </svg-icon>
+      </div>
+      <div
+        class="search-button"
+        [ngClass]="{
+          disabled:
+            (this.object === 'followers' && followers.length === 0) ||
+            (this.object === 'following' && following.length === 0)
+        }"
+        [@magnifier]="searchMode ? 'open' : 'closed'"
+        (click)="searchOnOff()"
+      >
+        <svg-icon
+          src="../../../../../assets/images/svg/search.svg"
+          class="svg magn"
+          [applyClass]="true"
+        >
+        </svg-icon>
+      </div>
+    </div>
+
+    <div class="block-2">
+      <div class="button-row">
+        <app-button 
+          [color]="'prim'"
+          (click)="searchMode?searchOnOff():null;object = 'followers'"
+          [text]="'Подписчики'"
+          [style]="object === 'followers' ? 'filled' : 'outlined'"
+          [rounded]="true"
+        ></app-button>
+        <app-button
+          [color]="'prim'"
+          (click)="searchMode?searchOnOff():null;object = 'following'"
+          [text]="'Подписки'"
+          [style]="object === 'following' ? 'filled' : 'outlined'"
+          [rounded]="true"
+        ></app-button>
+      </div>
+    </div>
+
+    <div class="block-3">
+      <hr />
+      <ng-template #followingBlock>
+        <div class="template">
+          <div *ngIf="following.length === 0" class="nofollow">
+            <p>Этот кулинар пока ни на кого не подписался :(</p>
+
+                     <svg-icon
+                [src]="
+                  '../../../../../assets/images/svg/sad-cook.svg'
+                "
+               [svgStyle]="{
+                
+                'height.em': '9', 'width.em':'9',
+                fill: 'var(--color-foreground)'
+              }"
+                >></svg-icon
+              >
+          </div>
+
+          <div
+            class="nofollow"
+            *ngIf="following.length > 0 && followingDisplay.length === 0"
+          >
+            Подписок по вашему запросу не найдено :( <br />
+            Попробуйте изменить параметры поиска
+
+                    <svg-icon
+                [src]="
+                  '../../../../../assets/images/svg/sad-cook.svg'
+                "
+               [svgStyle]="{
+                
+                'height.em': '9', 'width.em':'9',
+                fill: 'var(--color-foreground)'
+              }"
+                >></svg-icon
+              >
+          </div>
+          <div class="row" *ngFor="let follower of followingDisplay">
+            <div class="column">
+              <img
+                src="../../../../../assets/images/userpic.png"
+                alt="User Image 1"
+              />
+            </div>
+            <div
+              class="column"
+              (click)="goToFollowerAccount('/cooks/list/' + follower.id)"
+            >
+              <h2>{{ follower.fullName }}</h2>
+              <p>{{ "@" + follower.username }}</p>
+            </div>
+            <div class="column">
+              <app-button [disabled]="!(this.currentUser.id===0)"
+                *ngIf="follower.id !== currentUser?.id"
+                (click)="
+                  currentUserFollowingIds.includes(follower.id)
+                    ? unfollow(follower)
+                    : follow(follower)
+                "
+                [color]="'prim'"
+                [text]="
+                  currentUserFollowingIds.includes(follower.id)
+                    ? 'Отписаться'
+                    : 'Подписаться'
+                "
+                [style]="
+                  currentUserFollowingIds.includes(follower.id)
+                    ? 'outlined'
+                    : 'filled'
+                "
+                [rounded]="true"
+              >
+              </app-button>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+      <div *ngIf="object === 'followers'; else followingBlock">
+        <div class="template">
+          <div *ngIf="followers.length === 0" class="nofollow">
+           <p> У этого кулинара пока нет подписчиков :(</p>
+
+           
+                     <svg-icon
+                [src]="
+                  '../../../../../assets/images/svg/sad-cook.svg'
+                "
+               [svgStyle]="{
+                
+                'height.em': '9', 'width.em':'9',
+                fill: 'var(--color-foreground)'
+              }"
+                >></svg-icon
+              >
+          </div>
+          <div
+            class="nofollow"
+            *ngIf="followers.length > 0 && followersDisplay.length === 0"
+          >
+           <p>
+              Подписчиков по вашему запросу не найдено :( <br />
+              Попробуйте изменить параметры поиска
+           </p>
+
+            
+                     <svg-icon
+                [src]="
+                  '../../../../../assets/images/svg/sad-cook.svg'
+                "
+               [svgStyle]="{
+                
+                'height.em': '9', 'width.em':'9',
+                fill: 'var(--color-foreground)'
+              }"
+                >></svg-icon
+              >
+          </div>
+          <div class="row" *ngFor="let follower of followersDisplay">
+            <div class="column">
+              <img
+                src="../../../../../assets/images/userpic.png"
+                alt="User Image 1"
+              />
+            </div>
+            <div
+              class="column"
+              (click)="goToFollowerAccount('/cooks/list/' + follower.id)"
+            >
+              <h2>{{ follower.fullName }}</h2>
+              <p>{{ "@" + follower.username }}</p>
+            </div>
+            <div class="column">
+              <app-button [disabled]="!(this.currentUser.id===0)"
+                *ngIf="follower.id !== currentUser?.id"
+                (click)="
+                  currentUserFollowingIds.includes(follower.id)
+                    ? unfollow(follower)
+                    : follow(follower)
+                "
+                [color]="'prim'"
+                [text]="
+                  currentUserFollowingIds.includes(follower.id)
+                    ? 'Отписаться'
+                    : 'Подписаться'
+                "
+                [style]="
+                  currentUserFollowingIds.includes(follower.id)
+                    ? 'outlined'
+                    : 'filled'
+                "
+                [rounded]="true"
+              >
+              </app-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

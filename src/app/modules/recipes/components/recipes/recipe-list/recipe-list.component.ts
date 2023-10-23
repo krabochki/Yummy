@@ -1,16 +1,31 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
-import { Subscription } from 'rxjs';
-import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
+import { HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-recipe-list',
   templateUrl: './recipe-list.component.html',
   styleUrls: ['./recipe-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecipeListComponent {
-  @Input() recipes?: IRecipe[];
+  @Input() context: string = '';
+  @Input() recipes: IRecipe[] = [];
 
-  constructor() {}
+  @HostListener('scroll', ['$event'])
+  @ViewChild('list')
+  list: ElementRef | null = null;
+
+  
+
+  scrollLeft() {
+    if (this.list)
+      this.list.nativeElement.scrollLeft -=
+        this.list.nativeElement.scrollWidth / this.recipes.length;
+  }
+
+  scrollRight() {
+    if (this.list)
+      this.list.nativeElement.scrollLeft +=
+        this.list.nativeElement.scrollWidth / this.recipes.length;
+  }
 }

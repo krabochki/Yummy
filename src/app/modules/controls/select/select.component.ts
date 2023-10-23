@@ -1,36 +1,28 @@
-import { trigger, transition, style, animate } from '@angular/animations';
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { AuthService } from '../../authentication/services/auth.service';
+import { trigger } from '@angular/animations';
+import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
+import { modal, heightAnim } from 'src/tools/animations';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-select',
   templateUrl: './select.component.html',
   styleUrls: ['./select.component.scss'],
   animations: [
-    trigger('select', [
-      transition(':enter', [
-        style({ height: '0' }),
-        animate('800ms ease-out', style({ height: '*' })),
-      ]),
-      transition(':leave', [
-        style({ height: '*' }),
-        animate('800ms ease-in', style({ height: '0' })),
-      ]),
-    ]),
-  ],
+    trigger('modal', modal()),
+    trigger('select',heightAnim())]
 })
-export class SelectComponent implements OnInit,AfterViewInit {
-  @Output() emitter: EventEmitter<boolean> = new EventEmitter();
+export class SelectComponent implements AfterViewInit {
+  @Output() clickedEmit: EventEmitter<boolean> = new EventEmitter();
 
   @Input() items: string[] = [];
   @Input() disabling: boolean[] = [];
   @Input() routerLinks: string[] = [];
 
-  isLoggedIn: boolean = false;
-  constructor(private authService: AuthService) {}
-  ngOnInit() {
-    this.isLoggedIn = this.authService.isLoggedIn;
-  }
+  noAccessModalShow = false;
+
+  constructor(private router: Router) {}
+
   open: boolean = false;
 
   shiftedItems?: string[];
@@ -40,4 +32,22 @@ export class SelectComponent implements OnInit,AfterViewInit {
     this.shiftedItems = [...this.items];
     this.shiftedItems.shift();
   }
+
+  linkClick(disable: boolean) {
+    if (disable) {
+      this.noAccessModalShow = true;
+    }
+
+  }
+  handleNoAccessModal(event: boolean) {
+    if (event) {
+      this.router.navigateByUrl('/greetings');
+        window.scrollTo(0, 0);
+      this.open = false;
+    }
+    this.noAccessModalShow = false;
+  }
 }
+
+
+

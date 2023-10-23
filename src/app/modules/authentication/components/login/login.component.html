@@ -1,23 +1,73 @@
 <div class="container one-column">
-  
-   <div class="content">
-        <h1 class="label">Вход в аккаунт</h1>
-        <p class="tagline">Пожалуйста, введи свое имя пользователя/электронную почту и пароль, для того чтобы войти в аккаунт.</p>
-
-
+  <div class="content">
+    <h1 class="label">Вход в аккаунт</h1>
+    <p class="tagline">
+      Пожалуйста, введи свое имя пользователя/электронную почту и пароль, для
+      того чтобы войти в аккаунт.
+    </p>
 
     <div class="form">
-             <app-input [type]="'input'" [required]="true" [mask]="loginMask" [warningText]="'Введите корректный адрес электронной почты'" placeholder="Введите почту" (inputValueChange)="getLogin($event)"></app-input>
-             <app-input [type]="'input'" [max]="20" [required]="true" [mask]="passMask" [warningText]="'Пароль должен содержать 8-20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'" placeholder="Введите пароль" (inputValueChange)="getPassword($event)" [password]="true"></app-input>
+      <app-input
+        [type]="'input'"
+        [required]="true"
+        [mask]="loginMask"
+        [warningText]="'Введите корректный логин или электронную почту'"
+        placeholder="Введите логин или почту"
+        (inputValueChange)="getLogin($event)"
+      ></app-input>
+      <app-input
+        [type]="'input'"
+        [max]="20"
+        [required]="true"
+        [mask]="passMask"
+        [warningText]="
+          'Пароль должен содержать 8-20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'
+        "
+        placeholder="Введите пароль"
+        (inputValueChange)="getPassword($event)"
+        [password]="true"
+      ></app-input>
     </div>
 
+    <hr />
 
-               <hr>
+    <a [routerLink]="'/password-recovery'">Восстановление пароля</a>
 
-        
-       <div class="buttons">
-
-            <app-button [rounded]="true" [color]="'prim'"  [text]="'Войти'"></app-button>
-       </div>
-   </div>
+    <div class="buttons">
+      <app-button
+        [ngStyle]="{
+          'pointer-events':
+            loginMask.test(login) && passMask.test(pass) ? 'all' : 'none'
+        }"
+        (click)="loginUser()"
+        [disabled]="loginMask.test(login) && passMask.test(pass)"
+        [rounded]="true"
+        [color]="'prim'"
+        [text]="'Войти'"
+      ></app-button>
+    </div>
+  </div>
 </div>
+
+<app-modal 
+  [ngStyle]="{'z-index':100}"
+  @modal
+  *ngIf="modalShow"
+  [style]="'sec'"
+  [title]="'Успешный вход!'"
+  [type]="'Ok'"
+  (resultEmit)="handleModalResult($event)"
+  [buttonsText]="['На главную']"
+  [description]="'Вы успешно вошли в свой аккаунт!'"
+></app-modal>
+<app-modal
+  @modal
+
+  *ngIf="modalErrorShow"
+  [style]="'prim'"
+  [title]="'Неудачная попытка входа'"
+  [type]="'Ok'"
+  (resultEmit)="handleModalErrorResult($event)"
+  [buttonsText]="['Хорошо']"
+  [description]="failText"
+></app-modal>

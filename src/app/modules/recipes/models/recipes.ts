@@ -1,6 +1,4 @@
-import { IUser } from '../../user-pages/models/users';
 import { IComment } from 'src/app/modules/user-pages/models/comments';
-import { ICategory } from './categories';
 
 export interface IRecipe {
   id: number; // Уникальный идентификатор рецепта
@@ -19,9 +17,29 @@ export interface IRecipe {
   likesId: number[]; // Количество лайков
   cooksId: number[]; // Количество приготовлений
   comments: IComment[]; // Список комментариев
-  publicationDate: Date; // Дата регистрации пользователя
+  publicationDate: string; // Дата регистрации пользователя
+  favoritesId: number[]
 }
-
+export const nullRecipe:IRecipe ={ 
+    id: 0 ,
+  mainPhotoUrl: '' ,
+  name: '' , 
+  description:'', 
+  preparationTime: '',
+  servings: 0, 
+  origin: '' ,
+  ingredients: [],
+  nutritionalInfo: [],
+  instructions: [],
+  photos:[],
+  categories: [],
+  authorId: 0,
+  likesId: [],
+  cooksId: [], 
+  comments: [],
+  favoritesId:[],
+  publicationDate: '01-01-2000'
+}
 export interface Ingredient {
   name: string; // Название ингредиента
   quantity: number; // Количество

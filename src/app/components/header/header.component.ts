@@ -1,21 +1,24 @@
-import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, DoCheck, EventEmitter, HostListener, OnInit, Output } from '@angular/core';
+import { trigger } from '@angular/animations';
+import {
+  Component,
+  DoCheck,
+  EventEmitter,
+  HostListener,
+  OnInit,
+  Output,
+} from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { Subscription, filter } from 'rxjs';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
+import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
+import { modal } from 'src/tools/animations';
+modal;
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
   animations: [
-    trigger('settingsMobile', [
-      transition(':enter', [
-        style({ opacity: '0' }),
-        animate('300ms ease-out', style({ opacity: '1' })),
-      ]),
-      transition(':leave', [
-        style({ opacity: '1' }),
-        animate('300ms ease-in', style({ opacity: '0' })),
-      ]),
-    ]),
+    trigger('modal', modal()),
   ],
 })
 export class HeaderComponent implements OnInit, DoCheck {
@@ -36,8 +39,14 @@ export class HeaderComponent implements OnInit, DoCheck {
 
   mobile: boolean = false;
   hambOpen: boolean = false;
+  currentUserSubscription?: Subscription;
+  currentUser: IUser = nullUser;
 
-  @Output() headerHeightChange: EventEmitter<any> = new EventEmitter();
+  role: string = 'user';
+
+  notificationsCount = 10;
+
+  @Output() headerHeightChange: EventEmitter<number> = new EventEmitter();
 
   ngOnInit() {
     if (screen.width <= 480) {
@@ -45,6 +54,14 @@ export class HeaderComponent implements OnInit, DoCheck {
     } else {
       this.mobile = false;
     }
+
+    this.currentUserSubscription = this.authService
+      .getCurrentUser()
+      .subscribe((data) => {
+        this.currentUser = data;
+
+        this.role = this.currentUser?.role;
+      });
   }
   ngDoCheck() {
     const element = document.querySelector('.header') as HTMLElement | null;
@@ -58,8 +75,9 @@ export class HeaderComponent implements OnInit, DoCheck {
   }
 
   @HostListener('window:resize', ['$event'])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onResize(event: any) {
-    if (event.target.innerWidth <= 480) {
+    if (event.target.innerWidth <= 481) {
       this.mobile = true;
     } else {
       this.mobile = false;
@@ -69,8 +87,55 @@ export class HeaderComponent implements OnInit, DoCheck {
 
     const height = element?.offsetHeight;
 
-    this.emitter.emit(height);
+    this.headerHeightChange.emit(height);
   }
 
-  constructor(public authService: AuthService) {}
+
+  activePage: 'cooks' | 'recipes' | 'match' | 'main' = 'main';
+  constructor(
+    public authService: AuthService,
+    private router: Router,
+  ) {
+
+     this.router.events
+       .pipe(filter((event) => event instanceof NavigationEnd))
+       .subscribe(() => {
+         const currentUrl = this.router.url;
+         if (currentUrl.includes('recipes')) {
+           this.activePage = 'recipes';
+         } else if (currentUrl.includes('cooks')) {
+           this.activePage = 'cooks';
+         } else if (currentUrl.includes('match')) {
+           this.activePage = 'match';
+         }
+         else if (currentUrl.includes('plan')) {
+           this.activePage = 'recipes';
+
+           }
+         else if (currentUrl === '/') {
+           this.activePage = 'main';
+         }
+       });
+  }
+  updateImageSrc() {
+    throw new Error('Method not implemented.');
+  }
+
+  noAccessModalShow = false;
+
+  linkClick() {
+    if (this.currentUser.id === 0) {
+      this.noAccessModalShow = true;
+    }
+  }
+  handleNoAccessModal(event: boolean) {
+    if (event) {
+      this.scrollTop();
+      this.router.navigateByUrl('/greetings');
+    }
+    this.noAccessModalShow = false;
+  }
+  scrollTop() {
+    window.scrollTo(0, 0);
+  }
 }

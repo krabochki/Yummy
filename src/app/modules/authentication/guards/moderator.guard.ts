@@ -1,29 +1,11 @@
-import { Injectable, Inject } from "@angular/core";
-import { CanActivate, CanActivateChild, ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
-import { AuthService } from "../services/auth.service";
+import { Injectable, Inject } from '@angular/core';
+import { AuthService } from '../services/auth.service';
 
 @Injectable()
-export class ModeratorGuard
-    implements CanActivate, CanActivateChild {
-    constructor(
-        @Inject(AuthService) private auth: AuthService
-    ) {
+export class ModeratorGuard {
+  constructor(@Inject(AuthService) private auth: AuthService) {}
 
-
-    }
-
-    canActivate(
-        next: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot
-    ): boolean {
-        return this.auth.role=='admin' || this.auth.role=='moderator';
-    }
-
-    canActivateChild(
-        next: ActivatedRouteSnapshot,
-        state: RouterStateSnapshot
-    ): boolean {
-
-        return this.auth.role=='admin' || this.auth.role=='moderator';
-    }
+  canActivate(): boolean {
+    return this.auth.role === 'admin' || this.auth.role === 'moderator';
+  }
 }

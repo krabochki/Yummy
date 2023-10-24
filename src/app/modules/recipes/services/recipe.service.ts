@@ -7,7 +7,7 @@ import { BehaviorSubject, catchError, map, switchMap, take, tap, throwError } fr
   providedIn: 'root',
 })
 export class RecipeService {
-   recipesSubject = new BehaviorSubject<IRecipe[]>([]);
+  recipesSubject = new BehaviorSubject<IRecipe[]>([]);
   recipes$ = this.recipesSubject.asObservable();
 
   url: string = 'http://localhost:3000/recipes';
@@ -19,18 +19,14 @@ export class RecipeService {
   }
 
   deleteDataAboutDeletingUser(deletableId: number) {
-
-
-    
-
     let recipes: IRecipe[] = [];
     this.recipes$.subscribe((data) => {
       recipes = data;
 
       recipes.forEach((recipe) => {
         if (recipe.authorId === deletableId) {
-          this.deleteRecipe(recipe.id)
-      } else {
+          this.deleteRecipe(recipe.id);
+        } else {
           const before = { ...recipe };
 
           if (recipe.likesId.includes(deletableId)) {
@@ -69,19 +65,19 @@ export class RecipeService {
   }
 
   deleteRecipe(id: number) {
-  return this.http
-    .delete(`${this.url}/${id}`)
-    .pipe(
-      tap(() =>
-        this.recipesSubject.next(
-          this.recipesSubject.value.filter((recipe) => recipe.id !== id),
+    return this.http
+      .delete(`${this.url}/${id}`)
+      .pipe(
+        tap(() =>
+          this.recipesSubject.next(
+            this.recipesSubject.value.filter((recipe) => recipe.id !== id),
+          ),
         ),
-      ),
-      catchError((error) => {
-        return throwError(error); 
-      }),
-    )
-    .subscribe();
+        catchError((error) => {
+          return throwError(error);
+        }),
+      )
+      .subscribe();
   }
 
   postRecipe(recipe: IRecipe) {
@@ -97,33 +93,37 @@ export class RecipeService {
   updateRecipe(recipe: IRecipe) {
     const url = `${this.url}/${recipe.id}`;
 
-    return this.http
-      .put<IRecipe>(url, recipe)
-      .pipe(
-        switchMap((updatedRecipe) => {
-          return this.recipesSubject.pipe(
-            take(1), 
-            map((currentRecipes) => {
-              const index = currentRecipes.findIndex(
-                (r) => r.id === updatedRecipe.id,
-              );
-              if (index !== -1) {
-                const updatedUsers = [...currentRecipes];
-                updatedUsers[index] = updatedRecipe;
-                this.recipesSubject.next(updatedUsers); 
-              }
-              return updatedRecipe;
-            }),
-          )
-        }),
-        catchError((error) => {
-          return throwError(error);
-        }),
-      )
+    return this.http.put<IRecipe>(url, recipe).pipe(
+      switchMap((updatedRecipe) => {
+        return this.recipesSubject.pipe(
+          take(1),
+          map((currentRecipes) => {
+            const index = currentRecipes.findIndex(
+              (r) => r.id === updatedRecipe.id,
+            );
+            if (index !== -1) {
+              const updatedUsers = [...currentRecipes];
+              updatedUsers[index] = updatedRecipe;
+              this.recipesSubject.next(updatedUsers);
+            }
+            return updatedRecipe;
+          }),
+        );
+      }),
+      catchError((error) => {
+        return throwError(error);
+      }),
+    );
   }
 
   getFavoriteRecipesByUser(recipes: IRecipe[], user: number) {
     return recipes.filter((recipe) => recipe.favoritesId.includes(user));
+  }
+  getLikedRecipesByUser(recipes: IRecipe[], user: number) {
+    return recipes.filter((recipe) => recipe.likesId.includes(user));
+  }
+  getCookedRecipesByUser(recipes: IRecipe[], user: number) {
+    return recipes.filter((recipe) => recipe.cooksId.includes(user));
   }
   getPopularRecipes(recipes: IRecipe[]) {
     return recipes.sort((a, b) => b.likesId.length - a.likesId.length);

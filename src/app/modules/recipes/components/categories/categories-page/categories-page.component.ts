@@ -10,18 +10,23 @@ import { ICategory, ISection, nullSection } from '../../../models/categories';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { SectionService } from '../../../services/section.service';
+import { trigger } from '@angular/animations';
+import { heightAnim } from 'src/tools/animations';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-categories-page',
   templateUrl: './categories-page.component.html',
   styleUrls: ['./categories-page.component.scss'],
+  animations: [trigger('auto-complete', heightAnim())],
 })
 export class CategoriesPageComponent implements OnInit, OnDestroy {
   constructor(
     private categoryService: CategoryService,
     private route: ActivatedRoute,
     private sectionService: SectionService,
-    private cd:ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private titleService:Title
   ) {}
 
   sections: ISection[] = [];
@@ -33,7 +38,9 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
   filter: string = '';
 
   section: ISection = nullSection;
-
+  searchQuery: string = '';
+  autocompleteShow: boolean = false;
+  autocomplete: any[] = [];
   title: string = '';
 
   ngOnInit() {
@@ -41,13 +48,11 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
       this.filter = data['filter'];
       this.section = data['SectionResolver'];
 
-      
-
       if (this.filter === 'sections') {
         this.sectionSubscription = this.sectionService.sections$.subscribe(
           (sections: ISection[]) => {
-
-            this.title='Все категории'
+            this.title = 'Разделы';
+            this.titleService.setTitle(this.title)
             this.sections = sections;
 
             this.sections.sort((elem1: ISection, elem2: ISection) => {
@@ -57,8 +62,7 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
                 return -1;
               }
             });
-                             this.cd.markForCheck();
-
+            this.cd.markForCheck();
           },
         );
       } else {
@@ -66,11 +70,13 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
           () => {
             this.sections = [];
             this.title = this.section.name;
-            const sect = { ...this.section }
-            sect.name =''
-            
-            this.sections.push(sect); this.cd.markForCheck();
+                        this.titleService.setTitle(this.title);
 
+            const sect = { ...this.section };
+            sect.name = '';
+
+            this.sections.push(sect);
+            this.cd.markForCheck();
           },
         );
       }
@@ -80,9 +86,8 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
           this.categories.sort((category1: ICategory, category2: ICategory) =>
             category1.name > category2.name ? 1 : -1,
           );
-          this.isLoading = false;                           this.cd.markForCheck();
-
-
+          this.isLoading = false;
+          this.cd.markForCheck();
         },
       );
     });
@@ -94,11 +99,59 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
         sectionCategories.push(category);
       }
     });
+    if (this.filter !== 'sections') {
+      this.categories = sectionCategories;
+    }
     return sectionCategories;
+  }
+  getSectionOfCategory(category: ISection): ISection {
+    if (!category.categoriesId) {
+      return this.sectionService.getSectionOfCategory(this.sections, category)
+    }
+    return nullSection;
   }
 
   ngOnDestroy() {
     this.categoriesSubscription?.unsubscribe();
     this.sectionSubscription?.unsubscribe();
+  }
+
+  turnOffSearch() {
+    this.searchQuery = '';
+  }
+
+  blurSearch() {
+    setTimeout(() => {
+      this.autocompleteShow = false;
+    }, 300);
+  }
+
+  focusSearch() {
+    if (this.searchQuery !== '') {
+      this.autocompleteShow = true;
+    }
+  }
+  turnOnSearch() {
+    this.autocompleteShow = true;
+    if (this.searchQuery !== '') {
+      this.autocomplete = [];
+      const notEmptySections = this.sectionService.getNotEmptySections(
+        this.sections,
+      );
+      const filterSections: ISection[] = notEmptySections.filter(
+        (section: ISection) =>
+          section.name.toLowerCase().includes(this.searchQuery.toLowerCase()),
+      );
+      const filterCategories: ICategory[] = this.categories.filter(
+        (category: ICategory) =>
+          category.name.toLowerCase().includes(this.searchQuery.toLowerCase()),
+      );
+      filterCategories.forEach((filterCategory) => {
+        this.autocomplete.push(filterCategory);
+      });
+      filterSections.forEach((filterSection) => {
+        this.autocomplete.push(filterSection);
+      });
+    } else this.blurSearch();
   }
 }

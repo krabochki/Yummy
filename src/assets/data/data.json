@@ -10,7 +10,8 @@
         12,
         13,
         14,
-        15
+        15,
+        16
       ]
     },
     {
@@ -181,28 +182,9 @@
       "cookingTime": "adipisicing adipisicing culpa in Lorem",
       "servings": 18,
       "authorId": 8,
-      "cooksId": [
-        8,
-        4,
-        1,
-        5
-      ],
-      "favoritesId": [
-        7,
-        1,
-        3,
-        4,
-        8
-      ],
-      "likesId": [
-        9,
-        7,
-        5,
-        8,
-        4,
-        1,
-        3
-      ],
+      "cooksId": [],
+      "favoritesId": [],
+      "likesId": [],
       "status": "awaits",
       "origin": "Azerbaijan",
       "publicationDate": "2014-11-07",
@@ -2030,7 +2012,8 @@
         9,
         1,
         6,
-        13
+        13,
+        5
       ],
       "status": "public",
       "origin": "Sweden",
@@ -2155,8 +2138,7 @@
         4,
         1,
         6,
-        8,
-        5
+        8
       ],
       "status": "public",
       "origin": "Latvia",
@@ -2284,8 +2266,7 @@
         3,
         7,
         6,
-        13,
-        5
+        13
       ],
       "status": "public",
       "origin": "Portugal",
@@ -2498,10 +2479,9 @@
       "likesId": [
         6,
         2,
-        5,
         3
       ],
-      "status": "awaits",
+      "status": "public",
       "origin": "Madagascar",
       "publicationDate": "2016-03-05",
       "instuctions": [
@@ -2629,7 +2609,7 @@
         7,
         4
       ],
-      "status": "awaits",
+      "status": "public",
       "origin": "Hong Kong",
       "publicationDate": "2022-10-28",
       "instuctions": [
@@ -2848,13 +2828,9 @@
       "cookingTime": "aliquip excepteur est eu veniam",
       "servings": 5,
       "authorId": 5,
-      "cooksId": [
-        5
-      ],
+      "cooksId": [],
       "favoritesId": [],
-      "likesId": [
-        5
-      ],
+      "likesId": [],
       "status": "private",
       "origin": "Moldova",
       "publicationDate": "2020-07-14",
@@ -3212,7 +3188,7 @@
       "likesId": [
         4
       ],
-      "status": "awaits",
+      "status": "public",
       "origin": "Bangladesh",
       "publicationDate": "2015-08-17",
       "instuctions": [
@@ -4062,7 +4038,7 @@
       "personalWebsite": "https://www.chefalexeyzimin.com/",
       "location": "Москва, Россия",
       "registrationDate": "2023-01-15",
-      "profileViews": 7607,
+      "profileViews": 7608,
       "role": "admin"
     },
     {
@@ -4090,7 +4066,7 @@
       "personalWebsite": "",
       "location": "Санкт-Петербург, Россия",
       "registrationDate": "2023-03-20",
-      "profileViews": 6477,
+      "profileViews": 6478,
       "role": "user"
     },
     {
@@ -4131,7 +4107,8 @@
       "fullName": "Ольга Смирнова",
       "followersIds": [
         2,
-        6
+        6,
+        5
       ],
       "socialNetworks": [
         {
@@ -4146,7 +4123,7 @@
       "personalWebsite": "https://www.cookingadventures.com/",
       "location": "Лондон, Великобритания",
       "registrationDate": "2023-04-02",
-      "profileViews": 4940,
+      "profileViews": 4942,
       "role": "user"
     },
     {
@@ -4164,7 +4141,7 @@
       "personalWebsite": "https://angular.io/errors/",
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 1755
+      "profileViews": 1763
     },
     {
       "id": 6,
@@ -4181,7 +4158,8 @@
         2,
         4,
         9,
-        10
+        10,
+        5
       ],
       "socialNetworks": [
         {
@@ -4196,7 +4174,7 @@
       "personalWebsite": "https://www.healthandnutrition.com/",
       "location": "Сидней, Австралия",
       "registrationDate": "2023-06-18",
-      "profileViews": 4350,
+      "profileViews": 4351,
       "role": "user"
     },
     {
@@ -4254,7 +4232,7 @@
       "personalWebsite": "https://www.interiordesignsbyvictoria.com/",
       "location": "Милан, Италия",
       "registrationDate": "2023-08-12",
-      "profileViews": 3218,
+      "profileViews": 3219,
       "role": "user"
     },
     {

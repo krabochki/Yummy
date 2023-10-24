@@ -1,5 +1,10 @@
 @import "../../../../../../tools/UI/UI.scss";
 
+
+app-modal{
+  z-index: 10;
+  position: fixed;
+}
 .row {
   display: flex;
 }

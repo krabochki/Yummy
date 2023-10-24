@@ -68,11 +68,12 @@ const routes: Routes = [
         canActivate: [AuthGuard],
       },
       {
-        path: 'recipes/following',
-        data: { filter: 'following' },
+        path: 'recipes/updates',
+        data: { filter: 'updates' },
         component: SomeRecipesPageComponent,
         canActivate: [AuthGuard],
       },
+
       {
         path: 'recipes/search-results',
         component: SomeRecipesPageComponent,
@@ -82,7 +83,19 @@ const routes: Routes = [
         data: { filter: 'popular' },
         component: SomeRecipesPageComponent,
       },
+      {
+        path: 'recipes/cooked',
+        data: { filter: 'cooked' },
+        component: SomeRecipesPageComponent,
+        canActivate: [AuthGuard],
+      },
 
+      {
+        path: 'recipes/liked',
+        data: { filter: 'liked' },
+        component: SomeRecipesPageComponent,
+        canActivate: [AuthGuard],
+      },
       {
         path: 'recipes/recent',
         data: { filter: 'recent' },

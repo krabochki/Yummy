@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ICategory, ISection } from '../models/categories';
+import { ICategory, ISection, nullSection } from '../models/categories';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Subject } from 'rxjs';
 
@@ -12,13 +12,12 @@ export class SectionService {
   sectionsSubject = new BehaviorSubject<ISection[]>([]);
   sections$ = this.sectionsSubject.asObservable();
 
-  constructor(private http: HttpClient) {
-  
-  }
+  constructor(private http: HttpClient) {}
+
   loadSectionData() {
-     this.getSections().subscribe((data) => {
-       this.sectionsSubject.next(data);
-     });
+    this.getSections().subscribe((data) => {
+      this.sectionsSubject.next(data);
+    });
   }
 
   getSections() {
@@ -35,5 +34,19 @@ export class SectionService {
 
   postSection(category: ISection) {
     return this.http.post<ISection>(this.urlSections, category);
+  }
+
+  getNotEmptySections(sections: ISection[]): ISection[] {
+    return (sections = sections.filter(
+      (section) => section.categoriesId.length > 0,
+    ));
+  }
+
+  getSectionOfCategory(sections:ISection[], category: ICategory): ISection {
+      return (
+        sections.find((section) =>
+          section.categoriesId.includes(category.id),
+        ) || nullSection
+      );
   }
 }

@@ -155,6 +155,13 @@ p {
   text-align: center;
 }
 
+@media(max-width:1000px){
+  .admin-panel{
+    position: absolute;
+    right:4em;
+  }
+}
+
 @media (max-width: 900px) {
   .admin-panel{
     right: 0;

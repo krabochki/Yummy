@@ -376,7 +376,9 @@
             <app-button
               [style]="'filled'"
               [rounded]="false"
+              [disabled]="this.currentUser.id>0"
               [color]="'prim'"
+              (click)="this.currentUser.id>0?null:noAccessModalShow=true"
               [text]="'Опубликовать комментарий'"
             ></app-button>
           </div>

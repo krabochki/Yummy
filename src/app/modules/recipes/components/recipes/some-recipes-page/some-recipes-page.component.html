@@ -34,8 +34,8 @@
                               </div>
 
                         </div>
-                        <li *ngFor="let item of autocomplete" [routerLink]="'/recipes/list/' + item.id">
-                            <p> {{ item.name }}</p> <span *ngIf="filter!=='my-recipes'">{{getUser(item.authorId).fullName}}</span>
+                        <li *ngFor="let item of autocomplete">
+                            <p  [routerLink]="'/recipes/list/' + item.id"> {{ item.name }}</p> <span  [routerLink]="'/cooks/list/' + getUser(item.authorId).id"  *ngIf="filter!=='my-recipes'">{{getUser(item.authorId).fullName}}</span>
                         </li>
                     </ul>
                 </div>
@@ -75,6 +75,23 @@
                         </ng-template>
                     </div>
                 </div>
+
+                   <div *ngIf="currentUser.id>0 && favoriteRecipes.length>0" class="block">
+                    <div routerLink="/recipes/favorite" class="head">
+                        <h2>Закладки</h2>
+
+                        <svg-icon class="arrow-svg" [applyClass]="true"
+                            [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
+                    </div>
+                    <div class="recipes" [ngClass]="{'horizontal':favoriteRecipes.length>=5}">
+                        <app-horizontal-recipe-list *ngIf="favoriteRecipes.length>=5;else vertical"
+                            [recipes]="favoriteRecipes"></app-horizontal-recipe-list>
+                        <ng-template #vertical>
+                            <app-vertical-recipe-list [blocks]="favoriteRecipes"></app-vertical-recipe-list>
+
+                        </ng-template>
+                    </div>
+                </div>
                 <div class="block">
                     <div routerLink="/recipes/best" class="head">
                         <h2>Популярные рецепты</h2>
@@ -95,6 +112,38 @@
                     </div>
                     <div class="recipes horizontal">
                         <app-horizontal-recipe-list [recipes]="recentRecipes"></app-horizontal-recipe-list>
+                    </div>
+                </div>
+                   <div class="block">
+                    <div  *ngIf="currentUser.id>0 && cookedRecipes.length>0" routerLink="/recipes/cooked" class="head">
+                        <h2>Приготовленные рецепты</h2>
+
+                        <svg-icon class="arrow-svg" [applyClass]="true"
+                            [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
+                    </div>
+                      <div class="recipes" [ngClass]="{'horizontal':cookedRecipes.length>=5}">
+                        <app-horizontal-recipe-list *ngIf="cookedRecipes.length>=5;else vertical"
+                            [recipes]="cookedRecipes"></app-horizontal-recipe-list>
+                        <ng-template #vertical>
+                            <app-vertical-recipe-list [blocks]="cookedRecipes"></app-vertical-recipe-list>
+
+                        </ng-template>
+                    </div>
+                </div>
+                   <div *ngIf="currentUser.id>0 && likedRecipes.length>0" class="block">
+                    <div routerLink="/recipes/liked" class="head">
+                        <h2>Любимые рецепты</h2>
+
+                        <svg-icon class="arrow-svg" [applyClass]="true"
+                            [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
+                    </div>
+                    <div class="recipes" [ngClass]="{'horizontal':likedRecipes.length>=5}">
+                        <app-horizontal-recipe-list *ngIf="likedRecipes.length>=5;else vertical"
+                            [recipes]="likedRecipes"></app-horizontal-recipe-list>
+                        <ng-template #vertical>
+                            <app-vertical-recipe-list [blocks]="likedRecipes"></app-vertical-recipe-list>
+
+                        </ng-template>
                     </div>
                 </div>
 

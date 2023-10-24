@@ -18,7 +18,7 @@ import { ChangeDetectionStrategy } from '@angular/core';
   templateUrl: './user-page.component.html',
   styleUrls: ['./user-page.component.scss', './skeleton.scss'],
   animations: [trigger('fadeIn', fadeIn()), trigger('modal', modal())],
-  changeDetection:ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserPageComponent implements OnInit {
   recipesEnabled: boolean = true;
@@ -39,7 +39,7 @@ export class UserPageComponent implements OnInit {
     private recipeService: RecipeService,
     private titleService: Title,
     public router: Router,
-    private cd:ChangeDetectorRef,
+    private cd: ChangeDetectorRef,
     public routerEventsService: RouteEventsService,
   ) {
     registerLocaleData(localeRu);
@@ -50,10 +50,13 @@ export class UserPageComponent implements OnInit {
     this.router.navigate([this.routerEventsService.previousRoutePath.value]);
   }
 
-  currentUser: IUser = {...nullUser};
+  currentUser: IUser = { ...nullUser };
   settingsShow = false;
 
-  user: IUser = {...nullUser};
+  user: IUser = { ...nullUser };
+
+  editModalShow: boolean = false;
+  noAccessModalShow: boolean = false;
 
   userId: number = 0;
 
@@ -79,7 +82,6 @@ export class UserPageComponent implements OnInit {
 
       this.authService.currentUser$.subscribe((data) => {
         this.currentUser = data;
-
       });
 
       if (this.currentUser.id === this.user.id) {
@@ -145,7 +147,7 @@ export class UserPageComponent implements OnInit {
         });
       });
       if (!this.myPage) {
-          this.user.profileViews++;
+        this.user.profileViews++;
       }
       this.userService.updateUsers(this.user);
     });
@@ -192,5 +194,11 @@ export class UserPageComponent implements OnInit {
       }
     });
   }
-  editModalShow: boolean = false;
+
+  handleNoAccessModal(result: boolean) {
+    if (result) {
+      this.router.navigateByUrl('/greetings');
+    }
+    this.noAccessModalShow = false;
+  }
 }

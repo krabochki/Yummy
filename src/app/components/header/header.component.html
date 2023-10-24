@@ -16,7 +16,7 @@
         disabled: false
       },
       {
-        routeLink: '/categories',
+        routeLink: '/sections',
         disabled: false
       },
       {
@@ -46,7 +46,7 @@
       }
     ]"
 ></app-select>
-    <a (click)="linkClick()"  routerLink="plan" class="cook-plan"
+    <a style="cursor: pointer;" (click)="linkClick()"  [routerLink]="this.currentUser.id === 0? null : '/plan'" class="cook-plan"
       [ngClass]="{ dsl: this.currentUser.id === 0 ? true : false }">План готовки</a>
   </div>
 
@@ -55,10 +55,10 @@
         admin: currentUser.role === 'admin',
         moder: currentUser.role === 'moderator'
       }" routerLink="/control-dashboard" *ngIf="currentUser.role === 'admin' || currentUser.role === 'moderator'">
-      <svg-icon class="admin-svg" [src]="'../../../assets/images/svg/star.svg'" [class]="'svg'">></svg-icon>
+      <svg-icon class="admin-svg" [src]="'../../../assets/images/svg/star.svg'" [class]="'svg'"></svg-icon>
     </div>
     <button routerLink="greetings" *ngIf="this.currentUser.id !== 0" class="svg-button">
-      <svg-icon [src]="'../../../assets/images/svg/bell.svg'" [class]="'svg'">></svg-icon>
+      <svg-icon [src]="'../../../assets/images/svg/bell.svg'" [class]="'svg'"></svg-icon>
 
       <div class="notifications" *ngIf="notificationsCount > 0">
         {{ notificationsCount }}
@@ -69,10 +69,10 @@
         this.currentUser.id === 0 ? 'greetings' : 'cooks/list/' + currentUser.id
       " class="svg-button">
       <ng-template #account>
-        <svg-icon [src]="'../../../assets/images/svg/account.svg'" [class]="'svg'">></svg-icon>
+        <svg-icon [src]="'../../../assets/images/svg/account.svg'" [class]="'svg'"></svg-icon>
       </ng-template>
       <svg-icon *ngIf="this.currentUser.id === 0; else account" [src]="'../../../assets/images/svg/enter.svg'"
-        [class]="'svg'">></svg-icon>
+        [class]="'svg'"></svg-icon>
     </button>
   </div>
   <div [class.unactive]="currentUser.id === 0" *ngIf="mobile" class="mobile-buttons-panel">
@@ -80,7 +80,7 @@
         admin: currentUser.role === 'admin',
         moder: currentUser.role === 'moderator'
       }" routerLink="/control-dashboard" *ngIf="currentUser.role === 'admin' || currentUser.role === 'moderator'">
-      <svg-icon class="admin-svg" [src]="'../../../assets/images/svg/thick-star.svg'" [class]="'svg'">></svg-icon>
+      <svg-icon class="admin-svg" [src]="'../../../assets/images/svg/thick-star.svg'" [class]="'svg'"></svg-icon>
     </div>
     <div (click)="currentUser.id === 0 ? (noAccessModalShow = true) : null" [routerLink]="
         currentUser.id === 0 ? null : '/cooks/list/' + currentUser.id
@@ -123,11 +123,16 @@
     <div class="item">
       <!---->
       <div class="main-button" [routerLink]="currentUser.id === 0 ? '/greetings' : '/recipes/add'">
-        <svg-icon class="header-svg" [applyClass]="true" [src]="
-            '../../../../../assets/images/svg/header/' +
-            (currentUser.id === 0 ? 'login' : 'add') +
-            '.svg'
+        <svg-icon *ngIf="currentUser.id <=0; else plusSvg" class="header-svg" [applyClass]="true" [src]="
+            '../../../../../assets/images/svg/header/login.svg'
           "></svg-icon>
+          <ng-template #plusSvg>
+<svg-icon  class="header-svg" [applyClass]="true" [src]="
+            '../../../../../assets/images/svg/header/add.svg'
+          "></svg-icon>
+
+          </ng-template>
+           
       </div>
     </div>
     <div class="item" [routerLink]="'/cooks'">

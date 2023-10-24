@@ -1,7 +1,200 @@
 .wrap {
   padding: 0 calc(14.4vw + 0 * (100vw - 768px) / 760);
-  margin: 2em 0;
+  margin: 2.5em 0;
 }
+
+
+.autocomplete-list ul {
+  li {
+    border-bottom: 1px solid var(--scroll-body);
+    padding: 0.5em 1.2em;
+    cursor: pointer;
+    align-items: center;
+    column-gap: 2em;
+    display: flex;
+    justify-content: space-between;
+    transition:  background-color 0.2s ease-in-out;
+    scroll-snap-align: center;
+
+    span {
+      text-align: right;
+      transition: font-weight 0.2s ease-in-out;
+      width: 8em;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      line-height: 1.2;
+      font-size: 0.8em;
+      &:hover {
+        font-weight: 500;
+      }
+    }
+
+    p {
+      transition:font-weight  0.2s ease-in-out;
+      text-overflow: ellipsis;
+      line-height: 1.2;
+      overflow: hidden;
+      width:9em;
+      &:hover {
+        font-weight: 500;
+      }
+    }
+
+    &:hover {
+      background-color: var(--scroll-thumb);
+    }
+
+    &:first-of-type {
+      padding-top: 1em;
+    }
+
+    &:last-of-type {
+      padding-bottom: 1em;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  scroll-snap-type: y mandatory;
+
+  max-height: 50vh;
+  margin-top: 0.5em;
+  overflow-y: scroll;
+  position: absolute;
+  border-radius: 1.5em 5px 5px 1.5em;
+  display: flex;
+  padding: 0;
+  flex-direction: column;
+  z-index: 2;
+  top: 2.7em;
+  left: 0;
+  width: 100%;
+  background-color: var(--color-background-deeper);
+
+  &::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  &::-webkit-scrollbar-track {
+    border-radius: 20px;
+    background: var(--scroll-body);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--scroll-thumb);
+    border-radius: 20px;
+    border: 3px solid var(--scroll-body);
+  }
+}
+
+
+
+.no-found-recipes {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  
+  flex-direction: column;
+  text-align: center;
+  padding: 2em;
+  height: 100%;
+  row-gap: 1em;
+  font-size: 0.8em;
+
+  .sad-cook {
+    fill: var(--color-foreground);
+    height: 8em;
+  }
+
+  app-button {
+    margin: 0;
+  }
+}
+
+div.container.not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  p {
+    font-size: 1.5em;
+  }
+
+  h1 {
+    all: unset;
+  }
+
+  &.no-search {
+    .tagline {
+      width: unset;
+      font-size: 1.2em;
+    }
+
+    p {
+    }
+  }
+
+  .content .buttons app-button {
+    margin: 0;
+  }
+}
+
+.search-block {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: fit-content;
+  margin: 0 auto;
+  margin-bottom: 2.5em;
+
+  .search {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  input {
+    width: 16em;
+    font-size: 1.2em;
+    padding: 0.5em 1em;
+    border-radius: 1.5em 0 0 1.5em;
+    transition: background-color 0.3s ease-in-out;
+    background-color: var(--color-background-deeper-unactive);
+    padding-right: 1.5em;
+    font-weight: 500;
+
+    &::placeholder {
+      font-weight: 300;
+    }
+
+    &:focus {
+      background-color: var(--color-background-deeper);
+    }
+  }
+
+  .search-svg {
+    width: 1.3em;
+    height: 1.3em;
+    fill: var(--color-foreground);
+  }
+
+  .magnifier {
+    border-radius: 1.5em;
+    font-size: 1.2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    margin-left: -1em;
+    width: 2.3em;
+    height: 2.3em;
+    background-color: var(--color-primary);
+  }
+}
+
 h1 {
   line-height: 1;
   font-weight: 600;
@@ -10,16 +203,33 @@ h1 {
   margin-bottom: 1em;
   font-family: var(--font-family-accent);
 }
+
 .sections {
   margin-bottom: 3em;
 }
+
 h2 {
   cursor: pointer;
   line-height: 1;
   font-weight: 600;
   font-size: 1.5em;
-  margin-bottom: 1em;
-  text-align: center;
+}
+
+.arrow-svg {
+  height: 1em;
+  display: flex;
+  align-items: center;
+  fill: var(--color-foreground);
+  justify-content: center;
+  transform: rotate(-90deg);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  column-gap: 1.5em;
+  margin-bottom: 1.75em;
+  cursor: pointer;
 }
 
 @media (max-width: 480px) {

@@ -13,13 +13,13 @@ import { RouteEventsService } from 'src/app/modules/controls/route-events.servic
 import { CategoryService } from '../../../services/category.service';
 import { ICategory } from '../../../models/categories';
 import { trigger } from '@angular/animations';
-import { heightAnim } from 'src/tools/animations';
+import { heightAnim, modal } from 'src/tools/animations';
 
 @Component({
   selector: 'app-recipe-page',
   templateUrl: './recipe-page.component.html',
   styleUrls: ['./recipe-page.component.scss'],
-  animations: [trigger('history', heightAnim())],
+  animations: [trigger('history', heightAnim()), trigger('modal',modal())],
   changeDetection:ChangeDetectionStrategy.OnPush
 })
 export class RecipePageComponent implements OnInit {

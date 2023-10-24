@@ -25,7 +25,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     'Рецепты',
     'Ваши рецепты',
     'Все рецепты',
-    'Все категории',
+    'Разделы',
     'Закладки',
     'Подбор рецептов',
   ];

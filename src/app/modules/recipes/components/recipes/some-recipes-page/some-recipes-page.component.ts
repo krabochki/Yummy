@@ -17,15 +17,21 @@ enum RecipeType {
   Favorite = 'favorite',
   Category = 'category-recipes',
   All = 'all',
+  Liked = 'liked',
+  Cooked = 'cooked',
+  Updates = 'updates',
 }
 
 const recipeTitles = {
-  [RecipeType.Recent]: 'Недавние рецепты',
+  [RecipeType.Recent]: 'Свежие рецепты',
   [RecipeType.Popular]: 'Популярные рецепты',
-  [RecipeType.My]: 'Мои рецепты',
-  [RecipeType.Favorite]: 'Сохраненные рецепты',
+  [RecipeType.My]: 'Ваши рецепты',
+  [RecipeType.Favorite]: 'Закладки',
   [RecipeType.Category]: '',
   [RecipeType.All]: 'Все рецепты',
+  [RecipeType.Liked]: 'Любимые рецепты',
+  [RecipeType.Cooked]: 'Приготовленные рецепты',
+  [RecipeType.Updates]: 'Обновления любимых кулинаров',
 };
 
 const recipeNoRecipesRouterLinkText = {
@@ -33,8 +39,11 @@ const recipeNoRecipesRouterLinkText = {
   [RecipeType.Popular]: '',
   [RecipeType.My]: '/recipes/add',
   [RecipeType.Favorite]: '/recipes',
-  [RecipeType.Category]: '/categories',
+  [RecipeType.Category]: '/sections',
   [RecipeType.All]: '',
+  [RecipeType.Liked]: '/recipes',
+  [RecipeType.Cooked]: '/recipes',
+  [RecipeType.Updates]: '/cooks',
 };
 
 const recipeNoRecipesButtonText = {
@@ -44,6 +53,9 @@ const recipeNoRecipesButtonText = {
   [RecipeType.Favorite]: 'Все рецепты',
   [RecipeType.Category]: 'Все категории',
   [RecipeType.All]: '',
+  [RecipeType.Liked]: 'Все рецепты',
+  [RecipeType.Cooked]: 'Все рецепты',
+  [RecipeType.Updates]: 'Все кулинары',
 };
 
 
@@ -57,6 +69,12 @@ const recipeNoRecipesText = {
   [RecipeType.Category]:
     'В этой категории пока нет рецептов. Следите за обновлениями, совсем скоро они появятся!',
   [RecipeType.All]: '',
+  [RecipeType.Liked]:
+    'У вас пока нет любимых рецептов. Попробуйте отметить парочку рецептов как понравившиеся и зайдите сюда снова',
+  [RecipeType.Cooked]:
+    'У вас пока нет сохраненных рецептов. Попробуйте отметить парочку рецептов как приготовленные и зайдите сюда снова',
+  [RecipeType.Updates]:
+    'Новых рецептов среди ваших кулинаров не найдено. Попробуйте подписаться на более активных кулинаров и зайдите сюда снова',
 };
 
 @Component({
@@ -75,8 +93,7 @@ export class SomeRecipesPageComponent implements OnInit {
     private authService: AuthService,
     private userService: UserService,
     private title: Title,
-  ) {
-  }
+  ) {}
 
   dataLoad: boolean = false;
   filter: string = '';
@@ -86,6 +103,9 @@ export class SomeRecipesPageComponent implements OnInit {
   recentRecipes: IRecipe[] = [];
   popularRecipes: IRecipe[] = [];
   myRecipes: IRecipe[] = [];
+  likedRecipes: IRecipe[] = [];
+  cookedRecipes: IRecipe[] = [];
+  favoriteRecipes: IRecipe[] = [];
   followingRecipes: IRecipe[] = [];
   currentUser: IUser = { ...nullUser };
   searchQuery: string = '';
@@ -112,7 +132,7 @@ export class SomeRecipesPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(true)
+    console.log(true);
     this.route.data.subscribe((data) => {
       this.filter = data['filter'];
       switch (this.filter) {
@@ -131,8 +151,17 @@ export class SomeRecipesPageComponent implements OnInit {
         case 'popular':
           this.recipeType = RecipeType.Popular;
           break;
+        case 'liked':
+          this.recipeType = RecipeType.Liked;
+          break;
+        case 'cooked':
+          this.recipeType = RecipeType.Cooked;
+          break;
         case 'category-recipes':
           this.recipeType = RecipeType.Category;
+          break;
+        case 'updates':
+          this.recipeType = RecipeType.Updates;
           break;
       }
 
@@ -160,6 +189,33 @@ export class SomeRecipesPageComponent implements OnInit {
                   this.recipeService.getPopularRecipes(publicRecipes);
                 this.recipesToShow = this.allRecipes.slice(0, 8);
                 break;
+              case RecipeType.Updates:
+                this.allRecipes =
+                  this.recipeService.getRecentRecipes(publicRecipes);
+                this.currentUserFollowing = this.userService.getFollowing(
+                  this.allUsers,
+                  this.currentUser.id,
+                );
+                this.followingRecipes = [];
+
+                this.currentUserFollowing.forEach((following) => {
+                  const foundRecipes = this.recipeService.getRecipesByUser(
+                    this.allRecipes,
+                    following.id,
+                  );
+                  this.followingRecipes = [
+                    ...this.followingRecipes,
+                    ...foundRecipes,
+                  ];
+                  this.followingRecipes = this.followingRecipes.slice(0, 8);
+                                  this.recipesToShow = this.allRecipes.slice(
+                                    0,
+                                    8,
+                                  );
+                  console.log(this.followingRecipes)
+
+                });
+                break;
               case RecipeType.Recent:
                 this.allRecipes =
                   this.recipeService.getRecentRecipes(publicRecipes);
@@ -179,15 +235,39 @@ export class SomeRecipesPageComponent implements OnInit {
                 );
                 this.recipesToShow = this.allRecipes.slice(0, 8);
                 break;
+              case RecipeType.Liked:
+                this.allRecipes = this.recipeService.getLikedRecipesByUser(
+                  publicRecipes,
+                  this.currentUser.id,
+                );
+                this.recipesToShow = this.allRecipes.slice(0, 8);
+                break;
+              case RecipeType.Cooked:
+                this.allRecipes = this.recipeService.getCookedRecipesByUser(
+                  publicRecipes,
+                  this.currentUser.id,
+                );
+                this.recipesToShow = this.allRecipes.slice(0, 8);
+                break;
               case RecipeType.All:
                 this.allRecipes = publicRecipes;
                 this.recipesToShow = publicRecipes;
                 this.popularRecipes = this.recipeService
                   .getPopularRecipes(this.allRecipes)
-                  .slice(8);
+                  .slice(0, 8);
                 this.recentRecipes = this.recipeService
                   .getRecentRecipes(this.allRecipes)
-                  .slice(8);
+                  .slice(0, 8);
+                this.cookedRecipes = this.recipeService
+                  .getCookedRecipesByUser(this.allRecipes, user.id)
+                  .slice(0, 8);
+                this.likedRecipes = this.recipeService
+                  .getLikedRecipesByUser(this.allRecipes, user.id)
+                  .slice(0, 8);
+                this.favoriteRecipes = this.recipeService
+                  .getFavoriteRecipesByUser(this.allRecipes, user.id)
+                  .slice(0, 8);
+
                 this.myRecipes = this.recipeService.getRecipesByUser(
                   data,
                   this.currentUser.id,
@@ -196,18 +276,28 @@ export class SomeRecipesPageComponent implements OnInit {
                   this.allUsers,
                   this.currentUser.id,
                 );
+                this.followingRecipes = [];
+
                 this.currentUserFollowing.forEach((following) => {
-                  this.followingRecipes=[]
-                  const foundRecipes = this.recipeService.getRecipesByUser(
-                    this.recentRecipes,
+                  let foundRecipes = this.recipeService.getRecipesByUser(
+                    publicRecipes,
                     following.id,
                   );
+                  foundRecipes = this.recipeService.getRecentRecipes(foundRecipes)
                   this.followingRecipes = [
                     ...this.followingRecipes,
                     ...foundRecipes,
                   ];
                   this.followingRecipes = this.followingRecipes.slice(0, 8);
+                                    console.log(this.followingRecipes);
+
                 });
+
+                this.allRecipes = [
+                  ...this.allRecipes,
+                  ...this.myRecipes,
+                                ];
+
                 break;
             }
           });
@@ -246,13 +336,25 @@ export class SomeRecipesPageComponent implements OnInit {
   }
   search() {
     this.autocompleteShow = true;
+      const recipeAuthors: IUser[] = [];
+      this.allRecipes.forEach((element) => {
+        recipeAuthors.push(this.getUser(element.authorId));
+      });
     if (this.searchQuery && this.searchQuery !== '') {
       this.autocomplete = [];
 
+    
+      const search = this.searchQuery.toLowerCase().replace(/\s/g, "");
+
       const filterRecipes: IRecipe[] = this.allRecipes.filter(
         (recipe: IRecipe) =>
-          recipe.name.toLowerCase().includes(this.searchQuery.toLowerCase()),
+          recipe.name.toLowerCase().replace(/\s/g, '').includes(search) ||
+          this.getUser(recipe.authorId)
+            .fullName.toLowerCase()
+            .replace(/\s/g, '')
+            .includes(search),
       );
+     
       filterRecipes.forEach((element) => {
         this.autocomplete.push(element);
       });

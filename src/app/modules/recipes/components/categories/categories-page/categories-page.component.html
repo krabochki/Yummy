@@ -4,7 +4,7 @@
   <div>
     <div *ngFor="let section of sections" class="sections">
       <div *ngIf="section.categoriesId.length > 0" class="sections">
-        <h2>{{ section.name }}</h2>
+        <h2 [routerLink]="'/sections/list/'+section.id">{{ section.name }}</h2>
 
         <app-vertical-category-list [showRecipesNumber]="true" *ngIf="getCategoriesOfSection(section).length > 0"
           [categories]="getCategoriesOfSection(section)"></app-vertical-category-list>

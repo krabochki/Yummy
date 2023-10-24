@@ -112,6 +112,7 @@ export class SomeRecipesPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(true)
     this.route.data.subscribe((data) => {
       this.filter = data['filter'];
       switch (this.filter) {

@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -12,7 +12,14 @@ import { ControlsModule } from './modules/controls/controls.module';
 import { FooterComponent } from './components/footer/footer.component';
 import { AngularSvgIconModule, SvgIconComponent } from 'angular-svg-icon';
 import { RouteEventsService } from './modules/controls/route-events.service';
-
+import { SectionService } from './modules/recipes/services/section.service';
+import { CategoryService } from './modules/recipes/services/category.service';
+export function initializeSections(sectionSerivce: SectionService) {
+  return () => sectionSerivce.loadSectionData();
+}
+export function initializeCategories(CategoryService: CategoryService) {
+  return () => CategoryService.loadCategoryData();
+}
 
 @NgModule({
   declarations: [AppComponent, HeaderComponent, FooterComponent],
@@ -24,9 +31,27 @@ import { RouteEventsService } from './modules/controls/route-events.service';
     ControlsModule,
     AngularSvgIconModule.forRoot(),
   ],
-  providers: [AdminGuard, ModeratorGuard, RouteEventsService],
+  providers: [
+    SectionService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeSections,
+      deps: [SectionService],
+      multi: true,
+    },
+    CategoryService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeCategories,
+      deps: [CategoryService],
+      multi: true,
+    },
+
+    AdminGuard,
+    ModeratorGuard,
+    RouteEventsService,
+  ],
   bootstrap: [AppComponent],
   exports: [SvgIconComponent],
-
 })
 export class AppModule {}

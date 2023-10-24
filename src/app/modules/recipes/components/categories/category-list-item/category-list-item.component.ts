@@ -21,14 +21,15 @@ export class CategoryListItemComponent implements OnInit {
     if (this.showRecipesNumber)
       this.recipeService.recipes$.subscribe((data) => {
         if (this.context === 'category')
+        
           this.recipesNumber = this.recipeService.getRecipesByCategory(
-            data,
+            this.recipeService.getPublicRecipes(data),
             this.category.id,
           ).length;
         else {
           this.category.categoriesId.forEach((element: number) => {
             this.recipesNumber += this.recipeService.getRecipesByCategory(
-              data,
+              this.recipeService.getPublicRecipes(data),
               element,
             ).length;
           });

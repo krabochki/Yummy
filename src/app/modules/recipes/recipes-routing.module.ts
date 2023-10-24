@@ -11,6 +11,7 @@ import { AuthGuard } from '../authentication/guards/auth.guard';
 import { RecipeResolver } from './services/recipe.resolver';
 import { RecipeAccessGuard } from './guards/recipe-access.guard';
 import { CategoryResolver } from './services/category.resolver';
+import { SectionResolver } from './services/section.resolver';
 const routes: Routes = [
   {
     path: '',
@@ -50,7 +51,15 @@ const routes: Routes = [
         canActivate: [AuthGuard],
       },
       {
-        path: 'categories',
+        path: 'sections',
+
+        data: { filter: 'sections' },
+        component: CategoriesPageComponent,
+      },
+      {
+        path: 'sections/list/:id',
+        data: { filter: 'section' },
+        resolve: { SectionResolver },
         component: CategoriesPageComponent,
       },
       {
@@ -83,7 +92,7 @@ const routes: Routes = [
       {
         path: 'categories/list/:id',
         data: { filter: 'category-recipes' },
-        resolve: {CategoryResolver},
+        resolve: { CategoryResolver },
 
         component: SomeRecipesPageComponent,
       },

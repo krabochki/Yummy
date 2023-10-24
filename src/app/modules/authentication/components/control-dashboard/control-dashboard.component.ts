@@ -8,11 +8,12 @@ import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 import { ISection } from 'src/app/modules/recipes/models/categories';
 import { CategoryService } from 'src/app/modules/recipes/services/category.service';
 import { ChangeDetectionStrategy } from '@angular/core';
+import { SectionService } from 'src/app/modules/recipes/services/section.service';
 @Component({
   selector: 'app-control-dashboard',
   templateUrl: './control-dashboard.component.html',
   styleUrls: ['./control-dashboard.component.scss'],
-  changeDetection:ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ControlDashboardComponent implements OnInit, OnDestroy {
   currentUserSubscription?: Subscription;
@@ -26,6 +27,8 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     private recipeService: RecipeService,
     private titleService: Title,
     private authService: AuthService,
+    private sectionService: SectionService,
+
     private categoryService: CategoryService,
   ) {}
 
@@ -47,8 +50,8 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
         );
       });
 
-    this.sectionsSubscription = this.categoryService.sections$.subscribe(
-      (data) => {
+    this.sectionsSubscription = this.sectionService.sections$.subscribe(
+      (data:ISection[]) => {
         this.sections = data;
       },
     );

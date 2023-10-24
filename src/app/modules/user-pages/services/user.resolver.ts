@@ -14,9 +14,8 @@ export class UserResolver implements Resolve<IUser> {
 
   resolve(route: ActivatedRouteSnapshot): Observable<IUser> {
     const userId = Number(route.params['id']);
-
     if (userId <= 0) {
-      this.router.navigate(['cooks']);
+      this.router.navigate(['/cooks']);
       return EMPTY;
     }
 

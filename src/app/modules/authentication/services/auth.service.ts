@@ -30,7 +30,6 @@ export class AuthService {
     const savedUser = localStorage.getItem('currentUser');
 
     if (savedUser) {
-      console.log('saved user')
       const currentUser: IUser = JSON.parse(savedUser);
       this.userService.users$.subscribe((users) => {
         const foundUser = users.find(

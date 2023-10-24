@@ -25,6 +25,7 @@ import { ICategory, ISection } from '../../../models/categories';
 import { CategoryService } from '../../../services/category.service';
 import { Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
+import { SectionService } from '../../../services/section.service';
 
 export interface SectionGroup {
   section: string;
@@ -82,6 +83,7 @@ export class RecipeCreatingComponent implements OnInit {
     private _formBuilder: FormBuilder,
     private authService: AuthService,
     private categoryService: CategoryService,
+    private sectionService: SectionService,
     private recipeService: RecipeService,
     private fb: FormBuilder,
     public router: Router,
@@ -128,7 +130,7 @@ export class RecipeCreatingComponent implements OnInit {
 
     this.categoryService.categories$.subscribe((data) => {
       this.allCategories = data;
-      this.categoryService.sections$.subscribe((data) => {
+      this.sectionService.sections$.subscribe((data) => {
         this.allSections = data;
 
         this.allSections.forEach((section) => {

@@ -17,12 +17,13 @@ export class RecipeResolver {
     const recipeId = Number(route.params['id']);
 
     if (recipeId <= 0) {
-      this.router.navigate(['recipes']);
+      this.router.navigate(['/recipes']);
       return EMPTY;
     }
 
     return this.recipeService.recipes$.pipe(
       map((recipes: IRecipe[]) => {
+        console.log(recipes)
         const foundRecipe = recipes.find((recipe) => {
           if (recipe.id === recipeId) return true;
           else return false;
@@ -34,7 +35,7 @@ export class RecipeResolver {
         }
       }),
       catchError(() => {
-        this.router.navigate(['recipes']);
+        this.router.navigate(['/recipes']);
         return EMPTY;
       }),
     );

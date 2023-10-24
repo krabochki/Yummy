@@ -16,7 +16,7 @@ export class CategoryResolver {
     const categoryId = Number(route.params['id']);
 
     if (categoryId <= 0) {
-      this.router.navigate(['/categories']);
+      this.router.navigate(['/sections']);
       return EMPTY;
     }
 
@@ -33,7 +33,7 @@ export class CategoryResolver {
         }
       }),
       catchError(() => {
-        this.router.navigate(['/categories']);
+        this.router.navigate(['/sections']);
         return EMPTY;
       }),
     );

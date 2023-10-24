@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { ICategory } from 'src/app/modules/recipes/models/categories';
+import { ICategory, ISection } from 'src/app/modules/recipes/models/categories';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 import { CategoryService } from 'src/app/modules/recipes/services/category.service';
 import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
@@ -8,12 +8,13 @@ import { Title } from '@angular/platform-browser';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { ChangeDetectionStrategy } from '@angular/core';
+import { SectionService } from '../../services/section.service';
 
 @Component({
   selector: 'app-main-page',
   templateUrl: './main-page.component.html',
   styleUrls: ['./main-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MainPageComponent implements OnInit, OnDestroy {
   allRecipes: IRecipe[] = [];
@@ -25,12 +26,14 @@ export class MainPageComponent implements OnInit, OnDestroy {
 
   currentUserSubscription?: Subscription;
   currentUser: IUser = { ...nullUser };
-  popularRecipesLoaded = false; 
+  popularRecipesLoaded = false;
   userRecipes: IRecipe[] = [];
 
   constructor(
     private recipeService: RecipeService,
     private categoryService: CategoryService,
+    private sectionService: SectionService,
+
     private titleService: Title,
     private authService: AuthService,
   ) {
@@ -41,7 +44,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
     this.currentUserSubscription = this.authService.currentUser$.subscribe(
       (currentUser) => {
         this.currentUser = currentUser;
-         
+
         if (this.currentUser.id !== 0) {
           this.userRecipes = this.recipeService
             .getRecipesByUser(this.allRecipes, this.currentUser.id)
@@ -51,24 +54,23 @@ export class MainPageComponent implements OnInit, OnDestroy {
     );
     this.recipesSubscription = this.recipeService.recipes$.subscribe(
       (recipes) => {
-        
         this.allRecipes = recipes;
         const publicRecipes = this.recipeService.getPublicRecipes(
           this.allRecipes,
         );
 
-         this.currentUserSubscription = this.authService.currentUser$.subscribe(
-           (currentUser) => {
-             this.currentUser = currentUser;
-           },
-         );
-        
+        this.currentUserSubscription = this.authService.currentUser$.subscribe(
+          (currentUser) => {
+            this.currentUser = currentUser;
+          },
+        );
+
         if (this.currentUser.id !== 0) {
           this.userRecipes = this.recipeService
-            .getRecipesByUser(this.allRecipes,this.currentUser.id)
+            .getRecipesByUser(this.allRecipes, this.currentUser.id)
             .slice(0, 8);
         }
-        if (!this.popularRecipesLoaded && this.allRecipes.length>0) {
+        if (!this.popularRecipesLoaded && this.allRecipes.length > 0) {
           this.popularRecipes = this.recipeService
             .getPopularRecipes(publicRecipes)
             .slice(0, 8);
@@ -78,8 +80,8 @@ export class MainPageComponent implements OnInit, OnDestroy {
           .getRecentRecipes(publicRecipes)
           .slice(0, 8);
 
-        this.categoriesSubscription = this.categoryService.sections$.subscribe(
-          (data) => {
+        this.categoriesSubscription = this.sectionService.sections$.subscribe(
+          (data:ISection[]) => {
             this.allSections = data;
           },
         );

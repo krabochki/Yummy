@@ -1,4 +1,4 @@
-import { LOCALE_ID, NgModule } from '@angular/core';
+import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
 import { CommonModule, NgFor } from '@angular/common';
 import { RecipesRoutingModule } from './recipes-routing.module';
 import { RecipesComponent } from './recipes.component';
@@ -26,6 +26,7 @@ import { AsyncPipe } from '@angular/common';
 
 import { VerticalRecipeListComponent } from './components/recipes/vertical-recipe-list/vertical-recipe-list.component';
 import { VerticalCategoryListComponent } from './components/categories/vertical-category-list/vertical-category-list.component';
+import { SectionService } from './services/section.service';
 
 
 @NgModule({
@@ -43,7 +44,7 @@ import { VerticalCategoryListComponent } from './components/categories/vertical-
     HorizontalRecipeListComponent,
     VerticalRecipeListComponent,
     VerticalCategoryListComponent,
-    HorizontalCategoryListComponent
+    HorizontalCategoryListComponent,
   ],
   imports: [
     CommonModule,
@@ -55,7 +56,9 @@ import { VerticalCategoryListComponent } from './components/categories/vertical-
     ControlsModule,
     CommonModule,
     MatFormFieldModule,
-    MatAutocompleteModule,MatInputModule,AsyncPipe,
+    MatAutocompleteModule,
+    MatInputModule,
+    AsyncPipe,
     CdkDropList,
     CdkDragHandle,
     CdkDropList,
@@ -71,6 +74,11 @@ import { VerticalCategoryListComponent } from './components/categories/vertical-
     provideAngularSvgIcon(),
     { provide: LOCALE_ID, useValue: 'ru' },
   ],
-  exports: [HorizontalRecipeListComponent,VerticalCategoryListComponent, HorizontalCategoryListComponent, VerticalRecipeListComponent],
+  exports: [
+    HorizontalRecipeListComponent,
+    VerticalCategoryListComponent,
+    HorizontalCategoryListComponent,
+    VerticalRecipeListComponent,
+  ],
 })
 export class RecipesModule {}

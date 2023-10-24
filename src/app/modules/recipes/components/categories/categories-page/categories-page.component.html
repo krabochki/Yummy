@@ -1,10 +1,10 @@
-<div class="main" *ngIf="!this.isLoading; else loading">
-  <h1>Все категории</h1>
+<div class="wrap" *ngIf="!this.isLoading; else loading">
+  <h1>{{title}}</h1>
 
   <div>
     <div *ngFor="let section of sections" class="sections">
       <div *ngIf="section.categoriesId.length > 0" class="sections">
-        <h2 [routerLink]="'/sections/list/'+section.id">{{ section.name }}</h2>
+        <h2  [routerLink]="'/sections/list/'+section.id">{{ section.name }}</h2>
 
         <app-vertical-category-list [showRecipesNumber]="true" *ngIf="getCategoriesOfSection(section).length > 0"
           [categories]="getCategoriesOfSection(section)"></app-vertical-category-list>

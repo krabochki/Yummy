@@ -36,6 +36,7 @@ export class VerticalCategoryListComponent implements OnChanges {
     switch (true) {
       case event < 480:
         this.filterNullBlocks();
+        if(this.categories.length <=2)
         while (this.categories.length !== 3) this.categories.push(nullCategory);
         break;
       case event > 480 && event <= 610:

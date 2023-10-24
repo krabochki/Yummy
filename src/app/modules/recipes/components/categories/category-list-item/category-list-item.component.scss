@@ -29,40 +29,45 @@
 sup {
   font-size: 0.6em;
 
-  	position: absolute;
+  position: absolute;
+  margin-left: -1.3em;
 }
 
-.category.null p{
+.category.null p {
   width: 100%;
   min-width: 100%;
   max-width: 100%;
 }
 
-p{
-    position: relative;
-text-align: center;margin-top: 0.5em;
-overflow: hidden;
-  max-width: 12vw;
-text-overflow: ellipsis;
+p {
+  text-align: center;
+  margin-top: 0.5em;
+  overflow: hidden;
+    width: 12vw;
 
+  text-overflow: ellipsis;
   margin: 0 auto;
   margin-top: 0.5em;
-
 }
 span {
   cursor: pointer;
   text-align: center;
   color: var(--color-foreground);
   line-height: 1.1;
-  min-width: 8em;
+  min-width: 8em;  max-width:6vw;
+  overflow: hidden;
+
   font-size: 1.2em;
   text-align: center;
-
-
-  
 }
 
 @media (max-width: 900px) {
+
+  p {
+
+  min-width: 12vw;
+}
+
   .category {
     height: 17vmax;
     width: 17vmax;

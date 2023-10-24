@@ -15,7 +15,6 @@ import { SectionService } from '../../../services/section.service';
   selector: 'app-categories-page',
   templateUrl: './categories-page.component.html',
   styleUrls: ['./categories-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CategoriesPageComponent implements OnInit, OnDestroy {
   constructor(
@@ -35,6 +34,8 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
 
   section: ISection = nullSection;
 
+  title: string = '';
+
   ngOnInit() {
     this.route.data.subscribe((data) => {
       this.filter = data['filter'];
@@ -46,6 +47,7 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
         this.sectionSubscription = this.sectionService.sections$.subscribe(
           (sections: ISection[]) => {
 
+            this.title='Все категории'
             this.sections = sections;
 
             this.sections.sort((elem1: ISection, elem2: ISection) => {
@@ -63,7 +65,11 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
         this.sectionSubscription = this.sectionService.sections$.subscribe(
           () => {
             this.sections = [];
-            this.sections.push(this.section);                 this.cd.markForCheck();
+            this.title = this.section.name;
+            const sect = { ...this.section }
+            sect.name =''
+            
+            this.sections.push(sect); this.cd.markForCheck();
 
           },
         );

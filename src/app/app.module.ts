@@ -14,11 +14,19 @@ import { AngularSvgIconModule, SvgIconComponent } from 'angular-svg-icon';
 import { RouteEventsService } from './modules/controls/route-events.service';
 import { SectionService } from './modules/recipes/services/section.service';
 import { CategoryService } from './modules/recipes/services/category.service';
+import { RecipeService } from './modules/recipes/services/recipe.service';
+import { UserService } from './modules/user-pages/services/user.service';
 export function initializeSections(sectionSerivce: SectionService) {
   return () => sectionSerivce.loadSectionData();
 }
 export function initializeCategories(CategoryService: CategoryService) {
   return () => CategoryService.loadCategoryData();
+}
+export function initializeRecipes(RecipeService: RecipeService) {
+  return () => RecipeService.loadRecipeData();
+}
+export function initializeUsers(UserService: UserService) {
+  return () => UserService.loadUsersData();
 }
 
 @NgModule({
@@ -44,6 +52,20 @@ export function initializeCategories(CategoryService: CategoryService) {
       provide: APP_INITIALIZER,
       useFactory: initializeCategories,
       deps: [CategoryService],
+      multi: true,
+    },
+    UserService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeUsers,
+      deps: [UserService],
+      multi: true,
+    },
+    RecipeService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeRecipes,
+      deps: [RecipeService],
       multi: true,
     },
 

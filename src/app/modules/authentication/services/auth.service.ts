@@ -9,6 +9,7 @@ import {
 import { RecipeService } from '../../recipes/services/recipe.service';
 import { UserService } from '../../user-pages/services/user.service';
 import { IRecipe } from '../../recipes/models/recipes';
+import { usersUrl } from 'src/tools/source';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +21,7 @@ export class AuthService {
     new BehaviorSubject<IUser>({ ...nullUser });
   currentUser$ = this.currentUserSubject.asObservable();
 
-  usersUrl = 'http://localhost:3000/users';
+  usersUrl =  usersUrl
 
   constructor(
     private http: HttpClient,

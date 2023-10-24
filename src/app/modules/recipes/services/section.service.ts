@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { ICategory, ISection, nullSection } from '../models/categories';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
+import { sectionsUrl } from 'src/tools/source';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SectionService {
-  urlSections: string = 'http://localhost:3000/sections';
+  urlSections: string = sectionsUrl
 
   sectionsSubject = new BehaviorSubject<ISection[]>([]);
   sections$ = this.sectionsSubject.asObservable();

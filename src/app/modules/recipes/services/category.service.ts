@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { ICategory, ISection } from '../models/categories';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
+import { categoriesUrl } from 'src/tools/source';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CategoryService {
-  urlCategories: string = 'http://localhost:3000/categories';
+  urlCategories: string = categoriesUrl;
 
   private categoriesSubject = new BehaviorSubject<ICategory[]>([]);
   categories$ = this.categoriesSubject.asObservable();

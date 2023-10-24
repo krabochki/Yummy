@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { IUser } from '../models/users';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, map, switchMap, take, tap, throwError } from 'rxjs';
-import { RecipeService } from '../../recipes/services/recipe.service';
+import { usersUrl } from 'src/tools/source';
 
 @Injectable({
   providedIn: 'root',
@@ -10,17 +10,17 @@ import { RecipeService } from '../../recipes/services/recipe.service';
 export class UserService {
   private usersSubject = new BehaviorSubject<IUser[]>([]);
   users$ = this.usersSubject.asObservable();
+  url: string = usersUrl;
 
-  constructor(
-    private http: HttpClient,
-    private recipeService: RecipeService,
-  ) {
+  constructor(private http: HttpClient) {
+ 
+  }
+
+  loadUsersData() {
     this.getUsers().subscribe((data) => {
       this.usersSubject.next(data);
     });
   }
-
-  url: string = 'http://localhost:3000/users';
 
   isUserSubscriber(user: IUser, userId: number) {
     if (!user) return false;
@@ -65,11 +65,9 @@ export class UserService {
           user.followersIds = user.followersIds?.filter(
             (element) => element !== deletingId,
           );
-          this.updateUsers(user)
+          this.updateUsers(user);
         }
-
       });
-
     });
   }
 
@@ -127,12 +125,9 @@ export class UserService {
   }
 
   deleteUser() {
-
     //исправить: не удаляет юзера и выдает ошибки если у него более 1 своего рецепта
-
     // this.deleteDataAboutDeletingUser(deletableUser.id);
     // this.recipeService.deleteDataAboutDeletingUser(deletableUser.id);
-
     // return this.http
     //   .delete(`${this.url}/${deletableUser.id}`)
     //   .pipe(
@@ -148,13 +143,15 @@ export class UserService {
   }
 
   postUser(user: IUser) {
-    return this.http.post<IUser>(this.url, user).pipe(
-      tap((newUser: IUser) => {
-        const currentUsers = this.usersSubject.value;
-        const updatedUsers = [...currentUsers, newUser];
-        this.usersSubject.next(updatedUsers);
-
-      }),
-    ).subscribe();
+    return this.http
+      .post<IUser>(this.url, user)
+      .pipe(
+        tap((newUser: IUser) => {
+          const currentUsers = this.usersSubject.value;
+          const updatedUsers = [...currentUsers, newUser];
+          this.usersSubject.next(updatedUsers);
+        }),
+      )
+      .subscribe();
   }
 }

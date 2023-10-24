@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { IRecipe } from '../models/recipes';
 import { BehaviorSubject, catchError, map, switchMap, take, tap, throwError } from 'rxjs';
+import { recipesUrl } from 'src/tools/source';
 
 @Injectable({
   providedIn: 'root',
@@ -10,9 +11,13 @@ export class RecipeService {
   recipesSubject = new BehaviorSubject<IRecipe[]>([]);
   recipes$ = this.recipesSubject.asObservable();
 
-  url: string = 'http://localhost:3000/recipes';
+  url: string = recipesUrl;
 
   constructor(private http: HttpClient) {
+  
+  }
+
+  loadRecipeData() {
     this.getRecipes().subscribe((data) => {
       this.recipesSubject.next(data);
     });
@@ -131,9 +136,10 @@ export class RecipeService {
   getPublicRecipes(recipes: IRecipe[]) {
     return recipes.filter((recipe) => recipe.status === 'public');
   }
-  getPublicAndAllMyRecipes(recipes: IRecipe[],userId:number) {
-        return recipes.filter((recipe) => (recipe.status === 'public' || recipe.authorId === userId));
-
+  getPublicAndAllMyRecipes(recipes: IRecipe[], userId: number) {
+    return recipes.filter(
+      (recipe) => recipe.status === 'public' || recipe.authorId === userId,
+    );
   }
   getAwaitingRecipes(recipes: IRecipe[]) {
     return recipes.filter((recipe) => recipe.status === 'awaits');

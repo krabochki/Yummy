@@ -382,7 +382,18 @@
               [text]="'Опубликовать комментарий'"
             ></app-button>
           </div>
+          
         </div>
+        
+      </div>
+      <div *ngIf="this.recipe.status === 'public' && this.downRecipes.length!==0" class="ads-under-cont">
+        <h2>Похожие рецепты</h2>
+        <div class="row ads-under" >
+        <app-recipe-list-item
+          *ngFor="let downRecipe of downRecipes"
+          [recipe]="downRecipe"
+        ></app-recipe-list-item>
+      </div>
       </div>
     </div>
 

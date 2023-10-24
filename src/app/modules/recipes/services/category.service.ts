@@ -42,11 +42,15 @@ export class CategoryService {
     section: ISection,
     categories: ICategory[],
   ): ICategory[] {
-    const findedCategories = categories.filter((cat) => {
-      section.categoriesId.includes(cat.id);
-    });
-    if (findedCategories) return findedCategories;
-    else return [];
+
+    const findedCategories: ICategory[] = [];
+     categories.forEach((category) => {
+       if (section.categoriesId.includes(category.id)) {
+         findedCategories.push(category);
+       }
+     });
+  
+    return findedCategories;
   }
 
   updateCategory(category: ICategory) {

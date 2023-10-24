@@ -131,6 +131,10 @@ export class RecipeService {
   getPublicRecipes(recipes: IRecipe[]) {
     return recipes.filter((recipe) => recipe.status === 'public');
   }
+  getPublicAndAllMyRecipes(recipes: IRecipe[],userId:number) {
+        return recipes.filter((recipe) => (recipe.status === 'public' || recipe.authorId === userId));
+
+  }
   getAwaitingRecipes(recipes: IRecipe[]) {
     return recipes.filter((recipe) => recipe.status === 'awaits');
   }

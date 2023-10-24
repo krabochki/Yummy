@@ -10,8 +10,7 @@
         12,
         13,
         14,
-        15,
-        16
+        15
       ]
     },
     {
@@ -78,7 +77,9 @@
       "name": "Сладости и десерты",
       "photoUrl": "",
       "categoriesId": [
-        10
+        10,
+        16,
+        18
       ]
     }
   ],
@@ -167,6 +168,16 @@
       "id": 15,
       "name": "День рождения",
       "photoUrl": ""
+    },
+    {
+      "id": 18,
+      "name": "Мороженое",
+      "photoUrl": ""
+    },
+    {
+      "id": 17,
+      "name": "Восточные сладости",
+      "photoUrl": ""
     }
   ],
   "recipes": [
@@ -174,29 +185,36 @@
       "id": 1,
       "mainPhotoUrl": null,
       "comments": [],
-      "categories": [],
-      "name": "deserunt id deserunt",
+      "categories": [
+        18
+      ],
+      "name": "Шоколадное мороженое",
       "description": "Reprehenderit labore mollit sunt enim anim amet sunt reprehenderit tempor aliquip amet ex. Aute reprehenderit quis amet ad veniam esse sint. Laboris dolor sit incididunt veniam laboris in non. Consectetur fugiat commodo adipisicing sunt do minim sint.\r\nConsectetur do aliquip reprehenderit nostrud velit id veniam. Quis sint veniam consequat irure excepteur dolore magna. Reprehenderit velit Lorem esse non velit occaecat sint non minim Lorem. Sunt adipisicing ex et velit exercitation sunt ut magna. Ad exercitation Lorem adipisicing magna magna esse eu ad velit aliqua laborum nostrud.\r\nEt velit deserunt culpa pariatur velit elit officia enim Lorem sit qui. Laboris adipisicing Lorem voluptate mollit consectetur sunt ex cillum amet. Laborum adipisicing aliqua ea incididunt.\r\n",
       "history": "Cillum elit ex mollit ullamco fugiat. Reprehenderit est ad tempor magna cupidatat mollit Lorem aliqua. Lorem pariatur sit reprehenderit eu veniam. Non pariatur eu magna do magna fugiat nisi ex commodo qui occaecat id anim in.\r\nEa aliqua Lorem nulla do est duis in commodo est nisi sit et ipsum consectetur. Commodo deserunt ex veniam incididunt culpa ipsum culpa qui dolor aute voluptate. Culpa aute elit anim anim. Qui laborum ad aute labore aute anim ullamco quis occaecat voluptate voluptate eiusmod. Irure eu et eu est mollit dolore nulla in nulla do sit duis nisi dolor. Laboris aute irure sint voluptate sunt laboris duis nisi elit id ad sunt tempor. Nisi qui mollit occaecat deserunt id pariatur amet ea minim sint.\r\n",
-      "preparationTime": "in tempor consequat proident nisi",
-      "cookingTime": "adipisicing adipisicing culpa in Lorem",
+      "preparationTime": "5 минут",
+      "cookingTime": "15 минут",
       "servings": 18,
       "authorId": 8,
-      "cooksId": [],
-      "favoritesId": [],
-      "likesId": [],
-      "status": "awaits",
-      "origin": "Azerbaijan",
-      "publicationDate": "2014-11-07",
-      "instuctions": [
-        "sit",
-        "in",
-        "nulla",
-        "excepteur",
-        "pariatur",
-        "ex",
-        "quis"
+      "cooksId": [
+        1,
+        2,
+        3
       ],
+      "favoritesId": [
+        1,
+        2,
+        3
+      ],
+      "likesId": [
+        2,
+        3,
+        4,
+        1,
+        5
+      ],
+      "status": "public",
+      "origin": "Америка",
+      "publicationDate": "2014-11-07",
       "instructions": [
         {
           "images": [],
@@ -4123,7 +4141,7 @@
       "personalWebsite": "https://www.cookingadventures.com/",
       "location": "Лондон, Великобритания",
       "registrationDate": "2023-04-02",
-      "profileViews": 4942,
+      "profileViews": 4944,
       "role": "user"
     },
     {

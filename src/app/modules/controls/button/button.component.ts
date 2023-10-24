@@ -8,6 +8,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 })
 export class ButtonComponent {
 
+  @Input() icon:string = ''
 
   @Input() style:'filled'|'filled-min'|'outlined'|'banner'|undefined;
   @Input() color:'prim'|'sec'|undefined;

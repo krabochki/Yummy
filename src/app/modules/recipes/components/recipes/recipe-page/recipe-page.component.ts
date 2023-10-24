@@ -14,16 +14,18 @@ import { CategoryService } from '../../../services/category.service';
 import { ICategory } from '../../../models/categories';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
+import { SectionService } from '../../../services/section.service';
 
 @Component({
   selector: 'app-recipe-page',
   templateUrl: './recipe-page.component.html',
   styleUrls: ['./recipe-page.component.scss'],
-  animations: [trigger('history', heightAnim()), trigger('modal',modal())],
-  changeDetection:ChangeDetectionStrategy.OnPush
+  animations: [trigger('history', heightAnim()), trigger('modal', modal())],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecipePageComponent implements OnInit {
   constructor(
+    private sectionService: SectionService,
     private route: ActivatedRoute,
     private titleService: Title,
     private recipeService: RecipeService,
@@ -45,11 +47,13 @@ export class RecipePageComponent implements OnInit {
   readingTimeInMinutes: number = 0;
 
   currentUserSubscription?: Subscription;
-  currentUser: IUser = {...nullUser};
+  currentUser: IUser = { ...nullUser };
 
   basketMode = false;
 
-  author: IUser = {...nullUser};
+  downRecipes: IRecipe[] = [];
+
+  author: IUser = { ...nullUser };
   iHaveIndgredient: boolean[] = [];
   basket: boolean[] = [];
 
@@ -91,6 +95,119 @@ export class RecipePageComponent implements OnInit {
           });
 
           this.recipeService.recipes$.subscribe((recipes) => {
+
+            //перебираем все категории в рецепте
+            if (this.recipe.categories.length > 0) {
+              const maxRecipes = 4;
+              const recipesToAdd: IRecipe[] = [];
+              const publicRecipes =
+                this.recipeService.getPublicRecipes(recipes);
+              for (const category of this.recipe.categories) {
+                const recipesFromCategory =
+                  this.recipeService.getRecipesByCategory(
+                    publicRecipes,
+                    category,
+                  );
+
+                for (const newRecipe of recipesFromCategory) {
+                  if (
+                    !recipesToAdd.some(
+                      (existingRecipe) => existingRecipe.id === newRecipe.id,
+                    )
+                  ) {
+                    recipesToAdd.push(newRecipe);
+                    if (recipesToAdd.length >= maxRecipes) {
+                      break;
+                    }
+                  }
+                }
+
+                if (recipesToAdd.length >= maxRecipes) {
+                  break;
+                }
+              }
+
+              // Если до сих пор не заполнились то перебираем все рецепты в категориях из секций категорий рецепта
+              if (
+                recipesToAdd.length < maxRecipes &&
+                this.recipe.categories.length > 0
+              ) {
+                this.recipe.categories.forEach((element) => {
+                  const findSection = element;
+
+                  this.categoryService.categories$.subscribe((cat) => {
+                    const category = cat.find(
+                      (categ) => categ.id === findSection,
+                    );
+
+                    if (category)
+                      this.sectionService.sections$.subscribe((sect) => {
+                        const section =
+                          this.sectionService.getSectionOfCategory(
+                            sect,
+                            category,
+                          );
+                        const sectionCategories =
+                          this.categoryService.getCategoriesBySection(
+                            section,
+                            cat,
+                          );
+
+                        for (const category of sectionCategories) {
+                          const recipesFromCategory =
+                            this.recipeService.getRecipesByCategory(
+                              publicRecipes,
+                              category.id,
+                            );
+
+                          for (const newRecipe of recipesFromCategory) {
+                            if (
+                              !recipesToAdd.some(
+                                (existingRecipe) =>
+                                  existingRecipe.id === newRecipe.id,
+                              )
+                            ) {
+                              recipesToAdd.push(newRecipe);
+                              if (recipesToAdd.length >= maxRecipes) {
+                                break;
+                              }
+                            }
+                          }
+
+                          if (recipesToAdd.length >= maxRecipes) {
+                            break;
+                          }
+                        }
+                      });
+                  });
+                });
+              }
+              //если все равно нет 4 рецептов то берем популярные
+              if (
+                recipesToAdd.length < maxRecipes &&
+                this.recipe.categories.length > 0
+              ) {
+                let popularRecipes = this.recipeService.getPopularRecipes(publicRecipes)
+
+                popularRecipes = popularRecipes.filter((recipe) => recipe.authorId !== this.recipe.authorId)
+                  for (const newRecipe of popularRecipes) {
+                    if (
+                      !recipesToAdd.some(
+                        (existingRecipe) => existingRecipe.id === newRecipe.id,
+                      )
+                    ) {
+                      recipesToAdd.push(newRecipe);
+                      if (recipesToAdd.length >= maxRecipes) {
+                        break;
+                      }
+                    }
+                  }
+                
+
+              }
+                this.downRecipes = recipesToAdd.slice(0, maxRecipes);
+            }
+
             this.recentRecipes = this.recipeService.getPublicRecipes(recipes);
             this.recentRecipes = this.recipeService
               .getRecentRecipes(this.recentRecipes)
@@ -99,13 +216,11 @@ export class RecipePageComponent implements OnInit {
               if (recipe.id === this.recipe.id) {
                 this.recipe = recipe;
 
-                this.categoryService
-                  .categories$
-                  .subscribe((allCategories) => {
-                    this.categories = allCategories.filter((element) =>
-                      this.recipe.categories.includes(element.id),
-                    );
-                  });
+                this.categoryService.categories$.subscribe((allCategories) => {
+                  this.categories = allCategories.filter((element) =>
+                    this.recipe.categories.includes(element.id),
+                  );
+                });
 
                 const combinedText = [
                   recipe.history,
@@ -140,11 +255,8 @@ export class RecipePageComponent implements OnInit {
               }
             });
           });
-
-            
-          });
         });
-      
+      });
   }
 
   makeThisRecipeFavorite() {

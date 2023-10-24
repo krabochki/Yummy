@@ -58,7 +58,6 @@ const recipeNoRecipesButtonText = {
   [RecipeType.Updates]: 'Все кулинары',
 };
 
-
 const recipeNoRecipesText = {
   [RecipeType.Recent]: '',
   [RecipeType.Popular]: '',
@@ -132,7 +131,6 @@ export class SomeRecipesPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(true);
     this.route.data.subscribe((data) => {
       this.filter = data['filter'];
       switch (this.filter) {
@@ -168,12 +166,22 @@ export class SomeRecipesPageComponent implements OnInit {
       if (this.recipeType === RecipeType.Category) {
         this.category = data['CategoryResolver'];
         this.recipeService.recipes$.subscribe((data) => {
-          const publicRecipes = this.recipeService.getPublicRecipes(data);
-          this.allRecipes = this.recipeService.getRecipesByCategory(
-            publicRecipes,
-            this.category.id,
-          );
-          this.recipesToShow = this.allRecipes.slice(0, 8);
+          this.authService.currentUser$.subscribe((user: IUser) => {
+
+
+            this.currentUser = user;
+              
+            const publicAndMyRecipes = this.recipeService.getPublicAndAllMyRecipes(data, this.currentUser.id);
+            console.log(publicAndMyRecipes)
+              this.allRecipes = this.recipeService.getRecipesByCategory(
+                publicAndMyRecipes,
+                this.category.id,
+              );
+              this.recipesToShow = this.allRecipes.slice(0, 8);
+
+           }
+          )
+        
         });
       } else {
         this.authService.currentUser$.subscribe((user: IUser) => {
@@ -208,12 +216,8 @@ export class SomeRecipesPageComponent implements OnInit {
                     ...foundRecipes,
                   ];
                   this.followingRecipes = this.followingRecipes.slice(0, 8);
-                                  this.recipesToShow = this.allRecipes.slice(
-                                    0,
-                                    8,
-                                  );
-                  console.log(this.followingRecipes)
-
+                  this.recipesToShow = this.allRecipes.slice(0, 8);
+                  console.log(this.followingRecipes);
                 });
                 break;
               case RecipeType.Recent:
@@ -283,20 +287,17 @@ export class SomeRecipesPageComponent implements OnInit {
                     publicRecipes,
                     following.id,
                   );
-                  foundRecipes = this.recipeService.getRecentRecipes(foundRecipes)
+                  foundRecipes =
+                    this.recipeService.getRecentRecipes(foundRecipes);
                   this.followingRecipes = [
                     ...this.followingRecipes,
                     ...foundRecipes,
                   ];
                   this.followingRecipes = this.followingRecipes.slice(0, 8);
-                                    console.log(this.followingRecipes);
-
+                  console.log(this.followingRecipes);
                 });
 
-                this.allRecipes = [
-                  ...this.allRecipes,
-                  ...this.myRecipes,
-                                ];
+                this.allRecipes = [...this.allRecipes, ...this.myRecipes];
 
                 break;
             }
@@ -336,15 +337,14 @@ export class SomeRecipesPageComponent implements OnInit {
   }
   search() {
     this.autocompleteShow = true;
-      const recipeAuthors: IUser[] = [];
-      this.allRecipes.forEach((element) => {
-        recipeAuthors.push(this.getUser(element.authorId));
-      });
+    const recipeAuthors: IUser[] = [];
+    this.allRecipes.forEach((element) => {
+      recipeAuthors.push(this.getUser(element.authorId));
+    });
     if (this.searchQuery && this.searchQuery !== '') {
       this.autocomplete = [];
 
-    
-      const search = this.searchQuery.toLowerCase().replace(/\s/g, "");
+      const search = this.searchQuery.toLowerCase().replace(/\s/g, '');
 
       const filterRecipes: IRecipe[] = this.allRecipes.filter(
         (recipe: IRecipe) =>
@@ -354,7 +354,7 @@ export class SomeRecipesPageComponent implements OnInit {
             .replace(/\s/g, '')
             .includes(search),
       );
-     
+
       filterRecipes.forEach((element) => {
         this.autocomplete.push(element);
       });

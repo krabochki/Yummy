@@ -19,6 +19,7 @@ import { Title } from '@angular/platform-browser';
   templateUrl: './categories-page.component.html',
   styleUrls: ['./categories-page.component.scss'],
   animations: [trigger('auto-complete', heightAnim())],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CategoriesPageComponent implements OnInit, OnDestroy {
   constructor(
@@ -94,6 +95,7 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
   }
   getCategoriesOfSection(section: ISection): ICategory[] {
     const sectionCategories: ICategory[] = [];
+    
     this.categories.forEach((category) => {
       if (section.categoriesId.includes(category.id)) {
         sectionCategories.push(category);

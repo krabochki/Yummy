@@ -8,6 +8,8 @@
         <div class="block">
             <h1>{{ getTitleByRecipeType(recipeType) }}</h1>
 
+            <app-button class="add-recipe" [icon]="'add-recipe'" *ngIf="filter==='my-recipes'" routerLink="/recipes/add"  [color]="'prim'" [text]="'Создать рецепт'" [rounded]="true"></app-button>
+
             <div class="search-block">
                 <div class="search">
                     <input (focus)="focus()" (blur)="blur()" [(ngModel)]="searchQuery" (ngModelChange)="search()" type="text"
@@ -155,7 +157,7 @@
                 </div>
             </div>
             <app-button [text]="'Загрузить еще...'" (click)="loadMoreRecipes()"
-                *ngIf="allRecipes.length > recipesToShow.length" [rounded]="true" [style]="'outlined'"
+                *ngIf="(allRecipes.length > recipesToShow.length) && (filter!=='all')" [rounded]="true" [style]="'outlined'"
                 [color]="'prim'"></app-button>
         </div>
     </div>

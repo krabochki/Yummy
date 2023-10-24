@@ -23,7 +23,6 @@ app-modal{
   align-items: center;
   flex-wrap: wrap;
   h2 {
-    line-height: 1;
     margin: 0;
     font-weight: 500;
     font-size: 1.2em;
@@ -40,7 +39,6 @@ app-modal{
 h2 {
   margin-bottom: 0.75em;
   font-size: var(--font-l);
-  line-height: 1;
   font-weight: 700;
 }
 
@@ -52,23 +50,28 @@ h2 {
   display: grid;
   margin-top: 2em;
   column-gap: 2em;
-  grid-template-columns: 1fr 12em;
+  grid-template-columns: 1fr 10em;
 
-  .ads {
-    row-gap: 1em;
-  }
-}
-
-@media (max-width: 960px) {
-  .all {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
-
-    .ads {
-      display: none;
+ 
+  .ads-under{
+    column-gap: 1em;
+    width: 100%;
+    display: grid;grid-template-columns: repeat(4,1fr); justify-content: space-between;
+    app-recipe-list-item{
+      zoom:0.8
     }
   }
+
+  .ads {
+  
+    row-gap: 1em;
+     app-recipe-list-item{
+  zoom:0.8;
 }
+  }
+}
+
+
 
 .recipe-ingredients {
   display: grid;
@@ -227,6 +230,9 @@ h2 {
 .instructions {
   row-gap: 1em;
   display: flex;
+  h2{
+    margin: 0;
+  }
   flex-direction: column;
   .instruction {
     display: grid;
@@ -445,6 +451,7 @@ h1 {
   fill:Var(--color-foreground);height:1em;
   
 }
+
 .history{
   margin-top: 0.5em;
   font-weight: 400;
@@ -609,6 +616,20 @@ h1 {
 }
 
 
+@media(max-width:1280px){
+  .all {
+
+ 
+  .ads-under{
+    grid-template-columns: repeat(3,1fr); justify-content: space-between;
+    app-recipe-list-item{
+      &:last-of-type{
+        display: none
+      }
+    }
+  }
+  }
+}
 @media(max-width:1000px){
   .recipe-ingredients {
  
@@ -616,21 +637,86 @@ h1 {
     max-width: 8em;
   }}
 }
+
+@media (max-width: 960px) {
+  .all {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+
+    .ads {
+      display: none;
+    }
+ 
+
+
+ 
+  .ads-under{
+    grid-template-columns: repeat(4,1fr); justify-content: space-between;
+    app-recipe-list-item{
+      &:last-of-type{
+        display: inline
+      }
+    }
+  }
+  }
+}
+
 @media (max-width: 840px) {
+
+    .main {
+    width: 100%;
+  }
+
+  .main-photo {
+    width: 80%;
+    margin-top: 2em;
+  }
+  .center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column-reverse;
+    .ingredients {
+      .recipe-ingredients .name{
+        max-width: 12em;
+      }
+      .recipe-ingredients .count p:last-of-type{
+        max-width: 5em;
+      }
+      display: block;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      width: max-content;
+      h2 {
+        text-align: center;
+      }
+      .basket-open-button {
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+  }
+
+  .all {
+  .ads-under{
+    grid-template-columns: repeat(3,1fr);
+    
+    app-recipe-list-item{
+     &:last-of-type{
+      display: none;
+     }
+    }
+  }
+  }
+
   .head {
     column-gap: 1.5em;
   }
 
-  .center {
-    justify-content: center;
-    margin: 0 auto;
-    margin-top: 2em;
-    align-items: start;
-    column-gap: 3em;
-    display: grid;
-    grid-template-columns: 14em max-content;
-    align-items: center;
-  }
+ 
 }
 
 @media (max-width: 736px) {
@@ -671,36 +757,7 @@ h1 {
     text-align: center;
   }
 
-  .main {
-    width: 100%;
-  }
-
-  .main-photo {
-    width: 20em;
-    margin-top: 2em;
-  }
-  .center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column-reverse;
-    .ingredients {
-      display: block;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      width: max-content;
-      h2 {
-        text-align: center;
-      }
-      .basket-open-button {
-        margin-left: auto;
-        margin-right: auto;
-      }
-    }
-  }
+  
 
   .nutrients {
     margin: 0 auto;
@@ -726,8 +783,19 @@ h1 {
     }
   }
 }
+@media(max-width:650px){
+    .all {
+  .ads-under-cont{
+    display: none;
+  }}
+}
 
 @media (max-width: 480px) {
+
+   .main-photo {
+    width: 100%;
+    margin-top: 2em;
+  }
   h1 {
     margin-bottom: 0.5em;
   }

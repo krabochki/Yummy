@@ -1,9 +1,9 @@
-<div class="category-cont"  [title]="category.name +  ' [' + recipesNumber + ']'" [routerLink]="context==='category'?'/categories/list/'+category.id:null" *ngIf="category.id>0; else nullCategory" >
-  <div class="category"  [ngStyle]="{'cursor':context==='section'?'default':null}" *ngIf="category.id>0; else nullCategory" >
+<div class="category-cont"  [title]="category.name +  ' [' + recipesNumber + ']'" [routerLink]="context==='category'?'/categories/list/'+category.id:'sections/list/'+category.id" *ngIf="category.id>0; else nullCategory" >
+  <div class="category"   *ngIf="category.id>0; else nullCategory" >
   
       
   </div>
-     <div style="position: relative; overflow: visible;"> <p ><sup *ngIf="showRecipesNumber">({{recipesNumber}})</sup><span  [ngStyle]="{'cursor':context==='section'?'default':null}">{{category.name}}</span> </p></div>
+     <div style="position: relative; overflow: visible;"> <p ><sup *ngIf="showRecipesNumber">({{recipesNumber}})</sup><span>{{category.name}}</span> </p></div>
 </div>
 
 <ng-template #nullCategory  >

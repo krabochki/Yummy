@@ -1,0 +1,11 @@
+.wrap{
+    padding: 1.7em calc(14.4vw + 0 * (100vw - 768px) / 760);
+}
+
+@media(max-width:480px){
+    .wrap{
+        padding-left: 6%;
+        padding-right: 6%;
+    }
+
+}

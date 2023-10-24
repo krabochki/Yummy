@@ -1,19 +1,21 @@
 
 <app-banner [notMain]="false"  [background]="'main-banner-background'"  [link]="'match'" [label]="'Готовьте с радостью\nЕшьте с удовольствием'" [buttonText]="'Подобрать рецепт'"></app-banner>
 
-<div class="recipes"><app-recipe-list [context]="'popular'" [recipes]="popularRecipes"></app-recipe-list></div>
+<div class="admin-panel" routerLink="/control-dashboard" *ngIf="currentUser.role==='admin'||currentUser.role==='moderator'">★</div>
 
-<app-category-list  [categories]="allCategories"></app-category-list>
+<div class="recipes horizontal">
+    <app-horizontal-recipe-list  [recipes]="popularRecipes"></app-horizontal-recipe-list>
+</div>
+
+<app-category-list style="display:none" [categories]="allCategories"></app-category-list>
 
 
 <app-banner  *ngIf="currentUser.id === 0" [link]="'greetings'" [info]="'Получи преимущества и расширенные функции зарегистрированных кулинаров'" [label]="'Откроем мир вкуса вместе'" [buttonText]="'Создать аккаунт'" [background]="'reg-banner-background'"></app-banner>
 
-<app-banner  *ngIf="currentUser.id !== 0" [link]="'recipes/add'" [info]="'Добавляйте подробные проверенные временем рецептом и делитесь опытом с другими кулинарами'" [label]="'Добавляйте рецепты и делитесь ими'" [buttonText]="'Создать рецепт'" [background]="'share-recipes-banner-background'"></app-banner>
+<app-banner  *ngIf="currentUser.id !== 0" [link]="'recipes/add'" [info]="'Добавляйте подробные проверенные временем рецепты и делитесь опытом с другими кулинарами'" [label]="'Добавляйте рецепты и делитесь ими'" [buttonText]="'Создать рецепт'" [background]="'share-recipes-banner-background'"></app-banner>
 
+
+    <div class="recipes"><app-vertical-recipe-list [cols]="4" [blocks]="recentRecipes"></app-vertical-recipe-list></div>
+    
 <app-banner  *ngIf="currentUser.id !== 0" [link]="'cooks'" [info]="'Посмотрите профили кулинаров и подчерпните идеи для ведения собственного профиля и рецептов!'" [label]="'Находите вдохновение совсем рядом'" [buttonText]="'Все кулинары'" [background]="'inspiration-banner-background'"></app-banner>
 
-
-<div class="recipes">
-    <app-recipe-list  [context]="'recent'" [recipes]="recentRecipes"></app-recipe-list>
-    
-</div>

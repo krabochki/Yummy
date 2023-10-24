@@ -34,7 +34,7 @@ $maxWidth: 1280;
 
 }
 
-@media (max-width:900px){
+@media (max-width:480px){
     :root{
 
     @include adaptive-font(22,15);

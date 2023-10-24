@@ -1,13 +1,12 @@
-<div class="wrap">
-  <div class="recipe-list" #list>
+<div class="wrap" >
+  <div   class="recipe-list" #list>
     <app-recipe-list-item
       class="content"
-      [context]="context"
       *ngFor="let item of recipes; let i = index"
       [recipe]="recipes[i]"
     ></app-recipe-list-item>
   </div>
-  <button class="scroll-left">
+  <button class="scroll-left" >
     <svg-icon
       class="svg-arrow"
       (click)="scrollRight()"

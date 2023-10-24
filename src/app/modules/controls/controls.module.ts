@@ -15,6 +15,9 @@ import { SvgIconComponent,provideAngularSvgIcon } from 'angular-svg-icon';
 
 import { SocialButtonComponent } from './social-button/social-button.component';
 import { BannerComponent } from './banner/banner.component';
+import { CountInputComponent } from './count-input/count-input.component';
+import { UsualInputComponent } from './usual-input/usual-input.component';
+import { ExpandingInputComponent } from './expanding-input/expanding-input.component';
 @NgModule({
   declarations: [
     ButtonComponent,
@@ -26,6 +29,9 @@ import { BannerComponent } from './banner/banner.component';
     ToogleSwitchComponent,
     SocialButtonComponent,
     BannerComponent,
+    CountInputComponent,
+    UsualInputComponent,
+    ExpandingInputComponent,
     
   ],
   imports: [
@@ -44,7 +50,10 @@ import { BannerComponent } from './banner/banner.component';
     ToogleSwitchComponent,
     PluralRuDirective,
     SocialButtonComponent,
-    BannerComponent
+    BannerComponent,
+    CountInputComponent,
+    UsualInputComponent,
+    ExpandingInputComponent,
   ],
   providers: [
     provideAngularSvgIcon()

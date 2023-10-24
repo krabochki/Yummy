@@ -126,7 +126,7 @@ svg {
 
 @media (max-width: 900px) {
   .footer {
-    font-size: 0.9em;
+    font-size: 1.1em;
     row-gap: var(--space-xl);
 
     .quote {
@@ -186,7 +186,7 @@ svg {
 @media (max-width: 480px) {
   .footer {
     padding: 0;
-    height: 3.7em;
+    height: 3em;
     *{
       display: none;
     }

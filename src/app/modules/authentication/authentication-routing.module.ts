@@ -7,6 +7,8 @@ import { PasswordRecoveryComponent } from './components/password-recovery/passwo
 import { RegisterComponent } from './components/register/register.component';
 import { GreetingsComponent } from './components/greetings/greetings.component';
 import { OnlyNoAuthGuard } from './guards/only-no-auth.guard';
+import { ControlDashboardComponent } from './components/control-dashboard/control-dashboard.component';
+import { ModeratorGuard } from './guards/moderator.guard';
 
 const routes: Routes = [
   {
@@ -37,6 +39,11 @@ const routes: Routes = [
         path: 'email-confirmation ',
         component: EmailConfirmationComponent,
         canActivate: [OnlyNoAuthGuard],
+      },
+      {
+        path: 'control-dashboard',
+        component: ControlDashboardComponent,
+        canActivate: [ModeratorGuard],
       },
     ],
   },

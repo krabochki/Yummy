@@ -1,23 +1,57 @@
 @import "../../../../../../tools/UI/UI.scss";
 
-
 @keyframes loading {
-    0% {
-      background-position: -100px;
-    }
-  
-    100% {
-  background-position: 200px;
-    }
+  0% {
+    background-position: -100px;
   }
 
+  100% {
+    background-position: 200px;
+  }
+}
+.moder-buttons{
+  position: absolute;
+  top:0;
+  
+  left:0;
+  right: 0;
+  
+
+  padding: 1em 1em;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  
+  width: 100%;
+  button{
+    display: flex;
+    width: 2em;
+  height: 2em;
+    align-items: center;
+    justify-content: center;
+    padding:0.5em;
+    border-radius: 100%;
+  }
+
+  button:first-of-type{
+    background-color: rgb(247, 107, 107);
+  }
+    button:last-of-type{
+    background-color: rgb(103, 211, 125);
+  }
+
+}
+
 .recipe {
+  position: relative;
   background-image: url("../../../../../../assets/images/svg/pancakes.png");
 
   box-shadow: inset 0 -7em 4em rgba($color: #000000, $alpha: 0.7);
   scroll-snap-align: start;
   padding: 1rem 1rem;
   overflow-x: hidden;
+  overflow-y: hidden;
   background-size: cover;
   height: 15em;
   border-radius: 1.5em;
@@ -27,24 +61,60 @@
   grid-template-columns: 1fr;
   width: 100%; /* 4 колонки внутри грида */
 
-  &.sceleton{
+  &.sceleton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+padding: 2em;
+    &.null {
+      p {
+        opacity: 0.5;
+        font-size: 1em;
+        text-align: center;
+        line-height: 1;
+        color: var(--color-foreground-unactive);
+        margin-bottom: 0.75em;
+        font-weight: 600;
+        cursor: default;
+      }
+      .no-recipe-svg {
+        width: 100%;
+        opacity: 0.65;
 
+        fill: var(--color-foreground-unactive);
+      }
+      animation: none;
+      background-image: none;
+      background-image: linear-gradient(
+        to right,
+        transparent,
+        var(--color-background-deeper-unactive) 100%
+      );
+    }
     box-shadow: none;
 
-                animation: loading 1.7s infinite linear;
-            background: #dedfe1;
-        background-image: -webkit-linear-gradient(to right, #dedfe1 0%, #f2f3f5 20%, #dedfe1 40%, #dedfe1 100%);
-        background-image: linear-gradient(to right, #dedfe1 0%, #f2f3f5 20%, #dedfe1 40%, #dedfe1 100%);
-        background-repeat: no-repeat;
+    animation: loading 1.7s infinite linear;
+    background: var(--color-background-deeper);
+    background-image: -webkit-linear-gradient(
+      to right,
+      #dedfe1 0%,
+      #f2f3f5 20%,
+      #dedfe1 40%,
+      #dedfe1 100%
+    );
+    background-image: linear-gradient(
+      to right,
+      #dedfe1 0%,
+      #f2f3f5 20%,
+      #dedfe1 40%,
+      #dedfe1 100%
+    );
+    background-repeat: no-repeat;
 
-        color:transparent !important;
+    color: transparent !important;
+  }
 
-    }
-
-
-
-
-  
   * {
     color: #fff;
   }
@@ -71,8 +141,28 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    transition: 0.3s ease-in-out;
+    position: relative;
 
+    overflow: hidden;
+    &::before{
+      position: absolute;
+      top:0;bottom:0;right:0;left:0;margin:auto;
+      content: '';
+      background-color: rgb(255, 48, 48);
+      height: 0px;
+      width: 0px;
+      border-radius: 100%;
+      z-index: 0;
+      transition: 0.2s ease-in-out;
+    }
+
+    &:hover::before{
+      height:100%;
+      width: 100%;
+    }
     .fav-icon {
+      z-index: 1;
       fill: white;
       height: 1.3em;
     }
@@ -170,7 +260,6 @@ app-modal {
   .recipe {
     box-shadow: inset 0 -7em 4em rgba($color: #000000, $alpha: 0.5);
 
-    height: 13em;
     h1 {
       font-size: 1.1em;
       padding-bottom: 0.2em;
@@ -183,13 +272,10 @@ app-modal {
       margin-bottom: 0.4em;
     }
   }
-}
 
-@media (max-width: 700px) {
   .recipe {
     box-shadow: inset 0 -7em 4em rgba($color: #000000, $alpha: 0.5);
 
-    height: 14em;
     h1 {
       font-size: 1.3em;
 
@@ -202,11 +288,5 @@ app-modal {
     .title {
       margin-bottom: 0.4em;
     }
-  }
-}
-
-@media (max-width: 530px) {
-  .recipe {
-    width: 12em;
   }
 }

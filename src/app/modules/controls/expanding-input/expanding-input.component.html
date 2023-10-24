@@ -1,0 +1,30 @@
+<div class="input" 
+>
+  <div class="input-cont" [ngClass]="{'active':!isSleep && isFocused, 'uncorrect': error!==''}">
+
+        <textarea
+
+        spellcheck="false"
+        #input
+    autocomplete="off"
+      [maxlength]="max?max:null"
+      [(ngModel)]="value"
+      (keyup)="change()"
+      (focus)="focus()"
+      (blur)="blur()"
+
+      ></textarea>
+
+    <p
+      class="placeholder"
+      [ngClass]="{
+        uncorrect: error !== '',
+        up: this.isFocused,
+        sleep: this.isSleep
+      }"
+    >
+      {{ placeholder }}
+    </p>
+  </div>
+  <div  *ngIf="showError" class="error">{{ error }}</div>
+</div>

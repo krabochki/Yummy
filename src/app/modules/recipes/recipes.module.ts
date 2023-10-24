@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-
+import { CommonModule, NgFor } from '@angular/common';
 import { RecipesRoutingModule } from './recipes-routing.module';
 import { RecipesComponent } from './recipes.component';
 import { RecipePageComponent } from './components/recipes/recipe-page/recipe-page.component';
@@ -10,34 +9,52 @@ import { CategoryCreatingComponent } from './components/categories/category-crea
 import { SomeRecipesPageComponent } from './components/recipes/some-recipes-page/some-recipes-page.component';
 import { CategoriesPageComponent } from './components/categories/categories-page/categories-page.component';
 import { AuthGuard } from '../authentication/guards/auth.guard';
-import { RecipeListComponent } from './components/recipes/recipe-list/recipe-list.component';
+import { HorizontalRecipeListComponent } from './components/recipes/horizontal-recipe-list/horizontal-recipe-list.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
 import { CategoryListComponent } from './components/categories/category-list/category-list.component';
 import { CategoryListItemComponent } from './components/categories/category-list-item/category-list-item.component';
 import { RecipeListItemComponent } from './components/recipes/recipe-list-item/recipe-list-item.component';
 import { SvgIconComponent, provideAngularSvgIcon } from 'angular-svg-icon';
 import { ControlsModule } from '../controls/controls.module';
+import { CdkDropList, CdkDragHandle, CdkDrag } from '@angular/cdk/drag-drop';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { VerticalRecipeListComponent } from './components/recipes/vertical-recipe-list/vertical-recipe-list.component';
 @NgModule({
   declarations: [
     RecipesComponent,
     RecipePageComponent,
-    RecipeCreatingComponent,
     MatchRecipesComponent,
     CategoryCreatingComponent,
     SomeRecipesPageComponent,
     CategoriesPageComponent,
-    RecipeListComponent
-    , MainPageComponent,
+    MainPageComponent,
     CategoryListComponent,
     CategoryListItemComponent,
-    RecipeListItemComponent
-    
-
-
+    RecipeListItemComponent,
+    RecipeCreatingComponent,
+    HorizontalRecipeListComponent,
+    VerticalRecipeListComponent,
   ],
-  imports: [CommonModule, RecipesRoutingModule, SvgIconComponent, ControlsModule],
+  imports: [
+    CommonModule,
+    NgFor,
+    ControlsModule,
+    RecipesRoutingModule,
+    SvgIconComponent,
+    ControlsModule,
+    ControlsModule,
+    CommonModule,
+    CdkDropList,
+    CdkDragHandle,
+    CdkDropList,
+    CdkDrag,
+    CdkDragHandle,
+    NgFor,
+    CdkDrag,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
   providers: [AuthGuard, provideAngularSvgIcon()],
-  exports: [RecipeListComponent]
-  
+  exports: [HorizontalRecipeListComponent, VerticalRecipeListComponent],
 })
 export class RecipesModule {}

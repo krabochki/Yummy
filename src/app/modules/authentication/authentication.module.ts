@@ -14,6 +14,7 @@ import { OnlyNoAuthGuard } from './guards/only-no-auth.guard';
 import { ModeratorGuard } from './guards/moderator.guard';
 import { AdminGuard } from './guards/admin.guard';
 import { SvgIconComponent, provideAngularSvgIcon } from 'angular-svg-icon';
+import { RecipesModule } from '../recipes/recipes.module';
 @NgModule({
   declarations: [
 
@@ -31,7 +32,8 @@ import { SvgIconComponent, provideAngularSvgIcon } from 'angular-svg-icon';
     CommonModule,
     AuthenticationRoutingModule,
     ControlsModule,
-    SvgIconComponent
+    SvgIconComponent,
+    RecipesModule
   ],
   providers: [provideAngularSvgIcon(),AuthGuard, AdminGuard, ModeratorGuard, OnlyNoAuthGuard]
 

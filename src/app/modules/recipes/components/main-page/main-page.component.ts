@@ -40,16 +40,16 @@ export class MainPageComponent implements OnInit {
     this.recipesSubscription = this.recipeService
       .getRecipes()
       .subscribe((recipesData) => {
-        this.allRecipes = recipesData;
 
-        console.log(recipesData);
+        this.allRecipes= this.recipeService.getPublicRecipes(recipesData)
+
 
         this.popularRecipes = this.recipeService
-          .getPopularRecipes(recipesData)
+          .getPopularRecipes(this.allRecipes)
           .slice(0, 10);
 
         this.recentRecipes = this.recipeService
-          .getRecentRecipes(recipesData)
+          .getRecentRecipes(this.allRecipes)
           .slice(0, 10);
 
         this.categoriesSubscription = this.categoryService

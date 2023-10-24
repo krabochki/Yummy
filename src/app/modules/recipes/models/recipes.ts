@@ -6,48 +6,55 @@ export interface IRecipe {
   name: string; // Название рецепта
   description: string; // Описание рецепта
   preparationTime: string; // Время приготовления
+  cookingTime:string,
   servings: number; // Количество порций
   origin: string; // Происхождение рецепта
   ingredients: Ingredient[]; // Список ингредиентов
-  nutritionalInfo: NutritionInfo[]; // Пищевая ценность
-  instructions: string[]; // Инструкции по приготовлению
-  photos: string[]; // Фотографии (URL)
+  nutritions: Nutrition[]; // Пищевая ценность
+  instructions: Instruction[]; // Инструкции по приготовлению
   categories: number[]; // Список айди категорий рецепта
   authorId: number; // Информация об авторе рецепта
   likesId: number[]; // Количество лайков
   cooksId: number[]; // Количество приготовлений
+  history:string,
   comments: IComment[]; // Список комментариев
   publicationDate: string; // Дата регистрации пользователя
-  favoritesId: number[]
+  favoritesId: number[],
+  status: 'awaits' | 'private' | 'public';
 }
-export const nullRecipe:IRecipe ={ 
-    id: 0 ,
-  mainPhotoUrl: '' ,
-  name: '' , 
-  description:'', 
-  preparationTime: '',
-  servings: 0, 
-  origin: '' ,
+export const nullRecipe: IRecipe = {
+  id: 0,
+  mainPhotoUrl: '',
+  name: '',
+  description: '',
+  cookingTime: '',
+  preparationTime:'',
+  servings: 0,
+  origin: '',
   ingredients: [],
-  nutritionalInfo: [],
+  nutritions: [],
   instructions: [],
-  photos:[],
   categories: [],
+  history: '',
   authorId: 0,
   likesId: [],
-  cooksId: [], 
+  cooksId: [],
   comments: [],
-  favoritesId:[],
-  publicationDate: '01-01-2000'
-}
+  favoritesId: [],
+  publicationDate: '01-01-2000',
+  status: 'private'
+};
 export interface Ingredient {
   name: string; // Название ингредиента
-  quantity: number; // Количество
+  quantity: string; // Количество
   unit: string; // Единица измерения
 }
-
-export interface NutritionInfo {
+export interface Instruction {
+  content: string; // Название ингредиента
+  photos: string[3]; // Единица измерения
+}
+export interface Nutrition {
   name: string; // Название пищевой ценности
-  quantity: number; // Количество
+  quantity: string; // Количество
   unit: string; // Единица измерения
 }

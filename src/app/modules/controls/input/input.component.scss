@@ -19,6 +19,7 @@ textarea {
   border-bottom: 1px solid var(--color-foreground-unactive);
   font-weight: 400;
   width: 16em;
+  font-size: 1em;
   max-width: 16em;
   min-width: 16em;
   min-height: calc(var(--base) + var(--space-xs) + var(--space-m) + 0.5em);
@@ -130,7 +131,7 @@ div {
 
 @media (max-width:900px){
   *{
-     @include adaptive-font(26,20);
+     @include adaptive-font(16,10);
     
 }
 .req {

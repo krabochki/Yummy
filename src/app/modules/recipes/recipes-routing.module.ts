@@ -9,13 +9,18 @@ import { RecipeCreatingComponent } from './components/recipes/recipe-creating/re
 import { CategoryCreatingComponent } from './components/categories/category-creating/category-creating.component';
 import { AuthGuard } from '../authentication/guards/auth.guard';
 import { RecipeResolver } from './services/recipe.resolver';
+import { RecipeAccessGuard } from './guards/recipe-access.guard';
 const routes: Routes = [
   {
     path: '',
     component: RecipesComponent,
     children: [
-
-      { path: 'recipes/list/:id', component: RecipePageComponent, resolve: { RecipeResolver } },
+      {
+        path: 'recipes/list/:id',
+        component: RecipePageComponent,
+        resolve: { RecipeResolver },
+        canActivate: [RecipeAccessGuard],
+      },
       {
         path: 'recipes/add',
         component: RecipeCreatingComponent,

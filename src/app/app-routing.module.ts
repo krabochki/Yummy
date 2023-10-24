@@ -23,6 +23,8 @@ const routes: Routes = [
     loadChildren: () =>
       import('./modules/recipes/recipes.module').then((m) => m.RecipesModule),
   },
+  { path: 'not-found', component: PageNotFoundComponent },
+
   { path: '**', component: PageNotFoundComponent },
 ];
 

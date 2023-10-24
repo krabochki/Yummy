@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IRecipe, nullRecipe } from 'src/app/modules/recipes/models/recipes';
 import { RecipeService } from '../../../services/recipe.service';
@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
   selector: 'app-recipe-list-item',
   templateUrl: './recipe-list-item.component.html',
   styleUrls: ['./recipe-list-item.component.scss'],
-  animations: [trigger('modal', modal())]
+  animations: [trigger('modal', modal())],
 })
 export class RecipeListItemComponent implements OnInit {
   @Input() recipe: IRecipe = nullRecipe;
@@ -27,15 +27,24 @@ export class RecipeListItemComponent implements OnInit {
 
   currentUserId = 0;
 
+
+
+
   constructor(
     private recipeService: RecipeService,
     private authService: AuthService,
     private router: Router,
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.authService.getCurrentUser().subscribe((currentUser) => {
       this.currentUserId = currentUser.id;
+
+      if (currentUser.role !== 'user') {
+        this.moderMode = true;
+      }
+      
 
       this.recipeService.recipes$.subscribe((recipes) => {
         recipes.forEach((element) => {
@@ -55,7 +64,6 @@ export class RecipeListItemComponent implements OnInit {
             }
           }
 
-          
           this.dataLoaded = true;
         });
         //
@@ -84,6 +92,16 @@ export class RecipeListItemComponent implements OnInit {
     this.recipeService.updateRecipe(this.recipe);
   }
   //лайкаем рецепт
+  @Input() moderMode = false;
+  @Output() moderatorAction = new EventEmitter<number[]>();
+
+  approve() {
+    this.moderatorAction.emit([this.recipe.id, 1]);
+  }
+  notApprove() {
+    this.moderatorAction.emit([this.recipe.id, 0]);
+  }
+
   likeThisRecipe() {
     if (this.currentUserId === 0) {
       this.noAccessModalShow = true;

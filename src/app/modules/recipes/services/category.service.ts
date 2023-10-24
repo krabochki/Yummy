@@ -3,6 +3,11 @@ import { ICategory, ISection } from '../models/categories';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
 import { categoriesUrl } from 'src/tools/source';
+import { IRecipe } from '../models/recipes';
+
+interface CategoryCounts {
+  [categoryId: number]: number;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +36,8 @@ export class CategoryService {
     return this.http.get<ICategory>(`${this.urlCategories}/${id}`);
   }
 
+
+
   deleteCategory(id: number) {
     return this.http.delete<ICategory>(`${this.urlCategories}/${id}`);
   }
@@ -53,6 +60,30 @@ export class CategoryService {
   
     return findedCategories;
   }
+
+  getPopularCategories(categories:ICategory[], recipes:IRecipe[]) {
+  // Создаем объект, в котором ключами будут ID категорий, а значениями количество рецептов в каждой категории
+  const categoryCounts:CategoryCounts = {};
+  // Перебираем рецепты и увеличиваем счетчик в соответствующей категории
+  for (const recipe of recipes) {
+    for (const categoryId of recipe.categories) {
+      categoryCounts[categoryId] = (categoryCounts[categoryId] || 0) + 1;
+    }
+  }
+  // Сортируем категории по количеству рецептов в убывающем порядке
+  const sortedCategories = categories.slice().sort((a, b) => {
+    const countA = categoryCounts[a.id] || 0;
+    const countB = categoryCounts[b.id] || 0;
+    return countB - countA;
+  });
+
+  return sortedCategories;
+}
+
+
+
+
+
 
   updateCategory(category: ICategory) {
     return this.http.put<ICategory>(

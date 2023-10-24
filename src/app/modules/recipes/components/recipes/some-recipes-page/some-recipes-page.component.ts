@@ -358,6 +358,6 @@ export class SomeRecipesPageComponent implements OnInit {
       filterRecipes.forEach((element) => {
         this.autocomplete.push(element);
       });
-    } else this.blur();
+    } else this.autocompleteShow = false;
   }
 }

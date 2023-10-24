@@ -110,6 +110,11 @@ const routes: Routes = [
         component: SomeRecipesPageComponent,
       },
       {
+        path: 'categories/popular',
+        data: { filter: 'popular' },
+        component: CategoriesPageComponent,
+      },
+      {
         path: 'match',
         component: MatchRecipesComponent,
       },

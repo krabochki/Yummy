@@ -46,16 +46,7 @@ export class CountInputComponent {
     }
   }
 
-  input() {
-    this.value = this.value.replace(',,', ',');
 
-    if (this.value.includes(',')) {
-      this.value = this.value.replace(/[^\d,]/g, '').slice(0, 5);
-    } else {
-      this.value = this.value.replace(/[^\d,]/g, '').slice(0, 4);
-    }
-    if (this.value === '0') this.value = '1';
-  }
   writeValue(value: string): void {
     this.value = value;
   }

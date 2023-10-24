@@ -55,6 +55,19 @@ export function slideReverse() {
 }
 
 
+export function onlyHeight() {
+  return [
+    transition(':enter', [
+      style({ height: '0' }),
+      animate('300ms ease-out', style({ height: '*' })),
+    ]),
+    transition(':leave', [
+      style({ height: '*' }),
+      animate('300ms ease-in', style({ height: '20px' })),
+    ]),
+  ];
+}
+
 
 export function heightAnim() {
   return [

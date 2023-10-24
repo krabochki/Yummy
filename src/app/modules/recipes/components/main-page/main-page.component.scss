@@ -1,43 +1,53 @@
 @import '../../../../../tools/UI/UI.scss';
 
-h3 {
-  text-align: center;
-  font-weight: 600;
-  font-size: 1.5em;
-  margin-bottom: 1em;
-}
 
-.admin-panel{
-  position: fixed;
-  z-index: 100;
-  line-height: 1;
-  font-size: 1.25em;
-  text-align: center;
-  top:0;
-  left:0;
-  cursor: pointer;
-  background-color: var(--color-admin);
-  height: 2.5rem;
-  width: 2.5rem;
-  border-radius: 100%;
+.arrow-svg{
+  height: 1em;
   display: flex;
   align-items: center;
+  fill: var(--color-foreground);
   justify-content: center;
+  transform: rotate(-90deg);
+
 }
 
+.head{
+  display: flex;
+  align-items: center;
+  column-gap: 1.5em;
+    margin-bottom: 1.75em;
+  cursor: pointer;
+
+      padding: 0 calc(14.4vw + 0 * (100vw - 768px) / 760);
+
+}
+h2{
+  line-height: 1;
+  font-weight: 600;
+  font-size: 1.5em;
+
+}
+.block{
+  
+  margin: 3.5em 0;
+}
+
+
+
 .recipes {
-  padding: 1.7em calc(14.4vw + 0 * (100vw - 768px) / 760);
+  padding: 0 calc(14.4vw + 0 * (100vw - 768px) / 760);
 
   width: 100%;
-  margin: 1em auto;
+  margin: 0 auto;
   position: relative;
   &.horizontal::after {
-    margin: 1.7em calc(14.4vw + 0 * (100vw - 768px) / 760);
+    margin: 0 calc(14.4vw + 0 * (100vw - 768px) / 760);
 
-    height: 15em;
+    height: calc(100% - 1.3em);
     width: 15%;
-    background: linear-gradient(to right, transparent, var(--color-background));
+    background: linear-gradient(to right, transparent 0%,var(--color-background));
 
+    z-index: 1;
     right: 0;
     top: 0;
     content: "";
@@ -46,20 +56,7 @@ h3 {
   }
 }
 
-@media (max-width: 900px) {
 
-  .recipes {
-    &.horizontal::after {
-      width: 33%;
-      height: 15em;
-      right: 0;
-      top: 0;
-      content: "";
-      position: absolute;
-      pointer-events: none;
-    }
-  }
-}
 
 @media (max-width: 768px) {
   .recipes {
@@ -69,8 +66,10 @@ h3 {
   }
 }
 
-@media (max-width: 530px) {
-
+@media (max-width: 480px) {
+.head{
+  padding: 0 6%;
+}
 
   .recipes  {
     padding-left: 6%;

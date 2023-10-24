@@ -15,7 +15,7 @@ import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 })
 export class MainPageComponent implements OnInit {
   allRecipes: IRecipe[] = [];
-  allCategories: ICategory[] = [];
+  allSections: ICategory[] = [];
   popularRecipes: IRecipe[] = [];
   recentRecipes: IRecipe[] = [];
   recipesSubscription!: Subscription;
@@ -24,45 +24,48 @@ export class MainPageComponent implements OnInit {
   currentUserSubscription?: Subscription;
   currentUser: IUser = nullUser;
 
-
-
-
   constructor(
     private recipeService: RecipeService,
     private categoryService: CategoryService,
     private titleService: Title,
-    private authService:AuthService
+    private authService: AuthService,
   ) {
     this.titleService.setTitle('Yummy');
   }
 
+  userRecipes:IRecipe [] =[]
   ngOnInit(): void {
-    this.recipesSubscription = this.recipeService
-      .getRecipes()
-      .subscribe((recipesData) => {
+   
 
-        this.allRecipes= this.recipeService.getPublicRecipes(recipesData)
-
-
-        this.popularRecipes = this.recipeService
-          .getPopularRecipes(this.allRecipes)
-          .slice(0, 10);
-
-        this.recentRecipes = this.recipeService
-          .getRecentRecipes(this.allRecipes)
-          .slice(0, 10);
-
-        this.categoriesSubscription = this.categoryService
-          .getCategories()
-          .subscribe((recipesData) => {
-            this.allCategories = recipesData;
-          });
+    this.currentUserSubscription = this.authService
+      .getCurrentUser()
+      .subscribe((data) => {
+        this.currentUser = data;
       });
-  
-   this.currentUserSubscription = this.authService
-     .getCurrentUser()
-     .subscribe((data) => {
-       this.currentUser = data;
-     });
+    
+    
+     this.recipesSubscription = this.recipeService
+       .getRecipes()
+       .subscribe((recipesData) => {
+         this.allRecipes = this.recipeService.getPublicRecipes(recipesData);
+
+         this.popularRecipes = this.recipeService
+           .getPopularRecipes(this.allRecipes)
+           .slice(0, 8);
+
+         this.recentRecipes = this.recipeService
+           .getRecentRecipes(this.allRecipes)
+           .slice(0, 8);
+
+         this.userRecipes = this.recipeService
+           .getRecipesByUser(recipesData, this.currentUser.id)
+           .slice(0, 8);
+         
+         this.categoriesSubscription = this.categoryService
+           .getSections()
+           .subscribe((data) => {
+             this.allSections = data;
+           });
+       });
   }
 }

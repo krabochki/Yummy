@@ -62,9 +62,7 @@ export class RegisterComponent implements OnInit {
     private router: Router,
     private usersService: UserService,
   ) {
-    router.events.subscribe(() => {
-      window.scrollTo(0, 0);
-    });
+ 
     this.titleService.setTitle('Регистрация');
   }
 

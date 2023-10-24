@@ -1,0 +1,36 @@
+.main{
+          padding: 0 calc(14.4vw + 0 * (100vw - 768px) / 760);
+margin: 2em 0;
+} h1{
+  line-height: 1;
+  font-weight: 600;
+  font-size: var(--font-xxl);
+  text-align: center;
+  margin-bottom: 1em;
+  font-family: var(--font-family-accent);
+
+
+}
+.sections{
+  margin-bottom: 3em;
+}
+h2{
+  line-height: 1;
+  font-weight: 600;
+  font-size: 1.5em;
+margin-bottom: 1em;
+  text-align: center;
+}
+@media (max-width: 480px) {
+.head{
+  padding: 0 6%;
+}
+h2{
+    text-align: left;
+}
+
+  .main  {
+    padding-left: 6%;
+    padding-right: 0;
+  }
+}

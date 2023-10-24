@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IUser, nullUser } from '../../user-pages/models/users';
-import { BehaviorSubject, Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, map } from 'rxjs';
 import { RecipeService } from '../../recipes/services/recipe.service';
 import { UserService } from '../../user-pages/services/user.service';
 
@@ -25,17 +25,26 @@ export class AuthService {
 
     if (savedUser) {
       const currentUser: IUser = JSON.parse(savedUser);
-
-      if (this.loginUser(currentUser)) {
-        this.setCurrentUser(currentUser);
-      }
-      console.log(
-        'Автоматический вход в аккаунт пользователя ' +
-          currentUser.username +
-          ' выполнен успешно!',
-      );
+      this.userService.getUsers().subscribe((users) => {
+        const foundUser = users.find(
+          (u) =>
+            u.email === currentUser.email &&
+            u.password === currentUser.password &&
+            u.username === currentUser.username,
+        );
+        if (foundUser) {
+          this.setCurrentUser(currentUser);
+          console.log(
+            'Автоматический вход в аккаунт пользователя ' +
+              currentUser.username +
+              ' выполнен успешно!',
+          );
+        } else {
+          console.log('Такого пользователя не существует');
+        }
+      });
     } else {
-      console.log('Пользователь не найден');
+      console.log('Пользователь не был сохранен в локальном хранилище');
     }
   }
 
@@ -65,6 +74,20 @@ export class AuthService {
     return this.http.post(this.usersUrl, newUser);
   }
 
+  isUserExist(user: IUser) {
+    this.http.get<IUser[]>(this.usersUrl).pipe(
+      map((users) => {
+        const foundUser = users.find(
+          (u) =>
+            u.email === user.email &&
+            u.password === user.password &&
+            u.username === user.username,
+        );
+        if (!foundUser) return false;
+        return true;
+      }),
+    );
+  }
   loginUser(user: IUser) {
     return this.http.get<IUser[]>(this.usersUrl).pipe(
       map((users) => {

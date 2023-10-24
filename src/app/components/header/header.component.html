@@ -1,7 +1,7 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <div class="header">
-  <div class="label" (click)="scrollTop()" routerLink="/">
+  <div class="label" routerLink="/">
     {{ "yummy" | titlecase }}
   </div>
 
@@ -39,6 +39,15 @@
   </div>
 
   <div class="buttons" *ngIf="!mobile">
+     <div class="admin-panel" [ngClass]="{'admin':currentUser.role==='admin','moder':currentUser.role==='moderator'}" routerLink="/control-dashboard" *ngIf="currentUser.role==='admin'||currentUser.role==='moderator'">
+
+ <svg-icon class="admin-svg"
+          [src]="'../../../assets/images/svg/star.svg'"
+          [class]="'svg'"
+          >></svg-icon
+        >
+
+      </div>
     <button
       routerLink="greetings"
       *ngIf="this.currentUser.id !== 0"
@@ -46,6 +55,9 @@
       <svg-icon [src]="'../../../assets/images/svg/bell.svg'" [class]="'svg'"
         >></svg-icon
       >
+
+     
+
 
       <div class="notifications" *ngIf="notificationsCount > 0">
         {{ notificationsCount }}
@@ -77,6 +89,15 @@
     *ngIf="mobile"
     class="mobile-buttons-panel"
   >
+      <div class="admin-panel" [ngClass]="{'admin':currentUser.role==='admin','moder':currentUser.role==='moderator'}" routerLink="/control-dashboard" *ngIf="currentUser.role==='admin'||currentUser.role==='moderator'">
+
+ <svg-icon class="admin-svg"
+          [src]="'../../../assets/images/svg/thick-star.svg'"
+          [class]="'svg'"
+          >></svg-icon
+        >
+
+      </div>
     <div
       (click)="currentUser.id === 0 ? (noAccessModalShow = true) : null"
       [routerLink]="

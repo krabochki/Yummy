@@ -2,7 +2,18 @@
 <div class="main">
     
  <h1>Админ-панель</h1>
+        <h2>Рецепты на одобрение</h2>
+
+    <app-vertical-recipe-list  (moderatorAction)="getModeratorAction($event)" [moderMode]="true" [blocks]="awaitingRecipes"></app-vertical-recipe-list>
     
-    <app-vertical-recipe-list (moderatorAction)="getModeratorAction($event)" [moderMode]="true" [blocks]="awaitingRecipes"></app-vertical-recipe-list>
+        <h2>Категории на одобрение</h2>
+       
+
+    <h2>Разделы</h2> 
+    <app-button [color]="'prim'" [rounded]="true" [text]="'Добавить категорию'"></app-button>
+    <app-button [color]="'prim'" [rounded]="true" [text]="'Добавить раздел'"></app-button>
+    <app-vertical-category-list [context]="'section'" [showRecipesNumber]="true"  [categories]="sections"></app-vertical-category-list>
+
     
 </div>
+

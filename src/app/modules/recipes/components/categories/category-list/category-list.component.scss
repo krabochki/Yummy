@@ -1,14 +1,133 @@
-.category-list{
+@import "../../../../../../tools/UI/UI.scss";
 
-    margin:0 auto;
-    display: grid;
-    grid-auto-flow: column;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    row-gap:0.5rem;
-    column-gap:0.5rem;
-    max-width:65vw;
-    position: relative;
-    overflow-x:scroll;
-    scroll-snap-type: x mandatory;
-    
+
+
+.recipe-list {
+  margin: 0 auto;
+  display: grid;
+  grid-auto-flow: column;
+  row-gap: 1rem;
+  grid-template-rows: 1fr;
+  width: 100%;
+  position: relative;
+  column-gap: 1em;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  padding-bottom: 0.5em;
+  scroll-snap-type: x mandatory;
+  display: grid;
+  scroll-behavior: smooth;
+
+  &::-webkit-scrollbar {
+    width: 12px;
+  }
+  &::-webkit-scrollbar-track {
+    border-radius: 20px;
+    background: var(--scroll-body);
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--scroll-thumb);
+    border-radius: 20px;
+    border: 3px solid var(--scroll-body);
+  }
 }
+
+.vertical .recipe-list {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  overflow: hidden;
+  grid-auto-flow: row;
+  row-gap: 1rem;
+  column-gap: 1rem;
+  width: 100%;
+  padding-bottom: 0.5em;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+
+  scroll-behavior: smooth;
+}
+.vertical .three-cols.recipe-list{
+  grid-template-columns: 1fr 1fr 1fr;
+
+}
+
+.svg-arrow {
+  height: 3em;
+  margin-right: 0.7em;
+  width: 2em;
+  pointer-events: all;
+
+  stroke-width: 2em;
+  display: block;
+  stroke: var(--scroll-thumb);
+}
+
+.right {
+  margin-right: 0.2em;
+}
+
+.wrap {
+  position: relative;
+
+  .scroll-left {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    height: fit-content;
+    margin: auto;
+    right: -3em;
+
+    pointer-events: none;
+    z-index: 1;
+  }
+  .scroll-right {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    left: -3em;
+    pointer-events: none;
+
+    transform: scale(-1, -1);
+
+    z-index: 1;
+  }
+}
+
+app-recipe-list-item {
+  scroll-snap-align: start;
+}
+
+
+@media (max-width:900px){
+  .vertical .three-cols.recipe-list{
+        zoom:1
+  }
+}
+
+
+
+@media (max-width: 480px) {
+  .scroll-left,
+  .scroll-right {
+    display: none;
+  }
+  .recipe-list {
+    grid-auto-columns: unset;
+
+    grid-auto-flow: column;
+    grid-template-rows: 1fr;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+    padding-right: 6%;
+
+    column-gap: 1rem;
+    grid-template-rows: 1fr;
+    &::-webkit-scrollbar {
+      display: none; /* Safari and Chrome */
+    }
+  }
+ 
+}
+

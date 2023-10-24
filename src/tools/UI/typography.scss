@@ -87,6 +87,14 @@ $maxWidth: 1280;
     font-weight: 400;
     font-style: normal;
 }
+@font-face {
+    font-family: 'URW Geometric';
+    src: url(../../assets/fonts/URWGEOMETRIC-ITALIC.TTF) format('truetype'),
+    	 url(../../assets/fonts/URWGEOMETRIC-ITALIC.woff) format('woff'),
+    	 url(../../assets/fonts/URWGEOMETRIC-ITALIC.woff2) format('woff2');
+    font-weight: 400;
+    font-style: italic;
+}
 
 @font-face {
     font-family: 'URW Geometric';

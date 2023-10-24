@@ -8,6 +8,7 @@ import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 })
 export class HorizontalRecipeListComponent {
   @Input() recipes: IRecipe[] = [];
+  @Input() showAuthor: boolean = true;
 
   @ViewChild('list')
   list: ElementRef | null = null;

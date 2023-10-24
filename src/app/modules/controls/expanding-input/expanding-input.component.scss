@@ -48,14 +48,33 @@ textarea {
   padding: var(--space-s);
   caret-color: var(--color-secondary);
   font-weight: 400;
-  min-height: calc(var(--base) + var(--space-xs) + var(--space-m) + 0.5em);
-  height: calc(var(--base) + var(--space-xs) + var(--space-m) + 1em);
+  
+ min-height: calc(var(--base) + var(--space-xs) + var(--space-m) + 1em);
+ height: max-content;
   padding-bottom: var(--space-xs);
   padding-top: 0;
   transition: background-color 0.2s ease-in-out;
   margin-top: 1.5em;
-  line-height: 1.1;
-
+  line-height: 1.1;  overflow-x: hidden;
+  overflow-y: auto;
+&::-webkit-scrollbar {
+      width: 12px;
+    }
+    &::-webkit-scrollbar-track {
+      border-radius: 20px;
+      background: var(--scroll-body);
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--scroll-thumb);
+      border-radius: 20px;
+      border: 3px solid var(--scroll-body);
+    }
+    ::-webkit-resizer {
+  border: 2px solid black;
+  background: red;
+  box-shadow: 0 0 5px 5px blue;
+  outline: 2px solid yellow;
+}
   &.uncorrect:focus {
     border-bottom-width: 2px;
     border-bottom-color: var(--color-primary);
@@ -86,4 +105,5 @@ textarea {
     border-color: var(--color-primary);
   }
 }
+
 

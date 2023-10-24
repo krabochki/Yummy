@@ -70,8 +70,8 @@
 
     padding-right: 6%;
 
-    grid-auto-flow: column;
     grid-template-rows: 1fr;
+    grid-auto-flow: column;
   overflow-x: scroll;
   overflow-y: hidden;
   display: grid;
@@ -81,6 +81,10 @@
   .block{
     width:    13em;
 ;
+  }
+  .multirows-mobile.container{
+    grid-template-rows: 1fr 1fr;
+
   }
 }
 

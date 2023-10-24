@@ -10,6 +10,8 @@ import { CategoryCreatingComponent } from './components/categories/category-crea
 import { AuthGuard } from '../authentication/guards/auth.guard';
 import { RecipeResolver } from './services/recipe.resolver';
 import { RecipeAccessGuard } from './guards/recipe-access.guard';
+import { RecipeCreateClosingGuard } from './guards/recipe-create-closing.guard';
+import { CategoryResolver } from './services/category.resolver';
 const routes: Routes = [
   {
     path: '',
@@ -25,6 +27,7 @@ const routes: Routes = [
         path: 'recipes/add',
         component: RecipeCreatingComponent,
         canActivate: [AuthGuard],
+        canDeactivate: [RecipeCreateClosingGuard],
       },
       {
         path: 'recipes/edit',
@@ -33,15 +36,18 @@ const routes: Routes = [
       },
       {
         path: 'recipes',
+        data: { filter: 'all' },
         component: SomeRecipesPageComponent,
       },
       {
         path: 'recipes/yours',
+        data: { filter: 'my-recipes' },
         component: SomeRecipesPageComponent,
         canActivate: [AuthGuard],
       },
       {
         path: 'recipes/favorite',
+        data: { filter: 'favorite' },
         component: SomeRecipesPageComponent,
         canActivate: [AuthGuard],
       },
@@ -56,6 +62,7 @@ const routes: Routes = [
       },
       {
         path: 'recipes/following',
+        data: { filter: 'following' },
         component: SomeRecipesPageComponent,
         canActivate: [AuthGuard],
       },
@@ -65,16 +72,21 @@ const routes: Routes = [
       },
       {
         path: 'recipes/best',
+        data: { filter: 'popular' },
         component: SomeRecipesPageComponent,
       },
 
       {
         path: 'recipes/recent',
+        data: { filter: 'recent' },
         component: SomeRecipesPageComponent,
       },
 
       {
-        path: 'categories/:id',
+        path: 'categories/list/:id',
+        data: { filter: 'category-recipes' },
+        resolve: {CategoryResolver},
+
         component: SomeRecipesPageComponent,
       },
       {

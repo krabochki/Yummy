@@ -24,8 +24,11 @@
 
   }
   .block1 .main .info{
-    width: fit-content;
     flex: unset;
+
+  }
+  .info{
+    width: 30vw;
   }
 }
 
@@ -315,25 +318,34 @@ app-followers-and-following,app-settings {
   position: fixed;
 }
 
+
 .exit{
   position: absolute;
   top: 0;
   cursor: pointer;
-  left: 0;
-  opacity: 0.5;
+  left: -1em; width: 1.5em;
+  height: 2em;
+  opacity: 0.75;
   transition: opacity 0.3s ease-in-out;
   &:hover {
     opacity: 1;
   }
 }
 
+.exit.no-path{
+  cursor: default;
+  opacity: 0.25;
+  &:hover{
 
+    opacity: 0.25;
+  }
+}
 
 .settings{
         position: absolute;
   top: 0;
   cursor: pointer;
-  right: 0;
+  right: -1em;
   opacity: 0.5;
   transition: opacity 0.3s ease-in-out;
   &:hover {
@@ -349,7 +361,12 @@ app-followers-and-following,app-settings {
 }
 
 
+
 @media (max-width:480px){
+
+   .container .info{
+    width: 100%;
+  }
    app-vertical-recipe-list{
       width:100%;
       padding: 0;

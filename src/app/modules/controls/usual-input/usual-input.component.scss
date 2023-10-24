@@ -22,7 +22,7 @@ input {
   margin: auto;
   padding: var(--space-s);
   transition: 0.3s ease-in-out;
-
+line-height: 1;
   &.up {
     font-size: 0.7em;
     margin: 0;
@@ -81,10 +81,3 @@ input {
   position: relative;
 }
 
-
-@media(max-width:480px){
-  *{
-    line-height: 1;
-    font-size: 0.95em;
-  }
-}

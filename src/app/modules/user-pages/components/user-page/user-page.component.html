@@ -106,12 +106,12 @@
 
       <div>
         <h3>Поделиться этим аккаунтом</h3>
-        <div class="row social">
-          <div class="social-btn"></div>
-             <div class="social-btn"></div>
-                <div class="social-btn"></div>
-                   <div class="social-btn"></div>
-                      <div class="social-btn"></div>
+        <div >
+          <div ></div>
+             <div ></div>
+                <div ></div>
+                   <div></div>
+                      <div ></div>
         </div>
       </div>
     </div>
@@ -130,10 +130,10 @@
   <div class="block block1">
      <div
     class="svg-button exit"
-    *ngIf="
-      !(this.router.url === this.routerEventsService.previousRoutePath.value)
-    "
-    (click)="onSkipHandler()"
+    [ngClass]="{'no-path':
+      (this.router.url === this.routerEventsService.previousRoutePath.value)
+  }"
+    (click)="(this.router.url === this.routerEventsService.previousRoutePath.value)?null:onSkipHandler()"
   >
     <svg-icon
       [applyClass]="true"
@@ -267,7 +267,7 @@
     
     <app-vertical-recipe-list *ngIf="userRecipes.length > 0; else noRecipes"
       [cols]="3" 
-      [blocks]="displayRecipes"></app-vertical-recipe-list>
+      [blocks]="displayRecipes" [showAuthor]="false"></app-vertical-recipe-list>
    
   </ng-template>
 

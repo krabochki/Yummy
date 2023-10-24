@@ -45,13 +45,9 @@ export class FooterComponent implements OnInit {
   }
   handleNoAccessModal(event: boolean) {
     if (event) {
-      this.scrollTop();
-
       this.router.navigateByUrl('/greetings');
     }
     this.noAccessModalShow = false;
   }
-  scrollTop() {
-          window.scrollTo(0,0)
-  }
+
 }

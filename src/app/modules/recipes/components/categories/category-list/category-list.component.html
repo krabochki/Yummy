@@ -1,5 +1,26 @@
-<div class="category-list" [ngStyle]="{'grid-template-rows':(categories!.length>=8?'repeat(2, 1fr)':' 1fr')}"> 
-    
 
-    <app-category-list-item    *ngFor="let item of categories, let i=index" [category]="categories?categories[i]:undefined"></app-category-list-item></div>
 
+<div class="wrap" >
+  <div   class="recipe-list" #list>
+     <app-category-list-item class="content"[context]="context"   *ngFor="let item of categories, let i=index" [category]="categories[i]"></app-category-list-item></div>
+
+
+  <button class="scroll-left" >
+    <svg-icon
+      class="svg-arrow"
+      (click)="scrollRight()"
+      [applyClass]="true"
+      [src]="'../../../../../assets/images/svg/arrow.svg'"
+    >
+    </svg-icon>
+  </button>
+  <button class="scroll-right">
+    <svg-icon
+      class="svg-arrow right"
+      (click)="scrollLeft()"
+      [applyClass]="true"
+      [src]="'../../../../../assets/images/svg/arrow.svg'"
+    >
+    </svg-icon>
+  </button>
+</div>

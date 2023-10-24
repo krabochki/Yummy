@@ -1,1 +1,134 @@
-some recipe page
+<ng-template #skeleton >
+    <div class="main" >
+
+    </div>
+</ng-template>
+<div *ngIf="dataLoad; else skeleton">
+    <div class="main" *ngIf="this.recipesToShow.length > 0; else noRecipes">
+        <div class="block">
+            <h1>{{ h1 }}</h1>
+
+            <div class="search-block">
+                <div class="search">
+                    <input (focus)="focus()" (blur)="blur()" [(ngModel)]="searchQuery" (ngModelChange)="search()" type="text"
+                        placeholder="Введите запрос" />
+                    <div class="magnifier">    <svg-icon [applyClass]="true" class="search-svg"
+                        [src]="'../../../../../assets/images/svg/search.svg'"></svg-icon></div>
+                </div>
+
+                <div class="autocomplete-list">
+                    <ul @auto-complete *ngIf="autocompleteShow">
+
+                        <div *ngIf="autocomplete.length===0">
+
+                              <div class="no-found-recipes">
+                                   <div class="image">
+                    <svg-icon [applyClass]="true" class="sad-cook"
+                        [src]="'../../../../../assets/images/svg/sad-cook.svg'"></svg-icon>
+                </div>
+                    <p>
+                        В данной категории по вашему запросу нет никаких рецептов. Попробуйте
+                        изменить параметры поиска или подобрать рецепт в специальном разделе!
+                    </p>
+                    <app-button [text]="'Подбор рецептов'" [routerLink]="'/recipes/match'" [style]="'filled'" [color]="'prim'" [rounded]="true"></app-button>
+                              </div>
+
+                        </div>
+                        <li *ngFor="let item of autocomplete" [routerLink]="'/recipes/list/' + item.id">
+                            <p> {{ item.name }}</p> <span>{{getUser(item.authorId).fullName}}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <ng-template #all>
+
+                <div class="block" *ngIf="currentUser.id>0 && myRecipes.length>0">
+                    <div routerLink="/recipes/yours" class="head">
+                        <h2>Ваши рецепты</h2>
+
+                        <svg-icon class="arrow-svg" [applyClass]="true"
+                            [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
+                    </div>
+                    <div class="recipes" [ngClass]="{'horizontal':myRecipes.length>=5}">
+                        <app-horizontal-recipe-list *ngIf="myRecipes.length>=5;else vertical"
+                            [recipes]="myRecipes"></app-horizontal-recipe-list>
+                        <ng-template #vertical>
+                            <app-vertical-recipe-list [blocks]="myRecipes"></app-vertical-recipe-list>
+
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="block" *ngIf="currentUser.id>0 && followingRecipes.length>0">
+                    <div routerLink="/recipes/updates" class="head">
+                        <h2>Обновления любимых кулинаров</h2>
+
+                        <svg-icon class="arrow-svg" [applyClass]="true"
+                            [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
+                    </div>
+                    <div class="recipes" [ngClass]="{'horizontal':followingRecipes.length>=5}">
+                        <app-horizontal-recipe-list *ngIf="followingRecipes.length>=5;else vertical"
+                            [recipes]="followingRecipes"></app-horizontal-recipe-list>
+                        <ng-template #vertical>
+                            <app-vertical-recipe-list [blocks]="followingRecipes"></app-vertical-recipe-list>
+
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="block">
+                    <div routerLink="/recipes/best" class="head">
+                        <h2>Популярные рецепты</h2>
+
+                        <svg-icon class="arrow-svg" [applyClass]="true"
+                            [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
+                    </div>
+                    <div class="recipes horizontal">
+                        <app-horizontal-recipe-list [recipes]="popularRecipes"></app-horizontal-recipe-list>
+                    </div>
+                </div>
+                <div class="block">
+                    <div routerLink="/recipes/recent" class="head">
+                        <h2>Свежие рецепты</h2>
+
+                        <svg-icon class="arrow-svg" [applyClass]="true"
+                            [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
+                    </div>
+                    <div class="recipes horizontal">
+                        <app-horizontal-recipe-list [recipes]="recentRecipes"></app-horizontal-recipe-list>
+                    </div>
+                </div>
+
+            </ng-template>
+            <div *ngIf="filter!=='all';else all">
+                <div class="recipes" >
+                    <app-vertical-recipe-list [rowsNumberMobile]="allRecipes.length >= 4 ? 2 : 1"
+                     [showAuthor]="filter!=='my-recipes'?true:false"    [blocks]="recipesToShow" [cols]="4"></app-vertical-recipe-list>
+                </div>
+            </div>
+            <app-button [text]="'Загрузить еще...'" (click)="loadMoreRecipes()"
+                *ngIf="allRecipes.length > recipesToShow.length" [rounded]="true" [style]="'outlined'"
+                [color]="'prim'"></app-button>
+        </div>
+    </div>
+
+    <ng-template #noRecipes>
+        <div class="container one-column not-found">
+            <div class="image">
+                <svg-icon [applyClass]="true" class="fridge"
+                    [src]="'../../../../../assets/images/svg/fridge.svg'"></svg-icon>
+            </div>
+            <div class="content">
+                <h1 class="label">Рецептов пока <span class="title">нет</span></h1>
+                <p class="tagline">{{ noRecipesH1 }}</p>
+
+                <hr />
+                <div class="buttons">
+                    <app-button [routerLink]="noRecipesRouterLink" [rounded]="true" [color]="'prim'"
+                        [text]="noRecipesButtonText"></app-button>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+  
+</div>

@@ -152,6 +152,5 @@ export class UserService {
           this.usersSubject.next(updatedUsers);
         }),
       )
-      .subscribe();
   }
 }

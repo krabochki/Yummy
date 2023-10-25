@@ -1,28 +1,33 @@
 @import "../../../tools/UI/UI.scss";
 
 .container.one-column {
-
   hr,
   .tagline {
     width: 62%;
     margin: 0 auto;
   }
   row-gap: 0;
-  
-  .svg-pic{
-        max-height: 11em;
 
+  .svg-pic {
+    height: 11em;
   }
-  .image{
+  .image {
     display: flex;
     justify-content: center;
   }
+  .not-found {
+    display: flex;
+    justify-content:center;
+    height: 11em;
+    width: 100%
+  }
 
-  
-  .form {
+  form {
     display: flex;
     flex-direction: column;
     row-gap: var(--space-s);
+    margin: 0 auto;
+    width: 22em;
   }
   .label,
   .tagline {
@@ -35,15 +40,13 @@
   .buttons {
     margin: 0 auto;
   }
-    row-gap: var(--space-s);
-
+  row-gap: var(--space-s);
 }
 
- .svg-pic {
-    fill: var(--color-foreground);
-  }
+.svg-pic {
+  fill: var(--color-foreground);
+}
 .container {
-
   padding-left: calc(14.4vw + 0 * (100vw - 768px) / 760);
   padding-right: calc(14.4vw + 0 * (100vw - 768px) / 760);
 
@@ -54,24 +57,21 @@
 
   grid-template-rows: min-content;
 
-  margin: var(--space-xl) 0;
+  margin: 2em 0;
 
   &.img-container {
     column-gap: var(--space-xxl);
     grid-template-columns: 11em 32em;
   }
 
-  a{
-    color:var(--color-primary);
+  a {
+    color: var(--color-primary);
     text-decoration: underline;
     font-weight: 700;
     text-align: center;
   }
 
- 
-
   .content {
- 
     @include flexy(column);
     row-gap: var(--space-m);
 
@@ -104,53 +104,46 @@
 }
 
 @media (max-width: 900px) {
+  .image {
+    display: none;
+  }
 
-  a{
-  font-size: 1.4rem;
- }
-
-   .svg-pic {
-      height: 20rem;
+  .one-column {
+    padding: 0;
+    hr,
+    .tagline {
+      width: 100%;
+      margin: 0 auto;
     }
+    row-gap: 0;
 
-.one-column {
-  padding: 0;
-  hr,
-  .tagline {
-    width: 100%;
-    margin: 0 auto;
-
+    .form {
+      display: flex;
+      flex-direction: column;
+      row-gap: var(--space-s);
+    }
+    .label,
+    .tagline {
+      text-align: center;
+      text-align: center;
+    }
+    .form {
+      margin: 0 auto;
+    }
+    .buttons {
+      margin: 0 auto;
+    }
   }
-  row-gap: 0;
-
-  .form {
-    display: flex;
-    flex-direction: column;
-    row-gap: var(--space-s);
-  }
-  .label,
-  .tagline {
-    text-align: center;
-    text-align: center;
-  }
-  .form {
-    margin: 0 auto;
-  }
-  .buttons {
-    margin: 0 auto;
-  }
-}
-
-
 
   .container {
-    zoom: 0.7;
     display: flex;
-    align-items: center;
+    align-items: start;
+
     justify-content: center;
     flex-direction: column;
     row-gap: var(--space-xl);
-    margin: var(--space-2xl) 10em;
+    margin-right: 10em;
+    margin-left: 10em;
 
     &.img-container {
       column-gap: 0;
@@ -158,11 +151,8 @@
       grid-template-rows: auto;
     }
 
-   
-
     .content {
       .tagline {
-        font-size: var(--font-xl);
         text-align: center;
       }
 
@@ -170,53 +160,65 @@
         margin: 0 auto;
         flex-direction: column;
         row-gap: var(--space-s);
-        zoom: 1.4;
       }
 
       .label {
-        font-size: var(--font-2xl);
         text-align: center;
       }
     }
   }
 }
 
+@media (max-width: 768px) {
+  .container {
+    margin-right: 7em;
+    margin-left: 7em;
 
-@media(max-width:768px){
-  .container{
-    margin: var(--space-2xl) 7em;
+
   }
-  .container.one-column .tagline{
+  .container.one-column{
+    
+  form {
+    width: 18em;
+  }
+  }
+  .container.one-column .tagline {
     width: 90%;
   }
+
+  
 }
 
 @media (max-width: 480px) {
 
- 
+  
+  .container.one-column .svg-pic {
+    height: 9em;
+  }
 
+ .container.one-column   .not-found {
+      height: 9em;
 
+  }
+
+.container.one-column{
+    form {
+    width: 100%;
+  }
+}
   .container {
-    zoom: 0.7;
+    padding: 0;
+    margin-right: 12%;
+    margin-left:12%;
 
-padding: 0;
-    margin: var(--space-2xl) 10em;
-
-    &.img-container {
-      column-gap: 0;
-      grid-template-columns: 1fr;
-      grid-template-rows: auto;
+    &.not-found {
+      margin: 2em 6%;
     }
-
-    &.not-found{
-          margin: var(--space-2xl) 5em;
-
-    }
-
 
     .content {
-      .tagline {
-        font-size: var(--font-xl);
+      .tagline,hr {
+            width: 100%;
+
         text-align: center;
       }
 
@@ -224,25 +226,16 @@ padding: 0;
         margin: 0 auto;
         flex-direction: column;
         row-gap: var(--space-s);
-        zoom: 1.4;
       }
 
       .label {
-        font-size: var(--font-2xl);
         text-align: center;
       }
     }
   }
 }
-.svg-pic{
-  height: 20em;
-}
 
-
-.svg-pic{
-  width: auto;
-}
-app-modal{
+app-modal {
   position: fixed;
   z-index: 10;
 }

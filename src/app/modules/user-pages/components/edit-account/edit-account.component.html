@@ -25,7 +25,7 @@
 
 
       <h2>Основная информация</h2>
-
+<!-- 
       <div class="section-content">
         <app-input
           (inputValueChange)="getUsername($event)"
@@ -85,7 +85,7 @@
           [fitWidth]="true"
           [placeholder]="'Место проживания'"
           [max]="100"
-        ></app-input>
+        ></app-input> -->
       </div>
     </div>
 
@@ -93,7 +93,7 @@
       <h2>Социальные сети</h2>
 
       <div class="section-content">
-        <app-input
+        <!-- <app-input
           (inputValueChange)="getSocialMedia('pinterest',$event)"
           [warningText]="
             'Введенное значение не является корректной ссылкой на аккаунт пользователя в Pintreset. Пример: https://pinterest.com/krabochki'
@@ -136,7 +136,7 @@
           [mask]="facebookMask"
           [placeholder]="'Ссылка на Facebook'"
           [fitWidth]="true"
-        ></app-input>
+        ></app-input> -->
       </div>
     </div>
     <app-button
@@ -148,7 +148,6 @@
       [rounded]="true"
     ></app-button>
   </div>
-</div>
 
 <app-modal
   *ngIf="closeModal"

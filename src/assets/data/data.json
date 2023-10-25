@@ -1429,7 +1429,8 @@
         5
       ],
       "favoritesId": [
-        10
+        10,
+        5
       ],
       "likesId": [
         9,
@@ -4451,6 +4452,23 @@
       "email": "jokfd@mail.ru",
       "password": "ddssdds56J",
       "username": "fddfdff",
+      "role": "user",
+      "avatarUrl": "",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "",
+      "profileViews": 0
+    },
+    {
+      "id": 20,
+      "email": "victor_barinov@gmail.com",
+      "password": "VictorBarinov1950",
+      "username": "barinofff",
       "role": "user",
       "avatarUrl": "",
       "description": "",

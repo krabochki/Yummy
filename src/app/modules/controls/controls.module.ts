@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ButtonComponent } from './button/button.component';
 import { SelectComponent } from './select/select.component';
 import { RouterModule } from '@angular/router';
-import { InputComponent } from './input/input.component';
+import { PasswordInputComponent } from './password-input/password-input.component';
 import { FormsModule } from '@angular/forms';
 import { ModalComponent } from './modal/modal.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
@@ -22,7 +22,7 @@ import { ExpandingInputComponent } from './expanding-input/expanding-input.compo
   declarations: [
     ButtonComponent,
     SelectComponent,
-    InputComponent,
+    PasswordInputComponent,
     ModalComponent,
     PageNotFoundComponent,
     PluralRuDirective,
@@ -32,7 +32,6 @@ import { ExpandingInputComponent } from './expanding-input/expanding-input.compo
     CountInputComponent,
     UsualInputComponent,
     ExpandingInputComponent,
-    
   ],
   imports: [
     CommonModule,
@@ -40,12 +39,12 @@ import { ExpandingInputComponent } from './expanding-input/expanding-input.compo
     FormsModule,
     ShareButtonsModule,
     ShareIconsModule,
-    SvgIconComponent
+    SvgIconComponent,
   ],
   exports: [
     ButtonComponent,
     SelectComponent,
-    InputComponent,
+    PasswordInputComponent,
     ModalComponent,
     ToogleSwitchComponent,
     PluralRuDirective,
@@ -55,8 +54,6 @@ import { ExpandingInputComponent } from './expanding-input/expanding-input.compo
     UsualInputComponent,
     ExpandingInputComponent,
   ],
-  providers: [
-    provideAngularSvgIcon()
-  ]
+  providers: [provideAngularSvgIcon()],
 })
 export class ControlsModule {}

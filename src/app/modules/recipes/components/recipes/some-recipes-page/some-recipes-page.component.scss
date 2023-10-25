@@ -306,6 +306,13 @@ div.container.not-found {
 }
 
 @media (max-width: 480px) {
+  .fridge {
+  height: 10em;
+}
+.container.not-found[_ngcontent-ng-c1915635300] {
+    margin: 2em 6%
+}
+
   h1 {
     padding-right: 6%;
   }

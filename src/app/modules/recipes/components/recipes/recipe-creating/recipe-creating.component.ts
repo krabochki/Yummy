@@ -345,7 +345,7 @@ export class RecipeCreatingComponent implements OnInit {
       categoriesIds.push(element.id);
     });
     if (this.form.valid) {
-      this.recipeService.getRecipes().subscribe((data) => {
+      this.recipeService.recipes$.subscribe((data) => {
         const recipes: IRecipe[] = data;
         const maxId = Math.max(...recipes.map((u) => u.id));
         this.recipeId = maxId + 1;

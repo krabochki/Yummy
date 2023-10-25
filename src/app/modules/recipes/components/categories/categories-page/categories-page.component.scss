@@ -207,7 +207,12 @@ h1 {
 .sections {
   margin-bottom: 3em;
 }
-
+app-button.add-category{
+    margin: 0 auto;
+  margin-bottom: 1em;
+  display: flex;
+  justify-content: center;
+}
 h2 {
   cursor: pointer;
   line-height: 1;

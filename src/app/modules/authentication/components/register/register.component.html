@@ -9,7 +9,7 @@
     <form [formGroup]="form">
       <app-usual-input
         [inputRequired]="true"
-        [max]="40"
+        [max]="20"
         type="text"
         id="username"
         formControlName="username"
@@ -25,6 +25,7 @@
       <app-usual-input
         [inputRequired]="true"
         type="text"
+        [max]="64"
         id="email"
         formControlName="email"
         [placeholder]="'Электронная почта'"
@@ -32,7 +33,7 @@
         [error]="
           form.get('email')?.invalid &&
           (form.get('email')?.dirty || form.get('email')?.touched)
-            ? 'Введите корректный адрес электронной почты'
+            ? 'Введи корректный адрес электронной почты'
             : ''
         "
       ></app-usual-input>
@@ -41,6 +42,7 @@
         id="password"
         formControlName="password"
         [placeholder]="'Пароль'"
+        [max]="20"
         required
         [error]="
           form.get('password')?.invalid &&

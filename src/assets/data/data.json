@@ -4480,6 +4480,23 @@
       "location": "",
       "registrationDate": "",
       "profileViews": 0
+    },
+    {
+      "id": 21,
+      "email": "dasha_kakasha@mail.ru",
+      "password": "Dashakakasha0",
+      "username": "daria_kuzmenok",
+      "role": "user",
+      "avatarUrl": "",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "",
+      "profileViews": 0
     }
   ]
 }

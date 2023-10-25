@@ -29,26 +29,14 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegisterComponent implements OnInit, OnDestroy {
-  emailMask = loginMask; //маска для почты
-  passMask = passMask; //маска для пароля
-  usernameMask = usernameMask;
-  email: string = '';
-  pass: string = '';
-  username: string = '';
   modalAreYouSureShow: boolean = false;
   modalSuccessShow: boolean = false;
   modalFailShow: boolean = false;
   failText: string = '';
   users: IUser[] = [];
   usersSubscription?: Subscription;
-
-  get testUserData() {
-    return (
-      this.emailMask.test(this.email) &&
-      this.usernameMask.test(this.username) &&
-      this.passMask.test(this.pass)
-    );
-  }
+  registrationSubscription?: Subscription;
+  loginSubscription?: Subscription;
 
   form: FormGroup;
 
@@ -68,8 +56,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
         [
           Validators.required,
           Validators.minLength(5),
-          Validators.maxLength(100),
-          this.customPatternValidator(this.emailMask),
+          Validators.maxLength(64),
+          this.customPatternValidator(loginMask),
         ],
       ],
       username: [
@@ -78,7 +66,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
           Validators.required,
           Validators.minLength(4),
           Validators.maxLength(20),
-          this.customPatternValidator(this.usernameMask),
+          this.customPatternValidator(usernameMask),
         ],
       ],
       password: [
@@ -87,7 +75,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
           Validators.required,
           Validators.minLength(8),
           Validators.maxLength(20),
-          this.customPatternValidator(this.passMask),
+          this.customPatternValidator(passMask),
         ],
       ],
     });
@@ -130,26 +118,22 @@ export class RegisterComponent implements OnInit, OnDestroy {
       );
 
       if (!emailExists && !usernameExists) {
-        this.usersService.postUser(userData).subscribe(
+        this.registrationSubscription = this.usersService.postUser(userData).subscribe(
           () => {
-            this.authService.loginUser(userData).subscribe(() => {
-              localStorage.setItem('currentUser', JSON.stringify(userData));
-              this.authService.setCurrentUser(userData);
-              this.modalSuccessShow = true;
-              this.cd.markForCheck();
-              (error: Error) => {
-                console.error(
-                  'Регистрация | Ошибка в AuthService (loginUser): ' + error.message,
-                );
-              };
-            });
-          },
-          (error: Error) => {
-            console.error(
-              'Регистрация | Ошибка в UserService (postUser): ' + error.message,
-            );
-          },
-        );
+                
+                localStorage.setItem('currentUser', JSON.stringify(userData));
+                this.authService.setCurrentUser(userData);
+                this.modalSuccessShow = true;
+                this.cd.markForCheck();
+                (error: Error) => {
+                  console.error(
+                    'Регистрация | Ошибка в AuthService (loginUser): ' +
+                      error.message,
+                  );
+                };
+              });
+        
+        
       } else {
         if (emailExists) {
           this.failText =
@@ -184,5 +168,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.usersSubscription?.unsubscribe();
+    this.registrationSubscription?.unsubscribe();
+    this.loginSubscription?.unsubscribe();
   }
 }

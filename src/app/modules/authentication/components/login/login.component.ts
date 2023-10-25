@@ -1,5 +1,16 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { passMask, emailOrUsernameMask } from 'src/tools/regex';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
+import {
+  passMask,
+  emailOrUsernameMask,
+  loginMask,
+  usernameMask,
+} from 'src/tools/regex';
 import { AuthService } from '../../services/auth.service';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
@@ -8,35 +19,61 @@ import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
 import { Subscription } from 'rxjs';
+import {
+  AbstractControl,
+  Form,
+  FormBuilder,
+  FormGroup,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['../../common-styles.scss'],
   animations: [trigger('modal', modal())],
-  changeDetection:ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  loginMask = emailOrUsernameMask;
-  passMask = passMask;
-  login: string = '';
-  pass: string = '';
-  successModalShow: boolean = false;
-  errorModalShow: boolean = false;
-  failText: string = '';
+
+  successAttemptModalShow: boolean = false;
+  unsuccessfusAttemptModalShow: boolean = false;
+  unsuccessfusAttemptModalText: string = '';
   users: IUser[] = [];
   usersSubscription?: Subscription;
-
-  get testUserData(): boolean {
-    return this.loginMask.test(this.login) && this.passMask.test(this.pass);
-  }
+  loginSubscription?: Subscription;
+  form: FormGroup;
 
   constructor(
     private authService: AuthService,
     private titleService: Title,
+    private fb: FormBuilder,
+    private cd: ChangeDetectorRef,
     private usersService: UserService,
     private router: Router,
   ) {
     this.titleService.setTitle('Вход');
+
+    this.form = this.fb.group({
+      login: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(5),
+          Validators.maxLength(64),
+          this.customPatternValidator(emailOrUsernameMask),
+        ],
+      ],
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.maxLength(20),
+          this.customPatternValidator(passMask),
+        ],
+      ],
+    });
   }
 
   ngOnInit(): void {
@@ -47,57 +84,62 @@ export class LoginComponent implements OnInit, OnDestroy {
     );
   }
 
-  loginUser() {
-    const user = {
-      ...nullUser,
-      email: this.login,
-      password: this.pass,
-      username: this.login,
+  //Валидатор по маске regex для формы
+  customPatternValidator(pattern: RegExp): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const isValid = pattern.test(control.value);
+      return isValid ? null : { customPattern: { value: control.value } };
     };
+  }
 
-    this.authService.loginUser(user).subscribe(
-      (userExists) => {
-        if (userExists) {
-          localStorage.setItem('currentUser', JSON.stringify(userExists));
-          this.authService.setCurrentUser(userExists);
-          this.successModalShow = true;
-        } else {
-          const user = this.users.find(
-            (user) => user.email === this.login || user.username === this.login,
-          );
-          if (user != undefined) {
-            this.failText =
-              'Неправильный пароль. Попробуйте ввести данные снова или восстановить пароль.';
-          } else {
-            this.failText =
-              'Пользователя с такими данными не существует. Попробуйте перепроверить данные или зарегистрируйтесь.';
+  loginUser() {
+    if (this.form.valid) {
+      const userData: IUser = {
+        ...nullUser,
+        username: this.form.value.login,
+        email: this.form.value.login,
+        password: this.form.value.password,
+      };
+
+        this.loginSubscription = this.authService.loginUser(userData).subscribe(
+          (user) => {
+            if (user) {
+              localStorage.setItem('currentUser', JSON.stringify(user));
+              this.authService.setCurrentUser(user);
+              this.successAttemptModalShow = true;
+              
+              this.cd.markForCheck();
+            }
+            else {
+              const user = this.users.find(
+                (user) =>
+                  user.email === userData.email ||
+                  user.username === userData.username,
+              );
+              if (user !== undefined) {
+                this.unsuccessfusAttemptModalText =
+                  'Неправильный пароль. Попробуйте ввести данные снова или восстановить пароль';
+              } else {
+                this.unsuccessfusAttemptModalText =
+                  'Пользователя с такими данными не существует. Попробуйте перепроверить данные или зарегистрируйтесь';
+              }
+              this.unsuccessfusAttemptModalShow = true;
+            }
           }
-          this.errorModalShow = true;
-        }
-      },
-      (error: Error) => {
-        console.error('Ошибка при проверке пользователя:', error);
-      },
-    );
-  }
-
-  //данные от app-input
-  getLogin(typedLogin: string) {
-    this.login = typedLogin;
-  }
-  getPassword(typedPassword: string) {
-    this.pass = typedPassword;
+        )
+    }
   }
 
   handleErrorModalResult() {
-    this.errorModalShow = false;
+    this.unsuccessfusAttemptModalShow = false;
   }
   handleSuccessModalResult() {
-    this.successModalShow = false;
+    this.successAttemptModalShow = false;
     this.router.navigate(['/']);
   }
 
   ngOnDestroy() {
     this.usersSubscription?.unsubscribe();
+    this.loginSubscription?.unsubscribe()
   }
 }

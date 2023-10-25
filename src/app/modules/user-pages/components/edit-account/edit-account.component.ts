@@ -250,7 +250,6 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
       socialNetworks: socialNetworks,
     };
 
-    // this.http.post('', formData).subscribe();
     this.userService.updateUsers(newUser).subscribe(
       () => {
         this.authService.loginUser(this.newUser).subscribe((user) => {

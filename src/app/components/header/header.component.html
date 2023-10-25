@@ -7,41 +7,41 @@
   <div *ngIf="!mobile" class="menu-items">
     <app-select [items]="recipeSelectItems" 
       [routes]="[{
-        routeLink: '/recipes/yours',
+        routeLink: recipeRouterLinks[0],
         disabled: this.currentUser.id === 0
           ?true:false
       },
       {
-        routeLink: '/recipes',
+        routeLink:  recipeRouterLinks[1],
         disabled: false
       },
       {
-        routeLink: '/sections',
+        routeLink:  recipeRouterLinks[2],
         disabled: false
       },
       {
-        routeLink: '/recipes/favorite',
+        routeLink:  recipeRouterLinks[3],
         disabled: this.currentUser.id === 0
           ?true:false
       },
       {
-        routeLink: 'match',
+        routeLink:  recipeRouterLinks[4],
         disabled: false
       }]"
         
       ></app-select>
     <app-select [items]="cooksSelectItems" 
      [routes]="[{
-        routeLink: '/cooks/list/' + currentUser.id,
+        routeLink: cookRouterLinks[0],
         disabled: this.currentUser.id === 0
           ?true:false
       },
       {
-        routeLink: '/cooks',
+        routeLink: cookRouterLinks[1],
         disabled: false
       },
       {
-        routeLink: '/cooks/updates',
+        routeLink: cookRouterLinks[2],
         disabled: this.currentUser.id === 0 ?true:false
       }
     ]"

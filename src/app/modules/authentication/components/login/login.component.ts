@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -7,9 +8,7 @@ import {
 } from '@angular/core';
 import {
   passMask,
-  emailOrUsernameMask,
-  loginMask,
-  usernameMask,
+  emailOrUsernameMask
 } from 'src/tools/regex';
 import { AuthService } from '../../services/auth.service';
 import { Title } from '@angular/platform-browser';
@@ -18,15 +17,14 @@ import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
-import { Subscription } from 'rxjs';
 import {
   AbstractControl,
-  Form,
   FormBuilder,
   FormGroup,
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -35,14 +33,12 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent implements OnInit, OnDestroy {
-
   successAttemptModalShow: boolean = false;
   unsuccessfusAttemptModalShow: boolean = false;
   unsuccessfusAttemptModalText: string = '';
   users: IUser[] = [];
-  usersSubscription?: Subscription;
-  loginSubscription?: Subscription;
   form: FormGroup;
+  protected destroyed$: Subject<void> = new Subject<void>();
 
   constructor(
     private authService: AuthService,
@@ -77,11 +73,11 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.usersSubscription = this.usersService.users$.subscribe(
-      (data: IUser[]) => {
-        this.users = data;
-      },
-    );
+    this.usersService.users$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedUsers: IUser[]) => {
+        this.users = receivedUsers;
+      });
   }
 
   //Валидатор по маске regex для формы
@@ -92,7 +88,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     };
   }
 
-  loginUser() {
+  loginUser(): void {
     if (this.form.valid) {
       const userData: IUser = {
         ...nullUser,
@@ -101,45 +97,45 @@ export class LoginComponent implements OnInit, OnDestroy {
         password: this.form.value.password,
       };
 
-        this.loginSubscription = this.authService.loginUser(userData).subscribe(
-          (user) => {
-            if (user) {
-              localStorage.setItem('currentUser', JSON.stringify(user));
-              this.authService.setCurrentUser(user);
-              this.successAttemptModalShow = true;
-              
-              this.cd.markForCheck();
+      this.authService
+        .loginUser(userData)
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe((user: IUser | null) => {
+          if (user) {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            this.authService.setCurrentUser(user);
+            this.successAttemptModalShow = true;
+
+            this.cd.markForCheck();
+          } else {
+            const user = this.users.find(
+              (user) =>
+                user.email === userData.email ||
+                user.username === userData.username,
+            );
+            if (user !== undefined) {
+              this.unsuccessfusAttemptModalText =
+                'Неправильный пароль. Попробуйте ввести данные снова или восстановить пароль';
+            } else {
+              this.unsuccessfusAttemptModalText =
+                'Пользователя с такими данными не существует. Попробуйте перепроверить данные или зарегистрируйтесь';
             }
-            else {
-              const user = this.users.find(
-                (user) =>
-                  user.email === userData.email ||
-                  user.username === userData.username,
-              );
-              if (user !== undefined) {
-                this.unsuccessfusAttemptModalText =
-                  'Неправильный пароль. Попробуйте ввести данные снова или восстановить пароль';
-              } else {
-                this.unsuccessfusAttemptModalText =
-                  'Пользователя с такими данными не существует. Попробуйте перепроверить данные или зарегистрируйтесь';
-              }
-              this.unsuccessfusAttemptModalShow = true;
-            }
+            this.unsuccessfusAttemptModalShow = true;
           }
-        )
+        });
     }
   }
 
-  handleErrorModalResult() {
+  handleErrorModalResult(): void {
     this.unsuccessfusAttemptModalShow = false;
   }
-  handleSuccessModalResult() {
+  handleSuccessModalResult(): void {
     this.successAttemptModalShow = false;
     this.router.navigate(['/']);
   }
 
-  ngOnDestroy() {
-    this.usersSubscription?.unsubscribe();
-    this.loginSubscription?.unsubscribe()
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
   }
 }

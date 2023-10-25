@@ -1,10 +1,14 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { ActivatedRoute, Data, Router } from '@angular/router';
 import { IRecipe, nullRecipe } from '../../../models/recipes';
 import { Title } from '@angular/platform-browser';
 import { RecipeService } from '../../../services/recipe.service';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
-import { Subscription } from 'rxjs';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { registerLocaleData } from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
@@ -15,6 +19,7 @@ import { ICategory } from '../../../models/categories';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
 import { SectionService } from '../../../services/section.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-recipe-page',
@@ -23,7 +28,7 @@ import { SectionService } from '../../../services/section.service';
   animations: [trigger('history', heightAnim()), trigger('modal', modal())],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RecipePageComponent implements OnInit {
+export class RecipePageComponent implements OnInit, OnDestroy {
   constructor(
     private sectionService: SectionService,
     private route: ActivatedRoute,
@@ -46,12 +51,14 @@ export class RecipePageComponent implements OnInit {
 
   readingTimeInMinutes: number = 0;
 
-  currentUserSubscription?: Subscription;
+  protected destroyed$: Subject<void> = new Subject<void>();
+
   currentUser: IUser = { ...nullUser };
 
   basketMode = false;
 
   downRecipes: IRecipe[] = [];
+  recentRecipes: IRecipe[] = [];
 
   author: IUser = { ...nullUser };
   iHaveIndgredient: boolean[] = [];
@@ -66,10 +73,9 @@ export class RecipePageComponent implements OnInit {
   categories: ICategory[] = [];
   ngOnInit() {
     registerLocaleData(localeRu);
-
-    this.currentUserSubscription = this.authService
-      .getCurrentUser()
-      .subscribe((data) => {
+    this.authService.currentUser$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((data: IUser) => {
         this.currentUser = data;
 
         this.route.data.subscribe((data: Data) => {
@@ -85,111 +91,121 @@ export class RecipePageComponent implements OnInit {
             () => false,
           );
 
-          this.userService.users$.subscribe((data) => {
-            const findedUser = data.find(
-              (user) => user.id === this.recipe.authorId,
-            );
-            if (findedUser) {
-              this.author = findedUser;
-            }
-          });
+          this.userService.users$
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe((data) => {
+              const findedUser = data.find(
+                (user) => user.id === this.recipe.authorId,
+              );
+              if (findedUser) {
+                this.author = findedUser;
+              }
+            });
 
-          this.recipeService.recipes$.subscribe((recipes) => {
+          this.recipeService.recipes$
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe((recipes: IRecipe[]) => {
+              //перебираем все категории в рецепте
+              if (this.recipe.categories.length > 0) {
+                const maxRecipes = 4;
+                const recipesToAdd: IRecipe[] = [];
+                const publicRecipes =
+                  this.recipeService.getPublicRecipes(recipes);
+                for (const category of this.recipe.categories) {
+                  const recipesFromCategory =
+                    this.recipeService.getRecipesByCategory(
+                      publicRecipes,
+                      category,
+                    );
 
-            //перебираем все категории в рецепте
-            if (this.recipe.categories.length > 0) {
-              const maxRecipes = 4;
-              const recipesToAdd: IRecipe[] = [];
-              const publicRecipes =
-                this.recipeService.getPublicRecipes(recipes);
-              for (const category of this.recipe.categories) {
-                const recipesFromCategory =
-                  this.recipeService.getRecipesByCategory(
-                    publicRecipes,
-                    category,
-                  );
-
-                for (const newRecipe of recipesFromCategory) {
-                  if (
-                    !recipesToAdd.some(
-                      (existingRecipe) => existingRecipe.id === newRecipe.id,
-                    )
-                  ) {
-                    recipesToAdd.push(newRecipe);
-                    if (recipesToAdd.length >= maxRecipes) {
-                      break;
+                  for (const newRecipe of recipesFromCategory) {
+                    if (
+                      !recipesToAdd.some(
+                        (existingRecipe) => existingRecipe.id === newRecipe.id,
+                      )
+                    ) {
+                      recipesToAdd.push(newRecipe);
+                      if (recipesToAdd.length >= maxRecipes) {
+                        break;
+                      }
                     }
+                  }
+
+                  if (recipesToAdd.length >= maxRecipes) {
+                    break;
                   }
                 }
 
-                if (recipesToAdd.length >= maxRecipes) {
-                  break;
-                }
-              }
+                // Если до сих пор не заполнились то перебираем все рецепты в категориях из секций категорий рецепта
+                if (
+                  recipesToAdd.length < maxRecipes &&
+                  this.recipe.categories.length > 0
+                ) {
+                  this.recipe.categories.forEach((element) => {
+                    const findSection = element;
 
-              // Если до сих пор не заполнились то перебираем все рецепты в категориях из секций категорий рецепта
-              if (
-                recipesToAdd.length < maxRecipes &&
-                this.recipe.categories.length > 0
-              ) {
-                this.recipe.categories.forEach((element) => {
-                  const findSection = element;
+                    this.categoryService.categories$
+                      .pipe(takeUntil(this.destroyed$))
+                      .subscribe((cat: ICategory[]) => {
+                        const category = cat.find(
+                          (categ) => categ.id === findSection,
+                        );
 
-                  this.categoryService.categories$.subscribe((cat) => {
-                    const category = cat.find(
-                      (categ) => categ.id === findSection,
-                    );
+                        if (category)
+                          this.sectionService.sections$
+                            .pipe(takeUntil(this.destroyed$))
+                            .subscribe((sect) => {
+                              const section =
+                                this.sectionService.getSectionOfCategory(
+                                  sect,
+                                  category,
+                                );
+                              const sectionCategories =
+                                this.categoryService.getCategoriesBySection(
+                                  section,
+                                  cat,
+                                );
 
-                    if (category)
-                      this.sectionService.sections$.subscribe((sect) => {
-                        const section =
-                          this.sectionService.getSectionOfCategory(
-                            sect,
-                            category,
-                          );
-                        const sectionCategories =
-                          this.categoryService.getCategoriesBySection(
-                            section,
-                            cat,
-                          );
+                              for (const category of sectionCategories) {
+                                const recipesFromCategory =
+                                  this.recipeService.getRecipesByCategory(
+                                    publicRecipes,
+                                    category.id,
+                                  );
 
-                        for (const category of sectionCategories) {
-                          const recipesFromCategory =
-                            this.recipeService.getRecipesByCategory(
-                              publicRecipes,
-                              category.id,
-                            );
+                                for (const newRecipe of recipesFromCategory) {
+                                  if (
+                                    !recipesToAdd.some(
+                                      (existingRecipe) =>
+                                        existingRecipe.id === newRecipe.id,
+                                    )
+                                  ) {
+                                    recipesToAdd.push(newRecipe);
+                                    if (recipesToAdd.length >= maxRecipes) {
+                                      break;
+                                    }
+                                  }
+                                }
 
-                          for (const newRecipe of recipesFromCategory) {
-                            if (
-                              !recipesToAdd.some(
-                                (existingRecipe) =>
-                                  existingRecipe.id === newRecipe.id,
-                              )
-                            ) {
-                              recipesToAdd.push(newRecipe);
-                              if (recipesToAdd.length >= maxRecipes) {
-                                break;
+                                if (recipesToAdd.length >= maxRecipes) {
+                                  break;
+                                }
                               }
-                            }
-                          }
-
-                          if (recipesToAdd.length >= maxRecipes) {
-                            break;
-                          }
-                        }
+                            });
                       });
                   });
-                });
-              }
-              //если все равно нет 4 рецептов то берем популярные
-              if (
-                recipesToAdd.length < maxRecipes &&
-                this.recipe.categories.length > 0
-              ) {
-                let popularRecipes = this.recipeService.getPopularRecipes(publicRecipes)
+                }
+                //если все равно нет 4 рецептов то берем популярные
+                if (
+                  recipesToAdd.length < maxRecipes &&
+                  this.recipe.categories.length > 0
+                ) {
+                  let popularRecipes =
+                    this.recipeService.getPopularRecipes(publicRecipes);
 
-                popularRecipes = popularRecipes.filter((recipe) => recipe.authorId !== this.recipe.authorId)
+                  popularRecipes = popularRecipes.filter(
+                    (recipe) => recipe.authorId !== this.recipe.authorId,
+                  );
                   for (const newRecipe of popularRecipes) {
                     if (
                       !recipesToAdd.some(
@@ -202,59 +218,61 @@ export class RecipePageComponent implements OnInit {
                       }
                     }
                   }
-                
-
-              }
-                this.downRecipes = recipesToAdd.slice(0, maxRecipes);
-            }
-
-            this.recentRecipes = this.recipeService.getPublicRecipes(recipes);
-            this.recentRecipes = this.recipeService
-              .getRecentRecipes(this.recentRecipes)
-              .slice(0, 3);
-            recipes.forEach((recipe) => {
-              if (recipe.id === this.recipe.id) {
-                this.recipe = recipe;
-
-                this.categoryService.categories$.subscribe((allCategories) => {
-                  this.categories = allCategories.filter((element) =>
-                    this.recipe.categories.includes(element.id),
-                  );
-                });
-
-                const combinedText = [
-                  recipe.history,
-                  recipe.description,
-                  ...recipe.ingredients.map((ingredient) => ingredient.name),
-
-                  ...recipe.instructions.map((instruction) => instruction.name),
-                ].join(' ');
-
-                const wordsPerMinute = 200;
-                const recipeText = combinedText;
-                const words = recipeText.split(/\s+/);
-                const wordCount = words.length;
-                this.readingTimeInMinutes = wordCount / wordsPerMinute;
-                this.readingTimeInMinutes = Math.round(
-                  this.readingTimeInMinutes,
-                );
-
-                if (this.currentUser.id !== 0) {
-                  this.isRecipeLiked = this.recipe.likesId.includes(
-                    this.currentUser.id,
-                  );
-
-                  this.isRecipeCooked = this.recipe.cooksId.includes(
-                    this.currentUser.id,
-                  );
-
-                  this.isRecipeFavorite = this.recipe.favoritesId.includes(
-                    this.currentUser.id,
-                  );
                 }
+                this.downRecipes = recipesToAdd.slice(0, maxRecipes);
               }
+
+              this.recentRecipes = this.recipeService.getPublicRecipes(recipes);
+              this.recentRecipes = this.recipeService
+                .getRecentRecipes(this.recentRecipes)
+                .slice(0, 3);
+              recipes.forEach((recipe) => {
+                if (recipe.id === this.recipe.id) {
+                  this.recipe = recipe;
+
+                  this.categoryService.categories$
+                    .pipe(takeUntil(this.destroyed$))
+                    .subscribe((allCategories) => {
+                      this.categories = allCategories.filter((element) =>
+                        this.recipe.categories.includes(element.id),
+                      );
+                    });
+
+                  const combinedText = [
+                    recipe.history,
+                    recipe.description,
+                    ...recipe.ingredients.map((ingredient) => ingredient.name),
+
+                    ...recipe.instructions.map(
+                      (instruction) => instruction.name,
+                    ),
+                  ].join(' ');
+
+                  const wordsPerMinute = 200;
+                  const recipeText = combinedText;
+                  const words = recipeText.split(/\s+/);
+                  const wordCount = words.length;
+                  this.readingTimeInMinutes = wordCount / wordsPerMinute;
+                  this.readingTimeInMinutes = Math.round(
+                    this.readingTimeInMinutes,
+                  );
+
+                  if (this.currentUser.id !== 0) {
+                    this.isRecipeLiked = this.recipe.likesId.includes(
+                      this.currentUser.id,
+                    );
+
+                    this.isRecipeCooked = this.recipe.cooksId.includes(
+                      this.currentUser.id,
+                    );
+
+                    this.isRecipeFavorite = this.recipe.favoritesId.includes(
+                      this.currentUser.id,
+                    );
+                  }
+                }
+              });
             });
-          });
         });
       });
   }
@@ -276,7 +294,10 @@ export class RecipePageComponent implements OnInit {
         this.recipe,
       );
     }
-    this.recipeService.updateRecipe(this.recipe).subscribe();
+    this.recipeService
+      .updateRecipe(this.recipe)
+      .pipe(takeUntil(this.destroyed$))
+          .subscribe();
   }
 
   isRecipeFavorite: boolean = false;
@@ -312,7 +333,8 @@ export class RecipePageComponent implements OnInit {
         this.recipe,
       );
     }
-    this.recipeService.updateRecipe(updatedRecipe).subscribe();
+    this.recipeService.updateRecipe(updatedRecipe).pipe(takeUntil(this.destroyed$))
+          .subscribe();
   }
   //готовим рецепт
   cookThisRecipe() {
@@ -337,7 +359,8 @@ export class RecipePageComponent implements OnInit {
       );
     }
 
-    this.recipeService.updateRecipe(updatedRecipe).subscribe();
+    this.recipeService.updateRecipe(updatedRecipe).pipe(takeUntil(this.destroyed$))
+          .subscribe();
   }
 
   decreasePortions() {
@@ -385,5 +408,8 @@ export class RecipePageComponent implements OnInit {
     });
   }
 
-  recentRecipes: IRecipe[] = [];
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
+  }
 }

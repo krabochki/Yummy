@@ -15,18 +15,16 @@ import { IRecipe, nullRecipe } from '../../../models/recipes';
 })
 export class VerticalRecipeListComponent implements OnChanges {
   @Input() blocks: IRecipe[] = []; // Передаваемый массив блоков
-
   nullRecipe: IRecipe = nullRecipe;
-
   @Input() rowsNumberMobile = 1;
-
-  @Input() moderMode = false;
+  @Input() cols: number = 4;
+  @Input() showAuthor: boolean = true;
+  width: number = 0;
+  @Input() moderMode = false; 
+  
   ngOnChanges() {
     this.onResize();
   }
-
-  @Input() cols: number = 4;
-  @Input() showAuthor: boolean = true;
 
   filter() {
     this.blocks = this.blocks.filter((block) => block.id !== 0);
@@ -40,7 +38,6 @@ export class VerticalRecipeListComponent implements OnChanges {
     }
   }
 
-  width: number = 0;
   @HostListener('window:resize', ['$event'])
   onResize() {
     const event = window.innerWidth;

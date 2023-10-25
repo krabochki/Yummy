@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IRecipe, nullRecipe } from 'src/app/modules/recipes/models/recipes';
 import { RecipeService } from '../../../services/recipe.service';
@@ -7,17 +13,19 @@ import { modal } from 'src/tools/animations';
 import { Router } from '@angular/router';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-recipe-list-item',
   templateUrl: './recipe-list-item.component.html',
   styleUrls: ['./recipe-list-item.component.scss'],
   animations: [trigger('modal', modal())],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RecipeListItemComponent implements OnInit {
+export class RecipeListItemComponent implements OnInit, OnDestroy {
   @Input() recipe: IRecipe = nullRecipe;
   @Input() context: string = '';
+  protected destroyed$: Subject<void> = new Subject<void>();
 
   likes: number = 0;
   cooks: number = 0;
@@ -43,34 +51,41 @@ export class RecipeListItemComponent implements OnInit {
   @Input() showAuthor: boolean = true;
 
   ngOnInit() {
-    this.authService.currentUser$.subscribe((currentUser) => {
-      this.currentUserId = currentUser.id;
-      this.recipeService.recipes$.subscribe((recipes) => {
-        const findedRecipe = recipes.find((recipe) => {
-          if (recipe.id === this.recipe.id) return true;
+    this.authService.currentUser$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((currentUser) => {
+        this.currentUserId = currentUser.id;
+        this.recipeService.recipes$
+          .pipe(takeUntil(this.destroyed$))
+          .subscribe((recipes) => {
+            const findedRecipe = recipes.find((recipe) => {
+              return recipe.id === this.recipe.id;
+            });
+            if (findedRecipe) this.recipe = findedRecipe;
+            if (this.currentUserId !== 0) {
+              this.isRecipeLiked = this.recipe.likesId.includes(
+                this.currentUserId,
+              );
+              this.isRecipeCooked = this.recipe.cooksId.includes(
+                this.currentUserId,
+              );
+              this.isRecipeFavorite = this.recipe.favoritesId.includes(
+                this.currentUserId,
+              );
+            }
+          });
+      });
+
+    this.userService.users$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((users) => {
+        const findedAuthor = users.find((user) => {
+          if (user.id === this.recipe.authorId) return true;
           else return false;
         });
-        if (findedRecipe) this.recipe = findedRecipe;
-        if (this.currentUserId !== 0) {
-          this.isRecipeLiked = this.recipe.likesId.includes(this.currentUserId);
-          this.isRecipeCooked = this.recipe.cooksId.includes(
-            this.currentUserId,
-          );
-          this.isRecipeFavorite = this.recipe.favoritesId.includes(
-            this.currentUserId,
-          );
-        }
+        if (findedAuthor) this.author = findedAuthor;
+        this.dataLoaded = true;
       });
-    });
-
-    this.userService.users$.subscribe((users) => {
-      const findedAuthor = users.find((user) => {
-        if (user.id === this.recipe.authorId) return true;
-        else return false;
-      });
-      if (findedAuthor) this.author = findedAuthor;
-      this.dataLoaded = true;
-    });
   }
 
   //добавляем рецепт в избранное
@@ -79,19 +94,25 @@ export class RecipeListItemComponent implements OnInit {
       this.noAccessModalShow = true;
       return;
     }
+
     this.isRecipeFavorite = !this.isRecipeFavorite;
-    if (this.isRecipeFavorite) {
-      this.recipe = this.recipeService.addRecipeToFavorites(
-        this.currentUserId,
-        this.recipe,
+    this.recipe = this.isRecipeFavorite
+      ? this.recipeService.addRecipeToFavorites(this.currentUserId, this.recipe)
+      : this.recipeService.removeRecipeFromFavorites(
+          this.currentUserId,
+          this.recipe,
+        );
+
+    this.recipeService
+      .updateRecipe(this.recipe)
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(
+        () => console.log('Рецепт успешно добавлен в избранное'),
+        (error: Error) =>
+          console.error(
+            'Ошибка добавления рецепта в избранное: ' + error.message,
+          ),
       );
-    } else {
-      this.recipe = this.recipeService.removeRecipeFromFavorites(
-        this.currentUserId,
-        this.recipe,
-      );
-    }
-    this.recipeService.updateRecipe(this.recipe).subscribe();
   }
 
   //(действия модератора по одобрению рецептов потом будут в компоненте полной страницы)
@@ -103,22 +124,20 @@ export class RecipeListItemComponent implements OnInit {
       return;
     }
 
-    let updatedRecipe: IRecipe;
-
     this.isRecipeLiked = !this.isRecipeLiked;
 
-    if (this.isRecipeLiked) {
-      updatedRecipe = this.recipeService.likeRecipe(
-        this.currentUserId,
-        this.recipe,
+    this.recipe = this.isRecipeLiked
+      ? this.recipeService.likeRecipe(this.currentUserId, this.recipe)
+      : this.recipeService.unlikeRecipe(this.currentUserId, this.recipe);
+
+    this.recipeService
+      .updateRecipe(this.recipe)
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(
+        () => console.log('Рецепт успешно оценен'),
+        (error: Error) =>
+          console.error('Ошибка оценки рецепта: ' + error.message),
       );
-    } else {
-      updatedRecipe = this.recipeService.unlikeRecipe(
-        this.currentUserId,
-        this.recipe,
-      );
-    }
-    this.recipeService.updateRecipe(updatedRecipe).subscribe();
   }
   //готовим рецепт
   cookThisRecipe() {
@@ -129,21 +148,20 @@ export class RecipeListItemComponent implements OnInit {
 
     this.isRecipeCooked = !this.isRecipeCooked;
 
-    let updatedRecipe: IRecipe;
+    this.recipe = this.isRecipeCooked
+      ? this.recipeService.cookRecipe(this.currentUserId, this.recipe)
+      : this.recipeService.uncookRecipe(this.currentUserId, this.recipe);
 
-    if (this.isRecipeCooked) {
-      updatedRecipe = this.recipeService.cookRecipe(
-        this.currentUserId,
-        this.recipe,
+    this.recipeService
+      .updateRecipe(this.recipe)
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(
+        () => console.log('Рецепт успешно отмечен приготовленным'),
+        (error: Error) =>
+          console.error(
+            'Ошибка отметки рецепта приготовленным: ' + error.message,
+          ),
       );
-    } else {
-      updatedRecipe = this.recipeService.uncookRecipe(
-        this.currentUserId,
-        this.recipe,
-      );
-    }
-
-    this.recipeService.updateRecipe(updatedRecipe).subscribe();
   }
 
   // модальное окно (пользователь не вошел в аккаунт)
@@ -152,5 +170,10 @@ export class RecipeListItemComponent implements OnInit {
       this.router.navigateByUrl('/greetings');
     }
     this.noAccessModalShow = false;
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
   }
 }

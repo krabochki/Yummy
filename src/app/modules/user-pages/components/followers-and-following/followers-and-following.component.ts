@@ -4,6 +4,7 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnDestroy,
   OnInit,
   Output,
 } from '@angular/core';
@@ -18,6 +19,7 @@ import {
   state,
 } from '@angular/animations';
 import { widthAnim } from 'src/tools/animations';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-followers-and-following',
@@ -39,51 +41,51 @@ import { widthAnim } from 'src/tools/animations';
       transition('closed => open', [animate('0.4s')]),
     ]),
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FollowersAndFollowingComponent implements OnInit {
-  //ввод
-  @Input() userPage: IUser = {...nullUser};
-  @Input() currentUser: IUser = {...nullUser};
-   followers: IUser[] = [];
-  following: IUser[] = [];
-
-  followersDisplay: IUser[] = [];
-  followingDisplay: IUser[] = [];
-
-  //вывод: для закрытия окна
+export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
+  @Input() userPage: IUser = { ...nullUser };
+  @Input() currentUser: IUser = { ...nullUser };
+  @Input() object: 'followers' | 'following' = 'followers';
+  @Input() user: IUser = { ...nullUser };
   @Output() closeEmitter: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  //что смотрим
-  @Input() object: 'followers' | 'following' = 'followers';
-  searchMode: boolean = false;
+  followers: IUser[] = [];
+  following: IUser[] = [];
+  followersDisplay: IUser[] = [];
+  followingDisplay: IUser[] = [];
   currentUserFollowingIds: number[] = []; //подписки авторизованного пользователя
+
+  searchMode: boolean = false;
   searchQuery: string = '';
-  @Input() user: IUser = {...nullUser};
+  protected destroyed$: Subject<void> = new Subject<void>();
+
   constructor(
-    private cd:ChangeDetectorRef,
+    private cd: ChangeDetectorRef,
     private router: Router,
     public userService: UserService,
   ) {}
 
-
   ngOnInit(): void {
-    this.userService.users$.subscribe((data) => {
-      this.following = this.userService.getFollowing(data, this.user.id);
-      this.followers = this.userService.getFollowers(data, this.user.id);
-      this.followingDisplay = this.following;
-      this.followersDisplay = this.followers;
-      if (this.currentUser.id!==0) {
-        const currentUserFollowing = this.userService.getFollowing(
-          data,
-          this.currentUser?.id,
-        );
-        this.currentUserFollowingIds = [];
-        currentUserFollowing.forEach((currFollowing) => {
-          this.currentUserFollowingIds.push(currFollowing.id);
-        }); this.cd.detectChanges();
-      }
-    });
+    this.userService.users$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((data) => {
+        this.following = this.userService.getFollowing(data, this.user.id);
+        this.followers = this.userService.getFollowers(data, this.user.id);
+        this.followingDisplay = this.following;
+        this.followersDisplay = this.followers;
+        if (this.currentUser.id !== 0) {
+          const currentUserFollowing = this.userService.getFollowing(
+            data,
+            this.currentUser?.id,
+          );
+          this.currentUserFollowingIds = [];
+          currentUserFollowing.forEach((currFollowing) => {
+            this.currentUserFollowingIds.push(currFollowing.id);
+          });
+          this.cd.detectChanges();
+        }
+      });
   }
 
   //подписка текущего пользователя на людей в списке
@@ -95,8 +97,7 @@ export class FollowersAndFollowingComponent implements OnInit {
   //отписка текущего пользователя от людей в списке
   unfollow(user: IUser) {
     this.userService.removeFollower(user, this.currentUser?.id);
-    this.updateUser(user);   
-
+    this.updateUser(user);
   }
 
   searchOnOff() {
@@ -144,5 +145,9 @@ export class FollowersAndFollowingComponent implements OnInit {
         this.followingDisplay = this.following; // Если поле поиска пустое, показать всех подписчиков
       }
     }
+  }
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
   }
 }

@@ -14,6 +14,12 @@ button.prim {
   }
 }
 
+.svg{
+  height:var(--font-m);
+  fill:var(--color-background)
+}
+
+
 .disabled {
   pointer-events: none;
 }

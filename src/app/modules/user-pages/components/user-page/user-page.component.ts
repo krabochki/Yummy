@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IUser, nullUser } from '../../models/users';
 import { ActivatedRoute, Data, Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
-import { IRecipe, nullRecipe } from 'src/app/modules/recipes/models/recipes';
+import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
 import { fadeIn, modal } from 'src/tools/animations';
 import { trigger } from '@angular/animations';
@@ -11,25 +11,23 @@ import { Title } from '@angular/platform-browser';
 import { registerLocaleData } from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
 import { RouteEventsService } from 'src/app/modules/controls/route-events.service';
+import { ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-user-page',
   templateUrl: './user-page.component.html',
   styleUrls: ['./user-page.component.scss', './skeleton.scss'],
   animations: [trigger('fadeIn', fadeIn()), trigger('modal', modal())],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserPageComponent implements OnInit {
-  recipesEnabled: boolean = false;
-  moreInfoEnabled: boolean = true;
-
+  recipesEnabled: boolean = true;
+  moreInfoEnabled: boolean = false;
   obj: 'following' | 'followers' = 'followers';
-
   dataLoaded = false;
-
   showFollows = false;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-  closeFollows(event: any) {
+  closeFollows() {
     this.showFollows = false;
   }
 
@@ -41,6 +39,7 @@ export class UserPageComponent implements OnInit {
     private recipeService: RecipeService,
     private titleService: Title,
     public router: Router,
+    private cd: ChangeDetectorRef,
     public routerEventsService: RouteEventsService,
   ) {
     registerLocaleData(localeRu);
@@ -51,10 +50,13 @@ export class UserPageComponent implements OnInit {
     this.router.navigate([this.routerEventsService.previousRoutePath.value]);
   }
 
-  currentUser: IUser = nullUser;
+  currentUser: IUser = { ...nullUser };
   settingsShow = false;
 
-  user: IUser = nullUser;
+  user: IUser = { ...nullUser };
+
+  editModalShow: boolean = false;
+  noAccessModalShow: boolean = false;
 
   userId: number = 0;
 
@@ -75,12 +77,10 @@ export class UserPageComponent implements OnInit {
     this.route.data.subscribe((data: Data) => {
       this.user = data['user'];
       this.userId = this.user.id;
-      this.recipesEnabled = false;
-      this.moreInfoEnabled = true;
 
       this.titleService.setTitle('@' + this.user.username);
 
-      this.authService.getCurrentUser().subscribe((data) => {
+      this.authService.currentUser$.subscribe((data) => {
         this.currentUser = data;
       });
 
@@ -90,17 +90,7 @@ export class UserPageComponent implements OnInit {
         this.myPage = false;
       }
 
-      this.userFollowers = this.userService.getFollowers(
-        this.users,
-        this.userId,
-      );
-
-      this.userFollowing = this.userService.getFollowing(
-        this.users,
-        this.userId,
-      );
-
-      this.userService.getUsers().subscribe((data) => {
+      this.userService.users$.subscribe((data) => {
         this.users = data;
         const findedUser = data.find((user) => user.id === this.userId);
 
@@ -112,75 +102,57 @@ export class UserPageComponent implements OnInit {
           this.myPage = true;
         }
 
-        this.user.profileViews++;
-        if (this.myPage) {
-          this.currentUser.profileViews++;
-        }
-
-        this.authService.setCurrentUser(this.currentUser);
-
-        this.updateUser();
-
         this.userFollowers = this.userService.getFollowers(data, this.userId);
 
         this.userFollowing = this.userService.getFollowing(data, this.userId);
-      });
 
-      this.recipeService.getRecipes()?.subscribe((data) => {
-        this.allRecipes = this.recipeService.getPopularRecipes(data);
+        this.recipeService.recipes$.subscribe((data) => {
+          this.allRecipes = this.recipeService.getPopularRecipes(data);
 
-        this.userRecipes = this.recipeService.getRecipesByUser(
-          this.allRecipes,
-          this.userId,
-        );
-        if (
-          !this.myPage &&
-          (this.currentUser.role === 'admin' ||
-            this.currentUser.role === 'moderator')
-        ) {
-
-          this.userRecipes = this.recipeService.getNotPrivateRecipes(
-            this.userRecipes,
+          this.userRecipes = this.recipeService.getRecipesByUser(
+            this.allRecipes,
+            this.userId,
           );
-        } else if (
-          !this.myPage &&
-          this.currentUser.role !== 'admin' &&
-          this.currentUser.role !== 'moderator'
-        ) {
+          if (
+            !this.myPage &&
+            (this.currentUser.role === 'admin' ||
+              this.currentUser.role === 'moderator')
+          ) {
+            this.userRecipes = this.recipeService.getNotPrivateRecipes(
+              this.userRecipes,
+            );
+          } else if (
+            !this.myPage &&
+            this.currentUser.role !== 'admin' &&
+            this.currentUser.role !== 'moderator'
+          ) {
+            this.userRecipes = this.recipeService.getPublicRecipes(
+              this.userRecipes,
+            );
+          }
+          this.cooks = 0;
+          this.likes = 0;
+          this.comments = 0;
+          this.userRecipes.forEach((recipe) => {
+            this.cooks += recipe.cooksId?.length;
+            this.likes += recipe.likesId?.length;
+            this.comments += recipe.comments?.length;
+            if (!this.cooks) this.cooks = 0;
+            if (!this.likes) this.likes = 0;
+            if (!this.comments) this.comments = 0;
+          });
 
-          this.userRecipes = this.recipeService.getPublicRecipes(
-            this.userRecipes,
-          );
-        }
-
-        this.userRecipes.forEach((recipe) => {
-          this.cooks += recipe.cooksId?.length;
-          this.likes += recipe.likesId?.length;
-          this.comments += recipe.comments?.length;
-          if (!this.cooks) this.cooks = 0;
-          if (!this.likes) this.likes = 0;
-          if (!this.comments) this.comments = 0;
-        });
-
-        this.displayRecipes = [...this.userRecipes];
-
-        if (this.displayRecipes.length == 2) {
-          this.displayRecipes.push(nullRecipe);
-        }
-        if (this.displayRecipes.length == 1) {
-          this.displayRecipes.push(nullRecipe);
-          this.displayRecipes.push(nullRecipe);
-        }
-
-        setTimeout(() => {
+          this.cd.markForCheck();
           this.dataLoaded = true;
-        }, 700);
+        });
       });
+      if (!this.myPage) {
+        this.user.profileViews++;
+      }
+      this.userService.updateUsers(this.user);
     });
-
   }
 
-  displayRecipes: IRecipe[] = [];
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   settingsClose(event: boolean) {
     this.settingsShow = false;
@@ -190,26 +162,15 @@ export class UserPageComponent implements OnInit {
   follow() {
     this.user = this.userService.addFollower(this.user, this.currentUser.id);
     this.updateUser();
-
-    this.userFollowers.push(this.currentUser);
   }
 
   unfollow() {
     this.user = this.userService.removeFollower(this.user, this.currentUser.id);
     this.updateUser();
-
-    let indexToDelete: number = 0;
-
-    indexToDelete = this.userFollowers.findIndex(
-      (us: IUser) => us.id === this.currentUser.id,
-    );
-    if (indexToDelete !== -1 && indexToDelete) {
-      this.userFollowers.splice(indexToDelete, 1);
-    }
   }
 
   updateUser() {
-    this.userService.updateUser(this.user).subscribe();
+    this.userService.updateUsers(this.user);
   }
 
   username: string = 'username';
@@ -223,12 +184,8 @@ export class UserPageComponent implements OnInit {
     this.editModalShow = false;
   }
   updateCurrentUser(updatedUser: IUser) {
-    if (this.user.id === this.currentUser.id) {
-      this.user = updatedUser;
-      this.currentUser = updatedUser;
-    }
+    this.user = updatedUser;
     this.updateUser();
-    this.titleService.setTitle('@' + this.user.username);
 
     this.authService.loginUser(this.currentUser).subscribe((userExists) => {
       if (userExists) {
@@ -236,8 +193,12 @@ export class UserPageComponent implements OnInit {
         this.authService.setCurrentUser(userExists);
       }
     });
-
-    window.scrollTo(0, 0);
   }
-  editModalShow: boolean = false;
+
+  handleNoAccessModal(result: boolean) {
+    if (result) {
+      this.router.navigateByUrl('/greetings');
+    }
+    this.noAccessModalShow = false;
+  }
 }

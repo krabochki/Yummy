@@ -4,130 +4,100 @@
   <div class="label" routerLink="/">
     {{ "yummy" | titlecase }}
   </div>
-
   <div *ngIf="!mobile" class="menu-items">
-    <app-select
-      [items]="recipeSelectItems"
-      [disabling]="
-        this.currentUser.id === 0
-          ? [true, false, false, true, false]
-          : [false, false, false, false, false]
-      "
-      [routerLinks]="[
-        'recipes/yours',
-        'recipes',
-        'categories',
-        'recipes/favorite',
-        'match'
-      ]"
-    ></app-select>
-    <app-select
-      [items]="cooksSelectItems"
-      [disabling]="
-        this.currentUser.id === 0 ? [true, false, false] : [false, false, false]
-      "
-      [routerLinks]="['cooks/list/' + currentUser.id, 'cooks', 'cooks/updates']"
-    ></app-select>
-    <a
-      (click)="linkClick()"
-      @modal
-      routerLink="plan"
-      class="cook-plan"
-      [ngClass]="{ dsl: this.currentUser.id === 0 ? true : false }"
-      >План готовки</a
-    >
+    <app-select [items]="recipeSelectItems" 
+      [routes]="[{
+        routeLink: '/recipes/yours',
+        disabled: this.currentUser.id === 0
+          ?true:false
+      },
+      {
+        routeLink: '/recipes',
+        disabled: false
+      },
+      {
+        routeLink: '/sections',
+        disabled: false
+      },
+      {
+        routeLink: '/recipes/favorite',
+        disabled: this.currentUser.id === 0
+          ?true:false
+      },
+      {
+        routeLink: 'match',
+        disabled: false
+      }]"
+        
+      ></app-select>
+    <app-select [items]="cooksSelectItems" 
+     [routes]="[{
+        routeLink: '/cooks/list/' + currentUser.id,
+        disabled: this.currentUser.id === 0
+          ?true:false
+      },
+      {
+        routeLink: '/cooks',
+        disabled: false
+      },
+      {
+        routeLink: '/cooks/updates',
+        disabled: this.currentUser.id === 0 ?true:false
+      }
+    ]"
+></app-select>
+    <a style="cursor: pointer;" (click)="linkClick()"  [routerLink]="this.currentUser.id === 0? null : '/plan'" class="cook-plan"
+      [ngClass]="{ dsl: this.currentUser.id === 0 ? true : false }">План готовки</a>
   </div>
 
   <div class="buttons" *ngIf="!mobile">
-     <div class="admin-panel" [ngClass]="{'admin':currentUser.role==='admin','moder':currentUser.role==='moderator'}" routerLink="/control-dashboard" *ngIf="currentUser.role==='admin'||currentUser.role==='moderator'">
-
- <svg-icon class="admin-svg"
-          [src]="'../../../assets/images/svg/star.svg'"
-          [class]="'svg'"
-          >></svg-icon
-        >
-
-      </div>
-    <button
-      routerLink="greetings"
-      *ngIf="this.currentUser.id !== 0"
-      class="svg-button">
-      <svg-icon [src]="'../../../assets/images/svg/bell.svg'" [class]="'svg'"
-        >></svg-icon
-      >
-
-     
-
+    <div class="admin-panel" [ngClass]="{
+        admin: currentUser.role === 'admin',
+        moder: currentUser.role === 'moderator'
+      }" routerLink="/control-dashboard" *ngIf="currentUser.role === 'admin' || currentUser.role === 'moderator'">
+      <svg-icon class="admin-svg" [src]="'../../../assets/images/svg/star.svg'" [class]="'svg'"></svg-icon>
+    </div>
+    <button routerLink="greetings" *ngIf="this.currentUser.id !== 0" class="svg-button">
+      <svg-icon [src]="'../../../assets/images/svg/bell.svg'" [class]="'svg'"></svg-icon>
 
       <div class="notifications" *ngIf="notificationsCount > 0">
         {{ notificationsCount }}
       </div>
     </button>
 
-    <button
-      [routerLink]="
+    <button [routerLink]="
         this.currentUser.id === 0 ? 'greetings' : 'cooks/list/' + currentUser.id
-      "
-      class="svg-button">
+      " class="svg-button">
       <ng-template #account>
-        <svg-icon
-          [src]="'../../../assets/images/svg/account.svg'"
-          [class]="'svg'"
-          >></svg-icon
-        >
+        <svg-icon [src]="'../../../assets/images/svg/account.svg'" [class]="'svg'"></svg-icon>
       </ng-template>
-      <svg-icon
-        *ngIf="this.currentUser.id === 0; else account"
-        [src]="'../../../assets/images/svg/enter.svg'"
-        [class]="'svg'"
-        >></svg-icon
-      >
+      <svg-icon *ngIf="this.currentUser.id === 0; else account" [src]="'../../../assets/images/svg/enter.svg'"
+        [class]="'svg'"></svg-icon>
     </button>
   </div>
-  <div
-    [class.unactive]="currentUser.id === 0"
-    *ngIf="mobile"
-    class="mobile-buttons-panel"
-  >
-      <div class="admin-panel" [ngClass]="{'admin':currentUser.role==='admin','moder':currentUser.role==='moderator'}" routerLink="/control-dashboard" *ngIf="currentUser.role==='admin'||currentUser.role==='moderator'">
-
- <svg-icon class="admin-svg"
-          [src]="'../../../assets/images/svg/thick-star.svg'"
-          [class]="'svg'"
-          >></svg-icon
-        >
-
-      </div>
-    <div
-      (click)="currentUser.id === 0 ? (noAccessModalShow = true) : null"
-      [routerLink]="
+  <div [class.unactive]="currentUser.id === 0" *ngIf="mobile" class="mobile-buttons-panel">
+    <div class="admin-panel" [ngClass]="{
+        admin: currentUser.role === 'admin',
+        moder: currentUser.role === 'moderator'
+      }" routerLink="/control-dashboard" *ngIf="currentUser.role === 'admin' || currentUser.role === 'moderator'">
+      <svg-icon class="admin-svg" [src]="'../../../assets/images/svg/thick-star.svg'" [class]="'svg'"></svg-icon>
+    </div>
+    <div (click)="currentUser.id === 0 ? (noAccessModalShow = true) : null" [routerLink]="
         currentUser.id === 0 ? null : '/cooks/list/' + currentUser.id
-      "
-    >
-      <svg-icon
-        class="header-top-svg"
-        [applyClass]="true"
-        [src]="'../../../../../assets/images/svg/header/account.svg'"
-      ></svg-icon>
+      ">
+      <svg-icon class="header-top-svg" [applyClass]="true"
+        [src]="'../../../../../assets/images/svg/header/account.svg'"></svg-icon>
     </div>
 
     <div (click)="currentUser.id === 0 ? (noAccessModalShow = true) : null">
       <div class="count">10</div>
-      <svg-icon
-        class="header-top-svg"
-        [applyClass]="true"
-        [src]="'../../../../../assets/images/svg/header/notification.svg'"
-      ></svg-icon>
+      <svg-icon class="header-top-svg" [applyClass]="true"
+        [src]="'../../../../../assets/images/svg/header/notification.svg'"></svg-icon>
     </div>
-    <div
-      (click)="currentUser.id === 0 ? (noAccessModalShow = true) : null"
-      [routerLink]="currentUser.id === 0 ? null : '/plan'"
-    >
-      <svg-icon
-        class="header-top-svg"
-        [applyClass]="true"
-        [src]="'../../../../../assets/images/svg/header/calendar.svg'"
-      ></svg-icon>
+    <div (click)="currentUser.id === 0 ? (noAccessModalShow = true) : null"
+      [routerLink]="currentUser.id === 0 ? null : '/plan'">
+      <svg-icon class="header-top-svg" [applyClass]="true"
+        [src]="'../../../../../assets/images/svg/header/calendar.svg'"></svg-icon>
     </div>
   </div>
 </div>
@@ -135,82 +105,56 @@
 <div *ngIf="mobile" class="menu-bottom">
   <div class="item-cont">
     <div class="item" [routerLink]="''">
-      <svg-icon
-        [class]="activePage === 'main' ? 'header-svg active' : 'header-svg'"
-        [applyClass]="true"
-        [src]="
+      <svg-icon [class]="activePage === 'main' ? 'header-svg active' : 'header-svg'" [applyClass]="true" [src]="
           '../../../../../assets/images/svg/header/home' +
           (activePage === 'main' ? '-active' : '') +
           '.svg'
-        "
-      ></svg-icon>
+        "></svg-icon>
       <p [class.active]="activePage === 'main'">Главная</p>
     </div>
     <div class="item" [routerLink]="'/recipes'">
-      <svg-icon
-        [class]="activePage === 'recipes' ? 'header-svg active' : 'header-svg'"
-        [applyClass]="true"
-        [src]="
+      <svg-icon [class]="activePage === 'recipes' ? 'header-svg active' : 'header-svg'" [applyClass]="true" [src]="
           '../../../../../assets/images/svg/header/recipes' +
           (activePage === 'recipes' ? '-active' : '') +
           '.svg'
-        "
-      ></svg-icon>
+        "></svg-icon>
       <p [class.active]="activePage === 'recipes'">Рецепты</p>
     </div>
     <div class="item">
       <!---->
-      <div
-        class="main-button"
-        [routerLink]="currentUser.id === 0 ? '/greetings' : '/recipes/add'"
-      >
-        <svg-icon
-          class="header-svg"
-          [applyClass]="true"
-          [src]="
-            '../../../../../assets/images/svg/header/' +
-            (currentUser.id === 0 ? 'login' : 'add') +
-            '.svg'
-          "
-        ></svg-icon>
+      <div class="main-button" [routerLink]="currentUser.id === 0 ? '/greetings' : '/recipes/add'">
+        <svg-icon *ngIf="currentUser.id <=0; else plusSvg" class="header-svg" [applyClass]="true" [src]="
+            '../../../../../assets/images/svg/header/login.svg'
+          "></svg-icon>
+          <ng-template #plusSvg>
+<svg-icon  class="header-svg" [applyClass]="true" [src]="
+            '../../../../../assets/images/svg/header/add.svg'
+          "></svg-icon>
+
+          </ng-template>
+           
       </div>
     </div>
     <div class="item" [routerLink]="'/cooks'">
-      <svg-icon
-        [class]="activePage === 'cooks' ? 'header-svg active' : 'header-svg'"
-        [applyClass]="true"
-        [src]="
+      <svg-icon [class]="activePage === 'cooks' ? 'header-svg active' : 'header-svg'" [applyClass]="true" [src]="
           '../../../../../assets/images/svg/header/profiles' +
           (activePage === 'cooks' ? '-active' : '') +
           '.svg'
-        "
-      ></svg-icon>
+        "></svg-icon>
       <p [class.active]="activePage === 'cooks'">Кулинары</p>
     </div>
     <div class="item" [routerLink]="'/match'">
-      <svg-icon
-        [class]="activePage === 'match' ? 'header-svg active' : 'header-svg'"
-        [applyClass]="true"
-        [src]="
+      <svg-icon [class]="activePage === 'match' ? 'header-svg active' : 'header-svg'" [applyClass]="true" [src]="
           '../../../../../assets/images/svg/header/match' +
           (activePage === 'match' ? '-active' : '') +
           '.svg'
-        "
-      ></svg-icon>
+        "></svg-icon>
       <p [class.active]="activePage === 'match'">Подбор</p>
     </div>
   </div>
 </div>
 
-<app-modal
-  @modal
-  *ngIf="noAccessModalShow"
-  [style]="'prim'"
-  [title]="'Доступ к разделу ограничен'"
-  [type]="'yesOrNo'"
-  (resultEmit)="handleNoAccessModal($event)"
-  [buttonsText]="['Давайте', 'Не сейчас']"
-  [description]="
+<app-modal @modal *ngIf="noAccessModalShow" [style]="'prim'" [title]="'Доступ к разделу ограничен'" [type]="'yesOrNo'"
+  (resultEmit)="handleNoAccessModal($event)" [buttonsText]="['Давайте', 'Не сейчас']" [description]="
     'Этот раздел могут просматривать только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'
-  "
-></app-modal>
+  "></app-modal>

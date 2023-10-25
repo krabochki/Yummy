@@ -35,11 +35,20 @@ $yummy-theme: mat.define-light-theme((
 
 
 
+
 form{
+  .mat-mdc-form-field:hover .mat-mdc-form-field-focus-overlay
+  {
+    opacity:  1 !important;
+    background-color: var(--color-background-deeper)
+;
+  }
   .mdc-text-field--filled:not(.mdc-text-field--disabled) {
     max-width: 15em;
 background-color: var(--color-background-deeper-unactive);
 border-radius: var(--space-s) var(--space-s) 0 0;
+
+
 
 
 

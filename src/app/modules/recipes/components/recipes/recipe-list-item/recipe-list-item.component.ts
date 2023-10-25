@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IRecipe, nullRecipe } from 'src/app/modules/recipes/models/recipes';
 import { RecipeService } from '../../../services/recipe.service';
@@ -13,6 +13,7 @@ import { UserService } from 'src/app/modules/user-pages/services/user.service';
   templateUrl: './recipe-list-item.component.html',
   styleUrls: ['./recipe-list-item.component.scss'],
   animations: [trigger('modal', modal())],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RecipeListItemComponent implements OnInit {
   @Input() recipe: IRecipe = nullRecipe;
@@ -25,10 +26,12 @@ export class RecipeListItemComponent implements OnInit {
   isRecipeLiked: boolean = false;
   isRecipeCooked: boolean = false;
 
+  noAccessModalShow: boolean = false;
+
   dataLoaded = false;
 
   currentUserId = 0;
-  author: IUser = nullUser;
+  author: IUser = { ...nullUser };
 
   constructor(
     private recipeService: RecipeService,
@@ -37,46 +40,37 @@ export class RecipeListItemComponent implements OnInit {
     private router: Router,
   ) {}
 
-  @Input()  showAuthor: boolean = true;
+  @Input() showAuthor: boolean = true;
 
   ngOnInit() {
-
-    this.recipeService.recipes$.subscribe((recipes) => {
-      recipes.forEach((element) => {
-        if (element.id === this.recipe.id) {
-          this.recipe = element;
-
-          if (this.currentUserId !== 0) {
-            this.isRecipeLiked = this.recipe.likesId.includes(
-              this.currentUserId,
-            );
-            this.isRecipeCooked = this.recipe.cooksId.includes(
-              this.currentUserId,
-            );
-            this.isRecipeFavorite = this.recipe.favoritesId.includes(
-              this.currentUserId,
-            );
-          }
+    this.authService.currentUser$.subscribe((currentUser) => {
+      this.currentUserId = currentUser.id;
+      this.recipeService.recipes$.subscribe((recipes) => {
+        const findedRecipe = recipes.find((recipe) => {
+          if (recipe.id === this.recipe.id) return true;
+          else return false;
+        });
+        if (findedRecipe) this.recipe = findedRecipe;
+        if (this.currentUserId !== 0) {
+          this.isRecipeLiked = this.recipe.likesId.includes(this.currentUserId);
+          this.isRecipeCooked = this.recipe.cooksId.includes(
+            this.currentUserId,
+          );
+          this.isRecipeFavorite = this.recipe.favoritesId.includes(
+            this.currentUserId,
+          );
         }
-
-        this.dataLoaded = true;
       });
-      //
     });
 
-    if (this.showAuthor)
-          if (this.recipe.authorId !== 0)
-            this.userService
-              .getUser(this.recipe.authorId)
-              .subscribe((data) => (this.author = data));
-
-        this.authService.getCurrentUser().subscribe((currentUser) => {
-          this.currentUserId = currentUser.id;
-
-          if (currentUser.role !== 'user') {
-            this.moderMode = true;
-          }
-        });
+    this.userService.users$.subscribe((users) => {
+      const findedAuthor = users.find((user) => {
+        if (user.id === this.recipe.authorId) return true;
+        else return false;
+      });
+      if (findedAuthor) this.author = findedAuthor;
+      this.dataLoaded = true;
+    });
   }
 
   //добавляем рецепт в избранное
@@ -97,19 +91,12 @@ export class RecipeListItemComponent implements OnInit {
         this.recipe,
       );
     }
-    this.recipeService.updateRecipe(this.recipe);
+    this.recipeService.updateRecipe(this.recipe).subscribe();
   }
+
+  //(действия модератора по одобрению рецептов потом будут в компоненте полной страницы)
+
   //лайкаем рецепт
-  @Input() moderMode = false;
-  @Output() moderatorAction = new EventEmitter<number[]>();
-
-  approve() {
-    this.moderatorAction.emit([this.recipe.id, 1]);
-  }
-  notApprove() {
-    this.moderatorAction.emit([this.recipe.id, 0]);
-  }
-
   likeThisRecipe() {
     if (this.currentUserId === 0) {
       this.noAccessModalShow = true;
@@ -131,7 +118,7 @@ export class RecipeListItemComponent implements OnInit {
         this.recipe,
       );
     }
-    this.recipeService.updateRecipe(updatedRecipe);
+    this.recipeService.updateRecipe(updatedRecipe).subscribe();
   }
   //готовим рецепт
   cookThisRecipe() {
@@ -156,12 +143,10 @@ export class RecipeListItemComponent implements OnInit {
       );
     }
 
-    this.recipeService.updateRecipe(updatedRecipe);
+    this.recipeService.updateRecipe(updatedRecipe).subscribe();
   }
 
   // модальное окно (пользователь не вошел в аккаунт)
-  noAccessModalShow: boolean = false;
-
   handleNoAccessModal(result: boolean) {
     if (result) {
       this.router.navigateByUrl('/greetings');

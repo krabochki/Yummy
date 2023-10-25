@@ -1,5 +1,6 @@
 import {
   AfterContentChecked,
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   EventEmitter,
@@ -19,35 +20,38 @@ import {
   anySiteMask,
 } from 'src/tools/regex';
 import { UserService } from '../../services/user.service';
-import { FormArray } from '@angular/forms';
 
 @Component({
   selector: 'app-edit-account',
   templateUrl: './edit-account.component.html',
   styleUrls: ['./edit-account.component.scss'],
   animations: [trigger('modal', modal())],
+  changeDetection:ChangeDetectionStrategy.OnPush
 })
 export class EditAccountComponent implements OnInit, AfterContentChecked {
-  @Input() editableUser: IUser = nullUser;
-
-  newUser: IUser = nullUser;
+  @Input() editableUser: IUser = { ...nullUser };
   @Output() updatedUser = new EventEmitter<IUser>();
   @Output() closeEmitter = new EventEmitter<boolean>();
 
   saveModal: boolean = false;
   closeModal: boolean = false;
   successModal: boolean = false;
+  newUser: IUser = { ...nullUser };
 
   pinterestMask = pinterestMask;
   facebookMask = facebookMask;
   siteMask = anySiteMask;
   vkMask = vkMask;
   twitterMask = twitterMask;
+  usernameMask = usernameMask;
 
   pinterestLink = '';
   facebookLink = '';
   twitterLink = '';
   vkLink = '';
+
+  myImage: string = '';
+  defaultImage: string = '../../../../../assets/images/add-userpic.png';
 
   ngAfterContentChecked(): void {
     this.cdr.detectChanges();
@@ -57,62 +61,73 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
     private cdr: ChangeDetectorRef,
     private userService: UserService,
   ) {
-    const pinterestProfile = this.newUser.socialNetworks.find(
-      (network) => network.name === 'pinterest',
-    );
-    if (pinterestProfile) this.pinterestLink = pinterestProfile.link;
-    const facebookProfile = this.newUser.socialNetworks.find(
-      (network) => network.name === 'facebook',
-    );
-    if (facebookProfile) this.facebookLink = facebookProfile.link;
-    const twitterProfile = this.newUser.socialNetworks.find(
-      (network) => network.name === 'twitter',
-    );
-    if (twitterProfile) this.twitterLink = twitterProfile.link;
-    const vkProfile = this.newUser.socialNetworks.find(
-      (network) => network.name === 'ВКонтакте',
-    );
-    if (vkProfile) this.vkLink = vkProfile.link;
+    for (const network of this.newUser.socialNetworks) {
+      switch (network.name) {
+        case 'pinterest':
+          this.pinterestLink = network.link;
+          break;
+        case 'facebook':
+          this.facebookLink = network.link;
+          break;
+        case 'twitter':
+          this.twitterLink = network.link;
+          break;
+        case 'ВКонтакте':
+          this.vkLink = network.link;
+          break;
+      }
+    }
   }
 
   ngOnInit() {
-    this.userService.getUsers().subscribe((data: IUser[]) => {
+    this.userService.users$.subscribe((data: IUser[]) => {
       this.users = data;
     });
     this.myImage = this.defaultImage;
     this.newUser = { ...this.editableUser };
   }
+
   checkData(): boolean {
-    const pinterestProfile = this.newUser.socialNetworks.find(
-      (network) => network.name === 'pinterest',
-    );
-    if (pinterestProfile) this.pinterestLink = pinterestProfile.link;
-    const facebookProfile = this.newUser.socialNetworks.find(
-      (network) => network.name === 'facebook',
-    );
-    if (facebookProfile) this.facebookLink = facebookProfile.link;
-    const twitterProfile = this.newUser.socialNetworks.find(
-      (network) => network.name === 'twitter',
-    );
-    if (twitterProfile) this.twitterLink = twitterProfile.link;
-    const vkProfile = this.newUser.socialNetworks.find(
-      (network) => network.name === 'ВКонтакте',
-    );
-    if (vkProfile) this.vkLink = vkProfile.link;
+    for (const network of this.newUser.socialNetworks) {
+      switch (network.name) {
+        case 'pinterest':
+          if (network.link) this.pinterestLink = network.link;
+          break;
+        case 'facebook':
+          if (network.link) this.facebookLink = network.link;
+          break;
+        case 'twitter':
+          if (network.link) this.twitterLink = network.link;
+          break;
+        case 'ВКонтакте':
+          if (network.link) this.vkLink = network.link;
+          break;
+      }
+    }
+
     if (
       !this.siteMask.test(this.newUser.personalWebsite) &&
       this.newUser.personalWebsite !== ''
-    )
+    ) {
       return false;
+    }
 
-    if (this.vkLink !== '' && !vkMask.test(this.vkLink)) return false;
+    if (this.vkLink !== '' && !vkMask.test(this.vkLink)) {
+      return false;
+    }
 
-    if (this.facebookLink !== '' && !facebookMask.test(this.vkLink))
+    if (this.facebookLink !== '' && !facebookMask.test(this.vkLink)) {
       return false;
-    if (this.pinterestLink !== '' && !pinterestMask.test(this.pinterestLink))
+    }
+
+    if (this.pinterestLink !== '' && !pinterestMask.test(this.pinterestLink)) {
       return false;
-    if (this.twitterLink !== '' && !twitterMask.test(this.twitterLink))
+    }
+
+    if (this.twitterLink !== '' && !twitterMask.test(this.twitterLink)) {
       return false;
+    }
+
     if (!usernameMask.test(this.newUser.username)) {
       return false;
     }
@@ -120,7 +135,6 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
       return false;
     }
     if (this.ifUsernameExists()) {
-      console.log('пользователь существует')
       return false;
     }
 
@@ -129,17 +143,18 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
 
   users: IUser[] = [];
 
-  ifUsernameExists():boolean {
-    const usernameExists = this.users.find(
-      (u) => u.username === this.newUser.username,
-    );
+  ifUsernameExists(): boolean {
+    if (this.newUser.username !== this.editableUser.username) {
+      const usernameExists = this.users.find(
+        (u) => u.username === this.newUser.username,
+      );
 
-    if (usernameExists === undefined) {
-      console.log('все норм');
-      return false;
-    }
+      if (usernameExists === undefined) {
+        return false;
+      }
 
-    return true;
+      return true;
+    } else return false;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -157,10 +172,9 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
       //   });
     }
   }
-  myImage: string = '';
-  defaultImage: string = '../../../../../assets/images/add-userpic.png';
 
   //проверяем равны ли все поля в обьектах
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   areObjectsEqual(obj1: any, obj2: any): boolean {
     const keys1 = Object.keys(obj1);
     const keys2 = Object.keys(obj2);
@@ -203,56 +217,22 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
     this.closeModal = false;
   }
 
-  usernameMask = usernameMask;
-
-  getFacebook(value: string) {
+  getSocialMedia(
+    nameValue: 'facebook' | 'twitter' | 'ВКонтакте' | 'pinterest',
+    linkValue: string,
+  ) {
     this.newUser.socialNetworks = this.newUser.socialNetworks.filter(
-      (network) => network.name.toLowerCase() !== 'facebook',
+      (network) => network.name.toLowerCase() !== nameValue,
     );
     this.newUser.socialNetworks = this.newUser.socialNetworks.filter(
       (network) => network.link !== '',
     );
-    if (value !== '') {
-      const facebook: SocialNetwork = { link: value, name: 'facebook' };
-      this.newUser.socialNetworks.push(facebook);
-    }
-  }
-  getPinterest(value: string) {
-    this.newUser.socialNetworks = this.newUser.socialNetworks.filter(
-      (network) => network.name.toLowerCase() !== 'pinterest',
-    );
-    this.newUser.socialNetworks = this.newUser.socialNetworks.filter(
-      (network) => network.link !== '',
-    );
-    if (value !== '') {
-      const pinterest: SocialNetwork = { link: value, name: 'pinterest' };
-      this.newUser.socialNetworks.push(pinterest);
-    }
-  }
-  getVk(value: string) {
-    this.newUser.socialNetworks = this.newUser.socialNetworks.filter(
-      (network) => network.name !== 'ВКонтакте',
-    );
-    this.newUser.socialNetworks = this.newUser.socialNetworks.filter(
-      (network) => network.link !== '',
-    );
-    if (value !== '') {
-      const vk: SocialNetwork = { link: value, name: 'ВКонтакте' };
-      this.newUser.socialNetworks.push(vk);
-    }
-  }
-  getTwitter(value: string) {
-    this.newUser.socialNetworks = this.newUser.socialNetworks.filter(
-      (network) => network.name.toLowerCase() !== 'twitter',
-    );
-    this.newUser.socialNetworks = this.newUser.socialNetworks.filter(
-      (network) => network.link !== '',
-    );
-    if (value !== '') {
-      const twitter: SocialNetwork = { link: value, name: 'twitter' };
+    if (linkValue !== '') {
+      const twitter: SocialNetwork = { name: nameValue, link: linkValue };
       this.newUser.socialNetworks.push(twitter);
     }
   }
+
   getFullname(value: string) {
     this.newUser.fullName = value;
   }

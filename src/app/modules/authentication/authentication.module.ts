@@ -15,6 +15,7 @@ import { ModeratorGuard } from './guards/moderator.guard';
 import { AdminGuard } from './guards/admin.guard';
 import { SvgIconComponent, provideAngularSvgIcon } from 'angular-svg-icon';
 import { RecipesModule } from '../recipes/recipes.module';
+import { ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
 
@@ -33,6 +34,7 @@ import { RecipesModule } from '../recipes/recipes.module';
     AuthenticationRoutingModule,
     ControlsModule,
     SvgIconComponent,
+    ReactiveFormsModule,
     RecipesModule
   ],
   providers: [  provideAngularSvgIcon(),AuthGuard, AdminGuard, ModeratorGuard, OnlyNoAuthGuard]

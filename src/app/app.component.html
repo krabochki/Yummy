@@ -1,11 +1,9 @@
-<app-header  (headerHeightChange)="mergeHeight($event)"> ></app-header>
-
-
+<app-header (headerHeight)="getHeaderHeight($event)"></app-header>
 
 <div class="container">
   <div class="content">
-    <div [ngStyle]="{'height':height+'px'}"></div>
-    <router-outlet  ></router-outlet>
+    <div [ngStyle]="{ height: spaceUnderHeaderHeight + 'px' }"></div>
+    <router-outlet></router-outlet>
   </div>
   <footer class="footer">
     <app-footer></app-footer>

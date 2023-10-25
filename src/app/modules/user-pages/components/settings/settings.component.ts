@@ -1,9 +1,10 @@
 import { trigger } from '@angular/animations';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { slide, slideReverse,modal, heightAnim } from 'src/tools/animations';
+import { slide, slideReverse, modal, heightAnim } from 'src/tools/animations';
 import { IUser, nullUser } from '../../models/users';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { Router } from '@angular/router';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-settings',
@@ -27,12 +28,12 @@ export class SettingsComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
+    private userService: UserService,
   ) {
-    console.log(window.location.host);
     this.location = 'https://' + window.location.host;
   }
 
-  @Input() user: IUser = nullUser;
+  @Input() user: IUser = { ...nullUser };
 
   nightMode = false;
 
@@ -58,9 +59,9 @@ export class SettingsComponent {
   handleDeleteModal(event: boolean) {
     if (event) {
       if (this.user.id) {
-        this.authService.deleteUser(this.user.id).subscribe(); //удаляем человека
-        this.authService.logoutUser(); //выходим из аккаунта
-        this.router.navigateByUrl('/');
+        // this.authService.logoutUser(); //выходим из аккаунта
+        this.userService.deleteUser(); //удаляем человека
+        // this.router.navigateByUrl('/');
       }
     }
     this.deleteModalShow = false;
@@ -74,5 +75,3 @@ export class SettingsComponent {
 
   showSocialShare = false;
 }
-
-

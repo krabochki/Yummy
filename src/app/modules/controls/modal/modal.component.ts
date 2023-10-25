@@ -1,3 +1,4 @@
+import { ChangeDetectionStrategy } from '@angular/core';
 import {
   Component,
   EventEmitter,
@@ -9,6 +10,7 @@ import {
   selector: 'app-modal',
   templateUrl: './modal.component.html',
   styleUrls: ['./modal.component.scss'],
+  changeDetection:ChangeDetectionStrategy.OnPush
 })
 export class ModalComponent {
   @Input() type?: 'yesOrNo' | 'Ok';

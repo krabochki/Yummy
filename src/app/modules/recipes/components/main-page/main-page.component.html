@@ -15,13 +15,13 @@
 </div>
 
 <div class="block">
-   <div routerLink="/categories" class="head">
+   <div routerLink="/sections" class="head">
         <h2>Разделы</h2>
 
         <svg-icon class="arrow-svg" [applyClass]="true"
             [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
     </div>
-   <div class="recipes horizontal"> <app-category-list [context]="'section'"   [categories]="allSections"></app-category-list></div>
+   <div class="recipes"> <app-horizontal-category-list [context]="'section'" [showRecipesNumber]="true"  [categories]="allSections"></app-horizontal-category-list></div>
 
 </div>
 

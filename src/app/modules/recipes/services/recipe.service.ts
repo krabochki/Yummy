@@ -1,46 +1,63 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { IRecipe } from '../models/recipes';
-import { BehaviorSubject, tap } from 'rxjs';
+import { BehaviorSubject, catchError, map, switchMap, take, tap, throwError } from 'rxjs';
+import { recipesUrl } from 'src/tools/source';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RecipeService {
-  private recipesSubject = new BehaviorSubject<IRecipe[]>([]);
+  recipesSubject = new BehaviorSubject<IRecipe[]>([]);
   recipes$ = this.recipesSubject.asObservable();
 
-  url: string = 'http://localhost:3000/recipes';
+  url: string = recipesUrl;
 
   constructor(private http: HttpClient) {
+  
+  }
+
+  loadRecipeData() {
     this.getRecipes().subscribe((data) => {
       this.recipesSubject.next(data);
     });
   }
 
-  deleteDataAboutDeletingUser(authorId: number) {
+  deleteDataAboutDeletingUser(deletableId: number) {
     let recipes: IRecipe[] = [];
-    this.getRecipes().subscribe((data) => {
+    this.recipes$.subscribe((data) => {
       recipes = data;
 
       recipes.forEach((recipe) => {
-        if (recipe.authorId === authorId) {
-          this.deleteRecipe(recipe.id).subscribe();
+        if (recipe.authorId === deletableId) {
+          this.deleteRecipe(recipe.id);
         } else {
-          const before = recipe;
-          if (recipe.likesId)
+          const before = { ...recipe };
+
+          if (recipe.likesId.includes(deletableId)) {
             recipe.likesId = recipe.likesId.filter(
-              (element) => element !== authorId,
+              (element) => element !== deletableId,
             );
-          if (recipe.cooksId)
+          }
+          if (recipe.favoritesId.includes(deletableId)) {
+            recipe.favoritesId = recipe.favoritesId.filter(
+              (element) => element !== deletableId,
+            );
+          }
+          if (recipe.cooksId.includes(deletableId)) {
             recipe.cooksId = recipe.cooksId.filter(
-              (element) => element !== authorId,
+              (element) => element !== deletableId,
             );
+          }
           if (recipe.comments)
             recipe.comments = recipe.comments.filter(
-              (element) => element.id !== authorId,
+              (element) => element.id !== deletableId,
             );
-          if (before !== recipe) {
+          if (
+            before.likesId !== recipe.likesId ||
+            before.cooksId !== recipe.cooksId ||
+            before.favoritesId !== recipe.favoritesId
+          ) {
             this.updateRecipe(recipe);
           }
         }
@@ -52,50 +69,77 @@ export class RecipeService {
     return this.http.get<IRecipe[]>(this.url);
   }
 
-  getRecipe(id: number) {
-    return this.http.get<IRecipe>(`${this.url}/${id}`);
-  }
-
   deleteRecipe(id: number) {
-    return this.http.delete<IRecipe>(`${this.url}/${id}`);
+    return this.http
+      .delete(`${this.url}/${id}`)
+      .pipe(
+        tap(() =>
+          this.recipesSubject.next(
+            this.recipesSubject.value.filter((recipe) => recipe.id !== id),
+          ),
+        ),
+        catchError((error) => {
+          return throwError(error);
+        }),
+      )
+      .subscribe();
   }
 
   postRecipe(recipe: IRecipe) {
-  return this.http.post<IRecipe>(this.url, recipe).pipe(
-    tap((newRecipe:IRecipe) => {
-      // Добавляем новый рецепт в общий массив
-      const currentRecipes = this.recipesSubject.value;
-      const updatedRecipes = [...currentRecipes, newRecipe];
-      this.recipesSubject.next(updatedRecipes);
-    })
-  );
-}
-  
+    return this.http.post<IRecipe>(this.url, recipe).pipe(
+      tap((newRecipe: IRecipe) => {
+        const currentRecipes = this.recipesSubject.value;
+        const updatedRecipes = [...currentRecipes, newRecipe];
+        this.recipesSubject.next(updatedRecipes);
+      }),
+    );
+  }
 
   updateRecipe(recipe: IRecipe) {
     const url = `${this.url}/${recipe.id}`;
 
-    return this.http.put<IRecipe>(url, recipe).subscribe((updatedRecipe) => {
-      const currentRecipes = this.recipesSubject.value;
-
-      const index = currentRecipes.findIndex((r) => r.id === updatedRecipe.id);
-
-      if (index !== -1) {
-        const updatedRecipes = [...currentRecipes];
-        updatedRecipes[index] = updatedRecipe;
-        this.recipesSubject.next(updatedRecipes);
-      }
-    });
+    return this.http.put<IRecipe>(url, recipe).pipe(
+      switchMap((updatedRecipe) => {
+        return this.recipesSubject.pipe(
+          take(1),
+          map((currentRecipes) => {
+            const index = currentRecipes.findIndex(
+              (r) => r.id === updatedRecipe.id,
+            );
+            if (index !== -1) {
+              const updatedUsers = [...currentRecipes];
+              updatedUsers[index] = updatedRecipe;
+              this.recipesSubject.next(updatedUsers);
+            }
+            return updatedRecipe;
+          }),
+        );
+      }),
+      catchError((error) => {
+        return throwError(error);
+      }),
+    );
   }
 
   getFavoriteRecipesByUser(recipes: IRecipe[], user: number) {
-    return (recipes.filter((recipe) => recipe.favoritesId.includes(user)))
+    return recipes.filter((recipe) => recipe.favoritesId.includes(user));
+  }
+  getLikedRecipesByUser(recipes: IRecipe[], user: number) {
+    return recipes.filter((recipe) => recipe.likesId.includes(user));
+  }
+  getCookedRecipesByUser(recipes: IRecipe[], user: number) {
+    return recipes.filter((recipe) => recipe.cooksId.includes(user));
   }
   getPopularRecipes(recipes: IRecipe[]) {
     return recipes.sort((a, b) => b.likesId.length - a.likesId.length);
   }
   getPublicRecipes(recipes: IRecipe[]) {
     return recipes.filter((recipe) => recipe.status === 'public');
+  }
+  getPublicAndAllMyRecipes(recipes: IRecipe[], userId: number) {
+    return recipes.filter(
+      (recipe) => recipe.status === 'public' || recipe.authorId === userId,
+    );
   }
   getAwaitingRecipes(recipes: IRecipe[]) {
     return recipes.filter((recipe) => recipe.status === 'awaits');

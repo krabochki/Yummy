@@ -10,8 +10,8 @@ import { CategoryCreatingComponent } from './components/categories/category-crea
 import { AuthGuard } from '../authentication/guards/auth.guard';
 import { RecipeResolver } from './services/recipe.resolver';
 import { RecipeAccessGuard } from './guards/recipe-access.guard';
-import { RecipeCreateClosingGuard } from './guards/recipe-create-closing.guard';
 import { CategoryResolver } from './services/category.resolver';
+import { SectionResolver } from './services/section.resolver';
 const routes: Routes = [
   {
     path: '',
@@ -27,7 +27,6 @@ const routes: Routes = [
         path: 'recipes/add',
         component: RecipeCreatingComponent,
         canActivate: [AuthGuard],
-        canDeactivate: [RecipeCreateClosingGuard],
       },
       {
         path: 'recipes/edit',
@@ -52,7 +51,15 @@ const routes: Routes = [
         canActivate: [AuthGuard],
       },
       {
-        path: 'categories',
+        path: 'sections',
+
+        data: { filter: 'sections' },
+        component: CategoriesPageComponent,
+      },
+      {
+        path: 'sections/list/:id',
+        data: { filter: 'section' },
+        resolve: { SectionResolver },
         component: CategoriesPageComponent,
       },
       {
@@ -61,11 +68,12 @@ const routes: Routes = [
         canActivate: [AuthGuard],
       },
       {
-        path: 'recipes/following',
-        data: { filter: 'following' },
+        path: 'recipes/updates',
+        data: { filter: 'updates' },
         component: SomeRecipesPageComponent,
         canActivate: [AuthGuard],
       },
+
       {
         path: 'recipes/search-results',
         component: SomeRecipesPageComponent,
@@ -75,7 +83,19 @@ const routes: Routes = [
         data: { filter: 'popular' },
         component: SomeRecipesPageComponent,
       },
+      {
+        path: 'recipes/cooked',
+        data: { filter: 'cooked' },
+        component: SomeRecipesPageComponent,
+        canActivate: [AuthGuard],
+      },
 
+      {
+        path: 'recipes/liked',
+        data: { filter: 'liked' },
+        component: SomeRecipesPageComponent,
+        canActivate: [AuthGuard],
+      },
       {
         path: 'recipes/recent',
         data: { filter: 'recent' },
@@ -85,9 +105,14 @@ const routes: Routes = [
       {
         path: 'categories/list/:id',
         data: { filter: 'category-recipes' },
-        resolve: {CategoryResolver},
+        resolve: { CategoryResolver },
 
         component: SomeRecipesPageComponent,
+      },
+      {
+        path: 'categories/popular',
+        data: { filter: 'popular' },
+        component: CategoriesPageComponent,
       },
       {
         path: 'match',

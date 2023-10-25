@@ -1,16 +1,26 @@
 import { Injectable } from '@angular/core';
 import { IUser } from '../models/users';
 import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, catchError, map, switchMap, take, tap, throwError } from 'rxjs';
+import { usersUrl } from 'src/tools/source';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  private users: IUser[] = [];
+  private usersSubject = new BehaviorSubject<IUser[]>([]);
+  users$ = this.usersSubject.asObservable();
+  url: string = usersUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+ 
+  }
 
-  url: string = 'http://localhost:3000/users';
+  loadUsersData() {
+    this.getUsers().subscribe((data) => {
+      this.usersSubject.next(data);
+    });
+  }
 
   isUserSubscriber(user: IUser, userId: number) {
     if (!user) return false;
@@ -48,24 +58,19 @@ export class UserService {
 
   deleteDataAboutDeletingUser(deletingId: number) {
     let users: IUser[] = [];
-    this.getUsers().subscribe((data) => {
+    this.users$.subscribe((data) => {
       users = data;
-
       users.forEach((user) => {
-        const before = user.followersIds;
-        user.followersIds = user.followersIds?.filter(
-          (element) => element != deletingId,
-        );
-        if (before !== user.followersIds) {
-          this.updateUser(user).subscribe();
+        if (user.followersIds.includes(deletingId)) {
+          user.followersIds = user.followersIds?.filter(
+            (element) => element !== deletingId,
+          );
+          this.updateUsers(user);
         }
       });
     });
   }
 
-  getUser(id: number) {
-    return this.http.get<IUser>(`${this.url}/${id}`);
-  }
   addFollower(user: IUser, followerId: number): IUser {
     if (user && user.followersIds) {
       if (!user.followersIds.includes(followerId)) {
@@ -84,7 +89,68 @@ export class UserService {
     return user;
   }
 
+  updateUsers(user: IUser) {
+    const url = `${this.url}/${user.id}`;
+
+    return this.http
+      .put<IUser>(url, user)
+      .pipe(
+        switchMap((updatedUser) => {
+          // Обновление пользователей внутри Observable
+          return this.usersSubject.pipe(
+            take(1), // Берем только одно значение и отписываемся
+            map((currentUsers) => {
+              const index = currentUsers.findIndex(
+                (r) => r.id === updatedUser.id,
+              );
+              if (index !== -1) {
+                const updatedUsers = [...currentUsers];
+                updatedUsers[index] = updatedUser;
+                this.usersSubject.next(updatedUsers); // Обновляем Subject
+              }
+              return updatedUser; // Возвращаем обновленного пользователя
+            }),
+          );
+        }),
+        catchError((error) => {
+          // Обработка ошибки, если необходимо
+          return throwError(error);
+        }),
+      )
+      .subscribe();
+  }
+
   updateUser(user: IUser) {
     return this.http.put<IUser>(`${this.url}/${user.id}`, user);
+  }
+
+  deleteUser() {
+    //исправить: не удаляет юзера и выдает ошибки если у него более 1 своего рецепта
+    // this.deleteDataAboutDeletingUser(deletableUser.id);
+    // this.recipeService.deleteDataAboutDeletingUser(deletableUser.id);
+    // return this.http
+    //   .delete(`${this.url}/${deletableUser.id}`)
+    //   .pipe(
+    //     tap((answer) =>
+    //       this.usersSubject.next(
+    //         this.usersSubject.value.filter(
+    //           (user) => user.id !== deletableUser.id,
+    //         ),
+    //       ),
+    //     ),
+    //   )
+    //   .subscribe();
+  }
+
+  postUser(user: IUser) {
+    return this.http
+      .post<IUser>(this.url, user)
+      .pipe(
+        tap((newUser: IUser) => {
+          const currentUsers = this.usersSubject.value;
+          const updatedUsers = [...currentUsers, newUser];
+          this.usersSubject.next(updatedUsers);
+        }),
+      )
   }
 }

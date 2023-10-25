@@ -170,7 +170,7 @@
 
         <app-button
 
-        (click)="currentUser.id ===0 ? null: myPage? edit() :       (userService.isUserSubscriber(user, currentUser.id) ? unfollow() : follow())"
+        (click)="currentUser.id ===0 ? noAccessModalShow =true: myPage? edit() :       (userService.isUserSubscriber(user, currentUser.id) ? unfollow() : follow())"
           [disabled]="!(currentUser.id === 0)"
           [color]="'prim'"
           [style]="
@@ -257,17 +257,13 @@
           [svgStyle]="{
             'height.em': '12',
             'width.em': '12',
-            fill: 'var(--color-foreground)'
-          }"
-          >></svg-icon
-        >
-      </div></ng-template
-    >
+            fill: 'var(--color-foreground)'}"></svg-icon>
+      </div></ng-template>
 
     
     <app-vertical-recipe-list *ngIf="userRecipes.length > 0; else noRecipes"
       [cols]="3" 
-      [blocks]="displayRecipes" [showAuthor]="false"></app-vertical-recipe-list>
+      [blocks]="userRecipes" [showAuthor]="false"></app-vertical-recipe-list>
    
   </ng-template>
 
@@ -301,7 +297,7 @@
                   '.svg'
                 "
                 [class]="'svg'"
-                >></svg-icon
+                ></svg-icon
               >
 
               <span>{{ social.name | titlecase }}</span>
@@ -325,9 +321,8 @@
                 'width.em': '1.2',
                 'height.em': '1',
                 fill: 'var(--color-primary)'
-              }"
-              >></svg-icon
-            >
+              }">
+              </svg-icon>
             <a [href]="user.personalWebsite"> {{ user.personalWebsite }}</a>
           </li>
           <li class="row center" *ngIf="user?.location">
@@ -349,7 +344,7 @@
                 'height.em': '1',
                 fill: 'var(--color-foreground)'
               }"
-              >></svg-icon
+              ></svg-icon
             >
             <p>Аккаунт создан {{ user.registrationDate | date }}</p>
           </li>
@@ -442,13 +437,25 @@
   @modal
   [userPage]="user"
   [currentUser]="currentUser"
-  [followers]="userFollowers"
-  [following]="userFollowing"
+  [user]="user"
   *ngIf="showFollows"
   [object]="obj"
   l
-  (closeEmitter)="closeFollows($event)"
+  (closeEmitter)="closeFollows()"
 ></app-followers-and-following>
 
 
 <app-edit-account @modal (closeEmitter)="closeEdit($event)" (updatedUser)="updateCurrentUser($event)" [editableUser]="currentUser" *ngIf="editModalShow"></app-edit-account>
+
+<app-modal
+  @modal
+  *ngIf="noAccessModalShow"
+  [style]="'prim'"
+  [title]="'Доступ к функции ограничен'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleNoAccessModal($event)"
+  [buttonsText]="['Давайте', 'Не сейчас']"
+  [description]="
+    'Взаимодействовать с кулинарами могут только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'
+  "
+></app-modal>

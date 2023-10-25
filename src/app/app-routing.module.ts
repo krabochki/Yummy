@@ -14,16 +14,15 @@ const routes: Routes = [
   {
     path: '',
     loadChildren: () =>
-      import('./modules/user-pages/user-pages.module').then(
-        (m) => m.UserPagesModule,
-      ),
+      import('./modules/recipes/recipes.module').then((m) => m.RecipesModule),
   },
   {
     path: '',
     loadChildren: () =>
-      import('./modules/recipes/recipes.module').then((m) => m.RecipesModule),
+      import('./modules/user-pages/user-pages.module').then(
+        (m) => m.UserPagesModule,
+      ),
   },
-  { path: 'not-found', component: PageNotFoundComponent },
 
   { path: '**', component: PageNotFoundComponent },
 ];

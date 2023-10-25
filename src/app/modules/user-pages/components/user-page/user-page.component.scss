@@ -1,7 +1,11 @@
-@import "../../../../../tools/UI/UI.scss";
 
 * {
   line-height: 1;
+}
+
+app-modal{
+  position: fixed;
+  z-index: 10;
 }
 
 

@@ -1,33 +1,28 @@
-import {
-  Component,
-  HostListener,
-  Input,
-  OnChanges
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, Input, OnChanges } from '@angular/core';
 import { ICategory, nullCategory } from '../../../models/categories';
 
 @Component({
   selector: 'app-vertical-category-list',
   templateUrl: './vertical-category-list.component.html',
   styleUrls: ['./vertical-category-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VerticalCategoryListComponent implements OnChanges {
   @Input() categories: ICategory[] = [];
   @Input() showRecipesNumber: boolean = false;
   @Input() context: 'category' | 'section' = 'category';
-
-  nullCategory: ICategory = nullCategory;
-
   @Input() moderMode = false;
+
   ngOnChanges() {
     this.onResize();
   }
 
-  filter() {
+  filterNullBlocks() {
     this.categories = this.categories.filter((block) => block.id !== 0);
   }
+
   blockScheme(blocksInRow: number) {
-    this.filter();
+    this.filterNullBlocks();
     if (this.categories.length % blocksInRow !== 0) {
       while (this.categories.length % blocksInRow !== 0) {
         this.categories.push(nullCategory);
@@ -38,24 +33,24 @@ export class VerticalCategoryListComponent implements OnChanges {
   @HostListener('window:resize', ['$event'])
   onResize() {
     const event = window.innerWidth;
-
-    if (event < 480) {
-      this.filter();
-      if (this.categories.length < 3) {
+    switch (true) {
+      case event < 480:
+        this.filterNullBlocks();
+        if(this.categories.length <=2)
         while (this.categories.length !== 3) this.categories.push(nullCategory);
-      }
-      return;
-    } else if (event > 480 && event <= 610) {
-      this.blockScheme(2);
-    } else if (event > 610 && event <= 960) {
-      this.blockScheme(3);
-      return;
-    } else if (event > 960 && event <= 1400) {
-      this.blockScheme(4);
-      return;
-    } else if (event > 1400) {
-      this.blockScheme(5);
-      return;
+        break;
+      case event > 480 && event <= 610:
+        this.blockScheme(2);
+        break;
+      case event > 610 && event <= 960:
+        this.blockScheme(3);
+        break;
+      case event > 960 && event <= 1400:
+        this.blockScheme(4);
+        break;
+      case event > 1400:
+        this.blockScheme(5);
+        break;
     }
   }
 }

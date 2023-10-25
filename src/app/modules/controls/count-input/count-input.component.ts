@@ -1,4 +1,5 @@
-import { Component, Input, OnInit, forwardRef } from '@angular/core';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ChangeDetectionStrategy, Component, Input, forwardRef } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
@@ -12,19 +13,24 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
       multi: true,
     },
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CountInputComponent {
   @Input() min?: number;
   @Input() max?: number;
-  disabled = false;
-
   @Input() readonly: boolean = false;
+  disabled = false;
   value: string = '';
+  onChange: any = () => {
+    //
+  };
+  onTouched: any = () => {
+    //
+  };
 
-  onChange: any = () => {};
-  onTouched: any = () => {};
-
-  constructor() {}
+  get val() {
+    return Number(this.value);
+  }
 
   increase() {
     if (typeof this.max === 'undefined') {
@@ -46,7 +52,6 @@ export class CountInputComponent {
     }
   }
 
-
   writeValue(value: string): void {
     this.value = value;
   }
@@ -62,8 +67,4 @@ export class CountInputComponent {
   setDisabledState?(isDisabled: boolean): void {
     this.disabled = isDisabled;
   }
-  get val() {
-    return Number(this.value);
-  }
-
 }

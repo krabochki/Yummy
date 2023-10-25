@@ -1,9 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IUser, nullUser } from '../../user-pages/models/users';
-import { BehaviorSubject, Observable, catchError, map } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  map,
+} from 'rxjs';
 import { RecipeService } from '../../recipes/services/recipe.service';
 import { UserService } from '../../user-pages/services/user.service';
+import { IRecipe } from '../../recipes/models/recipes';
+import { usersUrl } from 'src/tools/source';
 
 @Injectable({
   providedIn: 'root',
@@ -12,9 +18,10 @@ export class AuthService {
   role = 'user';
 
   private currentUserSubject: BehaviorSubject<IUser> =
-    new BehaviorSubject<IUser>(nullUser);
+    new BehaviorSubject<IUser>({ ...nullUser });
+  currentUser$ = this.currentUserSubject.asObservable();
 
-  usersUrl = 'http://localhost:3000/users';
+  usersUrl =  usersUrl
 
   constructor(
     private http: HttpClient,
@@ -25,7 +32,7 @@ export class AuthService {
 
     if (savedUser) {
       const currentUser: IUser = JSON.parse(savedUser);
-      this.userService.getUsers().subscribe((users) => {
+      this.userService.users$.subscribe((users) => {
         const foundUser = users.find(
           (u) =>
             u.email === currentUser.email &&
@@ -56,40 +63,24 @@ export class AuthService {
     return this.currentUserSubject.asObservable();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  deleteUser(userId: number): Observable<any> {
-    const url = `${this.usersUrl}/${userId}`;
-    this.recipeService.deleteDataAboutDeletingUser(userId);
-    this.userService.deleteDataAboutDeletingUser(userId);
-    return this.http.delete(url);
-  }
-
   logoutUser() {
-    this.setCurrentUser(nullUser);
+    this.setCurrentUser({ ...nullUser });
     localStorage.removeItem('currentUser');
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  registerUser(newUser: IUser): Observable<any> {
-    return this.http.post(this.usersUrl, newUser);
+  isEmailExist(users: IUser[], email: string): boolean {
+    const userWithThisEmail = users.find((u) => u.email === email);
+    if (userWithThisEmail) return true;
+    else return false;
+  }
+  isUsernameExist(users: IUser[], username: string): boolean {
+    const userWithThisUsername = users.find((u) => u.username === username);
+    if (userWithThisUsername) return true;
+    else return false;
   }
 
-  isUserExist(user: IUser) {
-    this.http.get<IUser[]>(this.usersUrl).pipe(
-      map((users) => {
-        const foundUser = users.find(
-          (u) =>
-            u.email === user.email &&
-            u.password === user.password &&
-            u.username === user.username,
-        );
-        if (!foundUser) return false;
-        return true;
-      }),
-    );
-  }
   loginUser(user: IUser) {
-    return this.http.get<IUser[]>(this.usersUrl).pipe(
+    return this.userService.users$.pipe(
       map((users) => {
         const foundUser = users.find(
           (u) =>
@@ -99,6 +90,15 @@ export class AuthService {
         if (!foundUser) return null;
         return foundUser;
       }),
+    );
+  }
+
+  checkValidity(recipe: IRecipe, user: IUser): boolean {
+    return (
+      recipe.authorId === user.id ||
+      user.role === 'moderator' ||
+      user.role === 'admin' ||
+      recipe.status === 'public'
     );
   }
 }

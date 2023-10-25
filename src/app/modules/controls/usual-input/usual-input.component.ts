@@ -1,10 +1,12 @@
-import { Component, ElementRef, HostListener, Input, OnInit, ViewChild, forwardRef } from '@angular/core';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild, forwardRef } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-usual-input',
   templateUrl: './usual-input.component.html',
   styleUrls: ['./usual-input.component.scss'],
+  changeDetection:ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -58,8 +60,12 @@ export class UsualInputComponent implements OnInit {
     }
   }
 
-  onChange: any = () => {};
-  onTouched: any = () => {};
+  onChange: any = () => {
+//
+  };
+  onTouched: any = () => {
+//
+  };
   writeValue(value: string): void {
     this.value = value;
   }

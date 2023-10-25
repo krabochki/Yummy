@@ -1,50 +1,48 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  Input,
-  OnInit,
-  ViewChild,
-  forwardRef,
-} from '@angular/core';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Component, ElementRef, ViewChild , Input, OnInit, ChangeDetectionStrategy, forwardRef} from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
-  selector: 'app-expanding-input',
-  templateUrl: './expanding-input.component.html',
-  styleUrls: ['./expanding-input.component.scss'],
+  selector: 'app-password-input',
+  templateUrl: './password-input.component.html',
+  styleUrls: ['./password-input.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => ExpandingInputComponent),
+      useExisting: forwardRef(() => PasswordInputComponent),
       multi: true,
     },
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExpandingInputComponent implements OnInit {
-  disabled = false;
+export class PasswordInputComponent implements OnInit {
   @ViewChild('input') input?: ElementRef;
-  @Input() placeholder: string = '';
+
+  @Input() placeholder: string = ''; //плейсхолдер
+
+  showPassword = true; //показывается ли пароль
+
+  @Input() fitWidth: boolean = false;
+
+  disabled = false;
   @Input() error: string = '';
-  @Input() max: number | undefined = undefined;
+  @Input() max: number = 20;
   @Input() showError = true;
-
+  @Input() inputRequired: boolean = false;
   value = '';
-
   isSleep: boolean = false; //подсвечивается ли плейсхолдер
   isFocused = false; //есть ли фокус в инпуте (нужно ли подсвечивать плейсхолдер)
-  @Input() inputRequired: boolean = false;
 
-  change() {
-    this.onChange(this.value);
-  }
-  ngOnInit() {
+  ngOnInit(): void {
     if (this.inputRequired === true) {
       this.placeholder = this.placeholder + '*';
     }
   }
+
+  change() {
+    this.onChange(this.value);
+  }
+
   //Появление фокуса
   focus() {
     setTimeout(() => {
@@ -67,10 +65,10 @@ export class ExpandingInputComponent implements OnInit {
   }
 
   onChange: any = () => {
-//
+    //
   };
   onTouched: any = () => {
-//
+    //
   };
   writeValue(value: string): void {
     this.value = value;
@@ -84,4 +82,11 @@ export class ExpandingInputComponent implements OnInit {
   setDisabledState?(isDisabled: boolean): void {
     this.disabled = isDisabled;
   }
+
+  //Открытие/сокрытие пароля
+  eye() {
+    this.showPassword = !this.showPassword;
+    this.input?.nativeElement.focus();
+  }
 }
+

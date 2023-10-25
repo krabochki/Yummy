@@ -1,12 +1,14 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-button',
   templateUrl: './button.component.html',
-  styleUrls: ['./button.component.scss']
+  styleUrls: ['./button.component.scss'],
+  changeDetection:ChangeDetectionStrategy.OnPush
 })
 export class ButtonComponent {
 
+  @Input() icon:string = ''
 
   @Input() style:'filled'|'filled-min'|'outlined'|'banner'|undefined;
   @Input() color:'prim'|'sec'|undefined;

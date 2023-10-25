@@ -1,21 +1,135 @@
-<div class="main" *ngIf="!this.isLoading; else loading">
-    <h1>Все категории</h1>
-    
-    <div>
-    
-        <div *ngFor="let section of sections" class="sections">
-          <div *ngIf="section.categoriesId.length>0" class="sections">
-                <h2>{{section.name}}</h2>
-        
-                            <app-vertical-category-list [showRecipesNumber]="true"  *ngIf="getCategories(section).length>0" [categories]="getCategories(section)"></app-vertical-category-list>
-        
-                
+<div class="wrap" *ngIf="!this.isLoading; else loading">
+  <h1>{{ title }}</h1>
+
+  
+            <app-button class="add-category" [icon]="'add-category'" *ngIf="filter==='sections'" routerLink="/categories/add"  [color]="'prim'" [text]="'Создать категорию'" [rounded]="true"></app-button>
+
+  <div class="search-block">
+    <div class="search">
+      <input
+        (focus)="focusSearch()"
+        (blur)="blurSearch()"
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="turnOnSearch()"
+        type="text"
+        placeholder="Введите запрос"
+      />
+      <div class="magnifier">
+        <svg-icon
+          [applyClass]="true"
+          class="search-svg"
+          [src]="'../../../../../assets/images/svg/search.svg'"
+        ></svg-icon>
+      </div>
+    </div>
+
+    <div class="autocomplete-list">
+      <ul @auto-complete *ngIf="autocompleteShow">
+        <div *ngIf="autocomplete.length === 0">
+          <div class="no-found-recipes">
+            <div class="image">
+              <svg-icon
+                [applyClass]="true"
+                class="sad-cook"
+                [src]="'../../../../../assets/images/svg/sad-cook.svg'"
+              ></svg-icon>
+            </div>
+            <p>
+              По вашему запросу нет никаких категорий или секций. Попробуйте
+              изменить параметры поиска или попробовать наш специальный раздел!
+            </p>
+            <app-button
+              [text]="'Подбор рецептов'"
+              [routerLink]="'/recipes/match'"
+              [style]="'filled'"
+              [color]="'prim'"
+              [rounded]="true"
+            ></app-button>
           </div>
         </div>
-    
+        <li
+          *ngFor="let item of autocomplete"
+          [routerLink]="
+            filter !== 'sections' ? '/categories/list/' + item.id : null
+          "
+        >
+          <p
+            [routerLink]="
+              getSectionOfCategory(item).id === 0
+                ? '/sections/list/' + item.id
+                : '/categories/list/' + item.id
+            "
+          >
+            {{ item.name }}
+          </p>
+          <span
+            [routerLink]="'/sections/list/' + getSectionOfCategory(item).id"
+            *ngIf="
+              filter !== 'my-recipes' && getSectionOfCategory(item).id !== 0
+            "
+            >{{ getSectionOfCategory(item).name }}</span
+          >
+        </li>
+      </ul>
     </div>
+  </div>
+  <div>
+   
+
+    <div class="sections" *ngIf="filter === 'sections'">
+      <div [routerLink]="'/categories/popular'" class="head">
+        <h2>Популярные категории</h2>
+
+        <svg-icon
+          class="arrow-svg"
+          [applyClass]="true"
+          [src]="'../../../../../assets/images/svg/go-back.svg'"
+        ></svg-icon>
+      </div>
+
+      <app-horizontal-category-list
+        [showRecipesNumber]="true"
+        [categories]="popularCategories.slice(0, 8)"
+      ></app-horizontal-category-list>
+    </div>
+    <div *ngFor="let section of sections" class="sections">
+      <div
+        *ngIf="section.categoriesId.length > 0 "
+        class="sections"
+      >
+        <div
+          [routerLink]="'/sections/list/' + section.id"
+          *ngIf="section.name !== ''"
+          class="head"
+        >
+          <h2>{{ section.name }}</h2>
+
+          <svg-icon
+            class="arrow-svg"
+            [applyClass]="true"
+            [src]="'../../../../../assets/images/svg/go-back.svg'"
+          ></svg-icon>
+        </div>
+
+        <app-horizontal-category-list
+          *ngIf="filter === 'sections'; else oneSection"
+          [showRecipesNumber]="true"
+          [categories]="getCategoriesOfSection(section).slice(0, 8)"
+        ></app-horizontal-category-list>
+        <ng-template #oneSection>
+          <app-vertical-category-list
+            [showRecipesNumber]="true"
+            [categories]="categoriesToShow"
+          ></app-vertical-category-list>
+        </ng-template>
+          <app-button [text]="'Загрузить еще...'" (click)="loadMoreCategories()"
+                *ngIf="filter!=='sections' && getCategoriesOfSection(section).length > categoriesToShow.length" [rounded]="true" [style]="'outlined'"
+                [color]="'prim'"></app-button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <ng-template #loading>
-   <p  style="height:100vh"> Loading....</p>
+  <p>Loading....</p>
 </ng-template>

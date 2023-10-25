@@ -13,26 +13,27 @@
             <div>
                 <p>Рецепты</p>
                 <ul>
-                    <li (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" routerLink="recipes/yours">Ваши рецепты</li>
-                    <li  routerLink="recipes">Все рецепты</li>
-                    <li routerLink="categories">Все категории</li>
-                    <li (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" routerLink="recipes/favorite">Закладки</li>
-                    <li  routerLink="match">Подбор рецептов</li>
+                    <li (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" routerLink="/recipes/yours">Ваши рецепты</li>
+                    <li  routerLink="/recipes">Все рецепты</li>
+                    <li routerLink="/sections">Разделы</li>
+                    <li (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" routerLink="/recipes/favorite">Закладки</li>
+                    <li  routerLink="/match">Подбор рецептов</li>
                 </ul>
             </div>
             <div>
                 <p>Кулинары</p>
                 <ul>
-                    <li (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" [routerLink]="'cooks/list/'+currentUser.id">Ваш профиль</li>
-                    <li routerLink="cooks">Все кулинары</li>
-                    <li routerLink="cooks/updates">Обновления</li>
+                    <li (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" [routerLink]="this.currentUser.id >0?'/cooks/list/'+currentUser.id:null">Ваш профиль</li>
+                    <li routerLink="/cooks">Все кулинары</li>
+                    <li routerLink="/cooks/updates">Обновления</li>
                 </ul>
             </div>
             <div>
                 <p>Другое</p>
                 <ul>
-                    <li routerLink="plan" (click)="linkClick()"  [ngClass]="{'disabling':currentUser.id===0}">План готовки</li>
-                    <li routerLink="about">О сайте</li>
+                    <li [routerLink]="this.currentUser.id >0?'plan':null" (click)="linkClick()"  [ngClass]="{'disabling':currentUser.id===0}">План готовки</li>
+                    <li routerLink="/about">О сайте</li>
+                    <li routerLink="/user-policy">Пользовательское соглашение</li>
                 </ul>
             </div>
         </div>
@@ -49,7 +50,7 @@
                 <a [href]="link[1]">
                     <svg-icon [src]="'../../../assets/images/svg/'+link[0]+'.svg'"
                     [class]="'svg'"
-                    >></svg-icon>
+                    ></svg-icon>
                 </a>
            
             </li>

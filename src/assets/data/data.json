@@ -77,7 +77,9 @@
       "name": "Сладости и десерты",
       "photoUrl": "",
       "categoriesId": [
-        10
+        10,
+        16,
+        18
       ]
     }
   ],
@@ -166,6 +168,16 @@
       "id": 15,
       "name": "День рождения",
       "photoUrl": ""
+    },
+    {
+      "id": 18,
+      "name": "Мороженое",
+      "photoUrl": ""
+    },
+    {
+      "id": 17,
+      "name": "Восточные сладости",
+      "photoUrl": ""
     }
   ],
   "recipes": [
@@ -173,48 +185,36 @@
       "id": 1,
       "mainPhotoUrl": null,
       "comments": [],
-      "categories": [],
-      "name": "deserunt id deserunt",
+      "categories": [
+        18
+      ],
+      "name": "Шоколадное мороженое",
       "description": "Reprehenderit labore mollit sunt enim anim amet sunt reprehenderit tempor aliquip amet ex. Aute reprehenderit quis amet ad veniam esse sint. Laboris dolor sit incididunt veniam laboris in non. Consectetur fugiat commodo adipisicing sunt do minim sint.\r\nConsectetur do aliquip reprehenderit nostrud velit id veniam. Quis sint veniam consequat irure excepteur dolore magna. Reprehenderit velit Lorem esse non velit occaecat sint non minim Lorem. Sunt adipisicing ex et velit exercitation sunt ut magna. Ad exercitation Lorem adipisicing magna magna esse eu ad velit aliqua laborum nostrud.\r\nEt velit deserunt culpa pariatur velit elit officia enim Lorem sit qui. Laboris adipisicing Lorem voluptate mollit consectetur sunt ex cillum amet. Laborum adipisicing aliqua ea incididunt.\r\n",
       "history": "Cillum elit ex mollit ullamco fugiat. Reprehenderit est ad tempor magna cupidatat mollit Lorem aliqua. Lorem pariatur sit reprehenderit eu veniam. Non pariatur eu magna do magna fugiat nisi ex commodo qui occaecat id anim in.\r\nEa aliqua Lorem nulla do est duis in commodo est nisi sit et ipsum consectetur. Commodo deserunt ex veniam incididunt culpa ipsum culpa qui dolor aute voluptate. Culpa aute elit anim anim. Qui laborum ad aute labore aute anim ullamco quis occaecat voluptate voluptate eiusmod. Irure eu et eu est mollit dolore nulla in nulla do sit duis nisi dolor. Laboris aute irure sint voluptate sunt laboris duis nisi elit id ad sunt tempor. Nisi qui mollit occaecat deserunt id pariatur amet ea minim sint.\r\n",
-      "preparationTime": "in tempor consequat proident nisi",
-      "cookingTime": "adipisicing adipisicing culpa in Lorem",
+      "preparationTime": "5 минут",
+      "cookingTime": "15 минут",
       "servings": 18,
       "authorId": 8,
       "cooksId": [
-        8,
+        1,
+        2,
+        3
+      ],
+      "favoritesId": [
+        1,
+        2,
+        3
+      ],
+      "likesId": [
+        2,
+        3,
         4,
         1,
         5
       ],
-      "favoritesId": [
-        7,
-        1,
-        3,
-        4,
-        8
-      ],
-      "likesId": [
-        9,
-        7,
-        5,
-        8,
-        4,
-        1,
-        3
-      ],
-      "status": "awaits",
-      "origin": "Azerbaijan",
+      "status": "public",
+      "origin": "Америка",
       "publicationDate": "2014-11-07",
-      "instuctions": [
-        "sit",
-        "in",
-        "nulla",
-        "excepteur",
-        "pariatur",
-        "ex",
-        "quis"
-      ],
       "instructions": [
         {
           "images": [],
@@ -308,18 +308,21 @@
       "servings": 5,
       "authorId": 2,
       "cooksId": [
-        6
+        6,
+        5
       ],
       "favoritesId": [
         10,
         2,
         1,
-        8
+        8,
+        5
       ],
       "likesId": [
         9,
         6,
-        10
+        10,
+        5
       ],
       "status": "public",
       "origin": "Tonga",
@@ -549,18 +552,23 @@
       "servings": 8,
       "authorId": 4,
       "cooksId": [
-        2
+        2,
+        13,
+        5
       ],
       "favoritesId": [
         1,
-        6
+        6,
+        13
       ],
       "likesId": [
         6,
         1,
         8,
         9,
-        7
+        7,
+        13,
+        5
       ],
       "status": "public",
       "origin": "Marshall Islands",
@@ -670,8 +678,7 @@
         8,
         2,
         7,
-        1,
-        5
+        1
       ],
       "status": "public",
       "origin": "Ukraine",
@@ -774,11 +781,11 @@
       "authorId": 5,
       "cooksId": [
         8,
-        5,
         6,
         2,
         7,
-        9
+        9,
+        5
       ],
       "favoritesId": [
         7,
@@ -786,10 +793,10 @@
         2
       ],
       "likesId": [
-        5,
         6,
         4,
-        2
+        2,
+        5
       ],
       "status": "public",
       "origin": "Chad",
@@ -1156,7 +1163,8 @@
       "cooksId": [
         10,
         1,
-        9
+        9,
+        13
       ],
       "favoritesId": [
         9
@@ -1164,7 +1172,8 @@
       "likesId": [
         9,
         5,
-        2
+        2,
+        13
       ],
       "status": "public",
       "origin": "Swaziland",
@@ -1416,10 +1425,12 @@
       "authorId": 5,
       "cooksId": [
         10,
-        9
+        9,
+        5
       ],
       "favoritesId": [
-        10
+        10,
+        5
       ],
       "likesId": [
         9,
@@ -1882,15 +1893,16 @@
       "cooksId": [
         9,
         2,
-        3
+        3,
+        5
       ],
       "favoritesId": [
         7
       ],
       "likesId": [
-        5,
         6,
-        8
+        8,
+        5
       ],
       "status": "public",
       "origin": "Slovenia",
@@ -2003,12 +2015,15 @@
         8,
         9,
         1,
-        6
+        6,
+        13,
+        5
       ],
       "favoritesId": [
         10,
         9,
-        3
+        3,
+        13
       ],
       "likesId": [
         10,
@@ -2016,6 +2031,7 @@
         9,
         1,
         6,
+        13,
         5
       ],
       "status": "public",
@@ -2130,14 +2146,14 @@
         2,
         4,
         1,
-        9
+        9,
+        5
       ],
       "favoritesId": [
         4,
         8
       ],
       "likesId": [
-        5,
         4,
         1,
         6,
@@ -2255,18 +2271,21 @@
         5,
         4,
         6,
-        10
+        10,
+        13
       ],
       "favoritesId": [
         9,
         2,
-        1
+        1,
+        13
       ],
       "likesId": [
         4,
         3,
         7,
-        6
+        6,
+        13
       ],
       "status": "public",
       "origin": "Portugal",
@@ -2479,10 +2498,9 @@
       "likesId": [
         6,
         2,
-        5,
         3
       ],
-      "status": "awaits",
+      "status": "public",
       "origin": "Madagascar",
       "publicationDate": "2016-03-05",
       "instuctions": [
@@ -2610,7 +2628,7 @@
         7,
         4
       ],
-      "status": "awaits",
+      "status": "public",
       "origin": "Hong Kong",
       "publicationDate": "2022-10-28",
       "instuctions": [
@@ -2829,13 +2847,9 @@
       "cookingTime": "aliquip excepteur est eu veniam",
       "servings": 5,
       "authorId": 5,
-      "cooksId": [
-        5
-      ],
+      "cooksId": [],
       "favoritesId": [],
-      "likesId": [
-        5
-      ],
+      "likesId": [],
       "status": "private",
       "origin": "Moldova",
       "publicationDate": "2020-07-14",
@@ -3193,7 +3207,7 @@
       "likesId": [
         4
       ],
-      "status": "awaits",
+      "status": "public",
       "origin": "Bangladesh",
       "publicationDate": "2015-08-17",
       "instuctions": [
@@ -3420,7 +3434,8 @@
       ],
       "likesId": [
         8,
-        1
+        1,
+        5
       ],
       "status": "public",
       "origin": "Antarctica",
@@ -3797,6 +3812,222 @@
       "comments": [],
       "publicationDate": "",
       "status": "awaits"
+    },
+    {
+      "name": "Вишневый пирог как в \"Твин Пикс\"",
+      "ingredients": [
+        {
+          "name": "Мука",
+          "quantity": "200",
+          "unit": "г"
+        },
+        {
+          "name": "Масло сливочное (холодное)",
+          "quantity": "135",
+          "unit": "г"
+        },
+        {
+          "name": "Вода ледяная",
+          "quantity": "50",
+          "unit": "мл"
+        },
+        {
+          "name": "Сол",
+          "quantity": "1",
+          "unit": "щепотка"
+        },
+        {
+          "name": "Вишня",
+          "quantity": "500",
+          "unit": "г"
+        },
+        {
+          "name": "Крахмал",
+          "quantity": "2",
+          "unit": "ст. л"
+        },
+        {
+          "name": "Сахар",
+          "quantity": "80",
+          "unit": "гр"
+        },
+        {
+          "name": "Корица",
+          "quantity": "1/3 ",
+          "unit": "ч. л"
+        },
+        {
+          "name": "Мускатный орех",
+          "quantity": "1/4",
+          "unit": "ч. л"
+        },
+        {
+          "name": "Коньяк (или бренди)",
+          "quantity": "2-3",
+          "unit": "ст. л"
+        },
+        {
+          "name": "Желток (для смазки)",
+          "quantity": "1",
+          "unit": "шт"
+        }
+      ],
+      "instructions": [
+        {
+          "name": "Подготовьте продукты для начинки. Помойте вишню, удалите косточки.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Выделившийся при удалении косточек вишневый сок соедините с крахмалом, корицей, мускатным орехом и солью в кастрюле с толстым дном, размешайте. Нагрейте, помешивая лопаткой.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Добавьте вишню, сахар, перемешайте, доведите до кипения и на медленном огне проварите в течение 1 минуты. Влейте коньяк, перемешайте. Снимите начинку с огня, остудите. ",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Подготовьте продукты для теста. Муку просейте, холодное масло порубите на мелкие кубики.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Муку и масло порубите ножом, замесите тесто и соберите его в шар. При необходимости добавьте пару столовых ложек ледяной воды. Заверните тесто в пищевую пленку, положите в холодильник на 30 минут.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Духовку включите на 200 °C. Тесто разделите на две части: большую — для основы пирога и меньшую — для верхнего слоя. Раскатайте большую часть в тонкий пласт, перенесите в форму диаметром около 20 см, сформируйте высокие бортики. Выложите остывшую начинку.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Оставшееся тесто раскатайте с тонкий пласт, разрежьте на полоски и выложите их сверху начинки. Смажьте верх пирога слегка взбитым желтком",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Выпекайте пирог в разогретой духовке в течение 40 минут. Затем — при 180 °C еще 30 минут до легкого румянца теста. Остудите пирог в форме, затем снимите кольцо. ",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        }
+      ],
+      "mainPhotoUrl": null,
+      "description": "Когда специальный агент Дейл Купер первый раз попробовал вишневый пирог в Twin Peaks, запил \"черным, как безлунная ночь\" кофе, то он сразу же заказал еще две порции этого пирога. И его можно понять! ",
+      "history": "История рецепта гласит, что в первый пирог положили перебродившую вишню, что придало ему неповторимый вкус. Я предлагаю добавить в начинку пару столовых ложек бренди или коньяка. Не претендую на аутентичность рецепта, как приготовить вишневый пирог \"Твин Пикс\", но он получается чертовски вкусным! Готовьте с удовольствием!",
+      "preparationTime": "15 минут",
+      "cookingTime": "2 часа",
+      "origin": "Твин Пикс",
+      "nutritions": [
+        {
+          "name": "Калории",
+          "quantity": "238",
+          "unit": "ккал"
+        },
+        {
+          "name": "Белки",
+          "quantity": "3",
+          "unit": "г"
+        },
+        {
+          "name": "Жиры",
+          "quantity": "12",
+          "unit": "г"
+        },
+        {
+          "name": "Углеводы",
+          "quantity": "29",
+          "unit": "г"
+        }
+      ],
+      "servings": "8",
+      "authorId": 5,
+      "categories": [
+        10,
+        11,
+        9
+      ],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 33,
+      "comments": [],
+      "publicationDate": "",
+      "status": "private"
     }
   ],
   "users": [
@@ -3826,7 +4057,7 @@
       "personalWebsite": "https://www.chefalexeyzimin.com/",
       "location": "Москва, Россия",
       "registrationDate": "2023-01-15",
-      "profileViews": 7601,
+      "profileViews": 7608,
       "role": "admin"
     },
     {
@@ -3854,7 +4085,7 @@
       "personalWebsite": "",
       "location": "Санкт-Петербург, Россия",
       "registrationDate": "2023-03-20",
-      "profileViews": 6421,
+      "profileViews": 6478,
       "role": "user"
     },
     {
@@ -3882,7 +4113,7 @@
       "personalWebsite": "https://www.travelandeat.com/",
       "location": "Нью-Йорк, США",
       "registrationDate": "2023-05-10",
-      "profileViews": 5803,
+      "profileViews": 5806,
       "role": "user"
     },
     {
@@ -3911,7 +4142,7 @@
       "personalWebsite": "https://www.cookingadventures.com/",
       "location": "Лондон, Великобритания",
       "registrationDate": "2023-04-02",
-      "profileViews": 4921,
+      "profileViews": 4944,
       "role": "user"
     },
     {
@@ -3923,13 +4154,13 @@
       "avatarUrl": "",
       "description": "Хиханьки-хаханьки",
       "quote": "Один в поле не в поле и не один",
-      "fullName": "Полинка",
+      "fullName": "Полина",
       "followersIds": [],
       "socialNetworks": [],
       "personalWebsite": "https://angular.io/errors/",
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 1647
+      "profileViews": 1763
     },
     {
       "id": 6,
@@ -3962,7 +4193,7 @@
       "personalWebsite": "https://www.healthandnutrition.com/",
       "location": "Сидней, Австралия",
       "registrationDate": "2023-06-18",
-      "profileViews": 4345,
+      "profileViews": 4351,
       "role": "user"
     },
     {
@@ -4020,7 +4251,7 @@
       "personalWebsite": "https://www.interiordesignsbyvictoria.com/",
       "location": "Милан, Италия",
       "registrationDate": "2023-08-12",
-      "profileViews": 3217,
+      "profileViews": 3219,
       "role": "user"
     },
     {
@@ -4034,8 +4265,7 @@
       "followersIds": [
         4,
         8,
-        10,
-        5
+        10
       ],
       "socialNetworks": [
         {
@@ -4050,7 +4280,7 @@
       "personalWebsite": "https://www.techenthusiast.com/",
       "location": "Сан-Франциско, США",
       "registrationDate": "2023-09-03",
-      "profileViews": 2775,
+      "profileViews": 2789,
       "role": "user"
     },
     {
@@ -4078,8 +4308,195 @@
       "personalWebsite": "",
       "location": "Лондон, Великобритания",
       "registrationDate": "2023-10-19",
-      "profileViews": 2362,
+      "profileViews": 2363,
       "role": "user"
+    },
+    {
+      "id": 11,
+      "email": "sasha_beliy@mail.ru",
+      "password": "dffdH67D",
+      "username": "sasha_beliy",
+      "role": "user",
+      "avatarUrl": "",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "",
+      "profileViews": 0
+    },
+    {
+      "id": 12,
+      "email": "sdsdsdsd@mail.ru",
+      "password": "dssdssddsFg5",
+      "username": "dsdsddd",
+      "role": "user",
+      "avatarUrl": "",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "",
+      "profileViews": 2
+    },
+    {
+      "id": 13,
+      "email": "ffffffffffffffffff@mail.ru",
+      "password": "fdfdfdfGh5fE",
+      "username": "ffffffffffffff",
+      "role": "user",
+      "avatarUrl": "",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "",
+      "profileViews": 2
+    },
+    {
+      "id": 14,
+      "email": "sassaa@mail.ru",
+      "password": "dfdffdG6",
+      "username": "AAAAA",
+      "role": "user",
+      "avatarUrl": "",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "",
+      "profileViews": 3
+    },
+    {
+      "id": 15,
+      "email": "fddddddddddd@mail.ru",
+      "password": "dsdsdsd@mail.ru6G",
+      "username": "BBBBBBBBBBB",
+      "role": "user",
+      "avatarUrl": "",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "",
+      "profileViews": 0
+    },
+    {
+      "id": 16,
+      "email": "fdfdf@mail.ru",
+      "password": "dssdssdHg5",
+      "username": "ffdffdfdf",
+      "role": "user",
+      "avatarUrl": "",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "",
+      "profileViews": 0
+    },
+    {
+      "id": 17,
+      "email": "fdddsd@mail.ry",
+      "password": "fdfdffG6",
+      "username": "eeeeeeeeee",
+      "role": "user",
+      "avatarUrl": "",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "",
+      "profileViews": 0
+    },
+    {
+      "id": 18,
+      "email": "jkjjjkkjkkj@mail.ru",
+      "password": "sddsddsG6",
+      "username": "kjkjjkkjjkj",
+      "role": "user",
+      "avatarUrl": "",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "",
+      "profileViews": 0
+    },
+    {
+      "id": 19,
+      "email": "jokfd@mail.ru",
+      "password": "ddssdds56J",
+      "username": "fddfdff",
+      "role": "user",
+      "avatarUrl": "",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "",
+      "profileViews": 0
+    },
+    {
+      "id": 20,
+      "email": "victor_barinov@gmail.com",
+      "password": "VictorBarinov1950",
+      "username": "barinofff",
+      "role": "user",
+      "avatarUrl": "",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "",
+      "profileViews": 0
+    },
+    {
+      "id": 21,
+      "email": "dasha_kakasha@mail.ru",
+      "password": "Dashakakasha0",
+      "username": "daria_kuzmenok",
+      "role": "user",
+      "avatarUrl": "",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "",
+      "profileViews": 0
     }
   ]
 }

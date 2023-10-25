@@ -323,7 +323,7 @@
                 fill: 'var(--color-primary)'
               }">
               </svg-icon>
-            <a [href]="user.personalWebsite"> {{ user.personalWebsite }}</a>
+            <a [href]="user.personalWebsite">Личный сайт</a>
           </li>
           <li class="row center" *ngIf="user?.location">
             <svg-icon
@@ -445,7 +445,7 @@
 ></app-followers-and-following>
 
 
-<app-edit-account @modal (closeEmitter)="closeEdit($event)" (updatedUser)="updateCurrentUser($event)" [editableUser]="currentUser" *ngIf="editModalShow"></app-edit-account>
+<app-edit-account @modal (closeEmitter)="closeEdit()" (updatedUser)="updateCurrentUser($event)" [editableUser]="currentUser" *ngIf="editModalShow"></app-edit-account>
 
 <app-modal
   @modal

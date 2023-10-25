@@ -161,17 +161,14 @@ export class UserPageComponent implements OnInit {
   //подписка текущего пользователя на людей в списке
   follow() {
     this.user = this.userService.addFollower(this.user, this.currentUser.id);
-    this.updateUser();
+    this.userService.updateUsers(this.user).subscribe()
   }
 
   unfollow() {
     this.user = this.userService.removeFollower(this.user, this.currentUser.id);
-    this.updateUser();
+    this.userService.updateUsers(this.user).subscribe()
   }
 
-  updateUser() {
-    this.userService.updateUsers(this.user);
-  }
 
   username: string = 'username';
 
@@ -179,20 +176,15 @@ export class UserPageComponent implements OnInit {
     this.editModalShow = !this.editModalShow;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-  closeEdit(answer: any) {
+  closeEdit() {
     this.editModalShow = false;
   }
   updateCurrentUser(updatedUser: IUser) {
     this.user = updatedUser;
-    this.updateUser();
+    this.closeEdit()
+   
 
-    this.authService.loginUser(this.currentUser).subscribe((userExists) => {
-      if (userExists) {
-        localStorage.setItem('currentUser', JSON.stringify(userExists));
-        this.authService.setCurrentUser(userExists);
-      }
-    });
+   
   }
 
   handleNoAccessModal(result: boolean) {

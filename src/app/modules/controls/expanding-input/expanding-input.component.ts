@@ -4,6 +4,7 @@ import {
   Component,
   ElementRef,
   Input,
+  OnChanges,
   OnInit,
   ViewChild,
   forwardRef,
@@ -23,7 +24,7 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExpandingInputComponent implements OnInit {
+export class ExpandingInputComponent implements OnInit, OnChanges {
   disabled = false;
   @ViewChild('input') input?: ElementRef;
   @Input() placeholder: string = '';
@@ -31,11 +32,12 @@ export class ExpandingInputComponent implements OnInit {
   @Input() max: number | undefined = undefined;
   @Input() showError = true;
 
-  value = '';
+  @Input() value: string = '';
 
   isSleep: boolean = false; //подсвечивается ли плейсхолдер
   isFocused = false; //есть ли фокус в инпуте (нужно ли подсвечивать плейсхолдер)
   @Input() inputRequired: boolean = false;
+  getNotEmptyValue: boolean = false;
 
   change() {
     this.onChange(this.value);
@@ -43,6 +45,14 @@ export class ExpandingInputComponent implements OnInit {
   ngOnInit() {
     if (this.inputRequired === true) {
       this.placeholder = this.placeholder + '*';
+    }
+  }
+  ngOnChanges() {
+    if (this.value !== '' && !this.getNotEmptyValue) {
+      console.log(true);
+      this.focus();
+      this.blur();
+      this.change();
     }
   }
   //Появление фокуса
@@ -67,10 +77,10 @@ export class ExpandingInputComponent implements OnInit {
   }
 
   onChange: any = () => {
-//
+    //
   };
   onTouched: any = () => {
-//
+    //
   };
   writeValue(value: string): void {
     this.value = value;

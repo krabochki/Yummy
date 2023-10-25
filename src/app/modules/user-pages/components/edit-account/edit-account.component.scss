@@ -1,5 +1,13 @@
 @import "../../../../../tools/UI/UI.scss";
 
+
+.main-wrap{
+  display: flex; align-items: center; justify-content: space-between; column-gap: 1.5em; flex-direction:row-reverse;
+
+ .edit-cont & h2{
+  margin-top: 0;
+}}
+
 .edit-cont {
   background-color: var(--modal-black);
   width: 100vw;
@@ -19,7 +27,7 @@
     height: 2em;
   }
   .content {
-    padding: var(--space-xxl) 6em;
+    padding: 2.5em 6em;
     border-radius: var(--space-l) 0 0 var(--space-l);
     display: flex;
     align-items: center;
@@ -28,6 +36,7 @@
     width: 40rem;
 
     max-height: 80vh;
+    overflow-x: visible;
     overflow-y: scroll;
     background-color: var(--color-background);
 
@@ -64,12 +73,11 @@
     width: 100%;
     height: 100%;
     fill: var(--color-background);
-    
   }
 
   .delete {
     position: absolute;
-        cursor: pointer;
+    cursor: pointer;
 
     bottom: 0;
     display: flex;
@@ -85,13 +93,12 @@
 
   .image {
     position: relative;
-    margin: 0 auto;
     border-radius: 100%;
   }
 
   input {
     top: 0;
-        cursor: pointer;
+    cursor: pointer;
 
     right: 0;
     width: 100%;
@@ -101,21 +108,29 @@
   }
 
   .exit {
+    display: flex;
+    align-items: center;
+    top: -0.5em;left:-0.5em;
+    justify-content: center;
+    line-height: 1;
     cursor: pointer;
+    z-index: 2;
     position: absolute;
-    top: 0;
-    left: -2.5em;
-    height: 100%;
+   
+    width: 2em;
+    
+    height: 2em;
 
-    .svg {
-      fill: var(--color-foreground);
-      height: 100%;
-      width: 0.8em;
-    }
+    background-color: var(--color-primary);
+    border-radius: 100%;
+    color: var(--color-foreground);
   }
   h2 {
     font-size: var(--font-m);
     font-weight: 700;
+    margin-top: 1.5em;
+
+ 
   }
   .section {
     width: 100%;
@@ -136,4 +151,49 @@
 app-modal {
   z-index: 12;
   position: fixed;
+}
+
+
+@media(max-width:768px){
+   .edit-cont .content {
+    border-radius: 0;
+    row-gap: 2em;
+    width: 100vw;
+
+    height: 100vh;
+    max-height: unset;
+  
+
+    &::-webkit-scrollbar {
+    display: none;
+    }
+   
+  }
+  .edit-cont{
+      .exit {
+   
+    top: 0;right:0; left: unset;
+    width: 2.3em;
+    padding-bottom: 0.5em;
+    padding-left: 0.5em;
+    font-size: 1.2em;
+    
+    height: 2.3em;
+    border-radius: 0 0 0 100%;
+  }
+  }
+}
+
+
+
+@media(max-width:480px){
+
+  .main-wrap {
+    row-gap: 1.5em;
+    flex-direction: column;
+}
+
+  .edit-cont .content{
+    padding: 2.5em 6%;
+  }
 }

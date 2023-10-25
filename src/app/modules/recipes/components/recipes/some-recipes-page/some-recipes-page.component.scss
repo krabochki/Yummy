@@ -305,6 +305,10 @@ div.container.not-found {
   }
 }
 
+app-recipe-creating{position: fixed;
+  width: 100%;
+  height: 100%;
+z-index: 10;}
 @media (max-width: 480px) {
   .fridge {
   height: 10em;
@@ -313,7 +317,7 @@ div.container.not-found {
     margin: 2em 6%
 }
 
-  h1 {
+  h1, app-button {
     padding-right: 6%;
   }
 

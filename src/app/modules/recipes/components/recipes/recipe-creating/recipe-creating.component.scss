@@ -1,24 +1,32 @@
-@import "../../../../../../tools/UI/UI.scss";
 
 app-count-input {
   display: flex;
   justify-content: start;
 }
 .exit {
-  position: absolute;
-  fill: var(--color-foreground);
-  top: 0;
-  bottom: 0;
-  margin: auto;
-  width: 0.75em;
-  height: 0.75em;
-  cursor: pointer;
-  left: 0;
-  opacity: 0.5;
-  transition: opacity 0.3s ease-in-out;
-  &:hover {
-    opacity: 1;
-  }
+  display: flex;
+    align-items: center;
+    top: -0.5em;left:-0.5em;
+    justify-content: center;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 2;
+    position: absolute;
+   
+    width: 2em;
+    font-weight: 1000;
+    opacity: 0.5;
+    transition: 0.2s ease-in-out;
+
+    &:hover{
+      opacity: 1;
+    }
+    
+    height: 2em;
+
+    background-color: var(--color-primary);
+    border-radius: 100%;
+    color: var(--color-foreground);
 }
 
 app-modal {
@@ -33,10 +41,28 @@ svg-icon {
   height: 0.75em;
 }
 
+.wrap{
+  z-index: 3;
+  position: fixed;
+  top:0;left:0;
+  height:100%;width:100%;
+  background-color: var(--modal-black);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .cont {
+  position: relative;
+      border-radius: var(--space-l) 0 0 var(--space-l);
+
   display: block;
-  width: 50vw;
-  padding: var(--space-xl) 0;
+  width: 69vw;
+  padding: 2.5em 5vw;
+  height: 80vh;
+  overflow-y: scroll;
+  background-color: var(--color-background);
   margin: auto;
 
   h1 {
@@ -81,6 +107,19 @@ svg-icon {
       zoom: 1.3;
     }
   }
+
+   &::-webkit-scrollbar {
+      width: 12px;
+    }
+    &::-webkit-scrollbar-track {
+      border-radius: 20px;
+      background: var(--scroll-body);
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--scroll-thumb);
+      border-radius: 20px;
+      border: 3px solid var(--scroll-body);
+    }
 }
 
 .instruction {
@@ -374,11 +413,39 @@ app-select {
 
 @media (max-width: 900px) {
   .cont {
-    width: 100%;
-    padding-left: calc(14.4vw + 0 * (100vw - 768px) / 760);
-    padding-right: calc(14.4vw + 0 * (100vw - 768px) / 760);
+    width: 80vw;
   }
 }
+
+@media(max-width:768px){
+   .cont  {
+    border-radius: 0;
+    row-gap: 2em;
+    width: 100vw;
+
+    height: 100vh;
+    max-height: unset;
+  
+
+    &::-webkit-scrollbar {
+    display: none;
+    }
+   
+  }
+      .exit {
+   
+    top: 0;right:0; left: unset;
+    width: 2.3em;
+    padding-bottom: 0.5em;
+    padding-left: 0.5em;
+    font-size: 1.2em;
+    
+    height: 2.3em;
+    border-radius: 0 0 0 100%;
+  }
+  
+}
+
 
 @media (max-width: 680px) {
   .instruction {
@@ -549,10 +616,6 @@ app-select {
   }
 
   .cont {
-    display: block;
-    width: 100%;
-    padding: 1.75em 6%;
-    margin: 0;
 
     h1 {
       font-size: 1.5em;

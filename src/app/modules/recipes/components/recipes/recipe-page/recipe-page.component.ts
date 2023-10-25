@@ -29,17 +29,6 @@ import { Subject, takeUntil } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecipePageComponent implements OnInit, OnDestroy {
-  constructor(
-    private sectionService: SectionService,
-    private route: ActivatedRoute,
-    private titleService: Title,
-    private recipeService: RecipeService,
-    private authService: AuthService,
-    private userService: UserService,
-    public router: Router,
-    public routerEventsService: RouteEventsService,
-    private categoryService: CategoryService,
-  ) {}
   dataLoaded = false;
 
   showHistory = false;
@@ -63,6 +52,19 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   author: IUser = { ...nullUser };
   iHaveIndgredient: boolean[] = [];
   basket: boolean[] = [];
+  categories: ICategory[] = [];
+
+  constructor(
+    private sectionService: SectionService,
+    private route: ActivatedRoute,
+    private titleService: Title,
+    private recipeService: RecipeService,
+    private authService: AuthService,
+    private userService: UserService,
+    public router: Router,
+    public routerEventsService: RouteEventsService,
+    private categoryService: CategoryService,
+  ) {}
 
   addToBasket(i: number) {
     this.basket[i] = true;
@@ -70,7 +72,6 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   removeFromBasket(i: number) {
     this.basket[i] = false;
   }
-  categories: ICategory[] = [];
   ngOnInit() {
     registerLocaleData(localeRu);
     this.authService.currentUser$
@@ -297,7 +298,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     this.recipeService
       .updateRecipe(this.recipe)
       .pipe(takeUntil(this.destroyed$))
-          .subscribe();
+      .subscribe();
   }
 
   isRecipeFavorite: boolean = false;
@@ -333,8 +334,10 @@ export class RecipePageComponent implements OnInit, OnDestroy {
         this.recipe,
       );
     }
-    this.recipeService.updateRecipe(updatedRecipe).pipe(takeUntil(this.destroyed$))
-          .subscribe();
+    this.recipeService
+      .updateRecipe(updatedRecipe)
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe();
   }
   //готовим рецепт
   cookThisRecipe() {
@@ -359,8 +362,10 @@ export class RecipePageComponent implements OnInit, OnDestroy {
       );
     }
 
-    this.recipeService.updateRecipe(updatedRecipe).pipe(takeUntil(this.destroyed$))
-          .subscribe();
+    this.recipeService
+      .updateRecipe(updatedRecipe)
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe();
   }
 
   decreasePortions() {

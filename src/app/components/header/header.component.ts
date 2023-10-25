@@ -29,6 +29,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     'Закладки',
     'Подбор рецептов',
   ];
+  creatingMode = false;
   cooksSelectItems: string[] = [
     'Кулинары',
     'Ваш профиль',

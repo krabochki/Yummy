@@ -1,4 +1,7 @@
 {
+  "images":[
+
+  ],
   "sections": [
     {
       "id": 1,
@@ -2617,7 +2620,8 @@
       "authorId": 9,
       "cooksId": [
         3,
-        6
+        6,
+        5
       ],
       "favoritesId": [
         7,
@@ -4127,8 +4131,7 @@
       "fullName": "Ольга Смирнова",
       "followersIds": [
         2,
-        6,
-        5
+        6
       ],
       "socialNetworks": [
         {
@@ -4143,7 +4146,7 @@
       "personalWebsite": "https://www.cookingadventures.com/",
       "location": "Лондон, Великобритания",
       "registrationDate": "2023-04-02",
-      "profileViews": 4944,
+      "profileViews": 4946,
       "role": "user"
     },
     {
@@ -4178,8 +4181,7 @@
         2,
         4,
         9,
-        10,
-        5
+        10
       ],
       "socialNetworks": [
         {

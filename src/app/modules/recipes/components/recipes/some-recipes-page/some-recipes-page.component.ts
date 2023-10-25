@@ -7,7 +7,7 @@ import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { ICategory, nullCategory } from '../../../models/categories';
 import { Title } from '@angular/platform-browser';
 import { trigger } from '@angular/animations';
-import { heightAnim } from 'src/tools/animations';
+import { heightAnim, modal } from 'src/tools/animations';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import {
   RecipeType,
@@ -25,7 +25,7 @@ import { Subject, takeUntil } from 'rxjs';
     './some-recipes-page.component.scss',
     '../../../../authentication/common-styles.scss',
   ],
-  animations: [trigger('auto-complete', heightAnim())],
+  animations: [trigger('auto-complete', heightAnim()),trigger('modal',modal())],
 })
 export class SomeRecipesPageComponent implements OnInit, OnDestroy {
   constructor(
@@ -37,6 +37,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
   ) {}
 
   dataLoad: boolean = false;
+  creatingMode = false;
   filter: string = '';
   recipesToShow: IRecipe[] = [];
   allRecipes: IRecipe[] = [];

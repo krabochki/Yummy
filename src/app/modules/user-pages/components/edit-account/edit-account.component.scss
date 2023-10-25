@@ -12,6 +12,7 @@
   background-color: var(--modal-black);
   width: 100vw;
   height: 100vh;
+  
 
   position: fixed;
   top: 0;
@@ -27,7 +28,7 @@
     height: 2em;
   }
   .content {
-    padding: 2.5em 6em;
+    padding: 2.5em 5vw;
     border-radius: var(--space-l) 0 0 var(--space-l);
     display: flex;
     align-items: center;
@@ -118,6 +119,13 @@
     position: absolute;
    
     width: 2em;
+    font-weight: 1000;
+    opacity: 0.5;
+    transition: 0.2s ease-in-out;
+
+    &:hover{
+      opacity: 1;
+    }
     
     height: 2em;
 

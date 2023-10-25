@@ -4,8 +4,10 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  EventEmitter,
   OnDestroy,
   OnInit,
+  Output,
   ViewChild,
 } from '@angular/core';
 import {
@@ -28,6 +30,7 @@ import { CategoryService } from '../../../services/category.service';
 import { Observable, Subject } from 'rxjs';
 import { startWith, map, takeUntil } from 'rxjs/operators';
 import { SectionService } from '../../../services/section.service';
+import { MAT_AUTOCOMPLETE_SCROLL_STRATEGY } from '@angular/material/autocomplete';
 
 export interface SectionGroup {
   section: string;
@@ -51,7 +54,8 @@ export class RecipeCreatingComponent implements OnInit, OnDestroy {
   @ViewChild('input', { static: false })
   input: ElementRef | undefined;
 
-  
+  @Output() closeEmitter = new EventEmitter<boolean>();
+
   defaultImage: string = '../../../../../assets/images/add-main-photo.png';
   defaultInstructionImage: string =
     '../../../../../assets/images/add-photo.png';
@@ -76,6 +80,7 @@ export class RecipeCreatingComponent implements OnInit, OnDestroy {
   allCategories: ICategory[] = [];
   selectedCategories: ICategory[] = [];
   protected destroyed$: Subject<void> = new Subject<void>();
+  beginningData: any;
 
   f(field: string): FormArray {
     return this.form.get(field) as FormArray;
@@ -161,6 +166,7 @@ export class RecipeCreatingComponent implements OnInit, OnDestroy {
             });
           });
       });
+    this.beginningData = this.form.getRawValue();
   }
 
   //drag&drop
@@ -335,7 +341,7 @@ export class RecipeCreatingComponent implements OnInit, OnDestroy {
     this.f('instructions').removeAt(index);
   }
 
-  getImages(instructionIndex: number):AbstractControl<any,any>[] {
+  getImages(instructionIndex: number): AbstractControl<any, any>[] {
     const instructionsArray = this.f('instructions');
     const instructionGroup = instructionsArray.at(
       instructionIndex,
@@ -437,6 +443,12 @@ export class RecipeCreatingComponent implements OnInit, OnDestroy {
       this.createRecipe();
     }
     this.approveModalShow = false;
+  }
+  areObjectsEqual(): boolean {
+    return (
+      JSON.stringify(this.beginningData) !==
+      JSON.stringify(this.form.getRawValue())
+    );
   }
 
   ngOnDestroy(): void {

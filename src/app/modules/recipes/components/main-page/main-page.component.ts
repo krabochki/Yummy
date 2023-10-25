@@ -8,15 +8,19 @@ import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { SectionService } from '../../services/section.service';
 import { Subject, takeUntil } from 'rxjs';
+import { trigger } from '@angular/animations';
+import { modal } from 'src/tools/animations';
 
 @Component({
   selector: 'app-main-page',
   templateUrl: './main-page.component.html',
   styleUrls: ['./main-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [trigger('modal',modal())]
 })
 export class MainPageComponent implements OnInit, OnDestroy {
   allRecipes: IRecipe[] = [];
+  creatingMode = false;
   allSections: ICategory[] = [];
   popularRecipes: IRecipe[] = [];
   recentRecipes: IRecipe[] = [];
@@ -36,7 +40,6 @@ export class MainPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((currentUser: IUser) => {
@@ -59,8 +62,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
           const publicRecipes = this.recipeService.getPublicRecipes(
             this.allRecipes,
           );
-          
-      
+
           if (this.currentUser.id !== 0) {
             this.userRecipes = this.recipeService
               .getRecipesByUser(this.allRecipes, this.currentUser.id)
@@ -75,22 +77,18 @@ export class MainPageComponent implements OnInit, OnDestroy {
           this.recentRecipes = this.recipeService
             .getRecentRecipes(publicRecipes)
             .slice(0, 8);
-
         }
 
-        
-          this.sectionService.sections$
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe((data: ISection[]) => {
-              this.allSections = data;
-            });
-       
-      },
-    );
+        this.sectionService.sections$
+          .pipe(takeUntil(this.destroyed$))
+          .subscribe((data: ISection[]) => {
+            this.allSections = data;
+          });
+      });
   }
 
-  ngOnDestroy():void {
-        this.destroyed$.next();
-        this.destroyed$.complete();
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
   }
 }

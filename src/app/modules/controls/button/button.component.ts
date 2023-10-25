@@ -1,23 +1,26 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges } from '@angular/core';
 
 @Component({
   selector: 'app-button',
   templateUrl: './button.component.html',
   styleUrls: ['./button.component.scss'],
-  changeDetection:ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ButtonComponent {
+export class ButtonComponent implements OnChanges {
+  @Input() icon: string = '';
 
-  @Input() icon:string = ''
-
-  @Input() style:'filled'|'filled-min'|'outlined'|'banner'|undefined;
-  @Input() color:'prim'|'sec'|undefined;
-  @Input() rounded:boolean|undefined;
+  @Input() style: 'filled' | 'filled-min' | 'outlined' | 'banner' | undefined;
+  @Input() color: 'prim' | 'sec' | undefined;
+  @Input() rounded: boolean | undefined;
   @Input() text: string = 'Button';
   @Input() disabled: boolean = true;
 
-  getClass(){
+  ngOnChanges() {
+    this.cd.markForCheck()
+  }
 
+  constructor(private cd: ChangeDetectorRef) {}
+  getClass() {
     const styleClasses = [];
 
     switch (this.style) {
@@ -36,7 +39,7 @@ export class ButtonComponent {
       default:
         break;
     }
-  
+
     switch (this.color) {
       case 'prim':
         styleClasses.push('prim');
@@ -47,20 +50,19 @@ export class ButtonComponent {
       default:
         break;
     }
-    switch(this.rounded){
+    switch (this.rounded) {
       case true:
         styleClasses.push('rounded');
         break;
-        case false:
-          styleClasses.push('unrounded');
-          break;
+      case false:
+        styleClasses.push('unrounded');
+        break;
     }
 
-    if(!this.disabled){
+    if (!this.disabled) {
       styleClasses.push('disabled');
     }
-  
+
     return styleClasses;
   }
-
 }

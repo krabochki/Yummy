@@ -46,7 +46,7 @@ import { Subject, takeUntil } from 'rxjs';
 export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
   @Input() userPage: IUser = { ...nullUser };
   @Input() currentUser: IUser = { ...nullUser };
-  @Input() object: 'followers' | 'following' = 'followers';
+  @Input() object: 'followers' | 'following' = 'following';
   @Input() user: IUser = { ...nullUser };
   @Output() closeEmitter: EventEmitter<boolean> = new EventEmitter<boolean>();
 
@@ -88,6 +88,20 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
       });
   }
 
+  switchObject(object: 'following' |'followers') {
+    if (this.searchMode) this.searchOnOff();
+    if (object === 'following') {
+      
+      this.object = 'following';
+    }
+    else {
+      this.object = 'followers';
+    }
+    this.cd.markForCheck()
+  }
+
+
+
   //подписка текущего пользователя на людей в списке
   follow(user: IUser) {
     this.userService.addFollower(user, this.currentUser?.id);
@@ -108,7 +122,10 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
   }
 
   updateUser(user: IUser) {
-    this.userService.updateUsers(user);
+    this.userService
+      .updateUsers(user)
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe();
   }
 
   //переход по ссылке на человека

@@ -27,13 +27,17 @@ export class RecipeAccessGuard implements CanActivate {
     const recipe: IRecipe | undefined = recipes.find(
       (recipe) => recipe.id == recipeId,
     );
+
+      
     if (recipe)
+    {
+
       if (this.auth.checkValidity(recipe, user)) {
         return true;
       } else {
         this.router.navigate(['/recipes']);
         return false;
-      }
+      }}
     else {
       this.router.navigate(['/recipes']);
       return false;

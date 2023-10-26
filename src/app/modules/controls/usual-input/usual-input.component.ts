@@ -47,7 +47,8 @@ export class UsualInputComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    if (this.value !== '' && !this.getNotEmptyValue) {
+    
+    if (this.value !== '' && !this.getNotEmptyValue && !this.isFocused) {
       this.focus();
       this.blur();
       this.change();
@@ -61,12 +62,7 @@ export class UsualInputComponent implements OnInit, OnChanges {
 
   //Появление фокуса
   focus() {
-    setTimeout(() => {
-      this.input?.nativeElement.setSelectionRange(
-        this.value.length,
-        this.value.length,
-      );
-    });
+    
     this.isFocused = true;
     this.isSleep = false;
   }

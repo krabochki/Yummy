@@ -53,6 +53,9 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   iHaveIndgredient: boolean[] = [];
   basket: boolean[] = [];
   categories: ICategory[] = [];
+  successPublicModalShow: boolean = false;
+  publicModalHeader: string = 'опубликован';
+  publicModalText: string = 'опубликовали';
 
   constructor(
     private sectionService: SectionService,
@@ -254,7 +257,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
                   const words = recipeText.split(/\s+/);
                   const wordCount = words.length;
                   this.readingTimeInMinutes = wordCount / wordsPerMinute;
-                  this.readingTimeInMinutes = Math.round(
+                  this.readingTimeInMinutes = Math.ceil(
                     this.readingTimeInMinutes,
                   );
 
@@ -313,6 +316,13 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     this.noAccessModalShow = false;
   }
 
+  handlePublicModal(result: boolean) {
+    if (result) {
+      this.router.navigateByUrl('/control-dashboard');
+    }
+    this.noAccessModalShow = false;
+  }
+
   likeThisRecipe() {
     if (this.currentUser.id === 0) {
       this.noAccessModalShow = true;
@@ -366,6 +376,36 @@ export class RecipePageComponent implements OnInit, OnDestroy {
       .updateRecipe(updatedRecipe)
       .pipe(takeUntil(this.destroyed$))
       .subscribe();
+  }
+
+  publicRecipe() {
+    const publishedRecipe = this.recipeService.publicRecipe(this.recipe);
+    this.recipeService.updateRecipe(publishedRecipe).subscribe(
+      (answer: IRecipe) => {
+        if(answer)
+          this.successPublicModalShow = true;
+              this.router.navigateByUrl('/control-dashboard');
+
+      },
+      (error: Error) => {
+        console.error(error.message);
+      },
+    );
+  }
+  dismissRecipe() {
+    const dismissedRecipe = this.recipeService.dismissRecipe(this.recipe);
+    this.recipeService.updateRecipe(dismissedRecipe).subscribe(
+      () => {
+
+        this.publicModalText = 'отклонили';
+        this.successPublicModalShow = true;
+              this.router.navigateByUrl('/control-dashboard');
+
+      },
+      (error: Error) => {
+        console.error(error.message);
+      },
+    );
   }
 
   decreasePortions() {

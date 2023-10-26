@@ -155,7 +155,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
       if (!this.myPage) {
         this.user.profileViews++;
       }
-      this.userService.updateUsers(this.user);
+      this.userService.updateUsers(this.user).subscribe();
     });
   }
 
@@ -169,7 +169,6 @@ export class UserPageComponent implements OnInit, OnDestroy {
     this.user = this.userService.addFollower(this.user, this.currentUser.id);
     this.userService
       .updateUsers(this.user)
-      .pipe(takeUntil(this.destroyed$))
       .subscribe();
   }
 
@@ -177,7 +176,6 @@ export class UserPageComponent implements OnInit, OnDestroy {
     this.user = this.userService.removeFollower(this.user, this.currentUser.id);
     this.userService
       .updateUsers(this.user)
-      .pipe(takeUntil(this.destroyed$))
       .subscribe();
   }
 
@@ -193,6 +191,8 @@ export class UserPageComponent implements OnInit, OnDestroy {
   updateCurrentUser(updatedUser: IUser) {
     this.user = updatedUser;
     this.closeEdit();
+        this.cd.detectChanges();
+
   }
 
   handleNoAccessModal(result: boolean) {

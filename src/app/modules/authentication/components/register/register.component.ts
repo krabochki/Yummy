@@ -118,7 +118,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
       if (!emailExists && !usernameExists) {
         this.usersService
           .postUser(userData)
-          .pipe(takeUntil(this.destroyed$))
           .subscribe(() => {
             localStorage.setItem('currentUser', JSON.stringify(userData));
             this.authService.setCurrentUser(userData);

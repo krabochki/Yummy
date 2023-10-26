@@ -99,7 +99,6 @@ export class LoginComponent implements OnInit, OnDestroy {
 
       this.authService
         .loginUser(userData)
-        .pipe(takeUntil(this.destroyed$))
         .subscribe((user: IUser | null) => {
           if (user) {
             localStorage.setItem('currentUser', JSON.stringify(user));

@@ -18,6 +18,7 @@ import { BannerComponent } from './banner/banner.component';
 import { CountInputComponent } from './count-input/count-input.component';
 import { UsualInputComponent } from './usual-input/usual-input.component';
 import { ExpandingInputComponent } from './expanding-input/expanding-input.component';
+import { AutocompleteComponent } from './autocomplete/autocomplete.component';
 @NgModule({
   declarations: [
     ButtonComponent,
@@ -32,6 +33,7 @@ import { ExpandingInputComponent } from './expanding-input/expanding-input.compo
     CountInputComponent,
     UsualInputComponent,
     ExpandingInputComponent,
+    AutocompleteComponent,
   ],
   imports: [
     CommonModule,
@@ -52,6 +54,7 @@ import { ExpandingInputComponent } from './expanding-input/expanding-input.compo
     BannerComponent,
     CountInputComponent,
     UsualInputComponent,
+    AutocompleteComponent,
     ExpandingInputComponent,
   ],
   providers: [provideAngularSvgIcon()],

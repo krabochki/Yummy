@@ -30,8 +30,6 @@ import {
 } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
-import { ImageService } from '../../services/image.service';
-import { IImage } from '../../models/images';
 
 @Component({
   selector: 'app-edit-account',
@@ -50,7 +48,6 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
   successModal: boolean = false;
   newUser: IUser = { ...nullUser };
   users: IUser[] = [];
-  images: IImage[] = [];
 
   myImage: string = '';
   defaultImage: string = '../../../../../assets/images/add-userpic.png';
@@ -64,13 +61,12 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
   constructor(
     private cdr: ChangeDetectorRef,
     private userService: UserService,
-    private imageService: ImageService,
     private authService: AuthService,
     private fb: FormBuilder,
   ) {
     this.form = this.fb.group({
       username: [
-        '',
+        this.newUser.username,
         [
           Validators.required,
           Validators.minLength(4),
@@ -159,13 +155,25 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
           break;
       }
     }
+    
+      if (this.newUser.avatarUrl !== null) {
+        try {
+          const mainImageData: FormData = this.newUser.avatarUrl;
+          const mainpicFile = mainImageData.get('file') as File;
+          if (mainpicFile) {
+            this.form.get('image')?.setValue(mainImageData);
+            const objectURL = URL.createObjectURL(mainpicFile);
+            this.myImage = objectURL;
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    
     this.beginningData = this.form.getRawValue();
 
     this.userService.users$.subscribe((data: IUser[]) => {
       this.users = data;
-    });
-    this.imageService.images$.subscribe((data: IImage[]) => {
-      this.images = data;
     });
     this.myImage = this.defaultImage;
   }
@@ -230,19 +238,14 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
     const userpicData = new FormData();
     userpicData.append('image', this.form.get('userpic')?.value);
 
-    let maxPicId = Math.max(...this.images.map((u) => u.id));
-    if (!maxPicId || maxPicId < 0) maxPicId = 0;
-    const userpic: IImage = {
-      contextRelatedId: this.editableUser.id,
-      context: 'userpic',
-      id: maxPicId + 1,
-      file: userpicData,
-    };
+    
 
-    const newUser: IUser = {
+    this.newUser = {
       ...this.editableUser,
+    
       username: this.form.value.username,
       fullName: this.form.value.fullname,
+      avatarUrl:userpicData,
       quote: this.form.value.quote,
       personalWebsite: this.form.value.website,
       description: this.form.value.description,
@@ -250,23 +253,13 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
       socialNetworks: socialNetworks,
     };
 
-    this.userService.updateUsers(newUser).subscribe(
+    this.userService.updateUsers(this.newUser).subscribe(
       () => {
         this.authService.loginUser(this.newUser).subscribe((user) => {
           if (user) {
             localStorage.setItem('currentUser', JSON.stringify(user));
             this.authService.setCurrentUser(user);
-            this.imageService.postImage(userpic).subscribe(
-              () => {
-                console.log('Фото пользователя успешно загружено');
-              },
-              (error: Error) => {
-                console.error(
-                  'Изменение пользователя | Ошибка при загрузке фото пользователя: ' +
-                    error.message,
-                );
-              },
-            );
+            this.successModal = true;
           }
           (error: Error) => {
             console.error(
@@ -284,7 +277,6 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
       },
     );
 
-    this.updatedUser.emit(this.newUser);
   }
 
   handleSaveModal(answer: boolean) {
@@ -297,6 +289,8 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleSuccessModal(answer: boolean) {
     this.closeEmitter.emit(true);
+        this.updatedUser.emit(this.newUser);
+
     this.successModal = false;
   }
   handleCloseModal(answer: boolean) {

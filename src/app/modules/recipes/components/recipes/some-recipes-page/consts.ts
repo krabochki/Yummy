@@ -25,7 +25,7 @@ export const recipeTitles = {
  export const recipeNoRecipesRouterLinkText = {
   [RecipeType.Recent]: '',
   [RecipeType.Popular]: '',
-  [RecipeType.My]: '/recipes/add',
+  [RecipeType.My]: '',
   [RecipeType.Favorite]: '/recipes',
   [RecipeType.Category]: '/sections',
   [RecipeType.All]: '',

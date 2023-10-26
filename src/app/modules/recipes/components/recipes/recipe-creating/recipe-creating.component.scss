@@ -354,11 +354,13 @@ svg-icon {
 
 .tags {
   display: flex;
+  
   column-gap: 0.7em;
   flex-wrap: wrap;
   row-gap: 0.5em;
 
   margin: 0 auto;
+  margin-top: 1em;
   justify-content: center;
   align-items: center;
 }

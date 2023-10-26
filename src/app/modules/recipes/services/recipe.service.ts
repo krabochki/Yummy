@@ -13,9 +13,7 @@ export class RecipeService {
 
   url: string = recipesUrl;
 
-  constructor(private http: HttpClient) {
-  
-  }
+  constructor(private http: HttpClient) {}
 
   loadRecipeData() {
     this.getRecipes().subscribe((data) => {
@@ -95,13 +93,29 @@ export class RecipeService {
     );
   }
 
+  publicRecipe(recipe: IRecipe): IRecipe {
+    recipe.status = 'public';
+    
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    const yyyy = today.getFullYear();
+    const todayString = yyyy + '.' + mm + '.' + dd;
+
+    recipe.publicationDate = todayString;
+    return recipe;
+  }
+  dismissRecipe(recipe: IRecipe): IRecipe {
+    recipe.status = 'private';
+    return recipe;
+  }
+
   updateRecipe(recipe: IRecipe) {
     const url = `${this.url}/${recipe.id}`;
 
     return this.http.put<IRecipe>(url, recipe).pipe(
       switchMap((updatedRecipe) => {
         return this.recipesSubject.pipe(
-          take(1),
           map((currentRecipes) => {
             const index = currentRecipes.findIndex(
               (r) => r.id === updatedRecipe.id,

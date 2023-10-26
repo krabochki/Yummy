@@ -3,11 +3,11 @@ import { IComment } from 'src/app/modules/user-pages/models/comments';
 export interface IRecipe {
   id: number; // Уникальный идентификатор рецепта
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  mainPhotoUrl: any; // URL основного фото рецепта
+  mainImage: FormData|null; // URL основного фото рецепта
   name: string; // Название рецепта
   description: string; // Описание рецепта
   preparationTime: string; // Время приготовления
-  cookingTime:string,
+  cookingTime: string;
   servings: number; // Количество порций
   origin: string; // Происхождение рецепта
   ingredients: Ingredient[]; // Список ингредиентов
@@ -17,15 +17,15 @@ export interface IRecipe {
   authorId: number; // Информация об авторе рецепта
   likesId: number[]; // Количество лайков
   cooksId: number[]; // Количество приготовлений
-  history:string,
+  history: string;
   comments: IComment[]; // Список комментариев
   publicationDate: string; // Дата регистрации пользователя
-  favoritesId: number[],
+  favoritesId: number[];
   status: 'awaits' | 'private' | 'public';
 }
 export const nullRecipe: IRecipe = {
   id: 0,
-  mainPhotoUrl: null,
+  mainImage: null,
   name: '',
   description: '',
   cookingTime: '',
@@ -53,7 +53,7 @@ export interface Ingredient {
 export interface Instruction {
   name: string; // Название ингредиента
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  images: any[3]; // Единица измерения
+  images: FormData[]; // Единица измерения
 }
 export interface Nutrition {
   name: string; // Название пищевой ценности

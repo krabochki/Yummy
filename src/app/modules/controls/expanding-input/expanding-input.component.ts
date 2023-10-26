@@ -48,21 +48,16 @@ export class ExpandingInputComponent implements OnInit, OnChanges {
     }
   }
   ngOnChanges() {
-    if (this.value !== '' && !this.getNotEmptyValue) {
-      console.log(true);
+    if (this.value !== '' && !this.getNotEmptyValue && !this.isFocused) {
       this.focus();
       this.blur();
       this.change();
+      this.getNotEmptyValue = true;
     }
   }
   //Появление фокуса
   focus() {
-    setTimeout(() => {
-      this.input?.nativeElement.setSelectionRange(
-        this.value.length,
-        this.value.length,
-      );
-    });
+   
     this.isSleep = false;
     this.isFocused = true;
   }

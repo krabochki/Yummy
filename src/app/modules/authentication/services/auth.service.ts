@@ -96,8 +96,8 @@ export class AuthService {
   checkValidity(recipe: IRecipe, user: IUser): boolean {
     return (
       recipe.authorId === user.id ||
-      user.role === 'moderator' ||
-      user.role === 'admin' ||
+      (user.role === 'moderator' && recipe.status === 'awaits') ||
+      (user.role === 'admin' && recipe.status === 'awaits') ||
       recipe.status === 'public'
     );
   }

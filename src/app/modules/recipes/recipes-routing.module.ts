@@ -24,11 +24,6 @@ const routes: Routes = [
         canActivate: [RecipeAccessGuard],
       },
       {
-        path: 'recipes/add',
-        component: RecipeCreatingComponent,
-        canActivate: [AuthGuard],
-      },
-      {
         path: 'recipes/edit',
         component: RecipeCreatingComponent,
         canActivate: [AuthGuard],

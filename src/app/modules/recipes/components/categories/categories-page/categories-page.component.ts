@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { CategoryService } from '../../../services/category.service';
 import { ICategory, ISection, nullSection } from '../../../models/categories';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SectionService } from '../../../services/section.service';
 import { trigger } from '@angular/animations';
 import { heightAnim } from 'src/tools/animations';
@@ -46,6 +46,8 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
   constructor(
     private categoryService: CategoryService,
     private route: ActivatedRoute,
+    private router: Router,
+
     private sectionService: SectionService,
     private cd: ChangeDetectorRef,
     private titleService: Title,
@@ -54,9 +56,9 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.data.subscribe((data) => {
-        this.categoryService.categories$
-      .pipe(takeUntil(this.destroyed$))
-          .subscribe((data: ICategory[]) => {
+      this.categoryService.categories$
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe((data: ICategory[]) => {
           this.categories = data;
 
           this.recipeService.recipes$
@@ -69,63 +71,59 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
                 );
             });
           this.cd.markForCheck();
-        },
-      );
+        });
 
       this.filter = data['filter'];
       this.section = data['SectionResolver'];
 
       if (this.filter === 'sections') {
-          this.sectionService.sections$
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe((sections: ISection[]) => {
-              this.title = 'Разделы';
-              this.titleService.setTitle(this.title);
-              this.sections = sections;
-
-              this.sections.sort((elem1: ISection, elem2: ISection) => {
-                if (elem1.name > elem2.name) {
-                  return 1;
-                } else {
-                  return -1;
-                }
-              });
-              this.cd.markForCheck();
-            });
-      } else if (this.filter === 'popular') {
-      
-            this.sections = [];
-            this.title = 'Популярные категории';
+        this.sectionService.sections$
+          .pipe(takeUntil(this.destroyed$))
+          .subscribe((sections: ISection[]) => {
+            this.title = 'Разделы';
             this.titleService.setTitle(this.title);
+            this.sections = sections;
 
-            const popularCategories = this.popularCategories;
-            this.categoriesForPopular = popularCategories;
-            const popularCategoriesIds: number[] = [];
-            console.log(popularCategories);
-            popularCategories.forEach((element) => {
-              popularCategoriesIds.push(element.id);
+            this.sections.sort((elem1: ISection, elem2: ISection) => {
+              if (elem1.name > elem2.name) {
+                return 1;
+              } else {
+                return -1;
+              }
             });
-            const popularSection: ISection = {
-              name: '',
-              categoriesId: popularCategoriesIds,
-              id: -1,
-              photo: '',
-            };
-            this.sections.push(popularSection);
-            console.log(popularSection);
             this.cd.markForCheck();
-     
-        
+          });
+      } else if (this.filter === 'popular') {
+        this.sections = [];
+        this.title = 'Популярные категории';
+        this.titleService.setTitle(this.title);
+
+        const popularCategories = this.popularCategories;
+        this.categoriesForPopular = popularCategories;
+        const popularCategoriesIds: number[] = [];
+        console.log(popularCategories);
+        popularCategories.forEach((element) => {
+          popularCategoriesIds.push(element.id);
+        });
+        const popularSection: ISection = {
+          name: '',
+          categoriesId: popularCategoriesIds,
+          id: -1,
+          photo: '',
+        };
+        this.sections.push(popularSection);
+        console.log(popularSection);
+        this.cd.markForCheck();
       } else {
-             this.sections = [];
-             this.title = this.section.name;
-             this.titleService.setTitle(this.title);
+        this.sections = [];
+        this.title = this.section.name;
+        this.titleService.setTitle(this.title);
 
-             const sect = { ...this.section };
-             sect.name = '';
+        const sect = { ...this.section };
+        sect.name = '';
 
-             this.sections.push(sect);
-             this.cd.markForCheck();
+        this.sections.push(sect);
+        this.cd.markForCheck();
       }
       if (this.filter !== 'popular') {
         this.categories.sort((category1: ICategory, category2: ICategory) =>
@@ -140,6 +138,10 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
       }
       this.isLoading = false;
     });
+  }
+
+  navigateTo(link: string) {
+    this.router.navigateByUrl(link)
   }
 
   loadMoreCategories() {
@@ -177,9 +179,7 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
   }
 
   blurSearch() {
-    setTimeout(() => {
       this.autocompleteShow = false;
-    }, 300);
   }
 
   focusSearch() {

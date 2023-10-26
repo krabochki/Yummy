@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RecipeService } from '../../../services/recipe.service';
 import { IRecipe } from '../../../models/recipes';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
@@ -25,7 +25,10 @@ import { Subject, takeUntil } from 'rxjs';
     './some-recipes-page.component.scss',
     '../../../../authentication/common-styles.scss',
   ],
-  animations: [trigger('auto-complete', heightAnim()),trigger('modal',modal())],
+  animations: [
+    trigger('auto-complete', heightAnim()),
+    trigger('modal', modal()),
+  ],
 })
 export class SomeRecipesPageComponent implements OnInit, OnDestroy {
   constructor(
@@ -34,6 +37,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private userService: UserService,
     private title: Title,
+    private router:Router
   ) {}
 
   dataLoad: boolean = false;
@@ -72,6 +76,10 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
   }
   getNoRecipesRouterLinkTextByRecipetype(recipeType: RecipeType): string {
     return recipeNoRecipesRouterLinkText[recipeType] || '';
+  }
+
+  navigateTo(link: string) {
+    this.router.navigateByUrl(link);
   }
 
   setRecipeType(filter: string): void {
@@ -261,9 +269,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
   }
 
   blur() {
-    setTimeout(() => {
       this.autocompleteShow = false;
-    }, 300);
   }
   getUser(userId: number): IUser {
     const finded = this.allUsers.find((user) => user.id === userId);

@@ -30,6 +30,8 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
   likes: number = 0;
   cooks: number = 0;
 
+  editMode: boolean = false;
+
   isRecipeFavorite: boolean = false;
   isRecipeLiked: boolean = false;
   isRecipeCooked: boolean = false;
@@ -50,6 +52,10 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
 
   @Input() showAuthor: boolean = true;
 
+  editModeOff() {
+    this.editMode = false;
+    console.log('off')
+  }
   ngOnInit() {
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))

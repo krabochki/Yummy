@@ -12,6 +12,7 @@
   margin: 0 auto;
   margin-bottom: 1em;
   display: flex;
+  width: fit-content;
   justify-content: center;
 }
 .head {
@@ -358,7 +359,7 @@ z-index: 10;}
     left: 0;
     width: 94%;
 
-    background-color: var(--color-background-deeper-unactive);
+    background-color: var(--color-background-deeper);
   }
 }
 

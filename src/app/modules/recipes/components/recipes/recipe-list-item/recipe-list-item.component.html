@@ -14,8 +14,8 @@
 <div *ngIf="dataLoaded && recipe.id > 0; else sceleton" class="recipe" [title]="recipe.name">
   <div class="top">
     <div></div>
-    <div *ngIf="recipe.authorId === currentUserId || recipe.status === 'public'"
-      (click)="recipe.status === 'public' ? makeThisRecipeFavorite() : null" class="fav">
+    <div [ngClass]="{'disabled':recipe.status==='awaits'}" *ngIf="recipe.authorId === currentUserId || recipe.status === 'public'"
+      (click)="recipe.status === 'public' ? makeThisRecipeFavorite() : editMode=true" class="fav">
       <svg-icon *ngIf="recipe.status !== 'public'" [src]="'../../../../../assets/images/svg/pen.svg'"
         [applyClass]="true" class="fav-icon"></svg-icon>
       <svg-icon *ngIf="recipe.status === 'public' && !isRecipeFavorite"
@@ -29,7 +29,7 @@
       <h1 [routerLink]="'/recipes/list/' + recipe.id">{{ recipe.name }}</h1>
     </div>
     <div *ngIf="showAuthor" [routerLink]="'/cooks/list/' + author.id" class="author">
-      {{ author.fullName }}
+      {{ author.fullName===''?('@'+author.username):author.fullName }}
     </div>
 
     <div class="rate-panel" *ngIf="recipe.status === 'public'">
@@ -73,3 +73,5 @@
   (resultEmit)="handleNoAccessModal($event)" [buttonsText]="['Давайте', 'Не сейчас']" [description]="
     'Взаимодействовать с рецептами могут только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'
   "></app-modal>
+
+    <app-recipe-creating style="z-index:10; position: fixed;" [editedRecipe]="recipe" *ngIf="editMode" (closeEmitter)="editModeOff()" @modal ></app-recipe-creating>

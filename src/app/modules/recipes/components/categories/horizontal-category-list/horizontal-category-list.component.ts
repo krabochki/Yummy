@@ -54,13 +54,13 @@ export class HorizontalCategoryListComponent implements OnChanges {
         this.categories.length < 5:
         this.showScrollButtons = false;
         break;
-      case window.innerWidth > 610 &&
+      case window.innerWidth > 700 &&
         window.innerWidth <= 960 &&
         this.categories.length < 4:
         this.showScrollButtons = false;
         break;
       case window.innerWidth > 480 &&
-        window.innerWidth <= 610 &&
+        window.innerWidth <= 700 &&
         this.categories.length < 3:
         this.showScrollButtons = false;
         break;
@@ -88,10 +88,10 @@ export class HorizontalCategoryListComponent implements OnChanges {
           while (this.categories.length !== 3)
             this.categories.push(nullSection);
         break;
-      case event > 480 && event <= 610:
+      case event > 480 && event <= 700:
         this.blockScheme(2);
         break;
-      case event > 610 && event <= 960:
+      case event > 700 && event <= 960:
         this.blockScheme(3);
         break;
       case event > 960 && event <= 1400:

@@ -88,12 +88,12 @@ drag-scroll {
 @media (max-width: 960px) {
    drag-scroll {
     app-category-list-item {
-      min-width: calc(33% - 0.7em);
+      min-width: calc(32.5% - 0.7em);
     }
 }
 }
 
-@media (max-width: 610px) {
+@media (max-width: 700px) {
   drag-scroll {
     app-category-list-item {
       min-width: calc(49% - 0.7em);

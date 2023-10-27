@@ -211,8 +211,7 @@
         2,
         3,
         4,
-        1,
-        5
+        1
       ],
       "status": "public",
       "origin": "Америка",
@@ -555,14 +554,12 @@
       "authorId": 4,
       "cooksId": [
         2,
-        13,
-        5
+        13
       ],
       "favoritesId": [
         1,
         6,
-        13,
-        5
+        13
       ],
       "likesId": [
         6,
@@ -670,11 +667,13 @@
         4,
         10,
         1,
-        3
+        3,
+        5
       ],
       "favoritesId": [
         8,
-        3
+        3,
+        5
       ],
       "likesId": [
         9,
@@ -787,8 +786,7 @@
         6,
         2,
         7,
-        9,
-        5
+        9
       ],
       "favoritesId": [
         7,
@@ -798,8 +796,7 @@
       "likesId": [
         6,
         4,
-        2,
-        5
+        2
       ],
       "status": "public",
       "origin": "Chad",
@@ -1428,8 +1425,7 @@
       "authorId": 5,
       "cooksId": [
         10,
-        9,
-        5
+        9
       ],
       "favoritesId": [
         10,
@@ -2034,8 +2030,7 @@
         9,
         1,
         6,
-        13,
-        5
+        13
       ],
       "status": "public",
       "origin": "Sweden",
@@ -2288,7 +2283,8 @@
         3,
         7,
         6,
-        13
+        13,
+        5
       ],
       "status": "public",
       "origin": "Portugal",
@@ -2391,8 +2387,7 @@
       "authorId": 5,
       "cooksId": [
         9,
-        7,
-        5
+        7
       ],
       "favoritesId": [
         9,
@@ -2403,7 +2398,8 @@
         6,
         4,
         1,
-        7
+        7,
+        5
       ],
       "status": "public",
       "origin": "Guatemala",
@@ -3536,7 +3532,7 @@
       "categories": [
         1
       ],
-      "name": "excepteur ipsum exercitation",
+      "name": "excepteur ipsum exercitat",
       "description": "Простой рецепт приготовления любимого многими слоёного салата \"Сельдь под шубой\", со свёклой, картофелем, морковью и луком.",
       "history": "История селедки под шубой уходит далеко от нашей страны в северные скандинавские края, которые всегда славились избытком вкуснейшей рыбы. Изначально быть может, да, под шубою скрывалась не селедка. Но в кулинарных книгах Норвегии 1851 года можно найти схожий рецепт под названием Sillsallad, что в переводе и означает «селедочный салат». Существует и английский аналог. У нас же блюдо появилось лишь в 1960-х годах прошлого века. Однако, согласитесь, менее вкусным от этого оно не стало.",
       "preparationTime": "10 минут",
@@ -3560,20 +3556,60 @@
       ],
       "instructions": [
         {
-          "images": [],
-          "name": "Ipsum cupidatat magna exercitation exercitation pariatur consequat aliquip occaecat dolor ipsum enim exercitation. Pariatur enim quis nulla deserunt tempor deserunt tempor culpa incididunt dolor ad. Cillum duis cupidatat eiusmod id culpa esse. Occaecat dolor in incididunt irure ea dolor duis enim. Dolore elit veniam velit Lorem voluptate fugiat enim voluptate nostrud. Nulla ullamco velit aliquip veniam consectetur est proident laborum.\r\n"
+          "name": "Ipsum cupidatat magna exercitation exercitation pariatur consequat aliquip occaecat dolor ipsum enim exercitation. Pariatur enim quis nulla deserunt tempor deserunt tempor culpa incididunt dolor ad. Cillum duis cupidatat eiusmod id culpa esse. Occaecat dolor in incididunt irure ea dolor duis enim. Dolore elit veniam velit Lorem voluptate fugiat enim voluptate nostrud. Nulla ullamco velit aliquip veniam consectetur est proident laborum.\r\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
         },
         {
-          "images": [],
-          "name": "Est cillum aute nostrud qui reprehenderit Lorem ipsum sunt veniam adipisicing eiusmod. Et do sit aute adipisicing aute officia. Eiusmod dolor enim labore sit aliquip laborum mollit minim proident amet quis. Duis sunt magna voluptate voluptate culpa aliqua officia reprehenderit dolor. Occaecat est esse nulla consectetur consectetur velit pariatur voluptate tempor veniam elit sunt nostrud.\r\n"
+          "name": "Est cillum aute nostrud qui reprehenderit Lorem ipsum sunt veniam adipisicing eiusmod. Et do sit aute adipisicing aute officia. Eiusmod dolor enim labore sit aliquip laborum mollit minim proident amet quis. Duis sunt magna voluptate voluptate culpa aliqua officia reprehenderit dolor. Occaecat est esse nulla consectetur consectetur velit pariatur voluptate tempor veniam elit sunt nostrud.\r\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
         },
         {
-          "images": [],
-          "name": "Ex et minim exercitation tempor duis cupidatat officia. Excepteur do laboris proident occaecat ullamco nulla sit et. Non non velit ea enim voluptate velit cupidatat mollit enim velit. Dolor Lorem excepteur labore laborum eiusmod quis enim. Tempor Lorem commodo cillum magna sit nulla exercitation sint cupidatat. Non nulla eu est pariatur esse aliquip cillum qui. In nisi do quis reprehenderit cillum id qui ad sit.\r\n"
+          "name": "Ex et minim exercitation tempor duis cupidatat officia. Excepteur do laboris proident occaecat ullamco nulla sit et. Non non velit ea enim voluptate velit cupidatat mollit enim velit. Dolor Lorem excepteur labore laborum eiusmod quis enim. Tempor Lorem commodo cillum magna sit nulla exercitation sint cupidatat. Non nulla eu est pariatur esse aliquip cillum qui. In nisi do quis reprehenderit cillum id qui ad sit.\r\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
         },
         {
-          "images": [],
-          "name": "Sint non ad esse exercitation. Eiusmod voluptate eu qui ullamco exercitation duis aliquip aliquip irure sit occaecat nostrud cillum ea. Occaecat officia consequat eiusmod ad veniam deserunt id officia consequat pariatur veniam. Amet id Lorem exercitation ullamco est proident laboris. Ullamco laboris Lorem adipisicing aliquip labore non anim esse ipsum.\r\n"
+          "name": "Sint non ad esse exercitation. Eiusmod voluptate eu qui ullamco exercitation duis aliquip aliquip irure sit occaecat nostrud cillum ea. Occaecat officia consequat eiusmod ad veniam deserunt id officia consequat pariatur veniam. Amet id Lorem exercitation ullamco est proident laboris. Ullamco laboris Lorem adipisicing aliquip labore non anim esse ipsum.\r\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
         }
       ],
       "nutritions": [],
@@ -3633,10 +3669,11 @@
           "quantity": 46,
           "unit": "proident"
         }
-      ]
+      ],
+      "mainImage": null
     },
     {
-      "name": "Салат с крабовыми палочками",
+      "name": "Салат с крабовыми палочкам",
       "ingredients": [
         {
           "name": "Крабовые палочки",
@@ -3660,12 +3697,12 @@
         },
         {
           "name": "Соль",
-          "quantity": "по вкусу",
+          "quantity": "",
           "unit": ""
         },
         {
           "name": "Перец черный молотый",
-          "quantity": "по вкусу",
+          "quantity": "",
           "unit": ""
         },
         {
@@ -3793,10 +3830,11 @@
       "id": 31,
       "comments": [],
       "publicationDate": "",
-      "status": "private"
+      "status": "private",
+      "mainImage": null
     },
     {
-      "name": "Рикотта в сливочн",
+      "name": "Риds",
       "ingredients": [],
       "instructions": [],
       "mainPhotoUrl": null,
@@ -4035,7 +4073,7 @@
       "status": "private"
     },
     {
-      "name": "fdddf",
+      "name": "fdi",
       "ingredients": [],
       "instructions": [],
       "mainImage": null,
@@ -4057,7 +4095,7 @@
       "status": "private"
     },
     {
-      "name": "dfdffd",
+      "name": "dfdf",
       "ingredients": [],
       "instructions": [],
       "mainImage": null,
@@ -4183,13 +4221,193 @@
       "servings": 1,
       "authorId": 22,
       "categories": [],
-      "cooksId": [],
-      "likesId": [],
+      "cooksId": [
+        5
+      ],
+      "likesId": [
+        5
+      ],
       "favoritesId": [],
       "id": 40,
       "comments": [],
       "publicationDate": "2023.10.26",
       "status": "public"
+    },
+    {
+      "name": "kraboc",
+      "ingredients": [],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 5,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 41,
+      "comments": [],
+      "publicationDate": "",
+      "status": "private"
+    },
+    {
+      "name": "jjkkjkjjjkkj",
+      "ingredients": [],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 5,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 42,
+      "comments": [],
+      "publicationDate": "",
+      "status": "private"
+    },
+    {
+      "name": "jkkjk",
+      "ingredients": [],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 5,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 43,
+      "comments": [],
+      "publicationDate": "",
+      "status": "private"
+    },
+    {
+      "name": "jkkkjjk",
+      "ingredients": [],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 5,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 44,
+      "comments": [],
+      "publicationDate": "",
+      "status": "private"
+    },
+    {
+      "name": "jjkjkk",
+      "ingredients": [],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 5,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 45,
+      "comments": [],
+      "publicationDate": "",
+      "status": "private"
+    },
+    {
+      "name": "gfgffg",
+      "ingredients": [],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 5,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 46,
+      "comments": [],
+      "publicationDate": "",
+      "status": "private"
+    },
+    {
+      "name": "fggggfdddsfsdsdsddfdffds",
+      "ingredients": [],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 5,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 47,
+      "comments": [],
+      "publicationDate": "",
+      "status": "private"
+    },
+    {
+      "name": "fdffdfddfdffff",
+      "ingredients": [],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 5,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 48,
+      "comments": [],
+      "publicationDate": "",
+      "status": "private"
     }
   ],
   "users": [
@@ -4303,13 +4521,13 @@
       "personalWebsite": "https://www.cookingadventures.com/",
       "location": "Лондон, Великобритания",
       "registrationDate": "2023-04-02",
-      "profileViews": 4946,
+      "profileViews": 4949,
       "role": "user"
     },
     {
       "email": "polinaa.kuzmenokk@gmail.com",
       "password": "Krabochki0",
-      "username": "krabochk",
+      "username": "kraboch",
       "id": 5,
       "role": "admin",
       "avatarUrl": {},
@@ -4319,7 +4537,7 @@
       "followersIds": [],
       "socialNetworks": [],
       "personalWebsite": "https://angular.io/errors/",
-      "location": "Беларусь, Гродно",
+      "location": "Беларусь, Гродноn",
       "registrationDate": "2023-10-10",
       "profileViews": 1763
     },
@@ -4411,7 +4629,7 @@
       "personalWebsite": "https://www.interiordesignsbyvictoria.com/",
       "location": "Милан, Италия",
       "registrationDate": "2023-08-12",
-      "profileViews": 3219,
+      "profileViews": 3221,
       "role": "user"
     },
     {

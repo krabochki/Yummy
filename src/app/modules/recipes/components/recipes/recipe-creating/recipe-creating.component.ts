@@ -9,6 +9,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  Renderer2,
   ViewChild,
 } from '@angular/core';
 import {
@@ -80,8 +81,8 @@ export class RecipeCreatingComponent implements OnInit, OnDestroy {
   }
 
   constructor(
+    private renderer: Renderer2,
     private cd: ChangeDetectorRef,
-    private _formBuilder: FormBuilder,
     private authService: AuthService,
     private categoryService: CategoryService,
     private sectionService: SectionService,
@@ -115,6 +116,9 @@ export class RecipeCreatingComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.renderer.addClass(document.body, 'hide-overflow');
+    (<HTMLElement>document.querySelector('.header')).style.width =
+      'calc(100% - 16px)';
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((currentUser: IUser) => {
@@ -243,7 +247,6 @@ export class RecipeCreatingComponent implements OnInit, OnDestroy {
         if (findedCategory) this.selectedCategories.push(findedCategory);
       }
     }
-    console.log(this.form.getRawValue());
     this.beginningData = this.form.getRawValue();
   }
   group: SectionGroup[] = [];
@@ -481,7 +484,6 @@ export class RecipeCreatingComponent implements OnInit, OnDestroy {
       categoriesIds.push(element.id);
     });
 
-    if (this.form.valid) {
       const recipeData: IRecipe = {
         ...this.editedRecipe,
         name: this.form.value.recipeName,
@@ -500,14 +502,19 @@ export class RecipeCreatingComponent implements OnInit, OnDestroy {
         status: this.isAwaitingApprove ? 'awaits' : 'private',
       };
 
-      this.recipeService.updateRecipe(recipeData).subscribe(() => {
+      this.recipeService.updateRecipe(recipeData).subscribe(
+      
+        () => {
+          console.log('before modal')
+          this.successModalShow = true;
+          this.cd.markForCheck()
+                    console.log('after modal');
 
-          
-        this.successModalShow = true;
-        this.handleSuccessModal();
-        });
-  
-    }
+
+      },
+     
+      );
+    
   }
 
   //модальные окна
@@ -543,10 +550,8 @@ export class RecipeCreatingComponent implements OnInit, OnDestroy {
     if (answer) {
       this.isAwaitingApprove = true;
 
-      if (this.editMode)
-        this.editRecipe()
-      else
-      this.createRecipe();
+      if (this.editMode) this.editRecipe();
+      else this.createRecipe();
     }
     this.approveModalShow = false;
   }
@@ -556,8 +561,15 @@ export class RecipeCreatingComponent implements OnInit, OnDestroy {
       JSON.stringify(this.form.getRawValue())
     );
   }
-
+  clickBackgroundNotContent(elem: Event) {
+    if (elem.target !== elem.currentTarget) return;
+    this.areObjectsEqual()
+      ? (this.exitModalShow = true)
+      : this.closeEmitter.emit(true);
+  }
   ngOnDestroy(): void {
+    this.renderer.removeClass(document.body, 'hide-overflow');
+    (<HTMLElement>document.querySelector('.header')).style.width = '100%';
     this.destroyed$.next();
     this.destroyed$.complete();
   }

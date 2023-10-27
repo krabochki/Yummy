@@ -1,40 +1,20 @@
 @import "../../../../../../tools/UI/UI.scss";
 
-
-
-.recipe-list {
-  margin: 0 auto;
-  display: grid;
-  grid-auto-flow: column;
-  row-gap: 1rem;
-  grid-template-rows: 1fr;
+drag-scroll {
   width: 100%;
-  position: relative;
-    grid-auto-columns: calc(19% - 0.7em);
-
+  gap: 1em;
   column-gap: 1em;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding-bottom: 0.5em;
-  scroll-snap-type: x mandatory;
-  display: grid;
-  scroll-behavior: smooth;
 
-  &::-webkit-scrollbar {
-    width: 12px;
-  }
-  &::-webkit-scrollbar-track {
-    border-radius: 20px;
-    background: var(--scroll-body);
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: var(--scroll-thumb);
-    border-radius: 20px;
-    border: 3px solid var(--scroll-body);
+  display: flex;
+  cursor: grab;
+
+  app-category-list-item {
+    height: 100%;
+    margin: 0 0.5em;
+    min-width: calc(19% - 0.6em);
+    margin-bottom: 0.5em;
   }
 }
-
-
 
 .svg-arrow {
   height: 3em;
@@ -51,27 +31,26 @@
   margin-right: 0.2em;
 }
 
-.has-scroll{
-
-
-  &::after{
-           height: calc(100% - 1.3em);
+.has-scroll {
+  &::after {
+    height: calc(100% - 1.3em);
     width: 15%;
-    background: linear-gradient(to right, transparent 0%,var(--color-background));
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      var(--color-background)
+    );
 
     z-index: 1;
-    right: 0;
+    right: -0.2em;
     top: 0;
     content: "";
     position: absolute;
     pointer-events: none;
-
   }
 }
 .wrap {
   position: relative;
-
-
 
   .scroll-left {
     position: absolute;
@@ -98,50 +77,33 @@
   }
 }
 
-app-recipe-list-item {
-  scroll-snap-align: start;
+@media (max-width: 1400px) {
+  drag-scroll {
+    app-category-list-item {
+      min-width: calc(24% - 0.7em);
+    }
+  }
 }
 
-
-@media(max-width:1400px){
-  .recipe-list {
-      scroll-snap-type:none;
-
-    justify-content: center;
-    align-items: start;
-    grid-auto-columns: calc(24% - 0.7em);
-    app-category-list-item{
-      justify-content: center;
-      align-items: center;
-      display: flex;
+@media (max-width: 960px) {
+   drag-scroll {
+    app-category-list-item {
+      min-width: calc(33% - 0.7em);
     }
 }
 }
 
-@media(max-width:960px){
-
- .recipe-list {
-        justify-content: start;
-
-    grid-auto-columns: calc(33% - 0.7em);
+@media (max-width: 610px) {
+  drag-scroll {
+    app-category-list-item {
+      min-width: calc(49% - 0.7em);
+    }
 }
 }
-
-@media(max-width:610px){
-
- .recipe-list {
-        justify-content: start;
-
-    grid-auto-columns: calc(49% - 0.7em);
-}
-}
-
-
 
 @media (max-width: 480px) {
-
-  .has-scroll{
-    &::after{
+  .has-scroll {
+    &::after {
       display: none;
     }
   }
@@ -149,24 +111,11 @@ app-recipe-list-item {
   .scroll-right {
     display: none;
   }
-  .recipe-list {
-    grid-auto-columns: unset;
 
-    grid-auto-flow: column;
-    grid-template-rows: 1fr;
-  overflow-x: scroll;
-    justify-content: start;
-
-  overflow-y: hidden;
-  scroll-behavior: smooth;
-    padding-right: 6%;
-
-    column-gap: 1rem;
-    grid-template-rows: 1fr;
-    &::-webkit-scrollbar {
-      display: none; /* Safari and Chrome */
+  drag-scroll {
+    app-category-list-item {
+      min-width: 8em
     }
-  }
- 
 }
-
+    
+}

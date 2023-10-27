@@ -16,7 +16,6 @@ import { SectionService } from './modules/recipes/services/section.service';
 import { CategoryService } from './modules/recipes/services/category.service';
 import { RecipeService } from './modules/recipes/services/recipe.service';
 import { UserService } from './modules/user-pages/services/user.service';
-import { MAT_AUTOCOMPLETE_SCROLL_STRATEGY } from '@angular/material/autocomplete';
 import { RecipesModule } from './modules/recipes/recipes.module';
 
 export function initializeSections(sectionSerivce: SectionService) {

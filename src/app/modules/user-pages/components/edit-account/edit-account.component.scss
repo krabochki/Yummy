@@ -9,6 +9,7 @@
 }}
 
 .edit-cont {
+
   background-color: var(--modal-black);
   width: 100vw;
   height: 100vh;
@@ -28,18 +29,30 @@
     height: 2em;
   }
   .content {
+
     padding: 2.5em 5vw;
-    border-radius: var(--space-l) 0 0 var(--space-l);
-    display: flex;
+    border-radius: var(--space-l);
+  
+    width: 40rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        row-gap: 2em;
+        flex-direction: column;
+
+
+    background-color: var(--color-background);
+
+    .form{
+      width: 100%;
+          row-gap: 2em;
+
+          overflow-y: scroll;
+            display: flex;
     align-items: center;
     flex-direction: column;
-    row-gap: 2em;
-    width: 40rem;
-
-    max-height: 80vh;
-    overflow-x: visible;
-    overflow-y: scroll;
-    background-color: var(--color-background);
+    max-height: 60vh;
+    padding-right: 0.5em;
 
     &::-webkit-scrollbar {
       width: 12px;
@@ -53,6 +66,10 @@
       border-radius: 20px;
       border: 3px solid var(--scroll-body);
     }
+
+    }
+
+    
   }
   h1 {
     text-align: center;
@@ -111,7 +128,7 @@
   .exit {
     display: flex;
     align-items: center;
-    top: -0.5em;left:-0.5em;
+    top: -0.5em;right:-0.5em;
     justify-content: center;
     line-height: 1;
     cursor: pointer;
@@ -120,11 +137,10 @@
    
     width: 2em;
     font-weight: 1000;
-    opacity: 0.5;
     transition: 0.2s ease-in-out;
 
     &:hover{
-      opacity: 1;
+      scale: 1.15;
     }
     
     height: 2em;
@@ -163,20 +179,34 @@ app-modal {
 
 
 @media(max-width:768px){
-   .edit-cont .content {
+
+.edit-cont  .content {
     border-radius: 0;
     row-gap: 2em;
     width: 100vw;
 
     height: 100vh;
     max-height: unset;
-  
+    padding-bottom: 4em;
+    padding-top: 4em;
 
-    &::-webkit-scrollbar {
-    display: none;
+    row-gap: 1em;
+    overflow-y: scroll;
+
+    .form {
+      width: 100%;
+      max-height: unset;
+      height: 100%;
+      overflow-y: unset;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
     }
-   
   }
+
+   
+  
   .edit-cont{
       .exit {
    

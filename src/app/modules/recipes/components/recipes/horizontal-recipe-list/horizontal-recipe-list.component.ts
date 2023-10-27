@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, HostListener, Input, OnChanges, ViewChild } from '@angular/core';
+import { DragScrollComponent } from 'ngx-drag-scroll';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 
 @Component({
@@ -7,22 +8,26 @@ import { IRecipe } from 'src/app/modules/recipes/models/recipes';
   styleUrls: ['./horizontal-recipe-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HorizontalRecipeListComponent {
+export class HorizontalRecipeListComponent implements OnChanges {
   @Input() recipes: IRecipe[] = [];
   @Input() showAuthor: boolean = true;
 
-  @ViewChild('list')
-  list: ElementRef | null = null;
+  disableDrag = false;
+  @ViewChild('nav', { read: DragScrollComponent }) ds?: DragScrollComponent;
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.disableDrag = window.innerWidth < 480;
+  }
+  ngOnChanges() {
+    this.onResize();
+  }
 
   scrollLeft() {
-    if (this.list)
-      this.list.nativeElement.scrollLeft -=
-        this.list.nativeElement.scrollWidth / this.recipes.length;
+    this.ds?.moveLeft();
   }
 
   scrollRight() {
-    if (this.list)
-      this.list.nativeElement.scrollLeft +=
-        this.list.nativeElement.scrollWidth / this.recipes.length;
+    this.ds?.moveRight();
   }
 }

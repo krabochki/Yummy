@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { CommonModule, NgFor } from '@angular/common';
 import { RecipesRoutingModule } from './recipes-routing.module';
 import { RecipesComponent } from './recipes.component';
@@ -18,17 +18,14 @@ import { SvgIconComponent, provideAngularSvgIcon } from 'angular-svg-icon';
 import { ControlsModule } from '../controls/controls.module';
 import { CdkDropList, CdkDragHandle, CdkDrag } from '@angular/cdk/drag-drop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MAT_AUTOCOMPLETE_SCROLL_STRATEGY, MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatInputModule } from '@angular/material/input';
 import { AsyncPipe } from '@angular/common';
    
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
+import { DragScrollModule } from 'ngx-drag-scroll';
 
 import { VerticalRecipeListComponent } from './components/recipes/vertical-recipe-list/vertical-recipe-list.component';
 import { VerticalCategoryListComponent } from './components/categories/vertical-category-list/vertical-category-list.component';
-import { SectionService } from './services/section.service';
 
 
 @NgModule({
@@ -50,6 +47,7 @@ import { SectionService } from './services/section.service';
   ],
   imports: [
     CommonModule,
+    DragScrollModule,
     NgFor,
     ControlsModule,
     RecipesRoutingModule,
@@ -58,9 +56,6 @@ import { SectionService } from './services/section.service';
     ControlsModule,
     ControlsModule,
     CommonModule,
-    MatFormFieldModule,
-    MatAutocompleteModule,
-    MatInputModule,
     AsyncPipe,
     CdkDropList,
     CdkDragHandle,

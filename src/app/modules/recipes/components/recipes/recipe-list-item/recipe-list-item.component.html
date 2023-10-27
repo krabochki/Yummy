@@ -7,14 +7,14 @@
       Здесь могла быть <br />
       ваша реклама
     </p>
-    <svg-icon [applyClass]="true" class="no-recipe-svg"
+    <svg-icon  [applyClass]="true" class="no-recipe-svg"
       [src]="'../../../../../assets/images/svg/no-recipe.svg'"></svg-icon>
   </div>
 </ng-template>
-<div *ngIf="dataLoaded && recipe.id > 0; else sceleton" class="recipe" [title]="recipe.name">
+<div *ngIf="dataLoaded && recipe.id > 0; else sceleton" class="recipe" >
   <div class="top">
     <div></div>
-    <div [ngClass]="{'disabled':recipe.status==='awaits'}" *ngIf="recipe.authorId === currentUserId || recipe.status === 'public'"
+    <div (click)="handleInnerFunction($event)" [ngClass]="{'disabled':recipe.status==='awaits'}" *ngIf="recipe.authorId === currentUserId || recipe.status === 'public'"
       (click)="recipe.status === 'public' ? makeThisRecipeFavorite() : editMode=true" class="fav">
       <svg-icon *ngIf="recipe.status !== 'public'" [src]="'../../../../../assets/images/svg/pen.svg'"
         [applyClass]="true" class="fav-icon"></svg-icon>
@@ -26,23 +26,23 @@
   </div>
   <div class="bottom">
     <div class="title" [ngClass]="{ 'no-author': !showAuthor }">
-      <h1 [routerLink]="'/recipes/list/' + recipe.id">{{ recipe.name }}</h1>
+      <h1 [routerLink]="'/recipes/list/' + recipe.id" [title]="recipe.name">{{ recipe.name }}</h1>
     </div>
-    <div *ngIf="showAuthor" [routerLink]="'/cooks/list/' + author.id" class="author">
+    <div (click)="handleInnerFunction($event)" *ngIf="showAuthor" [title]="author.fullName===''?('@'+author.username):author.fullName" [routerLink]="'/cooks/list/' + author.id" class="author">
       {{ author.fullName===''?('@'+author.username):author.fullName }}
     </div>
 
     <div class="rate-panel" *ngIf="recipe.status === 'public'">
-      <div class="rate-item likes" (click)="likeThisRecipe()">
+      <div   (click)="handleInnerFunction($event)" class="rate-item likes" (click)="likeThisRecipe()">
         <svg-icon *ngIf="!isRecipeLiked" [src]="'../../../../../assets/images/svg/like.svg'" [applyClass]="true"
           class="like-icon"></svg-icon>
         <svg-icon *ngIf="isRecipeLiked" [src]="'../../../../../assets/images/svg/like-fill.svg'" [applyClass]="true"
           class="like-icon liked"></svg-icon>
-        <span [ngClass]="{ liked: isRecipeLiked }">{{
+        <span class="likes-num" [ngClass]="{ liked: isRecipeLiked }">{{
           recipe.likesId.length
           }}</span>
       </div>
-      <div class="rate-item cooks" (click)="cookThisRecipe()">
+      <div (click)="handleInnerFunction($event)" class="rate-item cooks" (click)="cookThisRecipe()">
         <svg-icon *ngIf="!isRecipeCooked" [src]="'../../../../../assets/images/svg/cook.svg'" [applyClass]="true"
           class="cook-icon"></svg-icon>
         <svg-icon *ngIf="isRecipeCooked" [src]="'../../../../../assets/images/svg/cook-fill.svg'" [applyClass]="true"

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { IRecipe } from '../models/recipes';
-import { BehaviorSubject, catchError, map, switchMap, take, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, map, mergeMap, switchMap, take, tap, throwError } from 'rxjs';
 import { recipesUrl } from 'src/tools/source';
 
 @Injectable({
@@ -94,45 +94,41 @@ export class RecipeService {
   }
 
   publicRecipe(recipe: IRecipe): IRecipe {
-    recipe.status = 'public';
-    
+    recipe.status = 'public';  
+    recipe.publicationDate = this.getCurrentDate();
+    return recipe;
+  }
+
+  getCurrentDate():string {
     const today = new Date();
     const dd = String(today.getDate()).padStart(2, '0');
     const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     const yyyy = today.getFullYear();
-    const todayString = yyyy + '.' + mm + '.' + dd;
-
-    recipe.publicationDate = todayString;
-    return recipe;
+    return yyyy + '.' + mm + '.' + dd;
   }
+
   dismissRecipe(recipe: IRecipe): IRecipe {
     recipe.status = 'private';
     return recipe;
   }
 
   updateRecipe(recipe: IRecipe) {
-    const url = `${this.url}/${recipe.id}`;
-
-    return this.http.put<IRecipe>(url, recipe).pipe(
-      switchMap((updatedRecipe) => {
-        return this.recipesSubject.pipe(
-          map((currentRecipes) => {
-            const index = currentRecipes.findIndex(
-              (r) => r.id === updatedRecipe.id,
-            );
-            if (index !== -1) {
-              const updatedUsers = [...currentRecipes];
-              updatedUsers[index] = updatedRecipe;
-              this.recipesSubject.next(updatedUsers);
-            }
-            return updatedRecipe;
-          }),
+    
+    return this.http.put<IRecipe>(`${this.url}/${recipe.id}`, recipe).pipe(
+      tap((updatedRecipe: IRecipe) => {
+        const currentRecipes = this.recipesSubject.value;
+        const index = currentRecipes.findIndex(
+          (r) => r.id === updatedRecipe.id,
         );
-      }),
-      catchError((error) => {
-        return throwError(error);
+        if (index !== -1) {
+          const updatedRecipes = [...currentRecipes];
+          updatedRecipes[index] = updatedRecipe;
+
+          this.recipesSubject.next(updatedRecipes);
+        }
       }),
     );
+
   }
 
   getFavoriteRecipesByUser(recipes: IRecipe[], user: number) {

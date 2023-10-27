@@ -86,6 +86,9 @@ export class MainPageComponent implements OnInit, OnDestroy {
           });
       });
   }
+  closeEdit() {
+    this.creatingMode = false;
+  }
 
   ngOnDestroy(): void {
     this.destroyed$.next();

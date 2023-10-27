@@ -19,6 +19,7 @@ import { CountInputComponent } from './count-input/count-input.component';
 import { UsualInputComponent } from './usual-input/usual-input.component';
 import { ExpandingInputComponent } from './expanding-input/expanding-input.component';
 import { AutocompleteComponent } from './autocomplete/autocomplete.component';
+
 @NgModule({
   declarations: [
     ButtonComponent,
@@ -41,7 +42,7 @@ import { AutocompleteComponent } from './autocomplete/autocomplete.component';
     FormsModule,
     ShareButtonsModule,
     ShareIconsModule,
-    SvgIconComponent,
+    SvgIconComponent
   ],
   exports: [
     ButtonComponent,

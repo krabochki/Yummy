@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Input,
   OnDestroy,
@@ -48,13 +49,14 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private userService: UserService,
     private router: Router,
+    private cd:ChangeDetectorRef
   ) {}
 
   @Input() showAuthor: boolean = true;
 
   editModeOff() {
     this.editMode = false;
-    console.log('off')
+    console.log('off');
   }
   ngOnInit() {
     this.authService.currentUser$
@@ -79,6 +81,8 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
                 this.currentUserId,
               );
             }
+            this.cd.markForCheck()
+            console.log('lol')
           });
       });
 
@@ -90,7 +94,8 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
           else return false;
         });
         if (findedAuthor) this.author = findedAuthor;
-        this.dataLoaded = true;
+        this.dataLoaded = true;            this.cd.markForCheck();
+
       });
   }
 
@@ -121,7 +126,11 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
       );
   }
 
-  //(действия модератора по одобрению рецептов потом будут в компоненте полной страницы)
+  handleInnerFunction(event: Event) {
+    // Этот метод вызывается при клике на внутренний элемент рецепта
+    // Останавливаем всплытие события, чтобы оно не дошло до внешнего контейнера
+    event.stopPropagation();
+  }
 
   //лайкаем рецепт
   likeThisRecipe() {

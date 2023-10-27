@@ -5,8 +5,10 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnDestroy,
   OnInit,
   Output,
+  Renderer2,
 } from '@angular/core';
 import { usernameMask } from 'src/tools/regex';
 import { IUser, nullUser, SocialNetwork } from '../../models/users';
@@ -38,9 +40,10 @@ import { AuthService } from 'src/app/modules/authentication/services/auth.servic
   animations: [trigger('modal', modal())],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EditAccountComponent implements OnInit, AfterContentChecked {
+export class EditAccountComponent
+  implements OnInit, AfterContentChecked, OnDestroy
+{
   @Input() editableUser: IUser = { ...nullUser };
-  @Output() updatedUser = new EventEmitter<IUser>();
   @Output() closeEmitter = new EventEmitter<boolean>();
 
   saveModal: boolean = false;
@@ -52,13 +55,14 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
   myImage: string = '';
   defaultImage: string = '../../../../../assets/images/add-userpic.png';
   form: FormGroup;
-  beginningData:any;
+  beginningData: any;
 
   ngAfterContentChecked(): void {
     this.cdr.detectChanges();
   }
 
   constructor(
+    private renderer: Renderer2,
     private cdr: ChangeDetectorRef,
     private userService: UserService,
     private authService: AuthService,
@@ -118,8 +122,7 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
         return isValid
           ? of(null)
           : of({ customPattern: { value: control.value } });
-      }
-      else return of(null)
+      } else return of(null);
     };
   }
   customPatternValidator(pattern: RegExp): ValidatorFn {
@@ -129,9 +132,11 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
     };
   }
 
-  
-
   ngOnInit() {
+    this.renderer.addClass(document.body, 'hide-overflow');
+    (<HTMLElement>document.querySelector('.header')).style.width =
+      'calc(100% - 16px)';
+    this.renderer.addClass(document.body, 'hide-overflow');
     this.newUser = { ...this.editableUser };
     this.form.get('username')?.setValue(this.newUser.username);
     this.form.get('quote')?.setValue(this.newUser.quote);
@@ -155,21 +160,20 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
           break;
       }
     }
-    
-      if (this.newUser.avatarUrl !== null) {
-        try {
-          const mainImageData: FormData = this.newUser.avatarUrl;
-          const mainpicFile = mainImageData.get('file') as File;
-          if (mainpicFile) {
-            this.form.get('image')?.setValue(mainImageData);
-            const objectURL = URL.createObjectURL(mainpicFile);
-            this.myImage = objectURL;
-          }
-        } catch (error) {
-          console.error(error);
+
+    if (this.newUser.avatarUrl !== null) {
+      try {
+        const mainImageData: FormData = this.newUser.avatarUrl;
+        const mainpicFile = mainImageData.get('file') as File;
+        if (mainpicFile) {
+          this.form.get('image')?.setValue(mainImageData);
+          const objectURL = URL.createObjectURL(mainpicFile);
+          this.myImage = objectURL;
         }
+      } catch (error) {
       }
-    
+    }
+
     this.beginningData = this.form.getRawValue();
 
     this.userService.users$.subscribe((data: IUser[]) => {
@@ -184,9 +188,9 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
 
     if (userpicFile) {
       this.form.get('userpic')?.setValue(userpicFile);
-        const objectURL = URL.createObjectURL(userpicFile);
-        this.myImage = objectURL;
-      }
+      const objectURL = URL.createObjectURL(userpicFile);
+      this.myImage = objectURL;
+    }
   }
 
   usernameExistsValidator() {
@@ -212,11 +216,10 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
   //проверяем равны ли все поля в обьектах
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   areObjectsEqual(): boolean {
-      return (
-        JSON.stringify(this.beginningData) !==
-        JSON.stringify(this.form.getRawValue())
-      );
-
+    return (
+      JSON.stringify(this.beginningData) !==
+      JSON.stringify(this.form.getRawValue())
+    );
   }
 
   updateUser() {
@@ -238,14 +241,12 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
     const userpicData = new FormData();
     userpicData.append('image', this.form.get('userpic')?.value);
 
-    
-
     this.newUser = {
       ...this.editableUser,
-    
+
       username: this.form.value.username,
       fullName: this.form.value.fullname,
-      avatarUrl:userpicData,
+      avatarUrl: userpicData,
       quote: this.form.value.quote,
       personalWebsite: this.form.value.website,
       description: this.form.value.description,
@@ -276,7 +277,6 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
         );
       },
     );
-
   }
 
   handleSaveModal(answer: boolean) {
@@ -289,7 +289,6 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleSuccessModal(answer: boolean) {
     this.closeEmitter.emit(true);
-        this.updatedUser.emit(this.newUser);
 
     this.successModal = false;
   }
@@ -298,5 +297,14 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
       this.closeEmitter.emit(true);
     }
     this.closeModal = false;
+  }
+
+  clickBackgroundNotContent(elem: Event) {
+    if (elem.target !== elem.currentTarget) return;
+    this.areObjectsEqual() ? (this.closeModal = true) : this.closeEmitter.emit(true);
+  }
+  ngOnDestroy(): void {
+    this.renderer.removeClass(document.body, 'hide-overflow');
+    (<HTMLElement>document.querySelector('.header')).style.width = '100%';
   }
 }

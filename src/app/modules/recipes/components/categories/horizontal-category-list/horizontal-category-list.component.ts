@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, HostListener, Input, OnChanges, ViewChild } from '@angular/core';
+import { DragScrollComponent } from 'ngx-drag-scroll';
 import { ICategory, ISection, nullCategory, nullSection } from 'src/app/modules/recipes/models/categories';
 
 @Component({
@@ -15,27 +16,29 @@ export class HorizontalCategoryListComponent implements OnChanges {
   list: ElementRef | null = null;
   @Input() context: 'category' | 'section' = 'category';
 
-  scrollLeft() {
-    if (this.list)
-      this.list.nativeElement.scrollLeft -=
-        this.list.nativeElement.scrollWidth / this.categories.length;
-  }
 
-  scrollRight() {
-    if (this.list)
-      this.list.nativeElement.scrollLeft +=
-        this.list.nativeElement.scrollWidth / this.categories.length;
-  }
 
   showScrollButtons = true;
-  ngOnChanges() {
-    this.onResize();
-  }
 
   filterNullBlocks() {
     this.categories = this.categories.filter((block) => block.id !== 0);
   }
 
+  disableDrag = false;
+  @ViewChild('nav', { read: DragScrollComponent }) ds?: DragScrollComponent;
+
+
+  ngOnChanges() {
+    this.onResize();
+  }
+
+  scrollLeft() {
+    this.ds?.moveLeft();
+  }
+
+  scrollRight() {
+    this.ds?.moveRight();
+  }
 
   //фиктивные блоки для случая если их меньше чем длина блоков в строке(чтобы не было пустого пространства) и проверка нужны для кнопки скролла
   blockScheme(blocksInRow: number) {
@@ -65,20 +68,18 @@ export class HorizontalCategoryListComponent implements OnChanges {
         this.showScrollButtons = true;
     }
 
-
-      
-      this.filterNullBlocks();
-      if (this.categories.length < blocksInRow) {
-        while (this.categories.length < blocksInRow) {
-          this.categories.push(nullSection);
-        }
+    this.filterNullBlocks();
+    if (this.categories.length < blocksInRow) {
+      while (this.categories.length < blocksInRow) {
+        this.categories.push(nullSection);
       }
+    }
   }
-
-  
 
   @HostListener('window:resize', ['$event'])
   onResize() {
+        this.disableDrag = window.innerWidth < 480;
+
     const event = window.innerWidth;
     switch (true) {
       case event < 480:

@@ -17,7 +17,6 @@
     "@angular/compiler": "^16.2.0",
     "@angular/core": "^16.2.0",
     "@angular/forms": "^16.2.0",
-    "@angular/material": "^16.2.8",
     "@angular/platform-browser": "^16.2.0",
     "@angular/platform-browser-dynamic": "^16.2.0",
     "@angular/router": "^16.2.0",
@@ -27,7 +26,8 @@
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "angular-svg-icon": "^16.1.0",
     "json-server": "^0.17.4",
-    "material": "^0.6.1",
+    "ng-disable-scroll": "^0.1.1",
+    "ngx-drag-scroll": "^16.0.0",
     "ngx-sharebuttons": "^13.0.0",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "rxjs": "~7.8.0"

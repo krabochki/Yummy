@@ -27,6 +27,8 @@
         ((100vw - 768px) / (1920 - 1160))
     );
 
+    
+
   grid-template-columns: repeat(3, max-content);
   background-color: var(--color-background-deeper-unactive);
   position: fixed;
@@ -200,6 +202,11 @@ p {
 }
 
 @media (max-width: 480px) {
+
+
+  .header{
+    width: 100% !important;
+  }
   .menu-bottom {
     height: 4em;
     width: 100%;

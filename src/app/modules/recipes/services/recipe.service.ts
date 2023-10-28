@@ -93,7 +93,7 @@ export class RecipeService {
     );
   }
 
-  publicRecipe(recipe: IRecipe): IRecipe {
+  approveRecipe(recipe: IRecipe): IRecipe {
     recipe.status = 'public';  
     recipe.publicationDate = this.getCurrentDate();
     return recipe;

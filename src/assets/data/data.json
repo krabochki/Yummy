@@ -83,12 +83,6 @@
         18,
         19
       ]
-    },
-    {
-      "id": 9,
-      "name": "Национальное",
-      "photoUrl": "",
-      "categoriesId": []
     }
   ],
   "categories": [
@@ -2844,118 +2838,6 @@
       ]
     },
     {
-      "id": 23,
-      "mainPhotoUrl": null,
-      "comments": [],
-      "categories": [],
-      "name": "eiusmod exercitation consectetur",
-      "description": "Eiusmod consequat amet nisi amet ex deserunt. Irure Lorem non quis do. Ea aliquip amet sint dolor sint aliqua adipisicing. Nisi adipisicing officia veniam elit culpa cupidatat quis nulla. Qui officia deserunt deserunt labore consectetur nulla occaecat sunt est id adipisicing quis laboris. Ea enim fugiat enim ipsum tempor esse adipisicing aliqua veniam aliqua.\r\nEnim velit ex ut dolore et amet aliqua officia consequat et. Laborum commodo veniam proident amet consequat excepteur Lorem velit eu. Sit sit veniam dolore Lorem do cillum ea ullamco cupidatat voluptate deserunt excepteur.\r\nIpsum quis dolore quis laborum ea esse tempor excepteur labore officia. Pariatur qui veniam est voluptate deserunt laboris non id adipisicing culpa. Anim do do ut aliqua excepteur velit. Do voluptate nulla nisi occaecat veniam consectetur aute. Aute veniam nisi esse quis voluptate non fugiat eiusmod proident proident commodo magna laborum deserunt. Reprehenderit laboris consectetur est ex incididunt aute esse voluptate velit commodo aute. Elit adipisicing magna nisi dolor eiusmod.\r\n",
-      "history": "Enim ad minim consequat ipsum ex qui pariatur aute sunt non culpa excepteur ut. Sit tempor aliqua dolor esse sint dolor duis elit magna incididunt eu. Quis incididunt occaecat mollit anim incididunt ad. Tempor in veniam anim in.\r\nIncididunt aute elit incididunt excepteur. Reprehenderit officia excepteur tempor eiusmod et mollit reprehenderit reprehenderit adipisicing esse amet laborum. Nulla magna et velit ad. Pariatur dolor tempor ea ea sit tempor sunt consequat.\r\n",
-      "preparationTime": "velit ea voluptate occaecat Lorem",
-      "cookingTime": "aliquip excepteur est eu veniam",
-      "servings": 5,
-      "authorId": 5,
-      "cooksId": [],
-      "favoritesId": [],
-      "likesId": [],
-      "status": "private",
-      "origin": "Moldova",
-      "publicationDate": "2020-07-14",
-      "instuctions": [
-        "magna",
-        "enim",
-        "in",
-        "ad",
-        "minim",
-        "ut",
-        "excepteur"
-      ],
-      "instructions": [
-        {
-          "images": [],
-          "name": "Esse sunt exercitation cillum tempor consectetur ut ipsum nostrud pariatur in. Ex enim elit sunt nisi velit proident et dolor ad aliquip. Minim deserunt ad duis id consectetur cillum deserunt labore. Sit eiusmod occaecat laborum ad ex minim. Pariatur minim laborum eiusmod quis.\r\n"
-        },
-        {
-          "images": [],
-          "name": "Veniam sunt consequat Lorem irure. Fugiat id veniam reprehenderit laboris id aliqua exercitation tempor ipsum eu est in. Aute exercitation commodo pariatur amet elit est laboris anim.\r\n"
-        },
-        {
-          "images": [],
-          "name": "Ipsum laboris proident ex laborum veniam consectetur aliqua aliqua esse. Laborum magna et dolore laboris dolore incididunt velit mollit quis adipisicing. Consectetur quis mollit consectetur duis elit nostrud. Cupidatat occaecat proident mollit voluptate commodo ullamco aute quis reprehenderit esse elit do irure in.\r\n"
-        },
-        {
-          "images": [],
-          "name": "Velit sint mollit labore velit aute in. Velit voluptate incididunt incididunt adipisicing dolor amet tempor est. Proident deserunt laboris minim do laboris non nisi voluptate ea ipsum minim ad. Duis eu ea culpa sunt enim anim consectetur nisi mollit culpa Lorem ex amet. Occaecat non aliquip eu id.\r\n"
-        },
-        {
-          "images": [],
-          "name": "In ullamco nostrud ipsum aliquip est aliquip. Adipisicing incididunt officia eu quis enim labore amet aliquip. Ipsum do nostrud enim nostrud deserunt aliqua minim mollit. Laborum voluptate consequat fugiat officia esse sit non proident pariatur id.\r\n"
-        },
-        {
-          "images": [],
-          "name": "Esse culpa id incididunt Lorem do. Anim dolor quis cupidatat anim consequat irure veniam ex dolor nostrud officia adipisicing amet. Fugiat ipsum id aliqua sunt cillum. Deserunt quis incididunt nisi duis duis. Amet anim ea anim commodo culpa anim est.\r\n"
-        },
-        {
-          "images": [],
-          "name": "Consectetur labore pariatur dolor ullamco deserunt nisi id Lorem est qui reprehenderit anim. Enim do non non ut aliqua magna quis deserunt irure consectetur. Sunt et id elit laborum ipsum occaecat nisi veniam ullamco Lorem irure id. Lorem culpa ea aliqua consequat velit qui deserunt cupidatat amet aliquip veniam eu. Labore qui enim non deserunt veniam. Enim dolore labore non et ullamco qui esse aliqua dolore. Ullamco magna reprehenderit dolore nostrud do aute ullamco in.\r\n"
-        }
-      ],
-      "nutritions": [
-        {
-          "name": "consequat",
-          "quantity": 34,
-          "unit": "ut"
-        },
-        {
-          "name": "anim",
-          "quantity": 33,
-          "unit": "ut"
-        },
-        {
-          "name": "quis",
-          "quantity": 23,
-          "unit": "non"
-        }
-      ],
-      "ingredients": [
-        {
-          "name": "labore",
-          "quantity": 18,
-          "unit": "dolore"
-        },
-        {
-          "name": "consequat",
-          "quantity": 46,
-          "unit": "velit"
-        },
-        {
-          "name": "officia",
-          "quantity": 32,
-          "unit": "laboris"
-        },
-        {
-          "name": "laboris",
-          "quantity": 42,
-          "unit": "do"
-        },
-        {
-          "name": "exercitation",
-          "quantity": 25,
-          "unit": "non"
-        },
-        {
-          "name": "eiusmod",
-          "quantity": 27,
-          "unit": "ipsum"
-        },
-        {
-          "name": "et",
-          "quantity": 30,
-          "unit": "et"
-        }
-      ]
-    },
-    {
       "id": 24,
       "categories": [
         9,
@@ -3534,337 +3416,6 @@
       ]
     },
     {
-      "id": 30,
-      "mainPhotoUrl": null,
-      "comments": [],
-      "categories": [
-        1
-      ],
-      "name": "excepteur ipsum exercitat",
-      "description": "Простой рецепт приготовления любимого многими слоёного салата \"Сельдь под шубой\", со свёклой, картофелем, морковью и луком.",
-      "history": "История селедки под шубой уходит далеко от нашей страны в северные скандинавские края, которые всегда славились избытком вкуснейшей рыбы. Изначально быть может, да, под шубою скрывалась не селедка. Но в кулинарных книгах Норвегии 1851 года можно найти схожий рецепт под названием Sillsallad, что в переводе и означает «селедочный салат». Существует и английский аналог. У нас же блюдо появилось лишь в 1960-х годах прошлого века. Однако, согласитесь, менее вкусным от этого оно не стало.",
-      "preparationTime": "10 минут",
-      "cookingTime": "1 день",
-      "servings": "10",
-      "authorId": 5,
-      "cooksId": [],
-      "favoritesId": [],
-      "likesId": [],
-      "status": "private",
-      "origin": "Россия",
-      "publicationDate": "",
-      "instuctions": [
-        "exercitation",
-        "voluptate",
-        "eu",
-        "aliqua",
-        "dolore",
-        "ipsum",
-        "culpa"
-      ],
-      "instructions": [
-        {
-          "name": "Ipsum cupidatat magna exercitation exercitation pariatur consequat aliquip occaecat dolor ipsum enim exercitation. Pariatur enim quis nulla deserunt tempor deserunt tempor culpa incididunt dolor ad. Cillum duis cupidatat eiusmod id culpa esse. Occaecat dolor in incididunt irure ea dolor duis enim. Dolore elit veniam velit Lorem voluptate fugiat enim voluptate nostrud. Nulla ullamco velit aliquip veniam consectetur est proident laborum.\r\n",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        },
-        {
-          "name": "Est cillum aute nostrud qui reprehenderit Lorem ipsum sunt veniam adipisicing eiusmod. Et do sit aute adipisicing aute officia. Eiusmod dolor enim labore sit aliquip laborum mollit minim proident amet quis. Duis sunt magna voluptate voluptate culpa aliqua officia reprehenderit dolor. Occaecat est esse nulla consectetur consectetur velit pariatur voluptate tempor veniam elit sunt nostrud.\r\n",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        },
-        {
-          "name": "Ex et minim exercitation tempor duis cupidatat officia. Excepteur do laboris proident occaecat ullamco nulla sit et. Non non velit ea enim voluptate velit cupidatat mollit enim velit. Dolor Lorem excepteur labore laborum eiusmod quis enim. Tempor Lorem commodo cillum magna sit nulla exercitation sint cupidatat. Non nulla eu est pariatur esse aliquip cillum qui. In nisi do quis reprehenderit cillum id qui ad sit.\r\n",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        },
-        {
-          "name": "Sint non ad esse exercitation. Eiusmod voluptate eu qui ullamco exercitation duis aliquip aliquip irure sit occaecat nostrud cillum ea. Occaecat officia consequat eiusmod ad veniam deserunt id officia consequat pariatur veniam. Amet id Lorem exercitation ullamco est proident laboris. Ullamco laboris Lorem adipisicing aliquip labore non anim esse ipsum.\r\n",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        }
-      ],
-      "nutritions": [],
-      "ingredients": [
-        {
-          "name": "voluptate",
-          "quantity": 46,
-          "unit": "veniam"
-        },
-        {
-          "name": "est",
-          "quantity": 35,
-          "unit": "laborum"
-        },
-        {
-          "name": "occaecat",
-          "quantity": 14,
-          "unit": "magna"
-        },
-        {
-          "name": "aute",
-          "quantity": 35,
-          "unit": "cupidatat"
-        },
-        {
-          "name": "reprehenderit",
-          "quantity": 42,
-          "unit": "voluptate"
-        },
-        {
-          "name": "non",
-          "quantity": 4,
-          "unit": "deserunt"
-        },
-        {
-          "name": "cillum",
-          "quantity": 43,
-          "unit": "nostrud"
-        },
-        {
-          "name": "laborum",
-          "quantity": 17,
-          "unit": "ipsum"
-        },
-        {
-          "name": "veniam",
-          "quantity": 9,
-          "unit": "officia"
-        },
-        {
-          "name": "elit",
-          "quantity": 44,
-          "unit": "voluptate"
-        },
-        {
-          "name": "reprehenderit",
-          "quantity": 46,
-          "unit": "proident"
-        }
-      ],
-      "mainImage": null
-    },
-    {
-      "name": "Салат с крабовыми палочкам",
-      "ingredients": [
-        {
-          "name": "Крабовые палочки",
-          "quantity": "240",
-          "unit": "г"
-        },
-        {
-          "name": "Огурец свежий",
-          "quantity": "3-4",
-          "unit": "шт"
-        },
-        {
-          "name": "Яйцо куриное",
-          "quantity": "3-4",
-          "unit": "шт"
-        },
-        {
-          "name": "Кукуруза консервированная",
-          "quantity": "140",
-          "unit": "г"
-        },
-        {
-          "name": "Соль",
-          "quantity": "",
-          "unit": ""
-        },
-        {
-          "name": "Перец черный молотый",
-          "quantity": "",
-          "unit": ""
-        },
-        {
-          "name": "Майонез ",
-          "quantity": "3",
-          "unit": "ст. л"
-        }
-      ],
-      "instructions": [
-        {
-          "name": "Подготовьте необходимые продукты для крабового салата с кукурузой и огурцами. Яйца отварите 8 минут, остудите в холодной воде, очистите от скорлупы. Слейте воду с кукурузы. Огурцы, при желании, можно очистить от кожуры.",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        },
-        {
-          "name": "\nКак приготовить салат из крабовых палочек с кукурузой и огурцами:\n\nНарежьте огурцы мелким кубиком, переложите в глубокую посуду, добавьте кукурузу.",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        },
-        {
-          "name": "Крабовые палочки разморозьте предварительно, нарежьте мелким кубиком, добавьте к овощам.",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        },
-        {
-          "name": "Нарубите куриные яйца или измельчите их с помощью специальной нарезки, добавьте в салат.",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        },
-        {
-          "name": "Посолите салат, поперчите, добавьте майонез.",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        },
-        {
-          "name": "Перемешайте салат, попробуйте на вкус, если все устраивает по соли и перцу, переложите салат в блюдо для подачи.",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        },
-        {
-          "name": "Подавайте салат сразу же после приготовления. Если планируете подавать салат позже, тогда заправляйте его перед самой подачей.",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        }
-      ],
-      "mainPhotoUrl": null,
-      "description": "",
-      "history": "",
-      "preparationTime": "",
-      "cookingTime": "10 минут",
-      "origin": "",
-      "nutritions": [],
-      "servings": "2",
-      "authorId": 5,
-      "categories": [
-        1,
-        4
-      ],
-      "cooksId": [],
-      "likesId": [],
-      "favoritesId": [],
-      "id": 31,
-      "comments": [],
-      "publicationDate": "",
-      "status": "private",
-      "mainImage": null
-    },
-    {
-      "name": "Риds",
-      "ingredients": [],
-      "instructions": [],
-      "mainPhotoUrl": null,
-      "description": "няма ня",
-      "history": "jkjkjk",
-      "preparationTime": "",
-      "cookingTime": "",
-      "origin": "",
-      "nutritions": [],
-      "servings": 1,
-      "authorId": 5,
-      "categories": [],
-      "cooksId": [],
-      "likesId": [],
-      "favoritesId": [],
-      "id": 32,
-      "comments": [],
-      "publicationDate": "",
-      "status": "private",
-      "mainImage": null
-    },
-    {
       "name": "Вишневый пирог как в \"Твин Пикс\"",
       "ingredients": [
         {
@@ -4081,50 +3632,6 @@
       "status": "private"
     },
     {
-      "name": "fdi",
-      "ingredients": [],
-      "instructions": [],
-      "mainImage": null,
-      "description": "",
-      "history": "",
-      "preparationTime": "",
-      "cookingTime": "",
-      "origin": "",
-      "nutritions": [],
-      "servings": 1,
-      "authorId": 5,
-      "categories": [],
-      "cooksId": [],
-      "likesId": [],
-      "favoritesId": [],
-      "id": 34,
-      "comments": [],
-      "publicationDate": "",
-      "status": "private"
-    },
-    {
-      "name": "dfdf",
-      "ingredients": [],
-      "instructions": [],
-      "mainImage": null,
-      "description": "",
-      "history": "",
-      "preparationTime": "",
-      "cookingTime": "",
-      "origin": "",
-      "nutritions": [],
-      "servings": 1,
-      "authorId": 5,
-      "categories": [],
-      "cooksId": [],
-      "likesId": [],
-      "favoritesId": [],
-      "id": 35,
-      "comments": [],
-      "publicationDate": "",
-      "status": "private"
-    },
-    {
       "name": "Ананасовый тарт татен Бри Ходж из сериала \"Отчаянные домохозяйки\"",
       "ingredients": [],
       "instructions": [],
@@ -4242,177 +3749,205 @@
       "status": "public"
     },
     {
-      "name": "kraboc",
-      "ingredients": [],
-      "instructions": [],
+      "name": "Классический торт \"Наполеон\"",
+      "ingredients": [
+        {
+          "name": "Мука",
+          "quantity": "750",
+          "unit": "г"
+        },
+        {
+          "name": "Масло сливочное (холодное) или маргарин",
+          "quantity": "400",
+          "unit": "г"
+        },
+        {
+          "name": "Яйца",
+          "quantity": "2",
+          "unit": "шт"
+        },
+        {
+          "name": "Вода холодная",
+          "quantity": "150",
+          "unit": "мл"
+        },
+        {
+          "name": "Водка или коньяк",
+          "quantity": "3",
+          "unit": "ст. л."
+        },
+        {
+          "name": "Уксус 9%",
+          "quantity": "1",
+          "unit": "ст. л."
+        },
+        {
+          "name": "Соль ",
+          "quantity": "1",
+          "unit": "щепотка"
+        },
+        {
+          "name": "Молоко ",
+          "quantity": "1",
+          "unit": "л"
+        },
+        {
+          "name": "Яйца",
+          "quantity": "4",
+          "unit": "шт."
+        },
+        {
+          "name": "Мука",
+          "quantity": "100",
+          "unit": "г"
+        },
+        {
+          "name": "Сахар ",
+          "quantity": "300",
+          "unit": "г"
+        },
+        {
+          "name": "Ванильный сахар",
+          "quantity": "20",
+          "unit": "г"
+        },
+        {
+          "name": "Масло сливочное",
+          "quantity": "350",
+          "unit": "г"
+        }
+      ],
+      "instructions": [
+        {
+          "name": "На блюдо кладем первый корж, смазываем приготовленным кремом, накрываем вторым коржом и так собираем весь торт. Затем слегка надавливаем на торт сверху, чтобы крем",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Смазываем бока и поверхность торта отложенным кремом.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Для украшения остатки коржей (обрезки) перекладываем в пакет и с помощью скалки измельчаем их в крошку.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Полученной крошкой обсыпаем бока и поверхность торта.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Отправляем торт в холодильник на несколько часов, а лучше всего на ночь, для пропитки.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Спустя указанное время достаем торт из холодильника.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Нарезаем на кусочки и можем порадовать себя и своих близких изумительно вкусным тортом \"Наполеон\".\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Классический торт \"Наполеон\" готов. Приятного аппетита и удачной вам выпечки!",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        }
+      ],
       "mainImage": null,
-      "description": "",
-      "history": "",
-      "preparationTime": "",
-      "cookingTime": "",
-      "origin": "",
+      "description": "Один из самых вкусных и любимых десертов в моей семье - торт \"Наполеон\". Его приготовление не назовешь простым и быстрым, но результат, безусловно, стоит этих усилий. Торт получается изумительно вкусным, с тонкими коржами и нежнейшим масляно-заварным кремом.",
+      "history": "Торт, который мы сейчас называем «Наполеоном» появился во Франции (а где же еще?) несколько веков назад. Назывался он Мillefeuille – что значит «Тысяча слоев». Известно, что в XIX веке этот торт был модернизирован великим французским поваром - Мари-Антуаном Каремом, который из классического старого десерта сделал более легкое в исполнении блюдо.",
+      "preparationTime": "15 минут",
+      "cookingTime": "2 часа",
+      "origin": "Франция",
       "nutritions": [],
-      "servings": 1,
+      "servings": 12,
       "authorId": 5,
-      "categories": [],
+      "categories": [
+        11,
+        10
+      ],
       "cooksId": [],
       "likesId": [],
       "favoritesId": [],
-      "id": 41,
-      "comments": [],
-      "publicationDate": "",
-      "status": "private"
-    },
-    {
-      "name": "jjkkjkjjjkkj",
-      "ingredients": [],
-      "instructions": [],
-      "mainImage": null,
-      "description": "",
-      "history": "",
-      "preparationTime": "",
-      "cookingTime": "",
-      "origin": "",
-      "nutritions": [],
-      "servings": 1,
-      "authorId": 5,
-      "categories": [],
-      "cooksId": [],
-      "likesId": [],
-      "favoritesId": [],
-      "id": 42,
-      "comments": [],
-      "publicationDate": "",
-      "status": "private"
-    },
-    {
-      "name": "jkkjk",
-      "ingredients": [],
-      "instructions": [],
-      "mainImage": null,
-      "description": "",
-      "history": "",
-      "preparationTime": "",
-      "cookingTime": "",
-      "origin": "",
-      "nutritions": [],
-      "servings": 1,
-      "authorId": 5,
-      "categories": [],
-      "cooksId": [],
-      "likesId": [],
-      "favoritesId": [],
-      "id": 43,
-      "comments": [],
-      "publicationDate": "",
-      "status": "private"
-    },
-    {
-      "name": "jkkkjjk",
-      "ingredients": [],
-      "instructions": [],
-      "mainImage": null,
-      "description": "",
-      "history": "",
-      "preparationTime": "",
-      "cookingTime": "",
-      "origin": "",
-      "nutritions": [],
-      "servings": 1,
-      "authorId": 5,
-      "categories": [],
-      "cooksId": [],
-      "likesId": [],
-      "favoritesId": [],
-      "id": 44,
-      "comments": [],
-      "publicationDate": "",
-      "status": "private"
-    },
-    {
-      "name": "jjkjkk",
-      "ingredients": [],
-      "instructions": [],
-      "mainImage": null,
-      "description": "",
-      "history": "",
-      "preparationTime": "",
-      "cookingTime": "",
-      "origin": "",
-      "nutritions": [],
-      "servings": 1,
-      "authorId": 5,
-      "categories": [],
-      "cooksId": [],
-      "likesId": [],
-      "favoritesId": [],
-      "id": 45,
-      "comments": [],
-      "publicationDate": "",
-      "status": "private"
-    },
-    {
-      "name": "gfgffg",
-      "ingredients": [],
-      "instructions": [],
-      "mainImage": null,
-      "description": "",
-      "history": "",
-      "preparationTime": "",
-      "cookingTime": "",
-      "origin": "",
-      "nutritions": [],
-      "servings": 1,
-      "authorId": 5,
-      "categories": [],
-      "cooksId": [],
-      "likesId": [],
-      "favoritesId": [],
-      "id": 46,
-      "comments": [],
-      "publicationDate": "",
-      "status": "private"
-    },
-    {
-      "name": "fggggfdddsfsdsdsddfdffds",
-      "ingredients": [],
-      "instructions": [],
-      "mainImage": null,
-      "description": "",
-      "history": "",
-      "preparationTime": "",
-      "cookingTime": "",
-      "origin": "",
-      "nutritions": [],
-      "servings": 1,
-      "authorId": 5,
-      "categories": [],
-      "cooksId": [],
-      "likesId": [],
-      "favoritesId": [],
-      "id": 47,
-      "comments": [],
-      "publicationDate": "",
-      "status": "private"
-    },
-    {
-      "name": "fdffdfddfdffff",
-      "ingredients": [],
-      "instructions": [],
-      "mainImage": null,
-      "description": "",
-      "history": "",
-      "preparationTime": "",
-      "cookingTime": "",
-      "origin": "",
-      "nutritions": [],
-      "servings": 1,
-      "authorId": 5,
-      "categories": [],
-      "cooksId": [],
-      "likesId": [],
-      "favoritesId": [],
-      "id": 48,
+      "id": 49,
       "comments": [],
       "publicationDate": "",
       "status": "private"
@@ -4535,7 +4070,7 @@
     {
       "email": "polinaa.kuzmenokk@gmail.com",
       "password": "Krabochki0",
-      "username": "krabochki",
+      "username": "krabochka",
       "id": 5,
       "role": "admin",
       "avatarUrl": {},
@@ -4742,7 +4277,7 @@
       "personalWebsite": "",
       "location": "",
       "registrationDate": "",
-      "profileViews": 1
+      "profileViews": 2
     }
   ]
 }

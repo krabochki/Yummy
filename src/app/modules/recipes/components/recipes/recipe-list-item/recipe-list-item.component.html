@@ -11,17 +11,27 @@
       [src]="'../../../../../assets/images/svg/no-recipe.svg'"></svg-icon>
   </div>
 </ng-template>
-<div *ngIf="dataLoaded && recipe.id > 0; else sceleton" class="recipe" >
+<div  *ngIf="dataLoaded && recipe.id > 0; else sceleton" class="recipe" >
   <div class="top">
-    <div></div>
     <div (click)="handleInnerFunction($event)" [ngClass]="{'disabled':recipe.status==='awaits'}" *ngIf="recipe.authorId === currentUserId || recipe.status === 'public'"
-      (click)="recipe.status === 'public' ? makeThisRecipeFavorite() : editMode=true" class="fav">
-      <svg-icon *ngIf="recipe.status !== 'public'" [src]="'../../../../../assets/images/svg/pen.svg'"
+      (click)="recipe.status === 'public' ? makeThisRecipeFavorite() : moreAuthorButtons=!moreAuthorButtons" class="fav">
+      <svg-icon *ngIf="recipe.status !== 'public'" [src]="'../../../../../assets/images/svg/brush.svg'"
         [applyClass]="true" class="fav-icon"></svg-icon>
       <svg-icon *ngIf="recipe.status === 'public' && !isRecipeFavorite"
         [src]="'../../../../../assets/images/svg/fav.svg'" [applyClass]="true" class="fav-icon"></svg-icon>
       <svg-icon *ngIf="recipe.status === 'public' && isRecipeFavorite"
         [src]="'../../../../../assets/images/svg/fav-fill.svg'" [applyClass]="true" class="fav-icon"></svg-icon>
+    </div>
+    <div  class="more-buttons" (click)="handleInnerFunction($event)" @modal  *ngIf="author.id===currentUserId && moreAuthorButtons">
+      <div class="top-button" (click)=" editMode=true">
+         <svg-icon  [src]="'../../../../../assets/images/svg/pen.svg'"
+        [applyClass]="true" class="remove-svg"></svg-icon>
+      </div>
+      <div class="top-button"  (click)="deleteRecipeModalShow=true">
+
+        <svg-icon [applyClass]="true" class="remove-svg" [src]="'../../../../../assets/images/svg/trash.svg'"></svg-icon>
+
+      </div>
     </div>
   </div>
   <div class="bottom">
@@ -72,4 +82,21 @@
     'Взаимодействовать с рецептами могут только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'
   "></app-modal>
 
-    <app-recipe-create style="z-index:10; position: fixed;" [editedRecipe]="recipe" *ngIf="editMode" (closeEmitter)="editModeOff()" @modal ></app-recipe-create>
+    <app-recipe-create (updatedRecipeEmitter)="handleEditedRecipe($event)" style="z-index:10; position: fixed;" [editedRecipe]="recipe" *ngIf="editMode" (closeEmitter)="editModeOff()" @modal ></app-recipe-create>
+
+    <app-modal @modal *ngIf="successEditModalShow" [style]="'sec'" [title]="'Рецепт успешно изменен'" [type]="'Ok'"
+  (resultEmit)="handleSuccessEditModal()" [buttonsText]="['Хорошо']" [description]="
+  'Твой рецепт успешно изменен' +
+    (isAwaitingApprove ? ' и ожидает одобрения модератора' : '')
+  "></app-modal>
+
+
+  <app-modal @modal *ngIf="deleteRecipeModalShow" [style]="'prim'" [title]="'Удаление рецепта'" [type]="'yesOrNo'"
+  (resultEmit)="handleDeleteRecipeModal($event)" [buttonsText]="['Давайте', 'Не сейчас']" [description]="
+    'Ты действительно хочешь удалить этот рецепт?'
+  "></app-modal>
+
+      <app-modal @modal *ngIf="successDeleteModalShow" [style]="'sec'" [title]="'Рецепт успешно удален'" [type]="'Ok'"
+  (resultEmit)="handleSuccessDeleteModal()" [buttonsText]="['Хорошо']" [description]="
+  'Этот рецепт успешно удален'
+  "></app-modal>

@@ -20,7 +20,7 @@ import {
   AbstractControl,
   FormControl,
 } from '@angular/forms';
-import { steps,Step } from './consts';
+import { steps, Step } from './consts';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Router } from '@angular/router';
 import { trigger } from '@angular/animations';
@@ -37,8 +37,6 @@ import { SectionService } from '../../../services/section.service';
 import { SectionGroup } from 'src/app/modules/controls/autocomplete/autocomplete.component';
 import { Title } from '@angular/platform-browser';
 
-
-
 @Component({
   selector: 'app-recipe-create',
   templateUrl: './recipe-create.component.html',
@@ -47,39 +45,16 @@ import { Title } from '@angular/platform-browser';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecipeCreateComponent implements OnInit, OnDestroy {
-  @ViewChild('input', { static: false })
-  input: ElementRef | undefined;
+  @ViewChild('input', { static: false }) input: ElementRef | undefined;
   @ViewChild('scrollContainer', { static: false }) scrollContainer?: ElementRef;
-
-  currentStep: number = 0;
-
-  showInfo = false;
-
-  steps: Step[] = steps;
-
-  goToPreviousStep() {
-    if (this.currentStep > 0) {
-      this.currentStep--;
-
-      this.scrollTop();
-    }
-  }
-  scrollTop(): void {
-    if (this.scrollContainer) this.scrollContainer.nativeElement.scrollTop = 0;
-  }
-  goToNextStep() {
-    if (this.currentStep < this.steps.length - 1) {
-      this.currentStep++;
-      this.scrollTop();
-    }
-  }
 
   @Output() closeEmitter = new EventEmitter<boolean>();
 
-  defaultImage: string = '../../../../../assets/images/add-main-photo.png';
-  defaultInstructionImage: string =
-    '../../../../../assets/images/add-photo.png';
-  mainImage: string = '';
+  @Input() editedRecipe: IRecipe = { ...nullRecipe };
+
+  currentStep: number = 0;
+  showInfo = false;
+  steps: Step[] = steps;
 
   currentUser: IUser = { ...nullUser };
 
@@ -87,7 +62,6 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
 
   isAwaitingApprove = false;
 
-  @Input() editedRecipe: IRecipe = { ...nullRecipe };
   recipeId = 0;
 
   successModalShow = false;
@@ -95,18 +69,24 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
   exitModalShow = false;
   editModalShow = false;
   createModalShow = false;
+
   images: string[][] = [['']];
-  category: string = '';
+  defaultImage: string = '../../../../../assets/images/add-main-photo.png';
+  defaultInstructionImage: string =
+    '../../../../../assets/images/add-photo.png';
+  mainImage: string = '';
+
   allSections: ISection[] = [];
   allCategories: ICategory[] = [];
   selectedCategories: ICategory[] = [];
+  group: SectionGroup[] = [];
+  fullGroup: SectionGroup[] = [];
+
   protected destroyed$: Subject<void> = new Subject<void>();
+
   beginningData: any;
 
   editMode: boolean = false;
-  f(field: string): FormArray {
-    return this.form.get(field) as FormArray;
-  }
 
   constructor(
     private renderer: Renderer2,
@@ -281,8 +261,27 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     }
     this.beginningData = this.form.getRawValue();
   }
-  group: SectionGroup[] = [];
-  fullGroup: SectionGroup[] = [];
+
+  f(field: string): FormArray {
+    return this.form.get(field) as FormArray;
+  }
+
+  goToPreviousStep() {
+    if (this.currentStep > 0) {
+      this.currentStep--;
+
+      this.scrollTop();
+    }
+  }
+  goToNextStep() {
+    if (this.currentStep < this.steps.length - 1) {
+      this.currentStep++;
+      this.scrollTop();
+    }
+  }
+  scrollTop(): void {
+    if (this.scrollContainer) this.scrollContainer.nativeElement.scrollTop = 0;
+  }
 
   //drag&drop
   drop(context: string, event: CdkDragDrop<string[]>) {
@@ -322,8 +321,6 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     imagesArray.at(imageIndex).get('file')?.setValue(null);
     this.images[instructionIndex][imageIndex] = '';
   }
-
-
 
   //получаем url загруженного фото инструкции для вывода в background-image
   getInstructionPhotoURL(instructionIndex: number, imageIndex: number): string {
@@ -473,6 +470,8 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     else this.createModalShow = true;
   }
 
+  @Output() updatedRecipeEmitter = new EventEmitter<IRecipe>();
+
   //обработчик отправки формы
   createRecipe(): void {
     const categoriesIds: number[] = [];
@@ -540,34 +539,31 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       status: this.isAwaitingApprove ? 'awaits' : 'private',
     };
 
-    this.recipeService.updateRecipe(recipeData).subscribe(() => {
-      this.successModalShow = true;
-      this.cd.markForCheck();
-    });
+    this.updatedRecipeEmitter.emit(recipeData);
   }
 
   //модальные окна
   handleCreateRecipeModal(answer: boolean): void {
     if (answer) {
       this.createRecipe();
-    }
-    else {
+    } else {
       this.renderer.addClass(document.body, 'hide-overflow');
       (<HTMLElement>document.querySelector('.header')).style.width =
         'calc(100% - 16px)';
-      this.createModalShow = false;
     }
+    this.createModalShow = false;
   }
   handleEditRecipeModal(answer: boolean): void {
     if (answer) {
       this.editRecipe();
-    }
-    else {
+    } else {
       this.renderer.addClass(document.body, 'hide-overflow');
       (<HTMLElement>document.querySelector('.header')).style.width =
         'calc(100% - 16px)';
-      this.editModalShow = false;
     }
+
+    this.editModalShow = false;
+    this.cd.markForCheck();
   }
 
   handleExitModal(answer: boolean): void {
@@ -575,23 +571,16 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
 
     if (answer) {
       this.closeEmitter.emit(true);
-
-      
+    } else {
+      setTimeout(() => {
+        this.renderer.addClass(document.body, 'hide-overflow');
+        (<HTMLElement>document.querySelector('.header')).style.width =
+          'calc(100% - 16px)';
+      }, 0);
     }
-    else {
-          setTimeout(() => {
-            this.renderer.addClass(document.body, 'hide-overflow');
-            (<HTMLElement>document.querySelector('.header')).style.width =
-              'calc(100% - 16px)';
-          }, 0);
-    }
-    
-
   }
   handleSuccessModal() {
-    if (this.editMode)
-      this.router.navigateByUrl('recipes/list/' + this.editedRecipe.id);
-    else this.router.navigateByUrl('recipes/list/' + (this.recipeId - 1));
+    this.router.navigateByUrl('recipes/list/' + (this.recipeId - 1));
 
     this.cd.markForCheck();
 
@@ -606,6 +595,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       else this.createRecipe();
     }
     this.approveModalShow = false;
+    this.cd.markForCheck();
   }
   areObjectsEqual(): boolean {
     return (

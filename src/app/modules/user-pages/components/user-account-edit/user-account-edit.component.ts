@@ -331,12 +331,20 @@ export class UserAccountEditComponent
     if (answer) {
       this.closeEmitter.emit(true);
     }
+    else {
       setTimeout(() => {
         this.renderer.addClass(document.body, 'hide-overflow');
         (<HTMLElement>document.querySelector('.header')).style.width =
           'calc(100% - 16px)';
       }, 0);
+      }
     this.closeModal = false;
+  }
+
+  closeEditModal() {
+    this.areObjectsEqual()
+          ? (this.closeModal = true)
+          : this.closeEmitter.emit(true)
   }
 
   clickBackgroundNotContent(elem: Event) {

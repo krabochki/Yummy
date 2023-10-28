@@ -28,9 +28,18 @@
     opacity: 1;
   }
 }
+*{
+  white-space:wrap
+}
+
+app-modal{
+    cursor: default;
+
+}
 
 .outer {
 
+  cursor: default;
   background-color: var(--modal-black);
   left: 0;
   top: 0;
@@ -45,6 +54,8 @@
   justify-content: center;
   .inner {
     position: relative;
+      cursor: default;
+
       max-height: 100vh;
       overflow-y: auto;
 
@@ -209,6 +220,16 @@ h3 {
   column-gap: 0.5em;
 
   .remove-tag {
+    .remove-tag-svg{
+      display: flex;
+
+      width: 0.7em;
+      height: 0.7em;
+align-items: center;
+
+justify-content: center;
+fill: var(--color-background);
+    }
     display: flex;
     align-items: center;
     justify-content: center;

@@ -85,11 +85,8 @@ export class MainPageComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroyed$))
           .subscribe((data: ISection[]) => {
             this.allSections = data;
-            this.categoryService.categories$
-              .pipe(takeUntil(this.destroyed$))
-              .subscribe((categories: ICategory[]) => {
                this.allSections = this.sectionService.getNotEmptySections(this.allSections)
-              });
+            console.log(this.allSections)
           });
       });
   }

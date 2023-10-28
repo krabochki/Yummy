@@ -29,33 +29,36 @@ import { Subject, takeUntil } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecipePageComponent implements OnInit, OnDestroy {
-  dataLoaded = false;
-
-  showHistory = false;
-  onSkipHandler() {
-    this.router.navigate([this.routerEventsService.previousRoutePath.value]);
-  }
+  protected destroyed$: Subject<void> = new Subject<void>();
 
   recipe: IRecipe = nullRecipe;
 
-  readingTimeInMinutes: number = 0;
-
-  protected destroyed$: Subject<void> = new Subject<void>();
-
-  currentUser: IUser = { ...nullUser };
-
-  basketMode = false;
-
+  categories: ICategory[] = [];
   downRecipes: IRecipe[] = [];
   recentRecipes: IRecipe[] = [];
 
   author: IUser = { ...nullUser };
+  currentUser: IUser = { ...nullUser };
+
   iHaveIndgredient: boolean[] = [];
   basket: boolean[] = [];
-  categories: ICategory[] = [];
-  successPublicModalShow: boolean = false;
-  publicModalHeader: string = 'опубликован';
-  publicModalText: string = 'опубликовали';
+  basketMode = false;
+
+  isRecipeFavorite: boolean = false;
+  isRecipeLiked: boolean = false;
+  isRecipeCooked: boolean = false;
+
+  noAccessModalShow: boolean = false;
+  successAdminActionModalShow: boolean = false;
+  dismissModalShow = false;
+  approveModalShow = false;
+  adminAction: 'approve' | 'dismiss' = 'dismiss';
+
+  dataLoaded = false;
+
+  showHistory = false;
+  
+  readingTimeInMinutes: number = 0;
 
   constructor(
     private sectionService: SectionService,
@@ -69,12 +72,6 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     private categoryService: CategoryService,
   ) {}
 
-  addToBasket(i: number) {
-    this.basket[i] = true;
-  }
-  removeFromBasket(i: number) {
-    this.basket[i] = false;
-  }
   ngOnInit() {
     registerLocaleData(localeRu);
     this.authService.currentUser$
@@ -281,6 +278,13 @@ export class RecipePageComponent implements OnInit, OnDestroy {
       });
   }
 
+  addToBasket(i: number) {
+    this.basket[i] = true;
+  }
+  removeFromBasket(i: number) {
+    this.basket[i] = false;
+  }
+
   makeThisRecipeFavorite() {
     if (this.currentUser.id === 0) {
       this.noAccessModalShow = true;
@@ -302,25 +306,6 @@ export class RecipePageComponent implements OnInit, OnDestroy {
       .updateRecipe(this.recipe)
       .pipe(takeUntil(this.destroyed$))
       .subscribe();
-  }
-
-  isRecipeFavorite: boolean = false;
-  isRecipeLiked: boolean = false;
-  isRecipeCooked: boolean = false;
-  noAccessModalShow: boolean = false;
-
-  handleNoAccessModal(result: boolean) {
-    if (result) {
-      this.router.navigateByUrl('/greetings');
-    }
-    this.noAccessModalShow = false;
-  }
-
-  handlePublicModal(result: boolean) {
-    if (result) {
-      this.router.navigateByUrl('/control-dashboard');
-    }
-    this.noAccessModalShow = false;
   }
 
   likeThisRecipe() {
@@ -378,34 +363,39 @@ export class RecipePageComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  publicRecipe() {
-    const publishedRecipe = this.recipeService.publicRecipe(this.recipe);
-    this.recipeService.updateRecipe(publishedRecipe).subscribe(
-      (answer: IRecipe) => {
-        if(answer)
-          this.successPublicModalShow = true;
-              this.router.navigateByUrl('/control-dashboard');
-
-      },
-      (error: Error) => {
-        console.error(error.message);
-      },
-    );
+  handleNoAccessModal(result: boolean) {
+    if (result) {
+      this.router.navigateByUrl('/greetings');
+    }
+    this.noAccessModalShow = false;
   }
-  dismissRecipe() {
-    const dismissedRecipe = this.recipeService.dismissRecipe(this.recipe);
-    this.recipeService.updateRecipe(dismissedRecipe).subscribe(
-      () => {
 
-        this.publicModalText = 'отклонили';
-        this.successPublicModalShow = true;
-              this.router.navigateByUrl('/control-dashboard');
+  handleDismissModal(answer: boolean): void {
+    if (answer) {
+      this.adminAction = 'dismiss';
 
-      },
-      (error: Error) => {
-        console.error(error.message);
-      },
-    );
+      this.successAdminActionModalShow = true;
+    }
+    this.dismissModalShow = false;
+  }
+  handleApproveModal(answer: boolean): void {
+    if (answer) {
+      this.adminAction = 'approve';
+      this.successAdminActionModalShow = true;
+    }
+    this.approveModalShow = false;
+  }
+  handleSuccessAdminActionModal() {
+    if (this.adminAction === 'approve') {
+      const approvedRecipe = this.recipeService.approveRecipe(this.recipe);
+      this.recipeService.updateRecipe(approvedRecipe).subscribe();
+    } else {
+      const dismissedRecipe = this.recipeService.dismissRecipe(this.recipe);
+      this.recipeService.updateRecipe(dismissedRecipe).subscribe();
+    }
+    this.router.navigateByUrl('/control-dashboard');
+
+    this.successAdminActionModalShow = false;
   }
 
   decreasePortions() {
@@ -451,6 +441,10 @@ export class RecipePageComponent implements OnInit, OnDestroy {
         ).toString();
       }
     });
+  }
+
+  onSkipHandler() {
+    this.router.navigate([this.routerEventsService.previousRoutePath.value]);
   }
 
   ngOnDestroy(): void {

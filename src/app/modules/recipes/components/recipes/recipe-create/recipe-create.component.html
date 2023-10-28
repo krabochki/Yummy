@@ -9,7 +9,7 @@
       <svg-icon [src]="'../../../../../assets/images/svg/close.svg'" [applyClass]="true" class="close-svg"></svg-icon>
     </div>
     <div class="header">
-      <h1>Создание рецепта</h1>
+      <h1>{{editMode?'Изменение':'Создание'}} рецепта</h1>
       <div class="navigation">
         <div class="nav-step-circles-block">
           <div class="nav-step-block" *ngFor="let step of steps; let i = index">
@@ -154,7 +154,7 @@
           <div class="tags">
             <div class="tag" *ngFor="let selected of selectedCategories">
               {{ selected.name }}
-              <span (click)="removeCategory(selected)" class="remove-tag">✕</span>
+              <span (click)="removeCategory(selected)" class="remove-tag"><svg-icon [applyClass]="true" class="remove-tag-svg" [src]="'../../../../../assets/images/svg/close.svg'"></svg-icon></span>
 
 
             </div>
@@ -381,20 +381,23 @@
         <div *ngIf="currentStep===6">
           <div class="buttons">
             <p>Если ты хочешь, чтобы рецепт увидели другие пользователи и могли с ним взаимодействовать,
-              <em>опублику</em> его. После нажатия на кнопку рецепт появится в твоих личных рецептах и будет
+              <em>опубликуй</em> его. После нажатия на кнопку рецепт {{editMode?'':' появится в твоих личных рецептах и'}} будет
               опубликован после <em>одобрения модератора</em></p>
-            <app-button  [title]="!form.valid?'Рецепт должен содержать как минимум имя. Если в рецепте есть нутриенты, ингредиенты или инструкции, они должны также содержать как минимум навание (содержание для инструкции)':''" (click)="form.valid ? (approveModalShow = true) : null" [text]="'Опубликовать'" [color]="'sec'"
-              [style]="'outlined'" [disabled]="form.valid" [rounded]="true"></app-button>
-            <p>Если ты не хочешь, чтобы рецепт увидели другие пользователи (прямо сейчас), просто <em>сохрани</em>
+            <app-button [disabled]="editMode? form.valid : areObjectsEqual() && form.valid"  [title]="!form.valid?'Рецепт должен содержать как минимум имя. Если в рецепте есть нутриенты, ингредиенты или инструкции, они должны также содержать как минимум навание (содержание для инструкции)':''" (click)="form.valid ? (approveModalShow = true) : null" [text]="'Опубликовать'" [color]="'sec'"
+              [style]="'outlined'"  [rounded]="true"></app-button>
+            <p *ngIf="!editMode">Если ты не хочешь, чтобы рецепт увидели другие пользователи (прямо сейчас), просто <em>сохрани</em>
               его. После нажатия на кнопку рецепт появится в твоих личных рецептах. Ты <em>всегда</em> сможешь
               опубликовать его позже</p>
 
-            <app-button class="main" (click)="form.valid ? submitForm() : null" [text]="editMode?'Изменить':'Сохранить'"
-[title]="!form.valid?'Рецепт должен содержать как минимум имя. Если в рецепте есть нутриенты, ингредиенты или инструкции, они должны также содержать как минимум навание (содержание для инструкции)':''"              [color]="'sec'" [disabled]="form.valid" [style]="'filled'" [rounded]="true"></app-button>
-            <p>Если ты передумал добавлять рецепт, <em>отмени</em> его создание. Все данные придется
-              вводить повторно, если ты захочешь создать этот рецепт снова </p>
+            <p *ngIf="editMode">После нажатия на кнопку рецепт обновится в твоих личных рецептах, но не станет виден другим пользователям. Ты <em>всегда</em> сможешь
+              опубликовать его позже.</p>
 
-            <app-button (click)="exitModalShow = true" [text]="'Отменить'" [color]="'prim'" [style]="'outlined'"
+            <app-button class="main" (click)="form.valid ? submitForm() : null" [text]="editMode?'Изменить':'Сохранить'"
+[title]="!form.valid?'Рецепт должен содержать как минимум имя. Если в рецепте есть нутриенты, ингредиенты или инструкции, они должны также содержать как минимум навание (содержание для инструкции)':''"              [color]="'sec'" [disabled]="areObjectsEqual() && form.valid" [style]="'filled'" [rounded]="true"></app-button>
+            <p>Если ты передумал {{editMode?' менять ':' добавлять '}} рецепт, <em>отмени</em> его {{editMode?' изменение':' добавление'}}. Все данные придется
+              вводить повторно, если ты захочешь {{editMode?' изменить ':' добавить '}}  этот рецепт снова </p>
+
+            <app-button  (click)="exitModalShow = true" [text]="'Отменить'" [color]="'prim'" [style]="'outlined'"
               [rounded]="true"></app-button>
           </div>
         </div>
@@ -404,16 +407,16 @@
     <div class="footer">
       <app-button [iconSize]="'min'" [color]="'sec'" [iconPosition]="'before'" [rounded]="true" [icon]="'arrow-previous'" [iconStyle]="'as-text'" [style]="'outlined'" [text]="'Назад'" (click)="goToPreviousStep()" 
         [disabled]="!(currentStep === 0)"></app-button>
-      <app-button  [iconSize]="'min'"  [icon]="'arrow-next'" [color]="'sec'" [rounded]="true" [style]="'filled'" [text]="'Вперед'" (click)="goToNextStep()"
+      <app-button   [iconSize]="'min'"  [icon]="'arrow-next'" [color]="'sec'" [rounded]="true" [style]="'filled'" [text]="'Вперед'" (click)="goToNextStep()"
         [disabled]="!(currentStep === steps.length - 1)"></app-button>
     </div>
   </div>
 </div>
 
 
-<app-modal @modal *ngIf="exitModalShow" [style]="'prim'" [title]="'Отмена'+ (editMode?' изменения':' сохранения ')+ 'рецепта'" [type]="'yesOrNo'"
+<app-modal @modal *ngIf="exitModalShow" [style]="'prim'" [title]="'Отмена'+ (editMode?' изменения ':' сохранения ')+ 'рецепта'" [type]="'yesOrNo'"
   (resultEmit)="handleExitModal($event)" [buttonsText]="['Да', 'Нет']"
-  [description]="'Ты уверен, что не хочешь'+(editMode?' изменить':' сохранить ') + 'рецепт?'"></app-modal>
+  [description]="'Ты уверен, что не хочешь '+(editMode?' изменить ':' сохранить ') + 'рецепт?'"></app-modal>
 <app-modal @modal *ngIf="successModalShow" [style]="'sec'" [title]="'Рецепт успешно сохранен'" [type]="'Ok'"
   (resultEmit)="handleSuccessModal()" [buttonsText]="['Хорошо']" [description]="
   'Твой рецепт успешно'+(editMode?' изменен':' сохранен в твоей личной коллекции') +

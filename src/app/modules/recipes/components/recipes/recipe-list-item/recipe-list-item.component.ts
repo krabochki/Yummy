@@ -10,7 +10,7 @@ import { AuthService } from 'src/app/modules/authentication/services/auth.servic
 import { IRecipe, nullRecipe } from 'src/app/modules/recipes/models/recipes';
 import { RecipeService } from '../../../services/recipe.service';
 import { trigger } from '@angular/animations';
-import { modal } from 'src/tools/animations';
+import { heightAnim, modal, onlyHeight } from 'src/tools/animations';
 import { Router } from '@angular/router';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
@@ -21,38 +21,34 @@ import { Subject, takeUntil } from 'rxjs';
   templateUrl: './recipe-list-item.component.html',
   styleUrls: ['./recipe-list-item.component.scss'],
   animations: [trigger('modal', modal())],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecipeListItemComponent implements OnInit, OnDestroy {
   @Input() recipe: IRecipe = nullRecipe;
   @Input() context: string = '';
+  @Input() showAuthor: boolean = true;
+
   protected destroyed$: Subject<void> = new Subject<void>();
 
   likes: number = 0;
   cooks: number = 0;
-
   editMode: boolean = false;
-
   isRecipeFavorite: boolean = false;
   isRecipeLiked: boolean = false;
   isRecipeCooked: boolean = false;
-
   noAccessModalShow: boolean = false;
-
   dataLoaded = false;
-
   currentUserId = 0;
   author: IUser = { ...nullUser };
+  successEditModalShow: boolean = false;
+  moreAuthorButtons: boolean = false;
 
   constructor(
     private recipeService: RecipeService,
     private authService: AuthService,
     private userService: UserService,
     private router: Router,
-    private cd:ChangeDetectorRef
+    private cd: ChangeDetectorRef,
   ) {}
-
-  @Input() showAuthor: boolean = true;
 
   editModeOff() {
     this.editMode = false;
@@ -80,7 +76,8 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
                 this.currentUserId,
               );
             }
-            this.cd.markForCheck()
+
+            this.cd.markForCheck();
           });
       });
 
@@ -92,8 +89,8 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
           else return false;
         });
         if (findedAuthor) this.author = findedAuthor;
-        this.dataLoaded = true;            this.cd.markForCheck();
-
+        this.dataLoaded = true;
+        this.cd.markForCheck();
       });
   }
 
@@ -124,11 +121,40 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
       );
   }
 
+  handleEditedRecipe(event: IRecipe) {
+    this.editMode = false;
+    this.editedRecipe = event;
+    if (this.editedRecipe.status === 'awaits') {
+      this.isAwaitingApprove = true;
+    }
+    this.successEditModalShow = true;
+  }
+  isAwaitingApprove: boolean = false;
+  editedRecipe: IRecipe = nullRecipe;
+  deleteRecipeModalShow: boolean = false;
+  successDeleteModalShow: boolean = false;
+  handleDeleteRecipeModal(event: boolean) {
+    if (event) {
+      this.successDeleteModalShow = true;
+    }
+    this.deleteRecipeModalShow = false;
+  }
+  handleSuccessEditModal() {
+    //?????????????? если наоборот сначала обновить то это модальное окно пропускается
+    this.recipeService.updateRecipe(this.editedRecipe).subscribe(() => {
+      this.router.navigateByUrl('recipes/list/' + this.editedRecipe.id);
+    });
+  }
+  handleSuccessDeleteModal() {
+    //?????????????? если наоборот сначала удалить то это модальное окно пропускается
+    this.recipeService.deleteRecipe(this.recipe.id);
+  }
   handleInnerFunction(event: Event) {
     // Этот метод вызывается при клике на внутренний элемент рецепта
     // Останавливаем всплытие события, чтобы оно не дошло до внешнего контейнера
     event.stopPropagation();
   }
+
 
   //лайкаем рецепт
   likeThisRecipe() {

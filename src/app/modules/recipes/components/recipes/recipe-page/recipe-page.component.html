@@ -239,14 +239,14 @@
               <p>{{ ingredient.unit }}</p>
             </div>
 
-            <div
+            <button
               [ngClass]="{ minus: basket[i] }"
               (click)="basket[i] ? removeFromBasket(i) : addToBasket(i)"
               class="basket-button"
               *ngIf="basketMode"
             >
               {{ basket[i] ? "−" : "+" }}
-            </div>
+            </button>
             <div *ngIf="!basketMode"></div>
           </ng-container>
         </ul>
@@ -359,11 +359,14 @@
               </div>
               <div class="row input-area">
                 <img
+                [routerLink]="'/cooks/list/'+currentUser.id"
                   src="../../../../../../assets/images/userpic.png"
                   class="userpic"
                   alt=""
                 />
-                <app-usual-input
+                <app-usual-input class="comment-input"
+
+                [max]="1000"
                 [inputType]="'textarea'"
                   type="text"
                   [placeholder]="
@@ -371,17 +374,18 @@
                       ? 'Будьте первым...'
                       : 'Напишите комментарий...'
                   "
+                  
                 >
                 </app-usual-input>
               </div>
   
               <app-button
                 [style]="'filled'"
-                [rounded]="false"
+                [rounded]="true"
                 [disabled]="this.currentUser.id>0"
-                [color]="'prim'"
+                [color]="'sec'"
                 (click)="this.currentUser.id>0?null:noAccessModalShow=true"
-                [text]="'Опубликовать комментарий'"
+                [text]="'Опубликовать'"
               ></app-button>
             </div>
             
@@ -415,8 +419,8 @@
      </div>
 
   <div *ngIf="this.recipe.status==='awaits' && currentUser.role!=='user'" class="moder-buttons">
-      <app-button  [color]="'prim'" (click)="publicRecipe()" [style]="'filled'" [rounded]="true" [text]="'Одобрить'"></app-button>
-      <app-button  [color]="'prim'"  (click)="dismissRecipe()" [style]="'outlined'" [rounded]="true" [text]="'Отклонить'"></app-button>
+      <app-button  [color]="'prim'" (click)="approveModalShow=true" [style]="'filled'" [rounded]="true" [text]="'Одобрить'"></app-button>
+      <app-button  [color]="'prim'"  (click)="dismissModalShow=true" [style]="'outlined'" [rounded]="true" [text]="'Отклонить'"></app-button>
     </div> 
    
 </div>
@@ -435,17 +439,42 @@
   "
 ></app-modal>
 
+<app-modal
+  @modal
+  *ngIf="dismissModalShow"
+  [style]="'prim'"
+  [title]="'Отклонение рецепта'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleDismissModal($event)"
+  [buttonsText]="['Да', 'Нет']"
+  [description]="
+    'Вы уверены, что хотите отклонить рецепт?'
+  "
+></app-modal>
 
 <app-modal
   @modal
-  *ngIf="successPublicModalShow"
+  *ngIf="approveModalShow"
+  [style]="'prim'"
+  [title]="'Одобрение рецепта'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleApproveModal($event)"
+  [buttonsText]="['Да', 'Нет']"
+  [description]="
+    'Вы уверены, что хотите одобрить рецепт?'
+  "
+></app-modal>
+
+<app-modal
+  @modal
+  *ngIf="successAdminActionModalShow"
   [style]="'sec'"
-  [title]="'Рецепт успешно '+(publicModalHeader)"
+  [title]="'Рецепт успешно '+(adminAction==='approve'?'одобрен':'отклонен')"
   [type]="'Ok'"
-  (resultEmit)="handlePublicModal($event)"
+  (resultEmit)="handleSuccessAdminActionModal()"
   [buttonsText]="['Хорошо']"
   [description]="
-    'Вы успешно '+ (publicModalText)+ ' рецепт пользователя ' +(author.fullName===''?'@'+author.username:author.fullName)
+    'Вы успешно '+ (adminAction==='approve'?'одобрили':'отклонили') + ' рецепт пользователя ' +(author.fullName===''?'@'+author.username:author.fullName)
   "
 ></app-modal>
 

@@ -8,6 +8,9 @@ app-modal{
 .row {
   display: flex;
 }
+.comment-input{
+  width: 100%;
+}
 * {
   text-overflow: ellipsis;
   max-width: 100%;
@@ -474,6 +477,7 @@ h1 {
 
   .userpic {
     border-radius: 100%;
+    cursor: pointer;
     min-width: 2em;margin-right: 1em;
     height: 2em;
   }

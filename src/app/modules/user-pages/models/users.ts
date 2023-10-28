@@ -1,7 +1,7 @@
 export interface IUser {
   id: number; // Уникальный идентификатор пользователя
   username: string; // Имя пользователя
-  avatarUrl: string; // URL аватара пользователя
+  avatarUrl: FormData|null; // URL аватара пользователя
   description: string; // Описание пользователя
   quote: string; // Цитата пользователя
   email: string; // Почта пользователя
@@ -22,7 +22,7 @@ export const nullUser: IUser = {
   password: '',
   username: '',
   role: 'user',
-  avatarUrl: '',
+  avatarUrl: null,
   description: '',
   quote: '',
   fullName: '',

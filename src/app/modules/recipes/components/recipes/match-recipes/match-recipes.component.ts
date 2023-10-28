@@ -4,6 +4,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   selector: 'app-match-recipes',
   templateUrl: './match-recipes.component.html',
   styleUrls: ['./match-recipes.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush, 
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MatchRecipesComponent {}
+export class MatchRecipesComponent {
+
+}

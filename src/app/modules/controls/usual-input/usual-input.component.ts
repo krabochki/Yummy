@@ -1,12 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild, forwardRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  OnInit,
+  ViewChild,
+  forwardRef,
+} from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-usual-input',
   templateUrl: './usual-input.component.html',
   styleUrls: ['./usual-input.component.scss'],
-  changeDetection:ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -15,7 +24,7 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
     },
   ],
 })
-export class UsualInputComponent implements OnInit {
+export class UsualInputComponent implements OnInit, OnChanges {
   disabled = false;
   @ViewChild('input') input?: ElementRef;
   @Input() placeholder: string = '';
@@ -23,32 +32,39 @@ export class UsualInputComponent implements OnInit {
   @Input() max: number | undefined = undefined;
   @Input() showError = true;
 
-  value = '';
+  @Input() value = '';
 
-  @Input()  inputRequired:boolean = false;
+  @Input() inputRequired: boolean = false;
 
   isSleep: boolean = false; //подсвечивается ли плейсхолдер
   isFocused = false; //есть ли фокус в инпуте (нужно ли подсвечивать плейсхолдер)
+  getNotEmptyValue: boolean = false; //есть ли значение изначально и обработали ли мы его
 
   ngOnInit() {
-    if (this.inputRequired===true) {
-      this.placeholder=this.placeholder+'*'
+    if (this.inputRequired === true) {
+      this.placeholder = this.placeholder + '*';
     }
   }
+
+  ngOnChanges() {
+    
+    if (this.value !== '' && !this.getNotEmptyValue && !this.isFocused) {
+      this.focus();
+      this.blur();
+      this.change();
+      this.getNotEmptyValue = true;
+    }
+  }
+
   change() {
     this.onChange(this.value);
   }
 
   //Появление фокуса
   focus() {
-    setTimeout(() => {
-      this.input?.nativeElement.setSelectionRange(
-        this.value.length,
-        this.value.length,
-      );
-    });
-    this.isSleep = false;
+    
     this.isFocused = true;
+    this.isSleep = false;
   }
 
   //Исчезновение фокуса
@@ -61,10 +77,10 @@ export class UsualInputComponent implements OnInit {
   }
 
   onChange: any = () => {
-//
+    //
   };
   onTouched: any = () => {
-//
+    //
   };
   writeValue(value: string): void {
     this.value = value;

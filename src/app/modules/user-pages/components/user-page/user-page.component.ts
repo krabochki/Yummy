@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IUser, nullUser } from '../../models/users';
 import { ActivatedRoute, Data, Router } from '@angular/router';
@@ -12,6 +12,7 @@ import { registerLocaleData } from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
 import { RouteEventsService } from 'src/app/modules/controls/route-events.service';
 import { ChangeDetectionStrategy } from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-user-page',
@@ -20,7 +21,7 @@ import { ChangeDetectionStrategy } from '@angular/core';
   animations: [trigger('fadeIn', fadeIn()), trigger('modal', modal())],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserPageComponent implements OnInit {
+export class UserPageComponent implements OnInit, OnDestroy {
   recipesEnabled: boolean = true;
   moreInfoEnabled: boolean = false;
   obj: 'following' | 'followers' = 'followers';
@@ -59,6 +60,7 @@ export class UserPageComponent implements OnInit {
   noAccessModalShow: boolean = false;
 
   userId: number = 0;
+  protected destroyed$: Subject<void> = new Subject<void>();
 
   userRecipes: IRecipe[] = [];
 
@@ -80,9 +82,11 @@ export class UserPageComponent implements OnInit {
 
       this.titleService.setTitle('@' + this.user.username);
 
-      this.authService.currentUser$.subscribe((data) => {
-        this.currentUser = data;
-      });
+      this.authService.currentUser$
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe((data) => {
+          this.currentUser = data;
+        });
 
       if (this.currentUser.id === this.user.id) {
         this.myPage = true;
@@ -106,50 +110,52 @@ export class UserPageComponent implements OnInit {
 
         this.userFollowing = this.userService.getFollowing(data, this.userId);
 
-        this.recipeService.recipes$.subscribe((data) => {
-          this.allRecipes = this.recipeService.getPopularRecipes(data);
+        this.recipeService.recipes$
+          .pipe(takeUntil(this.destroyed$))
+          .subscribe((data) => {
+            this.allRecipes = this.recipeService.getPopularRecipes(data);
 
-          this.userRecipes = this.recipeService.getRecipesByUser(
-            this.allRecipes,
-            this.userId,
-          );
-          if (
-            !this.myPage &&
-            (this.currentUser.role === 'admin' ||
-              this.currentUser.role === 'moderator')
-          ) {
-            this.userRecipes = this.recipeService.getNotPrivateRecipes(
-              this.userRecipes,
+            this.userRecipes = this.recipeService.getRecipesByUser(
+              this.allRecipes,
+              this.userId,
             );
-          } else if (
-            !this.myPage &&
-            this.currentUser.role !== 'admin' &&
-            this.currentUser.role !== 'moderator'
-          ) {
-            this.userRecipes = this.recipeService.getPublicRecipes(
-              this.userRecipes,
-            );
-          }
-          this.cooks = 0;
-          this.likes = 0;
-          this.comments = 0;
-          this.userRecipes.forEach((recipe) => {
-            this.cooks += recipe.cooksId?.length;
-            this.likes += recipe.likesId?.length;
-            this.comments += recipe.comments?.length;
-            if (!this.cooks) this.cooks = 0;
-            if (!this.likes) this.likes = 0;
-            if (!this.comments) this.comments = 0;
+            if (
+              !this.myPage &&
+              (this.currentUser.role === 'admin' ||
+                this.currentUser.role === 'moderator')
+            ) {
+              this.userRecipes = this.recipeService.getNotPrivateRecipes(
+                this.userRecipes,
+              );
+            } else if (
+              !this.myPage &&
+              this.currentUser.role !== 'admin' &&
+              this.currentUser.role !== 'moderator'
+            ) {
+              this.userRecipes = this.recipeService.getPublicRecipes(
+                this.userRecipes,
+              );
+            }
+            this.cooks = 0;
+            this.likes = 0;
+            this.comments = 0;
+            this.userRecipes.forEach((recipe) => {
+              this.cooks += recipe.cooksId?.length;
+              this.likes += recipe.likesId?.length;
+              this.comments += recipe.comments?.length;
+              if (!this.cooks) this.cooks = 0;
+              if (!this.likes) this.likes = 0;
+              if (!this.comments) this.comments = 0;
+            });
+
+            this.cd.markForCheck();
+            this.dataLoaded = true;
           });
-
-          this.cd.markForCheck();
-          this.dataLoaded = true;
-        });
       });
       if (!this.myPage) {
         this.user.profileViews++;
       }
-      this.userService.updateUsers(this.user);
+      this.userService.updateUsers(this.user).subscribe();
     });
   }
 
@@ -161,16 +167,16 @@ export class UserPageComponent implements OnInit {
   //подписка текущего пользователя на людей в списке
   follow() {
     this.user = this.userService.addFollower(this.user, this.currentUser.id);
-    this.updateUser();
+    this.userService
+      .updateUsers(this.user)
+      .subscribe();
   }
 
   unfollow() {
     this.user = this.userService.removeFollower(this.user, this.currentUser.id);
-    this.updateUser();
-  }
-
-  updateUser() {
-    this.userService.updateUsers(this.user);
+    this.userService
+      .updateUsers(this.user)
+      .subscribe();
   }
 
   username: string = 'username';
@@ -179,20 +185,14 @@ export class UserPageComponent implements OnInit {
     this.editModalShow = !this.editModalShow;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-  closeEdit(answer: any) {
+  closeEdit() {
     this.editModalShow = false;
   }
   updateCurrentUser(updatedUser: IUser) {
     this.user = updatedUser;
-    this.updateUser();
+    this.closeEdit();
+        this.cd.detectChanges();
 
-    this.authService.loginUser(this.currentUser).subscribe((userExists) => {
-      if (userExists) {
-        localStorage.setItem('currentUser', JSON.stringify(userExists));
-        this.authService.setCurrentUser(userExists);
-      }
-    });
   }
 
   handleNoAccessModal(result: boolean) {
@@ -200,5 +200,10 @@ export class UserPageComponent implements OnInit {
       this.router.navigateByUrl('/greetings');
     }
     this.noAccessModalShow = false;
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
   }
 }

@@ -62,8 +62,10 @@ hr {
   }
   .modal-dialog {
    
-    top: 0;
+    top: unset;
     left: 0;
+    align-items: end;
+    bottom:0;
   }
 
   .modal-content {

@@ -117,7 +117,6 @@ export class UserService {
           return throwError(error);
         }),
       )
-      .subscribe();
   }
 
   updateUser(user: IUser) {

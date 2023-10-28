@@ -9,7 +9,7 @@ import {
   Output,
 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { Subscription, filter } from 'rxjs';
+import { Subject, filter, takeUntil } from 'rxjs';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { modal } from 'src/tools/animations';
@@ -29,6 +29,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     'Закладки',
     'Подбор рецептов',
   ];
+  creatingMode = false;
   cooksSelectItems: string[] = [
     'Кулинары',
     'Ваш профиль',
@@ -36,13 +37,22 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     'Обновления',
   ];
 
+  recipeRouterLinks: string[] = [
+    '/recipes/yours',
+    '/recipes',
+    '/sections',
+    '/recipes/favorite',
+    '/match',
+  ];
+  cookRouterLinks: string[] = ['/cooks/list/', '/cooks', '/cooks/updates'];
+
   mobile: boolean = false;
-  currentUserSubscription?: Subscription;
   currentUser: IUser = { ...nullUser };
   notificationsCount: number = 10;
   noAccessModalShow: boolean = false;
   activePage: 'cooks' | 'recipes' | 'match' | 'main' = 'main';
   @Output() headerHeight: EventEmitter<number> = new EventEmitter();
+  protected destroyed$: Subject<void> = new Subject<void>();
 
   constructor(
     public authService: AuthService,
@@ -72,27 +82,28 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
       });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (screen.width <= 480) {
       this.mobile = true;
     } else {
       this.mobile = false;
     }
-    this.currentUserSubscription = this.authService.currentUser$.subscribe(
-      (data) => {
-        this.currentUser = data;         
 
-      },
-    );
+    this.authService.currentUser$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedUser) => {
+        this.currentUser = receivedUser;
+        this.cookRouterLinks[0] += this.currentUser.id;
+      });
   }
 
-  ngDoCheck() {
+  ngDoCheck(): void {
     this.headerHeightChange();
   }
 
   @HostListener('window:resize', ['$event'])
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onResize(event: any) {
+  onResize(event: any): void {
     if (event.target.innerWidth <= 481) {
       this.mobile = true;
     } else {
@@ -101,26 +112,27 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     this.headerHeightChange();
   }
 
-  headerHeightChange() {
+  headerHeightChange(): void {
     const element = document.querySelector('.header') as HTMLElement | null;
     const height = element?.offsetHeight;
     this.headerHeight.emit(height);
   }
 
-  linkClick() {
+  linkClick(): void {
     if (this.currentUser.id === 0) {
       this.noAccessModalShow = true;
     }
   }
 
-  handleNoAccessModal(event: boolean) {
+  handleNoAccessModal(event: boolean): void {
     if (event) {
       this.router.navigateByUrl('/greetings');
     }
     this.noAccessModalShow = false;
   }
 
-  ngOnDestroy() {
-    this.currentUserSubscription?.unsubscribe();
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
   }
 }

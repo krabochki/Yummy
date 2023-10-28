@@ -1,0 +1,47 @@
+<div class="container">
+  <input
+    [(ngModel)]="value"
+    (blur)="blur()"
+    (ngModelChange)="search()"
+    (focus)="focus()"
+    type="text"
+  />
+  <p
+    class="placeholder"
+    [ngClass]="{
+      up: this.isFocused,
+      sleep: this.isSleep
+    }"
+  >
+    {{ placeholder }}
+  </p>
+  <div class="autocomplete" @height *ngIf="autocompleteShow">
+    <div class="section noone" *ngIf="group.length === 0">
+      <p>
+        По вашему запросу нет никаких категорий. Попробуйте изменить параметры
+        поиска.
+      </p>
+      <svg-icon
+        [src]="'../../../../../assets/images/svg/sad-cook-2.svg'"
+        [applyClass]="true"
+        class="svg"
+      />
+    </div>
+
+    <div class="section" *ngFor="let item of group">
+      <h2>{{ item.section.name }}</h2>
+
+      <ol type="I">
+        <li
+          (mousedown)="
+            addCategory(category); this.value = ''; copyOfFullGroup()
+          "
+          *ngFor="let category of item.categories; let i = index"
+        >
+          <div class="num">{{ i + 1 }}</div>
+          <p class="content">{{ category.name }}</p>
+        </li>
+      </ol>
+    </div>
+  </div>
+</div>

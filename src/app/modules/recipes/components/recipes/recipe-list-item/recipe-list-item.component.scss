@@ -11,6 +11,11 @@
   }
 }
 
+.recipe .fav.disabled{
+  background-color: var(--color-foreground-unactive) ;
+  pointer-events: none;
+}
+
 .no-author{margin-bottom: 0.4em;}
 .author{
   cursor: pointer;

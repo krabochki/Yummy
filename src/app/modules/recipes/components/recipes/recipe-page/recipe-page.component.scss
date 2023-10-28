@@ -45,14 +45,6 @@ h2 {
 .main {
   width: min-content;
 }
-
-.all {
-  display: grid;
-  margin-top: 2em;
-  column-gap: 2em;
-  grid-template-columns: 1fr 10em;
-
- 
   .ads-under{
     column-gap: 1em;
     width: 100%;
@@ -61,6 +53,15 @@ h2 {
       zoom:0.8
     }
   }
+
+.all {
+  display: grid;
+  margin-top: 2em;
+  column-gap: 2em;
+  grid-template-columns: 1fr 10em;
+
+ 
+
 
   .ads {
   
@@ -658,6 +659,17 @@ h1 {
       }
     }
   }
+  }
+}
+
+.moder-buttons{
+  display: flex;
+  column-gap:1em;
+  margin-top: 2em;
+  justify-content: center;
+  overflow: visible;
+  app-button{
+    overflow: visible;
   }
 }
 

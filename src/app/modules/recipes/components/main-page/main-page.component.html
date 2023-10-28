@@ -31,7 +31,7 @@
     [label]="'Откроем мир вкуса вместе'" [buttonText]="'Создать аккаунт'"
     [background]="'reg-banner-background'"></app-banner>
 
-<app-banner *ngIf="currentUser.id !== 0" [link]="'recipes/add'"
+<app-banner *ngIf="currentUser.id !== 0" (click)="creatingMode=true"
     [info]="'Добавляйте подробные проверенные временем рецепты и делитесь опытом с другими кулинарами'"
     [label]="'Добавляйте рецепты и делитесь ими'" [buttonText]="'Создать рецепт'"
     [background]="'share-recipes-banner-background'"></app-banner>
@@ -77,3 +77,5 @@
     </ng-template>
 
 </div>
+
+  <app-recipe-creating style="z-index:10; position: fixed;" *ngIf="creatingMode" (closeEmitter)="creatingMode=false" @modal ></app-recipe-creating>

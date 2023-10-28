@@ -1,7 +1,7 @@
 import { trigger } from '@angular/animations';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { modal } from 'src/tools/animations';
@@ -12,9 +12,11 @@ import { modal } from 'src/tools/animations';
   styleUrls: ['./footer.component.scss'],
   animations: [trigger('modal', modal())],
 })
-export class FooterComponent implements OnInit {
-  currentUserSubscription: Subscription = new Subscription();
-  currentUser: IUser  = {...nullUser};
+export class FooterComponent implements OnInit, OnDestroy {
+  currentUser: IUser = { ...nullUser };
+  protected destroyed$: Subject<void> = new Subject<void>();
+
+  noAccessModalShow = false;
 
   links = [
     ['pinterest', 'http://pinterest.com'],
@@ -28,18 +30,14 @@ export class FooterComponent implements OnInit {
     private router: Router,
   ) {}
 
-  ngOnInit() {
-    this.currentUserSubscription = this.authService
-      .currentUser$
-      .subscribe((receivedUser) => {
-        this.currentUser = receivedUser;
-      });
+  ngOnInit(): void {
+    this.authService.currentUser$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedUser) => (this.currentUser = receivedUser));
   }
 
-  noAccessModalShow = false;
-
-  linkClick() {
-    if (this.currentUser.id===0) {
+  linkClick(): void {
+    if (this.currentUser.id === 0) {
       this.noAccessModalShow = true;
     }
   }
@@ -50,4 +48,8 @@ export class FooterComponent implements OnInit {
     this.noAccessModalShow = false;
   }
 
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
+  }
 }

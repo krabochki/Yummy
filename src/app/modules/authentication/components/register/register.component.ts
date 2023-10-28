@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { trigger } from '@angular/animations';
 import {
   ChangeDetectionStrategy,
@@ -13,7 +14,6 @@ import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { loginMask, passMask, usernameMask } from 'src/tools/regex';
 import { AuthService } from '../../services/auth.service';
 import { modal } from 'src/tools/animations';
-import { Subscription } from 'rxjs';
 import {
   AbstractControl,
   FormBuilder,
@@ -21,6 +21,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
@@ -34,11 +35,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
   modalFailShow: boolean = false;
   failText: string = '';
   users: IUser[] = [];
-  usersSubscription?: Subscription;
-  registrationSubscription?: Subscription;
-  loginSubscription?: Subscription;
-
   form: FormGroup;
+  protected destroyed$: Subject<void> = new Subject<void>();
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -81,12 +79,12 @@ export class RegisterComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() {
-    this.usersSubscription = this.usersService.users$.subscribe(
-      (users: IUser[]) => {
-        this.users = users;
-      },
-    );
+  ngOnInit(): void {
+    this.usersService.users$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedUsers: IUser[]) => {
+        this.users = receivedUsers;
+      });
   }
 
   //Валидатор по маске regex для формы
@@ -97,7 +95,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     };
   }
 
-  registration() {
+  registration(): void {
     if (this.form.valid) {
       const maxId = Math.max(...this.users.map((u) => u.id));
       const userData: IUser = {
@@ -118,22 +116,20 @@ export class RegisterComponent implements OnInit, OnDestroy {
       );
 
       if (!emailExists && !usernameExists) {
-        this.registrationSubscription = this.usersService.postUser(userData).subscribe(
-          () => {
-                
-                localStorage.setItem('currentUser', JSON.stringify(userData));
-                this.authService.setCurrentUser(userData);
-                this.modalSuccessShow = true;
-                this.cd.markForCheck();
-                (error: Error) => {
-                  console.error(
-                    'Регистрация | Ошибка в AuthService (loginUser): ' +
-                      error.message,
-                  );
-                };
-              });
-        
-        
+        this.usersService
+          .postUser(userData)
+          .subscribe(() => {
+            localStorage.setItem('currentUser', JSON.stringify(userData));
+            this.authService.setCurrentUser(userData);
+            this.modalSuccessShow = true;
+            this.cd.markForCheck();
+            (error: Error) => {
+              console.error(
+                'Регистрация | Ошибка в AuthService (loginUser): ' +
+                  error.message,
+              );
+            };
+          });
       } else {
         if (emailExists) {
           this.failText =
@@ -152,23 +148,22 @@ export class RegisterComponent implements OnInit, OnDestroy {
     }
   }
 
-  handleAreYouSureModalResult(result: boolean) {
+  handleAreYouSureModalResult(result: boolean): void {
     if (result) {
       this.registration();
     }
     this.modalAreYouSureShow = false;
   }
-  handleSuccessModalResult() {
+  handleSuccessModalResult(): void {
     this.router.navigate(['/']);
     this.modalSuccessShow = false;
   }
-  handleFailModalResult() {
+  handleFailModalResult(): void {
     this.modalFailShow = false;
   }
 
-  ngOnDestroy() {
-    this.usersSubscription?.unsubscribe();
-    this.registrationSubscription?.unsubscribe();
-    this.loginSubscription?.unsubscribe();
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
   }
 }

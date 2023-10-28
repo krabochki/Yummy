@@ -2,12 +2,13 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
+  OnDestroy,
   OnInit,
 } from '@angular/core';
 
 import { RecipeService } from '../../../services/recipe.service';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
-import { IRecipe } from '../../../models/recipes';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-category-list-item',
@@ -15,12 +16,13 @@ import { IRecipe } from '../../../models/recipes';
   styleUrls: ['./category-list-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CategoryListItemComponent implements OnInit {
+export class CategoryListItemComponent implements OnInit, OnDestroy {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @Input() category: any = null;
 
   @Input() showRecipesNumber: boolean = false;
   @Input() context: 'section' | 'category' = 'category';
+  protected destroyed$: Subject<void> = new Subject<void>();
 
   recipesNumber = 0;
   constructor(
@@ -29,8 +31,10 @@ export class CategoryListItemComponent implements OnInit {
   ) {}
   ngOnInit() {
     if (this.showRecipesNumber)
-      this.recipeService.recipes$.subscribe((data) => {
-        this.authService.currentUser$.subscribe((user) => {
+      this.recipeService.recipes$.pipe(takeUntil(this.destroyed$))
+          .subscribe((data) => {
+        this.authService.currentUser$.pipe(takeUntil(this.destroyed$))
+          .subscribe((user) => {
           if (this.context === 'category')
             this.recipesNumber = this.recipeService.getRecipesByCategory(
               this.recipeService.getPublicAndAllMyRecipes(data, user.id),
@@ -55,5 +59,10 @@ export class CategoryListItemComponent implements OnInit {
           }
         });
       });
+  }
+
+  ngOnDestroy(): void{
+     this.destroyed$.next();
+     this.destroyed$.complete();
   }
 }

@@ -7,41 +7,41 @@
   <div *ngIf="!mobile" class="menu-items">
     <app-select [items]="recipeSelectItems" 
       [routes]="[{
-        routeLink: '/recipes/yours',
+        routeLink: recipeRouterLinks[0],
         disabled: this.currentUser.id === 0
           ?true:false
       },
       {
-        routeLink: '/recipes',
+        routeLink:  recipeRouterLinks[1],
         disabled: false
       },
       {
-        routeLink: '/sections',
+        routeLink:  recipeRouterLinks[2],
         disabled: false
       },
       {
-        routeLink: '/recipes/favorite',
+        routeLink:  recipeRouterLinks[3],
         disabled: this.currentUser.id === 0
           ?true:false
       },
       {
-        routeLink: 'match',
+        routeLink:  recipeRouterLinks[4],
         disabled: false
       }]"
         
       ></app-select>
     <app-select [items]="cooksSelectItems" 
      [routes]="[{
-        routeLink: '/cooks/list/' + currentUser.id,
+        routeLink: cookRouterLinks[0],
         disabled: this.currentUser.id === 0
           ?true:false
       },
       {
-        routeLink: '/cooks',
+        routeLink: cookRouterLinks[1],
         disabled: false
       },
       {
-        routeLink: '/cooks/updates',
+        routeLink: cookRouterLinks[2],
         disabled: this.currentUser.id === 0 ?true:false
       }
     ]"
@@ -122,7 +122,7 @@
     </div>
     <div class="item">
       <!---->
-      <div class="main-button" [routerLink]="currentUser.id === 0 ? '/greetings' : '/recipes/add'">
+      <div class="main-button" [routerLink]="currentUser.id === 0 ? '/greetings' : null" (click)="currentUser.id===0?null:creatingMode=true">
         <svg-icon *ngIf="currentUser.id <=0; else plusSvg" class="header-svg" [applyClass]="true" [src]="
             '../../../../../assets/images/svg/header/login.svg'
           "></svg-icon>
@@ -158,3 +158,5 @@
   (resultEmit)="handleNoAccessModal($event)" [buttonsText]="['Давайте', 'Не сейчас']" [description]="
     'Этот раздел могут просматривать только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'
   "></app-modal>
+
+    <app-recipe-creating style="z-index:10; position: fixed;" *ngIf="creatingMode" (closeEmitter)="creatingMode=false" @modal ></app-recipe-creating>

@@ -19,10 +19,12 @@ import { ControlsModule } from '../controls/controls.module';
 import { CdkDropList, CdkDragHandle, CdkDrag } from '@angular/cdk/drag-drop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MAT_AUTOCOMPLETE_SCROLL_STRATEGY, MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { AsyncPipe } from '@angular/common';
    
+import { ScrollingModule } from '@angular/cdk/scrolling';
+
 
 import { VerticalRecipeListComponent } from './components/recipes/vertical-recipe-list/vertical-recipe-list.component';
 import { VerticalCategoryListComponent } from './components/categories/vertical-category-list/vertical-category-list.component';
@@ -51,6 +53,7 @@ import { SectionService } from './services/section.service';
     NgFor,
     ControlsModule,
     RecipesRoutingModule,
+    ScrollingModule,
     SvgIconComponent,
     ControlsModule,
     ControlsModule,
@@ -79,6 +82,7 @@ import { SectionService } from './services/section.service';
     VerticalCategoryListComponent,
     HorizontalCategoryListComponent,
     VerticalRecipeListComponent,
+    RecipeCreatingComponent
   ],
 })
 export class RecipesModule {}

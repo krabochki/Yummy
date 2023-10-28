@@ -45,21 +45,21 @@
       <div class="button-row">
         <app-button 
           [color]="'prim'"
-          (click)="searchMode?searchOnOff():null;object = 'followers'"
+          (click)="switchObject('followers')"
           [text]="'Подписчики'"
           [style]="object === 'followers' ? 'filled' : 'outlined'"
           [rounded]="true"
         ></app-button>
         <app-button
           [color]="'prim'"
-          (click)="searchMode?searchOnOff():null;object = 'following'"
+          (click)="switchObject('following')"
           [text]="'Подписки'"
           [style]="object === 'following' ? 'filled' : 'outlined'"
           [rounded]="true"
         ></app-button>
       </div>
     </div>
-
+ 
     <div class="block-3">
       <hr />
       <ng-template #followingBlock>

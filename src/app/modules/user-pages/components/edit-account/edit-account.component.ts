@@ -20,13 +20,23 @@ import {
   anySiteMask,
 } from 'src/tools/regex';
 import { UserService } from '../../services/user.service';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
+import { Observable, of } from 'rxjs';
+import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 
 @Component({
   selector: 'app-edit-account',
   templateUrl: './edit-account.component.html',
   styleUrls: ['./edit-account.component.scss'],
   animations: [trigger('modal', modal())],
-  changeDetection:ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditAccountComponent implements OnInit, AfterContentChecked {
   @Input() editableUser: IUser = { ...nullUser };
@@ -37,21 +47,12 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
   closeModal: boolean = false;
   successModal: boolean = false;
   newUser: IUser = { ...nullUser };
-
-  pinterestMask = pinterestMask;
-  facebookMask = facebookMask;
-  siteMask = anySiteMask;
-  vkMask = vkMask;
-  twitterMask = twitterMask;
-  usernameMask = usernameMask;
-
-  pinterestLink = '';
-  facebookLink = '';
-  twitterLink = '';
-  vkLink = '';
+  users: IUser[] = [];
 
   myImage: string = '';
   defaultImage: string = '../../../../../assets/images/add-userpic.png';
+  form: FormGroup;
+  beginningData:any;
 
   ngAfterContentChecked(): void {
     this.cdr.detectChanges();
@@ -60,141 +61,222 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
   constructor(
     private cdr: ChangeDetectorRef,
     private userService: UserService,
+    private authService: AuthService,
+    private fb: FormBuilder,
   ) {
+    this.form = this.fb.group({
+      username: [
+        this.newUser.username,
+        [
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(20),
+          this.customPatternValidator(usernameMask),
+          this.usernameExistsValidator(),
+        ],
+      ],
+      fullname: [this.newUser.fullName, [Validators.maxLength(30)]],
+      quote: [this.newUser.quote, [Validators.maxLength(100)]],
+      description: ['', [Validators.maxLength(2000)]],
+      location: ['', [Validators.maxLength(30)]],
+      website: [
+        '',
+        [Validators.maxLength(1000)],
+        this.customLinkPatternValidator(anySiteMask),
+      ],
+      twitter: [
+        '',
+        [Validators.maxLength(1000)],
+        this.customLinkPatternValidator(twitterMask),
+      ],
+      facebook: [
+        '',
+        [Validators.maxLength(1000)],
+        this.customLinkPatternValidator(facebookMask),
+      ],
+      vk: [
+        '',
+        [Validators.maxLength(1000)],
+        this.customLinkPatternValidator(vkMask),
+      ],
+      pinterest: [
+        '',
+        [Validators.maxLength(1000)],
+        this.customLinkPatternValidator(pinterestMask),
+      ],
+      userpic: [null],
+    });
+  }
+
+  //Валидатор по маске regex для формы
+  customLinkPatternValidator(pattern: RegExp): ValidatorFn {
+    return (
+      control: AbstractControl,
+    ): Observable<{ [key: string]: any } | null> => {
+      if (control.value !== '') {
+        const isValid = pattern.test(control.value);
+        return isValid
+          ? of(null)
+          : of({ customPattern: { value: control.value } });
+      }
+      else return of(null)
+    };
+  }
+  customPatternValidator(pattern: RegExp): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const isValid = pattern.test(control.value);
+      return isValid ? null : { customPattern: { value: control.value } };
+    };
+  }
+
+  
+
+  ngOnInit() {
+    this.newUser = { ...this.editableUser };
+    this.form.get('username')?.setValue(this.newUser.username);
+    this.form.get('quote')?.setValue(this.newUser.quote);
+    this.form.get('fullname')?.setValue(this.newUser.fullName);
+    this.form.get('description')?.setValue(this.newUser.description);
+    this.form.get('location')?.setValue(this.newUser.location);
+    this.form.get('website')?.setValue(this.newUser.personalWebsite);
     for (const network of this.newUser.socialNetworks) {
       switch (network.name) {
         case 'pinterest':
-          this.pinterestLink = network.link;
+          this.form.get('pinterest')?.setValue(network.link);
           break;
         case 'facebook':
-          this.facebookLink = network.link;
+          this.form.get('facebook')?.setValue(network.link);
           break;
         case 'twitter':
-          this.twitterLink = network.link;
+          this.form.get('twitter')?.setValue(network.link);
           break;
         case 'ВКонтакте':
-          this.vkLink = network.link;
+          this.form.get('vk')?.setValue(network.link);
           break;
       }
     }
-  }
+    
+      if (this.newUser.avatarUrl !== null) {
+        try {
+          const mainImageData: FormData = this.newUser.avatarUrl;
+          const mainpicFile = mainImageData.get('file') as File;
+          if (mainpicFile) {
+            this.form.get('image')?.setValue(mainImageData);
+            const objectURL = URL.createObjectURL(mainpicFile);
+            this.myImage = objectURL;
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    
+    this.beginningData = this.form.getRawValue();
 
-  ngOnInit() {
     this.userService.users$.subscribe((data: IUser[]) => {
       this.users = data;
     });
     this.myImage = this.defaultImage;
-    this.newUser = { ...this.editableUser };
   }
 
-  checkData(): boolean {
-    for (const network of this.newUser.socialNetworks) {
-      switch (network.name) {
-        case 'pinterest':
-          if (network.link) this.pinterestLink = network.link;
-          break;
-        case 'facebook':
-          if (network.link) this.facebookLink = network.link;
-          break;
-        case 'twitter':
-          if (network.link) this.twitterLink = network.link;
-          break;
-        case 'ВКонтакте':
-          if (network.link) this.vkLink = network.link;
-          break;
+  onUserpicChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const userpicFile: File | undefined = input.files?.[0];
+
+    if (userpicFile) {
+      this.form.get('userpic')?.setValue(userpicFile);
+        const objectURL = URL.createObjectURL(userpicFile);
+        this.myImage = objectURL;
       }
-    }
-
-    if (
-      !this.siteMask.test(this.newUser.personalWebsite) &&
-      this.newUser.personalWebsite !== ''
-    ) {
-      return false;
-    }
-
-    if (this.vkLink !== '' && !vkMask.test(this.vkLink)) {
-      return false;
-    }
-
-    if (this.facebookLink !== '' && !facebookMask.test(this.vkLink)) {
-      return false;
-    }
-
-    if (this.pinterestLink !== '' && !pinterestMask.test(this.pinterestLink)) {
-      return false;
-    }
-
-    if (this.twitterLink !== '' && !twitterMask.test(this.twitterLink)) {
-      return false;
-    }
-
-    if (!usernameMask.test(this.newUser.username)) {
-      return false;
-    }
-    if (this.areObjectsEqual(this.newUser, this.editableUser)) {
-      return false;
-    }
-    if (this.ifUsernameExists()) {
-      return false;
-    }
-
-    return true;
   }
 
-  users: IUser[] = [];
+  usernameExistsValidator() {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const username = control.value;
 
-  ifUsernameExists(): boolean {
-    if (this.newUser.username !== this.editableUser.username) {
-      const usernameExists = this.users.find(
-        (u) => u.username === this.newUser.username,
-      );
+      if (username !== this.editableUser.username) {
+        if (username === undefined || username === '') {
+          return null; // Пустое значение считается допустимым
+        }
 
-      if (usernameExists === undefined) {
-        return false;
+        const usernameExists = this.users.find((u) => u.username === username);
+
+        if (usernameExists !== undefined) {
+          return { usernameExists: true }; // Устанавливаем ошибку с именем 'usernameExists'
+        }
       }
 
-      return true;
-    } else return false;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onChangeInput(event: any) {
-    const selectedFile = event.target.files[0]; // Первый выбранный файл
-
-    if (selectedFile) {
-      const objectURL = URL.createObjectURL(selectedFile);
-      this.myImage = '';
-      this.myImage = objectURL;
-
-      // const formData = new FormData();
-      // formData.append('userpic', file, file.name);
-      // this.http.post(this.url, formData).subscribe((response) => {
-      //   });
-    }
+      return null; // Имя пользователя допустимо
+    };
   }
 
   //проверяем равны ли все поля в обьектах
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  areObjectsEqual(obj1: any, obj2: any): boolean {
-    const keys1 = Object.keys(obj1);
-    const keys2 = Object.keys(obj2);
+  areObjectsEqual(): boolean {
+      return (
+        JSON.stringify(this.beginningData) !==
+        JSON.stringify(this.form.getRawValue())
+      );
 
-    // Проверка на количество полей
-    if (keys1.length !== keys2.length) {
-      return false;
-    }
-
-    for (const key of keys1) {
-      if (obj1[key] !== obj2[key]) {
-        return false;
-      }
-    }
-
-    return true;
   }
 
   updateUser() {
-    this.updatedUser.emit(this.newUser);
+    const socialNetworks: SocialNetwork[] = [];
+
+    const socialNetworksData: SocialNetwork[] = [
+      { name: 'pinterest', link: this.form.value.pinterest },
+      { name: 'facebook', link: this.form.value.facebook },
+      { name: 'twitter', link: this.form.value.twitter },
+      { name: 'ВКонтакте', link: this.form.value.vk },
+    ];
+
+    for (const data of socialNetworksData) {
+      if (data.link !== '') {
+        socialNetworks.push(data);
+      }
+    }
+
+    const userpicData = new FormData();
+    userpicData.append('image', this.form.get('userpic')?.value);
+
+    
+
+    this.newUser = {
+      ...this.editableUser,
+    
+      username: this.form.value.username,
+      fullName: this.form.value.fullname,
+      avatarUrl:userpicData,
+      quote: this.form.value.quote,
+      personalWebsite: this.form.value.website,
+      description: this.form.value.description,
+      location: this.form.value.location,
+      socialNetworks: socialNetworks,
+    };
+
+    this.userService.updateUsers(this.newUser).subscribe(
+      () => {
+        this.authService.loginUser(this.newUser).subscribe((user) => {
+          if (user) {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            this.authService.setCurrentUser(user);
+            this.successModal = true;
+          }
+          (error: Error) => {
+            console.error(
+              'Изменение пользователя | Ошибка при авторизации обновленного пользователя: ' +
+                error.message,
+            );
+          };
+        });
+      },
+      (error: Error) => {
+        console.error(
+          'Изменение пользователя | Ошибка при обновлении пользователя: ' +
+            error.message,
+        );
+      },
+    );
+
   }
 
   handleSaveModal(answer: boolean) {
@@ -204,10 +286,11 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
     }
     this.saveModal = false;
   }
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleSuccessModal(answer: boolean) {
     this.closeEmitter.emit(true);
+        this.updatedUser.emit(this.newUser);
+
     this.successModal = false;
   }
   handleCloseModal(answer: boolean) {
@@ -215,40 +298,5 @@ export class EditAccountComponent implements OnInit, AfterContentChecked {
       this.closeEmitter.emit(true);
     }
     this.closeModal = false;
-  }
-
-  getSocialMedia(
-    nameValue: 'facebook' | 'twitter' | 'ВКонтакте' | 'pinterest',
-    linkValue: string,
-  ) {
-    this.newUser.socialNetworks = this.newUser.socialNetworks.filter(
-      (network) => network.name.toLowerCase() !== nameValue,
-    );
-    this.newUser.socialNetworks = this.newUser.socialNetworks.filter(
-      (network) => network.link !== '',
-    );
-    if (linkValue !== '') {
-      const twitter: SocialNetwork = { name: nameValue, link: linkValue };
-      this.newUser.socialNetworks.push(twitter);
-    }
-  }
-
-  getFullname(value: string) {
-    this.newUser.fullName = value;
-  }
-  getDescription(value: string) {
-    this.newUser.description = value;
-  }
-  getUsername(value: string) {
-    this.newUser.username = value;
-  }
-  getWebsite(value: string) {
-    this.newUser.personalWebsite = value;
-  }
-  getLocation(value: string) {
-    this.newUser.location = value;
-  }
-  getQuote(value: string) {
-    this.newUser.quote = value;
   }
 }

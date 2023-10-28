@@ -23,7 +23,6 @@ export class RecipeResolver {
 
     return this.recipeService.recipes$.pipe(
       map((recipes: IRecipe[]) => {
-        console.log(recipes)
         const foundRecipe = recipes.find((recipe) => {
           if (recipe.id === recipeId) return true;
           else return false;

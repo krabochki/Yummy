@@ -5,6 +5,7 @@ import { UserPageComponent } from './components/user-page/user-page.component';
 import { UsersPageComponent } from './components/users-page/users-page.component';
 import { SomeRecipesPageComponent } from '../recipes/components/recipes/some-recipes-page/some-recipes-page.component';
 import { UserResolver } from './services/user.resolver';
+import { PageNotFoundComponent } from '../controls/page-not-found/page-not-found.component';
 const routes: Routes = [
   {
     path: '',
@@ -27,7 +28,7 @@ const routes: Routes = [
 
       {
         path: 'cooks/updates',
-        component: SomeRecipesPageComponent,
+        component: PageNotFoundComponent,
       },
     ],
   },

@@ -170,3 +170,51 @@ app-modal {
   display: flex;
   column-gap: var(--space-s);
 }
+
+@media(max-width:480px){
+  
+.cont {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+    .close{
+    top: 0;
+    right: 0;
+    left: unset;
+    width: 2.3em;
+    padding-bottom: 0.5em;
+    padding-left: 0.5em;
+    font-size: 1.2em;
+    height: 2.3em;
+    border-radius: 0 0 0 100%;
+  }
+}
+.container {
+
+  border-radius: 0;
+  position: relative;
+ width: 100vw;  align-items: center;
+display: flex;
+justify-content: center;
+  height: 100%;
+  P{
+    margin: 0.8em 0;
+  }
+  .toogle{
+    width:70vw;
+
+  }
+  overflow-x: hidden;
+  >div{ width: 70vw;
+  height: 100%;
+  overflow: visible;
+  max-height: unset;
+  margin: 0;
+  padding: 2em;
+  top:0;bottom:0;left:0;right:0;
+  zoom:1.2;
+ 
+
+  }
+}
+}

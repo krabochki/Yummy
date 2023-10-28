@@ -217,9 +217,18 @@
     cursor: pointer;
     font-size: var(--font-m);
     line-height: 1;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    word-wrap:normal !important;
+    
+     display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3; /* Количество строк, которые вы хотите отобразить */
+    overflow-wrap: break-word; /* Разрешить перенос длинных слов */
+      hyphens: auto; /* Разрешить перенос слов */
+
+  white-space: normal; /* Изменить на "normal" */
+   overflow-y: hidden;
+   overflow-x: hidden;
+   text-overflow: ellipsis;
+
     font-weight: 600;
     padding-bottom: 0.2em;
   }

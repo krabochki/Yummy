@@ -17,7 +17,6 @@ import { SocialButtonComponent } from './social-button/social-button.component';
 import { BannerComponent } from './banner/banner.component';
 import { CountInputComponent } from './count-input/count-input.component';
 import { UsualInputComponent } from './usual-input/usual-input.component';
-import { ExpandingInputComponent } from './expanding-input/expanding-input.component';
 import { AutocompleteComponent } from './autocomplete/autocomplete.component';
 
 @NgModule({
@@ -33,7 +32,6 @@ import { AutocompleteComponent } from './autocomplete/autocomplete.component';
     BannerComponent,
     CountInputComponent,
     UsualInputComponent,
-    ExpandingInputComponent,
     AutocompleteComponent,
   ],
   imports: [
@@ -56,7 +54,6 @@ import { AutocompleteComponent } from './autocomplete/autocomplete.component';
     CountInputComponent,
     UsualInputComponent,
     AutocompleteComponent,
-    ExpandingInputComponent,
   ],
   providers: [provideAngularSvgIcon()],
 })

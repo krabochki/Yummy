@@ -11,7 +11,6 @@ import { RouteEventsService } from '../controls/route-events.service';
 import { RecipesModule } from '../recipes/recipes.module';
 import { CommentComponent } from './components/comments/comment/comment.component';
 import { CommentsListComponent } from './components/comments/comments-list/comments-list.component';
-import { EditAccountComponent } from './components/edit-account/edit-account.component';
 import { FollowersAndFollowingComponent } from './components/followers-and-following/followers-and-following.component';
 import { NotificationsListComponent } from './components/notifications/notifications-list/notifications-list.component';
 import { NotifyComponent } from './components/notifications/notify/notify.component';
@@ -22,12 +21,12 @@ import { UsersListComponent } from './components/users-list/users-list.component
 import { UsersPageComponent } from './components/users-page/users-page.component';
 import { UserPagesRoutingModule } from './user-pages-routing.module';
 import { UserPagesComponent } from './user-pages.component';
+import { UserAccountEditComponent } from './components/user-account-edit/user-account-edit.component';
 
 @NgModule({
   declarations: [
     UserPagesComponent,
     UserPageComponent,
-    EditAccountComponent,
     NotifyComponent,
     NotificationsListComponent,
     FollowersAndFollowingComponent,
@@ -36,7 +35,8 @@ import { UserPagesComponent } from './user-pages.component';
     SettingsComponent,
     UsersListComponent,
     UsersListItemComponent,
-    UsersPageComponent
+    UsersPageComponent,
+    UserAccountEditComponent
   ],
   imports: [
     CommonModule,

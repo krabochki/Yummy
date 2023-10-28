@@ -149,7 +149,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;
   }
 }
 
-*{
+.drag-scroll-content{
    &::-webkit-scrollbar {
     width: 12px;
   }

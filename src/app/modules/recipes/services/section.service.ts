@@ -3,6 +3,7 @@ import { ICategory, ISection, nullSection } from '../models/categories';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
 import { sectionsUrl } from 'src/tools/source';
+import { IRecipe } from '../models/recipes';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +20,10 @@ export class SectionService {
     this.getSections().subscribe((data) => {
       this.sectionsSubject.next(data);
     });
+  }
+
+  getSectionsWithCategories(sections:ISection[]):ISection[] {
+    return sections.filter((section:ISection)=> section.categoriesId.length>0)
   }
 
   getSections() {
@@ -41,6 +46,26 @@ export class SectionService {
     return (sections = sections.filter(
       (section) => section.categoriesId.length > 0,
     ));
+  }
+
+  getNumberRecipesOfSection(section: ISection, recipes: IRecipe[], categories: ICategory[]): number{
+    let sectionRecipesIds:number[] = []
+    section.categoriesId.forEach((categoryId) => {
+
+      const currentCategory = categories.find((category) => category.id = categoryId)
+      if (currentCategory) {
+        const categoryRecipesIds: number[] = [];
+        recipes.forEach((recipe) => {
+          if(recipe.categories.includes(currentCategory.id)) categoryRecipesIds.push(recipe.id)
+        }) 
+        sectionRecipesIds = [ ...sectionRecipesIds, ...categoryRecipesIds]
+      }
+
+    });
+    sectionRecipesIds = sectionRecipesIds.filter((recipeId, index, self) => {
+      return self.indexOf(recipeId) === index;
+    });
+    return sectionRecipesIds.length;
   }
 
   getSectionOfCategory(sections:ISection[], category: ICategory): ISection {

@@ -6,7 +6,6 @@ drag-scroll {
   column-gap: 1em;
 
   display: flex;
-  cursor: grab;
 
   app-category-list-item {
     height: 100%;
@@ -32,6 +31,8 @@ drag-scroll {
 }
 
 .has-scroll {
+    cursor: grab;
+
   &::after {
     height: calc(100% - 1.3em);
     width: 15%;

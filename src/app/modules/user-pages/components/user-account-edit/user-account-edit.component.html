@@ -1,0 +1,325 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="outer" (click)="clickBackgroundNotContent($event)">
+  <div class="inner">
+    <div
+      class="close-button"
+      (click)="
+        this.areObjectsEqual()
+          ? (this.closeModal = true)
+          : this.closeEmitter.emit(true)
+      "
+    >
+      <svg-icon
+        [src]="'../../../../../assets/images/svg/close.svg'"
+        [applyClass]="true"
+        class="close-svg"
+      ></svg-icon>
+    </div>
+    <div class="header">
+      <h1>Изменение аккаунта</h1>
+      <div class="navigation">
+        <div class="nav-step-circles-block">
+          <div class="nav-step-block" *ngFor="let step of steps; let i = index">
+            <div
+              class="nav-step-block-inner"
+              (click)="currentStep = i; scrollTop()"
+            >
+              <div
+                class="nav-step-circle"
+                [ngClass]="{
+                  active: i === currentStep,
+                  completed: i < currentStep
+                }"
+              >
+                {{ i + 1 }}
+              </div>
+              <p
+                class="nav-step-short-title"
+                [ngClass]="{
+                  active: i === currentStep,
+                  completed: i < currentStep
+                }"
+              >
+                {{ steps[i].shortTitle }}
+              </p>
+            </div>
+            <div
+              [ngClass]="{
+                completed: i < currentStep
+              }"
+              *ngIf="i !== steps.length - 1"
+              class="nav-step-line"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="unique-content">
+      <div>
+        <h2>{{ steps[currentStep].title }}</h2>
+        <button class="more-button" (click)="showInfo = !showInfo">
+          <svg-icon
+            [src]="'../../../../../assets/images/svg/help.svg'"
+            [applyClass]="true"
+            class="help-svg"
+          ></svg-icon>
+          Подробнее
+        </button>
+        <p class="description" *ngIf="showInfo" @height>
+          {{ steps[currentStep].description }}
+        </p>
+      </div>
+
+      <hr />
+
+      <form [formGroup]="form" #scrollContainer>
+        <div class="step-container" *ngIf="currentStep === 0">
+          <div class="main-info-control-with-image">
+             <div class="form-control">
+              <div class="image">
+                  <input type="file" (change)="onUserpicChange($event)" accept="image/*" />
+        
+                  <div class="delete" *ngIf="myImage !== defaultImage" (click)="myImage = defaultImage; this.form.get('userpic')?.setValue(null)">
+                    <svg-icon [applyClass]="true" class="svgTrash"
+                      [src]="'../../../../../assets/images/svg/trash.svg'"></svg-icon>
+                  </div>
+                  <div class="userpic" [ngClass]="{'have-image': this.form.get('userpic')?.value!==null}" [ngStyle]="{ 'background-image': 'url(' + myImage + ')' }" alt="User Photo"></div>
+                </div>
+            </div>
+           <div class="main-info-controls">
+              <div class="form-control">
+                <h3>Имя пользователя</h3>
+                <app-usual-input
+                  [inputRequired]="true"
+                  [max]="20"
+                  id="username"
+                  formControlName="username"
+                  [placeholder]="'Придумай себе имя пользователя'"
+                  required
+                  [value]="form.get('username')?.value"
+                  [error]="
+                    !form.get('username')?.hasError('usernameExists')
+                      ? form.get('username')?.invalid &&
+                        (form.get('username')?.dirty ||
+                          form.get('username')?.touched)
+                        ? 'Имя пользователя должно содержать от 4 до 20 символов, среди которых могут быть буквы (минимум одна), цифры, а также нижние почеркивания и точки (не подряд)'
+                        : ''
+                      : 'Это имя пользователя уже занято'
+                  "
+                ></app-usual-input>
+                <div *ngIf="form.get('username')?.hasError('usernameExists')">
+                  Это имя пользователя уже занято.
+                </div>
+              </div>
+              <div class="form-control">
+                <h3>Полное имя</h3>
+                <app-usual-input
+                  [max]="30"
+                  id="fullname"
+                  formControlName="fullname"
+                  [value]="form.get('fullname')?.value"
+                  [placeholder]="'Введи свое полное имя'"
+                  [error]="
+                    form.get('fullname')?.invalid &&
+                    (form.get('fullname')?.dirty || form.get('fullname')?.touched)
+                      ? 'Полное имя не может содержать более 30 символов'
+                      : ''
+                  "
+                ></app-usual-input>
+              </div>
+          </div>
+         </div>
+         
+        </div>
+        <div class="step-container" *ngIf="currentStep === 1">
+          <div class="form-control">
+                        <h3>Личная цитата</h3>
+
+            <app-usual-input
+              [inputType]="'textarea'"
+              [value]="this.form.get('quote')?.value"
+              [max]="100"
+              id="quote"
+              formControlName="quote"
+              [placeholder]="'Придумай себе личную цитату'"
+              [error]="
+                form.get('quote')?.invalid &&
+                (form.get('quote')?.dirty || form.get('quote')?.touched)
+                  ? 'Личная цитата не может содержать более 100 символов'
+                  : ''
+              "
+            ></app-usual-input>
+            </div>
+            <div class="form-control">
+              <h3>Описание</h3>
+            <app-usual-input
+              [inputType]="'textarea'"
+              [max]="2000"
+              id="description"
+              formControlName="description"
+              [value]="this.form.get('description')?.value"
+              [placeholder]="'Введи описание своего профиля. Тут может все, что угодно'"
+              [error]="
+                form.get('description')?.invalid &&
+                (form.get('description')?.dirty ||
+                  form.get('description')?.touched)
+                  ? 'Описание не может содержать более 2000 символов'
+                  : ''
+              "
+            ></app-usual-input>
+            </div>
+           <div class="form-control">
+            <h3>Личный веб-сайт</h3>
+              <app-usual-input
+                [max]="1000"
+                id="website"
+                formControlName="website"
+                [value]="form.get('website')?.value"
+                [placeholder]="'Оставь ссылку на свой личный веб-сайт'"
+                [error]="
+                  form.get('website')?.invalid &&
+                  (form.get('website')?.dirty || form.get('website')?.touched)
+                    ? 'Введенное значение не является корректной ссылкой на сайт в интернете. Пример: https://krabochki.com'
+                    : ''
+                "
+              ></app-usual-input>
+           </div>
+           <div class="form-control">
+            <h3>Место проживания</h3>
+              <app-usual-input
+                [max]="30"
+                [value]="form.get('location')?.value"
+                id="location"
+                formControlName="location"
+                [placeholder]="'Поделись местом своего проживания'"
+                [error]="
+                  form.get('location')?.invalid &&
+                  (form.get('location')?.dirty || form.get('location')?.touched)
+                    ? 'Место проживания не может содержать более 30 символов'
+                    : ''
+                "
+              ></app-usual-input>
+           </div>
+        </div>
+        <div *ngIf="currentStep === 2" class="step-container">
+          <div class="form-control">
+            <h3>Аккаунт в Pinterest</h3>
+            <app-usual-input [max]="1000" [value]="form.get('pinterest')?.value" id="pinterest"
+                    formControlName="pinterest" [placeholder]="'Оставь ссылку на свой аккаунт в Pinterest'" [error]="
+                      form.get('pinterest')?.invalid &&
+                      (form.get('pinterest')?.dirty || form.get('pinterest')?.touched)
+                        ? 'Введенное значение не является корректной ссылкой на аккаунт пользователя в Pintreset. Пример: https://pinterest.com/krabochki'
+                        : ''
+                    "></app-usual-input>
+          </div>
+               <div class="form-control">
+                <h3>Аккаунт во ВКонтакте</h3>
+                  <app-usual-input [max]="1000" id="vk" [value]="form.get('vk')?.value" formControlName="vk"
+                    [placeholder]="'Оставь ссылку на свой аккаунт во ВКонтакте'" [error]="
+                      form.get('vk')?.invalid &&
+                      (form.get('vk')?.dirty || form.get('vk')?.touched)
+                        ? 'Введенное значение не является корректной ссылкой на аккаунт пользователя во ВКонтакте. Пример: https://vk.com/nanananana_come_on'
+                        : ''
+                    "></app-usual-input>
+               </div>
+                <div class="form-control">
+                  <h3>Аккаунт в Twitter</h3>
+                  <app-usual-input [value]="form.get('twitter')?.value" [max]="1000" id="twitter" formControlName="twitter"
+                    [placeholder]="'Оставь ссылку на свой аккаунт в Twitter'" [error]="
+                      form.get('twitter')?.invalid &&
+                      (form.get('twitter')?.dirty || form.get('twitter')?.touched)
+                        ? 'Введенное значение не является корректной ссылкой на аккаунт пользователя в Twitter. Пример: https://twitter.com/krabochki'
+                        : ''
+                    "></app-usual-input>
+                </div>
+                <div class="form-control">
+                  <h3>Аккаунт в Facebook</h3>
+                  <app-usual-input type="facebook" [max]="1000" [value]="form.get('facebook')?.value" id="facebook"
+                    formControlName="facebook" [placeholder]="'Оставь ссылку на свой аккаунт в Facebook'" [error]="
+                      form.get('facebook')?.invalid &&
+                      (form.get('facebook')?.dirty || form.get('facebook')?.touched)
+                        ? 'Введенное значение не является корректной ссылкой на аккаунт пользователя в Facebook. Пример: https://facebook.com/krabochki'
+                        : ''
+                    "></app-usual-input>
+                </div>
+        </div>
+        <div *ngIf="currentStep === 3">
+          <div class="buttons">
+            <p>
+              Если ты хочешь, чтобы изменения увидели все кулинары, <em>сохрани</em> изменения в аккаунте
+            </p>
+            <app-button
+              [title]="
+                !(areObjectsEqual() && form.valid)
+                  ? 'Ты должен изменить хотя бы одно поле, а также пользователь должен содержать как минимум имя пользователя и если ты указал ссылки, то они должны быть корректны'
+                  : ''
+              "
+              [disabled]="areObjectsEqual() && form.valid" (click)="form.valid ? (saveModal = true) : null"
+              [text]="'Сохранить'"
+              [color]="'sec'"
+              [style]="'filled'"
+              [rounded]="true"
+            ></app-button>
+          
+            <p>
+              Если ты передумал обновлять аккаунт, просто <em>отмени</em> его изменение.
+              Все данные придется вводить повторно, если ты захочешь изменить его снова
+            </p>
+
+            <app-button
+            (click)="this.areObjectsEqual()
+          ? (this.closeModal = true)
+          : this.closeEmitter.emit(true)"
+              [text]="'Отменить'"
+              [color]="'prim'"
+              [style]="'outlined'"
+              [rounded]="true"
+            ></app-button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="footer">
+      <app-button 
+        [iconSize]="'min'"
+        [color]="'sec'"
+        [iconPosition]="'before'"
+        [rounded]="true"
+        [icon]="'arrow-previous'"
+        [iconStyle]="'as-text'"
+        [style]="'outlined'"
+        [text]="'Назад'"
+        (click)="goToPreviousStep()"
+        [disabled]="!(currentStep === 0)"
+      ></app-button>
+      <app-button
+        [iconSize]="'min'"
+        [icon]="'arrow-next'"
+        [color]="'sec'"
+        [rounded]="true"
+        [style]="'filled'"
+        [text]="'Вперед'"
+        (click)="goToNextStep()"
+        [disabled]="!(currentStep === steps.length - 1)"
+      ></app-button>
+    </div>
+  </div>
+</div>
+
+
+<app-modal *ngIf="closeModal" @modal [style]="'prim'" [title]="'Закрытие окна'" [type]="'yesOrNo'"
+  (resultEmit)="handleCloseModal($event)" [buttonsText]="['Да', 'Нет']" [description]="
+    'Вы уверены, что хотите вернуться к просмотру аккаунта и не сохранять изменения?'
+  ">
+</app-modal>
+
+<app-modal @modal *ngIf="saveModal" [style]="'prim'" [title]="'Изменение аккаунта'" [type]="'yesOrNo'"
+  (resultEmit)="handleSaveModal($event)" [buttonsText]="['Да', 'Нет']" [description]="
+    'Вы уверены, что хотите сохранить изменения и обновить свой аккаунт?'
+  "></app-modal>
+
+<app-modal @modal *ngIf="successModal" [style]="'sec'" [title]="'Аккаунт успешно изменен'" [type]="'Ok'"
+  (resultEmit)="handleSuccessModal($event)" [buttonsText]="['Хорошо']"
+  [description]="'Изменения вашего аккаунта успешно сохранены!'"></app-modal>

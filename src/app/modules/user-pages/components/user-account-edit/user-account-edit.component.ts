@@ -1,19 +1,23 @@
+
 import {
   AfterContentChecked,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  ElementRef,
   EventEmitter,
   Input,
   OnDestroy,
   OnInit,
   Output,
   Renderer2,
+  ViewChild,
 } from '@angular/core';
+import { steps,Step } from './consts';
 import { usernameMask } from 'src/tools/regex';
 import { IUser, nullUser, SocialNetwork } from '../../models/users';
 import { trigger } from '@angular/animations';
-import { modal } from 'src/tools/animations';
+import { heightAnim, modal } from 'src/tools/animations';
 import {
   vkMask,
   facebookMask,
@@ -34,13 +38,13 @@ import { Observable, of } from 'rxjs';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 
 @Component({
-  selector: 'app-edit-account',
-  templateUrl: './edit-account.component.html',
-  styleUrls: ['./edit-account.component.scss'],
-  animations: [trigger('modal', modal())],
+  selector: 'app-user-account-edit',
+  templateUrl: './user-account-edit.component.html',
+  styleUrls: ['./user-account-edit.component.scss'],
+  animations: [trigger('modal', modal()),trigger('height',heightAnim())],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EditAccountComponent
+export class UserAccountEditComponent
   implements OnInit, AfterContentChecked, OnDestroy
 {
   @Input() editableUser: IUser = { ...nullUser };
@@ -112,6 +116,32 @@ export class EditAccountComponent
     });
   }
 
+  @ViewChild('scrollContainer', { static: false }) scrollContainer?: ElementRef;
+
+  currentStep: number = 0;
+
+  showInfo = false;
+
+  steps: Step[] = steps;
+
+  goToPreviousStep() {
+    if (this.currentStep > 0) {
+      this.currentStep--;
+
+      this.scrollTop();
+    }
+  }
+  scrollTop(): void {
+    if (this.scrollContainer) this.scrollContainer.nativeElement.scrollTop = 0;
+  }
+  goToNextStep() {
+    if (this.currentStep < this.steps.length - 1) {
+      this.currentStep++;
+      this.scrollTop();
+    }
+  }
+  
+
   //Валидатор по маске regex для формы
   customLinkPatternValidator(pattern: RegExp): ValidatorFn {
     return (
@@ -170,8 +200,7 @@ export class EditAccountComponent
           const objectURL = URL.createObjectURL(mainpicFile);
           this.myImage = objectURL;
         }
-      } catch (error) {
-      }
+      } catch (error) {}
     }
 
     this.beginningData = this.form.getRawValue();
@@ -179,6 +208,7 @@ export class EditAccountComponent
     this.userService.users$.subscribe((data: IUser[]) => {
       this.users = data;
     });
+    this.cdr.markForCheck()
     this.myImage = this.defaultImage;
   }
 
@@ -284,6 +314,11 @@ export class EditAccountComponent
       this.updateUser();
       this.successModal = true;
     }
+      setTimeout(() => {
+        this.renderer.addClass(document.body, 'hide-overflow');
+        (<HTMLElement>document.querySelector('.header')).style.width =
+          'calc(100% - 16px)';
+      }, 0);
     this.saveModal = false;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -296,12 +331,19 @@ export class EditAccountComponent
     if (answer) {
       this.closeEmitter.emit(true);
     }
+      setTimeout(() => {
+        this.renderer.addClass(document.body, 'hide-overflow');
+        (<HTMLElement>document.querySelector('.header')).style.width =
+          'calc(100% - 16px)';
+      }, 0);
     this.closeModal = false;
   }
 
   clickBackgroundNotContent(elem: Event) {
     if (elem.target !== elem.currentTarget) return;
-    this.areObjectsEqual() ? (this.closeModal = true) : this.closeEmitter.emit(true);
+    this.areObjectsEqual()
+      ? (this.closeModal = true)
+      : this.closeEmitter.emit(true);
   }
   ngOnDestroy(): void {
     this.renderer.removeClass(document.body, 'hide-overflow');

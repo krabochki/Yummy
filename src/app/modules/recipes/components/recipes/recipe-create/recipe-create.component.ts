@@ -20,10 +20,11 @@ import {
   AbstractControl,
   FormControl,
 } from '@angular/forms';
+import { steps,Step } from './consts';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Router } from '@angular/router';
 import { trigger } from '@angular/animations';
-import { modal } from 'src/tools/animations';
+import { heightAnim, modal } from 'src/tools/animations';
 import { IRecipe, nullRecipe } from '../../../models/recipes';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { RecipeService } from '../../../services/recipe.service';
@@ -34,17 +35,44 @@ import { Observable, Subject } from 'rxjs';
 import { startWith, map, takeUntil, max } from 'rxjs/operators';
 import { SectionService } from '../../../services/section.service';
 import { SectionGroup } from 'src/app/modules/controls/autocomplete/autocomplete.component';
+import { Title } from '@angular/platform-browser';
+
+
 
 @Component({
-  selector: 'app-recipe-creating',
-  templateUrl: './recipe-creating.component.html',
-  styleUrls: ['./recipe-creating.component.scss'],
-  animations: [trigger('modal', modal())],
+  selector: 'app-recipe-create',
+  templateUrl: './recipe-create.component.html',
+  styleUrls: ['./recipe-create.component.scss'],
+  animations: [trigger('modal', modal()), trigger('height', heightAnim())],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RecipeCreatingComponent implements OnInit, OnDestroy {
+export class RecipeCreateComponent implements OnInit, OnDestroy {
   @ViewChild('input', { static: false })
   input: ElementRef | undefined;
+  @ViewChild('scrollContainer', { static: false }) scrollContainer?: ElementRef;
+
+  currentStep: number = 0;
+
+  showInfo = false;
+
+  steps: Step[] = steps;
+
+  goToPreviousStep() {
+    if (this.currentStep > 0) {
+      this.currentStep--;
+
+      this.scrollTop();
+    }
+  }
+  scrollTop(): void {
+    if (this.scrollContainer) this.scrollContainer.nativeElement.scrollTop = 0;
+  }
+  goToNextStep() {
+    if (this.currentStep < this.steps.length - 1) {
+      this.currentStep++;
+      this.scrollTop();
+    }
+  }
 
   @Output() closeEmitter = new EventEmitter<boolean>();
 
@@ -89,6 +117,7 @@ export class RecipeCreatingComponent implements OnInit, OnDestroy {
     private recipeService: RecipeService,
     private fb: FormBuilder,
     public router: Router,
+    private title: Title,
   ) {
     this.mainImage = this.defaultImage;
     this.form = this.fb.group({
@@ -159,6 +188,9 @@ export class RecipeCreatingComponent implements OnInit, OnDestroy {
 
     if (this.editedRecipe.id !== 0) {
       this.editMode = true;
+      if (this.editMode) this.title.setTitle('Создание рецепта');
+      else this.title.setTitle('Изменение рецепта');
+
       const editedRecipe = { ...this.editedRecipe };
       this.form.get('recipeName')?.setValue(editedRecipe.name);
       this.form.get('description')?.setValue(editedRecipe.description);
@@ -263,11 +295,12 @@ export class RecipeCreatingComponent implements OnInit, OnDestroy {
 
   //Работа с категориями
   addCategory(event: ICategory) {
-    const findedCategory: ICategory | undefined = this.selectedCategories.find(
-      (category) => category.id === event.id,
-    );
-    if (findedCategory === undefined) {
-      this.selectedCategories.push(event);
+    if (this.selectedCategories.length < 5) {
+      const findedCategory: ICategory | undefined =
+        this.selectedCategories.find((category) => category.id === event.id);
+      if (findedCategory === undefined) {
+        this.selectedCategories.push(event);
+      }
     }
   }
 
@@ -289,6 +322,8 @@ export class RecipeCreatingComponent implements OnInit, OnDestroy {
     imagesArray.at(imageIndex).get('file')?.setValue(null);
     this.images[instructionIndex][imageIndex] = '';
   }
+
+
 
   //получаем url загруженного фото инструкции для вывода в background-image
   getInstructionPhotoURL(instructionIndex: number, imageIndex: number): string {
@@ -327,6 +362,9 @@ export class RecipeCreatingComponent implements OnInit, OnDestroy {
           file: instuctionPicData,
         });
         const objectURL = URL.createObjectURL(instuctionPicFile);
+        if (!this.images[instructionIndex]) {
+          this.images[instructionIndex] = ['']; // Инициализация массива с одним пустым URL
+        }
         this.images[instructionIndex][imageIndex] = objectURL;
       }
     }
@@ -484,37 +522,28 @@ export class RecipeCreatingComponent implements OnInit, OnDestroy {
       categoriesIds.push(element.id);
     });
 
-      const recipeData: IRecipe = {
-        ...this.editedRecipe,
-        name: this.form.value.recipeName,
-        ingredients: this.form.value.ingredients,
-        instructions: this.form.value.instructions,
-        mainImage: this.form.value.image,
-        description: this.form.value.description,
-        history: this.form.value.history,
-        preparationTime: this.form.value.preparationTime,
-        cookingTime: this.form.value.cookingTime,
-        origin: this.form.value.origin,
-        nutritions: this.form.value.nutritions,
-        servings: this.form.value.portions,
-        categories: categoriesIds,
-        publicationDate: '',
-        status: this.isAwaitingApprove ? 'awaits' : 'private',
-      };
+    const recipeData: IRecipe = {
+      ...this.editedRecipe,
+      name: this.form.value.recipeName,
+      ingredients: this.form.value.ingredients,
+      instructions: this.form.value.instructions,
+      mainImage: this.form.value.image,
+      description: this.form.value.description,
+      history: this.form.value.history,
+      preparationTime: this.form.value.preparationTime,
+      cookingTime: this.form.value.cookingTime,
+      origin: this.form.value.origin,
+      nutritions: this.form.value.nutritions,
+      servings: this.form.value.portions,
+      categories: categoriesIds,
+      publicationDate: '',
+      status: this.isAwaitingApprove ? 'awaits' : 'private',
+    };
 
-      this.recipeService.updateRecipe(recipeData).subscribe(
-      
-        () => {
-          console.log('before modal')
-          this.successModalShow = true;
-          this.cd.markForCheck()
-                    console.log('after modal');
-
-
-      },
-     
-      );
-    
+    this.recipeService.updateRecipe(recipeData).subscribe(() => {
+      this.successModalShow = true;
+      this.cd.markForCheck();
+    });
   }
 
   //модальные окна
@@ -522,25 +551,48 @@ export class RecipeCreatingComponent implements OnInit, OnDestroy {
     if (answer) {
       this.createRecipe();
     }
-    this.createModalShow = false;
+    else {
+      this.renderer.addClass(document.body, 'hide-overflow');
+      (<HTMLElement>document.querySelector('.header')).style.width =
+        'calc(100% - 16px)';
+      this.createModalShow = false;
+    }
   }
   handleEditRecipeModal(answer: boolean): void {
     if (answer) {
       this.editRecipe();
     }
-    this.editModalShow = false;
+    else {
+      this.renderer.addClass(document.body, 'hide-overflow');
+      (<HTMLElement>document.querySelector('.header')).style.width =
+        'calc(100% - 16px)';
+      this.editModalShow = false;
+    }
   }
 
   handleExitModal(answer: boolean): void {
+    this.exitModalShow = false;
+
     if (answer) {
       this.closeEmitter.emit(true);
+
+      
     }
-    this.exitModalShow = false;
+    else {
+          setTimeout(() => {
+            this.renderer.addClass(document.body, 'hide-overflow');
+            (<HTMLElement>document.querySelector('.header')).style.width =
+              'calc(100% - 16px)';
+          }, 0);
+    }
+    
+
   }
   handleSuccessModal() {
     if (this.editMode)
       this.router.navigateByUrl('recipes/list/' + this.editedRecipe.id);
     else this.router.navigateByUrl('recipes/list/' + (this.recipeId - 1));
+
     this.cd.markForCheck();
 
     this.successModalShow = false;

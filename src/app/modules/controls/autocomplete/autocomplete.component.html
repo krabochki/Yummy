@@ -1,31 +1,21 @@
 <div class="container">
   <input
     [(ngModel)]="value"
+    [disabled]="disabled"
     (blur)="blur()"
     (ngModelChange)="search()"
     (focus)="focus()"
     type="text"
+    [placeholder]="placeholder"
   />
-  <p
-    class="placeholder"
-    [ngClass]="{
-      up: this.isFocused,
-      sleep: this.isSleep
-    }"
-  >
-    {{ placeholder }}
-  </p>
+  
   <div class="autocomplete" @height *ngIf="autocompleteShow">
     <div class="section noone" *ngIf="group.length === 0">
       <p>
         По вашему запросу нет никаких категорий. Попробуйте изменить параметры
         поиска.
       </p>
-      <svg-icon
-        [src]="'../../../../../assets/images/svg/sad-cook-2.svg'"
-        [applyClass]="true"
-        class="svg"
-      />
+    
     </div>
 
     <div class="section" *ngFor="let item of group">

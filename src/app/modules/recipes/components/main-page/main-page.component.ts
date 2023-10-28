@@ -10,18 +10,19 @@ import { SectionService } from '../../services/section.service';
 import { Subject, takeUntil } from 'rxjs';
 import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
+import { CategoryService } from '../../services/category.service';
 
 @Component({
   selector: 'app-main-page',
   templateUrl: './main-page.component.html',
   styleUrls: ['./main-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [trigger('modal',modal())]
+  animations: [trigger('modal', modal())],
 })
 export class MainPageComponent implements OnInit, OnDestroy {
   allRecipes: IRecipe[] = [];
   creatingMode = false;
-  allSections: ICategory[] = [];
+  allSections: ISection[] = [];
   popularRecipes: IRecipe[] = [];
   recentRecipes: IRecipe[] = [];
   currentUser: IUser = { ...nullUser };
@@ -32,6 +33,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
   constructor(
     private recipeService: RecipeService,
     private sectionService: SectionService,
+    private categoryService: CategoryService,
 
     private titleService: Title,
     private authService: AuthService,
@@ -83,6 +85,11 @@ export class MainPageComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroyed$))
           .subscribe((data: ISection[]) => {
             this.allSections = data;
+            this.categoryService.categories$
+              .pipe(takeUntil(this.destroyed$))
+              .subscribe((categories: ICategory[]) => {
+               this.allSections = this.sectionService.getNotEmptySections(this.allSections)
+              });
           });
       });
   }

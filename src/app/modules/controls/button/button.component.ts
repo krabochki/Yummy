@@ -9,6 +9,9 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges
 export class ButtonComponent implements OnChanges {
   @Input() icon: string = '';
 
+  @Input() iconStyle: 'white' | 'as-text' = 'white';
+  @Input() iconSize: 'min' | 'max' = 'max';
+  @Input() iconPosition: 'after' | 'before' = 'after';
   @Input() style: 'filled' | 'filled-min' | 'outlined' | 'banner' | undefined;
   @Input() color: 'prim' | 'sec' | undefined;
   @Input() rounded: boolean | undefined;
@@ -16,12 +19,18 @@ export class ButtonComponent implements OnChanges {
   @Input() disabled: boolean = true;
 
   ngOnChanges() {
-    this.cd.markForCheck()
+    this.cd.markForCheck();
   }
 
   constructor(private cd: ChangeDetectorRef) {}
   getClass() {
     const styleClasses = [];
+    if (this.iconPosition === 'before') {
+      styleClasses.push('before');
+    }
+    if (this.iconSize === 'min') {
+      styleClasses.push('min-icon')
+    }
 
     switch (this.style) {
       case 'filled':

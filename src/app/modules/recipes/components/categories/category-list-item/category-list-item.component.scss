@@ -25,50 +25,51 @@
   overflow: hidden;
 }
 
-sup {
-  font-size: 0.6em;
-
-  position: absolute;
-  margin-left: -1.3em;
-}
-
 .category.null p {
   width: 100%;
   min-width: 100%;
   max-width: 100%;
 }
 
-p {
-  text-align: center;
-  margin-top: 0.5em;
-  overflow: hidden;
-  width: 12vw;
-  margin: 0 auto;
-      text-overflow: ellipsis;
 
-  margin-top: 0.5em;
-    display: -webkit-box;
-   -webkit-line-clamp: 3; /* number of lines to show */
-           line-clamp: 3;
-   -webkit-box-orient: vertical;
+* {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }
-span {
-  cursor: pointer;
+
+  h1 {
+    sup{
+      font-size: 0.6em;
+    }
+      cursor: pointer;
+      position: relative;
+    font-size:1.2em;
+
+    line-height: 1;
+    
+     display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3; /* Количество строк, которые вы хотите отобразить */
+    overflow-wrap: break-word; /* Разрешить перенос длинных слов */
+      hyphens: auto; /* Разрешить перенос слов */
+
+  white-space: normal; /* Изменить на "normal" */
+   overflow-y: hidden;
+   overflow-x: hidden;
+   text-overflow: ellipsis;
+
+    font-weight: 400;
+    margin-top: 0.5em;
+    text-align: center;
+    padding-bottom: 0.2em;
   
-  text-align: center;
-  color: var(--color-foreground);
-  line-height: 1.1;
-  min-width: 8em;
-  max-width: 6vw;
+  }
 
-  white-space: wrap;
-  overflow: hidden;
-
- 
-
-  font-size: 1.2em;
-  text-align: center;
-}
 
 @media (max-width: 900px) {
   .category {

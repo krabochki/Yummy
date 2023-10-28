@@ -56,7 +56,6 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
 
   editModeOff() {
     this.editMode = false;
-    console.log('off');
   }
   ngOnInit() {
     this.authService.currentUser$
@@ -82,7 +81,6 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
               );
             }
             this.cd.markForCheck()
-            console.log('lol')
           });
       });
 

@@ -9,7 +9,7 @@ import { ICategory, ISection, nullCategory, nullSection } from 'src/app/modules/
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HorizontalCategoryListComponent implements OnChanges {
-  @Input() categories: ICategory[] | ISection[] = [];
+  @Input() categories: any[] = [];
   @Input() showRecipesNumber: boolean = false;
 
   @ViewChild('list')
@@ -19,6 +19,8 @@ export class HorizontalCategoryListComponent implements OnChanges {
 
 
   showScrollButtons = true;
+
+
 
   filterNullBlocks() {
     this.categories = this.categories.filter((block) => block.id !== 0);

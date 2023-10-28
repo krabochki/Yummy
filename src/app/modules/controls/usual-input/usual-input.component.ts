@@ -33,6 +33,7 @@ export class UsualInputComponent implements OnInit, OnChanges {
   @Input() showError = true;
 
   @Input() value = '';
+  @Input() inputType: 'input'|'textarea' = 'input';
 
   @Input() inputRequired: boolean = false;
 
@@ -47,7 +48,6 @@ export class UsualInputComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    
     if (this.value !== '' && !this.getNotEmptyValue && !this.isFocused) {
       this.focus();
       this.blur();
@@ -62,7 +62,6 @@ export class UsualInputComponent implements OnInit, OnChanges {
 
   //Появление фокуса
   focus() {
-    
     this.isFocused = true;
     this.isSleep = false;
   }

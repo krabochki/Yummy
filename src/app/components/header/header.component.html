@@ -159,4 +159,4 @@
     'Этот раздел могут просматривать только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'
   "></app-modal>
 
-    <app-recipe-creating style="z-index:10; position: fixed;" *ngIf="creatingMode" (closeEmitter)="creatingMode=false" @modal ></app-recipe-creating>
+    <app-recipe-create style="z-index:10; position: fixed;" *ngIf="creatingMode" (closeEmitter)="creatingMode=false" @modal ></app-recipe-create>

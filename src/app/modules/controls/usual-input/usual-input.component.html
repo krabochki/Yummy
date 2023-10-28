@@ -1,32 +1,39 @@
-<div class="input">
-  <div class="input-cont">
-    <input
-      [maxlength]="max?max:null"
-      type="text"
+<div class="wrap">
+  <input
+  *ngIf="inputType==='input';else textarea"
+    [maxlength]="max ? max : null"
+    type="text"
+    #input
+    [value]="value"
+    (keyup)="change()"
+    [(ngModel)]="value"
+    [disabled]="disabled"
+    autocomplete="off"
+    type="text"
+    [ngClass]="{
+      uncorrect: error !== ''
+    }"
+    [placeholder]="placeholder"
+    (focus)="focus()"
+    (blur)="blur()"
+  />
+  <ng-template #textarea>
+    <textarea
+      [ngClass]="{ active: !isSleep && isFocused, uncorrect: error !== '' }"
+      spellcheck="false"
       #input
-      [value]="value"
-      (keyup)="change()"
-      [(ngModel)]="value"
-      [disabled]="disabled"
       autocomplete="off"
-      type="text"
-      [ngClass]="{
-        uncorrect: error !== ''
-      }"
+      [maxlength]="max ? max : null"
+      [(ngModel)]="value"
+      (keyup)="change()"
       (focus)="focus()"
       (blur)="blur()"
-    />
+      [placeholder]="placeholder"
+      rows="4"
+    ></textarea>
+  </ng-template>
 
-    <p
-      class="placeholder"
-      [ngClass]="{
-        uncorrect: error !== '',
-        up: this.isFocused,
-        sleep: this.isSleep
-      }"
-    >
-      {{ placeholder }}
-    </p>
-  </div>
-  <div *ngIf="showError" class="error">{{ error }}</div>
+  <p class="howmuch" *ngIf="max!==undefined">{{ value.length }}/{{ max }}</p>
 </div>
+
+<div *ngIf="showError" class="error">{{ error }}</div>

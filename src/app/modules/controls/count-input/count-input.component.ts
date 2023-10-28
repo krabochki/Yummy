@@ -18,9 +18,9 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
 export class CountInputComponent {
   @Input() min?: number;
   @Input() max?: number;
+  @Input() value: number = 0;
   @Input() readonly: boolean = false;
   disabled = false;
-  value: string = '';
   onChange: any = () => {
     //
   };
@@ -34,25 +34,25 @@ export class CountInputComponent {
 
   increase() {
     if (typeof this.max === 'undefined') {
-      this.value = (Number(this.value) + 1).toString();
+      this.value = this.value + 1
       this.onChange(this.value);
     } else if (Number(this.value) < this.max) {
-      this.value = (Number(this.value) + 1).toString();
+      this.value =  this.value+1
       this.onChange(this.value);
     }
   }
 
   decrease() {
     if (typeof this.min === 'undefined') {
-      this.value = (Number(this.value) - 1).toString();
+      this.value = this.value - 1;
       this.onChange(this.value);
     } else if (Number(this.value) > this.min) {
-      this.value = (Number(this.value) - 1).toString();
+      this.value = this.value - 1;
       this.onChange(this.value);
     }
   }
 
-  writeValue(value: string): void {
+  writeValue(value: number): void {
     this.value = value;
   }
 

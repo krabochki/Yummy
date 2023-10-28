@@ -30,6 +30,7 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
     private authService: AuthService,
   ) {}
   ngOnInit() {
+    console.log(this.category)
     if (this.showRecipesNumber)
       this.recipeService.recipes$.pipe(takeUntil(this.destroyed$))
           .subscribe((data) => {

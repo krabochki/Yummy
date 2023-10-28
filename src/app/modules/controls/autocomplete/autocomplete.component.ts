@@ -27,14 +27,13 @@ export class AutocompleteComponent implements OnChanges {
   isSleep: boolean = false; //подсвечивается ли плейсхолдер
   isFocused = false; //есть ли фокус в инпуте (нужно ли подсвечивать плейсхолдер)
   @Input() placeholder: string = '';
+  @Input() disabled: boolean = false;
   @Input() group: SectionGroup[] = [];
   fullGroup: SectionGroup[] = [];
   protected destroyed$: Subject<void> = new Subject<void>();
   autocompleteShow: boolean = false;
 
-  constructor(
-    private router: Router
-  ) {}
+  constructor(private router: Router) {}
   categories: ICategory[] = [];
   sections: ISection[] = [];
   value = '';
@@ -43,10 +42,12 @@ export class AutocompleteComponent implements OnChanges {
 
   ngOnChanges() {
     if (!this.getFullGroup) {
+      this.group.forEach((group) => {
+        if (group.categories.length === 0) return;
+      });
       this.fullGroup = this.group;
       this.getFullGroup = true;
     }
-   
   }
 
   focus() {
@@ -66,7 +67,6 @@ export class AutocompleteComponent implements OnChanges {
     }
   }
 
-
   goToLink(link: string): void {
     this.router.navigateByUrl(link);
   }
@@ -74,11 +74,9 @@ export class AutocompleteComponent implements OnChanges {
     this.categoryEmitter.emit(listCategory);
   }
   copyOfFullGroup() {
-   setTimeout(() => {
-
-     this.group = JSON.parse(JSON.stringify(this.fullGroup));
-
-   }, 300);
+    setTimeout(() => {
+      this.group = JSON.parse(JSON.stringify(this.fullGroup));
+    }, 300);
   }
 
   search() {
@@ -86,10 +84,9 @@ export class AutocompleteComponent implements OnChanges {
       this.group = [];
       const search = this.value.toLowerCase().replace(/\s/g, '');
       const filterGroups: SectionGroup[] = [];
-      const allGroup: SectionGroup[] = JSON.parse(JSON.stringify(this.fullGroup));
-
-
-
+      const allGroup: SectionGroup[] = JSON.parse(
+        JSON.stringify(this.fullGroup),
+      );
 
       allGroup.forEach((itsGroup: SectionGroup) => {
         itsGroup.categories = itsGroup.categories.filter((element) => {

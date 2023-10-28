@@ -3,20 +3,43 @@ button.prim {
   background: var(--color-primary);
   border: 3px solid var(--color-primary);
 
+  .svg.as-text{
+  fill:var(--color-background);
+}
+
   &.disabled {
     background: var(--color-foreground-unactive);
     border-color: var(--color-foreground-unactive);
+    .svg.as-text{
+  fill: var(--color-background);
+}
+
   }
 
   &:focus {
     background-color: var(--color-primary-focus);
     border-color: var(--color-primary-focus);
+
+    .svg.as-text{
+  fill:var(--color-background);
+}
   }
 }
 
+
 .svg{
   height:var(--font-m);
-  fill:var(--color-background)
+  fill:var(--color-background);
+  display:flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button.min-icon{
+  .svg{
+    margin-top: 0.15em;
+    height: 0.7em;
+  }
 }
 
 
@@ -25,15 +48,27 @@ button.prim {
 }
 button.sec {
   background: var(--color-secondary);
+
+  .svg.as-text{
+  fill:var(--color-secondary);
+}
   border: 3px solid var(--color-secondary);
   &.disabled {
     background: var(--color-foreground-unactive);
-    border-color: var(----color-foreground-unactive);
+    border-color: var(--color-foreground-unactive);
+
+    .svg.as-text{
+  fill:var(--color-foreground-unactive);
+}
   }
 
   &:focus {
     background-color: var(--color-secondary-focus);
     border-color: var(--color-secondary-focus);
+
+    .svg.as-text{
+  fill:var(--color-secondary-focus);
+}
   }
 }
 
@@ -74,6 +109,9 @@ button.filled-min.sec {
     border-color: var(--color-secondary-lighter-focus);
     color: var(--color-secondary-focus);
   }
+}
+button.before{
+  flex-direction: row-reverse;
 }
 
 button {

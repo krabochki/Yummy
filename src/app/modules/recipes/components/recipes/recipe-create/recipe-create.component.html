@@ -1,0 +1,437 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="outer" (click)="clickBackgroundNotContent($event)">
+  <div class="inner" >
+    <div class="close-button" (click)="this.areObjectsEqual()
+      ? (this.exitModalShow = true)
+      : this.closeEmitter.emit(true);">
+
+      <svg-icon [src]="'../../../../../assets/images/svg/close.svg'" [applyClass]="true" class="close-svg"></svg-icon>
+    </div>
+    <div class="header">
+      <h1>Создание рецепта</h1>
+      <div class="navigation">
+        <div class="nav-step-circles-block">
+          <div class="nav-step-block" *ngFor="let step of steps; let i = index">
+            <div class="nav-step-block-inner" (click)="currentStep=i;scrollTop()">
+              <div class="nav-step-circle"  [ngClass]="{
+                  active: i === currentStep,
+                  completed: i < currentStep
+                }">
+                {{ i + 1 }}
+              </div>
+              <p class="nav-step-short-title" [ngClass]="{
+                  active: i === currentStep,
+                  completed: i < currentStep
+                }">{{ steps[i].shortTitle }}</p>
+            </div>
+            <div [ngClass]="{
+                completed: i < currentStep
+              }" *ngIf="i !== steps.length - 1" class="nav-step-line"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="unique-content">
+      <div>
+        <h2>{{ steps[currentStep].title }}</h2>
+        <button class="more-button" (click)="showInfo=!showInfo">
+          
+          <svg-icon  [src]="'../../../../../assets/images/svg/help.svg'" [applyClass]="true" class="help-svg"></svg-icon>
+          Подробнее</button>
+          <p class="description" *ngIf="showInfo" @height>{{ steps[currentStep].description }}</p>
+      </div>
+
+      <hr />
+
+      <form [formGroup]="form" #scrollContainer>
+        <div class="step-container" *ngIf="currentStep === 0">
+
+        
+
+          <div class="form-control">
+            <h3>Название рецепта</h3>
+            <app-usual-input [value]="this.form.get('recipeName')?.value" [inputRequired]="true" [max]="100" type="text"
+              id="recipeName" formControlName="recipeName" required [error]="
+                  form.get('recipeName')?.invalid &&
+                  (form.get('recipeName')?.dirty ||
+                    form.get('recipeName')?.touched)
+                    ? 'Название рецепта должно содержать от 3 до 100 символов'
+                    : ''
+                " [placeholder]="'Введи название твоего вкусного блюда'"></app-usual-input>
+          </div>
+          <div class="form-control">
+            <h3>Описание рецепта</h3>
+            <app-usual-input [inputType]="'textarea'" [max]="5000" [value]="this.form.get('description')?.value"
+              type="text" id="description" formControlName="description" [error]="form.get('description')?.invalid && form.get('description')?.touched
+                            ? 'Описание рецепта не должно превышать 5000 символов':
+                            ''" [placeholder]="'Опиши твой рецепт, его вкус и особенности'"> </app-usual-input>
+          </div>
+          <div class="form-control">
+            <h3>История рецепта</h3>
+            <app-usual-input [inputType]="'textarea'" [max]="5000" [value]="this.form.get('history')?.value" type="text"
+              id="history" formControlName="history" [error]="
+              form.get('history')?.invalid && form.get('history')?.touched
+                ? 'История рецепта не должна превышать 5000 символов'
+                : ''" [placeholder]=" 
+                  'Расскажи немного о истории происхождении рецепта. Быть может, он приснился тебе во сне? Это семейный рецепт, передающийся на протяжении нескольких поколений? Или тибетский монах по секрету поведал тебе тонкости его приготовления?'
+                "></app-usual-input>
+          </div>
+          <div class="form-control">
+              <div class="photo"   [ngClass]="{'have-image': this.form.get('image')?.value!==null}" [ngStyle]="{ 'background-image': 'url(' + mainImage + ')' }">
+          <input type="file" class="input-image" id="image" name="image" accept="image/*"
+            (change)="mainPhotoChange($event)" />
+    
+          <div class="delete" *ngIf="mainImage !== defaultImage" (click)="mainImage = defaultImage;this.form.get('image')?.setValue(null);">
+            <svg-icon [applyClass]="true" class="svg-trash" [src]="'../../../../../assets/images/svg/trash.svg'"></svg-icon>
+          </div>
+        </div>
+          </div>
+        </div>
+        <div class="step-container" *ngIf="currentStep === 1">
+          <div class="form-control">
+            <h3>Время подготовки</h3>
+            <app-usual-input [value]="this.form.get('preparationTime')?.value" [max]="20" type="text"
+              id="preparationTime" formControlName="preparationTime"
+              [placeholder]="'Введи время подготовки, например, 30 минут'" [error]="
+                form.get('preparationTime')?.invalid &&
+                form.get('preparationTime')?.touched
+                  ? 'Значение времени подготовки не должно превышать 20 символов'
+                  : ''
+              "></app-usual-input>
+          </div>
+          <div class="form-control">
+            <h3>Время готовки</h3>
+            <app-usual-input [value]="this.form.get('cookingTime')?.value" [max]="20" type="text" id="cookingTime"
+              formControlName="cookingTime" [placeholder]="'Введи время готовки, например, 1 час и 30 минут'" [error]="
+                form.get('cookingTime')?.invalid && form.get('cookingTime')?.touched
+                  ? 'Значение времени готовки не должно превышать 20 символов'
+                  : ''
+              "></app-usual-input>
+          </div>
+          <div class="form-control">
+            <h3>Количество порций</h3>
+            <div class="portions">
+              <p class="counter-label">Укажи, на сколько порций рассчитано блюдо: </p>
+              <app-count-input [value]="this.form.get('portions')?.value" [readonly]="true" formControlName="portions"
+                [min]="1" [max]="100"></app-count-input>
+              <p appPluralRu="" [value]="this.form.get('portions')?.value"
+                [arVariants]="[' порция', ' порции', ' порций']"></p>
+            </div>
+          </div>
+
+          <div class="form-control">
+            <h3>Место происхождения</h3>
+            <app-usual-input [value]="this.form.get('origin')?.value" [max]="20" type="text" id="origin"
+              formControlName="origin" [placeholder]="'Укажи место происхождения блюда, например, страну или регион'"
+              [error]="
+              form.get('origin')?.invalid && form.get('origin')?.touched
+                ? 'Значение места происхождения не должно превышать 20 символов'
+                : ''
+            "></app-usual-input>
+          </div>
+        </div>
+        <div *ngIf="currentStep === 2" class="step-container">
+          <div class="form-control">
+            <h3>Категории</h3>
+
+            <div><app-autocomplete [disabled]="selectedCategories.length===5" (categoryEmitter)="addCategory($event)"
+                [group]="group"
+                [placeholder]="'Выбери соответствующие категории для твоего рецепта'"></app-autocomplete>
+            </div>
+
+
+
+          </div>
+          <div class="form-control">
+            <h3>Список категорий твоего рецепта</h3>
+            <div *ngIf="selectedCategories.length===5" class="max-categories">Выбрано максимальное
+              количество категорий</div>
+          </div>
+
+          <div *ngIf="selectedCategories.length===0" class="no-categories">Ты пока не выбрал ни одну
+            категорию</div>
+          <div class="tags">
+            <div class="tag" *ngFor="let selected of selectedCategories">
+              {{ selected.name }}
+              <span (click)="removeCategory(selected)" class="remove-tag">✕</span>
+
+
+            </div>
+          </div>
+
+
+        </div>
+        <div *ngIf="currentStep === 3" class="step-container">
+
+          <div class="form-control ingred">
+            <h3>Список ингредиентов твоего рецепта</h3>
+
+            <div cdkDropList (cdkDropListDropped)="drop('ingredients',$event)" id="ingredients" class="ingredients"
+              formArrayName="ingredients">
+              <p class="no-content no-categories" *ngIf="f('ingredients').controls.length === 0">
+                Ингредиентов пока нет
+              </p>
+
+              <div class="boundary">
+                <div cdkDrag *ngFor="let ingredient of f('ingredients').controls; let i = index" [formGroupName]="i"
+                  class="ingredient-cont" cdkDragBoundary=".boundary">
+                  <div class="ingredient" >
+                    <div tabindex="-1" class="drag" cdkDragHandle>
+                      <svg-icon [applyClass]="true" class="svg-drag"
+                        [src]="'../../../../../assets/images/svg/drag.svg'">
+                      </svg-icon>
+                    </div>
+                    <div class="num">{{ i + 1 }}</div>
+
+                    <app-usual-input [value]="ingredient.get('name')?.value" [inputRequired]="true" [error]="
+                      ingredient.get('name')?.invalid &&
+                      (ingredient.get('name')?.dirty ||
+                        ingredient.get('name')?.touched)
+                        ? 'error'
+                        : ''
+                    " [max]="50" [showError]="false" type="text" id="ingredientName{{ i }}" formControlName="name"
+                      [placeholder]="'Название'" required></app-usual-input>
+
+                    <app-usual-input [max]="6" [value]="ingredient.get('quantity')?.value" id="ingredientAmount{{ i }}"
+                      formControlName="quantity" [placeholder]="'Кол-во'" [showError]="false" [error]="
+                      ingredient.get('quantity')?.invalid &&
+                      (ingredient.get('quantity')?.dirty ||
+                        ingredient.get('quantity')?.touched)
+                        ? 'error'
+                        : ''
+                    "></app-usual-input>
+
+                    <app-usual-input [value]="ingredient.get('unit')?.value" type="text" [max]="10"
+                      id="ingredientUnit{{ i }}" formControlName="unit" [placeholder]="'Ед. изм.'"></app-usual-input>
+
+                    <button type="button" tabindex="-1" (click)="removeIngredient(i)" class="remove-button">
+                      <svg-icon [applyClass]="true" class="svg-trash"
+                        [src]="'../../../../../assets/images/svg/trash.svg'">
+                      </svg-icon>
+                    </button>
+                  </div>
+                  <div>
+                    <div class="error" *ngIf="
+                      ingredient.get('name')?.invalid &&
+                      (ingredient.get('name')?.dirty ||
+                        ingredient.get('name')?.touched)
+                    ">
+                      Название рецепта обязательно и должно содержать не менее 2 и не
+                      более 20 символов
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+              <app-button (click)="!(f('ingredients').controls.length >= 100) ? addIngredient() : null"
+                [disabled]="!(f('ingredients').controls.length >= 100)" [text]="'Добавить ингредиент'" [color]="'sec'"
+                [style]="'filled-min'" [rounded]="true">
+              </app-button>
+            </div>
+
+
+          </div>
+        </div>
+        <div *ngIf="currentStep===4">
+
+          <div class="form-control ingred">
+            <h3>Список нутриентов твоего рецепта </h3>
+
+            <div cdkDropList (cdkDropListDropped)="drop('nutritions',$event)" id="nutritions" class="nutritions"
+              formArrayName="nutritions">
+              <p class="no-content no-categories" *ngIf="f('nutritions').controls.length === 0">
+                Нутриентов пока нет
+              </p>
+
+              <div class="boundary">
+                <div cdkDrag *ngFor="let nutrition of f('nutritions').controls; let i = index" [formGroupName]="i"
+                  class="nutrition-cont" cdkDragBoundary=".boundary">
+                  <div class="nutrition" >
+                    <div tabindex="-1" class="drag" cdkDragHandle>
+                      <svg-icon [applyClass]="true" class="svg-drag"
+                        [src]="'../../../../../assets/images/svg/drag.svg'">
+                      </svg-icon>
+                    </div>
+                    <div class="num">{{ i + 1 }}</div>
+
+                    <app-usual-input [value]="nutrition.get('name')?.value" [inputRequired]="true" [error]="
+                      nutrition.get('name')?.invalid &&
+                      (nutrition.get('name')?.dirty || nutrition.get('name')?.touched)
+                        ? 'Название нутриента должно содержать не менее 2 и не более 20 символов'
+                        : ''
+                    " [max]="20" [showError]="false" type="text" id="nutritionName{{ i }}" formControlName="name"
+                      [placeholder]="'Название'" required></app-usual-input>
+
+                    <app-usual-input [max]="6" [value]="nutrition.get('quantity')?.value" id="nutritionAmount{{ i }}"
+                      formControlName="quantity" [placeholder]="'Кол-во'" [showError]="false" [error]="
+                      nutrition.get('quantity')?.invalid &&
+                      (nutrition.get('quantity')?.dirty ||
+                        nutrition.get('quantity')?.touched)
+                        ? 'Количество нутриента должно содержать не более 6 символов'
+                        : ''
+                    "></app-usual-input>
+
+                    <app-usual-input type="text" [value]="nutrition.get('unit')?.value" [max]="10"
+                      id="nutritionUnit{{ i }}" formControlName="unit" [placeholder]="'Ед. изм.'"></app-usual-input>
+
+                    <button type="button" tabindex="-1" (click)="removeNutrition(i)" class="remove-button">
+                      <svg-icon [applyClass]="true" class="svg-trash"
+                        [src]="'../../../../../assets/images/svg/trash.svg'">
+                      </svg-icon>
+                    </button>
+                  </div>
+                  <div>
+                    <div class="error" *ngIf="
+                      nutrition.get('name')?.invalid &&
+                      (nutrition.get('name')?.dirty || nutrition.get('name')?.touched)
+                    ">
+                      Название нутриента обязательно и должно содержать не менее 2 и не
+                      более 100 символов
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+              <app-button (click)="!(f('nutritions').controls.length >= 100) ? addNutrition() : null"
+                [disabled]="!(f('nutritions').controls.length >= 100)" [text]="'Добавить нутриент'" [color]="'sec'"
+                [style]="'filled-min'" [rounded]="true">
+              </app-button>
+            </div>
+          </div>
+
+        </div>
+        <div *ngIf="currentStep===5">
+
+
+          <div class="form-control ingred">
+            <h3>Список инструкций твоего рецепта</h3>
+            <div formArrayName="instructions" id="instructions" cdkDropList
+              (cdkDropListDropped)="drop('instructions',$event)" class="instructions">
+              <p class="no-content no-categories" *ngIf="f('instructions').controls.length === 0">
+                Инструкций пока нет
+              </p>
+
+              <div class="boundary">
+                <div class="instruction-cont" cdkDragBoundary=".boundary" cdkDrag [formGroupName]="i"
+                  *ngFor="let instruction of f('instructions').controls; let i = index" [formGroupName]="i">
+                  <div class="instruction" >
+                    <div class="instruction-text">
+                      <div tabindex="-1" class="drag" cdkDragHandle>
+                        <svg-icon [applyClass]="true" class="svg-drag"
+                          [src]="'../../../../../assets/images/svg/drag.svg'">
+                        </svg-icon>
+                      </div>
+                      <div class="num">{{ i + 1 }}</div>
+
+                      <app-usual-input [inputType]="'textarea'" [value]="instruction.get('name')?.value" [max]="1000" type="text" id="name"
+                        formControlName="name" [placeholder]="'Содержание'" [inputRequired]="true" [showError]="false"
+                        [error]="
+                        instruction.get('name')?.invalid &&
+                        (instruction.get('name')?.dirty ||
+                          instruction.get('name')?.touched)
+                          ? 'error'
+                          : ''
+                      "></app-usual-input>
+
+                      <button type="button" tabindex="-1" (click)="removeInstruction(i)" class="remove-button">
+                        <svg-icon [applyClass]="true" class="svg-trash"
+                          [src]="'../../../../../assets/images/svg/trash.svg'">
+                        </svg-icon>
+                      </button>
+                    </div>
+
+                    <div tabindex="-1" formArrayName="images" class="instruction-images">
+                      <div class="add-image" *ngFor="let image of getImages(i); let j = index" [formGroupName]="j">
+                        <div class="instruction-image" [ngClass]="{'have-image': getInstructionPhotoURL(i, j) !== defaultInstructionImage}" [ngStyle]="{
+                          'background-image':
+                            'url(' + getInstructionPhotoURL(i, j) + ' )'
+                        }" alt="User Photo">
+                          <div tabindex="-1" class="delete" *ngIf="
+                            getInstructionPhotoURL(i, j) !== defaultInstructionImage
+                          " (click)="removeInstructionPhoto(i, j)">
+                            <svg-icon [applyClass]="true" class="svg-trash"
+                              [src]="'../../../../../assets/images/svg/trash.svg'"></svg-icon>
+                          </div>
+                          <input tabindex="-1" accept="image/*" type="file" id="image{{ i }}-{{ j }}" name="image"
+                            (change)="instuctionImageChange($event, i, j)" />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="error" *ngIf="
+                      instruction.get('name')?.invalid &&
+                      (instruction.get('name')?.dirty ||
+                        instruction.get('name')?.touched)
+                    ">
+                      Описание инструкции обязательно и должно содержать не менее 2 и не
+                      больше 1000 символов
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <app-button (click)="
+                !(f('instructions').controls.length >= 100) ? addInstruction() : null
+              " [disabled]="!(f('instructions').controls.length >= 100)" [text]="'Добавить инструкцию'" [color]="'sec'"
+                [style]="'filled-min'" [rounded]="true">
+              </app-button>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="currentStep===6">
+          <div class="buttons">
+            <p>Если ты хочешь, чтобы рецепт увидели другие пользователи и могли с ним взаимодействовать,
+              <em>опублику</em> его. После нажатия на кнопку рецепт появится в твоих личных рецептах и будет
+              опубликован после <em>одобрения модератора</em></p>
+            <app-button  [title]="!form.valid?'Рецепт должен содержать как минимум имя. Если в рецепте есть нутриенты, ингредиенты или инструкции, они должны также содержать как минимум навание (содержание для инструкции)':''" (click)="form.valid ? (approveModalShow = true) : null" [text]="'Опубликовать'" [color]="'sec'"
+              [style]="'outlined'" [disabled]="form.valid" [rounded]="true"></app-button>
+            <p>Если ты не хочешь, чтобы рецепт увидели другие пользователи (прямо сейчас), просто <em>сохрани</em>
+              его. После нажатия на кнопку рецепт появится в твоих личных рецептах. Ты <em>всегда</em> сможешь
+              опубликовать его позже</p>
+
+            <app-button class="main" (click)="form.valid ? submitForm() : null" [text]="editMode?'Изменить':'Сохранить'"
+[title]="!form.valid?'Рецепт должен содержать как минимум имя. Если в рецепте есть нутриенты, ингредиенты или инструкции, они должны также содержать как минимум навание (содержание для инструкции)':''"              [color]="'sec'" [disabled]="form.valid" [style]="'filled'" [rounded]="true"></app-button>
+            <p>Если ты передумал добавлять рецепт, <em>отмени</em> его создание. Все данные придется
+              вводить повторно, если ты захочешь создать этот рецепт снова </p>
+
+            <app-button (click)="exitModalShow = true" [text]="'Отменить'" [color]="'prim'" [style]="'outlined'"
+              [rounded]="true"></app-button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="footer">
+      <app-button [iconSize]="'min'" [color]="'sec'" [iconPosition]="'before'" [rounded]="true" [icon]="'arrow-previous'" [iconStyle]="'as-text'" [style]="'outlined'" [text]="'Назад'" (click)="goToPreviousStep()" 
+        [disabled]="!(currentStep === 0)"></app-button>
+      <app-button  [iconSize]="'min'"  [icon]="'arrow-next'" [color]="'sec'" [rounded]="true" [style]="'filled'" [text]="'Вперед'" (click)="goToNextStep()"
+        [disabled]="!(currentStep === steps.length - 1)"></app-button>
+    </div>
+  </div>
+</div>
+
+
+<app-modal @modal *ngIf="exitModalShow" [style]="'prim'" [title]="'Отмена'+ (editMode?' изменения':' сохранения ')+ 'рецепта'" [type]="'yesOrNo'"
+  (resultEmit)="handleExitModal($event)" [buttonsText]="['Да', 'Нет']"
+  [description]="'Ты уверен, что не хочешь'+(editMode?' изменить':' сохранить ') + 'рецепт?'"></app-modal>
+<app-modal @modal *ngIf="successModalShow" [style]="'sec'" [title]="'Рецепт успешно сохранен'" [type]="'Ok'"
+  (resultEmit)="handleSuccessModal()" [buttonsText]="['Хорошо']" [description]="
+  'Твой рецепт успешно'+(editMode?' изменен':' сохранен в твоей личной коллекции') +
+    (isAwaitingApprove ? ' и ожидает одобрения модератора' : '')
+  "></app-modal>
+
+<app-modal @modal *ngIf="createModalShow" [style]="'prim'" [title]="'Подтверди создание рецепта'" [type]="'yesOrNo'"
+  (resultEmit)="handleCreateRecipeModal($event)" [buttonsText]="['Да', 'Нет']"
+  [description]="'Ты уверен, что хочешь сохранить рецепт в своей коллекции?'"></app-modal>
+
+<app-modal @modal *ngIf="approveModalShow" [style]="'prim'" [title]="'Подтверди публикацию рецепта'"
+  [type]="'yesOrNo'" (resultEmit)="handleApproveModal($event)" [buttonsText]="['Да', 'Нет']" [description]="
+    'Ты уверен, что хочешь ' +(editMode?'изменить':'сохранить') + ' рецепт и отправить его на рассмотрение к модератору?'
+  "></app-modal>
+
+  
+
+
+  <app-modal @modal *ngIf="editModalShow" [style]="'prim'" [title]="'Подтвердите изменение рецепта'" [type]="'yesOrNo'"
+  (resultEmit)="handleEditRecipeModal($event)" [buttonsText]="['Да', 'Нет']"
+  [description]="'Вы уверены, что хотите изменить рецепт?'"></app-modal>

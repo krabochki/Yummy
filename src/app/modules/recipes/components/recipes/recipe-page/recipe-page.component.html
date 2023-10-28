@@ -363,7 +363,8 @@
                   class="userpic"
                   alt=""
                 />
-                <app-expanding-input
+                <app-usual-input
+                [inputType]="'textarea'"
                   type="text"
                   [placeholder]="
                     recipe.comments.length === 0
@@ -371,7 +372,7 @@
                       : 'Напишите комментарий...'
                   "
                 >
-                </app-expanding-input>
+                </app-usual-input>
               </div>
   
               <app-button

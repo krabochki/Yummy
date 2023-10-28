@@ -60,6 +60,12 @@ export class CategoryService {
   
     return findedCategories;
   }
+  
+  sortCategoriesByName(categories: ICategory[]): ICategory[]{
+     return categories.sort((category1: ICategory, category2: ICategory) =>
+       category1.name > category2.name ? 1 : -1,
+     );
+  }
 
   getPopularCategories(categories:ICategory[], recipes:IRecipe[]) {
   // Создаем объект, в котором ключами будут ID категорий, а значениями количество рецептов в каждой категории

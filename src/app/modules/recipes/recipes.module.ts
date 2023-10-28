@@ -3,7 +3,6 @@ import { CommonModule, NgFor } from '@angular/common';
 import { RecipesRoutingModule } from './recipes-routing.module';
 import { RecipesComponent } from './recipes.component';
 import { RecipePageComponent } from './components/recipes/recipe-page/recipe-page.component';
-import { RecipeCreatingComponent } from './components/recipes/recipe-creating/recipe-creating.component';
 import { MatchRecipesComponent } from './components/recipes/match-recipes/match-recipes.component';
 import { CategoryCreatingComponent } from './components/categories/category-creating/category-creating.component';
 import { SomeRecipesPageComponent } from './components/recipes/some-recipes-page/some-recipes-page.component';
@@ -26,12 +25,14 @@ import { DragScrollModule } from 'ngx-drag-scroll';
 
 import { VerticalRecipeListComponent } from './components/recipes/vertical-recipe-list/vertical-recipe-list.component';
 import { VerticalCategoryListComponent } from './components/categories/vertical-category-list/vertical-category-list.component';
+import { RecipeCreateComponent } from './components/recipes/recipe-create/recipe-create.component';
 
 
 @NgModule({
   declarations: [
     RecipesComponent,
     RecipePageComponent,
+    
     MatchRecipesComponent,
     CategoryCreatingComponent,
     SomeRecipesPageComponent,
@@ -39,7 +40,7 @@ import { VerticalCategoryListComponent } from './components/categories/vertical-
     MainPageComponent,
     CategoryListItemComponent,
     RecipeListItemComponent,
-    RecipeCreatingComponent,
+    RecipeCreateComponent,
     HorizontalRecipeListComponent,
     VerticalRecipeListComponent,
     VerticalCategoryListComponent,
@@ -77,7 +78,7 @@ import { VerticalCategoryListComponent } from './components/categories/vertical-
     VerticalCategoryListComponent,
     HorizontalCategoryListComponent,
     VerticalRecipeListComponent,
-    RecipeCreatingComponent
+    RecipeCreateComponent
   ],
 })
 export class RecipesModule {}

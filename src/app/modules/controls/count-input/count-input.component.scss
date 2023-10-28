@@ -3,11 +3,12 @@
 :host {
   display: flex;
   align-items: center;
+  width: fit-content;
   justify-content: center;
 
   input {
     font-weight: 500;
-    width: 2.75em;
+    width: 2em;
     cursor: unset;
     text-align: center;
   }

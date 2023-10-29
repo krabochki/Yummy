@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { IRecipe } from '../models/recipes';
 import { BehaviorSubject, catchError, map, mergeMap, switchMap, take, tap, throwError } from 'rxjs';
 import { recipesUrl } from 'src/tools/source';
+import { getCurrentDate } from 'src/tools/common';
 
 @Injectable({
   providedIn: 'root',
@@ -95,17 +96,10 @@ export class RecipeService {
 
   approveRecipe(recipe: IRecipe): IRecipe {
     recipe.status = 'public';  
-    recipe.publicationDate = this.getCurrentDate();
+    recipe.publicationDate = getCurrentDate();
     return recipe;
   }
 
-  getCurrentDate():string {
-    const today = new Date();
-    const dd = String(today.getDate()).padStart(2, '0');
-    const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    const yyyy = today.getFullYear();
-    return yyyy + '.' + mm + '.' + dd;
-  }
 
   dismissRecipe(recipe: IRecipe): IRecipe {
     recipe.status = 'private';

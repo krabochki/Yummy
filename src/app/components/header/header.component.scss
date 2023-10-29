@@ -287,7 +287,7 @@ p {
 
     &.unactive > div,
     &.unactive > div:first-of-type {
-      background-color: var(--color-foreground-unactive);
+      background-color: var(--color-foreground-unactive) !important;
 
       .count {
         display: none;

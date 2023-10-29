@@ -25,6 +25,7 @@ import {
 } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { usernameExistsValidator } from 'src/tools/validators';
+import { getCurrentDate } from 'src/tools/common';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
@@ -104,6 +105,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         username: this.form.value.username,
         email: this.form.value.email,
         password: this.form.value.password,
+        registrationDate: getCurrentDate(),
         id: maxId + 1,
       };
 

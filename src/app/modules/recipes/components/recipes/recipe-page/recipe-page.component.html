@@ -54,13 +54,13 @@
             />
             <p>{{ author.fullName===''?'@'+author.username:author.fullName }}</p>
           </div>
-          <div class="row date" *ngIf="this.recipe.status === 'public'">
+          <div class="row date"  *ngIf="this.recipe.status === 'public' && this.recipe.publicationDate">
             <svg-icon
               class="head-icon"
               [applyClass]="true"
               [src]="'../../../../../assets/images/svg/calendar.svg'"
             ></svg-icon>
-            <p>{{ recipe.publicationDate | date: "shortDate" }}</p>
+            <p>{{ recipe.publicationDate }}</p>
           </div>
           <div class="row date" *ngIf="this.recipe.status !== 'public'">
             <ng-container *ngIf="this.recipe.status === 'private'; else awaiting">
@@ -113,7 +113,9 @@
             ></svg-icon>
   
             <p>{{ recipe.comments.length }}</p>
-          </div></div>
+          </div>
+        
+        </div>
      </div>
          <ul *ngIf="categories.length>0" class="categories">
         <li class="row" *ngFor="let category of categories" [routerLink]="'/categories/list/'+category.id">{{(category.name)}} </li>
@@ -187,6 +189,7 @@
   <div class="column main">
     <div class="row center">
       <img
+      
         class="main-photo"
         src="../../../../../../assets/images/no-recipe-photo.png"
         alt=""
@@ -259,14 +262,16 @@
 
 
    <div  class="row all" style="overflow: visible;" >
-     <div style="overflow: visible;" class="instructions" *ngIf="this.recipe.instructions.length > 0">
-        <h2>Инструкции</h2>
-        <div
-          class="row instruction"
-          *ngFor="let instruction of recipe.instructions; let i = index"
-        >
-          <p class="num">{{ i + 1 }}</p>
-          <p>{{ instruction.name }}</p>
+     <div style="overflow: visible;" >
+        <div class="instructions" *ngIf="this.recipe.instructions.length>0">
+          <h2 *ngIf="this.recipe.instructions.length > 0">Инструкции</h2>
+          <div 
+            class="row instruction"
+            *ngFor="let instruction of recipe.instructions; let i = index"
+          >
+            <p class="num">{{ i + 1 }}</p>
+            <p>{{ instruction.name }}</p>
+          </div>
         </div>
   
         <div class="row buttons" *ngIf="this.recipe.status === 'public'">
@@ -313,9 +318,34 @@
               {{ recipe.cooksId.length }}
             </p>
           </div>
-          <div></div>
         </div>
   
+         <div class="socials" *ngIf="recipe.status==='public'">
+        <h2>Поделиться этим рецептом</h2>
+        <div class="row social">
+          <app-social-button [url]="linkForSocials"></app-social-button>
+          <app-social-button
+            [url]="linkForSocials"
+            [social]="'pinterest'"
+          ></app-social-button>
+          <app-social-button
+            [url]="linkForSocials"
+            [social]="'vk'"
+          ></app-social-button>
+          <app-social-button
+            [url]="linkForSocials"
+            [social]="'twitter'"
+          ></app-social-button>
+
+          <app-social-button
+            [url]="linkForSocials"
+            [social]="'facebook'"
+          ></app-social-button>
+        </div>
+      </div>
+
+      <hr>
+
         <div class="column" style="overflow: visible;" *ngIf="this.recipe.status === 'public'">
           <div style="overflow: visible;">
             <h2>Комментарии ({{ recipe.comments.length }})</h2>
@@ -399,6 +429,7 @@
             *ngFor="let downRecipe of downRecipes"
             [recipe]="downRecipe"
           ></app-recipe-list-item>
+
         </div>
         
         </div>

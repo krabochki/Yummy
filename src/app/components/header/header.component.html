@@ -90,7 +90,7 @@
     </div>
 
     <div (click)="currentUser.id === 0 ? (noAccessModalShow = true) : null">
-      <div class="count">10</div>
+      <div *ngIf="currentUser.id>0" class="count">10</div>
       <svg-icon class="header-top-svg" [applyClass]="true"
         [src]="'../../../../../assets/images/svg/header/notification.svg'"></svg-icon>
     </div>

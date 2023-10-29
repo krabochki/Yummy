@@ -211,7 +211,8 @@
         2,
         3,
         4,
-        1
+        1,
+        5
       ],
       "status": "public",
       "origin": "Америка",
@@ -3951,6 +3952,50 @@
       "comments": [],
       "publicationDate": "",
       "status": "private"
+    },
+    {
+      "name": "Hello World",
+      "ingredients": [],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 5,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 50,
+      "comments": [],
+      "publicationDate": "2023.10.29",
+      "status": "public"
+    },
+    {
+      "name": "fddfdfdffddfdffdfdfd",
+      "ingredients": [],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 5,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 51,
+      "comments": [],
+      "publicationDate": "29.10.2023",
+      "status": "public"
     }
   ],
   "users": [
@@ -4185,7 +4230,7 @@
       "personalWebsite": "https://www.interiordesignsbyvictoria.com/",
       "location": "Милан, Италия",
       "registrationDate": "2023-08-12",
-      "profileViews": 3221,
+      "profileViews": 3222,
       "role": "user"
     },
     {
@@ -4277,7 +4322,7 @@
       "personalWebsite": "",
       "location": "",
       "registrationDate": "",
-      "profileViews": 2
+      "profileViews": 4
     }
   ]
 }

@@ -233,6 +233,7 @@ h2 {
 }
 .instructions {
   row-gap: 1em;
+  margin-bottom: 1.75em;
   display: flex;
   h2{
     margin: 0;
@@ -312,8 +313,8 @@ h2 {
 }
 
 .exit {
-  width: 1.5em;
-  height: 2em;
+  min-width: 1.5em;
+  max-width: 1.5em;
   fill: var(--color-foreground);
 }
 .exit-button {
@@ -341,6 +342,8 @@ h1 {
   align-items: center;
   column-gap: 1em;
   margin-bottom: 1em;
+  display: grid;
+  grid-template-columns: max-content 1fr;
 
   .reading-time {
     font-weight: 300;
@@ -546,7 +549,7 @@ h1 {
   justify-content: start;
   column-gap: 1.5em;
 
-  margin: 1em 0 2em 0;
+  margin: 0 0 1em 0;
   div {
     align-items: center;
     column-gap: 0.5em;
@@ -684,7 +687,7 @@ h1 {
   }
 
   .main-photo {
-    width: 80%;
+    width: 60%;
     margin-top: 2em;
   }
   .center {
@@ -735,6 +738,14 @@ h1 {
  
 }
 
+.socials{
+  display: flex;
+  flex-direction: column;
+}
+.social{
+  column-gap: 1em;
+}
+
 @media (max-width: 736px) {
   .cards {
     justify-content: center;
@@ -747,19 +758,31 @@ h1 {
     justify-content: center;
   }
 
+   .header {
+  align-items: center;
+  column-gap: 1em;
+  margin-bottom: 1em;
+  
+  display: flex;
+  grid-template-columns: max-content fit-content;}
+  
+
   .head {
     flex-direction: column;
     display: flex;
+
+   
 
     row-gap: 1.5em;
     .short-info {
       margin: 0 auto;
       .row {
         column-gap: 0.4em;
+        text-align: center;
       }
       column-gap: 1em;
       p {
-        width: max-content;
+        width: min-content;
       }
     }
   }
@@ -799,11 +822,30 @@ h1 {
     }
   }
 }
+
+hr{
+  width: 100%;
+  height: 1px;
+
+  margin: 2em 0;
+  opacity: 0.25;
+  background-color: var(--color-foreground-unactive);
+}
+
+.ads-under-cont{
+  h2{
+    margin-bottom: 0.75em;
+  }
+  margin-top: 1em;
+}
+
+
 @media(max-width:650px){
     .all {
   .ads-under-cont{
     display: none;
   }}
+
 }
 
 @media (max-width: 480px) {

@@ -57,6 +57,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
 
   showHistory = false;
 
+  
   readingTimeInMinutes: number = 0;
 
   protected linkForSocials = '';
@@ -112,6 +113,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
           this.recentRecipes = this.recipeService
             .getRecentRecipes(this.recipeService.getPublicRecipes(recipes))
             .slice(0, 3);
+          this.recentRecipes.filter((recipe)=>{recipe.id!==this.recipe.id})
           this.setCategories();
           this.setReadingTimeInMinutes();
           this.setStatistics();
@@ -119,6 +121,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
         });
     });
   }
+
   setCategories(): void {
     this.categoryService.categories$
       .pipe(takeUntil(this.destroyed$))

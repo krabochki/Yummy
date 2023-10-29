@@ -82,7 +82,7 @@
       }" routerLink="/control-dashboard" *ngIf="currentUser.role === 'admin' || currentUser.role === 'moderator'">
       <svg-icon class="admin-svg" [src]="'../../../assets/images/svg/thick-star.svg'" [class]="'svg'"></svg-icon>
     </div>
-    <div (click)="currentUser.id === 0 ? (noAccessModalShow = true) : null" [routerLink]="
+    <div class="acc" (click)="currentUser.id === 0 ? (noAccessModalShow = true) : null" [routerLink]="
         currentUser.id === 0 ? null : '/cooks/list/' + currentUser.id
       ">
       <svg-icon class="header-top-svg" [applyClass]="true"

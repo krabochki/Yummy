@@ -66,7 +66,7 @@ app-modal{
     height: fit-content;
     display: flex;
     align-items: start;
-    row-gap: 2em;
+    row-gap: 1em;
     justify-content: center;
     flex-direction: column;
   }
@@ -81,7 +81,7 @@ hr {
 }
 h1 {
   font-family: var(--font-family-accent);
-  font-size: var(--font-l);
+  font-size: var(--font-xl);
   margin-bottom: 0.5em;
   text-align: center;
 }

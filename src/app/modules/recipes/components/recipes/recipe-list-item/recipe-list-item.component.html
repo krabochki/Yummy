@@ -15,7 +15,7 @@
   <div class="top">
     <div (click)="handleInnerFunction($event)" [ngClass]="{'disabled':recipe.status==='awaits'}" *ngIf="recipe.authorId === currentUserId || recipe.status === 'public'"
       (click)="recipe.status === 'public' ? makeThisRecipeFavorite() : moreAuthorButtons=!moreAuthorButtons" class="fav">
-      <svg-icon *ngIf="recipe.status !== 'public'" [src]="'../../../../../assets/images/svg/brush.svg'"
+      <svg-icon *ngIf="recipe.status !== 'public'" [src]="'../../../../../assets/images/svg/more.svg'"
         [applyClass]="true" class="fav-icon"></svg-icon>
       <svg-icon *ngIf="recipe.status === 'public' && !isRecipeFavorite"
         [src]="'../../../../../assets/images/svg/fav.svg'" [applyClass]="true" class="fav-icon"></svg-icon>
@@ -92,7 +92,7 @@
 
 
   <app-modal @modal *ngIf="deleteRecipeModalShow" [style]="'prim'" [title]="'Удаление рецепта'" [type]="'yesOrNo'"
-  (resultEmit)="handleDeleteRecipeModal($event)" [buttonsText]="['Давайте', 'Не сейчас']" [description]="
+  (resultEmit)="handleDeleteRecipeModal($event)" [buttonsText]="['Да', 'Нет']" [description]="
     'Ты действительно хочешь удалить этот рецепт?'
   "></app-modal>
 

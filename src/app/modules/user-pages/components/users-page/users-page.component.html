@@ -1,1 +1,188 @@
-all users will be here
+<div class="wrap">
+  <h1 *ngIf="allUsers.length > 0">{{ getTitleByUserType(userType) }}</h1>
+
+  <div *ngIf="allUsers.length > 0" class="search-block">
+    <div class="search">
+      <input
+        (focus)="focus()"
+        (blur)="blur()"
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="search()"
+        type="text"
+        placeholder="Введите запрос"
+      />
+      <div class="magnifier">
+        <svg-icon
+          [applyClass]="true"
+          class="search-svg"
+          [src]="'../../../../../assets/images/svg/search.svg'"
+        ></svg-icon>
+      </div>
+    </div>
+
+    <div class="autocomplete-list">
+      <ul @auto-complete *ngIf="autocompleteShow">
+        <div *ngIf="autocompleteUsersList.length === 0">
+          <div class="no-found-recipes">
+            <div>
+              <svg-icon
+                [applyClass]="true"
+                class="sad-cook"
+                [src]="'../../../../../assets/images/svg/no-such-cooks.svg'"
+              ></svg-icon>
+            </div>
+            <p>
+              В данном разделе по вашему запросу нет никаких кулинаров.
+              Попробуйте изменить параметры поиска!
+            </p>
+          </div>
+        </div>
+        <li
+          *ngFor="let item of autocompleteUsersList"
+          (mousedown)="navigateTo('/cooks/list/' + item.id)"
+        >
+          <p>{{ item.fullName }}</p>
+          <span>@{{ item.username }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <ng-template #notAll>
+    <div *ngIf="allUsers.length > 0; else noUsers">
+      <app-users-list [users]="showUsers"></app-users-list>
+
+      <app-button
+        [text]="'Загрузить еще...'"
+        (click)="loadMoreUsers()"
+        *ngIf="allUsers.length > showUsers.length"
+        [rounded]="true"
+        class="load-more"
+        [style]="'outlined'"
+        [color]="'prim'"
+      ></app-button>
+    </div>
+
+    <ng-template #noUsers>
+        <div class="container one-column not-found">
+          <div class="image">
+            <svg-icon
+              [applyClass]="true"
+              class="fridge"
+              [src]="'../../../../assets/images/svg/fridge.svg'"
+            ></svg-icon>
+          </div>
+          <div class="content">
+            <h1 class="label">Кулинаров пока <span class="title">нет</span></h1>
+            <p class="tagline">{{ getNoUsersTextByUserType(userType) }}</p>
+
+            <hr />
+            <div class="buttons">
+              <app-button
+                routerLink="/cooks"
+                [rounded]="true"
+                [color]="'prim'"
+                [text]="'Все кулинары'"
+              ></app-button>
+            </div>
+          </div>
+        </div>
+    </ng-template>
+  </ng-template>
+
+  <div *ngIf="filter === 'all'; else notAll">
+    <div
+      class="block"
+      *ngIf="currentUser.id !== 0 && currentUserFollowingUsers.length > 0"
+    >
+      <div routerLink="/cooks/following" class="head">
+        <h2>Ваши подписки</h2>
+
+        <svg-icon
+          class="arrow-svg"
+          [applyClass]="true"
+          [src]="'../../../../../assets/images/svg/go-back.svg'"
+        ></svg-icon>
+      </div>
+
+      <app-users-list
+        [users]="currentUserFollowingUsers.slice(0, 6)"
+      ></app-users-list>
+    </div>
+
+    <div
+      class="block"
+      *ngIf="currentUser.id !== 0 && currentUserFollowersUsers.length > 0"
+    >
+      <div routerLink="/cooks/followers" class="head">
+        <h2>Ваши подписчики</h2>
+
+        <svg-icon
+          class="arrow-svg"
+          [applyClass]="true"
+          [src]="'../../../../../assets/images/svg/go-back.svg'"
+        ></svg-icon>
+      </div>
+
+      <app-users-list
+        [users]="currentUserFollowersUsers.slice(0, 6)"
+      ></app-users-list>
+    </div>
+
+    <div class="block">
+      <div routerLink="/cooks/productive" class="head">
+        <h2>Самые продуктивные</h2>
+
+        <svg-icon
+          class="arrow-svg"
+          [applyClass]="true"
+          [src]="'../../../../../assets/images/svg/go-back.svg'"
+        ></svg-icon>
+      </div>
+
+      <app-users-list
+        [users]="moreProductiveUsers.slice(0, 6)"
+      ></app-users-list>
+    </div>
+
+    <div class="block">
+      <div routerLink="/cooks/popular" class="head">
+        <h2>Самые популярные</h2>
+
+        <svg-icon
+          class="arrow-svg"
+          [applyClass]="true"
+          [src]="'../../../../../assets/images/svg/go-back.svg'"
+        ></svg-icon>
+      </div>
+      <app-users-list [users]="popularUsers.slice(0, 6)"></app-users-list>
+    </div>
+    <div class="block">
+      <div routerLink="/cooks/most-viewed" class="head">
+        <h2>Самые просматриваемые</h2>
+
+        <svg-icon
+          class="arrow-svg"
+          [applyClass]="true"
+          [src]="'../../../../../assets/images/svg/go-back.svg'"
+        ></svg-icon>
+      </div>
+      <app-users-list [users]="moreViewedUsers.slice(0, 6)"></app-users-list>
+    </div>
+    <div class="block">
+      <div routerLink="/cooks/managers" class="head">
+        <h2>Управляющие</h2>
+
+        <svg-icon
+          class="arrow-svg"
+          [applyClass]="true"
+          [src]="'../../../../../assets/images/svg/go-back.svg'"
+        ></svg-icon>
+      </div>
+    </div>
+
+    <app-users-list
+      [users]="administratorsAndModerators.slice(0, 6)"
+    ></app-users-list>
+  </div>
+</div>

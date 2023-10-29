@@ -2395,7 +2395,8 @@
       "favoritesId": [
         9,
         8,
-        1
+        1,
+        5
       ],
       "likesId": [
         6,
@@ -4010,7 +4011,8 @@
       "followersIds": [
         2,
         3,
-        4
+        4,
+        5
       ],
       "socialNetworks": [
         {
@@ -4025,8 +4027,8 @@
       "personalWebsite": "https://www.chefalexeyzimin.com/",
       "location": "Москва, Россия",
       "registrationDate": "2023-01-15",
-      "profileViews": 7615,
-      "role": "admin"
+      "profileViews": 7635,
+      "role": "moderator"
     },
     {
       "id": 2,
@@ -4038,7 +4040,9 @@
       "fullName": "Екатерина Петрова",
       "followersIds": [
         1,
-        3
+        3,
+        23,
+        5
       ],
       "socialNetworks": [
         {
@@ -4053,7 +4057,7 @@
       "personalWebsite": "",
       "location": "Санкт-Петербург, Россия",
       "registrationDate": "2023-03-20",
-      "profileViews": 6478,
+      "profileViews": 6485,
       "role": "user"
     },
     {
@@ -4066,7 +4070,8 @@
       "fullName": "Максим Иванов",
       "followersIds": [
         1,
-        2
+        2,
+        5
       ],
       "socialNetworks": [
         {
@@ -4081,7 +4086,7 @@
       "personalWebsite": "https://www.travelandeat.com/",
       "location": "Нью-Йорк, США",
       "registrationDate": "2023-05-10",
-      "profileViews": 5806,
+      "profileViews": 5809,
       "role": "user"
     },
     {
@@ -4094,7 +4099,8 @@
       "fullName": "Ольга Смирнова",
       "followersIds": [
         2,
-        6
+        6,
+        5
       ],
       "socialNetworks": [
         {
@@ -4109,7 +4115,7 @@
       "personalWebsite": "https://www.cookingadventures.com/",
       "location": "Лондон, Великобритания",
       "registrationDate": "2023-04-02",
-      "profileViews": 4950,
+      "profileViews": 4966,
       "role": "user"
     },
     {
@@ -4122,7 +4128,9 @@
       "description": "",
       "quote": "В кулинарии может не хватать только аппетита.",
       "fullName": "Лина",
-      "followersIds": [],
+      "followersIds": [
+        23
+      ],
       "socialNetworks": [
         {
           "name": "pinterest",
@@ -4140,7 +4148,7 @@
       "personalWebsite": "",
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 1763
+      "profileViews": 1778
     },
     {
       "id": 6,
@@ -4157,7 +4165,8 @@
         2,
         4,
         9,
-        10
+        10,
+        5
       ],
       "socialNetworks": [
         {
@@ -4172,7 +4181,7 @@
       "personalWebsite": "https://www.healthandnutrition.com/",
       "location": "Сидней, Австралия",
       "registrationDate": "2023-06-18",
-      "profileViews": 4351,
+      "profileViews": 4354,
       "role": "user"
     },
     {
@@ -4201,7 +4210,7 @@
       "personalWebsite": "",
       "location": "Лиссабон, Португалия",
       "registrationDate": "2023-07-24",
-      "profileViews": 3943,
+      "profileViews": 3948,
       "role": "user"
     },
     {
@@ -4230,7 +4239,7 @@
       "personalWebsite": "https://www.interiordesignsbyvictoria.com/",
       "location": "Милан, Италия",
       "registrationDate": "2023-08-12",
-      "profileViews": 3222,
+      "profileViews": 3223,
       "role": "user"
     },
     {
@@ -4259,7 +4268,7 @@
       "personalWebsite": "https://www.techenthusiast.com/",
       "location": "Сан-Франциско, США",
       "registrationDate": "2023-09-03",
-      "profileViews": 2789,
+      "profileViews": 2792,
       "role": "user"
     },
     {
@@ -4287,7 +4296,7 @@
       "personalWebsite": "",
       "location": "Лондон, Великобритания",
       "registrationDate": "2023-10-19",
-      "profileViews": 2363,
+      "profileViews": 2365,
       "role": "user"
     },
     {
@@ -4317,11 +4326,32 @@
       "description": "",
       "quote": "",
       "fullName": "",
-      "followersIds": [],
+      "followersIds": [
+        5
+      ],
       "socialNetworks": [],
       "personalWebsite": "",
       "location": "",
       "registrationDate": "",
+      "profileViews": 7
+    },
+    {
+      "id": 23,
+      "email": "michael007@mail.ru",
+      "password": "Michael000",
+      "username": "michael",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [
+        5
+      ],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-10-30",
       "profileViews": 4
     }
   ]

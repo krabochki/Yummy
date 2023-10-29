@@ -1,1 +1,48 @@
-<p>users-list-item works!</p>
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="main-wrap" [ngClass]="{'admin':user.role==='admin', 'moder': user.role === 'moderator'}" >
+
+   <div class="main-and-follow">
+       <div style="display: flex; flex-direction: column; row-gap: 0.5em;">
+            <div class="wrap" [routerLink]="'/cooks/list/'+user.id">
+                <div class="userpic"></div>
+                <div>
+                   <div class="star-h1">
+                       <div class="star" *ngIf="user.role!=='user'"> <svg-icon class="star-svg" [applyClass]="true"  [src]="'../../../../../assets/images/svg/user-star.svg'"></svg-icon></div>
+                        <h1 [title]="user.role==='admin'?'Это администратор Yummy':user.role==='moderator'?'Это модератор Yummy':''">{{user.fullName}}</h1>
+                   </div>
+                    <h2>@{{user.username}}</h2>
+                </div>
+            </div>
+            <p class="location"  *ngIf="user.location!==''">
+                <svg-icon class="geo" [applyClass]="true" [src]="'../../../../../assets/images/svg/location.svg'"></svg-icon>
+               <span [title]="user.location"> {{user.location}}</span>
+                
+            </p>
+       </div>
+       <button  *ngIf="currentUser.id!==user.id" (click)="!isFollower?follow():unfollow()"  class="follow-button" [ngClass]="{'follow-btn':!isFollower, 'unfollow-btn':isFollower}">{{!isFollower?'Подписаться':'Отписаться'}}</button>
+       <div (click)="!isFollower?follow():unfollow()" [title]="!isFollower?'Подписаться':'Отписаться'" [class]="!isFollower?'follow':'unfollow'"  *ngIf="currentUser.id!==user.id" >
+        
+        <svg-icon *ngIf="!isFollower" class="follow-svg"  [src]="'../../../../../assets/images/svg/follow.svg'"></svg-icon>
+        <svg-icon *ngIf="isFollower" class="follow-svg"  [src]="'../../../../../assets/images/svg/unfollow.svg'"></svg-icon>
+    
+    </div>
+   </div>
+    <div class="follows">
+        <p title="Подписки">
+            {{followingLength}} <span appPluralRu=""
+            [value]="followingLength"
+            [arVariants]="['подписка', 'подписки', 'подписок']"></span>
+        </p>
+        <p title="Подписчики">
+            {{user.followersIds.length}} <span appPluralRu=""
+            [value]="user.followersIds.length"
+            [arVariants]="['подписчик', 'подписчика', 'подписчиков']"></span>
+        </p>
+        <p title="Рецепты">
+            {{userRecipesLength}} <span appPluralRu=""
+            [value]="userRecipesLength"
+            [arVariants]="['рецепт', 'рецепта', 'рецептов']"></span>
+        </p>
+    </div>
+</div>

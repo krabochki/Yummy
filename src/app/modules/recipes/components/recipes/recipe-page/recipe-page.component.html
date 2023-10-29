@@ -344,7 +344,7 @@
         </div>
       </div>
 
-      <hr>
+      <hr *ngIf="recipe.status==='public'">
 
         <div class="column" style="overflow: visible;" *ngIf="this.recipe.status === 'public'">
           <div style="overflow: visible;">

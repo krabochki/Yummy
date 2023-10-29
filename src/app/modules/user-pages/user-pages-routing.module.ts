@@ -6,6 +6,7 @@ import { UsersPageComponent } from './components/users-page/users-page.component
 import { SomeRecipesPageComponent } from '../recipes/components/recipes/some-recipes-page/some-recipes-page.component';
 import { UserResolver } from './services/user.resolver';
 import { PageNotFoundComponent } from '../controls/page-not-found/page-not-found.component';
+import { AuthGuard } from '../authentication/guards/auth.guard';
 const routes: Routes = [
   {
     path: '',
@@ -14,10 +15,47 @@ const routes: Routes = [
     children: [
       {
         path: 'cooks',
+        data: { filter: 'all' },
+
+        component: UsersPageComponent,
+      },
+
+      {
+        path: 'cooks/popular',
+        data: { filter: 'popular' },
+
         component: UsersPageComponent,
       },
       {
-        path: 'cooks/search',
+        path: 'cooks/managers',
+        data: { filter: 'managers' },
+
+        component: UsersPageComponent,
+      },
+      {
+        path: 'cooks/followers',
+        data: { filter: 'followers' },
+        canActivate: [AuthGuard],
+
+        component: UsersPageComponent,
+      },
+      {
+        path: 'cooks/following',
+        data: { filter: 'following' },
+        canActivate: [AuthGuard],
+
+        component: UsersPageComponent,
+      },
+      {
+        path: 'cooks/productive',
+        data: { filter: 'productive' },
+
+        component: UsersPageComponent,
+      },
+      {
+        path: 'cooks/most-viewed',
+        data: { filter: 'most-viewed' },
+
         component: UsersPageComponent,
       },
       {
@@ -28,7 +66,8 @@ const routes: Routes = [
 
       {
         path: 'cooks/updates',
-        component: PageNotFoundComponent,
+        data:{filter:'updates'},
+        component: SomeRecipesPageComponent,
       },
     ],
   },

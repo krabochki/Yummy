@@ -47,7 +47,7 @@
                   ></svg-icon>
                 </div>
                 <p>
-                  В данной категории по вашему запросу нет никаких рецептов.
+                  В данном разделе по вашему запросу нет никаких рецептов.
                   Попробуйте изменить параметры поиска или подобрать рецепт в
                   специальном разделе!
                 </p>
@@ -65,7 +65,7 @@
               <p (mousedown)="navigateTo('/recipes/list/' + item.id)">{{ item.name }}</p>
               <span (mousedown)="navigateTo('/cooks/list/'+ getUser(item.authorId).id)"
                 *ngIf="filter !== 'my-recipes'"
-                >{{ getUser(item.authorId).fullName }}</span
+                >{{ (getUser(item.authorId).fullName!=='')?getUser(item.authorId).fullName:'@'+getUser(item.authorId).username }}</span
               >
             </li>
           </ul>
@@ -294,7 +294,7 @@
   </ng-template>
 </div>
 
-<app-recipe-create
+<app-recipe-create style="position: fixed;z-index: 3;"
   (closeEmitter)="creatingMode = false"
   @modal
   *ngIf="creatingMode"

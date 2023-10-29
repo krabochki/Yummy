@@ -294,6 +294,7 @@ p {
       }
     }
 
+    
     & > div:not(.admin-panel) {
       background-color: var(--color-secondary);
       width: 2em;
@@ -324,10 +325,7 @@ p {
         background-color: var(--color-primary);
       }
 
-      &:nth-of-type(2) {
-        margin-right: 0.5em;
-        background-color: var(--color-primary);
-      }
+      
 
       .header-top-svg {
         fill: var(--color-background);
@@ -335,7 +333,15 @@ p {
         width: 100%;
       }
     }
+    & > 
+      div.acc {
+        margin-right: 0.5em;
+        background-color: var(--color-primary);
+      }
+
+    
   }
+
 
   .admin-svg{
     display: flex;

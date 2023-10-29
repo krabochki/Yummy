@@ -109,11 +109,11 @@
 }
 
 @media (max-width: 900px) {
-  .image {
+  .image,.fridge {
     display: none;
   }
 
-  .one-column {
+  .container.one-column {
     padding: 0;
     hr,
     .tagline {
@@ -129,6 +129,7 @@
     }
     .label,
     .tagline {
+      width: 100%;
       text-align: center;
       text-align: center;
     }
@@ -147,8 +148,8 @@
     justify-content: center;
     flex-direction: column;
     row-gap: var(--space-xl);
-    margin-right: 10em;
-    margin-left: 10em;
+    margin-right: 8em;
+    margin-left: 8em;
 
     &.img-container {
       column-gap: 0;
@@ -176,8 +177,8 @@
 
 @media (max-width: 768px) {
   .container {
-    margin-right: 7em;
-    margin-left: 7em;
+    margin-right: 0;
+    margin-left: 0;
 
 
   }

@@ -299,6 +299,10 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
           this.getUser(recipe.authorId)
             .fullName.toLowerCase()
             .replace(/\s/g, '')
+            .includes(search) ||
+          this.getUser(recipe.authorId)
+            .username.toLowerCase()
+            .replace(/\s/g, '')
             .includes(search),
       );
 

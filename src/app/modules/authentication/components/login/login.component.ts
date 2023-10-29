@@ -35,6 +35,7 @@ import { customPatternValidator, emailExistsValidator, usernameAndEmailNotExists
 })
 export class LoginComponent implements OnInit, OnDestroy {
   successAttemptModalShow: boolean = false;
+  failAttemptModalShow: boolean = false;
   users: IUser[] = [];
   form: FormGroup;
   protected destroyed$: Subject<void> = new Subject<void>();
@@ -49,9 +50,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   ) {
     this.titleService.setTitle('Вход');
 
-    this.form = this.fb.group({
-     
-    });
+    this.form = this.fb.group({});
   }
 
   ngOnInit(): void {
@@ -60,30 +59,29 @@ export class LoginComponent implements OnInit, OnDestroy {
       .subscribe((receivedUsers: IUser[]) => {
         this.users = receivedUsers;
       });
-    
-     this.form = this.fb.group({
-       login: [
-         '',
-         [
-           Validators.required,
-           Validators.minLength(5),
-           Validators.maxLength(64),
-           customPatternValidator(emailOrUsernameMask),
-           usernameAndEmailNotExistsValidator(this.users)
-         ],
-       ],
-       password: [
-         '',
-         [
-           Validators.required,
-           Validators.minLength(8),
-           Validators.maxLength(20),
-           customPatternValidator(passMask),
-         ],
-       ],
-     });
-  }
 
+    this.form = this.fb.group({
+      login: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(5),
+          Validators.maxLength(64),
+          customPatternValidator(emailOrUsernameMask),
+          usernameAndEmailNotExistsValidator(this.users),
+        ],
+      ],
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.maxLength(20),
+          customPatternValidator(passMask),
+        ],
+      ],
+    });
+  }
 
   loginUser(): void {
     if (this.form.valid) {
@@ -94,23 +92,27 @@ export class LoginComponent implements OnInit, OnDestroy {
         password: this.form.value.password,
       };
 
-      this.authService
-        .loginUser(userData)
-        .subscribe((user: IUser | null) => {
-          if (user) {
-            localStorage.setItem('currentUser', JSON.stringify(user));
-            this.authService.setCurrentUser(user);
-            this.successAttemptModalShow = true;
-            this.cd.markForCheck();
-          } 
-        });
+      this.authService.loginUser(userData).subscribe((user: IUser | null) => {
+        if (user) {
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          this.authService.setCurrentUser(user);
+          this.successAttemptModalShow = true;
+          this.cd.markForCheck();
+        }
+        else {
+          this.failAttemptModalShow = true;
+        }
+      });
     }
   }
-
 
   handleSuccessModalResult(): void {
     this.successAttemptModalShow = false;
     this.router.navigate(['/']);
+  }
+
+  handleFailModalResult(): void {
+    this.failAttemptModalShow = false;
   }
 
   ngOnDestroy(): void {

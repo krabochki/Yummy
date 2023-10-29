@@ -76,3 +76,15 @@
   [buttonsText]="['На главную']"
   [description]="'Вы успешно вошли в свой аккаунт!'"
 ></app-modal>
+
+<app-modal 
+  [ngStyle]="{'z-index':100}"
+  @modal
+  *ngIf="failAttemptModalShow"
+  [style]="'prim'"
+  [title]="'Неудачная попытка входа'"
+  [type]="'Ok'"
+  (resultEmit)="handleFailModalResult()"
+  [buttonsText]="['Хорошо']"
+  [description]="'Вы ввели неправильный пароль'"
+></app-modal>

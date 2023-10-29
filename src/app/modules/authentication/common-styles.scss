@@ -25,7 +25,7 @@
   form {
     display: flex;
     flex-direction: column;
-    row-gap: var(--space-s);
+    row-gap: 1.25em;
     margin: 0 auto;
     width: 18em;
   }
@@ -71,9 +71,14 @@
     text-align: center;
   }
 
+  .error{
+    font-size: 0.8em;
+    color:var(--color-primary);
+    line-height: 1
+  }
   .content {
     @include flexy(column);
-    row-gap: var(--space-m);
+    row-gap: 1.5em;
 
     .tagline {
       font-size: var(--font-m);

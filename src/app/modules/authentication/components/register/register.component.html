@@ -7,37 +7,51 @@
     </p>
 
     <form [formGroup]="form">
-      <app-usual-input
-        [inputRequired]="true"
-        [max]="20"
-        type="text"
-        id="username"
-        formControlName="username"
-        [placeholder]="'Имя пользователя'"
-        required
-        [error]="
-          form.get('username')?.invalid &&
-          (form.get('username')?.dirty || form.get('username')?.touched)
-            ? 'Имя пользователя должно содержать от 4 до 20 символов, среди которых могут быть буквы (минимум одна), цифры, а также нижние почеркивания и точки (не подряд)'
-            : ''
-        "
-      ></app-usual-input>
-      <app-usual-input
-        [inputRequired]="true"
-        type="text"
-        [max]="64"
-        id="email"
-        formControlName="email"
-        [placeholder]="'Электронная почта'"
-        required
-        [error]="
-          form.get('email')?.invalid &&
-          (form.get('email')?.dirty || form.get('email')?.touched)
-            ? 'Введи корректный адрес электронной почты'
-            : ''
-        "
-      ></app-usual-input>
-       <app-password-input
+      <div>
+        <app-usual-input
+          [inputRequired]="true"
+          [max]="20"
+          type="text"
+          id="username"
+          formControlName="username"
+          [placeholder]="'Имя пользователя'"
+          required
+          [error]="
+           !form.get('username')?.hasError('usernameExists')?
+            (form.get('username')?.invalid &&
+            (form.get('username')?.dirty || form.get('username')?.touched)
+              ? 'Имя пользователя должно содержать от 4 до 20 символов, среди которых могут быть буквы (минимум одна), цифры, а также нижние почеркивания и точки (не подряд)'
+              : ''):''
+          "
+        ></app-usual-input>
+                        <div class="error" *ngIf="form.get('username')?.hasError('usernameExists')">
+                    Это имя пользователя уже занято
+                  </div>
+      </div>
+     <div>
+        <app-usual-input
+          [inputRequired]="true"
+          type="text"
+          [max]="64"
+          id="email"
+          formControlName="email"
+          [placeholder]="'Электронная почта'"
+          required
+          [error]="
+          !form.get('email')?.hasError('emailExists')?
+            form.get('email')?.invalid &&
+            (form.get('email')?.dirty || form.get('email')?.touched)
+              ? 'Введи корректный адрес электронной почты'
+              : '':''
+          "
+        ></app-usual-input>
+        <div class="error" *ngIf="form.get('email')?.hasError('emailExists')">
+                    Пользователь с такой электронной почтой уже существует
+                  </div>
+     </div>
+       <app-usual-input
+              [inputType]="'password'"
+
        [inputRequired]="true"
         id="password"
         formControlName="password"
@@ -49,7 +63,7 @@
           (form.get('password')?.dirty || form.get('password')?.touched)
             ? 'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'
             : ''"
-      ></app-password-input>
+      ></app-usual-input>
     </form>
 
 
@@ -83,17 +97,6 @@
   "
 ></app-modal>
 
-<app-modal
-  @modal
-  [style]="'sec'"
-  [style]="'prim'"
-  *ngIf="modalFailShow"
-  [title]="'Неудачная попытка регистрации'"
-  [type]="'Ok'"
-  (resultEmit)="handleFailModalResult()"
-  [buttonsText]="['Хорошо']"
-  [description]="failText"
-></app-modal>
 
 <app-modal
   [style]="'sec'"

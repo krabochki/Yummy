@@ -25,6 +25,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
+import { customPatternValidator, emailExistsValidator, usernameAndEmailNotExistsValidator } from 'src/tools/validators';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -34,8 +35,6 @@ import { Subject, takeUntil } from 'rxjs';
 })
 export class LoginComponent implements OnInit, OnDestroy {
   successAttemptModalShow: boolean = false;
-  unsuccessfusAttemptModalShow: boolean = false;
-  unsuccessfusAttemptModalText: string = '';
   users: IUser[] = [];
   form: FormGroup;
   protected destroyed$: Subject<void> = new Subject<void>();
@@ -51,24 +50,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.titleService.setTitle('Вход');
 
     this.form = this.fb.group({
-      login: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(5),
-          Validators.maxLength(64),
-          this.customPatternValidator(emailOrUsernameMask),
-        ],
-      ],
-      password: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(8),
-          Validators.maxLength(20),
-          this.customPatternValidator(passMask),
-        ],
-      ],
+     
     });
   }
 
@@ -78,15 +60,30 @@ export class LoginComponent implements OnInit, OnDestroy {
       .subscribe((receivedUsers: IUser[]) => {
         this.users = receivedUsers;
       });
+    
+     this.form = this.fb.group({
+       login: [
+         '',
+         [
+           Validators.required,
+           Validators.minLength(5),
+           Validators.maxLength(64),
+           customPatternValidator(emailOrUsernameMask),
+           usernameAndEmailNotExistsValidator(this.users)
+         ],
+       ],
+       password: [
+         '',
+         [
+           Validators.required,
+           Validators.minLength(8),
+           Validators.maxLength(20),
+           customPatternValidator(passMask),
+         ],
+       ],
+     });
   }
 
-  //Валидатор по маске regex для формы
-  customPatternValidator(pattern: RegExp): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: any } | null => {
-      const isValid = pattern.test(control.value);
-      return isValid ? null : { customPattern: { value: control.value } };
-    };
-  }
 
   loginUser(): void {
     if (this.form.valid) {
@@ -104,30 +101,13 @@ export class LoginComponent implements OnInit, OnDestroy {
             localStorage.setItem('currentUser', JSON.stringify(user));
             this.authService.setCurrentUser(user);
             this.successAttemptModalShow = true;
-
             this.cd.markForCheck();
-          } else {
-            const user = this.users.find(
-              (user) =>
-                user.email === userData.email ||
-                user.username === userData.username,
-            );
-            if (user !== undefined) {
-              this.unsuccessfusAttemptModalText =
-                'Неправильный пароль. Попробуйте ввести данные снова или восстановить пароль';
-            } else {
-              this.unsuccessfusAttemptModalText =
-                'Пользователя с такими данными не существует. Попробуйте перепроверить данные или зарегистрируйтесь';
-            }
-            this.unsuccessfusAttemptModalShow = true;
-          }
+          } 
         });
     }
   }
 
-  handleErrorModalResult(): void {
-    this.unsuccessfusAttemptModalShow = false;
-  }
+
   handleSuccessModalResult(): void {
     this.successAttemptModalShow = false;
     this.router.navigate(['/']);

@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { ButtonComponent } from './button/button.component';
 import { SelectComponent } from './select/select.component';
 import { RouterModule } from '@angular/router';
-import { PasswordInputComponent } from './password-input/password-input.component';
 import { FormsModule } from '@angular/forms';
 import { ModalComponent } from './modal/modal.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
@@ -23,7 +22,6 @@ import { AutocompleteComponent } from './autocomplete/autocomplete.component';
   declarations: [
     ButtonComponent,
     SelectComponent,
-    PasswordInputComponent,
     ModalComponent,
     PageNotFoundComponent,
     PluralRuDirective,
@@ -45,7 +43,6 @@ import { AutocompleteComponent } from './autocomplete/autocomplete.component';
   exports: [
     ButtonComponent,
     SelectComponent,
-    PasswordInputComponent,
     ModalComponent,
     ToogleSwitchComponent,
     PluralRuDirective,

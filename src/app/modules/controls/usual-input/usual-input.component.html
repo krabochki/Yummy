@@ -1,8 +1,11 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <div class="wrap">
   <input
-  *ngIf="inputType==='input';else textarea"
+  *ngIf="inputType==='input' || inputType==='password';else textarea"
     [maxlength]="max ? max : null"
-    type="text"
+            [type]="showPassword && inputType==='password'?'password':'text'"
+
     #input
     [value]="value"
     (keyup)="change()"
@@ -33,6 +36,22 @@
     ></textarea>
   </ng-template>
 
+   <span class="eye" *ngIf="inputType==='password'" (click)="eye()">
+      <svg-icon
+        [applyClass]="true"
+        [class]="error !== '' ? 'uncorrect' : 'correct'"
+        *ngIf="!this.showPassword"
+        [src]="'../../../../assets/images/svg/eye-close.svg'"
+      ></svg-icon>
+
+      <svg-icon
+        *ngIf="this.showPassword"
+        [applyClass]="true"
+                [class]="error !== '' ? 'uncorrect' : 'correct'"
+        [src]="'../../../../assets/images/svg/eye-open.svg'"
+      ></svg-icon>
+    </span>
+    
   <p class="howmuch" *ngIf="max!==undefined">{{ value.length }}/{{ max }}</p>
 </div>
 

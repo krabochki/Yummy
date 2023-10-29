@@ -13,6 +13,8 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
+
+import { customPatternValidator,customLinkPatternValidator } from 'src/tools/validators';
 import { steps,Step } from './consts';
 import { usernameMask } from 'src/tools/regex';
 import { IUser, nullUser, SocialNetwork } from '../../models/users';
@@ -79,7 +81,7 @@ export class UserAccountEditComponent
           Validators.required,
           Validators.minLength(4),
           Validators.maxLength(20),
-          this.customPatternValidator(usernameMask),
+          customPatternValidator(usernameMask),
           this.usernameExistsValidator(),
         ],
       ],
@@ -90,27 +92,27 @@ export class UserAccountEditComponent
       website: [
         '',
         [Validators.maxLength(1000)],
-        this.customLinkPatternValidator(anySiteMask),
+        customLinkPatternValidator(anySiteMask),
       ],
       twitter: [
         '',
         [Validators.maxLength(1000)],
-        this.customLinkPatternValidator(twitterMask),
+        customLinkPatternValidator(twitterMask),
       ],
       facebook: [
         '',
         [Validators.maxLength(1000)],
-        this.customLinkPatternValidator(facebookMask),
+        customLinkPatternValidator(facebookMask),
       ],
       vk: [
         '',
         [Validators.maxLength(1000)],
-        this.customLinkPatternValidator(vkMask),
+        customLinkPatternValidator(vkMask),
       ],
       pinterest: [
         '',
         [Validators.maxLength(1000)],
-        this.customLinkPatternValidator(pinterestMask),
+        customLinkPatternValidator(pinterestMask),
       ],
       userpic: [null],
     });
@@ -141,27 +143,6 @@ export class UserAccountEditComponent
     }
   }
   
-
-  //Валидатор по маске regex для формы
-  customLinkPatternValidator(pattern: RegExp): ValidatorFn {
-    return (
-      control: AbstractControl,
-    ): Observable<{ [key: string]: any } | null> => {
-      if (control.value !== '') {
-        const isValid = pattern.test(control.value);
-        return isValid
-          ? of(null)
-          : of({ customPattern: { value: control.value } });
-      } else return of(null);
-    };
-  }
-  customPatternValidator(pattern: RegExp): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: any } | null => {
-      const isValid = pattern.test(control.value);
-      return isValid ? null : { customPattern: { value: control.value } };
-    };
-  }
-
   ngOnInit() {
     this.renderer.addClass(document.body, 'hide-overflow');
     (<HTMLElement>document.querySelector('.header')).style.width =

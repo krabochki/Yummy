@@ -100,3 +100,32 @@ select:-webkit-autofill:focus {
   -webkit-box-shadow: 0 0 0px 1000px #fffdc7 inset;
   transition: background-color 5000s ease-in-out 0s;
 }
+
+
+.eye {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  height: fit-content;
+  padding: var(--space-s);
+  cursor: pointer;
+
+
+}
+
+  svg {
+    width: 1em;
+    fill: var(--color-foreground);
+
+    
+    
+  }
+ .uncorrect{
+    fill:var(--color-primary)
+  }
+  .correct{
+          fill: var(--color-secondary);
+
+  }

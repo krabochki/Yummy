@@ -26,13 +26,17 @@ import { DragScrollModule } from 'ngx-drag-scroll';
 import { VerticalRecipeListComponent } from './components/recipes/vertical-recipe-list/vertical-recipe-list.component';
 import { VerticalCategoryListComponent } from './components/categories/vertical-category-list/vertical-category-list.component';
 import { RecipeCreateComponent } from './components/recipes/recipe-create/recipe-create.component';
-
+import { CommentComponent } from './components/comments/comment/comment.component';
+import { CommentsListComponent } from './components/comments/comments-list/comments-list.component';
+import { CUSTOM_TIME_DIFF_GENERATOR, TimePastPipe } from 'ng-time-past-pipe';
+import { timeDiffGenerator } from '../controls/time';
 
 @NgModule({
   declarations: [
     RecipesComponent,
+    CommentComponent,CommentsListComponent,
     RecipePageComponent,
-    
+
     MatchRecipesComponent,
     CategoryCreatingComponent,
     SomeRecipesPageComponent,
@@ -48,8 +52,10 @@ import { RecipeCreateComponent } from './components/recipes/recipe-create/recipe
   ],
   imports: [
     CommonModule,
+    TimePastPipe,
     DragScrollModule,
     NgFor,
+    
     ControlsModule,
     RecipesRoutingModule,
     ScrollingModule,
@@ -70,15 +76,17 @@ import { RecipeCreateComponent } from './components/recipes/recipe-create/recipe
   ],
   providers: [
     AuthGuard,
+    { provide: CUSTOM_TIME_DIFF_GENERATOR, useValue: timeDiffGenerator },
     provideAngularSvgIcon(),
     { provide: LOCALE_ID, useValue: 'ru' },
   ],
+  
   exports: [
     HorizontalRecipeListComponent,
     VerticalCategoryListComponent,
     HorizontalCategoryListComponent,
     VerticalRecipeListComponent,
-    RecipeCreateComponent
+    RecipeCreateComponent,
   ],
 })
 export class RecipesModule {}

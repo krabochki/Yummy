@@ -41,6 +41,8 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
   author: IUser = { ...nullUser };
   successEditModalShow: boolean = false;
   moreAuthorButtons: boolean = false;
+  publishModalShow: boolean = false;
+  successPublishModalShow: boolean = false;
 
   constructor(
     private recipeService: RecipeService,
@@ -155,7 +157,6 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
     event.stopPropagation();
   }
 
-
   //лайкаем рецепт
   likeThisRecipe() {
     if (this.currentUserId === 0) {
@@ -201,6 +202,20 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
             'Ошибка отметки рецепта приготовленным: ' + error.message,
           ),
       );
+  }
+
+  handlePublishRecipeModal(event: boolean) {
+    if (event) {
+       this.successPublishModalShow = true
+      
+    }
+    this.publishModalShow = false;
+  }
+  handleSuccessPublishModal() {
+  
+    this.recipe.status = 'awaits';
+    this.recipeService.updateRecipe(this.recipe).subscribe();
+    this.successPublishModalShow = false;
   }
 
   // модальное окно (пользователь не вошел в аккаунт)

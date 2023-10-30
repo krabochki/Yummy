@@ -1,9 +1,9 @@
-import { IComment } from 'src/app/modules/user-pages/models/comments';
+import { IComment } from 'src/app/modules/recipes/models/comments';
 
 export interface IRecipe {
   id: number; // Уникальный идентификатор рецепта
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  mainImage: FormData|null; // URL основного фото рецепта
+  mainImage: FormData | null; // URL основного фото рецепта
   name: string; // Название рецепта
   description: string; // Описание рецепта
   preparationTime: string; // Время приготовления
@@ -29,7 +29,7 @@ export const nullRecipe: IRecipe = {
   name: '',
   description: '',
   cookingTime: '',
-  preparationTime:'',
+  preparationTime: '',
   servings: 0,
   origin: '',
   ingredients: [],
@@ -43,7 +43,7 @@ export const nullRecipe: IRecipe = {
   comments: [],
   favoritesId: [],
   publicationDate: '01-01-2000',
-  status: 'private'
+  status: 'private',
 };
 export interface Ingredient {
   name: string; // Название ингредиента

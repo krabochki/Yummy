@@ -9,6 +9,7 @@ import { trigger } from '@angular/animations';
 import { heightAnim } from 'src/tools/animations';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { UsersType, noUsersText, userTitles } from './consts';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-users-page',
@@ -37,6 +38,7 @@ export class UsersPageComponent implements OnInit, OnDestroy {
 
   constructor(
     private userService: UserService,
+    private title: Title,
     private recipeService: RecipeService,
     private router: Router,
     private authService: AuthService,
@@ -104,6 +106,7 @@ export class UsersPageComponent implements OnInit, OnDestroy {
             this.allUsers = this.administratorsAndModerators;
             break;
         }
+        this.title.setTitle(this.getTitleByUserType(this.userType))
       });
   }
 

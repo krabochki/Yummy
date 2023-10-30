@@ -1,16 +1,11 @@
 import { CommonModule, Location } from '@angular/common';
 import { LOCALE_ID, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {
-  SvgIconComponent,
-  provideAngularSvgIcon
-} from 'angular-svg-icon';
+import { SvgIconComponent, provideAngularSvgIcon } from 'angular-svg-icon';
 import { AuthGuard } from '../authentication/guards/auth.guard';
 import { ControlsModule } from '../controls/controls.module';
 import { RouteEventsService } from '../controls/route-events.service';
 import { RecipesModule } from '../recipes/recipes.module';
-import { CommentComponent } from './components/comments/comment/comment.component';
-import { CommentsListComponent } from './components/comments/comments-list/comments-list.component';
 import { FollowersAndFollowingComponent } from './components/followers-and-following/followers-and-following.component';
 import { NotificationsListComponent } from './components/notifications/notifications-list/notifications-list.component';
 import { NotifyComponent } from './components/notifications/notify/notify.component';
@@ -30,13 +25,11 @@ import { UserAccountEditComponent } from './components/user-account-edit/user-ac
     NotifyComponent,
     NotificationsListComponent,
     FollowersAndFollowingComponent,
-    CommentComponent,
-    CommentsListComponent,
     SettingsComponent,
     UsersListComponent,
     UsersListItemComponent,
     UsersPageComponent,
-    UserAccountEditComponent
+    UserAccountEditComponent,
   ],
   imports: [
     CommonModule,
@@ -45,9 +38,8 @@ import { UserAccountEditComponent } from './components/user-account-edit/user-ac
     RecipesModule,
     SvgIconComponent,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
-
   providers: [
     { provide: LOCALE_ID, useValue: 'ru' },
 

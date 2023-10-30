@@ -1,0 +1,39 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="wrap" [ngClass]="{'dislike': comment.dislikesId.length>comment.likesId.length}">
+    <div class="userpic"></div>
+    <div class="content">
+       <div class="header">
+            <h1>{{author.fullName!==''?author.fullName:('@'+author.username)}}</h1>
+            <p class="date">{{date | timePast}}</p>
+       </div>
+        <p class="text">{{comment.text}}</p>
+<div class="footer">
+            <div class="likes">
+                <div class="like" (click)="likeComment()" [ngClass]="{'liked':comment.likesId.includes(currentUser.id)}">
+                    <svg-icon class="like-svg" *ngIf="!comment.likesId.includes(currentUser.id)" [applyClass]="true" [src]="'../../../../../assets/images/svg/like-comment.svg'"></svg-icon>
+                    <svg-icon class="like-svg" *ngIf="comment.likesId.includes(currentUser.id)" [applyClass]="true" [src]="'../../../../../assets/images/svg/like-comment-fill.svg'"></svg-icon>
+                    <span>{{comment.likesId.length}}</span>
+                </div>
+                <div (click)="dislikeComment()" class="like" [ngClass]="{'disliked':comment.dislikesId.includes(currentUser.id)}">
+                    <svg-icon class="like-svg" *ngIf="!comment.dislikesId.includes(currentUser.id)" [applyClass]="true" [src]="'../../../../../assets/images/svg/dislike.svg'"></svg-icon>
+                    <svg-icon *ngIf="comment.dislikesId.includes(currentUser.id)" class="like-svg" [applyClass]="true" [src]="'../../../../../assets/images/svg/dislike-fill.svg'"></svg-icon>
+                    <span>{{comment.dislikesId.length===0?0:('−'+comment.dislikesId.length)}}</span>
+                </div>
+               
+            </div>
+             <div class="actions">
+                   <div class="action" 
+  (click)="copy()">
+                        <svg-icon class="like-svg" [applyClass]="true" [src]="'../../../../../assets/images/svg/copy.svg'"></svg-icon>
+                        <span>{{!copyState?'Копировать':'Скопировано'}}</span>
+                        
+                   </div>
+                    <div class="action">
+                        <svg-icon class="like-svg" [applyClass]="true" [src]="'../../../../../assets/images/svg/report.svg'"></svg-icon>
+                        <span>Жалоба</span>
+                   </div>
+                </div>
+</div>
+    </div>
+</div>

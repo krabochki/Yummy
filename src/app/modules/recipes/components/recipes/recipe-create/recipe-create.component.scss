@@ -79,6 +79,10 @@ hr {
   opacity: 0.5;
   background-color: var(--color-foreground-unactive);
 }
+app-comments-list{
+  width: 100%;
+  display: flex;
+}
 h1 {
   font-family: var(--font-family-accent);
   font-size: var(--font-xl);

@@ -27,6 +27,10 @@
          <svg-icon  [src]="'../../../../../assets/images/svg/pen.svg'"
         [applyClass]="true" class="remove-svg"></svg-icon>
       </div>
+         <div class="top-button" (click)=" publishModalShow=true">
+         <svg-icon  [src]="'../../../../../assets/images/svg/publish.svg'"
+        [applyClass]="true" class="remove-svg"></svg-icon>
+      </div>
       <div class="top-button"  (click)="deleteRecipeModalShow=true">
 
         <svg-icon [applyClass]="true" class="remove-svg" [src]="'../../../../../assets/images/svg/trash.svg'"></svg-icon>
@@ -79,7 +83,7 @@
 
 <app-modal @modal *ngIf="noAccessModalShow" [style]="'prim'" [title]="'Доступ к функции ограничен'" [type]="'yesOrNo'"
   (resultEmit)="handleNoAccessModal($event)" [buttonsText]="['Давайте', 'Не сейчас']" [description]="
-    'Взаимодействовать с рецептами могут только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'
+    'Взаимодействовать с рецептами могут только пользователи с личным аккаунтом. Хочешь зарегистрироваться или войти в существующий аккаунт?'
   "></app-modal>
 
     <app-recipe-create (updatedRecipeEmitter)="handleEditedRecipe($event)" style="z-index:10; position: fixed;" [editedRecipe]="recipe" *ngIf="editMode" (closeEmitter)="editModeOff()" @modal ></app-recipe-create>
@@ -100,3 +104,15 @@
   (resultEmit)="handleSuccessDeleteModal()" [buttonsText]="['Хорошо']" [description]="
   'Этот рецепт успешно удален'
   "></app-modal>
+
+
+  
+       <app-modal @modal *ngIf="successPublishModalShow" [style]="'sec'" [title]="'Рецепт отправлен'" [type]="'Ok'"
+  (resultEmit)="handleSuccessPublishModal()" [buttonsText]="['Хорошо']" [description]="
+  'Этот рецепт успешно отправлен на рассмотрение к модератору'
+  "></app-modal>
+
+
+  <app-modal @modal *ngIf="publishModalShow" [style]="'prim'" [title]="'Подтвердите публикацию рецепта'" [type]="'yesOrNo'"
+  (resultEmit)="handlePublishRecipeModal($event)" [buttonsText]="['Да', 'Нет']"
+  [description]="'Ты уверен, что хочешь отправить рецепт на рассмотрение модератору для дальнейшей модерации?'"></app-modal>

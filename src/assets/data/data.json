@@ -3307,7 +3307,6 @@
     {
       "id": 28,
       "mainPhotoUrl": null,
-      "comments": [],
       "categories": [],
       "name": "et cillum velit",
       "description": "Tempor fugiat dolor veniam pariatur culpa Lorem Lorem proident exercitation laborum consequat aliqua ipsum nostrud. Eiusmod aute eiusmod consequat proident duis duis enim do mollit. Pariatur nostrud laboris ea laboris mollit nulla in voluptate in ad sint magna culpa. Reprehenderit magna magna quis culpa nisi occaecat do proident.\r\nAute qui adipisicing do incididunt ipsum nostrud adipisicing voluptate sunt excepteur. Exercitation dolore nostrud tempor incididunt velit. Mollit incididunt culpa fugiat elit adipisicing tempor proident eiusmod elit cupidatat non. Sint nulla quis laborum irure consectetur sunt aliquip enim officia cupidatat. In aliqua occaecat enim ut quis aute esse. Et mollit eu elit eiusmod ipsum qui elit magna.\r\nQuis sit aliqua anim laboris aliqua adipisicing est minim qui esse mollit anim elit. Id aliquip do Lorem elit laborum commodo consequat veniam excepteur fugiat ullamco cupidatat voluptate. Enim ea minim pariatur qui excepteur deserunt est duis consectetur cillum. Ut fugiat id esse proident. Veniam do cillum culpa mollit sunt sint consequat incididunt magna aliqua.\r\n",
@@ -3332,15 +3331,7 @@
       "status": "public",
       "origin": "Antarctica",
       "publicationDate": "2021-10-06",
-      "instuctions": [
-        "do",
-        "exercitation",
-        "eiusmod",
-        "labore",
-        "dolore",
-        "est",
-        "velit"
-      ],
+      "comments": [],
       "instructions": [
         {
           "images": [],
@@ -3629,9 +3620,65 @@
       "likesId": [],
       "favoritesId": [],
       "id": 33,
-      "comments": [],
-      "publicationDate": "",
-      "status": "private"
+      "comments": [
+        {
+          "id": 4,
+          "text": "заткнись",
+          "authorId": 5,
+          "date": "2023-10-30T02:29:47.613Z",
+          "likesId": [
+            5
+          ],
+          "dislikesId": []
+        },
+        {
+          "id": 3,
+          "text": "Все мпривет",
+          "authorId": 5,
+          "date": "2023-10-30T02:22:47.973Z",
+          "likesId": [
+            5
+          ],
+          "dislikesId": []
+        },
+        {
+          "id": 2,
+          "text": "рецепт 💩💩💩💩 если честно",
+          "authorId": 5,
+          "date": "2023-10-30T02:16:20.200Z",
+          "likesId": [],
+          "dislikesId": [
+            5
+          ]
+        },
+        {
+          "id": 1,
+          "text": "всем привет скиньте денег на карту я верну ",
+          "authorId": 5,
+          "date": "2023-10-30T02:10:30.151Z",
+          "likesId": [],
+          "dislikesId": [
+            5
+          ]
+        },
+        {
+          "id": 0,
+          "text": "и смех и грех",
+          "date": "2023-10-30T00:00:00.000Z",
+          "likesId": [
+            1,
+            2
+          ],
+          "authorId": 3,
+          "dislikesId": [
+            4,
+            6,
+            5
+          ]
+        }
+      ],
+      "publicationDate": "2023-10-30",
+      "status": "public"
     },
     {
       "name": "Ананасовый тарт татен Бри Ходж из сериала \"Отчаянные домохозяйки\"",
@@ -3652,7 +3699,9 @@
       ],
       "cooksId": [],
       "likesId": [],
-      "favoritesId": [],
+      "favoritesId": [
+        5
+      ],
       "id": 36,
       "comments": [],
       "publicationDate": "",
@@ -3952,7 +4001,7 @@
       "id": 49,
       "comments": [],
       "publicationDate": "",
-      "status": "private"
+      "status": "awaits"
     },
     {
       "name": "Hello World",

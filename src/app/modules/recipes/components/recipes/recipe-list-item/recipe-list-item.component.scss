@@ -127,16 +127,19 @@
 
 
     display: flex;
+    position: relative;
 
     flex-direction: column;
   }
 
   .more-buttons{
-       row-gap: 0.25em;
+       column-gap: 0.25em;
+       right: 2.5em;
     display: flex;
+    flex-direction: row-reverse;
+    position: absolute;
 
     
-    flex-direction: column;
   }
   .top-button{
     display: flex;
@@ -146,6 +149,17 @@
 
         position: relative;
 
+        &:last-of-type{
+          background-color: var(--color-primary-focus);
+          opacity: 0.65;
+          transition: 0.3s ease-in-out;
+          &:hover{
+            opacity: 1;
+          }
+          &::before{
+            display: none;
+          }
+        }
      &::before {
       position: absolute;
       top: 0;

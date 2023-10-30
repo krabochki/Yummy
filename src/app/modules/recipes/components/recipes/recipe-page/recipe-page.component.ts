@@ -19,6 +19,9 @@ import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
 import { SectionService } from '../../../services/section.service';
 import { Subject, takeUntil } from 'rxjs';
+import { CommentService } from '../../../services/comment.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { IComment } from '../../../models/comments';
 
 @Component({
   selector: 'app-recipe-page',
@@ -50,6 +53,8 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   noAccessModalShow: boolean = false;
   successAdminActionModalShow: boolean = false;
   dismissModalShow = false;
+  commentModalShow = false;
+  successCommentModalShow = false;
   approveModalShow = false;
   adminAction: 'approve' | 'dismiss' = 'dismiss';
 
@@ -57,10 +62,23 @@ export class RecipePageComponent implements OnInit, OnDestroy {
 
   showHistory = false;
 
-  
   readingTimeInMinutes: number = 0;
 
+  commentForm: FormGroup;
+  commentText: string = '';
+  fb: FormBuilder = new FormBuilder();
   protected linkForSocials = '';
+
+  commentsToShow: IComment[] = [];
+
+  loadMoreComments() {
+    const currentLength = this.commentsToShow.length;
+    const nextComments = this.recipe.comments.slice(
+      currentLength,
+      currentLength + 2,
+    );
+    this.commentsToShow = [...this.commentsToShow, ...nextComments];
+  }
 
   constructor(
     private sectionService: SectionService,
@@ -69,29 +87,39 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     private recipeService: RecipeService,
     private authService: AuthService,
     private userService: UserService,
+    private commentService: CommentService,
     public router: Router,
     public routerEventsService: RouteEventsService,
     private categoryService: CategoryService,
     private cd: ChangeDetectorRef,
-  ) {}
+  ) {
+    this.commentForm = this.fb.group({
+      commentText: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(5),
+          Validators.maxLength(1000),
+        ],
+      ],
+    });
+  }
 
   ngOnInit() {
-
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((data: IUser) => {
         this.currentUser = data;
-
       });
 
     this.route.data.subscribe((data: Data) => {
       this.recipe = data['RecipeResolver'];
-        this.linkForSocials = window.location.href;
+      this.linkForSocials = window.location.href;
 
       this.titleService.setTitle(this.recipe.name);
 
-      this.basketInit()
-    
+      this.basketInit();
+
       this.userService.users$
         .pipe(takeUntil(this.destroyed$))
         .subscribe((data) => {
@@ -113,7 +141,27 @@ export class RecipePageComponent implements OnInit, OnDestroy {
           this.recentRecipes = this.recipeService
             .getRecentRecipes(this.recipeService.getPublicRecipes(recipes))
             .slice(0, 3);
-          this.recentRecipes.filter((recipe)=>{recipe.id!==this.recipe.id})
+          this.recentRecipes.filter((recipe) => {
+            recipe.id !== this.recipe.id;
+          });
+
+          this.recipe.comments = this.recipe.comments.sort(
+            (commentA, commentB) => {
+              if (commentA.date < commentB.date) return 1;
+              if (commentA.date > commentB.date) return -1;
+              else return 0;
+            },
+          );
+          if (this.commentsToShow.length > 4)
+            this.commentsToShow = this.recipe.comments.slice(
+              0,
+              this.commentsToShow.length,
+            );
+          else {
+            this.commentsToShow = this.recipe.comments.slice(0, 4);
+          }
+            
+
           this.setCategories();
           this.setReadingTimeInMinutes();
           this.setStatistics();
@@ -122,6 +170,13 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     });
   }
 
+  addComment() {
+    const comment: IComment = this.commentService.makeComment(
+      this.currentUser,
+      this.commentForm.get('commentText')?.value,
+    );
+    this.commentService.addCommentToRecipe(this.recipe, comment).subscribe();
+  }
   setCategories(): void {
     this.categoryService.categories$
       .pipe(takeUntil(this.destroyed$))
@@ -144,15 +199,15 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     }
   }
 
-  basketInit():void {
-      this.iHaveIndgredient = Array.from(
-        { length: this.recipe.ingredients.length },
-        () => false,
-      );
-      this.basket = Array.from(
-        { length: this.recipe.ingredients.length },
-        () => false,
-      );
+  basketInit(): void {
+    this.iHaveIndgredient = Array.from(
+      { length: this.recipe.ingredients.length },
+      () => false,
+    );
+    this.basket = Array.from(
+      { length: this.recipe.ingredients.length },
+      () => false,
+    );
   }
 
   addToBasket(i: number) {
@@ -377,6 +432,17 @@ export class RecipePageComponent implements OnInit, OnDestroy {
       this.successAdminActionModalShow = true;
     }
     this.approveModalShow = false;
+  }
+  handleCommentModal(answer: boolean): void {
+    if (answer) {
+      this.addComment();
+      this.commentForm.get('commentText')?.setValue('');
+      this.successCommentModalShow = true;
+    }
+    this.commentModalShow = false;
+  }
+  handleSuccessCommentModal() {
+    this.successCommentModalShow = false;
   }
   handleSuccessAdminActionModal() {
     if (this.adminAction === 'approve') {

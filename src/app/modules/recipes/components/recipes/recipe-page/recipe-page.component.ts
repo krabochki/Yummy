@@ -437,6 +437,9 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     if (answer) {
       this.addComment();
       this.commentForm.get('commentText')?.setValue('');
+         this.commentForm.get('commentText')?.markAsPristine();
+      this.commentForm.get('commentText')?.markAsUntouched(); 
+
       this.successCommentModalShow = true;
     }
     this.commentModalShow = false;

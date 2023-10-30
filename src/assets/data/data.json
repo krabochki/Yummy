@@ -2479,18 +2479,34 @@
       "mainPhotoUrl": null,
       "comments": [
         {
-          "id": 1,
-          "text": "gfffgfgf",
+          "id": 6,
+          "text": "this.commentForm",
           "authorId": 5,
-          "date": "2023-10-30T17:37:28.081Z",
+          "date": "2023-10-30T23:16:12.579Z",
           "likesId": [],
           "dislikesId": []
         },
         {
-          "id": 2,
-          "text": "fdgffdfd",
+          "id": 5,
+          "text": "fgfffg",
           "authorId": 5,
-          "date": "2023-10-30T17:37:31.195Z",
+          "date": "2023-10-30T23:15:52.865Z",
+          "likesId": [],
+          "dislikesId": []
+        },
+        {
+          "id": 3,
+          "text": "так держать!!!!!!!!!!!!!!!уау",
+          "authorId": 5,
+          "date": "2023-10-30T23:14:47.702Z",
+          "likesId": [],
+          "dislikesId": []
+        },
+        {
+          "id": 7,
+          "text": "gffgfg",
+          "authorId": 5,
+          "date": "2023-10-30T23:16:17.042Z",
           "likesId": [],
           "dislikesId": []
         }
@@ -2511,8 +2527,7 @@
       "favoritesId": [
         9,
         8,
-        1,
-        5
+        1
       ],
       "likesId": [
         6,
@@ -4295,7 +4310,7 @@
       "personalWebsite": "",
       "location": "Беларусь (Гомель)",
       "registrationDate": "2023-10-30",
-      "profileViews": 4
+      "profileViews": 5
     },
     {
       "id": 24,

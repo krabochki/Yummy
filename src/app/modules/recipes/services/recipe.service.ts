@@ -131,6 +131,22 @@ export class RecipeService {
   getLikedRecipesByUser(recipes: IRecipe[], user: number) {
     return recipes.filter((recipe) => recipe.likesId.includes(user));
   }
+  getCommentedRecipesByUser(recipes: IRecipe[], userId: number) {
+    recipes = recipes.filter((recipe) => recipe.comments.length > 0);
+    const userCommentedRecipes:IRecipe[] = [];
+    recipes.forEach((element) => {
+      element.comments.forEach(
+        (comment) => {
+          if (comment.authorId === userId) 
+            userCommentedRecipes.push(element)
+        }
+      )
+    });
+    return userCommentedRecipes
+  
+
+    
+  }
   getCookedRecipesByUser(recipes: IRecipe[], user: number) {
     return recipes.filter((recipe) => recipe.cooksId.includes(user));
   }

@@ -49,6 +49,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
   recentRecipes: IRecipe[] = [];
   popularRecipes: IRecipe[] = [];
   discussedRecipes: IRecipe[] = [];
+  commentedRecipes: IRecipe[] = [];
   myRecipes: IRecipe[] = [];
   likedRecipes: IRecipe[] = [];
   cookedRecipes: IRecipe[] = [];
@@ -115,6 +116,9 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
       case 'discussed':
         this.recipeType = RecipeType.Discussed;
         break;
+      case 'commented':
+        this.recipeType = RecipeType.Commented;
+        break;
     }
   }
 
@@ -161,7 +165,8 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
                 const publicRecipes = this.recipeService.getPublicRecipes(data);
                 switch (this.recipeType) {
                   case RecipeType.Discussed:
-                    this.allRecipes = this.recipeService.getMostDiscussedRecipes(publicRecipes);
+                    this.allRecipes =
+                      this.recipeService.getMostDiscussedRecipes(publicRecipes);
                     this.recipesToShow = this.allRecipes.slice(0, 8);
                     break;
                   case RecipeType.Popular:
@@ -193,6 +198,12 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
                       );
                     this.recipesToShow = this.allRecipes.slice(0, 8);
                     break;
+                  case RecipeType.Commented:
+                    this.allRecipes = this.recipeService
+                      .getCommentedRecipesByUser(publicRecipes, this.currentUser.id)
+                    
+                            this.recipesToShow = this.allRecipes.slice(0, 8);
+                    break;
                   case RecipeType.Liked:
                     this.allRecipes = this.recipeService.getLikedRecipesByUser(
                       publicRecipes,
@@ -213,7 +224,12 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
                     this.popularRecipes = this.recipeService
                       .getPopularRecipes(this.allRecipes)
                       .slice(0, 8);
-                    this.discussedRecipes = this.recipeService.getMostDiscussedRecipes(publicRecipes).slice(0,8)
+                    this.discussedRecipes = this.recipeService
+                      .getMostDiscussedRecipes(publicRecipes)
+                      .slice(0, 8);
+                    this.commentedRecipes = this.recipeService
+                      .getCommentedRecipesByUser(publicRecipes, user.id)
+                      .slice(0, 8);
 
                     this.recentRecipes = this.recipeService
                       .getRecentRecipes(this.allRecipes)

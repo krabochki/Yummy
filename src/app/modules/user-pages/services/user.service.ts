@@ -39,6 +39,24 @@ export class UserService {
       return [];
     }
   }
+
+  getNearby(users: IUser[], user: IUser): IUser[]
+  {
+
+    const currentUserLocationWords = user.location.toLowerCase().replace(/[(){}[\]<>]/g, ' ').split(/[\s,.;:!]+/);
+
+    let matchingUsers = users.filter((item) => {
+      const userLocationWords = item.location.toLowerCase().replace(/[(){}[\]<>]/g, ' ').split(/[\s,.;:!]+/);
+      //есть ли хотя бы одно совпадающее слово
+      return currentUserLocationWords.some((word) =>
+        userLocationWords.includes(word),
+      );
+    });
+    
+    matchingUsers=matchingUsers.filter((item) => item.id !== user.id);
+    
+    return matchingUsers;
+}
   getFollowing(users: IUser[], userId: number): IUser[] {
     const following: IUser[] = [];
     users.forEach((user: IUser) => {

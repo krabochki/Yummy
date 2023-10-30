@@ -8,13 +8,14 @@ export enum RecipeType {
   Liked = 'liked',
   Cooked = 'cooked',
   Updates = 'updates',
-  Discussed = 'discussed'
+  Discussed = 'discussed',
+  Commented = 'commented'
 }
 
 export const recipeTitles = {
   [RecipeType.Recent]: 'Свежие рецепты',
   [RecipeType.Popular]: 'Популярные рецепты',
-  [RecipeType.My]: 'Ваши рецепты',
+  [RecipeType.My]: 'Твои рецепты',
   [RecipeType.Favorite]: 'Закладки',
   [RecipeType.Category]: '',
   [RecipeType.All]: 'Все рецепты',
@@ -22,6 +23,7 @@ export const recipeTitles = {
   [RecipeType.Cooked]: 'Приготовленные рецепты',
   [RecipeType.Updates]: 'Обновления любимых кулинаров',
   [RecipeType.Discussed]: 'Самые обсуждаемые рецепты',
+  [RecipeType.Commented]: 'Ты комментировал эти рецепты',
 };
 
  export const recipeNoRecipesRouterLinkText = {
@@ -34,7 +36,8 @@ export const recipeTitles = {
    [RecipeType.Liked]: '/recipes',
    [RecipeType.Cooked]: '/recipes',
    [RecipeType.Updates]: '/cooks',
-   [RecipeType.Discussed]: '',
+   [RecipeType.Discussed]: '/recipes',
+   [RecipeType.Commented]: '/recipes',
  };
 
 export const recipeNoRecipesButtonText = {
@@ -47,25 +50,28 @@ export const recipeNoRecipesButtonText = {
   [RecipeType.Liked]: 'Все рецепты',
   [RecipeType.Cooked]: 'Все рецепты',
   [RecipeType.Updates]: 'Все кулинары',
-  [RecipeType.Discussed]: '',
+  [RecipeType.Discussed]: 'Все рецепты',
+  [RecipeType.Commented]: 'Все рецепты',
 };
 
 export const recipeNoRecipesText = {
   [RecipeType.Recent]: '',
   [RecipeType.Popular]: '',
   [RecipeType.My]:
-    'У вас пока нет собственных рецептов. Попробуйте создать парочку рецептов и зайдите сюда снова',
+    'У тебя пока нет собственных рецептов. Попробуй создать парочку рецептов и зайди сюда снова',
   [RecipeType.Favorite]:
-    'У вас пока нет сохраненных рецептов. Попробуйте добавить парочку рецептов в избранное и зайдите сюда снова',
+    'У тебя пока нет сохраненных рецептов. Попробуй добавить парочку рецептов в избранное и зайди сюда снова',
   [RecipeType.Category]:
-    'В этой категории пока нет рецептов. Следите за обновлениями, совсем скоро они появятся!',
+    'В этой категории пока нет рецептов. Следи за обновлениями, совсем скоро они появятся!',
   [RecipeType.All]: '',
   [RecipeType.Liked]:
-    'У вас пока нет любимых рецептов. Попробуйте отметить парочку рецептов как понравившиеся и зайдите сюда снова',
+    'У тебя пока нет любимых рецептов. Попробуй отметить парочку рецептов как понравившиеся и зайди сюда снова',
   [RecipeType.Cooked]:
-    'У вас пока нет сохраненных рецептов. Попробуйте отметить парочку рецептов как приготовленные и зайдите сюда снова',
+    'У тебя пока нет сохраненных рецептов. Попробуй отметить парочку рецептов как приготовленные и зайди сюда снова',
   [RecipeType.Updates]:
-    'Новых рецептов среди ваших кулинаров не найдено. Попробуйте подписаться на более активных кулинаров и зайдите сюда снова',
+    'Новых рецептов среди твоих подписок не найдено. Попробуй подписаться на более активных кулинаров и зайди сюда снова',
   [RecipeType.Discussed]:
-    '',
+    'Пока никто не прокомментировал рецепты. Попробуй сам прокомментировать парочку рецептов и зайди сюда снова',
+  [RecipeType.Commented]:
+    'Ты пока не прокомментировал ни один рецепт. Попробуй прокомментировать парочку рецептов и зайди сюда снова',
 };

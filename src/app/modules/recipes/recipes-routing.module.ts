@@ -28,6 +28,12 @@ const routes: Routes = [
         component: SomeRecipesPageComponent,
       },
       {
+        path: 'recipes/commented',
+        data: { filter: 'commented' },
+        component: SomeRecipesPageComponent,
+        canActivate: [AuthGuard],
+      },
+      {
         path: 'recipes/most-discussed',
         data: { filter: 'discussed' },
         component: SomeRecipesPageComponent,

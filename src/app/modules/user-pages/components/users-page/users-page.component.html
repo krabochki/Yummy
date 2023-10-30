@@ -129,6 +129,25 @@
       ></app-users-list>
     </div>
 
+      <div
+      class="block"
+      *ngIf="currentUser.id !== 0 && nearbyUsers.length > 0"
+    >
+      <div routerLink="/cooks/nearby" class="head">
+        <h2>Кулинары рядом</h2>
+
+        <svg-icon
+          class="arrow-svg"
+          [applyClass]="true"
+          [src]="'../../../../../assets/images/svg/go-back.svg'"
+        ></svg-icon>
+      </div>
+
+      <app-users-list
+        [users]="nearbyUsers.slice(0, 6)"
+      ></app-users-list>
+    </div>
+
     <div class="block">
       <div routerLink="/cooks/productive" class="head">
         <h2>Самые продуктивные</h2>

@@ -5,6 +5,7 @@ export enum UsersType {
   Followers = 'followers',
   Following = 'following',
   Productive = 'productive',
+  Nearby = 'nearby',
   All = 'all',
 }
 
@@ -16,6 +17,7 @@ export const userTitles = {
   [UsersType.Following]: 'Ваши подписки',
   [UsersType.Productive]: 'Самые продуктивные кулинары',
   [UsersType.All]: 'Все кулинары',
+  [UsersType.Nearby]:'Кулинары рядом'
 };
 
 
@@ -23,11 +25,12 @@ export const userTitles = {
 export const noUsersText = {
   [UsersType.MostViewed]: '',
   [UsersType.Popular]: '',
+  [UsersType.Nearby]: 'Пока еще нет ни одного кулинара с похожей указанной локацией',
   [UsersType.Managers]: '',
   [UsersType.Followers]:
-    'У вас пока нет подписчиков. Попробуйте повысить популярность, создав пару рецептов и проявляя активность, и зайдите сюда снова!',
+    'У тебя пока нет подписчиков. Попробуй повысить популярность, создав пару рецептов и проявляя активность, и зайди сюда снова!',
   [UsersType.Following]:
-    'У вас пока нет подписчиков. Попробуйте подписаться на парочку кулинаров и зайдите сюда снова',
+    'У тебя пока нет подписчиков. Попробуй подписаться на парочку кулинаров и зайди сюда снова',
   [UsersType.Productive]: '',
   [UsersType.All]: '',
 };

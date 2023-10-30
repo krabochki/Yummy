@@ -25,6 +25,7 @@ export class UsersPageComponent implements OnInit, OnDestroy {
   protected users: IUser[] = [];
   protected recipes: IRecipe[] = [];
   protected popularUsers: IUser[] = [];
+  protected nearbyUsers: IUser[] = [];
   protected allUsers: IUser[] = [];
   protected moreProductiveUsers: IUser[] = [];
   protected administratorsAndModerators: IUser[] = [];
@@ -65,6 +66,7 @@ export class UsersPageComponent implements OnInit, OnDestroy {
       .subscribe((data) => {
         this.users = data;
         this.popularUsers = this.getPopularUsers(this.users);
+        this.nearbyUsers = this.getNearbyUsers(this.users);
         this.moreProductiveUsers = this.getMoreProductiveUsers(this.users);
         this.currentUserFollowingUsers = this.getCurrentUserFollowingUsers(
           this.users,
@@ -80,6 +82,10 @@ export class UsersPageComponent implements OnInit, OnDestroy {
         switch (this.userType) {
           case UsersType.All:
             this.allUsers = this.users;
+            break;
+          case UsersType.Nearby:
+            this.showUsers = this.nearbyUsers.slice(0,6);
+            this.allUsers = this.nearbyUsers;
             break;
           case UsersType.Popular:
             this.showUsers = this.popularUsers.slice(0, 6);
@@ -140,6 +146,9 @@ export class UsersPageComponent implements OnInit, OnDestroy {
       case 'most-viewed':
         this.userType = UsersType.MostViewed;
         break;
+      case 'nearby':
+        this.userType = UsersType.Nearby;
+        break;
     }
   }
 
@@ -153,6 +162,9 @@ export class UsersPageComponent implements OnInit, OnDestroy {
     return [...users].sort(
       (n1, n2) => n2.followersIds.length - n1.followersIds.length,
     );
+  }
+  private getNearbyUsers(users: IUser[]): IUser[] {
+    return this.userService.getNearby(users,this.currentUser)
   }
 
   private getMoreViewedUsers(users: IUser[]): IUser[] {

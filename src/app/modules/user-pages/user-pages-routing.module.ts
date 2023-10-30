@@ -53,6 +53,13 @@ const routes: Routes = [
         component: UsersPageComponent,
       },
       {
+        path: 'cooks/nearby',
+        data: { filter: 'nearby' },
+        canActivate: [AuthGuard],
+
+        component: UsersPageComponent,
+      },
+      {
         path: 'cooks/most-viewed',
         data: { filter: 'most-viewed' },
 
@@ -66,7 +73,7 @@ const routes: Routes = [
 
       {
         path: 'cooks/updates',
-        data:{filter:'updates'},
+        data: { filter: 'updates' },
         component: SomeRecipesPageComponent,
       },
     ],

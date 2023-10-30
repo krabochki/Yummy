@@ -545,16 +545,6 @@
       "mainPhotoUrl": null,
       "comments": [
         {
-          "id": 2,
-          "text": "ereeeeeeee3",
-          "authorId": 5,
-          "date": "2023-10-30T18:30:09.021Z",
-          "likesId": [
-            5
-          ],
-          "dislikesId": []
-        },
-        {
           "id": 3,
           "text": "ereeeeeeee3",
           "authorId": 3,
@@ -629,7 +619,8 @@
       "favoritesId": [
         1,
         6,
-        13
+        13,
+        5
       ],
       "likesId": [
         6,
@@ -4280,12 +4271,10 @@
       "description": "",
       "quote": "",
       "fullName": "",
-      "followersIds": [
-        5
-      ],
+      "followersIds": [],
       "socialNetworks": [],
       "personalWebsite": "",
-      "location": "",
+      "location": "Гродно",
       "registrationDate": "",
       "profileViews": 7
     },
@@ -4304,7 +4293,7 @@
       ],
       "socialNetworks": [],
       "personalWebsite": "",
-      "location": "",
+      "location": "Беларусь (Гомель)",
       "registrationDate": "2023-10-30",
       "profileViews": 4
     },

@@ -1,4 +1,4 @@
-import { IComment } from 'src/app/modules/recipes/models/comments';
+import { IComment, ICommentReport } from 'src/app/modules/recipes/models/comments';
 
 export interface IRecipe {
   id: number; // Уникальный идентификатор рецепта
@@ -21,7 +21,8 @@ export interface IRecipe {
   comments: IComment[]; // Список комментариев
   publicationDate: string; // Дата регистрации пользователя
   favoritesId: number[];
-  status: 'awaits' | 'private' | 'public';
+  status: 'awaits' | 'private' | 'public',
+  reports: ICommentReport[]
 }
 export const nullRecipe: IRecipe = {
   id: 0,
@@ -30,6 +31,7 @@ export const nullRecipe: IRecipe = {
   description: '',
   cookingTime: '',
   preparationTime: '',
+  reports:[],
   servings: 0,
   origin: '',
   ingredients: [],

@@ -1,108 +1,178 @@
-.wrap{
-    width: 100%;
-    background-color: var(--color-background);
-    display: flex;
-    column-gap: 1em;
-    transition: 0.3s ease-in-out;
-}
-h1{
-    font-size: 1.1em;
-    font-weight: 700;
-}
-.userpic{
-    background-image: url(../../../../../../assets/images/userpic.png);
-    min-width: 2em;
-    height: 2em;
-    border-radius: 100%;
-    background-position: center;
-    background-size: cover;
+.wrap {
+  width: 100%;
+  background-color: var(--color-background);
+  display: flex;
+  column-gap: 1em;
+  transition: 0.3s ease-in-out;
 }
 
-.content{
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    row-gap: 1em;
+h1 {
+  font-size: 1.1em;
+  font-weight: 700;
 }
-.footer{
+.userpic {
+  background-image: url(../../../../../../assets/images/userpic.png);
+  min-width: 2em;
+  height: 2em;
+  border-radius: 100%;
+  background-position: center;
+  background-size: cover;
+}
 
-    display: flex;
-    justify-content: space-between;
+.content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 1em;
+}
+.footer {
+  display: flex;
+  justify-content: space-between;
 }
 
-.dislike{
-    opacity: 0.5;
+.dislike {
+  opacity: 0.5;
 }
-.text{
-    line-height: 1;
+.text {
+  line-height: 1;
 }
-.likes .liked{
-*{
-    color:var(--color-secondary);
+.likes .liked {
+  * {
+    color: var(--color-secondary);
     fill: var(--color-secondary);
+  }
 }
 
-}
-
-.likes .disliked{
-*{
-    color:var(--color-primary);
+.likes .disliked {
+  * {
+    color: var(--color-primary);
     fill: var(--color-primary);
+  }
 }
 
+.header {
+  display: flex;
+  cursor: pointer;
+  flex-direction: column;
+  h1,
+  .date {
+    line-height: 1;
+  }
+}
+.date {
+  font-weight: 300;
+  color: var(--color-foreground-unactive);
+
+  font-size: 0.9em;
 }
 
-.header{
-    display: flex;
-    flex-direction: column;
-    h1,.date{
-        line-height: 1;
-    }
+.likes,
+.actions {
+  display: flex;
+  column-gap: 2em;
 }
-.date{
-    font-weight: 300;
-    color: var(--color-foreground-unactive);
+.like,
+.action {
+  height: 1.2em;
+  .like-svg,
+  span {
+    transition:
+      fill 0.1s ease-in-out,
+      color 0.2s ease-in-out;
+  }
 
-    font-size: 0.9em;
-}
-
-.likes,.actions{
-    display: flex;
-    column-gap: 2em;
-}
-.like,.action{
-    height: 1.2em;
-    .like-svg,span{
-            transition:fill 0.1s ease-in-out,color 0.2s ease-in-out;
-
-    }
-    
-    cursor: pointer;
-    column-gap: 0.5em;
-    display: flex;
-    align-items: end;
-    span{line-height: 1;}
-}
-.action:first-of-type:hover{
-    .like-svg{
-        fill: var(--color-secondary);
-    }
-
-    span{
-        color:var(--color-secondary)
-    }
-}.action:last-of-type:hover{
-    .like-svg{
-        fill: var(--color-primary);
-    }
-
-    span{
-        color:var(--color-primary)
-    }
+  cursor: pointer;
+  column-gap: 0.5em;
+  display: flex;
+  align-items: end;
+  span {
+    line-height: 1;
+  }
 }
 
-.like-svg{
+h1 span {
+  font-weight: 200;
+  font-size: 0.7em;
+}
+.modal {
+  overflow-y: hidden;
+  z-index: 3;
+  border-radius: 0.3em;
+  padding: 0.7em;
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.6em;
+  background-color: var(--color-background-deeper-unactive);
+  position: absolute;
+  bottom: 1.6em;
+  right: 0;
+}
+h1 {
+  display: flex;
+  column-gap: 0.5em;
+  align-items: center;
+}
+
+app-modal {
+  position: fixed;
+  z-index: 3;
+}
+.remove-svg {
+  fill: var(--color-primary);
+  height: 1em;
+  width: 1.2em;
+  transition: 0.1s ease-in-out;
+  &:hover {
+    fill: var(--color-primary-focus);
+  }
+}
+.action:hover {
+  .like-svg {
+    fill: var(--color-secondary);
+  }
+
+  span {
+    color: var(--color-secondary);
+  }
+}
+.action.red:hover {
+  .like-svg {
+    fill: var(--color-primary);
+  }
+
+  span {
+    color: var(--color-primary);
+  }
+}
+
+
+.like-svg {
+  fill: var(--color-foreground);
+  height: 1em;
+  width: 1.2em;
+}
+
+.action.haveReport{
+  opacity: 0.5;
+  &:hover{
+  .like-svg
+  {
     fill: var(--color-foreground);
-    height: 1em;
-    width: 1.2em;
+  }
+  span{
+    color: var(--color-foreground);
+  }
+  cursor: default;
+
+  }
+}
+
+
+@media(max-width:480px){
+  .action span{
+    display: none;
+  }
+  .likes,.actions{
+    column-gap: 1em;
+  }
 }

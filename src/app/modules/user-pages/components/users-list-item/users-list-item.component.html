@@ -15,7 +15,7 @@
                 </div>
             </div>
             <p class="location"  *ngIf="user.location!==''">
-                <svg-icon class="geo" [applyClass]="true" [src]="'../../../../../assets/images/svg/location.svg'"></svg-icon>
+                <svg-icon class="geo" [applyClass]="true" [src]="'../../../../../assets/images/svg/geo.svg'"></svg-icon>
                <span [title]="user.location"> {{user.location}}</span>
                 
             </p>
@@ -23,8 +23,8 @@
        <button  *ngIf="currentUser.id!==user.id" (click)="!isFollower?follow():unfollow()"  class="follow-button" [ngClass]="{'follow-btn':!isFollower, 'unfollow-btn':isFollower}">{{!isFollower?'Подписаться':'Отписаться'}}</button>
        <div (click)="!isFollower?follow():unfollow()" [title]="!isFollower?'Подписаться':'Отписаться'" [class]="!isFollower?'follow':'unfollow'"  *ngIf="currentUser.id!==user.id" >
         
-        <svg-icon *ngIf="!isFollower" class="follow-svg"  [src]="'../../../../../assets/images/svg/follow.svg'"></svg-icon>
-        <svg-icon *ngIf="isFollower" class="follow-svg"  [src]="'../../../../../assets/images/svg/unfollow.svg'"></svg-icon>
+        <svg-icon *ngIf="!isFollower" class="follow-svg"  [src]="'../../../../../assets/images/svg/follow2.svg'"></svg-icon>
+        <svg-icon *ngIf="isFollower" class="follow-svg"  [src]="'../../../../../assets/images/svg/unfollow2.svg'"></svg-icon>
     
     </div>
    </div>

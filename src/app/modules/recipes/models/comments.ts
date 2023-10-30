@@ -1,3 +1,5 @@
+import { IRecipe } from "./recipes";
+
   
 
 
@@ -15,5 +17,19 @@ export const nullComment:IComment={
   authorId : 0,
   date : new Date('0000-01-01T00:00:00.000').toJSON(),
   likesId : [],
-  dislikesId:[]
-  }
+  dislikesId: [],
+}
+export interface ICommentReport{
+  id: number,
+  reporterId: number,
+  date: string,
+  commentId: number
+}
+  
+export interface ICommentReportForAdmin {
+  recipeId:number,
+  id: number;
+  reporterId: number;
+  date: string;
+  commentId: number;
+}

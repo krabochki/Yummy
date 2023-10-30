@@ -30,7 +30,6 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
     private authService: AuthService,
   ) {}
   ngOnInit() {
-    console.log(this.category)
     if (this.showRecipesNumber)
       this.recipeService.recipes$.pipe(takeUntil(this.destroyed$))
           .subscribe((data) => {
@@ -44,6 +43,7 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
           else {
             const sectionRecipesIds: number[] = [];
             //перебираем категории в секции
+            if(this.category.categoriesId)
             this.category.categoriesId.forEach((element: number) => {
               const categoryRecipes = this.recipeService.getRecipesByCategory(
                 this.recipeService.getPublicAndAllMyRecipes(data, user.id),

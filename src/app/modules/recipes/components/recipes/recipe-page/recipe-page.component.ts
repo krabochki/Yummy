@@ -155,7 +155,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
           if (this.commentsToShow.length > 4)
             this.commentsToShow = this.recipe.comments.slice(
               0,
-              this.commentsToShow.length,
+              this.commentsToShow.length +1,
             );
           else {
             this.commentsToShow = this.recipe.comments.slice(0, 4);
@@ -445,16 +445,25 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     this.successCommentModalShow = false;
   }
   handleSuccessAdminActionModal() {
-    if (this.adminAction === 'approve') {
-      const approvedRecipe = this.recipeService.approveRecipe(this.recipe);
-      this.recipeService.updateRecipe(approvedRecipe).subscribe();
-    } else {
-      const dismissedRecipe = this.recipeService.dismissRecipe(this.recipe);
-      this.recipeService.updateRecipe(dismissedRecipe).subscribe();
-    }
-    this.router.navigateByUrl('/control-dashboard');
 
-    this.successAdminActionModalShow = false;
+        this.successAdminActionModalShow = false;
+            this.router.navigateByUrl('/control-dashboard');
+
+    setTimeout(() => {
+      
+
+      if (this.adminAction === 'approve') {
+        const approvedRecipe = this.recipeService.approveRecipe(this.recipe);
+        this.recipeService.updateRecipe(approvedRecipe).subscribe();
+      } else {
+        const dismissedRecipe = this.recipeService.dismissRecipe(this.recipe);
+        this.recipeService.updateRecipe(dismissedRecipe).subscribe();
+      }
+      this.router.navigateByUrl('/control-dashboard');
+    },
+    300);
+    
+
   }
 
   decreasePortions() {

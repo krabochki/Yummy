@@ -65,7 +65,6 @@ export class LoginComponent implements OnInit, OnDestroy {
         '',
         [
           Validators.required,
-          Validators.minLength(5),
           Validators.maxLength(64),
           customPatternValidator(emailOrUsernameMask),
           usernameAndEmailNotExistsValidator(this.users),

@@ -544,7 +544,76 @@
     {
       "id": 4,
       "mainPhotoUrl": null,
-      "comments": [],
+      "comments": [
+        {
+          "id": 2,
+          "text": "ereeeeeeee3",
+          "authorId": 5,
+          "date": "2023-10-30T18:30:09.021Z",
+          "likesId": [
+            5
+          ],
+          "dislikesId": []
+        },
+        {
+          "id": 3,
+          "text": "ereeeeeeee3",
+          "authorId": 3,
+          "date": "2023-10-30T18:30:09.021Z",
+          "likesId": [],
+          "dislikesId": [
+            5
+          ]
+        },
+        {
+          "id": 5,
+          "text": "ereeeeeeee3",
+          "authorId": 1,
+          "date": "2023-10-30T18:30:09.021Z",
+          "likesId": [],
+          "dislikesId": [
+            5
+          ]
+        },
+        {
+          "id": 6,
+          "text": "ereeeeeeee3",
+          "authorId": 6,
+          "date": "2023-10-30T18:30:09.021Z",
+          "likesId": [],
+          "dislikesId": [
+            5
+          ]
+        },
+        {
+          "id": 7,
+          "text": "ereeeeeeee3",
+          "authorId": 7,
+          "date": "2023-10-30T18:30:09.021Z",
+          "likesId": [],
+          "dislikesId": [
+            5
+          ]
+        },
+        {
+          "id": 5,
+          "text": "ereeeeeeee3",
+          "authorId": 1,
+          "date": "2023-10-30T18:30:09.021Z",
+          "likesId": [],
+          "dislikesId": [
+            5
+          ]
+        },
+        {
+          "id": 1,
+          "text": "dsssdssd",
+          "authorId": 24,
+          "date": "2023-10-30T17:21:42.564Z",
+          "likesId": [],
+          "dislikesId": []
+        }
+      ],
       "categories": [],
       "name": "Lorem laborum nulla",
       "description": "Consequat quis commodo elit enim ad incididunt id officia reprehenderit in dolore nulla. Irure est dolore occaecat et laborum adipisicing eiusmod enim. Duis proident sunt nulla quis veniam pariatur aute laboris et amet in do nulla nisi.\r\nEt Lorem reprehenderit aliquip tempor qui mollit id eu ex ipsum proident. Id aliquip labore esse excepteur cillum cillum pariatur duis dolor laboris. Ut ad eu commodo nostrud enim duis fugiat do adipisicing enim anim sunt eu.\r\nLaborum cillum pariatur anim occaecat. Adipisicing eu labore adipisicing ipsum anim fugiat deserunt quis. Ex reprehenderit qui fugiat cupidatat. Ad in consequat irure ipsum reprehenderit laboris. Id eu amet non aliqua incididunt commodo incididunt sunt. Voluptate ex eiusmod occaecat commodo aliquip velit veniam incididunt anim pariatur.\r\n",
@@ -649,6 +718,38 @@
           "name": "duis",
           "quantity": 28,
           "unit": "eiusmod"
+        }
+      ],
+      "reports": [
+        {
+          "id": 1,
+          "date": "2023-10-30T21:13:43.094Z",
+          "reporterId": 5,
+          "commentId": 3
+        },
+        {
+          "id": 3,
+          "date": "2023-10-30T21:13:46.946Z",
+          "reporterId": 5,
+          "commentId": 5
+        },
+        {
+          "id": 4,
+          "date": "2023-10-30T21:14:18.398Z",
+          "reporterId": 5,
+          "commentId": 6
+        },
+        {
+          "id": 5,
+          "date": "2023-10-30T21:14:20.151Z",
+          "reporterId": 5,
+          "commentId": 7
+        },
+        {
+          "id": 6,
+          "date": "2023-10-30T21:14:22.804Z",
+          "reporterId": 5,
+          "commentId": 1
         }
       ]
     },
@@ -1416,7 +1517,18 @@
     {
       "id": 11,
       "mainPhotoUrl": null,
-      "comments": [],
+      "comments": [
+        {
+          "id": 1,
+          "text": "ававваа",
+          "authorId": 5,
+          "date": "2023-10-30T18:12:41.095Z",
+          "likesId": [],
+          "dislikesId": [
+            5
+          ]
+        }
+      ],
       "categories": [],
       "name": "et ea enim",
       "description": "Esse reprehenderit anim id Lorem ad velit cupidatat officia mollit nostrud officia officia. Eiusmod quis Lorem excepteur ea reprehenderit excepteur adipisicing eu id. Irure incididunt aute non quis qui nostrud officia nostrud ex.\r\nNostrud enim do proident reprehenderit eu ut ipsum dolor labore duis consequat est ipsum. Amet esse incididunt anim culpa anim officia sit. Esse cillum dolore nulla qui cupidatat ut incididunt laboris est. Ea deserunt aliqua nisi mollit enim et aliquip magna ex. Pariatur nostrud tempor aliquip nisi ipsum aliquip eu enim ex eiusmod.\r\nEa qui id ea culpa aute amet sunt non enim culpa mollit. Quis ex reprehenderit irure culpa nulla do dolore. Aute ea commodo cillum ipsum consequat adipisicing cupidatat irure mollit ullamco tempor aute proident. Voluptate fugiat sunt est non sint minim deserunt est. Ex dolore culpa ipsum consequat in enim et aliqua mollit. Sunt labore Lorem reprehenderit elit enim est nulla minim laborum cillum cillum nostrud adipisicing. Veniam sunt culpa dolore velit velit ut ut labore id esse.\r\n",
@@ -1526,7 +1638,8 @@
           "quantity": 16,
           "unit": "sint"
         }
-      ]
+      ],
+      "reports": []
     },
     {
       "id": 12,
@@ -2379,7 +2492,24 @@
     {
       "id": 19,
       "mainPhotoUrl": null,
-      "comments": [],
+      "comments": [
+        {
+          "id": 1,
+          "text": "gfffgfgf",
+          "authorId": 5,
+          "date": "2023-10-30T17:37:28.081Z",
+          "likesId": [],
+          "dislikesId": []
+        },
+        {
+          "id": 2,
+          "text": "fdgffdfd",
+          "authorId": 5,
+          "date": "2023-10-30T17:37:31.195Z",
+          "likesId": [],
+          "dislikesId": []
+        }
+      ],
       "categories": [],
       "name": "dolor mollit commodo",
       "description": "Ex dolor fugiat do nostrud irure. Aliqua consectetur amet elit sint sit consectetur Lorem ullamco adipisicing do exercitation nisi. Pariatur non consectetur voluptate labore.\r\nId veniam cupidatat duis exercitation laborum aliquip aliqua duis. Tempor officia enim ullamco sint adipisicing et. Exercitation dolor elit cupidatat incididunt officia nulla in enim non consequat dolor cupidatat ipsum.\r\nVoluptate consequat pariatur qui irure pariatur officia cupidatat aliquip non laborum velit. Amet in duis minim officia sint proident ex. Deserunt cillum magna ullamco deserunt voluptate fugiat quis qui mollit irure amet quis aliqua. Elit exercitation dolore reprehenderit ullamco cillum et laboris deserunt cupidatat labore. Irure ut et eiusmod cillum ea culpa sit voluptate. Lorem Lorem in dolor laboris enim magna est elit eu tempor. Sint pariatur exercitation in qui irure culpa laboris anim consequat eiusmod elit cupidatat elit enim.\r\n",
@@ -2390,7 +2520,8 @@
       "authorId": 5,
       "cooksId": [
         9,
-        7
+        7,
+        5
       ],
       "favoritesId": [
         9,
@@ -2858,8 +2989,7 @@
       "cooksId": [
         8,
         6,
-        3,
-        5
+        3
       ],
       "favoritesId": [
         6,
@@ -3409,278 +3539,6 @@
       ]
     },
     {
-      "name": "Вишневый пирог как в \"Твин Пикс\"",
-      "ingredients": [
-        {
-          "name": "Мука",
-          "quantity": "200",
-          "unit": "г"
-        },
-        {
-          "name": "Масло сливочное (холодное)",
-          "quantity": "135",
-          "unit": "г"
-        },
-        {
-          "name": "Вода ледяная",
-          "quantity": "50",
-          "unit": "мл"
-        },
-        {
-          "name": "Соль",
-          "quantity": "1",
-          "unit": "щепотка"
-        },
-        {
-          "name": "Вишня",
-          "quantity": "500",
-          "unit": "г"
-        },
-        {
-          "name": "Крахмал",
-          "quantity": "2",
-          "unit": "ст. л"
-        },
-        {
-          "name": "Сахар",
-          "quantity": "80",
-          "unit": "гр"
-        },
-        {
-          "name": "Корица",
-          "quantity": "1/3 ",
-          "unit": "ч. л"
-        },
-        {
-          "name": "Мускатный орех",
-          "quantity": "1/4",
-          "unit": "ч. л"
-        },
-        {
-          "name": "Коньяк (или бренди)",
-          "quantity": "2-3",
-          "unit": "ст. л"
-        },
-        {
-          "name": "Желток (для смазки)",
-          "quantity": "1",
-          "unit": "шт"
-        }
-      ],
-      "instructions": [
-        {
-          "name": "Подготовьте продукты для начинки. Помойте вишню, удалите косточки.",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        },
-        {
-          "name": "Выделившийся при удалении косточек вишневый сок соедините с крахмалом, корицей, мускатным орехом и солью в кастрюле с толстым дном, размешайте. Нагрейте, помешивая лопаткой.",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        },
-        {
-          "name": "Добавьте вишню, сахар, перемешайте, доведите до кипения и на медленном огне проварите в течение 1 минуты. Влейте коньяк, перемешайте. Снимите начинку с огня, остудите. ",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        },
-        {
-          "name": "Подготовьте продукты для теста. Муку просейте, холодное масло порубите на мелкие кубики.",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        },
-        {
-          "name": "Муку и масло порубите ножом, замесите тесто и соберите его в шар. При необходимости добавьте пару столовых ложек ледяной воды. Заверните тесто в пищевую пленку, положите в холодильник на 30 минут.",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        },
-        {
-          "name": "Духовку включите на 200 °C. Тесто разделите на две части: большую — для основы пирога и меньшую — для верхнего слоя. Раскатайте большую часть в тонкий пласт, перенесите в форму диаметром около 20 см, сформируйте высокие бортики. Выложите остывшую начинку.",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        },
-        {
-          "name": "Оставшееся тесто раскатайте с тонкий пласт, разрежьте на полоски и выложите их сверху начинки. Смажьте верх пирога слегка взбитым желтком",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        },
-        {
-          "name": "Выпекайте пирог в разогретой духовке в течение 40 минут. Затем — при 180 °C еще 30 минут до легкого румянца теста. Остудите пирог в форме, затем снимите кольцо. ",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        }
-      ],
-      "mainImage": null,
-      "description": "Когда специальный агент Дейл Купер первый раз попробовал вишневый пирог в Twin Peaks, запил \"черным, как безлунная ночь\" кофе, то он сразу же заказал еще две порции этого пирога. И его можно понять! ",
-      "history": "История рецепта гласит, что в первый пирог положили перебродившую вишню, что придало ему неповторимый вкус. Я предлагаю добавить в начинку пару столовых ложек бренди или коньяка. Не претендую на аутентичность рецепта, как приготовить вишневый пирог \"Твин Пикс\", но он получается чертовски вкусным! Готовьте с удовольствием!",
-      "preparationTime": "20 минут",
-      "cookingTime": "2 часа",
-      "origin": "Твин Пикс",
-      "nutritions": [
-        {
-          "name": "Калории",
-          "quantity": "238",
-          "unit": "ккал"
-        },
-        {
-          "name": "Белки",
-          "quantity": "3",
-          "unit": "г"
-        },
-        {
-          "name": "Жиры",
-          "quantity": "12",
-          "unit": "г"
-        },
-        {
-          "name": "Углеводы",
-          "quantity": "29",
-          "unit": "г"
-        }
-      ],
-      "servings": "10",
-      "authorId": 5,
-      "categories": [
-        10,
-        11,
-        9
-      ],
-      "cooksId": [],
-      "likesId": [],
-      "favoritesId": [],
-      "id": 33,
-      "comments": [
-        {
-          "id": 4,
-          "text": "заткнись",
-          "authorId": 5,
-          "date": "2023-10-30T02:29:47.613Z",
-          "likesId": [
-            5
-          ],
-          "dislikesId": []
-        },
-        {
-          "id": 3,
-          "text": "Все мпривет",
-          "authorId": 5,
-          "date": "2023-10-30T02:22:47.973Z",
-          "likesId": [
-            5
-          ],
-          "dislikesId": []
-        },
-        {
-          "id": 2,
-          "text": "рецепт 💩💩💩💩 если честно",
-          "authorId": 5,
-          "date": "2023-10-30T02:16:20.200Z",
-          "likesId": [],
-          "dislikesId": [
-            5
-          ]
-        },
-        {
-          "id": 1,
-          "text": "всем привет скиньте денег на карту я верну ",
-          "authorId": 5,
-          "date": "2023-10-30T02:10:30.151Z",
-          "likesId": [],
-          "dislikesId": [
-            5
-          ]
-        },
-        {
-          "id": 0,
-          "text": "и смех и грех",
-          "date": "2023-10-30T00:00:00.000Z",
-          "likesId": [
-            1,
-            2
-          ],
-          "authorId": 3,
-          "dislikesId": [
-            4,
-            6,
-            5
-          ]
-        }
-      ],
-      "publicationDate": "2023-10-30",
-      "status": "public"
-    },
-    {
       "name": "Ананасовый тарт татен Бри Ходж из сериала \"Отчаянные домохозяйки\"",
       "ingredients": [],
       "instructions": [],
@@ -4001,7 +3859,7 @@
       "id": 49,
       "comments": [],
       "publicationDate": "",
-      "status": "awaits"
+      "status": "private"
     },
     {
       "name": "Hello World",
@@ -4019,7 +3877,9 @@
       "categories": [],
       "cooksId": [],
       "likesId": [],
-      "favoritesId": [],
+      "favoritesId": [
+        5
+      ],
       "id": 50,
       "comments": [],
       "publicationDate": "2023.10.29",
@@ -4045,6 +3905,59 @@
       "id": 51,
       "comments": [],
       "publicationDate": "29.10.2023",
+      "status": "public"
+    },
+    {
+      "name": "dssdsd",
+      "ingredients": [],
+      "instructions": [],
+      "mainImage": null,
+      "description": "dssdssds",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 24,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 52,
+      "comments": [
+        {
+          "id": 1,
+          "text": "огонь",
+          "authorId": 24,
+          "date": "2023-10-30T20:54:15.944Z",
+          "likesId": [],
+          "dislikesId": []
+        }
+      ],
+      "publicationDate": "2023-10-30",
+      "status": "public"
+    },
+    {
+      "name": "вавыавыввыаыва",
+      "ingredients": [],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 5,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 53,
+      "comments": [],
+      "publicationDate": "2023-10-30",
       "status": "public"
     }
   ],
@@ -4076,7 +3989,7 @@
       "personalWebsite": "https://www.chefalexeyzimin.com/",
       "location": "Москва, Россия",
       "registrationDate": "2023-01-15",
-      "profileViews": 7635,
+      "profileViews": 7639,
       "role": "moderator"
     },
     {
@@ -4135,7 +4048,7 @@
       "personalWebsite": "https://www.travelandeat.com/",
       "location": "Нью-Йорк, США",
       "registrationDate": "2023-05-10",
-      "profileViews": 5809,
+      "profileViews": 5811,
       "role": "user"
     },
     {
@@ -4197,7 +4110,7 @@
       "personalWebsite": "",
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 1778
+      "profileViews": 1780
     },
     {
       "id": 6,
@@ -4317,7 +4230,7 @@
       "personalWebsite": "https://www.techenthusiast.com/",
       "location": "Сан-Франциско, США",
       "registrationDate": "2023-09-03",
-      "profileViews": 2792,
+      "profileViews": 2793,
       "role": "user"
     },
     {
@@ -4402,6 +4315,23 @@
       "location": "",
       "registrationDate": "2023-10-30",
       "profileViews": 4
+    },
+    {
+      "id": 24,
+      "email": "krabikrab@mail.ru",
+      "password": "krabochki000oK",
+      "username": "krab",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-10-30",
+      "profileViews": 7
     }
   ]
 }

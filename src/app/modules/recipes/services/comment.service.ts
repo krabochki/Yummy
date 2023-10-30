@@ -1,5 +1,9 @@
 import { Injectable } from '@angular/core';
-import { IComment, nullComment } from 'src/app/modules/recipes/models/comments';
+import {
+  IComment,
+  ICommentReport,
+  nullComment,
+} from 'src/app/modules/recipes/models/comments';
 import { IRecipe } from '../models/recipes';
 import { RecipeService } from './recipe.service';
 import { IUser } from '../../user-pages/models/users';
@@ -20,8 +24,33 @@ export class CommentService {
     return comment;
   }
 
-  likeComment(user: IUser, comment: IComment, recipe: IRecipe) {
+  deleteComment(comment: IComment, recipe: IRecipe) {
+    recipe.comments = recipe.comments.filter((item) => item.id !== comment.id);
+    return this.recipeService.updateRecipe(recipe);
+  }
 
+  reportComment(comment: IComment, recipe: IRecipe, reporter: IUser) {
+
+    let maxId: number = 0;
+    if (recipe.reports) {
+      maxId = recipe.reports.reduce(
+        (max, c) => (c.id > max ? c.id : max),
+        0,
+      );
+    }
+    
+    const report: ICommentReport = {
+      id: maxId+1,
+      date: new Date().toJSON(),
+      reporterId: reporter.id,
+      commentId: comment.id,
+    };
+    if(!recipe.reports) recipe.reports = []
+    recipe.reports.push(report);
+    return this.recipeService.updateRecipe(recipe);
+  }
+
+  likeComment(user: IUser, comment: IComment, recipe: IRecipe) {
     const updatedComments = recipe.comments.map((item) => {
       if (comment.id === item.id) {
         if (!comment.likesId.includes(user.id)) {
@@ -30,19 +59,16 @@ export class CommentService {
           comment.likesId = comment.likesId.filter((id) => id !== user.id);
         }
         if (comment.dislikesId.includes(user.id)) {
-                    comment.dislikesId = comment.dislikesId.filter(
-                      (id) => id !== user.id,
-                    );
-
+          comment.dislikesId = comment.dislikesId.filter(
+            (id) => id !== user.id,
+          );
         }
       }
     });
-       return this.recipeService.updateRecipe(recipe);
-
+    return this.recipeService.updateRecipe(recipe);
   }
 
   dislikeComment(user: IUser, comment: IComment, recipe: IRecipe) {
-
     const updatedComments = recipe.comments.map((item) => {
       if (comment.id === item.id) {
         if (!comment.dislikesId.includes(user.id)) {
@@ -52,12 +78,12 @@ export class CommentService {
             (id) => id !== user.id,
           );
         }
-         if (comment.likesId.includes(user.id)) {
-           comment.likesId = comment.likesId.filter((id) => id !== user.id);
-         }
+        if (comment.likesId.includes(user.id)) {
+          comment.likesId = comment.likesId.filter((id) => id !== user.id);
+        }
       }
-    })
-   return this.recipeService.updateRecipe(recipe)
+    });
+    return this.recipeService.updateRecipe(recipe);
   }
 
   addCommentToRecipe(recipe: IRecipe, comment: IComment) {

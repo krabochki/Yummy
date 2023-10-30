@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-page-not-found',
@@ -7,7 +8,9 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PageNotFoundComponent implements OnInit {
+  constructor(private title:Title){}
   ngOnInit() {
+    this.title.setTitle('Страница не найдена')
     window.scrollTo(0, 0);
   }
 }

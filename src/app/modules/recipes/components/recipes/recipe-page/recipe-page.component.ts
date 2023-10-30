@@ -140,10 +140,15 @@ export class RecipePageComponent implements OnInit, OnDestroy {
           }
           this.recentRecipes = this.recipeService
             .getRecentRecipes(this.recipeService.getPublicRecipes(recipes))
-            .slice(0, 3);
-          this.recentRecipes.filter((recipe) => {
-            recipe.id !== this.recipe.id;
-          });
+           
+       
+          this.recentRecipes = this.recentRecipes.filter(
+            (recipe) => recipe.authorId !== this.currentUser.id,
+          );
+           this.recentRecipes = this.recentRecipes.filter(
+             (recipe) => recipe.id !== this.recipe.id,
+           );
+          this.recentRecipes=this.recentRecipes.slice(0, 3);
 
           this.recipe.comments = this.recipe.comments.sort(
             (commentA, commentB) => {
@@ -155,12 +160,11 @@ export class RecipePageComponent implements OnInit, OnDestroy {
           if (this.commentsToShow.length > 4)
             this.commentsToShow = this.recipe.comments.slice(
               0,
-              this.commentsToShow.length +1,
+              this.commentsToShow.length + 1,
             );
           else {
             this.commentsToShow = this.recipe.comments.slice(0, 4);
           }
-            
 
           this.setCategories();
           this.setReadingTimeInMinutes();
@@ -218,6 +222,9 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   }
   getSimilarRecipes(publicRecipes: IRecipe[], maxRecipes: number): IRecipe[] {
     const recipesToAdd: IRecipe[] = [];
+    publicRecipes = publicRecipes.filter(
+      (recipe) => recipe.authorId !== this.currentUser.id,
+    );
     for (const category of this.recipe.categories) {
       const recipesFromCategory = this.recipeService.getRecipesByCategory(
         publicRecipes,
@@ -437,8 +444,8 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     if (answer) {
       this.addComment();
       this.commentForm.get('commentText')?.setValue('');
-         this.commentForm.get('commentText')?.markAsPristine();
-      this.commentForm.get('commentText')?.markAsUntouched(); 
+      this.commentForm.get('commentText')?.markAsPristine();
+      this.commentForm.get('commentText')?.markAsUntouched();
 
       this.successCommentModalShow = true;
     }
@@ -448,13 +455,10 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     this.successCommentModalShow = false;
   }
   handleSuccessAdminActionModal() {
-
-        this.successAdminActionModalShow = false;
-            this.router.navigateByUrl('/control-dashboard');
+    this.successAdminActionModalShow = false;
+    this.router.navigateByUrl('/control-dashboard');
 
     setTimeout(() => {
-      
-
       if (this.adminAction === 'approve') {
         const approvedRecipe = this.recipeService.approveRecipe(this.recipe);
         this.recipeService.updateRecipe(approvedRecipe).subscribe();
@@ -463,10 +467,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
         this.recipeService.updateRecipe(dismissedRecipe).subscribe();
       }
       this.router.navigateByUrl('/control-dashboard');
-    },
-    300);
-    
-
+    }, 300);
   }
 
   decreasePortions() {

@@ -14,7 +14,7 @@ export class RecipeService {
 
   url: string = recipesUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   loadRecipeData() {
     this.getRecipes().subscribe((data) => {
@@ -95,7 +95,7 @@ export class RecipeService {
   }
 
   approveRecipe(recipe: IRecipe): IRecipe {
-    recipe.status = 'public';  
+    recipe.status = 'public';
     recipe.publicationDate = getCurrentDate();
     return recipe;
   }
@@ -137,10 +137,17 @@ export class RecipeService {
   getPopularRecipes(recipes: IRecipe[]) {
     return recipes.sort((a, b) => b.likesId.length - a.likesId.length);
   }
+  getMostDiscussedRecipes(recipes: IRecipe[]): IRecipe[]{
+    recipes = recipes.filter((recipe)=>recipe.comments.length>0)
+        return recipes.sort((a, b) => b.comments.length - a.comments.length);
+
+  }
   getPublicRecipes(recipes: IRecipe[]) {
+    
     return recipes.filter((recipe) => recipe.status === 'public');
   }
   getPublicAndAllMyRecipes(recipes: IRecipe[], userId: number) {
+    
     return recipes.filter(
       (recipe) => recipe.status === 'public' || recipe.authorId === userId,
     );

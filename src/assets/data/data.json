@@ -323,8 +323,7 @@
       "likesId": [
         9,
         6,
-        10,
-        5
+        10
       ],
       "status": "public",
       "origin": "Tonga",
@@ -638,8 +637,7 @@
         8,
         9,
         7,
-        13,
-        5
+        13
       ],
       "status": "public",
       "origin": "Marshall Islands",
@@ -1130,7 +1128,6 @@
         1
       ],
       "likesId": [
-        5,
         8,
         6
       ],
@@ -1554,8 +1551,7 @@
         1,
         3,
         7,
-        4,
-        5
+        4
       ],
       "status": "public",
       "origin": "Haiti",
@@ -2016,8 +2012,7 @@
       ],
       "likesId": [
         6,
-        8,
-        5
+        8
       ],
       "status": "public",
       "origin": "Slovenia",
@@ -2399,8 +2394,7 @@
         3,
         7,
         6,
-        13,
-        5
+        13
       ],
       "status": "public",
       "origin": "Portugal",
@@ -2533,8 +2527,7 @@
         6,
         4,
         1,
-        7,
-        5
+        7
       ],
       "status": "public",
       "origin": "Guatemala",
@@ -3455,8 +3448,7 @@
       ],
       "likesId": [
         8,
-        1,
-        5
+        1
       ],
       "status": "public",
       "origin": "Antarctica",
@@ -4331,7 +4323,7 @@
       "personalWebsite": "",
       "location": "",
       "registrationDate": "2023-10-30",
-      "profileViews": 7
+      "profileViews": 10
     }
   ]
 }

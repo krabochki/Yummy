@@ -21,11 +21,15 @@ const routes: Routes = [
         component: RecipePageComponent,
         resolve: { RecipeResolver },
         canActivate: [RecipeAccessGuard],
-      }
-     ,
+      },
       {
         path: 'recipes',
         data: { filter: 'all' },
+        component: SomeRecipesPageComponent,
+      },
+      {
+        path: 'recipes/most-discussed',
+        data: { filter: 'discussed' },
         component: SomeRecipesPageComponent,
       },
       {

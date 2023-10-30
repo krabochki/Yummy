@@ -8,6 +8,7 @@ export enum RecipeType {
   Liked = 'liked',
   Cooked = 'cooked',
   Updates = 'updates',
+  Discussed = 'discussed'
 }
 
 export const recipeTitles = {
@@ -20,19 +21,21 @@ export const recipeTitles = {
   [RecipeType.Liked]: 'Любимые рецепты',
   [RecipeType.Cooked]: 'Приготовленные рецепты',
   [RecipeType.Updates]: 'Обновления любимых кулинаров',
+  [RecipeType.Discussed]: 'Самые обсуждаемые рецепты',
 };
 
  export const recipeNoRecipesRouterLinkText = {
-  [RecipeType.Recent]: '',
-  [RecipeType.Popular]: '',
-  [RecipeType.My]: '',
-  [RecipeType.Favorite]: '/recipes',
-  [RecipeType.Category]: '/sections',
-  [RecipeType.All]: '',
-  [RecipeType.Liked]: '/recipes',
-  [RecipeType.Cooked]: '/recipes',
-  [RecipeType.Updates]: '/cooks',
-};
+   [RecipeType.Recent]: '',
+   [RecipeType.Popular]: '',
+   [RecipeType.My]: '',
+   [RecipeType.Favorite]: '/recipes',
+   [RecipeType.Category]: '/sections',
+   [RecipeType.All]: '',
+   [RecipeType.Liked]: '/recipes',
+   [RecipeType.Cooked]: '/recipes',
+   [RecipeType.Updates]: '/cooks',
+   [RecipeType.Discussed]: '',
+ };
 
 export const recipeNoRecipesButtonText = {
   [RecipeType.Recent]: '',
@@ -44,6 +47,7 @@ export const recipeNoRecipesButtonText = {
   [RecipeType.Liked]: 'Все рецепты',
   [RecipeType.Cooked]: 'Все рецепты',
   [RecipeType.Updates]: 'Все кулинары',
+  [RecipeType.Discussed]: '',
 };
 
 export const recipeNoRecipesText = {
@@ -62,4 +66,6 @@ export const recipeNoRecipesText = {
     'У вас пока нет сохраненных рецептов. Попробуйте отметить парочку рецептов как приготовленные и зайдите сюда снова',
   [RecipeType.Updates]:
     'Новых рецептов среди ваших кулинаров не найдено. Попробуйте подписаться на более активных кулинаров и зайдите сюда снова',
+  [RecipeType.Discussed]:
+    '',
 };

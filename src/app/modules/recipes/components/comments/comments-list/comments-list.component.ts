@@ -9,6 +9,7 @@ import { IRecipe, nullRecipe } from '../../../models/recipes';
 })
 export class CommentsListComponent {
   @Input() comments: IComment[] = [];
-  @Input() recipe: IRecipe = nullRecipe;
+  @Input() recipe: IRecipe = nullRecipe;   
+
 
 }

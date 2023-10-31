@@ -36,6 +36,7 @@ import { startWith, map, takeUntil, max } from 'rxjs/operators';
 import { SectionService } from '../../../services/section.service';
 import { SectionGroup } from 'src/app/modules/controls/autocomplete/autocomplete.component';
 import { Title } from '@angular/platform-browser';
+import { getCurrentDate } from 'src/tools/common';
 
 @Component({
   selector: 'app-recipe-create',
@@ -147,13 +148,13 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
             this.allSections = data;
 
             this.allSections.forEach((section) => {
-              if (section.categoriesId.length > 0) {
+              if (section.categories.length > 0) {
                 const sectionGroup: SectionGroup = {
                   section: nullSection,
                   categories: [],
                 };
                 sectionGroup.section = section;
-                section.categoriesId.forEach((element: number) => {
+                section.categories.forEach((element: number) => {
                   const finded = this.allCategories.find(
                     (elem) => elem.id === element,
                   );
@@ -292,6 +293,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     );
   }
 
+
   //Работа с категориями
   addCategory(event: ICategory) {
     if (this.selectedCategories.length < 5) {
@@ -309,6 +311,8 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       else return false;
     });
   }
+
+  
 
   //Работа с картинками
   //удаляем фото из инструкций рецепта по индеку инструкции и фото
@@ -488,7 +492,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       const recipeData: IRecipe = {
         name: this.form.value.recipeName,
         reports: [],
-        statistics:[],
+        statistics: [],
         ingredients: this.form.value.ingredients,
         instructions: this.form.value.instructions,
         mainImage: this.form.value.image,
@@ -506,7 +510,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
         favoritesId: [],
         id: this.recipeId,
         comments: [],
-        publicationDate: '',
+        publicationDate: getCurrentDate(),
         status: this.isAwaitingApprove ? 'awaits' : 'private',
       };
 

@@ -1,4 +1,33 @@
 @import "../../../../tools/UI/UI.scss";
+
+button.admin{
+    background: var(--color-admin);
+  border: 3px solid var(--color-admin);
+
+   &:focus {
+    background-color: var(--color-admin-focus);
+        border-color: var(--color-admin-focus);
+   }
+     &.disabled {
+    background: var(--color-foreground-unactive);
+    border-color: var(--color-foreground-unactive);}
+
+}
+
+button.moder{
+    background: var(--color-moderator);
+  border: 3px solid var(--color-moderator);
+
+   &:focus {
+    background-color: var(--color-moderator-focus);
+        border-color: var(--color-moderator-focus);
+   }
+     &.disabled {
+    background: var(--color-foreground-unactive);
+    border-color: var(--color-foreground-unactive);}
+
+}
+
 button.prim {
   background: var(--color-primary);
   border: 3px solid var(--color-primary);
@@ -69,6 +98,46 @@ button.sec {
     .svg.as-text{
   fill:var(--color-secondary-focus);
 }
+  }
+}
+button.filled-min.moder{
+   border: 3px solid var(--color-moderator-lighter);
+
+  background: var(--color-moderator-lighter);
+  color: var(--color-moderator);
+
+  &.disabled {
+    color: var(--color-background);
+
+    background: var(--color-foreground-unactive-lighter);
+    border-color: var(--color-foreground-unactive-lighter);
+  }
+
+  &:focus {
+    background-color: var(--color-moderator-lighter-focus);
+    color: var(--color-moderator-focus);
+
+    border-color: var(--color-moderator-lighter-focus);
+  }
+}
+button.filled-min.admin{
+   border: 3px solid var(--color-admin-lighter);
+
+  background: var(--color-admin-lighter);
+  color: var(--color-admin);
+
+  &.disabled {
+    color: var(--color-background);
+
+    background: var(--color-foreground-unactive-lighter);
+    border-color: var(--color-foreground-unactive-lighter);
+  }
+
+  &:focus {
+    background-color: var(--color-admin-lighter-focus);
+    color: var(--color-admin-focus);
+
+    border-color: var(--color-admin-lighter-focus);
   }
 }
 

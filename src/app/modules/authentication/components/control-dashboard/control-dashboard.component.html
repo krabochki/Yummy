@@ -1,169 +1,177 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<div class="main">
+<div *ngIf="currentUser.role!=='user'" class="main"
+  [ngClass]="{'admin':this.currentUser.role==='admin', 'moderator':this.currentUser.role==='moderator'}">
   <h1>
     {{
-      currentUser.role === "admin"
-        ? "Панель администратора"
-        : "Панель модератора"
+    currentUser.role === "admin"
+    ? "Панель администратора"
+    : "Панель модератора"
     }}
   </h1>
-  <div *ngIf="awaitingRecipes.length > 0">
-    <h2>Рецепты на одобрение</h2>
+  <div class="circles">
+    <div class="circle"><span>{{awaitingRecipes.length}} </span>
+      <p><span appPluralRu="" [value]="awaitingRecipes.length" [arVariants]="['рецепт','рецепта','рецептов']"></span> на
+        проверку</p>
+    </div>
+    <div class="circle"><span>{{reports.length}}</span>
+      <p><span appPluralRu="" [value]="reports.length" [arVariants]="['жалоба','жалобы','жалобы']"></span> на
+        комментарии</p>
+    </div>
+    <div class="circle"><span>{{categoriesForCheck.length}}</span>
+      <p><span appPluralRu="" [value]="categoriesForCheck.length"
+          [arVariants]="['категория','категории','категорий']"></span> на проверку</p>
+    </div>
 
-    <app-vertical-recipe-list
-      [moderMode]="true"
-      [blocks]="awaitingRecipes"
-    ></app-vertical-recipe-list>
   </div>
-  <div class="reports-block" *ngIf="reports.length > 0">
-    <h2 (click)="showCommentReports = !showCommentReports">
-      Жалобы на комментарии
-    </h2>
 
-    <div *ngIf="showCommentReports" @height>
-      <div class="reports">
-        <div class="report" *ngFor="let report of reports">
-          <div class="report-header">
-            <a
-              class="report-recipe"
-              [routerLink]="'/recipes/list/' + getRecipe(report.recipeId).id"
-            >
-              {{ getRecipe(report.recipeId).name }}
-            </a>
-            <p class="report-date">
-              Жалоба подана {{ report.date | timePast | lowercase }}
-            </p>
-          </div>
-          <div class="report-users">
-            <p class="reporter">
-              Пожаловался:
-              <a
-                class="report-user"
-                [routerLink]="'/cooks/list/' + getUser(report.reporterId).id"
-                >{{
+ <div class="content-wrap">
+    <div *ngIf="awaitingRecipes.length > 0">
+      <h2>Рецепты на одобрение</h2>
+  
+      <app-vertical-recipe-list [moderMode]="true" [blocks]="awaitingRecipes"></app-vertical-recipe-list>
+    </div>
+    <div class="reports-block" *ngIf="reports.length > 0">
+      <h2 (click)="showCommentReports = !showCommentReports">
+        Жалобы на комментарии
+      </h2>
+  
+      <div *ngIf="showCommentReports" @height>
+        <div class="reports">
+          <div class="report" *ngFor="let report of reports">
+            <div class="report-header">
+              <a class="report-recipe" [routerLink]="'/recipes/list/' + getRecipe(report.recipeId).id">
+                {{ getRecipe(report.recipeId).name }}
+              </a>
+              <p class="report-date">
+                Жалоба подана {{ report.date | timePast | lowercase }}
+              </p>
+            </div>
+            <div class="report-users">
+              <p class="reporter">
+                Пожаловался:
+                <a class="report-user" [routerLink]="'/cooks/list/' + getUser(report.reporterId).id">{{
                   getUser(report.reporterId).fullName !== ""
-                    ? getUser(report.reporterId).fullName
-                    : getUser(report.reporterId).username
-                }}</a
-              >
-            </p>
-            <p class="reporter">
-              Комментатор:
-              <a
-                class="report-user"
-                [routerLink]="
-                  '/cooks/list/' + getAuthorOfReportedComment(report).id
-                "
-              >
-                {{
+                  ? getUser(report.reporterId).fullName
+                  : getUser(report.reporterId).username
+                  }}</a>
+              </p>
+              <p class="reporter">
+                Комментатор:
+                <a class="report-user" [routerLink]="
+                    '/cooks/list/' + getAuthorOfReportedComment(report).id
+                  ">
+                  {{
                   getAuthorOfReportedComment(report).fullName !== ""
-                    ? getAuthorOfReportedComment(report).fullName
-                    : "@" + getAuthorOfReportedComment(report).username
-                }}</a
-              >
-            </p>
-          </div>
-          <p class="report-content">
-            Содержание комментария:
-            <span
-              >«{{
+                  ? getAuthorOfReportedComment(report).fullName
+                  : "@" + getAuthorOfReportedComment(report).username
+                  }}</a>
+              </p>
+            </div>
+            <p class="report-content">
+              Содержание комментария:
+              <span>«{{
                 getComment(report.commentId, getRecipe(report.recipeId)).text
-              }}»
-            </span>
-          </p>
-          <div class="report-buttons">
-            <app-button
-              [text]="'Оставить'"
-              (click)="
-                reportCommentDismissModalShow = true; actionReport = report
-              "
-              [color]="'sec'"
-              [style]="'filled'"
-              [rounded]="true"
-            ></app-button>
-            <app-button
-              [text]="'Удалить'"
-              (click)="
-                reportCommentApproveModalShow = true; actionReport = report
-              "
-              [color]="'prim'"
-              [style]="'filled'"
-              [rounded]="true"
-            ></app-button>
+                }}»
+              </span>
+            </p>
+            <div class="report-buttons">
+              <app-button [text]="'Оставить'" (click)="
+                  reportCommentDismissModalShow = true; actionReport = report
+                " [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
+              <app-button [text]="'Удалить'" (click)="
+                  reportCommentApproveModalShow = true; actionReport = report
+                " [color]="currentUser.role" [style]="'filled-min'" [rounded]="true"></app-button>
+            </div>
           </div>
         </div>
+        <app-button class="more-reports-button" [text]="'Загрузить еще...'" (click)="loadMoreCommentReports()"
+          *ngIf="allReports.length > reports.length" [rounded]="true" [style]="'outlined'" [color]="'prim'"></app-button>
       </div>
-      <app-button
-        class="more-reports-button"
-        [text]="'Загрузить еще...'"
-        (click)="loadMoreCommentReports()"
-        *ngIf="allReports.length > reports.length"
-        [rounded]="true"
-        [style]="'outlined'"
-        [color]="'prim'"
-      ></app-button>
     </div>
-  </div>
+  
+    <div class="reports-block" *ngIf="categoriesForCheck.length>0">
+  
+      <h2 (click)="showCategoriesForCheck=!showCategoriesForCheck">Категории на одобрение</h2>
+  
+  
+      <div *ngIf="showCategoriesForCheck" @height>
+        <div class="reports">
+          <div class="report" *ngFor="let category of categoriesForCheckToShow">
+            <div class="report-header">
+              <a class="report-recipe not-link">
+                {{ category.name }}
+              </a>
+              <p class="report-date">
+                Категория отправлена {{ category.sendDate | timePast | lowercase }}
+              </p>
+            </div>
+            <div class="report-users">
+              <p class="reporter">
+                Создатель:
+                <a class="report-user" [routerLink]="'/cooks/list/' + getUser(category.authorId).id">{{
+                  getUser(category.authorId).fullName !== ""
+                  ? getUser(category.authorId).fullName
+                  : getUser(category.authorId).username
+                  }}</a>
+              </p>
+              <p>
+                Секция: <a [routerLink]="'/sections/list/' + getSection(category.id).id"
+                  class="report-user">{{getSection(category.id).name}} </a>
+              </p>
+  
+            </div>
+            <div class="category-image">
+  
+            </div>
+            <div class="report-buttons">
+              <app-button [text]="'Принять'" (click)="actionCategory = category; approveCategoryActionModalShow = true;"
+                [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
+              <app-button [text]="'Отклонить'" (click)="actionCategory = category; dismissCategoryActionModalShow = true;"
+                [color]="currentUser.role" [style]="'filled-min'" [rounded]="true"></app-button>
+            </div>
+          </div>
+        </div>
+        <app-button class="more-reports-button" [text]="'Загрузить еще...'" (click)="loadMoreCategories()"
+          *ngIf="categoriesForCheck.length > categoriesForCheckToShow.length" [rounded]="true" [style]="'outlined'"
+          [color]="'prim'"></app-button>
+      </div>
+    </div>
+ </div>
 
-  <h2>Разделы</h2>
-  <app-button
-    [color]="'prim'"
-    [rounded]="true"
-    [text]="'Добавить категорию'"
-  ></app-button>
-  <app-button
-    [color]="'prim'"
-    [rounded]="true"
-    [text]="'Добавить раздел'"
-  ></app-button>
-  <app-vertical-category-list
-    [context]="'section'"
-    [showRecipesNumber]="true"
-    [categories]="sections"
-  ></app-vertical-category-list>
+
+
 </div>
 
-<app-modal
-  @modal
-  *ngIf="reportCommentDismissModalShow"
-  [style]="'prim'"
-  [title]="'Оставить комментарий'"
-  [type]="'yesOrNo'"
-  (resultEmit)="handleReportCommentDismissModal($event)"
-  [buttonsText]="['Да', 'Отмена']"
-  [description]="'Ты действительно хочешь оставить этот комментарий?'"
-></app-modal>
+<app-modal @modal *ngIf="reportCommentDismissModalShow" [style]="'sec'" [title]="'Оставить комментарий'"
+  [type]="'yesOrNo'" (resultEmit)="handleReportCommentDismissModal($event)" [buttonsText]="['Да', 'Отмена']"
+  [description]="'Ты действительно хочешь оставить этот комментарий?'"></app-modal>
 
-<app-modal
-  @modal
-  *ngIf="successReportCommentDismissModalShow"
-  [style]="'sec'"
-  [title]="'Жалоба отклонена'"
-  [type]="'Ok'"
-  (resultEmit)="handleSuccessReportCommentDismissModal()"
-  [buttonsText]="['Хорошо']"
-  [description]="'Жалоба на комментарий отклонена'"
-></app-modal>
+<app-modal @modal *ngIf="successReportCommentDismissModalShow" [style]="'sec'" [title]="'Жалоба отклонена'"
+  [type]="'Ok'" (resultEmit)="handleSuccessReportCommentDismissModal()" [buttonsText]="['Хорошо']"
+  [description]="'Жалоба на комментарий отклонена'"></app-modal>
 
-<app-modal
-  @modal
-  *ngIf="reportCommentApproveModalShow"
-  [style]="'prim'"
-  [title]="'Удалить комментарий'"
-  [type]="'yesOrNo'"
-  (resultEmit)="handleReportCommentApproveModal($event)"
-  [buttonsText]="['Да', 'Отмена']"
-  [description]="'Ты действительно хочешь удалить этот комментарий?'"
-></app-modal>
+<app-modal @modal *ngIf="reportCommentApproveModalShow" [style]="'prim'" [title]="'Удалить комментарий'"
+  [type]="'yesOrNo'" (resultEmit)="handleReportCommentApproveModal($event)" [buttonsText]="['Да', 'Отмена']"
+  [description]="'Ты действительно хочешь удалить этот комментарий?'"></app-modal>
 
-<app-modal
-  @modal
-  *ngIf="successReportCommentApproveModalShow"
-  [style]="'sec'"
-  [title]="'Жалоба принята'"
-  [type]="'Ok'"
-  (resultEmit)="handleSuccessReportCommentApproveModal()"
-  [buttonsText]="['Хорошо']"
-  [description]="'Жалоба на комментарий принята и комментарий удален'"
-></app-modal>
+<app-modal @modal *ngIf="successReportCommentApproveModalShow" [style]="'sec'" [title]="'Жалоба принята'" [type]="'Ok'"
+  (resultEmit)="handleSuccessReportCommentApproveModal()" [buttonsText]="['Хорошо']"
+  [description]="'Жалоба на комментарий принята и комментарий удален'"></app-modal>
+
+
+<app-modal @modal *ngIf="approveCategoryActionModalShow" [style]="'sec'" [title]="'Одобрение категории'"
+  [type]="'yesOrNo'" (resultEmit)="handleApproveCategoryModal($event)" [buttonsText]="['Да', 'Отмена']"
+  [description]="'Ты действительно хочешь одобрить эту категорию?'"></app-modal>
+
+<app-modal @modal *ngIf="dismissCategoryActionModalShow" [style]="'prim'" [title]="'Отклонение категории'"
+  [type]="'yesOrNo'" (resultEmit)="handleDismissCategoryModal($event)" [buttonsText]="['Да', 'Отмена']"
+  [description]="'Ты действительно хочешь отклонить эту категорию?'"></app-modal>
+
+  <app-modal @modal *ngIf="successApproveCategoryModalShow" [style]="'sec'" [title]="'Категория одобрена'" [type]="'Ok'"
+  (resultEmit)="handleSuccessApproveCategoryModal()" [buttonsText]="['Хорошо']"
+  [description]="'Категория успешно одобрена и опубликована'"></app-modal>
+
+    <app-modal @modal *ngIf="successDismissCategoryModalShow" [style]="'sec'" [title]="'Категория одобрена'" [type]="'Ok'"
+  (resultEmit)="handleSuccessDismissCategoryModal()" [buttonsText]="['Хорошо']"
+  [description]="'Категория успешно отклонена'"></app-modal>

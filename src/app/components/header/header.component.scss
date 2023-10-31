@@ -76,15 +76,13 @@
   height: 100%;
   width: 100%;
 }
-  &:hover{
-    scale: 1.2;
-  }
+  
 }
 .admin-svg{
-  z-index: 1;
   display: block;
-  position: static;
-    fill: var(--color-background);
+position: absolute;
+top:0;bottom:0;right:0;left:0;margin: auto;
+z-index: 2;  fill: var(--color-background);
   width: var(--font-m);
   height: var(--font-m);
 }
@@ -106,9 +104,6 @@
       transition: 0.3s ease-in-out;
 
     background-color: var(--color-secondary-focus);
-  }
-  &:hover {
-    scale: 1.2;
   }
 &:hover::after{
   height: 100%;
@@ -157,6 +152,7 @@ p {
 
 .cook-plan {
   text-align: center;
+  font-weight: 500;
 }
 
 @media(max-width:1000px){
@@ -212,6 +208,9 @@ p {
 
 @media (max-width: 480px) {
 
+  .admin-svg{
+    position: static;
+  }
 
   .header{
     width: 100% !important;
@@ -296,6 +295,7 @@ p {
 
     &.unactive > a,
     &.unactive > a:first-of-type {
+      
       background-color: var(--color-foreground-unactive) !important;
 
       .count {
@@ -352,11 +352,6 @@ p {
   }
 
 
-  .admin-svg{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
   .admin-panel{
     position: static;
     margin: 0;

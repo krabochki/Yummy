@@ -57,13 +57,16 @@ export class CommentComponent implements OnInit, OnDestroy {
 
   deleteComment() {
         
-      
-          this.recipe.reports = this.recipe.reports.filter(
-            (item) => item.commentId !== this.comment.id,
-          );
+    if (this.recipe.reports) {
+      this.recipe.reports = this.recipe.reports.filter(
+        (item) => item.commentId !== this.comment.id,
+      );
         
-
-    this.commentService.deleteComment(this.comment, this.recipe).subscribe();
+    }
+    
+    this.commentService.deleteComment(this.comment, this.recipe).subscribe(
+      ()=>{}
+   );
   }
 
   likeComment() {
@@ -124,6 +127,7 @@ export class CommentComponent implements OnInit, OnDestroy {
     if (result) {
       setTimeout(() => {
         this.deleteComment();
+        
       }, 300);
     }
   }

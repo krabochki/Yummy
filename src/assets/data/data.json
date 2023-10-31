@@ -1,10 +1,158 @@
 {
+  "categories": [
+    {
+      "status": "public",
+      "id": 1,
+      "name": "Новый Год",
+      "photoUrl": "url_1.jpg"
+    },
+    {
+      "status": "public",
+      "id": 2,
+      "name": "Пасха",
+      "photoUrl": "url_1.jpg"
+    },
+    {
+      "status": "public",
+      "id": 3,
+      "name": "Веганское",
+      "photoUrl": "url_1.jpg"
+    },
+    {
+      "status": "public",
+      "id": 4,
+      "name": "Вегетарианское",
+      "photoUrl": "url_1.jpg"
+    },
+    {
+      "status": "public",
+      "id": 5,
+      "name": "Пастафарианское",
+      "photoUrl": "url_1.jpg"
+    },
+    {
+      "status": "public",
+      "id": 6,
+      "name": "Полезное питание",
+      "photoUrl": "url_1.jpg"
+    },
+    {
+      "status": "public",
+      "id": 7,
+      "name": "Набор массы",
+      "photoUrl": "url_1.jpg"
+    },
+    {
+      "status": "public",
+      "id": 11,
+      "name": "С мукой",
+      "photoUrl": "url_1.jpg"
+    },
+    {
+      "status": "public",
+      "id": 9,
+      "name": "С ягодами",
+      "photoUrl": "url_1.jpg"
+    },
+    {
+      "status": "public",
+      "id": 10,
+      "name": "Пироги",
+      "photoUrl": "url_1.jpg"
+    },
+    {
+      "status": "public",
+      "id": 8,
+      "name": "Похудение",
+      "photoUrl": "url_1.jpg"
+    },
+    {
+      "status": "public",
+      "id": 12,
+      "name": "День благодарения",
+      "photoUrl": ""
+    },
+    {
+      "status": "public",
+      "id": 13,
+      "name": "День Валентина",
+      "photoUrl": ""
+    },
+    {
+      "status": "public",
+      "id": 14,
+      "name": "День святого Патрика",
+      "photoUrl": ""
+    },
+    {
+      "status": "public",
+      "id": 15,
+      "name": "Halloween",
+      "photoUrl": ""
+    },
+    {
+      "status": "public",
+      "id": 16,
+      "name": "Рождество",
+      "photoUrl": ""
+    },
+    {
+      "status": "public",
+      "id": 17,
+      "name": "День рождения",
+      "photoUrl": ""
+    },
+    {
+      "status": "public",
+      "id": 18,
+      "name": "Мороженое",
+      "photoUrl": ""
+    },
+    {
+      "status": "public",
+      "id": 19,
+      "name": "Восточные сладости",
+      "photoUrl": ""
+    },
+    {
+      "name": "Первые блюда",
+      "photo": {},
+      "sendDate": "2023-10-31T20:00:55.665Z",
+      "authorId": 5,
+      "id": 23,
+      "status": "public"
+    },
+    {
+      "name": "Вторые блюда",
+      "photo": {},
+      "sendDate": "2023-10-31T20:01:09.216Z",
+      "authorId": 5,
+      "id": 24,
+      "status": "public"
+    },
+    {
+      "name": "Белорусская кухня",
+      "photo": {},
+      "sendDate": "2023-10-31T20:03:30.039Z",
+      "authorId": 5,
+      "id": 25,
+      "status": "awaits"
+    },
+    {
+      "name": "Американская кухня",
+      "photo": {},
+      "sendDate": "2023-10-31T20:03:45.657Z",
+      "authorId": 5,
+      "id": 26,
+      "status": "awaits"
+    }
+  ],
   "sections": [
     {
       "id": 1,
       "name": "Праздники",
       "photoUrl": "",
-      "categoriesId": [
+      "categories": [
         1,
         2,
         12,
@@ -18,7 +166,7 @@
       "id": 2,
       "name": "Системы питания",
       "photoUrl": "",
-      "categoriesId": [
+      "categories": [
         3,
         4,
         5
@@ -28,7 +176,7 @@
       "id": 3,
       "name": "Контроль веса",
       "photoUrl": "",
-      "categoriesId": [
+      "categories": [
         6,
         7,
         8
@@ -36,33 +184,30 @@
     },
     {
       "id": 4,
-      "name": "Типы блюд",
-      "photoUrl": "",
-      "categoriesId": []
-    },
-    {
-      "id": 4,
       "name": "Кухни мира",
       "photoUrl": "",
-      "categoriesId": []
+      "categories": [
+        25,
+        26
+      ]
     },
     {
       "id": 5,
       "name": "Сезонные",
       "photoUrl": "",
-      "categoriesId": []
+      "categories": []
     },
     {
       "id": 6,
       "name": "По времени",
       "photoUrl": "",
-      "categoriesId": []
+      "categories": []
     },
     {
       "id": 9,
       "name": "По ингредиентам",
       "photoUrl": "",
-      "categoriesId": [
+      "categories": [
         11,
         9
       ]
@@ -71,115 +216,18 @@
       "id": 7,
       "name": "Экзотика",
       "photoUrl": "",
-      "categoriesId": []
+      "categories": []
     },
     {
       "id": 8,
       "name": "Сладости и десерты",
       "photoUrl": "",
-      "categoriesId": [
+      "categories": [
         10,
         16,
         18,
         19
       ]
-    }
-  ],
-  "categories": [
-    {
-      "id": 1,
-      "name": "Новый Год",
-      "photoUrl": "url_1.jpg"
-    },
-    {
-      "id": 2,
-      "name": "Пасха",
-      "photoUrl": "url_1.jpg"
-    },
-    {
-      "id": 3,
-      "name": "Веганское",
-      "photoUrl": "url_1.jpg"
-    },
-    {
-      "id": 4,
-      "name": "Вегетарианское",
-      "photoUrl": "url_1.jpg"
-    },
-    {
-      "id": 5,
-      "name": "Пастафарианское",
-      "photoUrl": "url_1.jpg"
-    },
-    {
-      "id": 6,
-      "name": "Полезное питание",
-      "photoUrl": "url_1.jpg"
-    },
-    {
-      "id": 7,
-      "name": "Набор массы",
-      "photoUrl": "url_1.jpg"
-    },
-    {
-      "id": 11,
-      "name": "С мукой",
-      "photoUrl": "url_1.jpg"
-    },
-    {
-      "id": 9,
-      "name": "С ягодами",
-      "photoUrl": "url_1.jpg"
-    },
-    {
-      "id": 10,
-      "name": "Пироги",
-      "photoUrl": "url_1.jpg"
-    },
-    {
-      "id": 8,
-      "name": "Похудение",
-      "photoUrl": "url_1.jpg"
-    },
-    {
-      "id": 12,
-      "name": "День благодарения",
-      "photoUrl": ""
-    },
-    {
-      "id": 13,
-      "name": "День Валентина",
-      "photoUrl": ""
-    },
-    {
-      "id": 14,
-      "name": "День святого Патрика",
-      "photoUrl": ""
-    },
-    {
-      "id": 15,
-      "name": "Halloween",
-      "photoUrl": ""
-    },
-    {
-      "id": 16,
-      "name": "Рождество",
-      "photoUrl": ""
-    },
-    {
-      "id": 17,
-      "name": "День рождения",
-      "photoUrl": ""
-    },
-    {
-      "id": 18,
-      "name": "Мороженое",
-      "photoUrl": ""
-    },
-    {
-      "id": 19,
-      "name": "Восточные сладости",
-      "photoUrl": ""
     }
   ],
   "recipes": [
@@ -323,7 +371,8 @@
       "likesId": [
         9,
         6,
-        10
+        10,
+        5
       ],
       "status": "public",
       "origin": "Tonga",
@@ -578,14 +627,6 @@
             5,
             1
           ]
-        },
-        {
-          "id": 1,
-          "text": "dsssdssd",
-          "authorId": 24,
-          "date": "2023-10-30T17:21:42.564Z",
-          "likesId": [],
-          "dislikesId": []
         }
       ],
       "categories": [],
@@ -712,12 +753,12 @@
           "date": "2023-10-30T21:14:20.151Z",
           "reporterId": 5,
           "commentId": 7
-        },
+        }
+      ],
+      "statistics": [
         {
-          "id": 6,
-          "date": "2023-10-30T21:14:22.804Z",
-          "reporterId": 5,
-          "commentId": 1
+          "userId": 5,
+          "answer": false
         }
       ]
     },
@@ -1356,135 +1397,6 @@
           "name": "laborum",
           "quantity": 36,
           "unit": "minim"
-        }
-      ]
-    },
-    {
-      "id": 10,
-      "mainPhotoUrl": null,
-      "comments": [],
-      "categories": [],
-      "name": "elit excepteur sunt",
-      "description": "Pariatur dolore pariatur consectetur adipisicing quis mollit sint cillum ex velit deserunt ad ullamco. Pariatur officia amet velit elit esse veniam tempor ipsum exercitation. Eu id commodo aliqua aliquip. Labore ad aute nostrud nisi non id ex ex minim. Commodo cupidatat aute quis consectetur aliqua.\r\nDeserunt officia pariatur fugiat dolor ullamco exercitation quis adipisicing. Nulla ut amet excepteur cupidatat commodo duis occaecat Lorem adipisicing. Voluptate deserunt sint culpa aliqua reprehenderit. Excepteur eu laborum irure et sunt excepteur incididunt qui qui dolore mollit commodo eu adipisicing. Irure anim labore veniam deserunt anim sit fugiat officia cupidatat. Nulla cupidatat cillum labore exercitation ipsum dolor esse sunt commodo reprehenderit commodo occaecat.\r\nNisi qui qui irure laboris nulla occaecat consectetur nostrud cillum consequat. Nisi culpa velit consectetur ex exercitation in qui anim cupidatat. Occaecat ea sit incididunt aliquip cupidatat veniam non nostrud non laboris excepteur cillum ex velit. Tempor officia ex veniam minim veniam sit aliqua.\r\n",
-      "history": "Cillum magna occaecat veniam tempor anim eu ad. Velit consequat ullamco nisi consectetur excepteur enim ullamco. Cillum cupidatat voluptate veniam duis aliquip proident mollit tempor labore tempor eiusmod esse. Aute aute et sint ex cupidatat commodo eu.\r\nAdipisicing adipisicing in non amet. Cillum incididunt laboris est adipisicing aute sit velit velit deserunt. Non excepteur officia eiusmod consectetur non laborum officia aliquip. Quis reprehenderit eu dolor consectetur ad sunt ex dolor irure ex. Nulla sit amet irure ut et voluptate pariatur.\r\n",
-      "preparationTime": "velit amet qui ullamco nisi",
-      "cookingTime": "dolor duis cupidatat ex id",
-      "servings": 5,
-      "authorId": 1,
-      "cooksId": [],
-      "favoritesId": [],
-      "likesId": [],
-      "status": "private",
-      "origin": "Suriname",
-      "publicationDate": "2019-10-30T23:58:43.609Z",
-      "instuctions": [
-        "consequat",
-        "dolor",
-        "culpa",
-        "ad",
-        "esse",
-        "est",
-        "ipsum"
-      ],
-      "instructions": [
-        {
-          "images": [],
-          "name": "Do occaecat enim incididunt aliqua anim cupidatat velit. Excepteur fugiat deserunt nisi proident consectetur fugiat Lorem. Consequat sunt nostrud et proident consectetur exercitation. Culpa irure deserunt consequat reprehenderit in cupidatat dolor aliquip est laborum non duis nostrud.\r\n"
-        },
-        {
-          "images": [],
-          "name": "Proident non aliquip consequat ea commodo labore et labore amet occaecat. Dolore elit minim pariatur aute nisi incididunt. Exercitation ea laborum labore labore cupidatat et voluptate in sit anim exercitation. Commodo proident excepteur eu deserunt veniam adipisicing et ad velit commodo anim velit aliqua eu. Aute est commodo sunt et excepteur deserunt cillum. Cillum cupidatat tempor consequat in do enim ad consectetur. Cillum ullamco labore consequat esse ad.\r\n"
-        },
-        {
-          "images": [],
-          "name": "Do aliquip Lorem mollit nisi id tempor non proident adipisicing voluptate adipisicing do amet. Dolore mollit labore laboris elit elit duis anim adipisicing dolor aliqua exercitation excepteur. Eiusmod sit esse aliquip elit veniam elit non dolor ut qui voluptate exercitation excepteur amet.\r\n"
-        },
-        {
-          "images": [],
-          "name": "Do eu quis esse officia sunt exercitation irure nisi anim ut non irure. Consequat ipsum ipsum minim officia amet reprehenderit ut Lorem Lorem. Incididunt amet laboris adipisicing sit ullamco culpa eu mollit non culpa consectetur fugiat quis. Elit aute eu eu consectetur incididunt enim quis consectetur.\r\n"
-        },
-        {
-          "images": [],
-          "name": "Id culpa dolore ut deserunt enim. Officia irure excepteur dolor officia. Consequat do quis commodo tempor.\r\n"
-        }
-      ],
-      "nutritions": [
-        {
-          "name": "occaecat",
-          "quantity": 3,
-          "unit": "cillum"
-        },
-        {
-          "name": "tempor",
-          "quantity": 25,
-          "unit": "tempor"
-        },
-        {
-          "name": "amet",
-          "quantity": 39,
-          "unit": "ex"
-        },
-        {
-          "name": "labore",
-          "quantity": 17,
-          "unit": "deserunt"
-        }
-      ],
-      "ingredients": [
-        {
-          "name": "laboris",
-          "quantity": 24,
-          "unit": "est"
-        },
-        {
-          "name": "anim",
-          "quantity": 22,
-          "unit": "pariatur"
-        },
-        {
-          "name": "culpa",
-          "quantity": 33,
-          "unit": "pariatur"
-        },
-        {
-          "name": "deserunt",
-          "quantity": 4,
-          "unit": "eu"
-        },
-        {
-          "name": "adipisicing",
-          "quantity": 31,
-          "unit": "nulla"
-        },
-        {
-          "name": "id",
-          "quantity": 6,
-          "unit": "do"
-        },
-        {
-          "name": "deserunt",
-          "quantity": 31,
-          "unit": "duis"
-        },
-        {
-          "name": "proident",
-          "quantity": 37,
-          "unit": "est"
-        },
-        {
-          "name": "est",
-          "quantity": 45,
-          "unit": "velit"
-        },
-        {
-          "name": "sit",
-          "quantity": 12,
-          "unit": "amet"
-        },
-        {
-          "name": "tempor",
-          "quantity": 49,
-          "unit": "incididunt"
         }
       ]
     },
@@ -2463,40 +2375,7 @@
     {
       "id": 19,
       "mainPhotoUrl": null,
-      "comments": [
-        {
-          "id": 6,
-          "text": "this.commentForm",
-          "authorId": 5,
-          "date": "2023-10-30T23:16:12.579Z",
-          "likesId": [],
-          "dislikesId": []
-        },
-        {
-          "id": 5,
-          "text": "fgfffg",
-          "authorId": 5,
-          "date": "2023-10-30T23:15:52.865Z",
-          "likesId": [],
-          "dislikesId": []
-        },
-        {
-          "id": 3,
-          "text": "так держать!!!!!!!!!!!!!!!уау",
-          "authorId": 5,
-          "date": "2023-10-30T23:14:47.702Z",
-          "likesId": [],
-          "dislikesId": []
-        },
-        {
-          "id": 7,
-          "text": "gffgfg",
-          "authorId": 5,
-          "date": "2023-10-30T23:16:17.042Z",
-          "likesId": [],
-          "dislikesId": []
-        }
-      ],
+      "comments": [],
       "categories": [],
       "name": "dolor mollit commodo",
       "description": "Ex dolor fugiat do nostrud irure. Aliqua consectetur amet elit sint sit consectetur Lorem ullamco adipisicing do exercitation nisi. Pariatur non consectetur voluptate labore.\r\nId veniam cupidatat duis exercitation laborum aliquip aliqua duis. Tempor officia enim ullamco sint adipisicing et. Exercitation dolor elit cupidatat incididunt officia nulla in enim non consequat dolor cupidatat ipsum.\r\nVoluptate consequat pariatur qui irure pariatur officia cupidatat aliquip non laborum velit. Amet in duis minim officia sint proident ex. Deserunt cillum magna ullamco deserunt voluptate fugiat quis qui mollit irure amet quis aliqua. Elit exercitation dolore reprehenderit ullamco cillum et laboris deserunt cupidatat labore. Irure ut et eiusmod cillum ea culpa sit voluptate. Lorem Lorem in dolor laboris enim magna est elit eu tempor. Sint pariatur exercitation in qui irure culpa laboris anim consequat eiusmod elit cupidatat elit enim.\r\n",
@@ -2974,7 +2853,8 @@
       "cooksId": [
         8,
         6,
-        3
+        3,
+        1
       ],
       "favoritesId": [
         6,
@@ -3075,6 +2955,12 @@
           "name": "Соль",
           "quantity": 0.5,
           "unit": "ч. л."
+        }
+      ],
+      "statistics": [
+        {
+          "userId": 1,
+          "answer": true
         }
       ]
     },
@@ -3642,210 +3528,6 @@
       "status": "public"
     },
     {
-      "name": "Классический торт \"Наполеон\"",
-      "ingredients": [
-        {
-          "name": "Мука",
-          "quantity": "750",
-          "unit": "г"
-        },
-        {
-          "name": "Масло сливочное (холодное) или маргарин",
-          "quantity": "400",
-          "unit": "г"
-        },
-        {
-          "name": "Яйца",
-          "quantity": "2",
-          "unit": "шт"
-        },
-        {
-          "name": "Вода холодная",
-          "quantity": "150",
-          "unit": "мл"
-        },
-        {
-          "name": "Водка или коньяк",
-          "quantity": "3",
-          "unit": "ст. л."
-        },
-        {
-          "name": "Уксус 9%",
-          "quantity": "1",
-          "unit": "ст. л."
-        },
-        {
-          "name": "Соль ",
-          "quantity": "1",
-          "unit": "щепотка"
-        },
-        {
-          "name": "Молоко ",
-          "quantity": "1",
-          "unit": "л"
-        },
-        {
-          "name": "Яйца",
-          "quantity": "4",
-          "unit": "шт."
-        },
-        {
-          "name": "Мука",
-          "quantity": "100",
-          "unit": "г"
-        },
-        {
-          "name": "Сахар ",
-          "quantity": "300",
-          "unit": "г"
-        },
-        {
-          "name": "Ванильный сахар",
-          "quantity": "20",
-          "unit": "г"
-        },
-        {
-          "name": "Масло сливочное",
-          "quantity": "350",
-          "unit": "г"
-        }
-      ],
-      "instructions": [
-        {
-          "name": "На блюдо кладем первый корж, смазываем приготовленным кремом, накрываем вторым коржом и так собираем весь торт. Затем слегка надавливаем на торт сверху, чтобы крем",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        },
-        {
-          "name": "Смазываем бока и поверхность торта отложенным кремом.",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        },
-        {
-          "name": "Для украшения остатки коржей (обрезки) перекладываем в пакет и с помощью скалки измельчаем их в крошку.",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        },
-        {
-          "name": "Полученной крошкой обсыпаем бока и поверхность торта.",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        },
-        {
-          "name": "Отправляем торт в холодильник на несколько часов, а лучше всего на ночь, для пропитки.",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        },
-        {
-          "name": "Спустя указанное время достаем торт из холодильника.\n\n",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        },
-        {
-          "name": "Нарезаем на кусочки и можем порадовать себя и своих близких изумительно вкусным тортом \"Наполеон\".\n\n",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        },
-        {
-          "name": "Классический торт \"Наполеон\" готов. Приятного аппетита и удачной вам выпечки!",
-          "images": [
-            {
-              "file": null
-            },
-            {
-              "file": null
-            },
-            {
-              "file": null
-            }
-          ]
-        }
-      ],
-      "mainImage": null,
-      "description": "Один из самых вкусных и любимых десертов в моей семье - торт \"Наполеон\". Его приготовление не назовешь простым и быстрым, но результат, безусловно, стоит этих усилий. Торт получается изумительно вкусным, с тонкими коржами и нежнейшим масляно-заварным кремом.",
-      "history": "Торт, который мы сейчас называем «Наполеоном» появился во Франции (а где же еще?) несколько веков назад. Назывался он Мillefeuille – что значит «Тысяча слоев». Известно, что в XIX веке этот торт был модернизирован великим французским поваром - Мари-Антуаном Каремом, который из классического старого десерта сделал более легкое в исполнении блюдо.",
-      "preparationTime": "15 минут",
-      "cookingTime": "2 часа",
-      "origin": "Франция",
-      "nutritions": [],
-      "servings": 12,
-      "authorId": 5,
-      "categories": [
-        11,
-        10
-      ],
-      "cooksId": [],
-      "likesId": [],
-      "favoritesId": [],
-      "id": 49,
-      "comments": [],
-      "publicationDate": "",
-      "status": "private"
-    },
-    {
       "name": "Hello World",
       "ingredients": [],
       "instructions": [],
@@ -4079,7 +3761,7 @@
       "personalWebsite": "",
       "location": "Санкт-Петербург, Россия",
       "registrationDate": "2023-03-20",
-      "profileViews": 6486,
+      "profileViews": 6487,
       "role": "user"
     },
     {
@@ -4108,7 +3790,7 @@
       "personalWebsite": "https://www.travelandeat.com/",
       "location": "Нью-Йорк, США",
       "registrationDate": "2023-05-10",
-      "profileViews": 5811,
+      "profileViews": 5814,
       "role": "user"
     },
     {
@@ -4170,7 +3852,7 @@
       "personalWebsite": "",
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 1785
+      "profileViews": 1788
     },
     {
       "id": 6,

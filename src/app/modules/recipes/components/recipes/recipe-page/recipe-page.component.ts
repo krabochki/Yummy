@@ -182,11 +182,10 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   }
 
   get date() {
-  return getFormattedDate(this.recipe.publicationDate)
-
+    return getFormattedDate(this.recipe.publicationDate);
   }
 
-   handleVoteModal(event: boolean) {
+  handleVoteModal(event: boolean) {
     if (event) {
       this.recipe = this.recipeService.voteForRecipe(
         this.recipe,
@@ -455,7 +454,6 @@ export class RecipePageComponent implements OnInit, OnDestroy {
 
     this.isRecipeCooked = !this.isRecipeCooked;
 
-
     if (this.isRecipeCooked) {
       this.recipe = this.recipeService.cookRecipe(
         this.currentUser.id,
@@ -483,8 +481,6 @@ export class RecipePageComponent implements OnInit, OnDestroy {
             ),
         );
     }
-
-
   }
 
   handleNoAccessModal(result: boolean) {

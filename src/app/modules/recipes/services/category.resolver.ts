@@ -23,7 +23,7 @@ export class CategoryResolver {
     return this.categoryService.categories$.pipe(
       map((categories: ICategory[]) => {
         const foundCategory = categories.find((category) => {
-          if (category.id === categoryId) return true;
+          if (category.id === categoryId && (category.status==='public')) return true;
           else return false;
         });
         if (foundCategory) {

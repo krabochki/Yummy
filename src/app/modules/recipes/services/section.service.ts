@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ICategory, ISection, nullSection } from '../models/categories';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, tap } from 'rxjs';
 import { sectionsUrl } from 'src/tools/source';
 import { IRecipe } from '../models/recipes';
 
@@ -9,7 +9,7 @@ import { IRecipe } from '../models/recipes';
   providedIn: 'root',
 })
 export class SectionService {
-  urlSections: string = sectionsUrl
+  urlSections: string = sectionsUrl;
 
   sectionsSubject = new BehaviorSubject<ISection[]>([]);
   sections$ = this.sectionsSubject.asObservable();
@@ -22,8 +22,42 @@ export class SectionService {
     });
   }
 
-  getSectionsWithCategories(sections:ISection[]):ISection[] {
-    return sections.filter((section:ISection)=> section.categoriesId.length>0)
+  getSectionsWithCategories(sections: ISection[],categories:ICategory[]): ISection[] {
+    const sectionWithCategories: ISection[] = []
+    sections.forEach((section) =>
+    {
+      const categoriesOfSection: ICategory[] = []
+      section.categories.forEach(element => {
+        const findCategory = categories.find((elem) => (elem.id === element && elem.status==='public'))
+        if (findCategory) {
+          categoriesOfSection.push(findCategory)
+        }
+        
+      });
+      if (categoriesOfSection.length > 0) {
+        sectionWithCategories.push(section)
+      }
+
+    
+    });
+    return sectionWithCategories;
+  }
+
+  updateSections(section: ISection) {
+    return this.http.put<ISection>(`${this.urlSections}/${section.id}`, section).pipe(
+      tap((updatedSection: ISection) => {
+        const curentSections = this.sectionsSubject.value;
+        const index = curentSections.findIndex(
+          (r) => r.id === updatedSection.id,
+        );
+        if (index !== -1) {
+          const updatedSections = [...curentSections];
+          updatedSections[index] = updatedSection;
+
+          this.sectionsSubject.next(updatedSections);
+        }
+      }),
+    );
   }
 
   getSections() {
@@ -44,23 +78,28 @@ export class SectionService {
 
   getNotEmptySections(sections: ISection[]): ISection[] {
     return (sections = sections.filter(
-      (section) => section.categoriesId.length > 0,
+      (section) => section.categories.length > 0,
     ));
   }
 
-  getNumberRecipesOfSection(section: ISection, recipes: IRecipe[], categories: ICategory[]): number{
-    let sectionRecipesIds:number[] = []
-    section.categoriesId.forEach((categoryId) => {
-
-      const currentCategory = categories.find((category) => category.id = categoryId)
+  getNumberRecipesOfSection(
+    section: ISection,
+    recipes: IRecipe[],
+    categories: ICategory[],
+  ): number {
+    let sectionRecipesIds: number[] = [];
+    section.categories.forEach((categoryId) => {
+      const currentCategory = categories.find(
+        (category) => (category.id = categoryId),
+      );
       if (currentCategory) {
         const categoryRecipesIds: number[] = [];
         recipes.forEach((recipe) => {
-          if(recipe.categories.includes(currentCategory.id)) categoryRecipesIds.push(recipe.id)
-        }) 
-        sectionRecipesIds = [ ...sectionRecipesIds, ...categoryRecipesIds]
+          if (recipe.categories.includes(currentCategory.id))
+            categoryRecipesIds.push(recipe.id);
+        });
+        sectionRecipesIds = [...sectionRecipesIds, ...categoryRecipesIds];
       }
-
     });
     sectionRecipesIds = sectionRecipesIds.filter((recipeId, index, self) => {
       return self.indexOf(recipeId) === index;
@@ -68,11 +107,10 @@ export class SectionService {
     return sectionRecipesIds.length;
   }
 
-  getSectionOfCategory(sections:ISection[], category: ICategory): ISection {
-      return (
-        sections.find((section) =>
-          section.categoriesId.includes(category.id),
-        ) || nullSection
-      );
+  getSectionOfCategory(sections: ISection[], category: ICategory): ISection {
+    return (
+      sections.find((section) => section.categories.includes(category.id)) ||
+      nullSection
+    );
   }
 }

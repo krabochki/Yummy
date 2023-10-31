@@ -49,7 +49,7 @@ p{
 }
 .main-wrap{
     display: flex;
-    background-color: var(--color-background-deeper);
+    background-color: var(--color-background-deeper-unactive);
     flex-direction: column;
     height:100%;
     justify-content: center;
@@ -59,7 +59,7 @@ p{
     transition:  0.2s ease-in-out;
     &:hover{
         scale:1.05;
-        background-color: var(--color-background-deeper-unactive);
+        background-color: var(--color-background-deeper);
     }
 }
 

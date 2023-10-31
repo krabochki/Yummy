@@ -1,5 +1,10 @@
 @import "../../../tools/UI/UI.scss";
 
+div.container.not-found{
+  .tagline{
+    width: 80%;
+  }
+}
 .container.one-column {
   hr,
   .tagline {
@@ -177,6 +182,10 @@
 
 @media (max-width: 768px) {
  
+  .container{
+    margin-right: 3em;
+    margin-left: 3em;
+  }
   .container.one-column{
     
   form {

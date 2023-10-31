@@ -1,1 +1,262 @@
-<p>category-creating works!</p>
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="outer" (click)="clickBackgroundNotContent($event)">
+  <div class="inner">
+    <div class="close-button" (click)="closeEditModal()">
+      <svg-icon
+        [src]="'../../../../../assets/images/svg/close.svg'"
+        [applyClass]="true"
+        class="close-svg"
+      ></svg-icon>
+    </div>
+    <div class="header">
+      <h1>Создание категории</h1>
+      <div class="navigation">
+        <div class="nav-step-circles-block">
+          <div class="nav-step-block" *ngFor="let step of steps; let i = index">
+            <div
+              class="nav-step-block-inner"
+              (click)="currentStep = i; scrollTop()"
+            >
+              <div
+                class="nav-step-circle"
+                [ngClass]="{
+                  active: i === currentStep,
+                  completed: i < currentStep
+                }"
+              >
+                {{ i + 1 }}
+              </div>
+              <p
+                class="nav-step-short-title"
+                [ngClass]="{
+                  active: i === currentStep,
+                  completed: i < currentStep
+                }"
+              >
+                {{ steps[i].shortTitle }}
+              </p>
+            </div>
+            <div
+              [ngClass]="{
+                completed: i < currentStep
+              }"
+              *ngIf="i !== steps.length - 1"
+              class="nav-step-line"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="unique-content">
+      <div>
+        <h2>{{ steps[currentStep].title }}</h2>
+        <button class="more-button" (click)="showInfo = !showInfo">
+          <svg-icon
+            [src]="'../../../../../assets/images/svg/help.svg'"
+            [applyClass]="true"
+            class="help-svg"
+          ></svg-icon>
+          Подробнее
+        </button>
+        <p class="description" *ngIf="showInfo" @height>
+          {{ steps[currentStep].description }}
+        </p>
+      </div>
+
+      <hr />
+
+      <form [formGroup]="form" #scrollContainer>
+        <div class="step-container" *ngIf="currentStep === 0">
+          <div class="main-info-control-with-image">
+            <div class="form-control">
+              <div class="image">
+                <input
+                  type="file"
+                  (change)="onUserpicChange($event)"
+                  accept="image/*"
+                />
+
+                <div
+                  class="delete"
+                  *ngIf="myImage !== defaultImage"
+                  (click)="
+                    myImage = defaultImage;
+                    this.form.get('image')?.setValue(null)
+                  "
+                >
+                  <svg-icon
+                    [applyClass]="true"
+                    class="svgTrash"
+                    [src]="'../../../../../assets/images/svg/trash.svg'"
+                  ></svg-icon>
+                </div>
+                <div
+                  class="userpic"
+                  [ngClass]="{
+                    'have-image': this.form.get('image')?.value !== null
+                  }"
+                  [ngStyle]="{ 'background-image': 'url(' + myImage + ')' }"
+                  alt="User Photo"
+                ></div>
+              </div>
+            </div>
+            <div class="main-info-controls">
+              <div class="form-control">
+                <h3>Название категории</h3>
+                <app-usual-input
+                  [inputRequired]="true"
+                  [max]="20"
+                  id="name"
+                  formControlName="name"
+                  [placeholder]="'Придумай название категории'"
+                  required
+                  [value]="form.get('name')?.value"
+                  [error]="
+                       form.get('name')?.invalid &&
+                        (form.get('name')?.dirty ||
+                          form.get('name')?.touched)
+                        ? 'Название категории должно содержать от 4 до 30 символов'
+                        : ''
+                  "
+                ></app-usual-input>
+              
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <div class="step-container" *ngIf="currentStep === 1">
+         <div class="form-control">
+            <h3>Категории</h3>
+
+            <div><app-autocomplete [disabled]="selectedSection!==null" [sectionMode]="true" (sectionEmitter)="addCategory($event)"
+                [group]="group"
+                [allSections]="allSections"
+                [placeholder]="'Выбери соответствующую секцию для твоего рецепта'"></app-autocomplete>
+            </div>
+
+
+
+          </div>
+          <div class="form-control">
+            <h3>Секция твоей категории</h3>
+            <div *ngIf="selectedSection" class="max-categories">Ты можешь выбрать только 1 секцию для своей категории</div>
+          </div>
+
+          <div *ngIf="!selectedSection" class="no-categories">Ты пока не выбрал
+            секцию</div>
+          <div class="tags" *ngIf="selectedSection">
+            <div class="tag" >
+              {{ selectedSection.name }}
+              <span (click)="removeCategory(selectedSection)" class="remove-tag"><svg-icon [applyClass]="true" class="remove-tag-svg" [src]="'../../../../../assets/images/svg/close.svg'"></svg-icon></span>
+
+
+            </div>
+        </div>
+        </div>
+        
+        <div *ngIf="currentStep === 2">
+          <div class="buttons">
+            <p>
+              Если ты хочешь, чтобы категорию увидели все кулинары,
+              <em>отправь ее на одобрение</em> модератору
+            </p>
+            <app-button
+              [title]="
+                !(areObjectsEqual() && form.valid && selectedSection)
+                  ? 'Все поля должны быть корректны'
+                  : ''
+              "
+              [disabled]="areObjectsEqual() && form.valid && selectedSection!==null"
+              (click)="form.valid ? (saveModal = true) : null"
+              [text]="'Опубликовать'"
+              [color]="'sec'"
+              [style]="'filled'"
+              [rounded]="true"
+            ></app-button>
+
+            <p>
+              Если ты передумал создавать категорию, просто <em>отмени</em> ее
+              создание. Все данные придется вводить повторно, если ты захочешь
+              создать ее снова
+            </p>
+
+            <app-button
+              (click)="closeEditModal()"
+              [text]="'Отменить'"
+              [color]="'prim'"
+              [style]="'outlined'"
+              type="button"
+              [rounded]="true"
+            ></app-button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="footer">
+      <app-button
+        [iconSize]="'min'"
+        [color]="'sec'"
+        [iconPosition]="'before'"
+        [rounded]="true"
+        [icon]="'arrow-previous'"
+        [iconStyle]="'as-text'"
+        [style]="'outlined'"
+        [text]="'Назад'"
+        (click)="goToPreviousStep()"
+        [disabled]="!(currentStep === 0)"
+      ></app-button>
+      <app-button
+        [iconSize]="'min'"
+        [icon]="'arrow-next'"
+        [color]="'sec'"
+        [rounded]="true"
+        
+        [style]="'filled'"
+        [text]="'Вперед'"
+        (click)="goToNextStep()"
+        [disabled]="!(currentStep === steps.length - 1)"
+      ></app-button>
+    </div>
+  </div>
+</div>
+
+<app-modal
+  *ngIf="closeModal"
+  @modal
+  [style]="'prim'"
+  [title]="'Закрытие окна'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleCloseModal($event)"
+  [buttonsText]="['Да', 'Нет']"
+  [description]="
+    'Вы уверены, что не хотите сохранить категорию?'
+  "
+>
+</app-modal>
+
+<app-modal
+  @modal
+  *ngIf="saveModal"
+  [style]="'prim'"
+  [title]="'Изменение аккаунта'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleSaveModal($event)"
+  [buttonsText]="['Да', 'Нет']"
+  [description]="
+    'Вы уверены, что хотите отправить категорию на рассмотрение модератору?'
+  "
+></app-modal>
+
+<app-modal
+  @modal
+  *ngIf="successModal"
+  [style]="'sec'"
+  [title]="'Категория успешно отправлена'"
+  [type]="'Ok'"
+  (resultEmit)="handleSuccessModal($event)"
+  [buttonsText]="['Хорошо']"
+  [description]="'Категория успешно отправлена модератору на рассмотрение'"
+></app-modal>

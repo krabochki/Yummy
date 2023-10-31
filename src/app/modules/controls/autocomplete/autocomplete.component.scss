@@ -50,7 +50,8 @@ h2 {
   height: 20vh;
   border-radius:  var(--space-s) var(--space-s);
 
-  overflow-y: auto;
+
+  overflow-y: auto !important;
 
   .num {
     display: flex;
@@ -72,6 +73,13 @@ h2 {
     border-radius: 100%;
   }
 
+  li.sections:hover{
+    padding-left: 1.5em;
+  }
+  li.sections{
+    padding-left: 1em;
+
+  }
   li {
     max-width: 100%;
     display: flex;
@@ -107,7 +115,8 @@ h2 {
       transition: color 0.2s ease-in-out;
       padding-left: 0.3em;
       text-overflow: ellipsis;
-      overflow: hidden;
+      overflow: hidden !important;
+      
     }
   }
 

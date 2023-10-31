@@ -59,6 +59,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   showCategoriesForCheck: boolean = false;
   categoriesForCheckToShow: ICategory[] = [];
   categoriesForCheck: ICategory[] = [];
+  showAwaitingRecipes: boolean = false;
   protected destroyed$: Subject<void> = new Subject<void>();
 
   constructor(
@@ -185,14 +186,19 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
 
       this.categoryService.deleteCategory(this.actionCategory.id).subscribe({
         next: () => {
-          this.sectionService.updateSections(section).subscribe(
-            {
-              next: () => { this.successDismissCategoryModalShow = true;this.cd.markForCheck()  },
-              error: (error:Error)=>{console.log(error.message)}
-            }
-          );
+          this.sectionService.updateSections(section).subscribe({
+            next: () => {
+              this.successDismissCategoryModalShow = true;
+              this.cd.markForCheck();
+            },
+            error: (error: Error) => {
+              console.log(error.message);
+            },
+          });
         },
-        error: (error:Error) => {console.log(error.message)},
+        error: (error: Error) => {
+          console.log(error.message);
+        },
         complete: () => {},
       });
     }

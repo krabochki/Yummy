@@ -3701,6 +3701,30 @@
       "comments": [],
       "publicationDate": "",
       "status": "private"
+    },
+    {
+      "name": "Даша Какаша",
+      "reports": [],
+      "statistics": [],
+      "ingredients": [],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 5,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 56,
+      "comments": [],
+      "publicationDate": "2023-10-31T21:38:12.729Z",
+      "status": "awaits"
     }
   ],
   "users": [

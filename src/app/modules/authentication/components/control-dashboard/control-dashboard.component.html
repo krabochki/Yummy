@@ -26,11 +26,53 @@
   </div>
 
  <div class="content-wrap">
-    <div *ngIf="awaitingRecipes.length > 0">
-      <h2>Рецепты на одобрение</h2>
-  
-      <app-vertical-recipe-list [moderMode]="true" [blocks]="awaitingRecipes"></app-vertical-recipe-list>
     </div>
+    
+
+        <div class="reports-block" *ngIf="awaitingRecipes.length > 0">
+      <h2 (click)="showAwaitingRecipes = !showAwaitingRecipes">
+        Рецепты на проверку
+      </h2>
+  
+      <div *ngIf="showAwaitingRecipes" @height>
+        <div class="reports">
+          <div class="report" *ngFor="let recipe of awaitingRecipes">
+            <div class="report-header">
+              <a class="report-recipe" [routerLink]="'/recipes/list/' + recipe.id">
+                {{ recipe.name }}
+              </a>
+              <p class="report-date">
+                Рецепт создан {{ recipe.publicationDate | timePast | lowercase }}
+              </p>
+            </div>
+            <div class="report-users">
+              <p class="reporter">
+                Автор:
+                <a class="report-user" [routerLink]="'/cooks/list/' + recipe.authorId">{{
+                  getUser(recipe.authorId).fullName !== ""
+                  ? getUser(recipe.authorId).fullName
+                  : getUser(recipe.authorId).username
+                  }}</a>
+              </p>
+              
+            </div>
+            <!-- <p class="report-content">
+              Содержание комментария:
+              <span>«{{
+                getComment(report.commentId, getRecipe(report.recipeId)).text
+                }}»
+              </span>
+            </p> -->
+            <div class="report-buttons">
+              <app-button [text]="'Оставить'"  [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
+              <app-button [text]="'Удалить'"  [color]="currentUser.role" [style]="'filled-min'" [rounded]="true"></app-button>
+            </div>
+          </div>
+        </div>
+        <app-button class="more-reports-button" [text]="'Загрузить еще...'" (click)="loadMoreCommentReports()"
+          *ngIf="allReports.length > reports.length" [rounded]="true" [style]="'outlined'" [color]="'prim'"></app-button>
+      </div>
+
     <div class="reports-block" *ngIf="reports.length > 0">
       <h2 (click)="showCommentReports = !showCommentReports">
         Жалобы на комментарии

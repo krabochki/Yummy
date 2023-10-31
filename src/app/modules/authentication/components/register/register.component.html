@@ -16,13 +16,7 @@
           formControlName="username"
           [placeholder]="'Имя пользователя'"
           required
-          [error]="
-           !form.get('username')?.hasError('usernameExists')?
-            (form.get('username')?.invalid &&
-            (form.get('username')?.dirty || form.get('username')?.touched)
-              ? 'Имя пользователя должно содержать от 4 до 20 символов, среди которых могут быть буквы (минимум одна), цифры, а также нижние почеркивания и точки (не подряд)'
-              : ''):''
-          "
+          [error]="usernameNotValidError"
         ></app-usual-input>
                         <div class="error" *ngIf="form.get('username')?.hasError('usernameExists')">
                     Это имя пользователя уже занято
@@ -37,13 +31,7 @@
           formControlName="email"
           [placeholder]="'Электронная почта'"
           required
-          [error]="
-          !form.get('email')?.hasError('emailExists')?
-            form.get('email')?.invalid &&
-            (form.get('email')?.dirty || form.get('email')?.touched)
-              ? 'Введи корректный адрес электронной почты'
-              : '':''
-          "
+          [error]="emailNotValidError"
         ></app-usual-input>
         <div class="error" *ngIf="form.get('email')?.hasError('emailExists')">
                     Пользователь с такой электронной почтой уже существует
@@ -58,11 +46,7 @@
         [placeholder]="'Пароль'"
         [max]="20"
         required
-        [error]="
-          form.get('password')?.invalid &&
-          (form.get('password')?.dirty || form.get('password')?.touched)
-            ? 'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'
-            : ''"
+        [error]="passwordNotValidError"
       ></app-usual-input>
     </form>
 

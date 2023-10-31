@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   Input,
@@ -13,6 +14,7 @@ import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { IRecipe, nullRecipe } from '../../../models/recipes';
 import { CommentService } from '../../../services/comment.service';
 import { trigger } from '@angular/animations';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { modal } from 'src/tools/animations';
 
 @Component({
@@ -20,6 +22,7 @@ import { modal } from 'src/tools/animations';
   templateUrl: './comment.component.html',
   styleUrls: ['./comment.component.scss'],
   animations: [trigger('modal', modal())],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CommentComponent implements OnInit, OnDestroy {
   @Input() comment: IComment = nullComment;
@@ -36,6 +39,7 @@ export class CommentComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private cd: ChangeDetectorRef,
     private authService: AuthService,
+    private clipboard:Clipboard,
     private commentService: CommentService,
   ) {}
 
@@ -64,19 +68,22 @@ export class CommentComponent implements OnInit, OnDestroy {
         
     }
     
-    this.commentService.deleteComment(this.comment, this.recipe).subscribe(
-      ()=>{}
-   );
+    this.commentService
+      .deleteComment(this.comment, this.recipe)
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe();
   }
 
   likeComment() {
     this.commentService
       .likeComment(this.currentUser, this.comment, this.recipe)
+      .pipe(takeUntil(this.destroyed$))
       .subscribe();
   }
   dislikeComment() {
     this.commentService
       .dislikeComment(this.currentUser, this.comment, this.recipe)
+      .pipe(takeUntil(this.destroyed$))
       .subscribe();
   }
 
@@ -85,6 +92,7 @@ export class CommentComponent implements OnInit, OnDestroy {
 
     this.commentService
       .reportComment(this.comment, this.recipe, this.currentUser)
+      .pipe(takeUntil(this.destroyed$))
       .subscribe(() => (this.successReportCommentModalShow = true));
   }
 
@@ -92,29 +100,19 @@ export class CommentComponent implements OnInit, OnDestroy {
     return new Date(this.comment.date);
   }
 
+  
   get haveReport(): boolean {
-    if (this.recipe.reports) {
-      const find = this.recipe.reports.find((item) => {
-        return (
-          item.reporterId === this.currentUser.id &&
-          item.commentId === this.comment.id
-        );
-      });
-      if (find) return true;
-      else return false;
-    } else return false;
+    return !!this.recipe?.reports?.find(
+      (item) =>
+        item.reporterId === this.currentUser.id &&
+        item.commentId === this.comment.id,
+    );
+    
   }
 
   copy() { //копирование комментария
-    const textArea = document.createElement('textarea');
-    textArea.value = this.comment.text;
-    document.body.appendChild(textArea);
-    textArea.select();
-    try {
-      document.execCommand('copy');
-      this.copyState = true;
-    } catch (error) {}
-    document.body.removeChild(textArea);
+    this.clipboard.copy(this.comment.text)
+    this.copyState = true;
     setTimeout(() => {
       this.copyState = false;
       this.cd.markForCheck();

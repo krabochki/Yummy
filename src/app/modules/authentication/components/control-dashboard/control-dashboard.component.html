@@ -77,10 +77,10 @@
             </p>
             <div class="report-buttons">
               <app-button [text]="'Оставить'" (click)="
-                  reportCommentDismissModalShow = true; actionReport = report
+                 reportActionClick('dismiss',report)
                 " [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
               <app-button [text]="'Удалить'" (click)="
-                  reportCommentApproveModalShow = true; actionReport = report
+                   reportActionClick('approve',report)
                 " [color]="currentUser.role" [style]="'filled-min'" [rounded]="true"></app-button>
             </div>
           </div>

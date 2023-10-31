@@ -21,7 +21,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { ICategory, ISection, nullCategory, nullSection } from '../../../models/categories';
+import { ICategory, ISection, nullCategory } from '../../../models/categories';
 import { SectionGroup } from 'src/app/modules/controls/autocomplete/autocomplete.component';
 import { Subject, takeUntil } from 'rxjs';
 import { SectionService } from '../../../services/section.service';
@@ -176,8 +176,6 @@ export class CategoryCreatingComponent
       status: 'awaits',
     };
     
-    console.log(this.selectedSection)
-
     this.categoryService.postCategory(this.newCategory).subscribe(
       () => {
         this.successModal = true;

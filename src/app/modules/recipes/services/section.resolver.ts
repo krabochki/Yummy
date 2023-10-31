@@ -14,7 +14,6 @@ export class SectionResolver implements Resolve<ISection> {
 
   resolve(route: ActivatedRouteSnapshot): Observable<ISection> {
     const sectionId = Number(route.params['id']);
-    console.log('resolver');
 
     if (sectionId <= 0) {
       this.router.navigate(['/sections']);

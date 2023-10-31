@@ -185,15 +185,13 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
 
       this.categoryService.deleteCategory(this.actionCategory.id).subscribe({
         next: () => {
-          this.sectionService.updateSections(section).subscribe(
-            {
-              next: () => { this.successDismissCategoryModalShow = true;this.cd.markForCheck()  },
-              error: (error:Error)=>{console.log(error.message)}
-            }
-          );
+          this.sectionService.updateSections(section).subscribe({
+            next: () => {
+              this.successDismissCategoryModalShow = true;
+              this.cd.markForCheck();
+            },
+          });
         },
-        error: (error:Error) => {console.log(error.message)},
-        complete: () => {},
       });
     }
   }
@@ -284,17 +282,32 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     const report = this.actionReport;
     if (report) {
       const recipe = this.getRecipe(report.recipeId);
-      recipe.comments = recipe.comments.filter(
-        (item) => item.id !== report.commentId,
-      );
-      recipe.reports = recipe.reports.filter(
-        (item) => item.commentId !== report.commentId,
-      );
+
       this.recipeService
-        .updateRecipe(recipe)
+        .updateRecipe({
+          ...recipe,
+          comments: recipe.comments.filter(
+            (item) => item.id !== report.commentId,
+          ),
+          reports: recipe.reports.filter(
+            (item) => item.commentId !== report.commentId,
+          ),
+        })
         .subscribe(() => (this.successReportCommentApproveModalShow = true));
     }
     this.actionReport = null;
+  }
+
+  reportActionClick(
+    action: 'approve' | 'dismiss',
+    report: ICommentReportForAdmin,
+  ) {
+    if (action === 'approve') {
+      this.reportCommentApproveModalShow = true;
+    } else {
+      this.reportCommentDismissModalShow = true;
+    }
+    this.actionReport = report;
   }
 
   leaveComment() {
@@ -302,11 +315,14 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
 
     if (report) {
       const recipe = this.getRecipe(report.recipeId);
-      recipe.reports = recipe.reports.filter(
-        (item) => item.commentId !== report.commentId,
-      );
+
       this.recipeService
-        .updateRecipe(recipe)
+        .updateRecipe({
+          ...recipe,
+          reports: recipe.reports.filter(
+            (item) => item.commentId !== report.commentId,
+          ),
+        })
         .subscribe(() => (this.successReportCommentDismissModalShow = true));
     }
     this.actionReport = null;

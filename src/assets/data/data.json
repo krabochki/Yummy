@@ -594,6 +594,16 @@
       "mainPhotoUrl": null,
       "comments": [
         {
+          "id": 8,
+          "text": "всем привет",
+          "authorId": 5,
+          "date": "2023-10-31T20:52:12.661Z",
+          "likesId": [
+            5
+          ],
+          "dislikesId": []
+        },
+        {
           "id": 3,
           "text": "ereeeeeeee3",
           "authorId": 3,
@@ -737,12 +747,6 @@
       ],
       "reports": [
         {
-          "id": 1,
-          "date": "2023-10-30T21:13:43.094Z",
-          "reporterId": 5,
-          "commentId": 3
-        },
-        {
           "id": 4,
           "date": "2023-10-30T21:14:18.398Z",
           "reporterId": 5,
@@ -750,9 +754,15 @@
         },
         {
           "id": 5,
-          "date": "2023-10-30T21:14:20.151Z",
+          "date": "2023-10-31T20:52:40.650Z",
           "reporterId": 5,
           "commentId": 7
+        },
+        {
+          "id": 6,
+          "date": "2023-10-31T20:53:49.555Z",
+          "reporterId": 5,
+          "commentId": 3
         }
       ],
       "statistics": [
@@ -884,7 +894,18 @@
     {
       "id": 6,
       "mainPhotoUrl": null,
-      "comments": [],
+      "comments": [
+        {
+          "id": 1,
+          "text": "gfffdfd",
+          "authorId": 5,
+          "date": "2023-10-31T20:21:49.324Z",
+          "likesId": [],
+          "dislikesId": [
+            5
+          ]
+        }
+      ],
       "categories": [],
       "name": "laboris deserunt labore",
       "description": "Consequat ut deserunt anim amet sint ipsum anim excepteur anim incididunt magna ex officia non. Dolore eu ullamco est commodo. Sunt aute quis reprehenderit officia labore ex nisi pariatur consectetur sit ullamco consequat duis reprehenderit. Consectetur Lorem reprehenderit duis exercitation esse aute incididunt ipsum fugiat cupidatat nostrud sint dolore. Duis elit ea culpa commodo magna ex Lorem eiusmod.\r\nTempor sint sit fugiat amet. Nostrud irure ex est sunt. Nostrud eiusmod ea Lorem Lorem.\r\nIpsum cillum pariatur cupidatat sunt deserunt non cupidatat esse ea voluptate laborum. Mollit nulla irure ea sint anim do consectetur duis. Nostrud laborum cupidatat sunt est sit aliquip. Et culpa laboris laborum pariatur minim laborum ex laboris in commodo ut commodo. Esse dolor duis incididunt est ullamco. Excepteur aliqua cillum esse aliqua nulla. Laborum nisi deserunt labore sint ea adipisicing aute officia.\r\n",
@@ -913,7 +934,7 @@
       ],
       "status": "public",
       "origin": "Chad",
-      "publicationDate": "2019-10-30T23:58:43.609Z0",
+      "publicationDate": "2022-10-30T23:58:43.609Z",
       "instuctions": [
         "cillum",
         "laboris",

@@ -10,7 +10,7 @@ import { AuthService } from 'src/app/modules/authentication/services/auth.servic
 import { IRecipe, nullRecipe } from 'src/app/modules/recipes/models/recipes';
 import { RecipeService } from '../../../services/recipe.service';
 import { trigger } from '@angular/animations';
-import { heightAnim, modal, onlyHeight } from 'src/tools/animations';
+import { modal } from 'src/tools/animations';
 import { Router } from '@angular/router';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
@@ -135,19 +135,11 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
   }
 
   handleVoteModal(event: boolean) {
-    if (event) {
-      this.recipe = this.recipeService.voteForRecipe(
-        this.recipe,
-        this.currentUserId,
-        true,
-      );
-    } else {
-      this.recipe = this.recipeService.voteForRecipe(
-        this.recipe,
-        this.currentUserId,
-        false,
-      );
-    }
+    this.recipe = this.recipeService.voteForRecipe(
+      this.recipe,
+      this.currentUserId,
+      !!event,
+    );
     this.cookThisRecipe();
     this.voteModalShow = false;
   }

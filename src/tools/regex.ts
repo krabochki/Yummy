@@ -10,3 +10,6 @@ export const vkMask = /^(https?:\/\/)?(www\.)?vk\.com\/.+/;
 export const twitterMask = /^(https?:\/\/)?(www\.)?twitter\.com\/.+/;
 export const anySiteMask =
   /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
+
+export const allPunctuationMarks = /[\s,.;:!]+/;
+export const brackets = /[(){}[\]<>]/g;

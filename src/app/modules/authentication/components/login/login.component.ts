@@ -18,14 +18,12 @@ import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
 import {
-  AbstractControl,
   FormBuilder,
   FormGroup,
-  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { customPatternValidator, emailExistsValidator, usernameAndEmailNotExistsValidator } from 'src/tools/validators';
+import { customPatternValidator, usernameAndEmailNotExistsValidator } from 'src/tools/validators';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -103,6 +101,21 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  get passwordNotValidError() {
+    return this.form.get('password')?.invalid &&
+          (this.form.get('password')?.dirty || this.form.get('password')?.touched)
+            ? 'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'
+            : '';
+  }
+  get loginNotValidError() {
+    return !this.form.get('login')?.hasError('loginExists')
+      ? this.form.get('login')?.invalid &&
+        (this.form.get('login')?.dirty || this.form.get('login')?.touched)
+        ? 'Введи корректный логин или электронную почту'
+        : ''
+      : '';
   }
 
   handleSuccessModalResult(): void {

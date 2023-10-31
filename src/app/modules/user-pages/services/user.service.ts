@@ -3,6 +3,7 @@ import { IUser } from '../models/users';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, map, switchMap, take, tap, throwError } from 'rxjs';
 import { usersUrl } from 'src/tools/source';
+import { allPunctuationMarks, brackets } from 'src/tools/regex';
 
 @Injectable({
   providedIn: 'root',
@@ -44,12 +45,18 @@ export class UserService {
   {
     if (user.location.trim() !== '') {
 
-      const currentUserLocationWords = user.location.toLowerCase().replace(/[(){}[\]<>]/g, ' ').split(/[\s,.;:!]+/);
+      const currentUserLocationWords = user.location
+        .toLowerCase()
+        .replace(brackets, ' ')
+        .split(allPunctuationMarks);
 
       let matchingUsers = users.filter((item) => {
         if (item.location.trim() !== '') {
 
-          const userLocationWords = item.location.toLowerCase().replace(/[(){}[\]<>]/g, ' ').split(/[\s,.;:!]+/);
+          const userLocationWords = item.location
+            .toLowerCase()
+            .replace(brackets, ' ')
+            .split(allPunctuationMarks);
           //есть ли хотя бы одно совпадающее слово
           return currentUserLocationWords.some((word) =>
             userLocationWords.includes(word),

@@ -5,7 +5,6 @@ import { RecipePageComponent } from './components/recipes/recipe-page/recipe-pag
 import { CategoriesPageComponent } from './components/categories/categories-page/categories-page.component';
 import { MatchRecipesComponent } from './components/recipes/match-recipes/match-recipes.component';
 import { SomeRecipesPageComponent } from './components/recipes/some-recipes-page/some-recipes-page.component';
-import { RecipeCreatingComponent } from './components/recipes/recipe-creating/recipe-creating.component';
 import { CategoryCreatingComponent } from './components/categories/category-creating/category-creating.component';
 import { AuthGuard } from '../authentication/guards/auth.guard';
 import { RecipeResolver } from './services/recipe.resolver';
@@ -24,13 +23,19 @@ const routes: Routes = [
         canActivate: [RecipeAccessGuard],
       },
       {
-        path: 'recipes/edit',
-        component: RecipeCreatingComponent,
+        path: 'recipes',
+        data: { filter: 'all' },
+        component: SomeRecipesPageComponent,
+      },
+      {
+        path: 'recipes/commented',
+        data: { filter: 'commented' },
+        component: SomeRecipesPageComponent,
         canActivate: [AuthGuard],
       },
       {
-        path: 'recipes',
-        data: { filter: 'all' },
+        path: 'recipes/most-discussed',
+        data: { filter: 'discussed' },
         component: SomeRecipesPageComponent,
       },
       {

@@ -1,22 +1,74 @@
 @import "../../../../tools/UI/UI.scss";
+
+button.admin{
+    background: var(--color-admin);
+  border: 3px solid var(--color-admin);
+
+   &:focus {
+    background-color: var(--color-admin-focus);
+        border-color: var(--color-admin-focus);
+   }
+     &.disabled {
+    background: var(--color-foreground-unactive);
+    border-color: var(--color-foreground-unactive);}
+
+}
+
+button.moder{
+    background: var(--color-moderator);
+  border: 3px solid var(--color-moderator);
+
+   &:focus {
+    background-color: var(--color-moderator-focus);
+        border-color: var(--color-moderator-focus);
+   }
+     &.disabled {
+    background: var(--color-foreground-unactive);
+    border-color: var(--color-foreground-unactive);}
+
+}
+
 button.prim {
   background: var(--color-primary);
   border: 3px solid var(--color-primary);
 
+  .svg.as-text{
+  fill:var(--color-background);
+}
+
   &.disabled {
     background: var(--color-foreground-unactive);
     border-color: var(--color-foreground-unactive);
+    .svg.as-text{
+  fill: var(--color-background);
+}
+
   }
 
   &:focus {
     background-color: var(--color-primary-focus);
     border-color: var(--color-primary-focus);
+
+    .svg.as-text{
+  fill:var(--color-background);
+}
   }
 }
 
+
 .svg{
   height:var(--font-m);
-  fill:var(--color-background)
+  fill:var(--color-background);
+  display:flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button.min-icon{
+  .svg{
+    margin-top: 0.15em;
+    height: 0.7em;
+  }
 }
 
 
@@ -25,15 +77,67 @@ button.prim {
 }
 button.sec {
   background: var(--color-secondary);
+
+  .svg.as-text{
+  fill:var(--color-secondary);
+}
   border: 3px solid var(--color-secondary);
   &.disabled {
     background: var(--color-foreground-unactive);
-    border-color: var(----color-foreground-unactive);
+    border-color: var(--color-foreground-unactive);
+
+    .svg.as-text{
+  fill:var(--color-foreground-unactive);
+}
   }
 
   &:focus {
     background-color: var(--color-secondary-focus);
     border-color: var(--color-secondary-focus);
+
+    .svg.as-text{
+  fill:var(--color-secondary-focus);
+}
+  }
+}
+button.filled-min.moder{
+   border: 3px solid var(--color-moderator-lighter);
+
+  background: var(--color-moderator-lighter);
+  color: var(--color-moderator);
+
+  &.disabled {
+    color: var(--color-background);
+
+    background: var(--color-foreground-unactive-lighter);
+    border-color: var(--color-foreground-unactive-lighter);
+  }
+
+  &:focus {
+    background-color: var(--color-moderator-lighter-focus);
+    color: var(--color-moderator-focus);
+
+    border-color: var(--color-moderator-lighter-focus);
+  }
+}
+button.filled-min.admin{
+   border: 3px solid var(--color-admin-lighter);
+
+  background: var(--color-admin-lighter);
+  color: var(--color-admin);
+
+  &.disabled {
+    color: var(--color-background);
+
+    background: var(--color-foreground-unactive-lighter);
+    border-color: var(--color-foreground-unactive-lighter);
+  }
+
+  &:focus {
+    background-color: var(--color-admin-lighter-focus);
+    color: var(--color-admin-focus);
+
+    border-color: var(--color-admin-lighter-focus);
   }
 }
 
@@ -75,6 +179,9 @@ button.filled-min.sec {
     color: var(--color-secondary-focus);
   }
 }
+button.before{
+  flex-direction: row-reverse;
+}
 
 button {
   display: flex;
@@ -88,7 +195,7 @@ button {
   color: var(--color-background);
   overflow: hidden;
   transition:
-    scale 0.3s,
+    scale 0.2s,
     background-color 0.2s ease-in-out,
     border-color 0.2s ease-in-out,
     color 0.2s ease-in-out;
@@ -158,7 +265,7 @@ button.banner {
   background-color: rgba($color: white, $alpha: 0.1);
   font-weight: 900;
   letter-spacing: 2px;
-  transition: letter-spacing 0.3s ease-in-out;
+  transition: letter-spacing 0.3s ease-in-out, background-color 0.3s ease-in-out;
 
   &:hover {
     scale: 1;
@@ -168,6 +275,7 @@ button.banner {
 }
 
 .svg-arrow {
+  transform: rotate(-90deg);
   fill: white;
   width: 0.8em;
 }

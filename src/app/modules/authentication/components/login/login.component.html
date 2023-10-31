@@ -7,23 +7,30 @@
     </p>
 
      <form [formGroup]="form">
-      <app-usual-input
-        [inputRequired]="true"
-        type="text"
-        [max]="64"
-        id="login"
-        formControlName="login"
-        [placeholder]="'Логин или электронная почта'"
-        required
-        [error]="
-          form.get('login')?.invalid &&
-          (form.get('login')?.dirty || form.get('login')?.touched)
-            ? 'Введи корректный логин или электронную почту'
-            : ''
-        "
-      ></app-usual-input>
-       <app-password-input
+     <div>
+        <app-usual-input
+          [inputRequired]="true"
+          type="text"
+          [max]="64"
+          id="login"
+          formControlName="login"
+          [placeholder]="'Логин или электронная почта'"
+          required
+          [error]="
+          !form.get('login')?.hasError('loginExists')?
+            form.get('login')?.invalid &&
+            (form.get('login')?.dirty || form.get('login')?.touched)
+              ? 'Введи корректный логин или электронную почту'
+              : '':''
+          "
+        ></app-usual-input>
+        <div class="error" *ngIf="form.get('login')?.hasError('loginExists')">
+                      Пользователя с такой электронной почтой или именем пользователя не существует
+                    </div>
+     </div>
+       <app-usual-input
        [inputRequired]="true"
+       [inputType]="'password'"
         id="password"
         formControlName="password"
         [placeholder]="'Пароль'"
@@ -34,7 +41,7 @@
           (form.get('password')?.dirty || form.get('password')?.touched)
             ? 'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'
             : ''"
-      ></app-password-input>
+      ></app-usual-input>
     </form>
 
 
@@ -69,14 +76,15 @@
   [buttonsText]="['На главную']"
   [description]="'Вы успешно вошли в свой аккаунт!'"
 ></app-modal>
-<app-modal
-  @modal
 
-  *ngIf="unsuccessfusAttemptModalShow"
+<app-modal 
+  [ngStyle]="{'z-index':100}"
+  @modal
+  *ngIf="failAttemptModalShow"
   [style]="'prim'"
   [title]="'Неудачная попытка входа'"
   [type]="'Ok'"
-  (resultEmit)="handleErrorModalResult()"
+  (resultEmit)="handleFailModalResult()"
   [buttonsText]="['Хорошо']"
-  [description]="unsuccessfusAttemptModalText"
+  [description]="'Вы ввели неправильный пароль'"
 ></app-modal>

@@ -3,24 +3,28 @@
 
 
 <div class="block">
-    <div routerLink="/recipes/best" class="head">
-        <h2>Популярные рецепты</h2>
-
-        <svg-icon class="arrow-svg" [applyClass]="true"
-            [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
-    </div>
+<a routerLink="/recipes/best">
+        <div  class="head">
+            <h2>Популярные рецепты</h2>
+    
+            <svg-icon class="arrow-svg" [applyClass]="true"
+                [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
+        </div>
+</a>
     <div class="recipes horizontal">
         <app-horizontal-recipe-list [recipes]="popularRecipes"></app-horizontal-recipe-list>
     </div>
 </div>
 
 <div class="block">
-   <div routerLink="/sections" class="head">
-        <h2>Разделы</h2>
-
-        <svg-icon class="arrow-svg" [applyClass]="true"
-            [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
-    </div>
+   <a routerLink="/sections">
+       <div  class="head">
+            <h2>Разделы</h2>
+    
+            <svg-icon class="arrow-svg" [applyClass]="true"
+                [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
+        </div>
+   </a>
    <div class="recipes"> <app-horizontal-category-list [context]="'section'" [showRecipesNumber]="true"  [categories]="allSections"></app-horizontal-category-list></div>
 
 </div>
@@ -31,35 +35,39 @@
     [label]="'Откроем мир вкуса вместе'" [buttonText]="'Создать аккаунт'"
     [background]="'reg-banner-background'"></app-banner>
 
-<app-banner *ngIf="currentUser.id !== 0" (click)="creatingMode=true"
-    [info]="'Добавляйте подробные проверенные временем рецепты и делитесь опытом с другими кулинарами'"
-    [label]="'Добавляйте рецепты и делитесь ими'" [buttonText]="'Создать рецепт'"
-    [background]="'share-recipes-banner-background'"></app-banner>
+<app-banner *ngIf="currentUser.id !== 0"
+    [info]="'Добавляй подробные, проверенные временем рецепты и делись опытом с другими кулинарами'"
+    [label]="'Добавляй рецепты и делитесь ими'" [buttonText]="'Создать рецепт'"
+    [background]="'share-recipes-banner-background'"  (clickButton)="creatingMode=true"></app-banner>
 
 
 <div class="block">
-    <div routerLink="/recipes/recent" class="head">
-        <h2>Свежие рецепты</h2>
-
-        <svg-icon class="arrow-svg" [applyClass]="true"
-            [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
-    </div>
+    <a routerLink="/recipes/recent">
+        <div  class="head">
+            <h2>Свежие рецепты</h2>
+    
+            <svg-icon class="arrow-svg" [applyClass]="true"
+                [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
+        </div>
+    </a>
     <div class="recipes horizontal"><app-horizontal-recipe-list  [recipes]="recentRecipes"></app-horizontal-recipe-list></div>
 
 </div>
 <app-banner *ngIf="currentUser.id !== 0" [link]="'cooks'"
-    [info]="'Посмотрите профили кулинаров и подчерпните идеи для ведения собственного профиля и рецептов!'"
-    [label]="'Находите вдохновение совсем рядом'" [buttonText]="'Все кулинары'"
+    [info]="'Посмотри профили кулинаров и подчерпни идеи для ведения собственного профиля и рецептов!'"
+    [label]="'Находи вдохновение совсем рядом'" [buttonText]="'Все кулинары'"
     [background]="'inspiration-banner-background'"></app-banner>
 
 <div class="block" *ngIf="currentUser.id!==0 && userRecipes.length>0">
 
-    <div routerLink="/recipes/yours" class="head">
-        <h2>Ваши рецепты</h2>
-
-        <svg-icon class="arrow-svg" [applyClass]="true"
-            [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
-    </div>
+    <a routerLink="/recipes/yours" >
+        <div class="head">
+            <h2>Твои рецепты</h2>
+    
+            <svg-icon class="arrow-svg" [applyClass]="true"
+                [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
+        </div>
+    </a>
 
 
     <div *ngIf="userRecipes.length >=4; else vertical">
@@ -78,4 +86,4 @@
 
 </div>
 
-  <app-recipe-creating style="z-index:10; position: fixed;" *ngIf="creatingMode" (closeEmitter)="creatingMode=false" @modal ></app-recipe-creating>
+  <app-recipe-create style="z-index:10; position: fixed;" *ngIf="creatingMode"  (closeEmitter)="closeEdit()" @modal ></app-recipe-create>

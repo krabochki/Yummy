@@ -14,14 +14,18 @@ import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { loginMask, passMask, usernameMask } from 'src/tools/regex';
 import { AuthService } from '../../services/auth.service';
 import { modal } from 'src/tools/animations';
+import { customPatternValidator ,emailExistsValidator} from 'src/tools/validators';
 import {
   AbstractControl,
   FormBuilder,
   FormGroup,
+  ValidationErrors,
   ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
+import { usernameExistsValidator } from 'src/tools/validators';
+import { getCurrentDate } from 'src/tools/common';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
@@ -32,11 +36,13 @@ import { Subject, takeUntil } from 'rxjs';
 export class RegisterComponent implements OnInit, OnDestroy {
   modalAreYouSureShow: boolean = false;
   modalSuccessShow: boolean = false;
-  modalFailShow: boolean = false;
-  failText: string = '';
   users: IUser[] = [];
-  form: FormGroup;
+  form: FormGroup
   protected destroyed$: Subject<void> = new Subject<void>();
+
+  createUser: IUser = nullUser;
+
+  usernameValidator = usernameExistsValidator;
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -47,36 +53,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
   ) {
     this.titleService.setTitle('Регистрация');
-
     this.form = this.fb.group({
-      email: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(5),
-          Validators.maxLength(64),
-          this.customPatternValidator(loginMask),
-        ],
-      ],
-      username: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(4),
-          Validators.maxLength(20),
-          this.customPatternValidator(usernameMask),
-        ],
-      ],
-      password: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(8),
-          Validators.maxLength(20),
-          this.customPatternValidator(passMask),
-        ],
-      ],
-    });
+    })
   }
 
   ngOnInit(): void {
@@ -85,14 +63,38 @@ export class RegisterComponent implements OnInit, OnDestroy {
       .subscribe((receivedUsers: IUser[]) => {
         this.users = receivedUsers;
       });
-  }
-
-  //Валидатор по маске regex для формы
-  customPatternValidator(pattern: RegExp): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: any } | null => {
-      const isValid = pattern.test(control.value);
-      return isValid ? null : { customPattern: { value: control.value } };
-    };
+    
+     this.form = this.fb.group({
+       email: [
+         '',
+         [
+           Validators.required,
+           Validators.minLength(5),
+           Validators.maxLength(64),
+           customPatternValidator(loginMask),
+           emailExistsValidator(this.users),
+         ],
+       ],
+       username: [
+         '',
+         [
+           Validators.required,
+           Validators.minLength(4),
+           Validators.maxLength(20),
+           customPatternValidator(usernameMask),
+           usernameExistsValidator(this.users, nullUser),
+         ],
+       ],
+       password: [
+         '',
+         [
+           Validators.required,
+           Validators.minLength(8),
+           Validators.maxLength(20),
+           customPatternValidator(passMask),
+         ],
+       ],
+     });
   }
 
   registration(): void {
@@ -103,48 +105,23 @@ export class RegisterComponent implements OnInit, OnDestroy {
         username: this.form.value.username,
         email: this.form.value.email,
         password: this.form.value.password,
+        registrationDate: getCurrentDate(),
         id: maxId + 1,
       };
 
-      const emailExists = this.authService.isEmailExist(
-        this.users,
-        userData.email,
-      );
-      const usernameExists = this.authService.isUsernameExist(
-        this.users,
-        userData.username,
-      );
-
-      if (!emailExists && !usernameExists) {
-        this.usersService
-          .postUser(userData)
-          .subscribe(() => {
-            localStorage.setItem('currentUser', JSON.stringify(userData));
-            this.authService.setCurrentUser(userData);
-            this.modalSuccessShow = true;
-            this.cd.markForCheck();
-            (error: Error) => {
-              console.error(
-                'Регистрация | Ошибка в AuthService (loginUser): ' +
-                  error.message,
-              );
-            };
-          });
-      } else {
-        if (emailExists) {
-          this.failText =
-            'Регистрация невозможна, так как пользователь с данной электронной почтой уже существует.';
-        }
-        if (usernameExists) {
-          this.failText =
-            'Регистрация невозможна, так как пользователь с данным именем пользователя уже существует.';
-        }
-        if (usernameExists && emailExists) {
-          this.failText =
-            'Регистрация невозможна, так как пользователь с данной электронной почтой и именем пользователя уже существует.';
-        }
-        this.modalFailShow = true;
-      }
+        this.usersService.postUser(userData).subscribe(() => {
+          localStorage.setItem('currentUser', JSON.stringify(userData));
+          this.authService.setCurrentUser(userData);
+          this.modalSuccessShow = true;
+          this.cd.markForCheck();
+          (error: Error) => {
+            console.error(
+              'Регистрация | Ошибка в AuthService (loginUser): ' +
+                error.message,
+            );
+          };
+        });
+     
     }
   }
 
@@ -157,9 +134,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
   handleSuccessModalResult(): void {
     this.router.navigate(['/']);
     this.modalSuccessShow = false;
-  }
-  handleFailModalResult(): void {
-    this.modalFailShow = false;
   }
 
   ngOnDestroy(): void {

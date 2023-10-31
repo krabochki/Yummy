@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Input,
   OnDestroy,
@@ -9,7 +10,7 @@ import { AuthService } from 'src/app/modules/authentication/services/auth.servic
 import { IRecipe, nullRecipe } from 'src/app/modules/recipes/models/recipes';
 import { RecipeService } from '../../../services/recipe.service';
 import { trigger } from '@angular/animations';
-import { modal } from 'src/tools/animations';
+import { heightAnim, modal, onlyHeight } from 'src/tools/animations';
 import { Router } from '@angular/router';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
@@ -20,41 +21,41 @@ import { Subject, takeUntil } from 'rxjs';
   templateUrl: './recipe-list-item.component.html',
   styleUrls: ['./recipe-list-item.component.scss'],
   animations: [trigger('modal', modal())],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecipeListItemComponent implements OnInit, OnDestroy {
   @Input() recipe: IRecipe = nullRecipe;
   @Input() context: string = '';
+  @Input() showAuthor: boolean = true;
+
   protected destroyed$: Subject<void> = new Subject<void>();
 
   likes: number = 0;
   cooks: number = 0;
-
   editMode: boolean = false;
-
   isRecipeFavorite: boolean = false;
   isRecipeLiked: boolean = false;
   isRecipeCooked: boolean = false;
-
   noAccessModalShow: boolean = false;
-
   dataLoaded = false;
-
   currentUserId = 0;
   author: IUser = { ...nullUser };
+  successEditModalShow: boolean = false;
+  moreAuthorButtons: boolean = false;
+  publishModalShow: boolean = false;
+  successPublishModalShow: boolean = false;
+  voteModalShow: boolean = false;
+  successVoteModalShow: boolean = false;
 
   constructor(
     private recipeService: RecipeService,
     private authService: AuthService,
     private userService: UserService,
     private router: Router,
+    private cd: ChangeDetectorRef,
   ) {}
-
-  @Input() showAuthor: boolean = true;
 
   editModeOff() {
     this.editMode = false;
-    console.log('off')
   }
   ngOnInit() {
     this.authService.currentUser$
@@ -79,6 +80,8 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
                 this.currentUserId,
               );
             }
+
+            this.cd.markForCheck();
           });
       });
 
@@ -91,6 +94,7 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
         });
         if (findedAuthor) this.author = findedAuthor;
         this.dataLoaded = true;
+        this.cd.markForCheck();
       });
   }
 
@@ -121,7 +125,70 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
       );
   }
 
-  //(действия модератора по одобрению рецептов потом будут в компоненте полной страницы)
+  handleEditedRecipe(event: IRecipe) {
+    this.editMode = false;
+    this.editedRecipe = event;
+    if (this.editedRecipe.status === 'awaits') {
+      this.isAwaitingApprove = true;
+    }
+    this.successEditModalShow = true;
+  }
+
+  handleVoteModal(event: boolean) {
+    if (event) {
+      this.recipe = this.recipeService.voteForRecipe(
+        this.recipe,
+        this.currentUserId,
+        true,
+      );
+    } else {
+      this.recipe = this.recipeService.voteForRecipe(
+        this.recipe,
+        this.currentUserId,
+        false,
+      );
+    }
+    this.cookThisRecipe();
+    this.voteModalShow = false;
+  }
+  handleSuccessVoteModal() {
+    this.recipeService
+      .updateRecipe(this.recipe)
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(
+        () => console.log('Рецепт отмечен приготовленным'),
+        (error: Error) =>
+          console.error(
+            'Ошибка отметки рецепта приготовленным: ' + error.message,
+          ),
+      );
+    this.successVoteModalShow = false;
+  }
+  isAwaitingApprove: boolean = false;
+  editedRecipe: IRecipe = nullRecipe;
+  deleteRecipeModalShow: boolean = false;
+  successDeleteModalShow: boolean = false;
+  handleDeleteRecipeModal(event: boolean) {
+    if (event) {
+      this.successDeleteModalShow = true;
+    }
+    this.deleteRecipeModalShow = false;
+  }
+  handleSuccessEditModal() {
+    //?????????????? если наоборот сначала обновить то это модальное окно пропускается
+    this.recipeService.updateRecipe(this.editedRecipe).subscribe(() => {
+      this.router.navigateByUrl('recipes/list/' + this.editedRecipe.id);
+    });
+  }
+  handleSuccessDeleteModal() {
+    //?????????????? если наоборот сначала удалить то это модальное окно пропускается
+    this.recipeService.deleteRecipe(this.recipe.id);
+  }
+  handleInnerFunction(event: Event) {
+    // Этот метод вызывается при клике на внутренний элемент рецепта
+    // Останавливаем всплытие события, чтобы оно не дошло до внешнего контейнера
+    event.stopPropagation();
+  }
 
   //лайкаем рецепт
   likeThisRecipe() {
@@ -147,6 +214,7 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
   }
   //готовим рецепт
   cookThisRecipe() {
+
     if (this.currentUserId === 0) {
       this.noAccessModalShow = true;
       return;
@@ -158,16 +226,38 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
       ? this.recipeService.cookRecipe(this.currentUserId, this.recipe)
       : this.recipeService.uncookRecipe(this.currentUserId, this.recipe);
 
-    this.recipeService
-      .updateRecipe(this.recipe)
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe(
-        () => console.log('Рецепт успешно отмечен приготовленным'),
-        (error: Error) =>
-          console.error(
-            'Ошибка отметки рецепта приготовленным: ' + error.message,
-          ),
+    if (!this.isRecipeCooked) {
+      this.recipe = this.recipeService.removeVote(
+        this.recipe,
+        this.currentUserId,
       );
+         this.recipeService
+           .updateRecipe(this.recipe)
+           .pipe(takeUntil(this.destroyed$))
+           .subscribe(
+             () => console.log('Рецепт отмечен приготовленным'),
+             (error: Error) =>
+               console.error(
+                 'Ошибка отметки рецепта приготовленным: ' + error.message,
+               ),
+           );
+    }
+    if (this.isRecipeCooked) this.successVoteModalShow = true;
+
+    
+ 
+  }
+
+  handlePublishRecipeModal(event: boolean) {
+    if (event) {
+      this.successPublishModalShow = true;
+    }
+    this.publishModalShow = false;
+  }
+  handleSuccessPublishModal() {
+    this.recipe.status = 'awaits';
+    this.recipeService.updateRecipe(this.recipe).subscribe();
+    this.successPublishModalShow = false;
   }
 
   // модальное окно (пользователь не вошел в аккаунт)

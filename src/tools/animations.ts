@@ -13,11 +13,11 @@ export function modal() {
   return [
     transition(':enter', [
       style({ opacity: '0' }),
-      animate('300ms ease-out', style({ opacity: '1' })),
+      animate('250ms ease-in-out', style({ opacity: '1' })),
     ]),
     transition(':leave', [
       style({ opacity: '1' }),
-      animate('300ms ease-in', style({ opacity: '0' })),
+      animate('250ms ease-in-out', style({ opacity: '0' })),
     ]),
   ];
 }
@@ -62,10 +62,13 @@ export function onlyHeight() {
 export function heightAnim() {
   return [
     transition(':enter', [
-      style({ height: '0', opacity: '0' }),
-      animate('300ms ease-in', style({ height: '*', opacity: '1' })),
+      style({ height: '0', opacity: '0','overflow':'hidden' }),
+      animate('300ms ease-in', style({ height: '*', opacity: '1','overflow':'visible' })),
     ]),
-    transition(':leave', [
+    transition(':leave',
+    
+      
+      [style({ 'overflow':'hidden'}),
       animate('300ms ease-in', style({ height: '0', opacity: '0' })),
     ]),
   ];

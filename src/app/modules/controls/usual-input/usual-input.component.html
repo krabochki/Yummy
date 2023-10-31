@@ -1,32 +1,58 @@
-<div class="input">
-  <div class="input-cont">
-    <input
-      [maxlength]="max?max:null"
-      type="text"
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="wrap">
+  <input
+  *ngIf="inputType==='input' || inputType==='password';else textarea"
+    [maxlength]="max ? max : null"
+            [type]="showPassword && inputType==='password'?'password':'text'"
+
+    #input
+    [value]="value"
+    (keyup)="change()"
+    [(ngModel)]="value"
+    [disabled]="disabled"
+    autocomplete="off"
+    type="text"
+    [ngClass]="{
+      uncorrect: error !== ''
+    }"
+    [placeholder]="placeholder"
+    (focus)="focus()"
+    (blur)="blur()"
+  />
+  <ng-template #textarea>
+    <textarea
+      [ngClass]="{ active: !isSleep && isFocused, uncorrect: error !== '' }"
+      spellcheck="false"
       #input
-      [value]="value"
-      (keyup)="change()"
-      [(ngModel)]="value"
-      [disabled]="disabled"
       autocomplete="off"
-      type="text"
-      [ngClass]="{
-        uncorrect: error !== ''
-      }"
+      [maxlength]="max ? max : null"
+      [(ngModel)]="value"
+      (keyup)="change()"
       (focus)="focus()"
       (blur)="blur()"
-    />
+      [placeholder]="placeholder"
+      rows="4"
+    ></textarea>
+  </ng-template>
 
-    <p
-      class="placeholder"
-      [ngClass]="{
-        uncorrect: error !== '',
-        up: this.isFocused,
-        sleep: this.isSleep
-      }"
-    >
-      {{ placeholder }}
-    </p>
-  </div>
-  <div *ngIf="showError" class="error">{{ error }}</div>
+   <span class="eye" *ngIf="inputType==='password'" (click)="eye()">
+      <svg-icon
+        [applyClass]="true"
+        [class]="error !== '' ? 'uncorrect' : 'correct'"
+        *ngIf="!this.showPassword"
+        [src]="'../../../../assets/images/svg/eye-close.svg'"
+      ></svg-icon>
+
+      <svg-icon
+        *ngIf="this.showPassword"
+        [applyClass]="true"
+                [class]="error !== '' ? 'uncorrect' : 'correct'"
+        [src]="'../../../../assets/images/svg/eye-open.svg'"
+      ></svg-icon>
+    </span>
+    
+  <p class="howmuch" *ngIf="max!==undefined">{{ value.length }}/{{ max }}</p>
 </div>
+
+<div *ngIf="showError" class="error">{{ error }}</div>

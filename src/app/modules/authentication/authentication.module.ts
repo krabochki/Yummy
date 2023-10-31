@@ -16,6 +16,7 @@ import { AdminGuard } from './guards/admin.guard';
 import { SvgIconComponent, provideAngularSvgIcon } from 'angular-svg-icon';
 import { RecipesModule } from '../recipes/recipes.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { TimePastPipe } from 'ng-time-past-pipe';
 @NgModule({
   declarations: [
 
@@ -34,6 +35,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     AuthenticationRoutingModule,
     ControlsModule,
     SvgIconComponent,
+    TimePastPipe,
     ReactiveFormsModule,
     RecipesModule
   ],

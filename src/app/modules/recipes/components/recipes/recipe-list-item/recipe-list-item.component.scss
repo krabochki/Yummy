@@ -1,6 +1,5 @@
 @import "../../../../../../tools/UI/UI.scss";
 
-
 @keyframes loading {
   0% {
     background-position: -100px;
@@ -11,49 +10,28 @@
   }
 }
 
-.recipe .fav.disabled{
-  background-color: var(--color-foreground-unactive) ;
+.recipe .fav.disabled {
+  background-color: var(--color-foreground-unactive);
   pointer-events: none;
 }
 
-.no-author{margin-bottom: 0.4em;}
-.author{
+
+* {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+.no-author {
+  margin-bottom: 0.4em;
+}
+.author {
   cursor: pointer;
   font-size: 0.9em;
   margin-bottom: 0.4em;
-}
-.moder-buttons{
-  position: absolute;
-  top:0;
-  
-  left:0;
-  right: 0;
-  
-
-  padding: 1em 1em;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  
-  width: 100%;
-  button{
-    display: flex;
-    width: 2em;
-  height: 2em;
-    align-items: center;
-    justify-content: center;
-    padding:0.5em;
-    border-radius: 100%;
-  }
-
-  button:first-of-type{
-    background-color: rgb(247, 107, 107);
-  }
-    button:last-of-type{
-    background-color: rgb(103, 211, 125);
-  }
-
 }
 
 .recipe {
@@ -79,7 +57,7 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-padding: 2em;
+    padding: 2em;
     &.null {
       p {
         opacity: 0.5;
@@ -134,6 +112,9 @@ padding: 2em;
 
   .bottom {
     width: 100%;
+        max-width:100%;
+        overflow: hidden;
+
     justify-self: flex-end;
     align-self: flex-end;
   }
@@ -142,7 +123,81 @@ padding: 2em;
     justify-self: flex-end;
     align-self: start;
     width: 100%;
+    row-gap: 0.4em;
+
+
+    display: flex;
+    position: relative;
+
+    flex-direction: column;
   }
+
+  .more-buttons{
+       column-gap: 0.25em;
+       right: 2.5em;
+    display: flex;
+    flex-direction: row-reverse;
+    position: absolute;
+
+    
+  }
+  .top-button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+
+        position: relative;
+
+        &:last-of-type{
+          background-color: var(--color-primary-focus);
+          opacity: 0.65;
+          transition: 0.3s ease-in-out;
+          &:hover{
+            opacity: 1;
+          }
+          &::before{
+            display: none;
+          }
+        }
+     &::before {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      margin: auto;
+      content: "";
+      background-color: var(--color-secondary-focus);
+      height: 0px;
+      width: 0px;
+      border-radius: 100%;
+      z-index: 0;
+      transition: 0.2s ease-in-out;
+    }
+    &:hover::before{
+      width: 100%;
+      height: 100%;
+    }
+
+    .remove-svg{
+      z-index: 2;
+      display: flex;
+    align-items: center;
+    justify-content: center;
+      fill: var(--color-foreground);
+            height: 1.3em;
+            width: 1em;
+
+    }
+    cursor: pointer;
+  width: 2em;
+  height: 2em;
+  border-radius: 100%;
+  background-color: var(--color-secondary);
+      margin-left: auto;
+
+}
   .fav {
     border-radius: 100%;
     margin-left: auto;
@@ -158,10 +213,14 @@ padding: 2em;
     position: relative;
 
     overflow: hidden;
-    &::before{
+    &::before {
       position: absolute;
-      top:0;bottom:0;right:0;left:0;margin:auto;
-      content: '';
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      margin: auto;
+      content: "";
       background-color: var(--color-primary-focus);
       height: 0px;
       width: 0px;
@@ -170,12 +229,13 @@ padding: 2em;
       transition: 0.2s ease-in-out;
     }
 
-    &:hover::before{
-      height:100%;
+    &:hover::before {
+      height: 100%;
       width: 100%;
     }
     .fav-icon {
       z-index: 1;
+      width: 1em;
       fill: white;
       height: 1.3em;
     }
@@ -184,6 +244,8 @@ padding: 2em;
     display: flex;
     z-index: 100;
     column-gap: 1em;
+    
+    
 
     span {
       &.cooked {
@@ -209,7 +271,6 @@ padding: 2em;
     }
     .like-icon {
       fill: white;
-      transition: 0.3s ease-in-out;
       height: 1em;
       margin-bottom: 0.04em;
       &.liked {
@@ -226,20 +287,24 @@ padding: 2em;
     }
   }
 
-  .title {
-    display: flex;
-    align-items: flex-end;
-  }
+
+
   h1 {
     cursor: pointer;
-
     font-size: var(--font-m);
     line-height: 1;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    
+     display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3; /* Количество строк, которые вы хотите отобразить */
+    overflow-wrap: break-word; /* Разрешить перенос длинных слов */
+      hyphens: auto; /* Разрешить перенос слов */
+
+  white-space: normal; /* Изменить на "normal" */
+   overflow-y: hidden;
+   overflow-x: hidden;
+   text-overflow: ellipsis;
+
     font-weight: 600;
     padding-bottom: 0.2em;
   }
@@ -269,8 +334,6 @@ app-modal {
 }
 
 @media (max-width: 900px) {
-
-
   .recipe {
     box-shadow: inset 0 -7em 4em rgba($color: #000000, $alpha: 0.5);
 

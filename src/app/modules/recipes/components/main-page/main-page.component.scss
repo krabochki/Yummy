@@ -14,10 +14,11 @@
   display: flex;
   align-items: center;
   column-gap: 1.5em;
-    margin-bottom: 1.75em;
+  width:fit-content;
   cursor: pointer;
 
-      padding: 0 calc(14.4vw + 0 * (100vw - 768px) / 760);
+      margin: 0 calc(14.4vw + 0 * (100vw - 768px) / 760);
+    margin-bottom: 1.75em;
 
 }
 h2{
@@ -42,7 +43,7 @@ h2{
   &.horizontal::after {
     margin: 0 calc(14.4vw + 0 * (100vw - 768px) / 760);
 
-    height: calc(100% - 1.3em);
+    height: calc(100% - 0.8em);
     width: 15%;
     background: linear-gradient(to right, transparent 0%,var(--color-background));
 
@@ -67,7 +68,8 @@ h2{
 
 @media (max-width: 480px) {
 .head{
-  padding: 0 6%;
+  margin-left: 6%;
+  margin-right: 6%;
 }
 
   .recipes  {

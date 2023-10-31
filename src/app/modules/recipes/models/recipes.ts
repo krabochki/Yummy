@@ -1,9 +1,9 @@
-import { IComment } from 'src/app/modules/user-pages/models/comments';
+import { IComment, ICommentReport } from 'src/app/modules/recipes/models/comments';
 
 export interface IRecipe {
   id: number; // Уникальный идентификатор рецепта
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  mainImage: FormData|null; // URL основного фото рецепта
+  mainImage: FormData | null; // URL основного фото рецепта
   name: string; // Название рецепта
   description: string; // Описание рецепта
   preparationTime: string; // Время приготовления
@@ -22,20 +22,29 @@ export interface IRecipe {
   publicationDate: string; // Дата регистрации пользователя
   favoritesId: number[];
   status: 'awaits' | 'private' | 'public';
+  reports: ICommentReport[];
+  statistics: IRecipeStatistics[];
 }
+
+export interface IRecipeStatistics{
+  userId: number,
+  answer:boolean
+} 
 export const nullRecipe: IRecipe = {
   id: 0,
   mainImage: null,
   name: '',
   description: '',
   cookingTime: '',
-  preparationTime:'',
+  preparationTime: '',
+  reports:[],
   servings: 0,
   origin: '',
   ingredients: [],
   nutritions: [],
   instructions: [],
   categories: [],
+  statistics:[],
   history: '',
   authorId: 0,
   likesId: [],
@@ -43,7 +52,7 @@ export const nullRecipe: IRecipe = {
   comments: [],
   favoritesId: [],
   publicationDate: '01-01-2000',
-  status: 'private'
+  status: 'private',
 };
 export interface Ingredient {
   name: string; // Название ингредиента

@@ -23,7 +23,7 @@ modal;
 export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   recipeSelectItems: string[] = [
     'Рецепты',
-    'Ваши рецепты',
+    'Твои рецепты',
     'Все рецепты',
     'Разделы',
     'Закладки',
@@ -32,7 +32,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   creatingMode = false;
   cooksSelectItems: string[] = [
     'Кулинары',
-    'Ваш профиль',
+    'Твой профиль',
     'Все кулинары',
     'Обновления',
   ];
@@ -93,7 +93,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedUser) => {
         this.currentUser = receivedUser;
-        this.cookRouterLinks[0] += this.currentUser.id;
+        this.cookRouterLinks[0] = '/cooks/list/'+ this.currentUser.id;
       });
   }
 

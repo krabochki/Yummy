@@ -77,6 +77,8 @@ export class UserPageComponent implements OnInit, OnDestroy {
   users: IUser[] = [];
   ngOnInit() {
     this.route.data.subscribe((data: Data) => {
+      this.recipesEnabled = true;
+      this.moreInfoEnabled = false;
       this.user = data['user'];
       this.userId = this.user.id;
 

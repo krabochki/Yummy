@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { IUser } from '../../models/users';
 
 @Component({
   selector: 'app-users-list',
@@ -6,5 +7,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./users-list.component.scss']
 })
 export class UsersListComponent {
+
+  @Input() public users:IUser[] = []
 
 }

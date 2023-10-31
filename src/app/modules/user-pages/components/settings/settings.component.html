@@ -25,7 +25,7 @@
         </div>
       </div>
       <div>
-        <p routerLink="/about">О сайте...</p>
+        <p><a routerLink="/about">О сайте...</a></p>
         <p  (click)="showSocialShare=!showSocialShare">Пригласите друзей <span>{{showSocialShare?'<':'>'}}</span></p>
         <div @heightAnim *ngIf="showSocialShare" class="socials">
 

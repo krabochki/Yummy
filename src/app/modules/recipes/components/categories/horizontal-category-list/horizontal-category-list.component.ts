@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, HostListener, Input, OnChanges, ViewChild } from '@angular/core';
+import { DragScrollComponent } from 'ngx-drag-scroll';
 import { ICategory, ISection, nullCategory, nullSection } from 'src/app/modules/recipes/models/categories';
 
 @Component({
@@ -8,34 +9,38 @@ import { ICategory, ISection, nullCategory, nullSection } from 'src/app/modules/
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HorizontalCategoryListComponent implements OnChanges {
-  @Input() categories: ICategory[] | ISection[] = [];
+  @Input() categories: any[] = [];
   @Input() showRecipesNumber: boolean = false;
 
   @ViewChild('list')
   list: ElementRef | null = null;
   @Input() context: 'category' | 'section' = 'category';
 
-  scrollLeft() {
-    if (this.list)
-      this.list.nativeElement.scrollLeft -=
-        this.list.nativeElement.scrollWidth / this.categories.length;
-  }
 
-  scrollRight() {
-    if (this.list)
-      this.list.nativeElement.scrollLeft +=
-        this.list.nativeElement.scrollWidth / this.categories.length;
-  }
 
   showScrollButtons = true;
-  ngOnChanges() {
-    this.onResize();
-  }
+
+
 
   filterNullBlocks() {
     this.categories = this.categories.filter((block) => block.id !== 0);
   }
 
+  disableDrag = false;
+  @ViewChild('nav', { read: DragScrollComponent }) ds?: DragScrollComponent;
+
+
+  ngOnChanges() {
+    this.onResize();
+  }
+
+  scrollLeft() {
+    this.ds?.moveLeft();
+  }
+
+  scrollRight() {
+    this.ds?.moveRight();
+  }
 
   //фиктивные блоки для случая если их меньше чем длина блоков в строке(чтобы не было пустого пространства) и проверка нужны для кнопки скролла
   blockScheme(blocksInRow: number) {
@@ -51,13 +56,13 @@ export class HorizontalCategoryListComponent implements OnChanges {
         this.categories.length < 5:
         this.showScrollButtons = false;
         break;
-      case window.innerWidth > 610 &&
+      case window.innerWidth > 700 &&
         window.innerWidth <= 960 &&
         this.categories.length < 4:
         this.showScrollButtons = false;
         break;
       case window.innerWidth > 480 &&
-        window.innerWidth <= 610 &&
+        window.innerWidth <= 700 &&
         this.categories.length < 3:
         this.showScrollButtons = false;
         break;
@@ -65,20 +70,18 @@ export class HorizontalCategoryListComponent implements OnChanges {
         this.showScrollButtons = true;
     }
 
-
-      
-      this.filterNullBlocks();
-      if (this.categories.length < blocksInRow) {
-        while (this.categories.length < blocksInRow) {
-          this.categories.push(nullSection);
-        }
+    this.filterNullBlocks();
+    if (this.categories.length < blocksInRow) {
+      while (this.categories.length < blocksInRow) {
+        this.categories.push(nullSection);
       }
+    }
   }
-
-  
 
   @HostListener('window:resize', ['$event'])
   onResize() {
+        this.disableDrag = window.innerWidth < 480;
+
     const event = window.innerWidth;
     switch (true) {
       case event < 480:
@@ -87,10 +90,10 @@ export class HorizontalCategoryListComponent implements OnChanges {
           while (this.categories.length !== 3)
             this.categories.push(nullSection);
         break;
-      case event > 480 && event <= 610:
+      case event > 480 && event <= 700:
         this.blockScheme(2);
         break;
-      case event > 610 && event <= 960:
+      case event > 700 && event <= 960:
         this.blockScheme(3);
         break;
       case event > 960 && event <= 1400:

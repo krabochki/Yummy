@@ -1,14 +1,30 @@
-<div class="category-cont"  [title]="category.name +  ' [' + recipesNumber + ']'" [routerLink]="context==='category'?'/categories/list/'+category.id:'sections/list/'+category.id" *ngIf="category.id>0; else nullCategory" >
-  <div class="category"   *ngIf="category.id>0; else nullCategory" >
-  
-      
-  </div>
-     <div style="position: relative; overflow: visible;"> <p ><sup *ngIf="showRecipesNumber">({{recipesNumber}})</sup><span>{{category.name}}</span> </p></div>
+<div
+  class="category-cont"
+  [title]="category.name + ' [' + recipesNumber + ']'"
+  *ngIf="category.id > 0; else nullCategory"
+>
+  <div class="category" *ngIf="category.id > 0; else nullCategory"></div>
+  <a  [routerLink]="
+        context === 'category'
+          ? '/categories/list/' + category.id
+          : 'sections/list/' + category.id
+      ">
+    <div
+     
+      style="position: relative; overflow: visible"
+    >
+      <h1 class="name"><sup>{{recipesNumber}} </sup>{{category.name}}</h1>
+    </div>
+  </a>
 </div>
 
-<ng-template #nullCategory  >
+<ng-template #nullCategory>
   <div class="category null">
-        <p> Скоро...</p>
-    <svg-icon [applyClass]="true" class="svg" [src]="'../../../../../assets/images/svg/no-category.svg'"></svg-icon>
-    </div>
+    <p>Скоро...</p>
+    <svg-icon
+      [applyClass]="true"
+      class="svg"
+      [src]="'../../../../../assets/images/svg/no-category.svg'"
+    ></svg-icon>
+  </div>
 </ng-template>

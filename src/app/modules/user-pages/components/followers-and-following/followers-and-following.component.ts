@@ -7,6 +7,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  Renderer2,
 } from '@angular/core';
 import { IUser, nullUser } from '../../models/users';
 import { Router } from '@angular/router';
@@ -61,12 +62,17 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
   protected destroyed$: Subject<void> = new Subject<void>();
 
   constructor(
+    private renderer: Renderer2,
+
     private cd: ChangeDetectorRef,
     private router: Router,
     public userService: UserService,
   ) {}
 
   ngOnInit(): void {
+    this.renderer.addClass(document.body, 'hide-overflow');
+    (<HTMLElement>document.querySelector('.header')).style.width =
+      'calc(100% - 16px)';
     this.userService.users$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((data) => {
@@ -88,19 +94,15 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
       });
   }
 
-  switchObject(object: 'following' |'followers') {
+  switchObject(object: 'following' | 'followers') {
     if (this.searchMode) this.searchOnOff();
     if (object === 'following') {
-      
       this.object = 'following';
-    }
-    else {
+    } else {
       this.object = 'followers';
     }
-    this.cd.markForCheck()
+    this.cd.markForCheck();
   }
-
-
 
   //подписка текущего пользователя на людей в списке
   follow(user: IUser) {
@@ -163,8 +165,14 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
       }
     }
   }
+  clickBackgroundNotContent(elem: Event) {
+    if (elem.target !== elem.currentTarget) return;
+    this.closeEmitter.emit(true);
+  }
   ngOnDestroy(): void {
     this.destroyed$.next();
     this.destroyed$.complete();
+    this.renderer.removeClass(document.body, 'hide-overflow');
+    (<HTMLElement>document.querySelector('.header')).style.width = '100%';
   }
 }

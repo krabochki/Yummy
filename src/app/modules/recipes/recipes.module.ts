@@ -1,9 +1,8 @@
-import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { CommonModule, NgFor } from '@angular/common';
 import { RecipesRoutingModule } from './recipes-routing.module';
 import { RecipesComponent } from './recipes.component';
 import { RecipePageComponent } from './components/recipes/recipe-page/recipe-page.component';
-import { RecipeCreatingComponent } from './components/recipes/recipe-creating/recipe-creating.component';
 import { MatchRecipesComponent } from './components/recipes/match-recipes/match-recipes.component';
 import { CategoryCreatingComponent } from './components/categories/category-creating/category-creating.component';
 import { SomeRecipesPageComponent } from './components/recipes/some-recipes-page/some-recipes-page.component';
@@ -18,23 +17,26 @@ import { SvgIconComponent, provideAngularSvgIcon } from 'angular-svg-icon';
 import { ControlsModule } from '../controls/controls.module';
 import { CdkDropList, CdkDragHandle, CdkDrag } from '@angular/cdk/drag-drop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MAT_AUTOCOMPLETE_SCROLL_STRATEGY, MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatInputModule } from '@angular/material/input';
 import { AsyncPipe } from '@angular/common';
    
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
+import { DragScrollModule } from 'ngx-drag-scroll';
 
 import { VerticalRecipeListComponent } from './components/recipes/vertical-recipe-list/vertical-recipe-list.component';
 import { VerticalCategoryListComponent } from './components/categories/vertical-category-list/vertical-category-list.component';
-import { SectionService } from './services/section.service';
-
+import { RecipeCreateComponent } from './components/recipes/recipe-create/recipe-create.component';
+import { CommentComponent } from './components/comments/comment/comment.component';
+import { CommentsListComponent } from './components/comments/comments-list/comments-list.component';
+import { CUSTOM_TIME_DIFF_GENERATOR, TimePastPipe } from 'ng-time-past-pipe';
+import { timeDiffGenerator } from '../controls/time';
 
 @NgModule({
   declarations: [
     RecipesComponent,
+    CommentComponent,CommentsListComponent,
     RecipePageComponent,
+
     MatchRecipesComponent,
     CategoryCreatingComponent,
     SomeRecipesPageComponent,
@@ -42,7 +44,7 @@ import { SectionService } from './services/section.service';
     MainPageComponent,
     CategoryListItemComponent,
     RecipeListItemComponent,
-    RecipeCreatingComponent,
+    RecipeCreateComponent,
     HorizontalRecipeListComponent,
     VerticalRecipeListComponent,
     VerticalCategoryListComponent,
@@ -50,7 +52,10 @@ import { SectionService } from './services/section.service';
   ],
   imports: [
     CommonModule,
+    TimePastPipe,
+    DragScrollModule,
     NgFor,
+    
     ControlsModule,
     RecipesRoutingModule,
     ScrollingModule,
@@ -58,9 +63,6 @@ import { SectionService } from './services/section.service';
     ControlsModule,
     ControlsModule,
     CommonModule,
-    MatFormFieldModule,
-    MatAutocompleteModule,
-    MatInputModule,
     AsyncPipe,
     CdkDropList,
     CdkDragHandle,
@@ -74,15 +76,17 @@ import { SectionService } from './services/section.service';
   ],
   providers: [
     AuthGuard,
+    { provide: CUSTOM_TIME_DIFF_GENERATOR, useValue: timeDiffGenerator },
     provideAngularSvgIcon(),
     { provide: LOCALE_ID, useValue: 'ru' },
   ],
+  
   exports: [
     HorizontalRecipeListComponent,
     VerticalCategoryListComponent,
     HorizontalCategoryListComponent,
     VerticalRecipeListComponent,
-    RecipeCreatingComponent
+    RecipeCreateComponent,
   ],
 })
 export class RecipesModule {}

@@ -1,0 +1,6 @@
+<div class="list">
+    <div  *ngFor="let comment of comments; let i = index"><app-comment [recipe]="recipe" [comment]="comment"></app-comment>
+    
+        <hr *ngIf="i<comments.length-1">
+    </div>
+</div>

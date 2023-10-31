@@ -2,7 +2,7 @@
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 
 <div class="select">
-    <div class="head" [ngStyle]="{'z-index':open?'9':'0'}" (click)="open=!open">
+    <div class="head"  [ngStyle]="{'z-index':open?'9':'0'}" (click)="open=!open">
         <p>{{items[0]}}</p>
         <svg width="11" height="7" viewBox="0 0 11 7" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M5.22527 5.00078L9.37501 0.916016L10.3257 1.82358L5.22527 6.74506L0.124857 1.82358L1.07553 0.916016L5.22527 5.00078Z" />
@@ -11,11 +11,13 @@
     </div>
     
     <ul class="dropdown" @select *ngIf="open" (click)="this.clickedEmit.emit(true)">
-    <li (click)="linkClick(routes[i].disabled);open=false" *ngFor="let item of shiftedItems, let i = index"
-     [routerLink]="routes[i].routeLink"  [ngClass]="{'dsl':(routes[i].disabled?true:false)}">
-
-{{item}}
-    </li>
+    <a [ngClass]="{'dsl':(routes[i].disabled?true:false)}" *ngFor="let item of shiftedItems, let i = index" (click)="linkClick(routes[i].disabled);open=false" 
+         [routerLink]="routes[i].disabled?null:routes[i].routeLink" >
+        <li  >
+    
+    {{item}}
+        </li>
+    </a>
 
     </ul>
 </div>

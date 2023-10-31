@@ -31,10 +31,11 @@ export class UsualInputComponent implements OnInit, OnChanges {
   @Input() error: string = '';
   @Input() max: number | undefined = undefined;
   @Input() showError = true;
-
   @Input() value = '';
-
+  @Input() inputType: 'input' | 'textarea' | 'password' = 'input';
   @Input() inputRequired: boolean = false;
+
+  showPassword = true; //показывается ли пароль
 
   isSleep: boolean = false; //подсвечивается ли плейсхолдер
   isFocused = false; //есть ли фокус в инпуте (нужно ли подсвечивать плейсхолдер)
@@ -47,7 +48,6 @@ export class UsualInputComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    
     if (this.value !== '' && !this.getNotEmptyValue && !this.isFocused) {
       this.focus();
       this.blur();
@@ -62,7 +62,12 @@ export class UsualInputComponent implements OnInit, OnChanges {
 
   //Появление фокуса
   focus() {
-    
+    setTimeout(() => {
+      this.input?.nativeElement.setSelectionRange(
+        this.value.length,
+        this.value.length,
+      );
+    });
     this.isFocused = true;
     this.isSleep = false;
   }
@@ -74,6 +79,11 @@ export class UsualInputComponent implements OnInit, OnChanges {
       this.isFocused = true;
       this.isSleep = true;
     }
+  }
+
+  eye() {
+    this.showPassword = !this.showPassword;
+    this.input?.nativeElement.focus();
   }
 
   onChange: any = () => {

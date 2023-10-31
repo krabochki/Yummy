@@ -23,7 +23,7 @@
   top: 0;
   z-index: 100;
   left: 0;
-  width: 100%;
+  width:100vw;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5); /* Черный фон с 50% непрозрачностью */
   display: flex;
@@ -140,7 +140,7 @@ hr {
     flex-direction: column;
 
     &::-webkit-scrollbar {
-      width: 12px;
+      width: 10px;
     }
     &::-webkit-scrollbar-track {
       border-radius: 20px;
@@ -163,12 +163,22 @@ hr {
     column-gap: var(--space-m);
 
     h2 {
-      cursor: pointer;
+            cursor: pointer;
+
+            max-width: 100%;
+            overflow: hidden;
+            max-width: 10em;
+            text-overflow: ellipsis;
       font-weight: 600;
       font-size: 1.1em;
       margin-bottom: 0.1em;
     }
     p {
+          max-width: 6em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+
       font-weight: 500;
       color: var(--color-foreground-unactive);
     }
@@ -231,13 +241,12 @@ hr {
 
   .row{
     column-gap: var(--space-s);
-        grid-template-columns: 3em 7em 7.2em;
+        grid-template-columns: max-content 1fr 7.2em;
 
   }
 
    p,h2{
     overflow: hidden;
-white-space: nowrap;
 
         text-overflow: ellipsis;
         
@@ -256,19 +265,13 @@ white-space: nowrap;
     height: 70vh;
     overflow-x: hidden;
 
+
+
     
     &::-webkit-scrollbar {
-      width: 8px;
+      display: none;
     }
-    &::-webkit-scrollbar-track {
-      border-radius: 20px;
-      background: var(--scroll-body);
-    }
-    &::-webkit-scrollbar-thumb {
-      background-color: var(--scroll-thumb);
-      border-radius: 20px;
-      border:none;
-    }
+   
   }
 
 }

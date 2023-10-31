@@ -37,7 +37,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private userService: UserService,
     private title: Title,
-    private router:Router
+    private router: Router,
   ) {}
 
   dataLoad: boolean = false;
@@ -48,6 +48,8 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
   category: ICategory = nullCategory;
   recentRecipes: IRecipe[] = [];
   popularRecipes: IRecipe[] = [];
+  discussedRecipes: IRecipe[] = [];
+  commentedRecipes: IRecipe[] = [];
   myRecipes: IRecipe[] = [];
   likedRecipes: IRecipe[] = [];
   cookedRecipes: IRecipe[] = [];
@@ -111,6 +113,12 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
       case 'updates':
         this.recipeType = RecipeType.Updates;
         break;
+      case 'discussed':
+        this.recipeType = RecipeType.Discussed;
+        break;
+      case 'commented':
+        this.recipeType = RecipeType.Commented;
+        break;
     }
   }
 
@@ -156,6 +164,11 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
               .subscribe((data) => {
                 const publicRecipes = this.recipeService.getPublicRecipes(data);
                 switch (this.recipeType) {
+                  case RecipeType.Discussed:
+                    this.allRecipes =
+                      this.recipeService.getMostDiscussedRecipes(publicRecipes);
+                    this.recipesToShow = this.allRecipes.slice(0, 8);
+                    break;
                   case RecipeType.Popular:
                     this.allRecipes =
                       this.recipeService.getPopularRecipes(publicRecipes);
@@ -185,6 +198,12 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
                       );
                     this.recipesToShow = this.allRecipes.slice(0, 8);
                     break;
+                  case RecipeType.Commented:
+                    this.allRecipes = this.recipeService
+                      .getCommentedRecipesByUser(publicRecipes, this.currentUser.id)
+                    
+                            this.recipesToShow = this.allRecipes.slice(0, 8);
+                    break;
                   case RecipeType.Liked:
                     this.allRecipes = this.recipeService.getLikedRecipesByUser(
                       publicRecipes,
@@ -205,6 +224,13 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
                     this.popularRecipes = this.recipeService
                       .getPopularRecipes(this.allRecipes)
                       .slice(0, 8);
+                    this.discussedRecipes = this.recipeService
+                      .getMostDiscussedRecipes(publicRecipes)
+                      .slice(0, 8);
+                    this.commentedRecipes = this.recipeService
+                      .getCommentedRecipesByUser(publicRecipes, user.id)
+                      .slice(0, 8);
+
                     this.recentRecipes = this.recipeService
                       .getRecentRecipes(this.allRecipes)
                       .slice(0, 8);
@@ -269,7 +295,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
   }
 
   blur() {
-      this.autocompleteShow = false;
+    this.autocompleteShow = false;
   }
   getUser(userId: number): IUser {
     const finded = this.allUsers.find((user) => user.id === userId);
@@ -298,6 +324,10 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
           recipe.name.toLowerCase().replace(/\s/g, '').includes(search) ||
           this.getUser(recipe.authorId)
             .fullName.toLowerCase()
+            .replace(/\s/g, '')
+            .includes(search) ||
+          this.getUser(recipe.authorId)
+            .username.toLowerCase()
             .replace(/\s/g, '')
             .includes(search),
       );

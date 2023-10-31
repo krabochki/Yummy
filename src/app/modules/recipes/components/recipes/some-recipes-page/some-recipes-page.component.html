@@ -47,8 +47,8 @@
                   ></svg-icon>
                 </div>
                 <p>
-                  В данной категории по вашему запросу нет никаких рецептов.
-                  Попробуйте изменить параметры поиска или подобрать рецепт в
+                  В данном разделе по твоему запросу нет никаких рецептов.
+                  Попробуй изменить параметры поиска или подобрать рецепт в
                   специальном разделе!
                 </p>
                 <app-button
@@ -65,7 +65,7 @@
               <p (mousedown)="navigateTo('/recipes/list/' + item.id)">{{ item.name }}</p>
               <span (mousedown)="navigateTo('/cooks/list/'+ getUser(item.authorId).id)"
                 *ngIf="filter !== 'my-recipes'"
-                >{{ getUser(item.authorId).fullName }}</span
+                >{{ (getUser(item.authorId).fullName!=='')?getUser(item.authorId).fullName:'@'+getUser(item.authorId).username }}</span
               >
             </li>
           </ul>
@@ -74,15 +74,15 @@
 
       <ng-template #all>
         <div class="block" *ngIf="currentUser.id > 0 && myRecipes.length > 0">
-          <div routerLink="/recipes/yours" class="head">
-            <h2>Ваши рецепты</h2>
+          <a routerLink="/recipes/yours" class="head">
+            <h2>Твои рецепты</h2>
 
             <svg-icon
               class="arrow-svg"
               [applyClass]="true"
               [src]="'../../../../../assets/images/svg/go-back.svg'"
             ></svg-icon>
-          </div>
+          </a>
           <div
             class="recipes"
             [ngClass]="{ horizontal: myRecipes.length >= 5 }"
@@ -102,7 +102,7 @@
           class="block"
           *ngIf="currentUser.id > 0 && followingRecipes.length > 0"
         >
-          <div routerLink="/recipes/updates" class="head">
+          <a routerLink="/recipes/updates" class="head">
             <h2>Обновления любимых кулинаров</h2>
 
             <svg-icon
@@ -110,7 +110,7 @@
               [applyClass]="true"
               [src]="'../../../../../assets/images/svg/go-back.svg'"
             ></svg-icon>
-          </div>
+          </a>
           <div
             class="recipes"
             [ngClass]="{ horizontal: followingRecipes.length >= 5 }"
@@ -131,7 +131,7 @@
           *ngIf="currentUser.id > 0 && favoriteRecipes.length > 0"
           class="block"
         >
-          <div routerLink="/recipes/favorite" class="head">
+          <a routerLink="/recipes/favorite" class="head">
             <h2>Закладки</h2>
 
             <svg-icon
@@ -139,7 +139,7 @@
               [applyClass]="true"
               [src]="'../../../../../assets/images/svg/go-back.svg'"
             ></svg-icon>
-          </div>
+          </a>
           <div
             class="recipes"
             [ngClass]="{ horizontal: favoriteRecipes.length >= 5 }"
@@ -156,7 +156,7 @@
           </div>
         </div>
         <div class="block">
-          <div routerLink="/recipes/best" class="head">
+          <a routerLink="/recipes/best" class="head">
             <h2>Популярные рецепты</h2>
 
             <svg-icon
@@ -164,16 +164,16 @@
               [applyClass]="true"
               [src]="'../../../../../assets/images/svg/go-back.svg'"
             ></svg-icon>
-          </div>
+          </a>
           <div class="recipes horizontal">
             <app-horizontal-recipe-list
               [recipes]="popularRecipes"
             ></app-horizontal-recipe-list>
           </div>
         </div>
-        <div class="block">
-          <div routerLink="/recipes/recent" class="head">
-            <h2>Свежие рецепты</h2>
+         <div class="block">
+          <div *ngIf=" discussedRecipes.length > 0" routerLink="/recipes/most-discussed" class="head">
+            <h2>Самые обсуждаемые рецепты</h2>
 
             <svg-icon
               class="arrow-svg"
@@ -181,6 +181,30 @@
               [src]="'../../../../../assets/images/svg/go-back.svg'"
             ></svg-icon>
           </div>
+          <div  [ngClass]="{ horizontal: discussedRecipes.length >= 5 }" class="recipes">
+
+            <app-horizontal-recipe-list
+              *ngIf="discussedRecipes.length >= 5; else vertical"
+              [recipes]="discussedRecipes"
+            ></app-horizontal-recipe-list>
+            <ng-template #vertical>
+              <app-vertical-recipe-list
+                [blocks]="discussedRecipes"
+              ></app-vertical-recipe-list>
+            </ng-template>
+         
+          </div>
+        </div>
+        <div class="block">
+          <a routerLink="/recipes/recent" class="head">
+            <h2>Свежие рецепты</h2>
+
+            <svg-icon
+              class="arrow-svg"
+              [applyClass]="true"
+              [src]="'../../../../../assets/images/svg/go-back.svg'"
+            ></svg-icon>
+          </a>
           <div class="recipes horizontal">
             <app-horizontal-recipe-list
               [recipes]="recentRecipes"
@@ -188,7 +212,7 @@
           </div>
         </div>
         <div class="block">
-          <div
+          <a
             *ngIf="currentUser.id > 0 && cookedRecipes.length > 0"
             routerLink="/recipes/cooked"
             class="head"
@@ -200,7 +224,7 @@
               [applyClass]="true"
               [src]="'../../../../../assets/images/svg/go-back.svg'"
             ></svg-icon>
-          </div>
+          </a>
           <div
             class="recipes"
             [ngClass]="{ horizontal: cookedRecipes.length >= 5 }"
@@ -220,7 +244,7 @@
           *ngIf="currentUser.id > 0 && likedRecipes.length > 0"
           class="block"
         >
-          <div routerLink="/recipes/liked" class="head">
+          <a routerLink="/recipes/liked" class="head">
             <h2>Любимые рецепты</h2>
 
             <svg-icon
@@ -228,7 +252,7 @@
               [applyClass]="true"
               [src]="'../../../../../assets/images/svg/go-back.svg'"
             ></svg-icon>
-          </div>
+          </a>
           <div
             class="recipes"
             [ngClass]="{ horizontal: likedRecipes.length >= 5 }"
@@ -244,6 +268,31 @@
             </ng-template>
           </div>
         </div>
+         <div class="block"   *ngIf="currentUser.id > 0 && commentedRecipes.length > 0">
+          <a  routerLink="/recipes/commented" class="head">
+            <h2>Ты комментировал эти рецепты</h2>
+
+            <svg-icon
+              class="arrow-svg"
+              [applyClass]="true"
+              [src]="'../../../../../assets/images/svg/go-back.svg'"
+            ></svg-icon>
+          </a>
+          <div  [ngClass]="{ horizontal: commentedRecipes.length >= 5 }" class="recipes">
+
+            <app-horizontal-recipe-list
+              *ngIf="commentedRecipes.length >= 5; else vertical"
+              [recipes]="commentedRecipes"
+            ></app-horizontal-recipe-list>
+            <ng-template #vertical>
+              <app-vertical-recipe-list
+                [blocks]="commentedRecipes"
+              ></app-vertical-recipe-list>
+            </ng-template>
+         
+          </div>
+        </div>
+
       </ng-template>
       <div *ngIf="filter !== 'all'; else all">
         <div class="recipes">
@@ -294,8 +343,8 @@
   </ng-template>
 </div>
 
-<app-recipe-creating
+<app-recipe-create style="position: fixed;z-index: 3;"
   (closeEmitter)="creatingMode = false"
   @modal
   *ngIf="creatingMode"
-></app-recipe-creating>
+></app-recipe-create>

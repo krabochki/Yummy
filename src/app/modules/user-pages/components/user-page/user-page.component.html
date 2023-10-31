@@ -443,7 +443,7 @@
 ></app-followers-and-following>
 
 
-<app-edit-account @modal (closeEmitter)="closeEdit()" (updatedUser)="updateCurrentUser($event)" [editableUser]="currentUser" *ngIf="editModalShow"></app-edit-account>
+<app-user-account-edit @modal (closeEmitter)="closeEdit()"  [editableUser]="currentUser" *ngIf="editModalShow"></app-user-account-edit>
 
 <app-modal
   @modal

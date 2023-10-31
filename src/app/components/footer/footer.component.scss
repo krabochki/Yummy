@@ -67,7 +67,7 @@
                         max-width: 8em;
 
 
-        li {
+        a {
           line-height: 1;
 
           text-decoration: underline;
@@ -90,7 +90,7 @@
         display: flex;
         flex-direction: column;
         row-gap: var(--space-xxs);
-        li {
+        a {
           cursor: pointer;
         }
       }

@@ -22,6 +22,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { CommentService } from '../../../services/comment.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IComment } from '../../../models/comments';
+import { getFormattedDate } from 'src/tools/common';
 
 @Component({
   selector: 'app-recipe-page',
@@ -180,6 +181,10 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     });
   }
 
+  get date() {
+  return getFormattedDate(this.recipe.publicationDate)
+
+  }
 
    handleVoteModal(event: boolean) {
     if (event) {

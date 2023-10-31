@@ -4,7 +4,7 @@
 
     <div class="main-info">
         <div>
-            <p class="label" routerLink="/">Yummy</p>
+            <a class="label" routerLink="/">Yummy</a>
             <p class="quote">«Повара — это художники, рабочим материалом для которых является еда.
                 Кулинария — это искусство использования цветов, вкусов, запахов и форм для создания изысканного блюда».
             </p>
@@ -13,27 +13,27 @@
             <div>
                 <p>Рецепты</p>
                 <ul>
-                    <li (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" routerLink="/recipes/yours">Твои рецепты</li>
-                    <li  routerLink="/recipes">Все рецепты</li>
-                    <li routerLink="/sections">Разделы</li>
-                    <li (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" routerLink="/recipes/favorite">Закладки</li>
-                    <li  routerLink="/match">Подбор рецептов</li>
+                    <a (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" routerLink="/recipes/yours">Твои рецепты</a>
+                    <a  routerLink="/recipes">Все рецепты</a>
+                    <a routerLink="/sections">Разделы</a>
+                    <a (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" routerLink="/recipes/favorite">Закладки</a>
+                    <a  routerLink="/match">Подбор рецептов</a>
                 </ul>
             </div>
             <div>
                 <p>Кулинары</p>
                 <ul>
-                    <li (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" [routerLink]="this.currentUser.id >0?'/cooks/list/'+currentUser.id:null">Твой профиль</li>
-                    <li routerLink="/cooks">Все кулинары</li>
-                    <li routerLink="/cooks/updates">Обновления</li>
+                    <a (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" [routerLink]="this.currentUser.id >0?'/cooks/list/'+currentUser.id:null">Твой профиль</a>
+                    <a routerLink="/cooks">Все кулинары</a>
+                    <a routerLink="/cooks/updates">Обновления</a>
                 </ul>
             </div>
             <div>
                 <p>Другое</p>
                 <ul>
-                    <li [routerLink]="this.currentUser.id >0?'plan':null" (click)="linkClick()"  [ngClass]="{'disabling':currentUser.id===0}">План готовки</li>
-                    <li routerLink="/about">О сайте</li>
-                    <li routerLink="/user-policy">Пользовательское соглашение</li>
+                    <a [routerLink]="this.currentUser.id >0?'plan':null" (click)="linkClick()"  [ngClass]="{'disabling':currentUser.id===0}">План готовки</a>
+                    <a routerLink="/about">О сайте</a>
+                    <a routerLink="/user-policy">Пользовательское соглашение</a>
                 </ul>
             </div>
         </div>
@@ -46,14 +46,14 @@
         <p class="copyright">© 2023 Yummy. Никакие права не защищены</p>
 
         <ul class="links">
-            <li *ngFor="let link of links, let i=index">
+            <a *ngFor="let link of links, let i=index">
                 <a [href]="link[1]">
                     <svg-icon [src]="'../../../assets/images/svg/'+link[0]+'.svg'"
                     [class]="'svg'"
                     ></svg-icon>
                 </a>
            
-            </li>
+            </a>
         </ul>
     </div>
 </div>

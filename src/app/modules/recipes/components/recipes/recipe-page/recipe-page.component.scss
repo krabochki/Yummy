@@ -443,7 +443,11 @@ h1 {
 
       p {
         max-width: 9em;
+        &::-webkit-scrollbar{
+          display: none;
+        }
       overflow-y: visible;
+      line-height: 1.25;
 
         text-decoration: underline;
         cursor: pointer;
@@ -521,7 +525,7 @@ h1 {
       font-size: 1em;
       font-weight: 500;
     }
-    span {
+    .link {
       cursor: pointer;
 
       text-decoration: underline;
@@ -866,7 +870,11 @@ hr{
   margin-top: 1em;
 }
 .date p{
+  line-height: 1.25;
   max-width: 9em;
+   &::-webkit-scrollbar{
+          display: none;
+        }
   width: fit-content;
   width: minmax(fit-content,9em);
 }

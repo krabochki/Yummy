@@ -4,7 +4,7 @@
 
    <div class="main-and-follow">
        <div style="display: flex; flex-direction: column; row-gap: 0.5em;">
-            <div class="wrap" [routerLink]="'/cooks/list/'+user.id">
+            <a class="wrap" [routerLink]="'/cooks/list/'+user.id">
                 <div class="userpic"></div>
                 <div>
                    <div class="star-h1">
@@ -13,7 +13,7 @@
                    </div>
                     <h2>@{{user.username}}</h2>
                 </div>
-            </div>
+            </a>
             <p class="location"  *ngIf="user.location!==''">
                 <svg-icon class="geo" [applyClass]="true" [src]="'../../../../../assets/images/svg/geo.svg'"></svg-icon>
                <span [title]="user.location"> {{user.location}}</span>

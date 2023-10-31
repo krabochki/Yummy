@@ -74,7 +74,7 @@
 
       <ng-template #all>
         <div class="block" *ngIf="currentUser.id > 0 && myRecipes.length > 0">
-          <div routerLink="/recipes/yours" class="head">
+          <a routerLink="/recipes/yours" class="head">
             <h2>Твои рецепты</h2>
 
             <svg-icon
@@ -82,7 +82,7 @@
               [applyClass]="true"
               [src]="'../../../../../assets/images/svg/go-back.svg'"
             ></svg-icon>
-          </div>
+          </a>
           <div
             class="recipes"
             [ngClass]="{ horizontal: myRecipes.length >= 5 }"
@@ -102,7 +102,7 @@
           class="block"
           *ngIf="currentUser.id > 0 && followingRecipes.length > 0"
         >
-          <div routerLink="/recipes/updates" class="head">
+          <a routerLink="/recipes/updates" class="head">
             <h2>Обновления любимых кулинаров</h2>
 
             <svg-icon
@@ -110,7 +110,7 @@
               [applyClass]="true"
               [src]="'../../../../../assets/images/svg/go-back.svg'"
             ></svg-icon>
-          </div>
+          </a>
           <div
             class="recipes"
             [ngClass]="{ horizontal: followingRecipes.length >= 5 }"
@@ -131,7 +131,7 @@
           *ngIf="currentUser.id > 0 && favoriteRecipes.length > 0"
           class="block"
         >
-          <div routerLink="/recipes/favorite" class="head">
+          <a routerLink="/recipes/favorite" class="head">
             <h2>Закладки</h2>
 
             <svg-icon
@@ -139,7 +139,7 @@
               [applyClass]="true"
               [src]="'../../../../../assets/images/svg/go-back.svg'"
             ></svg-icon>
-          </div>
+          </a>
           <div
             class="recipes"
             [ngClass]="{ horizontal: favoriteRecipes.length >= 5 }"
@@ -156,7 +156,7 @@
           </div>
         </div>
         <div class="block">
-          <div routerLink="/recipes/best" class="head">
+          <a routerLink="/recipes/best" class="head">
             <h2>Популярные рецепты</h2>
 
             <svg-icon
@@ -164,7 +164,7 @@
               [applyClass]="true"
               [src]="'../../../../../assets/images/svg/go-back.svg'"
             ></svg-icon>
-          </div>
+          </a>
           <div class="recipes horizontal">
             <app-horizontal-recipe-list
               [recipes]="popularRecipes"
@@ -196,7 +196,7 @@
           </div>
         </div>
         <div class="block">
-          <div routerLink="/recipes/recent" class="head">
+          <a routerLink="/recipes/recent" class="head">
             <h2>Свежие рецепты</h2>
 
             <svg-icon
@@ -204,7 +204,7 @@
               [applyClass]="true"
               [src]="'../../../../../assets/images/svg/go-back.svg'"
             ></svg-icon>
-          </div>
+          </a>
           <div class="recipes horizontal">
             <app-horizontal-recipe-list
               [recipes]="recentRecipes"
@@ -212,7 +212,7 @@
           </div>
         </div>
         <div class="block">
-          <div
+          <a
             *ngIf="currentUser.id > 0 && cookedRecipes.length > 0"
             routerLink="/recipes/cooked"
             class="head"
@@ -224,7 +224,7 @@
               [applyClass]="true"
               [src]="'../../../../../assets/images/svg/go-back.svg'"
             ></svg-icon>
-          </div>
+          </a>
           <div
             class="recipes"
             [ngClass]="{ horizontal: cookedRecipes.length >= 5 }"
@@ -244,7 +244,7 @@
           *ngIf="currentUser.id > 0 && likedRecipes.length > 0"
           class="block"
         >
-          <div routerLink="/recipes/liked" class="head">
+          <a routerLink="/recipes/liked" class="head">
             <h2>Любимые рецепты</h2>
 
             <svg-icon
@@ -252,7 +252,7 @@
               [applyClass]="true"
               [src]="'../../../../../assets/images/svg/go-back.svg'"
             ></svg-icon>
-          </div>
+          </a>
           <div
             class="recipes"
             [ngClass]="{ horizontal: likedRecipes.length >= 5 }"
@@ -269,7 +269,7 @@
           </div>
         </div>
          <div class="block"   *ngIf="currentUser.id > 0 && commentedRecipes.length > 0">
-          <div  routerLink="/recipes/commented" class="head">
+          <a  routerLink="/recipes/commented" class="head">
             <h2>Ты комментировал эти рецепты</h2>
 
             <svg-icon
@@ -277,7 +277,7 @@
               [applyClass]="true"
               [src]="'../../../../../assets/images/svg/go-back.svg'"
             ></svg-icon>
-          </div>
+          </a>
           <div  [ngClass]="{ horizontal: commentedRecipes.length >= 5 }" class="recipes">
 
             <app-horizontal-recipe-list

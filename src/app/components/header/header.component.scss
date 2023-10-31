@@ -82,6 +82,8 @@
 }
 .admin-svg{
   z-index: 1;
+  display: block;
+  position: static;
     fill: var(--color-background);
   width: var(--font-m);
   height: var(--font-m);
@@ -161,6 +163,7 @@ p {
   .admin-panel{
     position: absolute;
     right:4em;
+    
   }
 }
 
@@ -168,11 +171,17 @@ p {
   .admin-panel{
     right: 0;
     position: absolute;
-    margin:0 -4em;
+    margin:0 -5em;
     margin-bottom: -2.5em;
   }
   .header {
-    align-items: center;
+
+    pointer-events: none;
+
+*{
+      pointer-events: all;
+
+}    align-items: center;
     justify-content: center;
     padding: var(--space-xl) 0;
     grid-template-columns: repeat(1, max-content);
@@ -285,8 +294,8 @@ p {
     justify-content: center;
     column-gap: 0.5em;
 
-    &.unactive > div,
-    &.unactive > div:first-of-type {
+    &.unactive > a,
+    &.unactive > a:first-of-type {
       background-color: var(--color-foreground-unactive) !important;
 
       .count {
@@ -295,7 +304,7 @@ p {
     }
 
     
-    & > div:not(.admin-panel) {
+    & > a:not(.admin-panel) {
       background-color: var(--color-secondary);
       width: 2em;
 
@@ -334,7 +343,7 @@ p {
       }
     }
     & > 
-      div.acc {
+      a.acc {
         margin-right: 0.5em;
         background-color: var(--color-primary);
       }

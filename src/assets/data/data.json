@@ -549,17 +549,9 @@
           "text": "ereeeeeeee3",
           "authorId": 3,
           "date": "2023-10-30T18:30:09.021Z",
-          "likesId": [],
-          "dislikesId": [
-            5
-          ]
-        },
-        {
-          "id": 5,
-          "text": "ereeeeeeee3",
-          "authorId": 1,
-          "date": "2023-10-30T18:30:09.021Z",
-          "likesId": [],
+          "likesId": [
+            1
+          ],
           "dislikesId": [
             5
           ]
@@ -569,7 +561,9 @@
           "text": "ereeeeeeee3",
           "authorId": 6,
           "date": "2023-10-30T18:30:09.021Z",
-          "likesId": [],
+          "likesId": [
+            1
+          ],
           "dislikesId": [
             5
           ]
@@ -581,17 +575,8 @@
           "date": "2023-10-30T18:30:09.021Z",
           "likesId": [],
           "dislikesId": [
-            5
-          ]
-        },
-        {
-          "id": 5,
-          "text": "ereeeeeeee3",
-          "authorId": 1,
-          "date": "2023-10-30T18:30:09.021Z",
-          "likesId": [],
-          "dislikesId": [
-            5
+            5,
+            1
           ]
         },
         {
@@ -715,12 +700,6 @@
           "date": "2023-10-30T21:13:43.094Z",
           "reporterId": 5,
           "commentId": 3
-        },
-        {
-          "id": 3,
-          "date": "2023-10-30T21:13:46.946Z",
-          "reporterId": 5,
-          "commentId": 5
         },
         {
           "id": 4,
@@ -3944,7 +3923,9 @@
       "servings": 1,
       "authorId": 24,
       "categories": [],
-      "cooksId": [],
+      "cooksId": [
+        23
+      ],
       "likesId": [],
       "favoritesId": [],
       "id": 52,
@@ -3961,7 +3942,13 @@
         }
       ],
       "publicationDate": "2023-10-30T23:58:43.609Z",
-      "status": "public"
+      "status": "public",
+      "statistics": [
+        {
+          "userId": 23,
+          "answer": false
+        }
+      ]
     },
     {
       "name": "вавыавыввыаыва",
@@ -4062,7 +4049,7 @@
       "personalWebsite": "https://www.chefalexeyzimin.com/",
       "location": "Москва, Россия",
       "registrationDate": "2023-01-15",
-      "profileViews": 7639,
+      "profileViews": 7642,
       "role": "moderator"
     },
     {
@@ -4092,7 +4079,7 @@
       "personalWebsite": "",
       "location": "Санкт-Петербург, Россия",
       "registrationDate": "2023-03-20",
-      "profileViews": 6485,
+      "profileViews": 6486,
       "role": "user"
     },
     {
@@ -4150,7 +4137,7 @@
       "personalWebsite": "https://www.cookingadventures.com/",
       "location": "Лондон, Великобритания",
       "registrationDate": "2023-04-02",
-      "profileViews": 4966,
+      "profileViews": 4967,
       "role": "user"
     },
     {
@@ -4183,7 +4170,7 @@
       "personalWebsite": "",
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 1783
+      "profileViews": 1785
     },
     {
       "id": 6,
@@ -4216,7 +4203,7 @@
       "personalWebsite": "https://www.healthandnutrition.com/",
       "location": "Сидней, Австралия",
       "registrationDate": "2023-06-18",
-      "profileViews": 4354,
+      "profileViews": 4355,
       "role": "user"
     },
     {
@@ -4385,7 +4372,7 @@
       "personalWebsite": "",
       "location": "Беларусь (Гомель)",
       "registrationDate": "2023-10-30",
-      "profileViews": 5
+      "profileViews": 10
     },
     {
       "id": 24,

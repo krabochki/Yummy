@@ -6,6 +6,8 @@
 h1 {
   line-height: 1;
   font-size: var(--font-xxl);
+  text-overflow: ellipsis;
+  overflow: hidden;
   text-align: center;
   font-family: var(--font-family-accent);
   margin-bottom: 1em;

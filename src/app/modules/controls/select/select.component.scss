@@ -35,7 +35,7 @@
         border-right: 0;
    
         cursor: pointer;
-       &:last-of-type{
+      ul &:last-of-type{
         border:none;
         padding-bottom: var(--space-s);
         border-bottom-right-radius: var(--space-m);

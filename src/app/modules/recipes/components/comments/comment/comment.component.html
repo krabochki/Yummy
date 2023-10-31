@@ -7,7 +7,7 @@
   }">
     <div class="userpic"></div>
     <div class="content">
-        <div class="header" [routerLink]="'/cooks/list/' + author.id">
+        <a class="header" [routerLink]="'/cooks/list/' + author.id">
             <h1>
                 {{ author.fullName !== "" ? author.fullName : "@" + author.username }}
 
@@ -15,7 +15,7 @@
                 <span *ngIf="comment.authorId === recipe.authorId">Автор рецепта</span>
             </h1>
             <p class="date">{{ date | timePast }}</p>
-        </div>
+        </a>
         <p class="text">{{ comment.text }}</p>
         <div class="footer">
             <div class="likes">

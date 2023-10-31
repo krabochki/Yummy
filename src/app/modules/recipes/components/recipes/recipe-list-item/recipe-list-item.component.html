@@ -39,9 +39,9 @@
     </div>
   </div>
   <div class="bottom">
-      <h1 [ngStyle]="{'margin-bottom':(!showAuthor?'0.25em':null)}" [routerLink]="'/recipes/list/' + recipe.id" [title]="recipe.name">{{ recipe.name }}</h1>
-    <div (click)="handleInnerFunction($event)" *ngIf="showAuthor" [title]="author.fullName===''?('@'+author.username):author.fullName" [routerLink]="'/cooks/list/' + author.id" class="author">
-      {{ author.fullName===''?('@'+author.username):author.fullName }}
+      <h1 [ngStyle]="{'margin-bottom':(!showAuthor?'0.25em':null)}"  [title]="recipe.name"><a [routerLink]="'/recipes/list/' + recipe.id">{{ recipe.name }}</a></h1>
+    <div (click)="handleInnerFunction($event)" *ngIf="showAuthor" [title]="author.fullName===''?('@'+author.username):author.fullName"  class="author">
+      <a [routerLink]="'/cooks/list/' + author.id">{{ author.fullName===''?('@'+author.username):author.fullName }}</a>
     </div>
 
     <div class="rate-panel" *ngIf="recipe.status === 'public'">

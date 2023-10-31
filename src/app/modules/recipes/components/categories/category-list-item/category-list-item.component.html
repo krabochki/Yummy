@@ -4,16 +4,18 @@
   *ngIf="category.id > 0; else nullCategory"
 >
   <div class="category" *ngIf="category.id > 0; else nullCategory"></div>
-  <div
-    [routerLink]="
-      context === 'category'
-        ? '/categories/list/' + category.id
-        : 'sections/list/' + category.id
-    "
-    style="position: relative; overflow: visible"
-  >
-    <h1 class="name"><sup>{{recipesNumber}} </sup>{{category.name}}</h1>
-  </div>
+  <a  [routerLink]="
+        context === 'category'
+          ? '/categories/list/' + category.id
+          : 'sections/list/' + category.id
+      ">
+    <div
+     
+      style="position: relative; overflow: visible"
+    >
+      <h1 class="name"><sup>{{recipesNumber}} </sup>{{category.name}}</h1>
+    </div>
+  </a>
 </div>
 
 <ng-template #nullCategory>

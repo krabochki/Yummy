@@ -7,7 +7,6 @@
     class="add-category"
     [icon]="'add-category'"
     *ngIf="filter === 'sections'"
-    routerLink="/categories/add"
     [color]="'prim'"
     [text]="'Создать категорию'"
     [rounded]="true"
@@ -84,7 +83,7 @@
   </div>
   <div>
     <div class="sections" *ngIf="filter === 'sections'">
-      <div [routerLink]="'/categories/popular'" class="head">
+      <a [routerLink]="'/categories/popular'" class="head">
         <h2>Популярные категории</h2>
 
         <svg-icon
@@ -92,7 +91,7 @@
           [applyClass]="true"
           [src]="'../../../../../assets/images/svg/go-back.svg'"
         ></svg-icon>
-      </div>
+      </a>
 
       <app-horizontal-category-list
         [showRecipesNumber]="true"
@@ -101,7 +100,7 @@
     </div>
     <div *ngFor="let section of sections" class="sections">
       <div *ngIf="section.categoriesId.length > 0" class="sections">
-        <div
+        <a
           [routerLink]="'/sections/list/' + section.id"
           *ngIf="section.name !== ''"
           class="head"
@@ -113,7 +112,7 @@
             [applyClass]="true"
             [src]="'../../../../../assets/images/svg/go-back.svg'"
           ></svg-icon>
-        </div>
+        </a>
 
         <app-horizontal-category-list
           *ngIf="filter === 'sections'; else oneSection"

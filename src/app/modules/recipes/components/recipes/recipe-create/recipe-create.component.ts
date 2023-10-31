@@ -487,7 +487,8 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     if (this.form.valid) {
       const recipeData: IRecipe = {
         name: this.form.value.recipeName,
-        reports:[],
+        reports: [],
+        statistics:[],
         ingredients: this.form.value.ingredients,
         instructions: this.form.value.instructions,
         mainImage: this.form.value.image,

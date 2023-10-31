@@ -43,6 +43,8 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
   moreAuthorButtons: boolean = false;
   publishModalShow: boolean = false;
   successPublishModalShow: boolean = false;
+  voteModalShow: boolean = false;
+  successVoteModalShow: boolean = false;
 
   constructor(
     private recipeService: RecipeService,
@@ -131,6 +133,37 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
     }
     this.successEditModalShow = true;
   }
+
+  handleVoteModal(event: boolean) {
+    if (event) {
+      this.recipe = this.recipeService.voteForRecipe(
+        this.recipe,
+        this.currentUserId,
+        true,
+      );
+    } else {
+      this.recipe = this.recipeService.voteForRecipe(
+        this.recipe,
+        this.currentUserId,
+        false,
+      );
+    }
+    this.cookThisRecipe();
+    this.voteModalShow = false;
+  }
+  handleSuccessVoteModal() {
+    this.recipeService
+      .updateRecipe(this.recipe)
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(
+        () => console.log('Рецепт отмечен приготовленным'),
+        (error: Error) =>
+          console.error(
+            'Ошибка отметки рецепта приготовленным: ' + error.message,
+          ),
+      );
+    this.successVoteModalShow = false;
+  }
   isAwaitingApprove: boolean = false;
   editedRecipe: IRecipe = nullRecipe;
   deleteRecipeModalShow: boolean = false;
@@ -181,6 +214,7 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
   }
   //готовим рецепт
   cookThisRecipe() {
+
     if (this.currentUserId === 0) {
       this.noAccessModalShow = true;
       return;
@@ -192,27 +226,35 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
       ? this.recipeService.cookRecipe(this.currentUserId, this.recipe)
       : this.recipeService.uncookRecipe(this.currentUserId, this.recipe);
 
-    this.recipeService
-      .updateRecipe(this.recipe)
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe(
-        () => console.log('Рецепт успешно отмечен приготовленным'),
-        (error: Error) =>
-          console.error(
-            'Ошибка отметки рецепта приготовленным: ' + error.message,
-          ),
+    if (!this.isRecipeCooked) {
+      this.recipe = this.recipeService.removeVote(
+        this.recipe,
+        this.currentUserId,
       );
+         this.recipeService
+           .updateRecipe(this.recipe)
+           .pipe(takeUntil(this.destroyed$))
+           .subscribe(
+             () => console.log('Рецепт отмечен приготовленным'),
+             (error: Error) =>
+               console.error(
+                 'Ошибка отметки рецепта приготовленным: ' + error.message,
+               ),
+           );
+    }
+    if (this.isRecipeCooked) this.successVoteModalShow = true;
+
+    
+ 
   }
 
   handlePublishRecipeModal(event: boolean) {
     if (event) {
-       this.successPublishModalShow = true
-      
+      this.successPublishModalShow = true;
     }
     this.publishModalShow = false;
   }
   handleSuccessPublishModal() {
-  
     this.recipe.status = 'awaits';
     this.recipeService.updateRecipe(this.recipe).subscribe();
     this.successPublishModalShow = false;

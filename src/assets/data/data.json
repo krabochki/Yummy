@@ -216,7 +216,7 @@
       ],
       "status": "public",
       "origin": "Америка",
-      "publicationDate": "2014-11-07",
+      "publicationDate": "2014-10-30T23:58:43.609Z",
       "instructions": [
         {
           "images": [],
@@ -327,7 +327,7 @@
       ],
       "status": "public",
       "origin": "Tonga",
-      "publicationDate": "2018-04-30",
+      "publicationDate": "2018-10-30T23:58:43.609Z",
       "instuctions": [
         "in",
         "veniam",
@@ -460,7 +460,7 @@
       ],
       "status": "public",
       "origin": "Canada",
-      "publicationDate": "2017-11-10",
+      "publicationDate": "2017-10-30T23:58:43.609Z",
       "instuctions": [
         "aute",
         "dolore",
@@ -632,7 +632,7 @@
       ],
       "status": "public",
       "origin": "Marshall Islands",
-      "publicationDate": "2021-06-20",
+      "publicationDate": "2021-10-30T23:58:43.609Z",
       "instuctions": [
         "non",
         "sit",
@@ -776,7 +776,7 @@
       ],
       "status": "public",
       "origin": "Ukraine",
-      "publicationDate": "2021-07-13",
+      "publicationDate": "2022-10-30T23:58:43.609Z",
       "instuctions": [
         "reprehenderit",
         "ullamco",
@@ -878,7 +878,8 @@
         6,
         2,
         7,
-        9
+        9,
+        5
       ],
       "favoritesId": [
         7,
@@ -892,7 +893,7 @@
       ],
       "status": "public",
       "origin": "Chad",
-      "publicationDate": "2019-02-10",
+      "publicationDate": "2019-10-30T23:58:43.609Z0",
       "instuctions": [
         "cillum",
         "laboris",
@@ -987,6 +988,12 @@
           "quantity": 34,
           "unit": "elit"
         }
+      ],
+      "statistics": [
+        {
+          "userId": 5,
+          "answer": true
+        }
       ]
     },
     {
@@ -1015,7 +1022,7 @@
       ],
       "status": "public",
       "origin": "Brunei Darussalam",
-      "publicationDate": "2018-06-25",
+      "publicationDate": "2018-10-30T23:58:43.609Z",
       "instuctions": [
         "minim",
         "do",
@@ -1124,7 +1131,7 @@
       ],
       "status": "public",
       "origin": "Tanzania",
-      "publicationDate": "2019-08-23",
+      "publicationDate": "2019-10-30T23:58:43.609Z",
       "instuctions": [
         "non",
         "fugiat",
@@ -1268,7 +1275,7 @@
       ],
       "status": "public",
       "origin": "Swaziland",
-      "publicationDate": "2014-11-17",
+      "publicationDate": "2014-10-30T23:58:43.609Z",
       "instuctions": [
         "occaecat",
         "aliqua",
@@ -1390,7 +1397,7 @@
       "likesId": [],
       "status": "private",
       "origin": "Suriname",
-      "publicationDate": "2019-03-18",
+      "publicationDate": "2019-10-30T23:58:43.609Z",
       "instuctions": [
         "consequat",
         "dolor",
@@ -1546,7 +1553,7 @@
       ],
       "status": "public",
       "origin": "Haiti",
-      "publicationDate": "2020-07-30",
+      "publicationDate": "2020-10-30T23:58:43.609Z",
       "instuctions": [
         "ullamco",
         "culpa",
@@ -1645,7 +1652,7 @@
       "likesId": [],
       "status": "private",
       "origin": "Paraguay",
-      "publicationDate": "2017-12-22",
+      "publicationDate": "2017-10-30T23:58:43.609Z",
       "instuctions": [
         "adipisicing",
         "amet",
@@ -1768,7 +1775,7 @@
       ],
       "status": "public",
       "origin": "Nepal",
-      "publicationDate": "2016-10-10",
+      "publicationDate": "2016-10-30T23:58:43.609Z",
       "instuctions": [
         "consectetur",
         "exercitation",
@@ -1904,7 +1911,7 @@
       ],
       "status": "public",
       "origin": "Senegal",
-      "publicationDate": "2018-06-26",
+      "publicationDate": "2018-10-30T23:58:43.609Z",
       "instuctions": [
         "consectetur",
         "nostrud",
@@ -2007,7 +2014,7 @@
       ],
       "status": "public",
       "origin": "Slovenia",
-      "publicationDate": "2016-08-26",
+      "publicationDate": "2016-10-30T23:58:43.609Z",
       "instuctions": [
         "Lorem",
         "incididunt",
@@ -2136,7 +2143,7 @@
       ],
       "status": "public",
       "origin": "Sweden",
-      "publicationDate": "2023-07-21",
+      "publicationDate": "2023-10-30T23:58:43.609Z",
       "instuctions": [
         "veniam",
         "excepteur",
@@ -2261,7 +2268,7 @@
       ],
       "status": "public",
       "origin": "Latvia",
-      "publicationDate": "2023-02-04",
+      "publicationDate": "2023-02-04T23:58:43.609Z",
       "instuctions": [
         "non",
         "est",
@@ -2389,7 +2396,7 @@
       ],
       "status": "public",
       "origin": "Portugal",
-      "publicationDate": "2017-03-08",
+      "publicationDate": "2023-03-08T23:58:43.609Z",
       "instuctions": [
         "ex",
         "qui",
@@ -2537,7 +2544,7 @@
       ],
       "status": "public",
       "origin": "Guatemala",
-      "publicationDate": "2017-07-03",
+      "publicationDate": "2017-10-02T23:58:43.609Z",
       "instuctions": [
         "officia",
         "duis",
@@ -2635,7 +2642,7 @@
       ],
       "status": "public",
       "origin": "Madagascar",
-      "publicationDate": "2016-03-05",
+      "publicationDate": "2016-03-05T23:58:43.609Z",
       "instuctions": [
         "ea",
         "magna",
@@ -2764,7 +2771,7 @@
       ],
       "status": "public",
       "origin": "Hong Kong",
-      "publicationDate": "2022-10-28",
+      "publicationDate": "2022-10-18T23:58:43.609Z",
       "instuctions": [
         "eiusmod",
         "do",
@@ -2858,7 +2865,7 @@
       "likesId": [],
       "status": "private",
       "origin": "Cote D'Ivoire (Ivory Coast)",
-      "publicationDate": "2018-05-12",
+      "publicationDate": "2018-05-15T23:58:43.609Z",
       "instuctions": [
         "exercitation",
         "in",
@@ -3002,7 +3009,7 @@
       ],
       "status": "public",
       "origin": "Америка",
-      "publicationDate": "2014-12-13",
+      "publicationDate": "2023-10-13T23:58:43.609Z",
       "instuctions": [
         "nulla",
         "aute",
@@ -3109,7 +3116,7 @@
       "likesId": [],
       "status": "private",
       "origin": "Bouvet Island",
-      "publicationDate": "2020-06-05",
+      "publicationDate": "2023-05-05T23:58:43.609Z",
       "instuctions": [
         "eiusmod",
         "officia",
@@ -3230,7 +3237,7 @@
       ],
       "status": "public",
       "origin": "Bangladesh",
-      "publicationDate": "2015-08-17",
+      "publicationDate": "2015-10-30T23:58:43.609Z",
       "instuctions": [
         "labore",
         "ipsum",
@@ -3348,7 +3355,7 @@
       "likesId": [],
       "status": "private",
       "origin": "Argentina",
-      "publicationDate": "2018-09-29",
+      "publicationDate": "2018-10-30T23:58:43.609Z",
       "instuctions": [
         "ex",
         "enim",
@@ -3458,7 +3465,7 @@
       ],
       "status": "public",
       "origin": "Antarctica",
-      "publicationDate": "2021-10-06",
+      "publicationDate": "2021-10-30T23:58:43.609Z",
       "comments": [],
       "instructions": [
         {
@@ -3560,7 +3567,7 @@
       ],
       "id": 36,
       "comments": [],
-      "publicationDate": "",
+      "publicationDate": "2023-10-27T23:58:43.609Z",
       "status": "public"
     },
     {
@@ -3582,7 +3589,7 @@
       "favoritesId": [],
       "id": 37,
       "comments": [],
-      "publicationDate": "",
+      "publicationDate": "2023-9-30T23:58:43.609Z",
       "status": "public"
     },
     {
@@ -3626,7 +3633,7 @@
       "favoritesId": [],
       "id": 39,
       "comments": [],
-      "publicationDate": "2023.10.26",
+      "publicationDate": "2023-10-26T23:58:43.609Z",
       "status": "public"
     },
     {
@@ -3652,7 +3659,7 @@
       "favoritesId": [],
       "id": 40,
       "comments": [],
-      "publicationDate": "2023.10.26",
+      "publicationDate": "2023-10-28T23:58:43.609Z",
       "status": "public"
     },
     {
@@ -3880,7 +3887,7 @@
       ],
       "id": 50,
       "comments": [],
-      "publicationDate": "2023.10.29",
+      "publicationDate": "2023-10-29T23:58:43.609Z",
       "status": "public"
     },
     {
@@ -3897,13 +3904,31 @@
       "servings": 1,
       "authorId": 5,
       "categories": [],
-      "cooksId": [],
+      "cooksId": [
+        5,
+        24,
+        23
+      ],
       "likesId": [],
       "favoritesId": [],
       "id": 51,
       "comments": [],
-      "publicationDate": "29.10.2023",
-      "status": "public"
+      "publicationDate": "2023-10-30T23:58:43.609Z",
+      "status": "public",
+      "statistics": [
+        {
+          "userId": 5,
+          "answer": false
+        },
+        {
+          "userId": 24,
+          "answer": true
+        },
+        {
+          "userId": 23,
+          "answer": false
+        }
+      ]
     },
     {
       "name": "dssdsd",
@@ -3929,11 +3954,13 @@
           "text": "огонь",
           "authorId": 24,
           "date": "2023-10-30T20:54:15.944Z",
-          "likesId": [],
+          "likesId": [
+            5
+          ],
           "dislikesId": []
         }
       ],
-      "publicationDate": "2023-10-30",
+      "publicationDate": "2023-10-30T23:58:43.609Z",
       "status": "public"
     },
     {
@@ -3955,8 +3982,56 @@
       "favoritesId": [],
       "id": 53,
       "comments": [],
-      "publicationDate": "2023-10-30",
+      "publicationDate": "2023-10-30T23:58:43.609Z",
       "status": "public"
+    },
+    {
+      "name": "fddffdfddffd",
+      "reports": [],
+      "statistics": [],
+      "ingredients": [],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 5,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 54,
+      "comments": [],
+      "publicationDate": "2023-10-30T23:58:43.609Z",
+      "status": "public"
+    },
+    {
+      "name": "fggfgfgf",
+      "reports": [],
+      "statistics": [],
+      "ingredients": [],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 5,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 55,
+      "comments": [],
+      "publicationDate": "",
+      "status": "private"
     }
   ],
   "users": [
@@ -4108,7 +4183,7 @@
       "personalWebsite": "",
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 1780
+      "profileViews": 1783
     },
     {
       "id": 6,

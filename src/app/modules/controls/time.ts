@@ -70,11 +70,11 @@ export const timeDiffGenerator: TimeDiffGenerator = (diff): string => {
     return '1 год назад';
   }
   if (diff.days >= 545) {
-    return diff.years + diff.years === 1
-      ? 'год'
+    return diff.years === 1
+      ? diff.years + ' год назад'
       : diff.years === 2 || diff.years === 3 || diff.years === 4
-      ? 'года'
-      : 'лет' + 'назад';
+      ? diff.years + ' года назад'
+      : diff.years + ' лет назад';
   } else {
     return defaultTimeDiffGenerator(diff);
   }

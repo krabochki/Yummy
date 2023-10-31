@@ -69,6 +69,10 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   fb: FormBuilder = new FormBuilder();
   protected linkForSocials = '';
 
+  statisticPercent = 0;
+
+  voteModalShow: boolean = false;
+  successVoteModalShow: boolean = false;
   commentsToShow: IComment[] = [];
 
   loadMoreComments() {
@@ -134,21 +138,23 @@ export class RecipePageComponent implements OnInit, OnDestroy {
       this.recipeService.recipes$
         .pipe(takeUntil(this.destroyed$))
         .subscribe((recipes: IRecipe[]) => {
+          this.statisticPercent = Number(this.getStatictics().toFixed(0));
+
           if (this.recipe.categories.length > 0) {
             const publicRecipes = this.recipeService.getPublicRecipes(recipes);
             this.downRecipes = this.getSimilarRecipes(publicRecipes, 4);
           }
-          this.recentRecipes = this.recipeService
-            .getRecentRecipes(this.recipeService.getPublicRecipes(recipes))
-           
-       
+          this.recentRecipes = this.recipeService.getRecentRecipes(
+            this.recipeService.getPublicRecipes(recipes),
+          );
+
           this.recentRecipes = this.recentRecipes.filter(
             (recipe) => recipe.authorId !== this.currentUser.id,
           );
-           this.recentRecipes = this.recentRecipes.filter(
-             (recipe) => recipe.id !== this.recipe.id,
-           );
-          this.recentRecipes=this.recentRecipes.slice(0, 3);
+          this.recentRecipes = this.recentRecipes.filter(
+            (recipe) => recipe.id !== this.recipe.id,
+          );
+          this.recentRecipes = this.recentRecipes.slice(0, 3);
 
           this.recipe.comments = this.recipe.comments.sort(
             (commentA, commentB) => {
@@ -172,6 +178,52 @@ export class RecipePageComponent implements OnInit, OnDestroy {
           this.cd.markForCheck();
         });
     });
+  }
+
+
+   handleVoteModal(event: boolean) {
+    if (event) {
+      this.recipe = this.recipeService.voteForRecipe(
+        this.recipe,
+        this.currentUser.id,
+        true,
+      );
+    } else {
+      this.recipe = this.recipeService.voteForRecipe(
+        this.recipe,
+        this.currentUser.id,
+        false,
+      );
+    }
+    this.cookThisRecipe();
+    this.voteModalShow = false;
+  }
+  handleSuccessVoteModal() {
+    this.recipeService
+      .updateRecipe(this.recipe)
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(
+        () => console.log('Рецепт отмечен приготовленным'),
+        (error: Error) =>
+          console.error(
+            'Ошибка отметки рецепта приготовленным: ' + error.message,
+          ),
+      );
+    this.successVoteModalShow = false;
+  }
+
+  getStatictics(): number {
+    if (this.recipe.statistics && this.recipe.statistics.length > 0) {
+      const totalVotes = this.recipe.statistics.length;
+      const positiveVotes = this.recipe.statistics.filter(
+        (item) => item.answer,
+      ).length;
+      const negativeVotes = totalVotes - positiveVotes;
+      const successRate = (positiveVotes / totalVotes) * 100;
+
+      return successRate;
+    }
+    return 0;
   }
 
   addComment() {
@@ -398,24 +450,36 @@ export class RecipePageComponent implements OnInit, OnDestroy {
 
     this.isRecipeCooked = !this.isRecipeCooked;
 
-    let updatedRecipe: IRecipe;
 
     if (this.isRecipeCooked) {
-      updatedRecipe = this.recipeService.cookRecipe(
+      this.recipe = this.recipeService.cookRecipe(
         this.currentUser.id,
         this.recipe,
       );
+      this.successVoteModalShow = true;
     } else {
-      updatedRecipe = this.recipeService.uncookRecipe(
+      this.recipe = this.recipeService.uncookRecipe(
         this.currentUser.id,
         this.recipe,
       );
+
+      this.recipe = this.recipeService.removeVote(
+        this.recipe,
+        this.currentUser.id,
+      );
+      this.recipeService
+        .updateRecipe(this.recipe)
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe(
+          () => console.log('Рецепт отмечен приготовленным'),
+          (error: Error) =>
+            console.error(
+              'Ошибка отметки рецепта приготовленным: ' + error.message,
+            ),
+        );
     }
 
-    this.recipeService
-      .updateRecipe(updatedRecipe)
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe();
+
   }
 
   handleNoAccessModal(result: boolean) {

@@ -54,7 +54,7 @@
           recipe.likesId.length
           }}</span>
       </div>
-      <div (click)="handleInnerFunction($event)" class="rate-item cooks" (click)="cookThisRecipe()">
+      <div (click)="handleInnerFunction($event)" class="rate-item cooks" (click)="!isRecipeCooked&&currentUserId>0?voteModalShow=true:cookThisRecipe()">
         <svg-icon *ngIf="!isRecipeCooked" [src]="'../../../../../assets/images/svg/cook.svg'" [applyClass]="true"
           class="cook-icon"></svg-icon>
         <svg-icon *ngIf="isRecipeCooked" [src]="'../../../../../assets/images/svg/cook-fill.svg'" [applyClass]="true"
@@ -116,3 +116,13 @@
   <app-modal @modal *ngIf="publishModalShow" [style]="'prim'" [title]="'Подтвердите публикацию рецепта'" [type]="'yesOrNo'"
   (resultEmit)="handlePublishRecipeModal($event)" [buttonsText]="['Да', 'Нет']"
   [description]="'Ты уверен, что хочешь отправить рецепт на рассмотрение модератору для дальнейшей модерации?'"></app-modal>
+
+  <app-modal @modal *ngIf="voteModalShow" [style]="'prim'" [title]="'Оставьте отзыв'" [type]="'yesOrNo'"
+  (resultEmit)="handleVoteModal($event)" [buttonsText]="['Да', 'Нет']" [description]="
+    'Ты бы приготовил этот рецепт снова?'
+  "></app-modal>
+
+      <app-modal @modal *ngIf="successVoteModalShow" [style]="'sec'" [title]="'Твой отзыв сохранен'" [type]="'Ok'"
+  (resultEmit)="handleSuccessVoteModal()" [buttonsText]="['Хорошо']" [description]="
+  'Спасибо! Твое мнение важно для нас'
+  "></app-modal>

@@ -491,7 +491,8 @@ svg-icon {
       position: relative;
       border: 1px solid var(--color-foreground-unactive);
 
-      height: 7em;
+      height: 7em;    background-color: var(--color-background-deeper-unactive);
+
       background-size: cover;
       background-position: center;
       border-radius: var(--space-m);
@@ -591,6 +592,7 @@ svg-icon {
     opacity: 0;
     cursor: pointer;
   }
+    background-color: var(--color-background-deeper-unactive);
 
   width: 16em;
   height: 10em;

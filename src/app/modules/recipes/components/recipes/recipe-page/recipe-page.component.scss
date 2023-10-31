@@ -1,5 +1,17 @@
 @import "../../../../../../tools/UI/UI.scss";
 
+.statistic{
+  display: flex;
+  column-gap: 1em;
+  font-weight: 200;
+  color: var(--color-foreground);
+  font-size: 0.9em;
+  opacity: 0.65;
+  .stat-svg{
+    fill:var(--color-foreground);
+    height:0.8em
+  }
+}
 
 app-modal{
   z-index: 10;
@@ -360,7 +372,11 @@ h1 {
     justify-content: center;
   }
 }
+.main-info,.header,.short-info{
+  overflow: visible;
+}
 .cont {
+  overflow: visible;
   padding: var(--space-xl) calc(14.4vw + 0 * (100vw - 768px) / 760);
 }
 
@@ -368,6 +384,7 @@ h1 {
   row-gap: 1em;
 }
 .head {
+  overflow: visible;
   display: grid;
   grid-auto-flow: column;
   column-gap: 4em;
@@ -406,6 +423,7 @@ h1 {
   }
 
   .full-user-info {
+    overflow: visible;
     row-gap: 0.25em;
   }
   .short-info {
@@ -420,9 +438,12 @@ h1 {
     }
     .user-info {
       max-width: 14em;
+      overflow: visible;
+      overflow-x: hidden;
 
       p {
-        max-width: 12em;
+        max-width: 9em;
+      overflow-y: visible;
 
         text-decoration: underline;
         cursor: pointer;
@@ -781,9 +802,7 @@ h1 {
         text-align: center;
       }
       column-gap: 1em;
-      p {
-        width: min-content;
-      }
+    
     }
   }
   .header {
@@ -823,6 +842,8 @@ h1 {
   }
 }
 
+
+
 .moreComments{
   overflow: visible;
   display: flex;
@@ -843,6 +864,11 @@ hr{
     margin-bottom: 0.75em;
   }
   margin-top: 1em;
+}
+.date p{
+  max-width: 9em;
+  width: fit-content;
+  width: minmax(fit-content,9em);
 }
 
 
@@ -869,8 +895,12 @@ hr{
     padding: var(--space-xl) 6%;
   }
   .head .short-info .user-info p {
-    max-width: 8em;
+    max-width: 6em;
   }
+
+.date p{
+  max-width: 6em;
+}
 
   .i-comment {
     .policy {
@@ -908,3 +938,4 @@ hr{
     width: auto;
   }
 }
+

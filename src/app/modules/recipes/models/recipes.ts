@@ -21,9 +21,15 @@ export interface IRecipe {
   comments: IComment[]; // Список комментариев
   publicationDate: string; // Дата регистрации пользователя
   favoritesId: number[];
-  status: 'awaits' | 'private' | 'public',
-  reports: ICommentReport[]
+  status: 'awaits' | 'private' | 'public';
+  reports: ICommentReport[];
+  statistics: IRecipeStatistics[];
 }
+
+export interface IRecipeStatistics{
+  userId: number,
+  answer:boolean
+} 
 export const nullRecipe: IRecipe = {
   id: 0,
   mainImage: null,
@@ -38,6 +44,7 @@ export const nullRecipe: IRecipe = {
   nutritions: [],
   instructions: [],
   categories: [],
+  statistics:[],
   history: '',
   authorId: 0,
   likesId: [],

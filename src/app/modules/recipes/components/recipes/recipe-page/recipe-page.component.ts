@@ -52,12 +52,8 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   isRecipeCooked: boolean = false;
 
   noAccessModalShow: boolean = false;
-  successAdminActionModalShow: boolean = false;
-  dismissModalShow = false;
   commentModalShow = false;
   successCommentModalShow = false;
-  approveModalShow = false;
-  adminAction: 'approve' | 'dismiss' = 'dismiss';
 
   dataLoaded = false;
 
@@ -490,21 +486,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     this.noAccessModalShow = false;
   }
 
-  handleDismissModal(answer: boolean): void {
-    if (answer) {
-      this.adminAction = 'dismiss';
 
-      this.successAdminActionModalShow = true;
-    }
-    this.dismissModalShow = false;
-  }
-  handleApproveModal(answer: boolean): void {
-    if (answer) {
-      this.adminAction = 'approve';
-      this.successAdminActionModalShow = true;
-    }
-    this.approveModalShow = false;
-  }
   handleCommentModal(answer: boolean): void {
     if (answer) {
       this.addComment();
@@ -519,21 +501,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   handleSuccessCommentModal() {
     this.successCommentModalShow = false;
   }
-  handleSuccessAdminActionModal() {
-    this.successAdminActionModalShow = false;
-    this.router.navigateByUrl('/control-dashboard');
-
-    setTimeout(() => {
-      if (this.adminAction === 'approve') {
-        const approvedRecipe = this.recipeService.approveRecipe(this.recipe);
-        this.recipeService.updateRecipe(approvedRecipe).subscribe();
-      } else {
-        const dismissedRecipe = this.recipeService.dismissRecipe(this.recipe);
-        this.recipeService.updateRecipe(dismissedRecipe).subscribe();
-      }
-      this.router.navigateByUrl('/control-dashboard');
-    }, 300);
-  }
+  
 
   decreasePortions() {
     if (this.recipe.servings > 1) {

@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { Subject, takeUntil } from 'rxjs';
+import { getCurrentDate } from 'src/tools/common';
 
 @Component({
   selector: 'app-recipe-list-item',
@@ -248,6 +249,7 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
   }
   handleSuccessPublishModal() {
     this.recipe.status = 'awaits';
+    this.recipe.publicationDate = getCurrentDate();
     this.recipeService.updateRecipe(this.recipe).subscribe();
     this.successPublishModalShow = false;
   }

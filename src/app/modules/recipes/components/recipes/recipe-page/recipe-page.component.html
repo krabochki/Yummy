@@ -488,25 +488,6 @@
     </div>
   </div>
 
-  <div
-    *ngIf="this.recipe.status === 'awaits' && currentUser.role !== 'user'"
-    class="moder-buttons"
-  >
-    <app-button
-      [color]="'prim'"
-      (click)="approveModalShow = true"
-      [style]="'filled'"
-      [rounded]="true"
-      [text]="'Одобрить'"
-    ></app-button>
-    <app-button
-      [color]="'prim'"
-      (click)="dismissModalShow = true"
-      [style]="'outlined'"
-      [rounded]="true"
-      [text]="'Отклонить'"
-    ></app-button>
-  </div>
 </div>
 
 <app-modal
@@ -522,45 +503,7 @@
   "
 ></app-modal>
 
-<app-modal
-  @modal
-  *ngIf="dismissModalShow"
-  [style]="'prim'"
-  [title]="'Отклонение рецепта'"
-  [type]="'yesOrNo'"
-  (resultEmit)="handleDismissModal($event)"
-  [buttonsText]="['Да', 'Нет']"
-  [description]="'Вы уверены, что хотите отклонить рецепт?'"
-></app-modal>
 
-<app-modal
-  @modal
-  *ngIf="approveModalShow"
-  [style]="'prim'"
-  [title]="'Одобрение рецепта'"
-  [type]="'yesOrNo'"
-  (resultEmit)="handleApproveModal($event)"
-  [buttonsText]="['Да', 'Нет']"
-  [description]="'Вы уверены, что хотите одобрить рецепт?'"
-></app-modal>
-
-<app-modal
-  @modal
-  *ngIf="successAdminActionModalShow"
-  [style]="'sec'"
-  [title]="
-    'Рецепт успешно ' + (adminAction === 'approve' ? 'одобрен' : 'отклонен')
-  "
-  [type]="'Ok'"
-  (resultEmit)="handleSuccessAdminActionModal()"
-  [buttonsText]="['Хорошо']"
-  [description]="
-    'Вы успешно ' +
-    (adminAction === 'approve' ? 'одобрили' : 'отклонили') +
-    ' рецепт пользователя ' +
-    (author.fullName === '' ? '@' + author.username : author.fullName)
-  "
-></app-modal>
 
 
 <app-modal

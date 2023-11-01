@@ -1,0 +1,55 @@
+
+.info{
+    --main: #1491ff;
+}
+
+.warning{
+    --main:#fff714; 
+}
+
+.success{
+    --main:#3de472; 
+}
+
+
+.error{
+    --main:var(--color-primary); 
+}
+.not-readed.body{
+background-color: red
+}
+
+.time{
+    margin-top: 0.5em;
+    color: var(--color-foreground-unactive);
+    text-align: right;
+}
+
+
+.body{
+    border-left:4px solid var(--main);
+    padding: 0.5em 1em 0.5em 1em;
+}
+
+.title{
+    font-weight: 600;
+    line-height: 1;
+    color: var(--main);
+}
+.text{
+    line-height: 1;
+    font-size: 0.8em;
+}
+
+.svg-notify{
+    fill:var(--main);
+    min-width: 1.25em;
+    height: 1.25em;
+}
+.head{
+    align-items: center;
+        margin-bottom: 0.25em;
+
+    display: flex;
+    column-gap: 0.5em;
+}

@@ -1,3 +1,5 @@
+import { INotification } from "./notifications";
+
 export interface IUser {
   id: number; // Уникальный идентификатор пользователя
   username: string; // Имя пользователя
@@ -14,6 +16,7 @@ export interface IUser {
   registrationDate: string; // Дата регистрации пользователя
   profileViews: number; // Количество просмотров профиля
   role: 'admin' | 'moderator' | 'user';
+  notifications: INotification[]
 }
 
 export const nullUser: IUser = {
@@ -32,6 +35,7 @@ export const nullUser: IUser = {
   location: '',
   registrationDate: '',
   profileViews: 0,
+  notifications:[]
 };
 
 export interface SocialNetwork {

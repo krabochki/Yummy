@@ -136,7 +136,7 @@
       "sendDate": "2023-10-31T20:03:30.039Z",
       "authorId": 5,
       "id": 25,
-      "status": "awaits"
+      "status": "public"
     },
     {
       "name": "Американская кухня",
@@ -144,7 +144,31 @@
       "sendDate": "2023-10-31T20:03:45.657Z",
       "authorId": 5,
       "id": 26,
-      "status": "awaits"
+      "status": "public"
+    },
+    {
+      "name": "Друзья",
+      "photo": {},
+      "sendDate": "2023-10-31T23:08:48.358Z",
+      "authorId": 5,
+      "id": 28,
+      "status": "public"
+    },
+    {
+      "name": "Украинская кухня",
+      "photo": {},
+      "sendDate": "2023-11-01T00:31:44.976Z",
+      "authorId": 5,
+      "id": 29,
+      "status": "public"
+    },
+    {
+      "name": "Кухня",
+      "photo": {},
+      "sendDate": "2023-11-01T00:32:14.553Z",
+      "authorId": 5,
+      "id": 30,
+      "status": "public"
     }
   ],
   "sections": [
@@ -159,7 +183,8 @@
         13,
         14,
         17,
-        15
+        15,
+        16
       ]
     },
     {
@@ -188,7 +213,8 @@
       "photoUrl": "",
       "categories": [
         25,
-        26
+        26,
+        29
       ]
     },
     {
@@ -224,10 +250,21 @@
       "photoUrl": "",
       "categories": [
         10,
-        16,
         18,
         19
       ]
+    },
+    {
+      "id": 10,
+      "name": "Сериальное",
+      "categories": [
+        28,
+        30
+      ],
+      "photo": {},
+      "status": "public",
+      "authorId": 0,
+      "sendDate": ""
     }
   ],
   "recipes": [
@@ -602,41 +639,6 @@
             5
           ],
           "dislikesId": []
-        },
-        {
-          "id": 3,
-          "text": "ereeeeeeee3",
-          "authorId": 3,
-          "date": "2023-10-30T18:30:09.021Z",
-          "likesId": [
-            1
-          ],
-          "dislikesId": [
-            5
-          ]
-        },
-        {
-          "id": 6,
-          "text": "ereeeeeeee3",
-          "authorId": 6,
-          "date": "2023-10-30T18:30:09.021Z",
-          "likesId": [
-            1
-          ],
-          "dislikesId": [
-            5
-          ]
-        },
-        {
-          "id": 7,
-          "text": "ereeeeeeee3",
-          "authorId": 7,
-          "date": "2023-10-30T18:30:09.021Z",
-          "likesId": [],
-          "dislikesId": [
-            5,
-            1
-          ]
         }
       ],
       "categories": [],
@@ -745,26 +747,7 @@
           "unit": "eiusmod"
         }
       ],
-      "reports": [
-        {
-          "id": 4,
-          "date": "2023-10-30T21:14:18.398Z",
-          "reporterId": 5,
-          "commentId": 6
-        },
-        {
-          "id": 5,
-          "date": "2023-10-31T20:52:40.650Z",
-          "reporterId": 5,
-          "commentId": 7
-        },
-        {
-          "id": 6,
-          "date": "2023-10-31T20:53:49.555Z",
-          "reporterId": 5,
-          "commentId": 3
-        }
-      ],
+      "reports": [],
       "statistics": [
         {
           "userId": 5,
@@ -3632,18 +3615,7 @@
       "likesId": [],
       "favoritesId": [],
       "id": 52,
-      "comments": [
-        {
-          "id": 1,
-          "text": "огонь",
-          "authorId": 24,
-          "date": "2023-10-30T20:54:15.944Z",
-          "likesId": [
-            5
-          ],
-          "dislikesId": []
-        }
-      ],
+      "comments": [],
       "publicationDate": "2023-10-30T23:58:43.609Z",
       "status": "public",
       "statistics": [
@@ -3651,7 +3623,8 @@
           "userId": 23,
           "answer": false
         }
-      ]
+      ],
+      "reports": []
     },
     {
       "name": "вавыавыввыаыва",
@@ -3721,6 +3694,278 @@
       "id": 55,
       "comments": [],
       "publicationDate": "",
+      "status": "private"
+    },
+    {
+      "name": "Киш с тыквой и копчёным мясом",
+      "reports": [],
+      "statistics": [],
+      "ingredients": [
+        {
+          "name": "Тесто слоёное готовое (бездрожжевое) ",
+          "quantity": "300",
+          "unit": "г"
+        },
+        {
+          "name": "Тыква",
+          "quantity": "400",
+          "unit": "г"
+        },
+        {
+          "name": "Мясо копчёное (рулька, бекон или грудинка)",
+          "quantity": "200",
+          "unit": "г"
+        },
+        {
+          "name": "Лук репчатый",
+          "quantity": "1",
+          "unit": "шт"
+        },
+        {
+          "name": "Яйца",
+          "quantity": "1",
+          "unit": "шт"
+        },
+        {
+          "name": "Сметана",
+          "quantity": "100",
+          "unit": "г"
+        },
+        {
+          "name": "Сыр твёрдый",
+          "quantity": "100",
+          "unit": "г"
+        },
+        {
+          "name": "Соль ",
+          "quantity": "",
+          "unit": "по вкусу"
+        },
+        {
+          "name": "Перец чёрный молотый",
+          "quantity": "",
+          "unit": "по вкусу"
+        },
+        {
+          "name": "Масло растительное",
+          "quantity": "2",
+          "unit": "ст. л."
+        }
+      ],
+      "instructions": [
+        {
+          "name": "Подготавливаем необходимые ингредиенты для приготовления тыквенного киша.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Тыкву нарезаем кусочками, заливаем водой и отправляем тушиться на огонь, примерно 20-25 минут.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Раскатываем слоёное тесто и выкладываем в форму, смазанную растительным маслом. Делаем бортики высотой 5-6 см.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Лук нарезаем мелким кубиком и обжариваем на растительном масле.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Нарезаем копчёное мясо и добавляем его обжариваться к луку.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Блендерим тушёную тыкву, превращая её в пюре.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Перемешиваем тыквенное пюре с обжаренным луком и копчёным мясом.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Смешиваем яйца, сметану, соль и перец по вкусу.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Натираем в яично-сметанную массу половину сыра.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Смешиваем все ингредиенты начинки.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Выливаем приготовленную начинку в форму с тестом. Сверху натираем оставшийся сыр на крупной тёрке.\nОтправляем пирог с тыквой и копчёным мясом в духовку, разогретую до 180 градусов, примерно на 25-30 минут.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Тыквенный пирог-киш вкусен как в горячем, так и в холодном виде, но лучше разрезать его остывшим.\nПриятного аппетита!",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        }
+      ],
+      "mainImage": null,
+      "description": "В разгар сезона тыквы хочу предложить вам чудесный рецепт - тыквенный киш. Прекрасный открытый пирог из готового слоёного теста с вкусной и сочной начинкой. Не пирог, а просто объедение!",
+      "history": "",
+      "preparationTime": "35 минут",
+      "cookingTime": "1 час",
+      "origin": "Америка",
+      "nutritions": [],
+      "servings": 8,
+      "authorId": 5,
+      "categories": [
+        26,
+        15,
+        10
+      ],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 56,
+      "comments": [],
+      "publicationDate": "2023-11-01T02:14:01.721Z",
+      "status": "public"
+    },
+    {
+      "name": "монако монако",
+      "reports": [],
+      "statistics": [],
+      "ingredients": [],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 5,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 57,
+      "comments": [],
+      "publicationDate": "2023-11-01T02:13:39.976Z",
       "status": "private"
     }
   ],
@@ -3873,7 +4118,129 @@
       "personalWebsite": "",
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 1788
+      "profileViews": 1788,
+      "notifications": [
+        {
+          "id": 13,
+          "relatedLink": "/recipes/list/52",
+          "context": "comment",
+          "type": "error",
+          "message": "Твоя жалоба на комментарий пользователя @krab «огонь» под рецептом «dssdsd» отклонена",
+          "title": "Жалоба на комментарий отклонена",
+          "timestamp": "2023-11-01T02:24:05.206Z",
+          "read": false
+        },
+        {
+          "id": 12,
+          "relatedLink": "/recipes/list/52",
+          "context": "comment",
+          "type": "error",
+          "message": "Твоя жалоба на комментарий пользователя @krab «огонь» под рецептом «dssdsd» отклонена",
+          "title": "Жалоба на комментарий отклонена",
+          "timestamp": "2023-11-01T02:22:59.390Z",
+          "read": false
+        },
+        {
+          "id": 11,
+          "relatedLink": "/recipes/list/4",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя @ «» под рецептом «Lorem laborum nulla» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T02:17:28.044Z",
+          "read": false
+        },
+        {
+          "id": 10,
+          "relatedLink": "/recipes/list/4",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя @ «» под рецептом «Lorem laborum nulla» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T02:17:16.631Z",
+          "read": false
+        },
+        {
+          "id": 9,
+          "relatedLink": "/recipes/list/4",
+          "context": "comment",
+          "type": "error",
+          "message": "Марк Джонсон",
+          "title": "Жалоба на комментарий отклонена",
+          "timestamp": "2023-11-01T02:16:05.386Z",
+          "read": false
+        },
+        {
+          "id": 8,
+          "relatedLink": "/recipes/list/56",
+          "context": "recipe",
+          "type": "success",
+          "message": "Твой рецепт «Киш с тыквой и копчёным мясом» одобрен и теперь может просматриваться всеми кулинарами",
+          "title": "Рецепт одобрен",
+          "timestamp": "2023-11-01T02:14:01.781Z",
+          "read": false
+        },
+        {
+          "id": 7,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "error",
+          "message": "Твой рецепт «монако монако» отклонен",
+          "title": "Рецепт отклонен",
+          "timestamp": "2023-11-01T02:13:56.648Z",
+          "read": false
+        },
+        {
+          "id": 6,
+          "relatedLink": "",
+          "context": "category",
+          "type": "error",
+          "message": "Твоя категория «eejejjejej» отклонена",
+          "title": "Категория отклонена",
+          "timestamp": "2023-11-01T01:39:09.964Z",
+          "read": true
+        },
+        {
+          "id": 5,
+          "relatedLink": "",
+          "context": "category",
+          "type": "error",
+          "message": "Твоя категория «Биба боба» отклонена",
+          "title": "Категория отклонена",
+          "timestamp": "2023-11-01T01:02:38.792Z",
+          "read": true
+        },
+        {
+          "id": 4,
+          "relatedLink": "/categories/list/30",
+          "context": "category",
+          "type": "success",
+          "message": "Твоя категория «Кухня» одобрена и теперь может просматриваться всеми кулинарами",
+          "title": "Категория одобрена",
+          "timestamp": "2023-11-01T00:32:29.691Z",
+          "read": true
+        },
+        {
+          "id": 3,
+          "relatedLink": "/categories/list/29",
+          "context": "category",
+          "type": "success",
+          "message": "Твоя категория «Украинская кухня» одобрена и теперь может просматриваться всеми кулинарами",
+          "title": "Категория одобрена",
+          "timestamp": "2023-11-01T00:32:25.892Z",
+          "read": true
+        },
+        {
+          "id": 14,
+          "relatedLink": "/recipes/list/52",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя @ «» под рецептом «dssdsd» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T02:24:25.242Z",
+          "read": false
+        }
+      ]
     },
     {
       "id": 6,
@@ -3906,7 +4273,7 @@
       "personalWebsite": "https://www.healthandnutrition.com/",
       "location": "Сидней, Австралия",
       "registrationDate": "2023-06-18",
-      "profileViews": 4355,
+      "profileViews": 4356,
       "role": "user"
     },
     {

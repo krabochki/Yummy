@@ -156,7 +156,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
                 sectionGroup.section = section;
                 section.categories.forEach((element: number) => {
                   const finded = this.allCategories.find(
-                    (elem) => elem.id === element,
+                    (elem) => (elem.id === element && elem.status==='public'),
                   );
                   if (finded) sectionGroup.categories.push(finded);
                 });

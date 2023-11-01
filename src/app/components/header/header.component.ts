@@ -11,7 +11,9 @@ import {
 import { NavigationEnd, Router } from '@angular/router';
 import { Subject, filter, takeUntil } from 'rxjs';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
+import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
+import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { modal } from 'src/tools/animations';
 modal;
 @Component({
@@ -46,9 +48,11 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   ];
   cookRouterLinks: string[] = ['/cooks/list/', '/cooks', '/cooks/updates'];
 
+  notifiesOpen: boolean = false;
   mobile: boolean = false;
   currentUser: IUser = { ...nullUser };
-  notificationsCount: number = 10;
+  notifies: INotification[] = [];
+  user: IUser = nullUser;
   noAccessModalShow: boolean = false;
   activePage: 'cooks' | 'recipes' | 'match' | 'main' = 'main';
   @Output() headerHeight: EventEmitter<number> = new EventEmitter();
@@ -56,6 +60,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
 
   constructor(
     public authService: AuthService,
+    public userService: UserService,
     private router: Router,
   ) {
     //узнаем на какой странице сейчас пользователь для навигации на мобильной версии
@@ -93,8 +98,33 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedUser) => {
         this.currentUser = receivedUser;
-        this.cookRouterLinks[0] = '/cooks/list/'+ this.currentUser.id;
+        this.cookRouterLinks[0] = '/cooks/list/' + this.currentUser.id;
       });
+    this.userService.users$.pipe(takeUntil(this.destroyed$)).subscribe(
+      (users) => {
+        
+        const find = users.find((u) => u.id === this.currentUser.id);
+        if (find) {
+          this.user = find;
+          const userNotifies = this.user.notifications.sort((n1, n2) => {
+            const date1 = new Date(n1.timestamp);
+            const date2 = new Date(n2.timestamp);
+            if (date1.getTime() > date2.getTime()) {
+              return -1;
+            } else {
+              return 1;
+            }
+          });  
+          this.notifies = userNotifies;
+        }
+      
+      }
+    )
+  }
+
+
+  get notificationCount() {
+    return this.user.notifications.filter((n)=> n.read===false).length
   }
 
   ngDoCheck(): void {

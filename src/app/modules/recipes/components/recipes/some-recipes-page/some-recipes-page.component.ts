@@ -260,9 +260,10 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
               });
           });
       }
+          this.title.setTitle(this.getTitleByRecipeType(this.recipeType));
+
       this.dataLoad = true;
     });
-    this.title.setTitle(this.getTitleByRecipeType(this.recipeType));
   }
 
   loadMoreRecipes() {

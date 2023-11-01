@@ -30,6 +30,7 @@ import { CommentComponent } from './components/comments/comment/comment.componen
 import { CommentsListComponent } from './components/comments/comments-list/comments-list.component';
 import { CUSTOM_TIME_DIFF_GENERATOR, TimePastPipe } from 'ng-time-past-pipe';
 import { timeDiffGenerator } from '../controls/time';
+import { SectionCreatingComponent } from './components/categories/section-creating/section-creating.component';
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import { timeDiffGenerator } from '../controls/time';
     VerticalRecipeListComponent,
     VerticalCategoryListComponent,
     HorizontalCategoryListComponent,
+    SectionCreatingComponent,
   ],
   imports: [
     CommonModule,
@@ -86,6 +88,7 @@ import { timeDiffGenerator } from '../controls/time';
     VerticalCategoryListComponent,
     HorizontalCategoryListComponent,
     VerticalRecipeListComponent,
+    SectionCreatingComponent,
     RecipeCreateComponent,
   ],
 })

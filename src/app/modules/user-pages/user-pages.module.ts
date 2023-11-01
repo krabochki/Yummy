@@ -17,6 +17,7 @@ import { UsersPageComponent } from './components/users-page/users-page.component
 import { UserPagesRoutingModule } from './user-pages-routing.module';
 import { UserPagesComponent } from './user-pages.component';
 import { UserAccountEditComponent } from './components/user-account-edit/user-account-edit.component';
+import { TimePastPipe } from 'ng-time-past-pipe';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,8 @@ import { UserAccountEditComponent } from './components/user-account-edit/user-ac
     UserPagesRoutingModule,
     ControlsModule,
     RecipesModule,
+    TimePastPipe,
+
     SvgIconComponent,
     FormsModule,
     ReactiveFormsModule,
@@ -48,5 +51,6 @@ import { UserAccountEditComponent } from './components/user-account-edit/user-ac
     provideAngularSvgIcon(),
     RouteEventsService,
   ],
+  exports: [NotificationsListComponent],
 })
 export class UserPagesModule {}

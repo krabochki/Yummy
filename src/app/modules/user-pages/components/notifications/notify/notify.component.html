@@ -1,0 +1,12 @@
+<a [routerLink]="notify.relatedLink?notify.relatedLink:null" [ngClass]="getClass()">
+    
+    <div class="body"  >
+        <div class="head">
+            <svg-icon class="svg-notify" [applyClass]="true" [src]="icon"></svg-icon>
+            <h1 class="title">{{notify.title}}</h1>
+        </div>
+        <p class="text">{{notify.message}}</p>
+        <p class="text time">{{notify.timestamp|timePast}}</p>
+    </div>
+    
+</a>

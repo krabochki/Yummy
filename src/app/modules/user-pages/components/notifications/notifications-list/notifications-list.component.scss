@@ -1,0 +1,43 @@
+:host {
+  position: fixed;
+  right: 0;
+  top: 0;
+  background-color: var(--color-background-deeper);
+  height: 100%;
+  z-index: 10;
+  width: 15em;
+
+  
+
+}
+.notifies{
+  overflow-y: auto;
+  &::-webkit-scrollbar{
+    display: none;
+  }
+   display: flex;
+    flex-direction: column;
+    row-gap: 0.5em;
+
+    justify-content: start;
+    align-items: start;
+    align-content: start;
+      padding-bottom: 0.5em;
+
+}
+h1 {
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 0.2em;
+  font-size: var(--font-l);
+  margin-top: 0.5em;
+}
+
+
+.list{
+  display: grid;
+
+  height: 100%;
+  grid-template-rows: min-content 100%;
+  padding: 0 0;
+}

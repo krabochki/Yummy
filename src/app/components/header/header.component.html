@@ -59,11 +59,11 @@
       }" routerLink="/control-dashboard" *ngIf="currentUser.role === 'admin' || currentUser.role === 'moderator'">
      <a> <svg-icon class="admin-svg" [src]="'../../../assets/images/svg/star.svg'" [class]="'svg'"></svg-icon></a>
     </div>
-    <button *ngIf="this.currentUser.id !== 0" class="svg-button">
+    <button  (click)="notifiesOpen=!notifiesOpen" *ngIf="this.currentUser.id !== 0" class="svg-button">
       <svg-icon [src]="'../../../assets/images/svg/bell.svg'" [class]="'svg'"></svg-icon>
 
-      <div class="notifications" *ngIf="notificationsCount > 0">
-        {{ notificationsCount }}
+      <div class="notifications" *ngIf="notificationCount > 0">
+        {{ notificationCount }}
       </div>
     </button>
 
@@ -94,7 +94,7 @@
     </a>
 
     <a (click)="currentUser.id === 0 ? (noAccessModalShow = true) : null">
-      <div *ngIf="currentUser.id>0" class="count">10</div>
+      <div *ngIf="currentUser.id>0" class="count">{{notificationCount}}</div>
       <svg-icon class="header-top-svg" [applyClass]="true"
         [src]="'../../../../../assets/images/svg/header/notification.svg'"></svg-icon>
     </a>
@@ -174,3 +174,5 @@
   "></app-modal>
 
     <app-recipe-create style="z-index:10; position: fixed;" *ngIf="creatingMode" (closeEmitter)="creatingMode=false" @modal ></app-recipe-create>
+
+    <app-notifications-list [user]="user" *ngIf="!notifiesOpen" [notifies]="notifies"></app-notifications-list>

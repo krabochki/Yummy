@@ -9,16 +9,22 @@
 .main {
   padding: 2.5em calc(14.4vw + 0 * (100vw - 768px) / 760);
 }
-.category-image{
+.category-image,.recipe-image{
   width: 8em;
   height: 8em;
   border-radius: 100%;
   background-position: center;
   background-size: cover;
   margin: 0 auto;
-  background-image: url('../../../../../assets/images/category.png');
 }
+.category-image{
+    background-image: url('../../../../../assets/images/category.png');
 
+}
+.recipe-image{
+    background-image: url('../../../../../assets/images/svg/pancakes.png');
+
+}
 h1 {
   line-height: 1;
   font-size: var(--font-xxl);
@@ -44,7 +50,7 @@ app-modal{
   position: fixed;
   z-index: 3;
 }
-h2{
+h2,.circles *{
    -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */
   -khtml-user-select: none; /* Konqueror HTML */
@@ -72,8 +78,6 @@ h2{
         .report-user {
           font-weight: 500;
           cursor: pointer;
-          text-decoration: underline;
-          text-decoration-thickness: 1px;
         }
         line-height: 1.2;
         font-size: 0.9em;

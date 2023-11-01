@@ -17,6 +17,7 @@ import { CategoryService } from './modules/recipes/services/category.service';
 import { RecipeService } from './modules/recipes/services/recipe.service';
 import { UserService } from './modules/user-pages/services/user.service';
 import { RecipesModule } from './modules/recipes/recipes.module';
+import { UserPagesModule } from './modules/user-pages/user-pages.module';
 
 export function initializeSections(sectionSerivce: SectionService) {
   return () => sectionSerivce.loadSectionData();
@@ -40,6 +41,7 @@ export function initializeUsers(UserService: UserService) {
     HttpClientModule,
     RecipesModule,
     ControlsModule,
+   UserPagesModule,
     AngularSvgIconModule.forRoot(),
   ],
   providers: [

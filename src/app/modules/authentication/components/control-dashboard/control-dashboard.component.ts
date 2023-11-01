@@ -21,7 +21,8 @@ import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
 import { CategoryService } from 'src/app/modules/recipes/services/category.service';
-import { HttpClient } from '@angular/common/http';
+import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
+import { INotification } from 'src/app/modules/user-pages/models/notifications';
 @Component({
   selector: 'app-control-dashboard',
   templateUrl: './control-dashboard.component.html',
@@ -42,6 +43,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   actionCategory: ICategory | null = null;
 
   awaitingRecipes: IRecipe[] = [];
+  awaitingRecipesToShow: IRecipe[] = [];
 
   reportCommentDismissModalShow: boolean = false;
   successReportCommentDismissModalShow: boolean = false;
@@ -56,11 +58,13 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
 
   showCommentReports: boolean = false;
 
+  sectionCreatingMode = false;
+
   showCategoriesForCheck: boolean = false;
   categoriesForCheckToShow: ICategory[] = [];
   categoriesForCheck: ICategory[] = [];
   protected destroyed$: Subject<void> = new Subject<void>();
-
+  showAwaitingRecipes: boolean = false;
   constructor(
     private recipeService: RecipeService,
     private cd: ChangeDetectorRef,
@@ -68,8 +72,8 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private userService: UserService,
     private sectionService: SectionService,
-    private http: HttpClient,
     private categoryService: CategoryService,
+    private notifyService: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -115,7 +119,16 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
         this.recipes = receivedRecipes;
         this.awaitingRecipes =
           this.recipeService.getAwaitingRecipes(receivedRecipes);
+        if (this.awaitingRecipesToShow.length > 3) {
+          this.awaitingRecipesToShow = this.awaitingRecipes.slice(
+            0,
+            this.awaitingRecipesToShow.length,
+          );
+        } else {
+          this.awaitingRecipesToShow = this.awaitingRecipes.slice(0, 3);
+        }
         this.cd.markForCheck();
+        this.awaitingRecipesToShow = this.awaitingRecipes;
       });
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
@@ -142,6 +155,17 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     const currentLength = this.reports.length;
     const nextRecipes = this.allReports.slice(currentLength, currentLength + 3);
     this.reports = [...this.reports, ...nextRecipes];
+  }
+  loadMoreAwaitingRecipes() {
+    const currentLength = this.awaitingRecipesToShow.length;
+    const nextRecipes = this.awaitingRecipes.slice(
+      currentLength,
+      currentLength + 3,
+    );
+    this.awaitingRecipesToShow = [
+      ...this.awaitingRecipesToShow,
+      ...nextRecipes,
+    ];
   }
   loadMoreCategories() {
     const currentLength = this.categoriesForCheckToShow.length;
@@ -171,9 +195,26 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   approveCategory() {
     if (this.actionCategory) {
       this.actionCategory.status = 'public';
-      this.categoryService
-        .updateCategory(this.actionCategory)
-        .subscribe(() => (this.successApproveCategoryModalShow = true));
+      this.categoryService.updateCategory(this.actionCategory).subscribe(() => {
+        if (this.actionCategory) {
+          this.successApproveCategoryModalShow = true;
+          const author: IUser = this.getUser(this.actionCategory?.authorId);
+          const link: string = '/categories/list/' + this.actionCategory.id;
+          const title =
+            'Твоя категория «' +
+            this.actionCategory.name +
+            '» одобрена и теперь может просматриваться всеми кулинарами';
+          const notify: INotification = this.notifyService.buildNotification(
+            'Категория одобрена',
+            title,
+            'success',
+            'category',
+            link,
+          );
+          this.notifyService.sendNotification(notify, author).subscribe();
+          this.cd.markForCheck();
+        }
+      });
     }
   }
   dismissCategory() {
@@ -188,6 +229,22 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
           this.sectionService.updateSections(section).subscribe({
             next: () => {
               this.successDismissCategoryModalShow = true;
+              if (this.actionCategory) {
+                const author: IUser = this.getUser(
+                  this.actionCategory?.authorId,
+                );
+                const title =
+                  'Твоя категория «' + this.actionCategory.name + '» отклонена';
+                const notify: INotification =
+                  this.notifyService.buildNotification(
+                    'Категория отклонена',
+                    title,
+                    'error',
+                    'category',
+                    '',
+                  );
+                this.notifyService.sendNotification(notify, author).subscribe();
+              }
               this.cd.markForCheck();
             },
           });
@@ -226,60 +283,15 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     else return nullRecipe;
   }
 
-  notApproveRecipe(id: number): void {
-    const approvedRecipe: IRecipe | undefined = this.awaitingRecipes.find(
-      (recipe: IRecipe) => recipe.id === id,
-    );
+  
+            
 
-    if (approvedRecipe) {
-      approvedRecipe.status = 'private';
-      this.recipeService
-        .updateRecipe(approvedRecipe)
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe(
-          () => {
-            this.awaitingRecipes = this.awaitingRecipes.filter(
-              (recipe) => recipe.id !== id,
-            );
-          },
-          (error) => {
-            console.error(
-              'Произошла ошибка при обновлении статуса рецепта модератором: ',
-              error,
-            );
-          },
-        );
-    }
-  }
-
-  approveRecipe(id: number): void {
-    const approvedRecipe: IRecipe | undefined = this.awaitingRecipes.find(
-      (recipe: IRecipe) => recipe.id === id,
-    );
-
-    if (approvedRecipe) {
-      approvedRecipe.status = 'public';
-      this.recipeService
-        .updateRecipe(approvedRecipe)
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe(
-          () => {
-            this.awaitingRecipes = this.awaitingRecipes.filter(
-              (recipe) => recipe.id !== id,
-            );
-          },
-          (error) => {
-            console.error(
-              'Произошла ошибка при обновлении статуса рецепта модератором: ',
-              error,
-            );
-          },
-        );
-    }
-  }
 
   blockComment() {
+
+
     const report = this.actionReport;
+    
     if (report) {
       const recipe = this.getRecipe(report.recipeId);
 
@@ -293,9 +305,57 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
             (item) => item.commentId !== report.commentId,
           ),
         })
-        .subscribe(() => (this.successReportCommentApproveModalShow = true));
+        .subscribe(() => {
+          this.successReportCommentApproveModalShow = true;
+
+          if (this.actionReport) {
+            const recipe: IRecipe = this.getRecipe(this.actionReport.recipeId);
+            const reporter: IUser = this.getUser(this.actionReport.reporterId);
+            const comment: IComment = this.getComment(
+              this.actionReport.commentId,
+              recipe,
+            );
+              const author: IUser = this.getUser(
+                this.getComment(this.actionReport.commentId, recipe).authorId,
+              );
+            const title1 =
+              'Твой комментарий «' +
+              comment.text +
+              '» под рецептом «' +
+              recipe.name +
+              '» удален по жалобе';
+
+            const title2 =
+              'Твоя жалоба на комментарий пользователя ' + (author.fullName
+                ? author.fullName
+                : ('@' +
+                  author.username)) +
+                  ' «' +
+                  comment.text +
+                  '» под рецептом «' +
+                  recipe.name +
+                  '» принята';
+            const notify1: INotification = this.notifyService.buildNotification(
+              'Твой комментарий удален по жалобе',
+              title1,
+              'error',
+              'comment',
+              '/recipes/list/' + recipe.id,
+            );
+            const notify2: INotification = this.notifyService.buildNotification(
+              'Комментарий удален по твоей жалобе',
+              title2,
+              'success',
+              'comment',
+              '/recipes/list/'+recipe.id
+            )
+            this.notifyService.sendNotification(notify1, author).subscribe();
+            this.notifyService.sendNotification(notify2, reporter).subscribe();
+          }
+              this.actionReport = null;
+
+        });
     }
-    this.actionReport = null;
   }
 
   reportActionClick(
@@ -323,9 +383,44 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
             (item) => item.commentId !== report.commentId,
           ),
         })
-        .subscribe(() => (this.successReportCommentDismissModalShow = true));
+        .subscribe(() => {
+          this.successReportCommentDismissModalShow = true
+        
+          if (this.actionReport) {
+            const recipe: IRecipe = this.getRecipe(this.actionReport.recipeId);
+            const reporter: IUser = this.getUser(this.actionReport.reporterId);
+            const comment: IComment = this.getComment(
+              this.actionReport.commentId,
+              recipe,
+            );
+            const author: IUser = this.getUser(
+              this.getComment(this.actionReport.commentId, recipe).authorId,
+            );
+           
+            const title =
+              'Твоя жалоба на комментарий пользователя ' + (author.fullName
+                ? author.fullName
+                : '@' +
+                  author.username +
+                  ' «') +
+                  comment.text +
+                  '» под рецептом «' +
+                  recipe.name +
+                  '» отклонена';
+          
+            const notify: INotification = this.notifyService.buildNotification(
+              'Жалоба на комментарий отклонена',
+              title,
+              'error',
+              'comment',
+              '/recipes/list/' + recipe.id,
+            );
+            this.notifyService.sendNotification(notify, reporter).subscribe();
+          }
+              this.actionReport = null;
+
+        });
     }
-    this.actionReport = null;
   }
 
   getAuthorOfReportedComment(report: ICommentReportForAdmin): IUser {
@@ -348,6 +443,100 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   }
   handleSuccessReportCommentApproveModal() {
     this.successReportCommentApproveModalShow = false;
+  }
+
+  handleDismissRecipeModal(answer: boolean): void {
+    if (answer) {
+      this.adminAction = 'dismiss';
+
+      this.successRecipeActionModalShow = true;
+    }
+    this.dismissRecipeModalShow = false;
+  }
+
+  handleApproveRecipeModal(answer: boolean): void {
+    if (answer) {
+      this.adminAction = 'approve';
+      this.successRecipeActionModalShow = true;
+    }
+    this.approveRecipeModalShow = false;
+  }
+
+  awaitingRecipeActionClick(action: 'approve' | 'dismiss', recipe: IRecipe) {
+    if (action === 'approve') {
+      this.approveRecipeModalShow = true;
+    } else {
+      this.dismissRecipeModalShow = true;
+    }
+    this.actionRecipe = recipe;
+  }
+
+  successRecipeActionModalShow: boolean = false;
+  dismissRecipeModalShow = false;
+  approveRecipeModalShow = false;
+  adminAction: 'approve' | 'dismiss' = 'dismiss';
+  actionRecipe: null | IRecipe = null;
+
+  
+            
+
+              
+    
+
+  handleSuccessRecipeActionModal() {
+    this.successRecipeActionModalShow = false;
+
+    if (this.actionRecipe) {
+      if (this.adminAction === 'approve') {
+        const approvedRecipe = this.recipeService.approveRecipe(
+          this.actionRecipe,
+        );
+        this.recipeService.updateRecipe(approvedRecipe).subscribe(
+          () => {
+            if (this.actionRecipe) {
+              const author: IUser = this.getUser(this.actionRecipe?.authorId);
+              const title =
+                'Твой рецепт «' +
+                this.actionRecipe.name +
+                '» одобрен и теперь может просматриваться всеми кулинарами';
+              const notify: INotification =
+                this.notifyService.buildNotification(
+                  'Рецепт одобрен',
+                  title,
+                  'success',
+                  'recipe',
+                  '/recipes/list/' + this.actionRecipe.id,
+                );
+              this.notifyService.sendNotification(notify, author).subscribe();
+            }
+          }
+        
+        );
+      } else {
+        const dismissedRecipe = this.recipeService.dismissRecipe(
+          this.actionRecipe,
+        );
+        this.recipeService.updateRecipe(dismissedRecipe).subscribe(
+          () => {
+            if (this.actionRecipe) {
+              const author: IUser = this.getUser(this.actionRecipe?.authorId);
+              const title =
+                'Твой рецепт «' + this.actionRecipe.name + '» отклонен';
+              const notify: INotification =
+                this.notifyService.buildNotification(
+                  'Рецепт отклонен',
+                  title,
+                  'error',
+                  'recipe',
+                  '',
+                );
+              this.notifyService.sendNotification(notify, author).subscribe();
+            }
+      }
+    
+        );
+      }
+    }
   }
 
   ngOnDestroy(): void {

@@ -21,6 +21,8 @@ import {
 } from '@angular/animations';
 import { widthAnim } from 'src/tools/animations';
 import { Subject, takeUntil } from 'rxjs';
+import { NotificationService } from '../../services/notification.service';
+import { INotification } from '../../models/notifications';
 
 @Component({
   selector: 'app-followers-and-following',
@@ -63,11 +65,11 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
 
   constructor(
     private renderer: Renderer2,
-
+    private notifyService: NotificationService,
     private cd: ChangeDetectorRef,
     private router: Router,
     public userService: UserService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.renderer.addClass(document.body, 'hide-overflow');
@@ -108,6 +110,16 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
   follow(user: IUser) {
     this.userService.addFollower(user, this.currentUser?.id);
     this.updateUser(user);
+
+    const title = 'Кулинар ' + (this.currentUser.fullName? this.currentUser.fullName: '@' + this.currentUser.username) + ' подписался на тебя';
+    const notify: INotification = this.notifyService.buildNotification(
+      'Новый подписчик',
+      title,
+      'info',
+      'user',
+      '/cooks/list/' + this.currentUser.id,
+    );
+    this.notifyService.sendNotification(notify, user).subscribe()
   }
 
   //отписка текущего пользователя от людей в списке

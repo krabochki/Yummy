@@ -1,4 +1,8 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <div class="list">
     <h1>Уведомления</h1>
-    <div class="notifies"><app-notify *ngFor="let notify of notifies" [notify]="notify"></app-notify></div>
+    <div class="notifies"><app-notify @height *ngFor="let notify of notifies" [notify]="notify"></app-notify></div>
 </div>
+
+<div class="background" (click)="closeEmitter.emit(false)"></div>

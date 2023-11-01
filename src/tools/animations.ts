@@ -9,6 +9,35 @@ export function fadeIn() {
   ];
 }
 
+export function notifies() {
+  return [
+    transition(':enter', [
+      style({ 'transform': 'translateX(15em)' }),
+      animate('400ms ease-in-out', style({ 'transform': 'translateX(0)' })),
+    ]),
+    transition(':leave', [
+      style({ 'transform': 'translateX(0)' }),
+      animate('400ms ease-in-out', style({ 'transform': 'translateX(15em)' })),
+    ]),
+  ];
+}
+
+export function count() {
+  return [
+    transition(':enter', [
+      style({ 'scale': '0' }),
+      animate('300ms ease-in-out', style({ 'scale': '100%' })),
+    ]),
+    transition(':leave', [
+      style({ 'scale': '100%' }),
+      animate('300ms ease-in-out', style({ 'scale': '0' })),
+    ]),
+  ];
+}
+
+
+
+
 export function modal() {
   return [
     transition(':enter', [
@@ -49,12 +78,12 @@ export function slideReverse() {
 export function onlyHeight() {
   return [
     transition(':enter', [
-      style({ height: '0' }),
-      animate('300ms ease-out', style({ height: '*' })),
+      style({ height: '0', overflow: 'hidden' }),
+      animate('300ms ease-out', style({ height: '*' , overflow:'visible'})),
     ]),
     transition(':leave', [
-      style({ height: '*' }),
-      animate('300ms ease-in', style({ height: '20px' })),
+      style({ height: '*',overflow:'visible' }),
+      animate('300ms ease-in', style({ height: '20px',overflow:'hidden' })),
     ]),
   ];
 }

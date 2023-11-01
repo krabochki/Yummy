@@ -80,8 +80,7 @@ export class RecipeService {
         catchError((error) => {
           return throwError(error);
         }),
-      )
-      .subscribe();
+      );
   }
 
   postRecipe(recipe: IRecipe) {

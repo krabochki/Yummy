@@ -1,7 +1,7 @@
 export interface INotification {
   id: number;
   type: 'info' | 'warning' | 'error' | 'success';
-  context: 'category' | 'recipe' | 'without'|'comment';
+  context: 'category' | 'recipe' | 'without'|'comment'|'user';
   relatedLink: string,
   message: string; // Текст уведомления
   title: string;

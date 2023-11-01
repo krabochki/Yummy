@@ -1,5 +1,6 @@
 import { trigger } from '@angular/animations';
 import {
+  ChangeDetectorRef,
   Component,
   DoCheck,
   EventEmitter,
@@ -8,59 +9,54 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
+import { cookRouterLinks, cooksSelectItems, recipeRouterLinks, recipeSelectItems, recipeRoutes, userRoutes } from './consts';
 import { NavigationEnd, Router } from '@angular/router';
 import { Subject, filter, takeUntil } from 'rxjs';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
-import { modal } from 'src/tools/animations';
-modal;
+import { count, modal, notifies } from 'src/tools/animations';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
-  animations: [trigger('modal', modal())],
+  animations: [
+    trigger('modal', modal()),
+    trigger('notifies', notifies()),
+    trigger('count', count()),
+  ],
 })
 export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
-  recipeSelectItems: string[] = [
-    'Рецепты',
-    'Твои рецепты',
-    'Все рецепты',
-    'Разделы',
-    'Закладки',
-    'Подбор рецептов',
-  ];
-  creatingMode = false;
-  cooksSelectItems: string[] = [
-    'Кулинары',
-    'Твой профиль',
-    'Все кулинары',
-    'Обновления',
-  ];
+  @Output() headerHeight: EventEmitter<number> = new EventEmitter();
 
-  recipeRouterLinks: string[] = [
-    '/recipes/yours',
-    '/recipes',
-    '/sections',
-    '/recipes/favorite',
-    '/match',
-  ];
-  cookRouterLinks: string[] = ['/cooks/list/', '/cooks', '/cooks/updates'];
+  activePage: 'cooks' | 'recipes' | 'match' | 'main' = 'main';
+
+  recipeRouterLinks = recipeRouterLinks;
+  recipeSelectItems = recipeSelectItems;
+  cooksSelectItems = cooksSelectItems;
+  cookRouterLinks = cookRouterLinks;
+
+  creatingMode = false;
+
+  currentUser: IUser = { ...nullUser };
+  users: IUser[] = [];
 
   notifiesOpen: boolean = false;
-  mobile: boolean = false;
-  currentUser: IUser = { ...nullUser };
   notifies: INotification[] = [];
-  user: IUser = nullUser;
+
+  mobile: boolean = false;
+
   noAccessModalShow: boolean = false;
-  activePage: 'cooks' | 'recipes' | 'match' | 'main' = 'main';
-  @Output() headerHeight: EventEmitter<number> = new EventEmitter();
+
+  baseSvgPath: string = '../../../assets/images/svg/';
+
   protected destroyed$: Subject<void> = new Subject<void>();
 
   constructor(
     public authService: AuthService,
     public userService: UserService,
+    public cd: ChangeDetectorRef,
     private router: Router,
   ) {
     //узнаем на какой странице сейчас пользователь для навигации на мобильной версии
@@ -87,44 +83,27 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
       });
   }
 
+  get recipeRoutes() {
+    return recipeRoutes(this.currentUser.id);
+  }
+  get userRoutes() {
+    return userRoutes(this.currentUser.id)
+  }
+
+  get notificationCount() {
+    if (this.currentUser.notifications)
+      return this.currentUser.notifications.filter((n) => n.read === false)
+        .length;
+    else return 0;
+  }
+
   ngOnInit(): void {
     if (screen.width <= 480) {
       this.mobile = true;
     } else {
       this.mobile = false;
     }
-
-    this.authService.currentUser$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((receivedUser) => {
-        this.currentUser = receivedUser;
-        this.cookRouterLinks[0] = '/cooks/list/' + this.currentUser.id;
-      });
-    this.userService.users$.pipe(takeUntil(this.destroyed$)).subscribe(
-      (users) => {
-        
-        const find = users.find((u) => u.id === this.currentUser.id);
-        if (find) {
-          this.user = find;
-          const userNotifies = this.user.notifications.sort((n1, n2) => {
-            const date1 = new Date(n1.timestamp);
-            const date2 = new Date(n2.timestamp);
-            if (date1.getTime() > date2.getTime()) {
-              return -1;
-            } else {
-              return 1;
-            }
-          });  
-          this.notifies = userNotifies;
-        }
-      
-      }
-    )
-  }
-
-
-  get notificationCount() {
-    return this.user.notifications.filter((n)=> n.read===false).length
+    this.usersInit();
   }
 
   ngDoCheck(): void {
@@ -142,17 +121,91 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     this.headerHeightChange();
   }
 
+  currentUserInit() {
+    this.authService.currentUser$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedUser) => {
+        if (receivedUser.id !== 0) {
+          if (this.currentUser.id !== receivedUser.id) {
+            const findUser = this.users.find((u) => u.id === receivedUser.id);
+            if (findUser) {
+              this.cookRouterLinks[0] = '/cooks/list/' + this.currentUser.id;
+              this.currentUser = findUser;
+              this.notifies = [];
+              this.updateNotifies();
+            }
+          }
+        } else this.currentUser = receivedUser;
+      });
+  }
+
+  usersInit() {
+    this.userService.users$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((users) => {
+        this.users = users;
+        this.currentUserInit();
+        this.updateNotifies();
+      });
+  }
+
+  makeNotifiesUnreaded() {
+    let haveNotRead: boolean = false;
+    this.notifies.forEach((notification) => {
+      if (notification.read === false) {
+        haveNotRead = true;
+      }
+      notification.read = true;
+    });
+
+    if (haveNotRead) this.userService.updateUsers(this.currentUser).subscribe();
+  }
+
+  updateNotifies() {
+    if (this.currentUser.notifications) {
+      const userNotifies = [...this.currentUser.notifications];
+
+      if (this.notifies) {
+        userNotifies.forEach((notification) => {
+          if (!this.notifies.some((n) => n.id === notification.id)) {
+            this.notifies.unshift(notification);
+          }
+        });
+      } else {
+        this.notifies = userNotifies;
+        this.cd.markForCheck();
+      }
+    }
+  }
+
   headerHeightChange(): void {
     const element = document.querySelector('.header') as HTMLElement | null;
     const height = element?.offsetHeight;
     this.headerHeight.emit(height);
   }
 
-  linkClick(): void {
+  linkClick(link: string): void {
     if (this.currentUser.id === 0) {
       this.noAccessModalShow = true;
     }
+    else {
+      this.router.navigateByUrl(link)
+    }
   }
+
+  svgPath(svg: string) {
+    return this.baseSvgPath + svg + '.svg';
+  }
+  isActiveSvgPath(svg: string, activePage: string) {
+    return this.baseSvgPath + '/header/' + svg +
+      (this.activePage === activePage ? '-active' : '') +
+      '.svg'
+  }
+  svgActiveClass(activePage: string) {
+    return this.activePage === activePage ? 'header-svg active' : 'header-svg';
+  }
+
+
 
   handleNoAccessModal(event: boolean): void {
     if (event) {

@@ -16,12 +16,15 @@ import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { Subject, takeUntil } from 'rxjs';
 import { getCurrentDate } from 'src/tools/common';
+import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
+import { INotification } from 'src/app/modules/user-pages/models/notifications';
 
 @Component({
   selector: 'app-recipe-list-item',
   templateUrl: './recipe-list-item.component.html',
   styleUrls: ['./recipe-list-item.component.scss'],
   animations: [trigger('modal', modal())],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RecipeListItemComponent implements OnInit, OnDestroy {
   @Input() recipe: IRecipe = nullRecipe;
@@ -39,6 +42,7 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
   noAccessModalShow: boolean = false;
   dataLoaded = false;
   currentUserId = 0;
+  currentUser:IUser = {...nullUser};
   author: IUser = { ...nullUser };
   successEditModalShow: boolean = false;
   moreAuthorButtons: boolean = false;
@@ -53,6 +57,7 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private router: Router,
     private cd: ChangeDetectorRef,
+    private notifyService: NotificationService,
   ) {}
 
   editModeOff() {
@@ -63,6 +68,7 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe((currentUser) => {
         this.currentUserId = currentUser.id;
+        this.currentUser = currentUser;
         this.recipeService.recipes$
           .pipe(takeUntil(this.destroyed$))
           .subscribe((recipes) => {
@@ -118,7 +124,25 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
       .updateRecipe(this.recipe)
       .pipe(takeUntil(this.destroyed$))
       .subscribe(
-        () => console.log('Рецепт успешно добавлен в избранное'),
+        () => 
+        {
+          if (this.isRecipeFavorite) {
+            const author: IUser = this.author;
+            const title =
+              'Твой рецепт «' +
+              this.recipe.name +
+              '» кто-то добавил в избранное'
+
+            const notify: INotification = this.notifyService.buildNotification(
+              'Твой рецепт добавили в избранное',
+              title,
+              'info',
+              'recipe',
+              '/recipes/list/' + this.recipe.id,
+            );
+            this.notifyService.sendNotification(notify, author).subscribe();
+          }
+        },
         (error: Error) =>
           console.error(
             'Ошибка добавления рецепта в избранное: ' + error.message,
@@ -135,12 +159,14 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
     this.successEditModalShow = true;
   }
 
+  vote: boolean = false;
   handleVoteModal(event: boolean) {
     this.recipe = this.recipeService.voteForRecipe(
       this.recipe,
       this.currentUserId,
       !!event,
     );
+    this.vote = event;
     this.cookThisRecipe();
     this.voteModalShow = false;
   }
@@ -149,7 +175,34 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
       .updateRecipe(this.recipe)
       .pipe(takeUntil(this.destroyed$))
       .subscribe(
-        () => console.log('Рецепт отмечен приготовленным'),
+        () => {
+           if (this.isRecipeCooked) {
+                 const author: IUser = this.author;
+
+                 const title =
+                   ('Твой рецепт «' +
+                   this.recipe.name +
+                   '» приготовил кулинар ' +
+                   (this.currentUser.fullName
+                     ? this.currentUser.fullName
+                     : '@' + this.currentUser.username) + (this.vote?' и оставил положительный отзыв':' и оставил негативный отзыв'));
+
+                 const notify: INotification =
+                   this.notifyService.buildNotification(
+                     'Твой рецепт приготовили',
+                     title,
+                     'info',
+                     'recipe',
+                     '/cooks/list/' + this.currentUser.id,
+                   );
+                 this.notifyService
+                   .sendNotification(notify, author)
+                   .subscribe();
+             }
+
+            this.vote = false;
+          }
+        ,
         (error: Error) =>
           console.error(
             'Ошибка отметки рецепта приготовленным: ' + error.message,
@@ -170,12 +223,44 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
   handleSuccessEditModal() {
     //?????????????? если наоборот сначала обновить то это модальное окно пропускается
     this.recipeService.updateRecipe(this.editedRecipe).subscribe(() => {
+      const author: IUser = this.currentUser;
+      const title =
+        ('Рецепт «' +
+        this.editedRecipe.name +
+        '» изменен' +
+        (this.isAwaitingApprove ? ' и успешно отправлен на проверку' : ''));
+      const notify: INotification = this.notifyService.buildNotification(
+        this.isAwaitingApprove
+          ? 'Рецепт изменен и отправлен на проверку'
+          : 'Рецепт изменен',
+        title,
+        'success',
+        'recipe',
+        '/recipes/list/' + this.editedRecipe.id,
+      );
+      this.notifyService.sendNotification(notify, author).subscribe();
+
       this.router.navigateByUrl('recipes/list/' + this.editedRecipe.id);
     });
   }
   handleSuccessDeleteModal() {
     //?????????????? если наоборот сначала удалить то это модальное окно пропускается
-    this.recipeService.deleteRecipe(this.recipe.id);
+    this.recipeService.deleteRecipe(this.recipe.id).subscribe(
+      () => {
+          const author: IUser = this.author;
+          const title =
+            'Ты удалил свой рецепт «' + this.recipe.name + '»';
+
+          const notify: INotification = this.notifyService.buildNotification(
+            'Твой рецепт удален',
+            title,
+            'success',
+            'recipe',
+            '',
+          );
+          this.notifyService.sendNotification(notify, author).subscribe();
+      }
+    );
   }
   handleInnerFunction(event: Event) {
     // Этот метод вызывается при клике на внутренний элемент рецепта
@@ -200,14 +285,34 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
       .updateRecipe(this.recipe)
       .pipe(takeUntil(this.destroyed$))
       .subscribe(
-        () => console.log('Рецепт успешно оценен'),
+        () => {
+
+          if (this.isRecipeLiked) {
+            const author: IUser = this.author;
+
+            const title =
+              ('Твой рецепт «' +
+                this.recipe.name +
+                '» понравился кулинару ' + (this.currentUser.fullName ? this.currentUser.fullName : ('@' + this.currentUser.username)));
+            
+            const notify: INotification = this.notifyService.buildNotification(
+           
+              'Твой рецепт оценили',
+              title,
+              'info',
+              'recipe',
+              '/cooks/list/' + this.currentUser.id,
+            );
+            this.notifyService.sendNotification(notify, author).subscribe();
+          }
+
+        },
         (error: Error) =>
           console.error('Ошибка оценки рецепта: ' + error.message),
       );
   }
   //готовим рецепт
   cookThisRecipe() {
-
     if (this.currentUserId === 0) {
       this.noAccessModalShow = true;
       return;
@@ -224,21 +329,19 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
         this.recipe,
         this.currentUserId,
       );
-         this.recipeService
-           .updateRecipe(this.recipe)
-           .pipe(takeUntil(this.destroyed$))
-           .subscribe(
-             () => console.log('Рецепт отмечен приготовленным'),
-             (error: Error) =>
-               console.error(
-                 'Ошибка отметки рецепта приготовленным: ' + error.message,
-               ),
-           );
+      this.recipeService
+        .updateRecipe(this.recipe)
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe(
+          () => {
+          },
+          (error: Error) =>
+            console.error(
+              'Ошибка отметки рецепта приготовленным: ' + error.message,
+            ),
+        );
     }
     if (this.isRecipeCooked) this.successVoteModalShow = true;
-
-    
- 
   }
 
   handlePublishRecipeModal(event: boolean) {
@@ -250,7 +353,22 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
   handleSuccessPublishModal() {
     this.recipe.status = 'awaits';
     this.recipe.publicationDate = getCurrentDate();
-    this.recipeService.updateRecipe(this.recipe).subscribe();
+    this.recipeService.updateRecipe(this.recipe).subscribe(
+
+      () => {
+         const author: IUser = this.author;
+         const title = 'Рецепт «' + this.recipe.name + '» успешно отправлен на проверку';
+
+         const notify: INotification = this.notifyService.buildNotification(
+           'Рецепт отправлен на проверку',
+           title,
+           'success',
+           'recipe',
+           '/recipes/list/'+this.recipe.id,
+         );
+         this.notifyService.sendNotification(notify, author).subscribe();
+      }
+    );
     this.successPublishModalShow = false;
   }
 

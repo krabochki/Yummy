@@ -23,6 +23,8 @@ import { CommentService } from '../../../services/comment.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IComment } from '../../../models/comments';
 import { getFormattedDate } from 'src/tools/common';
+import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
+import { INotification } from 'src/app/modules/user-pages/models/notifications';
 
 @Component({
   selector: 'app-recipe-page',
@@ -82,6 +84,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   }
 
   constructor(
+    private notifyService:NotificationService,
     private sectionService: SectionService,
     private route: ActivatedRoute,
     private titleService: Title,
@@ -181,7 +184,9 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     return getFormattedDate(this.recipe.publicationDate);
   }
 
+  vote: boolean = false;
   handleVoteModal(event: boolean) {
+    this.vote = event;
     if (event) {
       this.recipe = this.recipeService.voteForRecipe(
         this.recipe,
@@ -194,6 +199,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
         this.currentUser.id,
         false,
       );
+      
     }
     this.cookThisRecipe();
     this.voteModalShow = false;
@@ -203,7 +209,35 @@ export class RecipePageComponent implements OnInit, OnDestroy {
       .updateRecipe(this.recipe)
       .pipe(takeUntil(this.destroyed$))
       .subscribe(
-        () => console.log('Рецепт отмечен приготовленным'),
+        () => 
+        
+        {
+           if (this.isRecipeCooked) {
+             const author: IUser = this.author;
+
+             const title =
+               'Твой рецепт «' +
+               this.recipe.name +
+               '» приготовил кулинар ' +
+               (this.currentUser.fullName
+                 ? this.currentUser.fullName
+                 : '@' + this.currentUser.username) +
+               (this.vote
+                 ? ' и оставил положительный отзыв'
+                 : ' и оставил негативный отзыв');
+
+             const notify: INotification = this.notifyService.buildNotification(
+               'Твой рецепт приготовили',
+               title,
+               'info',
+               'recipe',
+               '/cooks/list/' + this.currentUser.id,
+             );
+             this.notifyService.sendNotification(notify, author).subscribe();
+           }
+
+           this.vote = false;
+        },
         (error: Error) =>
           console.error(
             'Ошибка отметки рецепта приготовленным: ' + error.message,
@@ -231,7 +265,23 @@ export class RecipePageComponent implements OnInit, OnDestroy {
       this.currentUser,
       this.commentForm.get('commentText')?.value,
     );
-    this.commentService.addCommentToRecipe(this.recipe, comment).subscribe();
+    this.commentService.addCommentToRecipe(this.recipe, comment).subscribe(
+
+      () => {
+         const author: IUser = this.currentUser;
+         const title =
+           'Твой комментарий «'+comment.text +'» успешно опубликован под рецептом «'+this.recipe.name +'»';
+
+         const notify: INotification = this.notifyService.buildNotification(
+           'Комментарий опубликован',
+           title,
+           'success',
+           'comment',
+           '/recipes/list/' + this.recipe.id,
+         );
+         this.notifyService.sendNotification(notify, author).subscribe();
+      }
+    );
   }
   setCategories(): void {
     this.categoryService.categories$
@@ -412,7 +462,27 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     this.recipeService
       .updateRecipe(this.recipe)
       .pipe(takeUntil(this.destroyed$))
-      .subscribe();
+      .subscribe(
+
+        () => {
+          if (this.isRecipeFavorite) {
+            const author: IUser = this.author;
+            const title =
+              'Твой рецепт «' +
+              this.recipe.name +
+              '» кто-то добавил в избранное'
+
+            const notify: INotification = this.notifyService.buildNotification(
+              'Твой рецепт добавили в избранное',
+              title,
+              'info',
+              'recipe',
+              '/recipes/list/' + this.recipe.id,
+            );
+            this.notifyService.sendNotification(notify, author).subscribe();
+          }
+        }
+      );
   }
 
   likeThisRecipe() {
@@ -439,7 +509,33 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     this.recipeService
       .updateRecipe(updatedRecipe)
       .pipe(takeUntil(this.destroyed$))
-      .subscribe();
+      .subscribe(
+        () => {
+          if (this.isRecipeLiked) {
+            if (this.isRecipeLiked) {
+              const author: IUser = this.author;
+
+              const title =
+                'Твой рецепт «' +
+                this.recipe.name +
+                '» понравился пользователю ' +
+                (this.currentUser.fullName
+                  ? this.currentUser.fullName
+                  : '@' + this.currentUser.username);
+
+              const notify: INotification =
+                this.notifyService.buildNotification(
+                  'Твой рецепт оценили',
+                  title,
+                  'info',
+                  'recipe',
+                  '/cooks/list/' + this.currentUser.id,
+                );
+              this.notifyService.sendNotification(notify, author).subscribe();
+            }
+          }
+        }
+      );
   }
   //готовим рецепт
   cookThisRecipe() {

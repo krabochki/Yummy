@@ -28,6 +28,8 @@ import { SectionService } from '../../../services/section.service';
 import { getCurrentDate } from 'src/tools/common';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
+import { INotification } from 'src/app/modules/user-pages/models/notifications';
+import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 
 @Component({
   selector: 'app-category-creating',
@@ -58,6 +60,7 @@ export class CategoryCreatingComponent
   }
 
   constructor(
+    private notifyService:NotificationService,
     private renderer: Renderer2,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -182,6 +185,24 @@ export class CategoryCreatingComponent
         if (this.selectedSection) {
           this.selectedSection.categories.push(this.newCategory.id);
           this.sectionService.updateSections(this.selectedSection).subscribe()
+
+              const author: IUser = this.currentUser;
+              const title =
+                'Категория «' +
+                this.newCategory.name +
+                '» для секции «' +
+                this.selectedSection.name +
+                '» отправлена на проверку';
+
+              const notify: INotification =
+                this.notifyService.buildNotification(
+                  'Категория отправлена на проверку',
+                  title,
+                  'success',
+                  'category',
+                  ''
+                );
+              this.notifyService.sendNotification(notify, author).subscribe();
         }
       }
       

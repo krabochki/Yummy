@@ -1,18 +1,24 @@
-import { Component, Input } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, Input } from '@angular/core';
 import { INotification, nullNotification } from '../../../models/notifications';
 import { style } from '@angular/animations';
+import { ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-notify',
   templateUrl: './notify.component.html',
   styleUrls: ['./notify.component.scss'],
+changeDetection:ChangeDetectionStrategy.OnPush
+  
 })
-export class NotifyComponent {
+export class NotifyComponent  {
   @Input() notify: INotification = nullNotification;
 
+
+  
+
   getClass() {
-    const styleClasses = []; 
-    if(this.notify.read) styleClasses.push('not-readed')
+    const styleClasses = [];
+    if (!this.notify.read) styleClasses.push('not-readed');
     switch (this.notify.type) {
       case 'info':
         styleClasses.push('info');

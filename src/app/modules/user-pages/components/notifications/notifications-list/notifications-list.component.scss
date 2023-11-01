@@ -2,16 +2,29 @@
   position: fixed;
   right: 0;
   top: 0;
-  background-color: var(--color-background-deeper);
   height: 100%;
   z-index: 10;
   width: 15em;
+  
 
   
 
 }
+.background{
+  position: fixed;
+  top:0;left:0;
+  z-index: -1;
+  width: 100%;
+
+  pointer-events: none;
+  height: 100%;
+
+  background-color: transparent
+}
 .notifies{
+  z-index: 2;
   overflow-y: auto;
+      width: 100%;
   &::-webkit-scrollbar{
     display: none;
   }
@@ -23,6 +36,7 @@
     align-items: start;
     align-content: start;
       padding-bottom: 0.5em;
+      margin-bottom: 3em;
 
 }
 h1 {
@@ -32,10 +46,16 @@ h1 {
   font-size: var(--font-l);
   margin-top: 0.5em;
 }
+app-notify{
+      width: 100%;
+
+}
 
 
 .list{
-  display: grid;
+  display: grid;  z-index: 2;
+  background-color: var(--color-background-deeper);
+
 
   height: 100%;
   grid-template-rows: min-content 100%;

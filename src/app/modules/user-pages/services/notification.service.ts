@@ -4,6 +4,7 @@ import { UserService } from './user.service';
 import { INotification, nullNotification } from '../models/notifications';
 import { getCurrentDate } from 'src/tools/common';
 import { IUser } from '../models/users';
+import { EMPTY } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -12,13 +13,20 @@ export class NotificationService {
   constructor(
     private userService: UserService,
     private authService: AuthService,
-  ) { }
+  ) { 
+    this.userService.users$.subscribe(
+       (data)=>
+      this.users = data
+    )
+  }
+
+  users:IUser[] = []
 
   buildNotification(
     title: string,
     text: string,
     type: 'info' | 'warning' | 'error' | 'success',
-    context: 'category' | 'recipe' | 'without'|'comment',
+    context: 'category' | 'recipe' | 'without'|'comment'|'user',
     link:string
     
   ): INotification {
@@ -35,12 +43,22 @@ export class NotificationService {
   }
 
   sendNotification(notification: INotification, user: IUser) {
-    if (!user.notifications) {
-      user.notifications = [];
+
+    const actualUser = this.users.find((u)=>u.id===user.id)
+
+    if (actualUser) {
+      if (!actualUser.notifications) {
+        actualUser.notifications = [];
+      }
+      let maxId = 0;
+      if (actualUser.notifications.length > 0)
+        maxId = Math.max(...actualUser.notifications.map((n) => n.id));
+      notification.id = maxId + 1;
+      actualUser.notifications.push(notification);
     }
-    const maxId = Math.max(...user.notifications.map((n) => n.id));
-    notification.id = maxId + 1;
-    user.notifications.push(notification);
-    return this.userService.updateUsers(user);
+    if(actualUser)
+      return this.userService.updateUsers(actualUser);
+    else return EMPTY
+    
   }
 }

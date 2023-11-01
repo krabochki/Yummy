@@ -14,7 +14,7 @@
     [rounded]="true"
   ></app-button>
 
-  <div *ngIf="getPublicCategories(section).length>0 || filter==='popular'" class="search-block">
+  <div *ngIf="getPublicCategories(section).length>0 || filter==='popular' || filter==='sections'" class="search-block">
     <div class="search">
       <input
         (focus)="focusSearch()"

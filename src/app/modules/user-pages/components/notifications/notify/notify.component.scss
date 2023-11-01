@@ -15,8 +15,8 @@
 .error{
     --main:var(--color-primary); 
 }
-.not-readed.body{
-background-color: red
+.not-readed .body{
+background-color: var(--not-read)
 }
 
 .time{
@@ -40,6 +40,7 @@ background-color: red
     line-height: 1;
     font-size: 0.8em;
 }
+
 
 .svg-notify{
     fill:var(--main);

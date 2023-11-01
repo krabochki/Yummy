@@ -123,6 +123,12 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+     this.userService.users$
+       .pipe(takeUntil(this.destroyed$))
+       .subscribe((data) => {
+         this.allUsers = data;
+       });
+    
     this.route.data.subscribe((data) => {
       this.filter = data['filter'];
       this.setRecipeType(this.filter);
@@ -154,11 +160,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroyed$))
           .subscribe((user: IUser) => {
             this.currentUser = user;
-            this.userService.users$
-              .pipe(takeUntil(this.destroyed$))
-              .subscribe((data) => {
-                this.allUsers = data;
-              });
+           
             this.recipeService.recipes$
               .pipe(takeUntil(this.destroyed$))
               .subscribe((data) => {

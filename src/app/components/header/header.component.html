@@ -19,7 +19,7 @@
         }" routerLink="/control-dashboard" *ngIf="currentUser.role === 'admin' || currentUser.role === 'moderator'">
         <a> <svg-icon class="admin-svg" [src]="svgPath('star')" [class]="'svg'" /></a>
       </div>
-      <button (click)="notifiesOpen=!notifiesOpen; (!notifiesOpen)?makeNotifiesUnreaded():null "
+      <button (click)="notifiesOpen=true"
         *ngIf="this.currentUser.id !== 0" class="svg-button">
         <svg-icon [src]="svgPath('bell')" [class]="'svg'" />
         <div @count class="notifications" *ngIf="notificationCount > 0">
@@ -28,12 +28,12 @@
       </button>
 
       <a [routerLink]="
-            this.currentUser.id === 0 ? 'greetings' : 'cooks/list/' + currentUser.id">
+            !this.currentUser.id ? 'greetings' : 'cooks/list/' + currentUser.id">
         <button class="svg-button">
           <ng-template #account>
             <svg-icon [src]="svgPath('account')" [class]="'svg'" />
           </ng-template>
-          <svg-icon *ngIf="this.currentUser.id === 0; else account" [src]="svgPath('enter')" [class]="'svg'" />
+          <svg-icon *ngIf="!this.currentUser.id; else account" [src]="svgPath('enter')" [class]="'svg'" />
         </button>
       </a>
     </div>
@@ -42,25 +42,22 @@
   <ng-container *ngIf="mobile">
     <div>
 
-      <div [class.unactive]="currentUser.id === 0" class="mobile-buttons-panel">
+      <div [class.unactive]="!currentUser.id" class="mobile-buttons-panel">
         <a class="admin-panel" [ngClass]="{
         admin: currentUser.role === 'admin',
         moder: currentUser.role === 'moderator'
       }" routerLink="/control-dashboard" *ngIf="currentUser.role === 'admin' || currentUser.role === 'moderator'">
           <svg-icon class="admin-svg" [src]="svgPath('thick-star')" [class]="'svg'"></svg-icon>
         </a>
-        <a class="acc" (click)="currentUser.id === 0 ? (noAccessModalShow = true) : null" [routerLink]="
-        currentUser.id === 0 ? null : '/cooks/list/' + currentUser.id
-      ">
+        <a class="acc" (click)="linkClick('/cooks/list/'+currentUser.id)">
           <svg-icon class="header-top-svg" [applyClass]="true" [src]="svgPath('header/account')" />
         </a>
 
-        <a (click)="currentUser.id === 0 ? (noAccessModalShow = true) : notifiesOpen=!notifiesOpen">
+        <a (click)="!currentUser.id ? (noAccessModalShow = true) : notifiesOpen=true">
           <div *ngIf="currentUser.id>0 && notificationCount > 0" class="count">{{notificationCount}}</div>
           <svg-icon class="header-top-svg" [applyClass]="true" [src]="svgPath('header/notification')" />
         </a>
-        <a (click)="currentUser.id === 0 ? (noAccessModalShow = true) : null"
-          [routerLink]="currentUser.id === 0 ? null : '/plan'">
+        <a (click)="linkClick('plan')">
           <svg-icon class="header-top-svg" [applyClass]="true" [src]="svgPath('header/calendar')" />
         </a>
       </div>
@@ -120,5 +117,5 @@
 <app-recipe-create style="z-index:10; position: fixed;" *ngIf="creatingMode" (closeEmitter)="creatingMode=false"
   @modal></app-recipe-create>
 
-<app-notifications-list @notifies [user]="currentUser" *ngIf="notifiesOpen"
+<app-notifications-list (closeEmitter)="notifiesOpen=false; makeNotifiesUnreaded()" @notifies [user]="currentUser" *ngIf="notifiesOpen"
   [notifies]="notifies"></app-notifications-list>

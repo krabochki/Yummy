@@ -126,7 +126,6 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedUser) => {
         if (receivedUser.id !== 0) {
-          if (this.currentUser.id !== receivedUser.id) {
             const findUser = this.users.find((u) => u.id === receivedUser.id);
             if (findUser) {
               this.cookRouterLinks[0] = '/cooks/list/' + this.currentUser.id;
@@ -134,7 +133,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
               this.notifies = [];
               this.updateNotifies();
             }
-          }
+          
         } else this.currentUser = receivedUser;
       });
   }
@@ -151,12 +150,14 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
 
   makeNotifiesUnreaded() {
     let haveNotRead: boolean = false;
+    console.log(this.notifies)
     this.notifies.forEach((notification) => {
       if (notification.read === false) {
         haveNotRead = true;
       }
       notification.read = true;
     });
+    console.log(this.notifies);
 
     if (haveNotRead) this.userService.updateUsers(this.currentUser).subscribe();
   }

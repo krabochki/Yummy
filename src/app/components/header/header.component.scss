@@ -208,7 +208,14 @@ p {
 }
 
 @media (max-width: 480px) {
-
+.admin-panel{
+  
+&:hover::after{
+  height: 0;
+  width: 0;
+}
+  
+}
   .admin-svg{
     position: static;
   }

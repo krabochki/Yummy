@@ -1,8 +1,6 @@
-import { Component, EventEmitter, HostListener, Input, OnDestroy, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { INotification } from '../../../models/notifications';
 import { IUser, nullUser } from '../../../models/users';
-import { UserService } from '../../../services/user.service';
-import { Subject, takeUntil } from 'rxjs';
 import { trigger } from '@angular/animations';
 import { onlyHeight } from 'src/tools/animations';
 
@@ -11,6 +9,7 @@ import { onlyHeight } from 'src/tools/animations';
   templateUrl: './notifications-list.component.html',
   animations:[trigger('height',onlyHeight())],
   styleUrls: ['./notifications-list.component.scss'],
+  changeDetection:ChangeDetectionStrategy.OnPush
 })
 export class NotificationsListComponent {
   @Input() notifies: INotification[] = [];

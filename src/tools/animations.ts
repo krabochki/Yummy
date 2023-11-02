@@ -12,12 +12,12 @@ export function fadeIn() {
 export function notifies() {
   return [
     transition(':enter', [
-      style({ 'transform': 'translateX(15em)' }),
+      style({ 'transform': 'translateX(17em)' }),
       animate('400ms ease-in-out', style({ 'transform': 'translateX(0)' })),
     ]),
     transition(':leave', [
       style({ 'transform': 'translateX(0)' }),
-      animate('400ms ease-in-out', style({ 'transform': 'translateX(15em)' })),
+      animate('400ms ease-in-out', style({ 'transform': 'translateX(17em)' })),
     ]),
   ];
 }
@@ -97,8 +97,8 @@ export function heightAnim() {
     transition(':leave',
     
       
-      [style({ 'overflow':'hidden'}),
-      animate('300ms ease-in', style({ height: '0', opacity: '0' })),
+      [
+      animate('300ms ease-in', style({ height: '0', opacity: '0','overflow':'hidden' })),
     ]),
   ];
 }
@@ -106,7 +106,7 @@ export function heightAnim() {
 export function widthAnim() {
   return [
     transition(':enter', [
-      style({ opacity: '0', width: '0' }),
+      style({ opacity: '0', width: '0', overflow:'hidden' }),
       animate('500ms ease-out', style({ opacity: '1', width: '*' })),
     ]),
     transition(':leave', [

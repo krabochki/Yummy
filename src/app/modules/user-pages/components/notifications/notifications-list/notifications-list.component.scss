@@ -4,7 +4,7 @@
   top: 0;
   height: 100%;
   z-index: 10;
-  width: 15em;
+  width: 17em;
   
 
   
@@ -16,7 +16,6 @@
   z-index: -1;
   width: 100%;
 
-  pointer-events: none;
   height: 100%;
 
   background-color: transparent
@@ -30,13 +29,12 @@
   }
    display: flex;
     flex-direction: column;
-    row-gap: 0.5em;
 
     justify-content: start;
     align-items: start;
     align-content: start;
       padding-bottom: 0.5em;
-      margin-bottom: 3em;
+      margin-bottom: 2.5em;
 
 }
 h1 {
@@ -48,7 +46,8 @@ h1 {
 }
 app-notify{
       width: 100%;
-
+border-bottom: 1px solid var(--color-background-deeper-unactive);
+border-top: 1px solid var(--color-background-deeper-unactive);
 }
 
 
@@ -60,4 +59,9 @@ app-notify{
   height: 100%;
   grid-template-rows: min-content 100%;
   padding: 0 0;
+}
+@media(max-width:480px){
+  :host{
+    width:20em;
+  }
 }

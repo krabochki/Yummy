@@ -224,32 +224,27 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
         (categoryId) => categoryId !== this.actionCategory?.id,
       );
 
-      this.categoryService.deleteCategory(this.actionCategory.id).subscribe({
-        next: () => {
-          this.sectionService.updateSections(section).subscribe({
-            next: () => {
-              this.successDismissCategoryModalShow = true;
-              if (this.actionCategory) {
-                const author: IUser = this.getUser(
-                  this.actionCategory?.authorId,
-                );
-                const title =
-                  'Твоя категория «' + this.actionCategory.name + '» отклонена';
-                const notify: INotification =
-                  this.notifyService.buildNotification(
-                    'Категория отклонена',
-                    title,
-                    'error',
-                    'category',
-                    '',
-                  );
-                this.notifyService.sendNotification(notify, author).subscribe();
-              }
-              this.cd.markForCheck();
-            },
+      this.categoryService
+        .deleteCategory(this.actionCategory.id)
+        .subscribe(() => {
+          this.sectionService.updateSections(section).subscribe(() => {
+            this.successDismissCategoryModalShow = true;
           });
-        },
-      });
+          if (this.actionCategory) {
+            const author: IUser = this.getUser(this.actionCategory?.authorId);
+            const title =
+              'Твоя категория «' + this.actionCategory.name + '» отклонена';
+            const notify: INotification = this.notifyService.buildNotification(
+              'Категория отклонена',
+              title,
+              'error',
+              'category',
+              '',
+            );
+            this.notifyService.sendNotification(notify, author).subscribe();
+            this.cd.markForCheck();
+          }
+        });
     }
   }
   handleSuccessApproveCategoryModal() {
@@ -283,16 +278,14 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     else return nullRecipe;
   }
 
-  
-            
-
-
   blockComment() {
-
-
     const report = this.actionReport;
-    
+
     if (report) {
+      const comment = this.getComment(
+        report.commentId,
+        this.getRecipe(report.recipeId),
+      );
       const recipe = this.getRecipe(report.recipeId);
 
       this.recipeService
@@ -309,32 +302,12 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
           this.successReportCommentApproveModalShow = true;
 
           if (this.actionReport) {
-            const recipe: IRecipe = this.getRecipe(this.actionReport.recipeId);
-            const reporter: IUser = this.getUser(this.actionReport.reporterId);
-            const comment: IComment = this.getComment(
-              this.actionReport.commentId,
-              recipe,
-            );
-              const author: IUser = this.getUser(
-                this.getComment(this.actionReport.commentId, recipe).authorId,
-              );
-            const title1 =
-              'Твой комментарий «' +
-              comment.text +
-              '» под рецептом «' +
-              recipe.name +
-              '» удален по жалобе';
-
-            const title2 =
-              'Твоя жалоба на комментарий пользователя ' + (author.fullName
-                ? author.fullName
-                : ('@' +
-                  author.username)) +
-                  ' «' +
-                  comment.text +
-                  '» под рецептом «' +
-                  recipe.name +
-                  '» принята';
+            const report = { ...this.actionReport };
+            const recipe: IRecipe = this.getRecipe(report.recipeId);
+            const reporter: IUser = this.getUser(report.reporterId);
+            const author: IUser = this.getUser(comment.authorId);
+            const title1 ='Твой комментарий «' +comment.text +'» под рецептом «' +recipe.name +'» удален по жалобе';
+            const title2 ='Твоя жалоба на комментарий пользователя ' +(author.fullName ? author.fullName : '@' + author.username) +' «' +comment.text +'» под рецептом «'+recipe.name+'» принята';
             const notify1: INotification = this.notifyService.buildNotification(
               'Твой комментарий удален по жалобе',
               title1,
@@ -347,13 +320,13 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
               title2,
               'success',
               'comment',
-              '/recipes/list/'+recipe.id
-            )
-            this.notifyService.sendNotification(notify1, author).subscribe();
+              '/recipes/list/' + recipe.id,
+            );
             this.notifyService.sendNotification(notify2, reporter).subscribe();
+            this.notifyService.sendNotification(notify1, author).subscribe(() => {
+                console.log('success');
+              });
           }
-              this.actionReport = null;
-
         });
     }
   }
@@ -384,8 +357,8 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
           ),
         })
         .subscribe(() => {
-          this.successReportCommentDismissModalShow = true
-        
+          this.successReportCommentDismissModalShow = true;
+
           if (this.actionReport) {
             const recipe: IRecipe = this.getRecipe(this.actionReport.recipeId);
             const reporter: IUser = this.getUser(this.actionReport.reporterId);
@@ -394,20 +367,21 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
               recipe,
             );
             const author: IUser = this.getUser(
-              this.getComment(this.actionReport.commentId, recipe).authorId,
+              this.getComment(
+                this.actionReport.commentId,
+                this.getRecipe(this.actionReport.recipeId),
+              ).authorId,
             );
-           
+
             const title =
-              'Твоя жалоба на комментарий пользователя ' + (author.fullName
-                ? author.fullName
-                : '@' +
-                  author.username +
-                  ' «') +
-                  comment.text +
-                  '» под рецептом «' +
-                  recipe.name +
-                  '» отклонена';
-          
+              'Твоя жалоба на комментарий пользователя ' +
+              (author.fullName ? author.fullName : '@' + author.username) +
+              ' «' +
+              comment.text +
+              '» под рецептом «' +
+              recipe.name +
+              '» отклонена';
+
             const notify: INotification = this.notifyService.buildNotification(
               'Жалоба на комментарий отклонена',
               title,
@@ -417,8 +391,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
             );
             this.notifyService.sendNotification(notify, reporter).subscribe();
           }
-              this.actionReport = null;
-
+          this.actionReport = null;
         });
     }
   }
@@ -477,12 +450,6 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   adminAction: 'approve' | 'dismiss' = 'dismiss';
   actionRecipe: null | IRecipe = null;
 
-  
-            
-
-              
-    
-
   handleSuccessRecipeActionModal() {
     this.successRecipeActionModalShow = false;
 
@@ -491,50 +458,42 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
         const approvedRecipe = this.recipeService.approveRecipe(
           this.actionRecipe,
         );
-        this.recipeService.updateRecipe(approvedRecipe).subscribe(
-          () => {
-            if (this.actionRecipe) {
-              const author: IUser = this.getUser(this.actionRecipe?.authorId);
-              const title =
-                'Твой рецепт «' +
-                this.actionRecipe.name +
-                '» одобрен и теперь может просматриваться всеми кулинарами';
-              const notify: INotification =
-                this.notifyService.buildNotification(
-                  'Рецепт одобрен',
-                  title,
-                  'success',
-                  'recipe',
-                  '/recipes/list/' + this.actionRecipe.id,
-                );
-              this.notifyService.sendNotification(notify, author).subscribe();
-            }
+        this.recipeService.updateRecipe(approvedRecipe).subscribe(() => {
+          if (this.actionRecipe) {
+            const author: IUser = this.getUser(this.actionRecipe?.authorId);
+            const title =
+              'Твой рецепт «' +
+              this.actionRecipe.name +
+              '» одобрен и теперь может просматриваться всеми кулинарами';
+            const notify: INotification = this.notifyService.buildNotification(
+              'Рецепт одобрен',
+              title,
+              'success',
+              'recipe',
+              '/recipes/list/' + this.actionRecipe.id,
+            );
+            this.notifyService.sendNotification(notify, author).subscribe();
           }
-        
-        );
+        });
       } else {
         const dismissedRecipe = this.recipeService.dismissRecipe(
           this.actionRecipe,
         );
-        this.recipeService.updateRecipe(dismissedRecipe).subscribe(
-          () => {
-            if (this.actionRecipe) {
-              const author: IUser = this.getUser(this.actionRecipe?.authorId);
-              const title =
-                'Твой рецепт «' + this.actionRecipe.name + '» отклонен';
-              const notify: INotification =
-                this.notifyService.buildNotification(
-                  'Рецепт отклонен',
-                  title,
-                  'error',
-                  'recipe',
-                  '',
-                );
-              this.notifyService.sendNotification(notify, author).subscribe();
-            }
-      }
-    
-        );
+        this.recipeService.updateRecipe(dismissedRecipe).subscribe(() => {
+          if (this.actionRecipe) {
+            const author: IUser = this.getUser(this.actionRecipe?.authorId);
+            const title =
+              'Твой рецепт «' + this.actionRecipe.name + '» отклонен';
+            const notify: INotification = this.notifyService.buildNotification(
+              'Рецепт отклонен',
+              title,
+              'error',
+              'recipe',
+              '',
+            );
+            this.notifyService.sendNotification(notify, author).subscribe();
+          }
+        });
       }
     }
   }

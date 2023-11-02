@@ -171,36 +171,20 @@
       "status": "public"
     },
     {
-      "name": "мяул",
-      "photo": {},
-      "sendDate": "2023-11-01T16:49:56.225Z",
-      "authorId": 1,
-      "id": 31,
-      "status": "awaits"
-    },
-    {
       "name": "sffsdfdfd",
       "photo": {},
       "sendDate": "2023-11-01T16:55:32.865Z",
       "authorId": 1,
       "id": 32,
-      "status": "awaits"
+      "status": "public"
     },
     {
-      "name": "лололо",
+      "name": "Питание для бодибилдеров",
       "photo": {},
-      "sendDate": "2023-11-01T16:57:02.704Z",
-      "authorId": 1,
-      "id": 33,
-      "status": "awaits"
-    },
-    {
-      "name": "fdffddf",
-      "photo": {},
-      "sendDate": "2023-11-01T16:58:22.618Z",
-      "authorId": 1,
-      "id": 34,
-      "status": "awaits"
+      "sendDate": "2023-11-01T20:04:17.677Z",
+      "authorId": 5,
+      "id": 35,
+      "status": "public"
     }
   ],
   "sections": [
@@ -226,9 +210,7 @@
       "categories": [
         3,
         4,
-        5,
-        31,
-        33
+        5
       ]
     },
     {
@@ -239,7 +221,7 @@
         6,
         7,
         8,
-        34
+        35
       ]
     },
     {
@@ -370,53 +352,7 @@
           "unit": "magna"
         }
       ],
-      "ingredients": [
-        {
-          "name": "est",
-          "quantity": 47,
-          "unit": "sint"
-        },
-        {
-          "name": "nisi",
-          "quantity": 12,
-          "unit": "officia"
-        },
-        {
-          "name": "sint",
-          "quantity": 29,
-          "unit": "Lorem"
-        },
-        {
-          "name": "fugiat",
-          "quantity": 25,
-          "unit": "sit"
-        },
-        {
-          "name": "ut",
-          "quantity": 47,
-          "unit": "officia"
-        },
-        {
-          "name": "est",
-          "quantity": 17,
-          "unit": "amet"
-        },
-        {
-          "name": "enim",
-          "quantity": 17,
-          "unit": "voluptate"
-        },
-        {
-          "name": "in",
-          "quantity": 8,
-          "unit": "laboris"
-        },
-        {
-          "name": "laborum",
-          "quantity": 35,
-          "unit": "sunt"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 2,
@@ -489,68 +425,7 @@
           "unit": "tempor"
         }
       ],
-      "ingredients": [
-        {
-          "name": "cillum",
-          "quantity": 26,
-          "unit": "incididunt"
-        },
-        {
-          "name": "irure",
-          "quantity": 17,
-          "unit": "deserunt"
-        },
-        {
-          "name": "nulla",
-          "quantity": 13,
-          "unit": "ut"
-        },
-        {
-          "name": "id",
-          "quantity": 45,
-          "unit": "et"
-        },
-        {
-          "name": "cupidatat",
-          "quantity": 4,
-          "unit": "eiusmod"
-        },
-        {
-          "name": "et",
-          "quantity": 40,
-          "unit": "veniam"
-        },
-        {
-          "name": "qui",
-          "quantity": 28,
-          "unit": "id"
-        },
-        {
-          "name": "sunt",
-          "quantity": 10,
-          "unit": "anim"
-        },
-        {
-          "name": "ut",
-          "quantity": 34,
-          "unit": "mollit"
-        },
-        {
-          "name": "ex",
-          "quantity": 32,
-          "unit": "ullamco"
-        },
-        {
-          "name": "velit",
-          "quantity": 40,
-          "unit": "ad"
-        },
-        {
-          "name": "laborum",
-          "quantity": 42,
-          "unit": "dolore"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 3,
@@ -639,44 +514,12 @@
           "unit": "ut"
         }
       ],
-      "ingredients": [
-        {
-          "name": "et",
-          "quantity": 10,
-          "unit": "exercitation"
-        },
-        {
-          "name": "duis",
-          "quantity": 22,
-          "unit": "voluptate"
-        },
-        {
-          "name": "amet",
-          "quantity": 17,
-          "unit": "velit"
-        },
-        {
-          "name": "esse",
-          "quantity": 48,
-          "unit": "deserunt"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 4,
       "mainPhotoUrl": null,
-      "comments": [
-        {
-          "id": 8,
-          "text": "всем привет",
-          "authorId": 5,
-          "date": "2023-10-31T20:52:12.661Z",
-          "likesId": [
-            5
-          ],
-          "dislikesId": []
-        }
-      ],
+      "comments": [],
       "categories": [],
       "name": "Lorem laborum nulla",
       "description": "Consequat quis commodo elit enim ad incididunt id officia reprehenderit in dolore nulla. Irure est dolore occaecat et laborum adipisicing eiusmod enim. Duis proident sunt nulla quis veniam pariatur aute laboris et amet in do nulla nisi.\r\nEt Lorem reprehenderit aliquip tempor qui mollit id eu ex ipsum proident. Id aliquip labore esse excepteur cillum cillum pariatur duis dolor laboris. Ut ad eu commodo nostrud enim duis fugiat do adipisicing enim anim sunt eu.\r\nLaborum cillum pariatur anim occaecat. Adipisicing eu labore adipisicing ipsum anim fugiat deserunt quis. Ex reprehenderit qui fugiat cupidatat. Ad in consequat irure ipsum reprehenderit laboris. Id eu amet non aliqua incididunt commodo incididunt sunt. Voluptate ex eiusmod occaecat commodo aliquip velit veniam incididunt anim pariatur.\r\n",
@@ -746,51 +589,8 @@
           "unit": "aliquip"
         }
       ],
-      "ingredients": [
-        {
-          "name": "aliqua",
-          "quantity": 5,
-          "unit": "pariatur"
-        },
-        {
-          "name": "pariatur",
-          "quantity": 23,
-          "unit": "officia"
-        },
-        {
-          "name": "mollit",
-          "quantity": 37,
-          "unit": "pariatur"
-        },
-        {
-          "name": "in",
-          "quantity": 34,
-          "unit": "aliqua"
-        },
-        {
-          "name": "reprehenderit",
-          "quantity": 26,
-          "unit": "id"
-        },
-        {
-          "name": "veniam",
-          "quantity": 16,
-          "unit": "non"
-        },
-        {
-          "name": "duis",
-          "quantity": 28,
-          "unit": "eiusmod"
-        }
-      ],
-      "reports": [
-        {
-          "id": 1,
-          "date": "2023-11-01T16:42:07.139Z",
-          "reporterId": 1,
-          "commentId": 8
-        }
-      ],
+      "ingredients": [],
+      "reports": [],
       "statistics": [
         {
           "userId": 5,
@@ -869,69 +669,12 @@
           "unit": "incididunt"
         }
       ],
-      "ingredients": [
-        {
-          "name": "eu",
-          "quantity": 42,
-          "unit": "duis"
-        },
-        {
-          "name": "nisi",
-          "quantity": 44,
-          "unit": "ipsum"
-        },
-        {
-          "name": "ex",
-          "quantity": 9,
-          "unit": "cillum"
-        },
-        {
-          "name": "ad",
-          "quantity": 33,
-          "unit": "incididunt"
-        },
-        {
-          "name": "do",
-          "quantity": 39,
-          "unit": "nulla"
-        },
-        {
-          "name": "elit",
-          "quantity": 31,
-          "unit": "occaecat"
-        },
-        {
-          "name": "est",
-          "quantity": 2,
-          "unit": "eiusmod"
-        },
-        {
-          "name": "officia",
-          "quantity": 46,
-          "unit": "proident"
-        },
-        {
-          "name": "occaecat",
-          "quantity": 14,
-          "unit": "magna"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 6,
       "mainPhotoUrl": null,
-      "comments": [
-        {
-          "id": 1,
-          "text": "gfffdfd",
-          "authorId": 5,
-          "date": "2023-10-31T20:21:49.324Z",
-          "likesId": [],
-          "dislikesId": [
-            5
-          ]
-        }
-      ],
+      "comments": [],
       "categories": [],
       "name": "laboris deserunt labore",
       "description": "Consequat ut deserunt anim amet sint ipsum anim excepteur anim incididunt magna ex officia non. Dolore eu ullamco est commodo. Sunt aute quis reprehenderit officia labore ex nisi pariatur consectetur sit ullamco consequat duis reprehenderit. Consectetur Lorem reprehenderit duis exercitation esse aute incididunt ipsum fugiat cupidatat nostrud sint dolore. Duis elit ea culpa commodo magna ex Lorem eiusmod.\r\nTempor sint sit fugiat amet. Nostrud irure ex est sunt. Nostrud eiusmod ea Lorem Lorem.\r\nIpsum cillum pariatur cupidatat sunt deserunt non cupidatat esse ea voluptate laborum. Mollit nulla irure ea sint anim do consectetur duis. Nostrud laborum cupidatat sunt est sit aliquip. Et culpa laboris laborum pariatur minim laborum ex laboris in commodo ut commodo. Esse dolor duis incididunt est ullamco. Excepteur aliqua cillum esse aliqua nulla. Laborum nisi deserunt labore sint ea adipisicing aute officia.\r\n",
@@ -1014,62 +757,14 @@
           "unit": "est"
         }
       ],
-      "ingredients": [
-        {
-          "name": "commodo",
-          "quantity": 15,
-          "unit": "eu"
-        },
-        {
-          "name": "pariatur",
-          "quantity": 17,
-          "unit": "est"
-        },
-        {
-          "name": "excepteur",
-          "quantity": 9,
-          "unit": "cupidatat"
-        },
-        {
-          "name": "eu",
-          "quantity": 21,
-          "unit": "anim"
-        },
-        {
-          "name": "ad",
-          "quantity": 39,
-          "unit": "voluptate"
-        },
-        {
-          "name": "quis",
-          "quantity": 12,
-          "unit": "ullamco"
-        },
-        {
-          "name": "laboris",
-          "quantity": 48,
-          "unit": "ad"
-        },
-        {
-          "name": "officia",
-          "quantity": 34,
-          "unit": "elit"
-        }
-      ],
+      "ingredients": [],
       "statistics": [
         {
           "userId": 5,
           "answer": true
         }
       ],
-      "reports": [
-        {
-          "id": 1,
-          "date": "2023-11-01T16:42:44.529Z",
-          "reporterId": 1,
-          "commentId": 1
-        }
-      ]
+      "reports": []
     },
     {
       "id": 7,
@@ -1098,15 +793,6 @@
       "status": "public",
       "origin": "Brunei Darussalam",
       "publicationDate": "2018-10-30T23:58:43.609Z",
-      "instuctions": [
-        "minim",
-        "do",
-        "eu",
-        "dolor",
-        "labore",
-        "cupidatat",
-        "reprehenderit"
-      ],
       "instructions": [
         {
           "images": [],
@@ -1145,49 +831,12 @@
           "unit": "cillum"
         }
       ],
-      "ingredients": [
-        {
-          "name": "commodo",
-          "quantity": 47,
-          "unit": "non"
-        },
-        {
-          "name": "Lorem",
-          "quantity": 50,
-          "unit": "sit"
-        },
-        {
-          "name": "quis",
-          "quantity": 13,
-          "unit": "eiusmod"
-        },
-        {
-          "name": "excepteur",
-          "quantity": 14,
-          "unit": "laborum"
-        },
-        {
-          "name": "consectetur",
-          "quantity": 38,
-          "unit": "veniam"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 8,
       "mainPhotoUrl": null,
-      "comments": [
-        {
-          "id": 1,
-          "text": "dfdfdf",
-          "authorId": 1,
-          "date": "2023-11-01T16:26:49.616Z",
-          "likesId": [],
-          "dislikesId": [
-            1
-          ]
-        }
-      ],
+      "comments": [],
       "categories": [],
       "name": "cupidatat enim ipsum",
       "description": "Lorem sit duis irure amet consectetur nostrud fugiat et aute consequat quis culpa. Dolor veniam aute sit commodo consectetur eiusmod labore esse enim. Laborum culpa duis eu do. In duis est velit minim elit do sunt amet in reprehenderit aute sit. Nostrud et mollit magna proident voluptate irure deserunt qui Lorem exercitation ullamco. Sunt esse id et laboris voluptate. Officia anim esse enim esse dolor do fugiat officia dolor adipisicing.\r\nAnim velit id nostrud laboris ullamco anim dolore nisi cupidatat elit do. In exercitation et pariatur duis deserunt. Tempor proident culpa labore sunt elit in. Aliquip non sit mollit commodo fugiat enim laborum deserunt. Excepteur ea dolore cupidatat nostrud laborum esse Lorem ullamco duis ut pariatur ut duis. Nostrud consectetur pariatur consequat aute ex commodo aute ad excepteur et cillum. Exercitation sunt laborum ullamco veniam labore.\r\nDuis irure commodo magna exercitation. Elit incididunt consequat enim amet aliquip duis. Nulla in sint quis Lorem.\r\n",
@@ -1271,74 +920,14 @@
           "unit": "deserunt"
         }
       ],
-      "ingredients": [
-        {
-          "name": "velit",
-          "quantity": 15,
-          "unit": "sunt"
-        },
-        {
-          "name": "Lorem",
-          "quantity": 12,
-          "unit": "eiusmod"
-        },
-        {
-          "name": "nostrud",
-          "quantity": 38,
-          "unit": "eu"
-        },
-        {
-          "name": "enim",
-          "quantity": 38,
-          "unit": "pariatur"
-        },
-        {
-          "name": "sit",
-          "quantity": 12,
-          "unit": "irure"
-        },
-        {
-          "name": "exercitation",
-          "quantity": 48,
-          "unit": "id"
-        },
-        {
-          "name": "velit",
-          "quantity": 19,
-          "unit": "fugiat"
-        },
-        {
-          "name": "nostrud",
-          "quantity": 49,
-          "unit": "non"
-        },
-        {
-          "name": "magna",
-          "quantity": 5,
-          "unit": "cupidatat"
-        },
-        {
-          "name": "Lorem",
-          "quantity": 8,
-          "unit": "eu"
-        },
-        {
-          "name": "officia",
-          "quantity": 49,
-          "unit": "reprehenderit"
-        },
-        {
-          "name": "veniam",
-          "quantity": 50,
-          "unit": "veniam"
-        }
-      ],
+      "ingredients": [],
       "statistics": [
         {
           "userId": 1,
           "answer": false
         }
-      ]
+      ],
+      "reports": []
     },
     {
       "id": 9,
@@ -1421,74 +1010,12 @@
           "unit": "ex"
         }
       ],
-      "ingredients": [
-        {
-          "name": "et",
-          "quantity": 10,
-          "unit": "nostrud"
-        },
-        {
-          "name": "magna",
-          "quantity": 8,
-          "unit": "esse"
-        },
-        {
-          "name": "officia",
-          "quantity": 41,
-          "unit": "et"
-        },
-        {
-          "name": "do",
-          "quantity": 12,
-          "unit": "fugiat"
-        },
-        {
-          "name": "aliqua",
-          "quantity": 35,
-          "unit": "consectetur"
-        },
-        {
-          "name": "Lorem",
-          "quantity": 2,
-          "unit": "excepteur"
-        },
-        {
-          "name": "deserunt",
-          "quantity": 39,
-          "unit": "fugiat"
-        },
-        {
-          "name": "cillum",
-          "quantity": 5,
-          "unit": "ipsum"
-        },
-        {
-          "name": "excepteur",
-          "quantity": 42,
-          "unit": "minim"
-        },
-        {
-          "name": "laborum",
-          "quantity": 36,
-          "unit": "minim"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 11,
       "mainPhotoUrl": null,
-      "comments": [
-        {
-          "id": 1,
-          "text": "ававваа",
-          "authorId": 5,
-          "date": "2023-10-30T18:12:41.095Z",
-          "likesId": [],
-          "dislikesId": [
-            5
-          ]
-        }
-      ],
+      "comments": [],
       "categories": [],
       "name": "et ea enim",
       "description": "Esse reprehenderit anim id Lorem ad velit cupidatat officia mollit nostrud officia officia. Eiusmod quis Lorem excepteur ea reprehenderit excepteur adipisicing eu id. Irure incididunt aute non quis qui nostrud officia nostrud ex.\r\nNostrud enim do proident reprehenderit eu ut ipsum dolor labore duis consequat est ipsum. Amet esse incididunt anim culpa anim officia sit. Esse cillum dolore nulla qui cupidatat ut incididunt laboris est. Ea deserunt aliqua nisi mollit enim et aliquip magna ex. Pariatur nostrud tempor aliquip nisi ipsum aliquip eu enim ex eiusmod.\r\nEa qui id ea culpa aute amet sunt non enim culpa mollit. Quis ex reprehenderit irure culpa nulla do dolore. Aute ea commodo cillum ipsum consequat adipisicing cupidatat irure mollit ullamco tempor aute proident. Voluptate fugiat sunt est non sint minim deserunt est. Ex dolore culpa ipsum consequat in enim et aliqua mollit. Sunt labore Lorem reprehenderit elit enim est nulla minim laborum cillum cillum nostrud adipisicing. Veniam sunt culpa dolore velit velit ut ut labore id esse.\r\n",
@@ -1572,33 +1099,7 @@
           "unit": "aliqua"
         }
       ],
-      "ingredients": [
-        {
-          "name": "esse",
-          "quantity": 15,
-          "unit": "deserunt"
-        },
-        {
-          "name": "exercitation",
-          "quantity": 1,
-          "unit": "id"
-        },
-        {
-          "name": "duis",
-          "quantity": 30,
-          "unit": "sunt"
-        },
-        {
-          "name": "ex",
-          "quantity": 29,
-          "unit": "reprehenderit"
-        },
-        {
-          "name": "occaecat",
-          "quantity": 16,
-          "unit": "sint"
-        }
-      ],
+      "ingredients": [],
       "reports": [],
       "statistics": [
         {
@@ -1665,58 +1166,7 @@
           "unit": "ullamco"
         }
       ],
-      "ingredients": [
-        {
-          "name": "ipsum",
-          "quantity": 25,
-          "unit": "tempor"
-        },
-        {
-          "name": "nulla",
-          "quantity": 29,
-          "unit": "non"
-        },
-        {
-          "name": "consequat",
-          "quantity": 45,
-          "unit": "ullamco"
-        },
-        {
-          "name": "id",
-          "quantity": 35,
-          "unit": "quis"
-        },
-        {
-          "name": "minim",
-          "quantity": 15,
-          "unit": "exercitation"
-        },
-        {
-          "name": "minim",
-          "quantity": 2,
-          "unit": "veniam"
-        },
-        {
-          "name": "adipisicing",
-          "quantity": 32,
-          "unit": "sit"
-        },
-        {
-          "name": "tempor",
-          "quantity": 46,
-          "unit": "deserunt"
-        },
-        {
-          "name": "minim",
-          "quantity": 37,
-          "unit": "dolor"
-        },
-        {
-          "name": "consequat",
-          "quantity": 1,
-          "unit": "est"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 13,
@@ -1799,63 +1249,7 @@
           "unit": "proident"
         }
       ],
-      "ingredients": [
-        {
-          "name": "laboris",
-          "quantity": 44,
-          "unit": "cupidatat"
-        },
-        {
-          "name": "anim",
-          "quantity": 34,
-          "unit": "dolore"
-        },
-        {
-          "name": "ex",
-          "quantity": 39,
-          "unit": "enim"
-        },
-        {
-          "name": "velit",
-          "quantity": 1,
-          "unit": "amet"
-        },
-        {
-          "name": "duis",
-          "quantity": 10,
-          "unit": "adipisicing"
-        },
-        {
-          "name": "deserunt",
-          "quantity": 14,
-          "unit": "tempor"
-        },
-        {
-          "name": "sint",
-          "quantity": 48,
-          "unit": "ex"
-        },
-        {
-          "name": "velit",
-          "quantity": 28,
-          "unit": "id"
-        },
-        {
-          "name": "pariatur",
-          "quantity": 30,
-          "unit": "et"
-        },
-        {
-          "name": "ex",
-          "quantity": 3,
-          "unit": "commodo"
-        },
-        {
-          "name": "irure",
-          "quantity": 9,
-          "unit": "velit"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 14,
@@ -1936,28 +1330,7 @@
           "unit": "id"
         }
       ],
-      "ingredients": [
-        {
-          "name": "elit",
-          "quantity": 28,
-          "unit": "aute"
-        },
-        {
-          "name": "quis",
-          "quantity": 42,
-          "unit": "ut"
-        },
-        {
-          "name": "aute",
-          "quantity": 14,
-          "unit": "ea"
-        },
-        {
-          "name": "incididunt",
-          "quantity": 46,
-          "unit": "laboris"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 15,
@@ -2041,43 +1414,7 @@
           "unit": "minim"
         }
       ],
-      "ingredients": [
-        {
-          "name": "id",
-          "quantity": 2,
-          "unit": "velit"
-        },
-        {
-          "name": "voluptate",
-          "quantity": 23,
-          "unit": "culpa"
-        },
-        {
-          "name": "proident",
-          "quantity": 8,
-          "unit": "esse"
-        },
-        {
-          "name": "excepteur",
-          "quantity": 18,
-          "unit": "ea"
-        },
-        {
-          "name": "id",
-          "quantity": 16,
-          "unit": "qui"
-        },
-        {
-          "name": "sint",
-          "quantity": 38,
-          "unit": "laborum"
-        },
-        {
-          "name": "labore",
-          "quantity": 49,
-          "unit": "magna"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 16,
@@ -2151,79 +1488,12 @@
           "unit": "qui"
         }
       ],
-      "ingredients": [
-        {
-          "name": "elit",
-          "quantity": 45,
-          "unit": "sint"
-        },
-        {
-          "name": "exercitation",
-          "quantity": 43,
-          "unit": "sit"
-        },
-        {
-          "name": "commodo",
-          "quantity": 9,
-          "unit": "labore"
-        },
-        {
-          "name": "dolor",
-          "quantity": 30,
-          "unit": "nisi"
-        },
-        {
-          "name": "exercitation",
-          "quantity": 4,
-          "unit": "cillum"
-        },
-        {
-          "name": "ea",
-          "quantity": 22,
-          "unit": "ex"
-        },
-        {
-          "name": "adipisicing",
-          "quantity": 16,
-          "unit": "fugiat"
-        },
-        {
-          "name": "officia",
-          "quantity": 36,
-          "unit": "officia"
-        },
-        {
-          "name": "nostrud",
-          "quantity": 41,
-          "unit": "est"
-        },
-        {
-          "name": "cupidatat",
-          "quantity": 24,
-          "unit": "enim"
-        },
-        {
-          "name": "Lorem",
-          "quantity": 22,
-          "unit": "magna"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 17,
       "mainPhotoUrl": null,
-      "comments": [
-        {
-          "id": 1,
-          "text": "Превосходно",
-          "authorId": 1,
-          "date": "2023-11-01T13:02:03.828Z",
-          "likesId": [
-            1
-          ],
-          "dislikesId": []
-        }
-      ],
+      "comments": [],
       "categories": [],
       "name": "tempor magna amet",
       "description": "Pariatur Lorem ea irure laborum excepteur nostrud ut elit. Nulla aliquip est ullamco enim sunt deserunt sunt commodo aliqua ea non. Nulla quis tempor quis amet laboris velit ex exercitation aliquip elit commodo aliqua voluptate. Proident non est consectetur tempor ad in aliqua velit incididunt eiusmod laboris quis esse ex.\r\nLorem pariatur adipisicing aute quis consequat Lorem duis. Est id officia ipsum quis minim adipisicing voluptate id. Sint enim in cillum sunt enim amet aliqua quis amet dolore. Pariatur esse est duis ipsum velit magna magna quis aliquip nisi sunt officia eu. Labore consequat duis duis reprehenderit enim mollit laborum occaecat cupidatat id consectetur sunt ut tempor.\r\nNostrud cillum consectetur mollit dolor occaecat quis sunt fugiat enim. Ea occaecat eiusmod commodo do. Cillum mollit Lorem laborum ullamco eu amet sint aute tempor voluptate sint.\r\n",
@@ -2302,48 +1572,8 @@
           "unit": "exercitation"
         }
       ],
-      "ingredients": [
-        {
-          "name": "proident",
-          "quantity": 7,
-          "unit": "veniam"
-        },
-        {
-          "name": "ut",
-          "quantity": 13,
-          "unit": "elit"
-        },
-        {
-          "name": "non",
-          "quantity": 16,
-          "unit": "sint"
-        },
-        {
-          "name": "est",
-          "quantity": 39,
-          "unit": "sint"
-        },
-        {
-          "name": "consequat",
-          "quantity": 8,
-          "unit": "in"
-        },
-        {
-          "name": "quis",
-          "quantity": 6,
-          "unit": "adipisicing"
-        },
-        {
-          "name": "irure",
-          "quantity": 14,
-          "unit": "exercitation"
-        },
-        {
-          "name": "duis",
-          "quantity": 19,
-          "unit": "cillum"
-        }
-      ]
+      "ingredients": [],
+      "reports": []
     },
     {
       "id": 18,
@@ -2441,28 +1671,7 @@
           "unit": "aliqua"
         }
       ],
-      "ingredients": [
-        {
-          "name": "velit",
-          "quantity": 18,
-          "unit": "consequat"
-        },
-        {
-          "name": "aliquip",
-          "quantity": 13,
-          "unit": "sit"
-        },
-        {
-          "name": "incididunt",
-          "quantity": 20,
-          "unit": "irure"
-        },
-        {
-          "name": "cillum",
-          "quantity": 44,
-          "unit": "est"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 19,
@@ -2531,38 +1740,7 @@
           "unit": "proident"
         }
       ],
-      "ingredients": [
-        {
-          "name": "aliquip",
-          "quantity": 34,
-          "unit": "nostrud"
-        },
-        {
-          "name": "esse",
-          "quantity": 2,
-          "unit": "incididunt"
-        },
-        {
-          "name": "voluptate",
-          "quantity": 25,
-          "unit": "id"
-        },
-        {
-          "name": "ut",
-          "quantity": 43,
-          "unit": "velit"
-        },
-        {
-          "name": "aute",
-          "quantity": 5,
-          "unit": "dolore"
-        },
-        {
-          "name": "laborum",
-          "quantity": 44,
-          "unit": "esse"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 20,
@@ -2644,53 +1822,7 @@
           "unit": "labore"
         }
       ],
-      "ingredients": [
-        {
-          "name": "est",
-          "quantity": 2,
-          "unit": "veniam"
-        },
-        {
-          "name": "laborum",
-          "quantity": 50,
-          "unit": "reprehenderit"
-        },
-        {
-          "name": "occaecat",
-          "quantity": 23,
-          "unit": "eiusmod"
-        },
-        {
-          "name": "adipisicing",
-          "quantity": 20,
-          "unit": "exercitation"
-        },
-        {
-          "name": "nostrud",
-          "quantity": 34,
-          "unit": "incididunt"
-        },
-        {
-          "name": "laborum",
-          "quantity": 29,
-          "unit": "cupidatat"
-        },
-        {
-          "name": "fugiat",
-          "quantity": 37,
-          "unit": "enim"
-        },
-        {
-          "name": "laborum",
-          "quantity": 42,
-          "unit": "elit"
-        },
-        {
-          "name": "laborum",
-          "quantity": 27,
-          "unit": "anim"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 21,
@@ -2775,28 +1907,7 @@
           "unit": "consectetur"
         }
       ],
-      "ingredients": [
-        {
-          "name": "aliqua",
-          "quantity": 38,
-          "unit": "enim"
-        },
-        {
-          "name": "ex",
-          "quantity": 29,
-          "unit": "esse"
-        },
-        {
-          "name": "in",
-          "quantity": 46,
-          "unit": "tempor"
-        },
-        {
-          "name": "officia",
-          "quantity": 34,
-          "unit": "eiusmod"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 22,
@@ -2868,63 +1979,7 @@
           "unit": "tempor"
         }
       ],
-      "ingredients": [
-        {
-          "name": "quis",
-          "quantity": 11,
-          "unit": "ut"
-        },
-        {
-          "name": "tempor",
-          "quantity": 9,
-          "unit": "anim"
-        },
-        {
-          "name": "ullamco",
-          "quantity": 14,
-          "unit": "labore"
-        },
-        {
-          "name": "esse",
-          "quantity": 8,
-          "unit": "dolor"
-        },
-        {
-          "name": "sunt",
-          "quantity": 34,
-          "unit": "deserunt"
-        },
-        {
-          "name": "veniam",
-          "quantity": 22,
-          "unit": "veniam"
-        },
-        {
-          "name": "eu",
-          "quantity": 25,
-          "unit": "pariatur"
-        },
-        {
-          "name": "exercitation",
-          "quantity": 14,
-          "unit": "est"
-        },
-        {
-          "name": "anim",
-          "quantity": 33,
-          "unit": "nisi"
-        },
-        {
-          "name": "ullamco",
-          "quantity": 39,
-          "unit": "laboris"
-        },
-        {
-          "name": "dolor",
-          "quantity": 49,
-          "unit": "amet"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 24,
@@ -2934,18 +1989,7 @@
         11
       ],
       "mainPhotoUrl": null,
-      "comments": [
-        {
-          "id": 1,
-          "text": "Всем привет! Готовил этот рецепт с мыслью, понравится он вам или нет. Надеюсь, вы оцените и приготовите его сами!!!",
-          "authorId": 1,
-          "date": "2023-11-01T13:01:14.416Z",
-          "likesId": [
-            1
-          ],
-          "dislikesId": []
-        }
-      ],
+      "comments": [],
       "name": "Чизкейк с клубникой",
       "description": "Вкусный чизкейк с клубникой можно приготовить и без выпечки — с желатином. От кусочка такого многослойного десерта не откажется ни одна сладкоежка. Подавайте его с горячим чаем либо кофе, латте. Описание приготовления: В летнее время такой десерт можно готовить хоть каждый день. Его основой может служить не только песочное печенье, но и бисквитный корж. По желанию часть клубники можно измельчить вместе с творогом и тогда получится клубнично-творожный слой.",
       "history": "Aliquip sit amet mollit occaecat cupidatat qui consequat. Magna ad deserunt est mollit. Veniam Lorem in cupidatat minim cillum dolore Lorem incididunt eiusmod est consectetur amet amet tempor. Cillum magna eu cupidatat eu velit. Officia sint incididunt sint amet consequat eu cupidatat consectetur fugiat cupidatat velit ipsum nisi. Et elit nostrud laboris commodo eu ex. Est dolor labore minim excepteur enim voluptate laboris.\r\nAliqua reprehenderit ad voluptate labore. Incididunt consequat sunt commodo non anim irure ad dolore et ut labore et aliquip incididunt. Nulla occaecat in consequat anim sunt qui voluptate. Ut sunt cillum dolor veniam excepteur eu deserunt sunt dolor aliqua consectetur incididunt officia.\r\n",
@@ -3067,14 +2111,7 @@
           "answer": false
         }
       ],
-      "reports": [
-        {
-          "id": 1,
-          "date": "2023-11-01T16:31:07.066Z",
-          "reporterId": 5,
-          "commentId": 1
-        }
-      ]
+      "reports": []
     },
     {
       "id": 25,
@@ -3143,48 +2180,7 @@
           "unit": "id"
         }
       ],
-      "ingredients": [
-        {
-          "name": "ut",
-          "quantity": 19,
-          "unit": "labore"
-        },
-        {
-          "name": "amet",
-          "quantity": 22,
-          "unit": "elit"
-        },
-        {
-          "name": "occaecat",
-          "quantity": 33,
-          "unit": "cillum"
-        },
-        {
-          "name": "aute",
-          "quantity": 45,
-          "unit": "elit"
-        },
-        {
-          "name": "consectetur",
-          "quantity": 15,
-          "unit": "elit"
-        },
-        {
-          "name": "consectetur",
-          "quantity": 22,
-          "unit": "sunt"
-        },
-        {
-          "name": "labore",
-          "quantity": 30,
-          "unit": "incididunt"
-        },
-        {
-          "name": "incididunt",
-          "quantity": 16,
-          "unit": "dolor"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 26,
@@ -3262,58 +2258,7 @@
           "unit": "est"
         }
       ],
-      "ingredients": [
-        {
-          "name": "veniam",
-          "quantity": 28,
-          "unit": "irure"
-        },
-        {
-          "name": "irure",
-          "quantity": 14,
-          "unit": "adipisicing"
-        },
-        {
-          "name": "nostrud",
-          "quantity": 12,
-          "unit": "reprehenderit"
-        },
-        {
-          "name": "cupidatat",
-          "quantity": 49,
-          "unit": "ullamco"
-        },
-        {
-          "name": "veniam",
-          "quantity": 16,
-          "unit": "id"
-        },
-        {
-          "name": "velit",
-          "quantity": 3,
-          "unit": "officia"
-        },
-        {
-          "name": "dolore",
-          "quantity": 20,
-          "unit": "nisi"
-        },
-        {
-          "name": "ad",
-          "quantity": 17,
-          "unit": "voluptate"
-        },
-        {
-          "name": "do",
-          "quantity": 17,
-          "unit": "ea"
-        },
-        {
-          "name": "do",
-          "quantity": 24,
-          "unit": "nulla"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 27,
@@ -3369,53 +2314,7 @@
           "unit": "pariatur"
         }
       ],
-      "ingredients": [
-        {
-          "name": "est",
-          "quantity": 10,
-          "unit": "nulla"
-        },
-        {
-          "name": "ut",
-          "quantity": 24,
-          "unit": "id"
-        },
-        {
-          "name": "voluptate",
-          "quantity": 45,
-          "unit": "velit"
-        },
-        {
-          "name": "voluptate",
-          "quantity": 17,
-          "unit": "cupidatat"
-        },
-        {
-          "name": "laboris",
-          "quantity": 34,
-          "unit": "nostrud"
-        },
-        {
-          "name": "adipisicing",
-          "quantity": 3,
-          "unit": "cillum"
-        },
-        {
-          "name": "aute",
-          "quantity": 32,
-          "unit": "velit"
-        },
-        {
-          "name": "cillum",
-          "quantity": 22,
-          "unit": "consectetur"
-        },
-        {
-          "name": "ea",
-          "quantity": 18,
-          "unit": "nisi"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 28,
@@ -3492,33 +2391,7 @@
           "unit": "minim"
         }
       ],
-      "ingredients": [
-        {
-          "name": "sit",
-          "quantity": 10,
-          "unit": "ullamco"
-        },
-        {
-          "name": "laboris",
-          "quantity": 25,
-          "unit": "quis"
-        },
-        {
-          "name": "cillum",
-          "quantity": 5,
-          "unit": "ea"
-        },
-        {
-          "name": "ipsum",
-          "quantity": 21,
-          "unit": "enim"
-        },
-        {
-          "name": "elit",
-          "quantity": 39,
-          "unit": "et"
-        }
-      ]
+      "ingredients": []
     },
     {
       "name": "Ананасовый тарт татен Бри Ходж из сериала \"Отчаянные домохозяйки\"",
@@ -3781,30 +2654,6 @@
       "status": "public"
     },
     {
-      "name": "fggfgfgf",
-      "reports": [],
-      "statistics": [],
-      "ingredients": [],
-      "instructions": [],
-      "mainImage": null,
-      "description": "",
-      "history": "",
-      "preparationTime": "",
-      "cookingTime": "",
-      "origin": "",
-      "nutritions": [],
-      "servings": 1,
-      "authorId": 5,
-      "categories": [],
-      "cooksId": [],
-      "likesId": [],
-      "favoritesId": [],
-      "id": 55,
-      "comments": [],
-      "publicationDate": "",
-      "status": "private"
-    },
-    {
       "name": "Киш с тыквой и копчёным мясом",
       "reports": [],
       "statistics": [],
@@ -4053,30 +2902,6 @@
       "status": "public"
     },
     {
-      "name": "монако монако",
-      "reports": [],
-      "statistics": [],
-      "ingredients": [],
-      "instructions": [],
-      "mainImage": null,
-      "description": "",
-      "history": "",
-      "preparationTime": "",
-      "cookingTime": "",
-      "origin": "",
-      "nutritions": [],
-      "servings": 1,
-      "authorId": 5,
-      "categories": [],
-      "cooksId": [],
-      "likesId": [],
-      "favoritesId": [],
-      "id": 57,
-      "comments": [],
-      "publicationDate": "2023-11-01T02:13:39.976Z",
-      "status": "private"
-    },
-    {
       "name": "Пок-мок",
       "reports": [],
       "statistics": [],
@@ -4098,7 +2923,7 @@
       "id": 58,
       "comments": [],
       "publicationDate": "",
-      "status": "awaits"
+      "status": "private"
     },
     {
       "name": "Кисси-мисси",
@@ -4206,6 +3031,46 @@
       "comments": [],
       "publicationDate": "2023-11-01T15:56:57.536Z",
       "status": "awaits"
+    },
+    {
+      "name": "Глазунья",
+      "reports": [],
+      "statistics": [],
+      "ingredients": [
+        {
+          "name": "Яйца",
+          "quantity": "2",
+          "unit": "шт"
+        },
+        {
+          "name": "Соль",
+          "quantity": "",
+          "unit": "на глаз"
+        },
+        {
+          "name": "Специи",
+          "quantity": "",
+          "unit": "по вкусу"
+        }
+      ],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "1 минута",
+      "cookingTime": "10 минут",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 5,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 67,
+      "comments": [],
+      "publicationDate": "2023-11-02T00:00:24.427Z",
+      "status": "public"
     }
   ],
   "users": [
@@ -4232,7 +3097,7 @@
       "personalWebsite": "https://www.chefalexeyzimin.com/",
       "location": "Москва, Россия",
       "registrationDate": "2023-01-15",
-      "profileViews": 7647,
+      "profileViews": 7650,
       "role": "moderator",
       "notifications": [
         {
@@ -4334,6 +3199,316 @@
           "title": "Новый подписчик",
           "timestamp": "2023-11-01T18:06:51.747Z",
           "read": true
+        },
+        {
+          "id": 11,
+          "relatedLink": "/recipes/list/4",
+          "context": "comment",
+          "type": "error",
+          "message": "Твоя жалоба на комментарий пользователя Линавсем привет» под рецептом «Lorem laborum nulla» отклонена",
+          "title": "Жалоба на комментарий отклонена",
+          "timestamp": "2023-11-01T20:09:19.293Z",
+          "read": true
+        },
+        {
+          "id": 12,
+          "relatedLink": "/recipes/list/6",
+          "context": "comment",
+          "type": "error",
+          "message": "Твоя жалоба на комментарий пользователя Леха Зимин 1000gfffdfd» под рецептом «laboris deserunt labore» отклонена",
+          "title": "Жалоба на комментарий отклонена",
+          "timestamp": "2023-11-01T20:11:03.025Z",
+          "read": true
+        },
+        {
+          "id": 13,
+          "relatedLink": "/recipes/list/17",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «Превосходно» под рецептом «tempor magna amet»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:11:17.131Z",
+          "read": true
+        },
+        {
+          "id": 14,
+          "relatedLink": "/recipes/list/17",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «Превосходно» под рецептом «tempor magna amet»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:14:30.495Z",
+          "read": true
+        },
+        {
+          "id": 15,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «dfdfdf» под рецептом «cupidatat enim ipsum»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:16:35.024Z",
+          "read": true
+        },
+        {
+          "id": 16,
+          "relatedLink": "/recipes/list/17",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «Превосходно» под рецептом «tempor magna amet»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:19:32.238Z",
+          "read": true
+        },
+        {
+          "id": 17,
+          "relatedLink": "/recipes/list/11",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Лина «ававваа» под рецептом «et ea enim»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:21:05.159Z",
+          "read": true
+        },
+        {
+          "id": 18,
+          "relatedLink": "/recipes/list/11",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя Лина «ававваа» под рецептом «et ea enim» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T20:26:34.746Z",
+          "read": true
+        },
+        {
+          "id": 19,
+          "relatedLink": "/recipes/list/11",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя Лина «ававваа» под рецептом «et ea enim» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T20:27:41.803Z",
+          "read": true
+        },
+        {
+          "id": 20,
+          "relatedLink": "/recipes/list/4",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Лина «всем привет» под рецептом «Lorem laborum nulla»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:29:43.616Z",
+          "read": true
+        },
+        {
+          "id": 21,
+          "relatedLink": "/recipes/list/56",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Лина «гавно» под рецептом «Киш с тыквой и копчёным мясом»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:32:01.071Z",
+          "read": true
+        },
+        {
+          "id": 22,
+          "relatedLink": "/recipes/list/6",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Лина «gfffdfd» под рецептом «laboris deserunt labore»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:33:02.220Z",
+          "read": true
+        },
+        {
+          "id": 23,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Твой комментарий «огнище» успешно опубликован под рецептом «cupidatat enim ipsum»",
+          "title": "Комментарий опубликован",
+          "timestamp": "2023-11-01T20:33:38.101Z",
+          "read": true
+        },
+        {
+          "id": 24,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Лина «не огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:34:57.695Z",
+          "read": true
+        },
+        {
+          "id": 25,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Анна Казакова «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:44:03.385Z",
+          "read": true
+        },
+        {
+          "id": 26,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Екатерина Петрова «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:49:45.904Z",
+          "read": true
+        },
+        {
+          "id": 27,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Екатерина Петрова «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:51:07.331Z",
+          "read": true
+        },
+        {
+          "id": 28,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя @ «» под рецептом «cupidatat enim ipsum» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T20:51:15.666Z",
+          "read": true
+        },
+        {
+          "id": 29,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Екатерина Петрова «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:52:08.540Z",
+          "read": true
+        },
+        {
+          "id": 30,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя @ «» под рецептом «cupidatat enim ipsum» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T20:52:14.573Z",
+          "read": true
+        },
+        {
+          "id": 31,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Екатерина Петрова «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:53:22.431Z",
+          "read": true
+        },
+        {
+          "id": 32,
+          "relatedLink": "",
+          "context": "category",
+          "type": "error",
+          "message": "Твоя категория «мяул» отклонена",
+          "title": "Категория отклонена",
+          "timestamp": "2023-11-01T20:55:36.324Z",
+          "read": true
+        },
+        {
+          "id": 33,
+          "relatedLink": "/categories/list/32",
+          "context": "category",
+          "type": "success",
+          "message": "Твоя категория «sffsdfdfd» одобрена и теперь может просматриваться всеми кулинарами",
+          "title": "Категория одобрена",
+          "timestamp": "2023-11-01T20:55:49.218Z",
+          "read": true
+        },
+        {
+          "id": 34,
+          "relatedLink": "",
+          "context": "category",
+          "type": "error",
+          "message": "Твоя категория «лололо» отклонена",
+          "title": "Категория отклонена",
+          "timestamp": "2023-11-01T20:55:52.871Z",
+          "read": true
+        },
+        {
+          "id": 35,
+          "relatedLink": "",
+          "context": "category",
+          "type": "error",
+          "message": "Твоя категория «fdffddf» отклонена",
+          "title": "Категория отклонена",
+          "timestamp": "2023-11-01T20:56:45.607Z",
+          "read": true
+        },
+        {
+          "id": 36,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя Екатерина Петрова «огнище» под рецептом «cupidatat enim ipsum» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T21:03:08.660Z",
+          "read": true
+        },
+        {
+          "id": 37,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T21:08:09.328Z",
+          "read": true
+        },
+        {
+          "id": 38,
+          "relatedLink": "/recipes/list/60",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «пока» под рецептом «Кисси-мисси»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T21:10:12.043Z",
+          "read": true
+        },
+        {
+          "id": 39,
+          "relatedLink": "/recipes/list/60",
+          "context": "comment",
+          "type": "error",
+          "message": "Твой комментарий «пока» под рецептом «Кисси-мисси» удален по жалобе",
+          "title": "Твой комментарий удален по жалобе",
+          "timestamp": "2023-11-01T21:10:27.376Z",
+          "read": true
+        },
+        {
+          "id": 40,
+          "relatedLink": "/recipes/list/60",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Лина «привет» под рецептом «Кисси-мисси»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T21:12:29.800Z",
+          "read": true
+        },
+        {
+          "id": 41,
+          "relatedLink": "/recipes/list/60",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя Лина «привет» под рецептом «Кисси-мисси» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T21:12:36.769Z",
+          "read": true
         }
       ],
       "avatarUrl": {}
@@ -4397,6 +3572,56 @@
           "title": "Новый подписчик",
           "timestamp": "2023-11-01T18:14:50.608Z",
           "read": true
+        },
+        {
+          "id": 4,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:48:30.566Z",
+          "read": false
+        },
+        {
+          "id": 5,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:49:45.887Z",
+          "read": false
+        },
+        {
+          "id": 6,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:51:07.325Z",
+          "read": false
+        },
+        {
+          "id": 7,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:52:08.534Z",
+          "read": false
+        },
+        {
+          "id": 8,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:53:22.426Z",
+          "read": false
         }
       ]
     },
@@ -4498,7 +3723,7 @@
           "message": "Кто-то пожаловался на твой комментарий «всем привет» под рецептом «Lorem laborum nulla»",
           "title": "Кто-то пожаловался на комментарий",
           "timestamp": "2023-11-01T16:42:07.192Z",
-          "read": false
+          "read": true
         },
         {
           "id": 2,
@@ -4508,7 +3733,7 @@
           "message": "Кто-то пожаловался на твой комментарий «gfffdfd» под рецептом «laboris deserunt labore»",
           "title": "Кто-то пожаловался на комментарий",
           "timestamp": "2023-11-01T16:42:44.617Z",
-          "read": false
+          "read": true
         },
         {
           "id": 3,
@@ -4518,7 +3743,7 @@
           "message": "Твой комментарий «fdfdfdfd» успешно опубликован под рецептом «laboris deserunt labore»",
           "title": "Комментарий опубликован",
           "timestamp": "2023-11-01T16:44:05.624Z",
-          "read": false
+          "read": true
         },
         {
           "id": 4,
@@ -4528,7 +3753,7 @@
           "message": "Твой комментарий «gfggfggf» успешно опубликован под рецептом «laboris deserunt labore»",
           "title": "Комментарий опубликован",
           "timestamp": "2023-11-01T16:44:19.278Z",
-          "read": false
+          "read": true
         },
         {
           "id": 5,
@@ -4538,7 +3763,7 @@
           "message": "Твой комментарий «ggffggf» успешно опубликован под рецептом «laboris deserunt labore»",
           "title": "Комментарий опубликован",
           "timestamp": "2023-11-01T16:45:07.282Z",
-          "read": false
+          "read": true
         },
         {
           "id": 6,
@@ -4548,7 +3773,7 @@
           "message": "Твой комментарий «fdfdf» успешно опубликован под рецептом «laboris deserunt labore»",
           "title": "Комментарий опубликован",
           "timestamp": "2023-11-01T16:46:15.409Z",
-          "read": false
+          "read": true
         },
         {
           "id": 7,
@@ -4558,7 +3783,547 @@
           "message": "Твой комментарий «And i new tomorrow» успешно опубликован под рецептом «laboris deserunt labore»",
           "title": "Комментарий опубликован",
           "timestamp": "2023-11-01T16:47:05.590Z",
-          "read": false
+          "read": true
+        },
+        {
+          "id": 8,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "success",
+          "message": "Ты удалил свой рецепт «fggfgfgf»",
+          "title": "Твой рецепт удален",
+          "timestamp": "2023-11-01T19:17:53.432Z",
+          "read": true
+        },
+        {
+          "id": 9,
+          "relatedLink": "/recipes/list/67",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «fgfddff» сохранен в твоих рецептах",
+          "title": "Рецепт создан",
+          "timestamp": "2023-11-01T19:18:11.944Z",
+          "read": true
+        },
+        {
+          "id": 10,
+          "relatedLink": "/recipes/list/68",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «fdssdfdfsfd» сохранен в твоих рецептах",
+          "title": "Рецепт создан",
+          "timestamp": "2023-11-01T19:20:12.156Z",
+          "read": true
+        },
+        {
+          "id": 11,
+          "relatedLink": "/recipes/list/69",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «fddfdf» сохранен в твоих рецептах",
+          "title": "Рецепт создан",
+          "timestamp": "2023-11-01T19:20:36.250Z",
+          "read": true
+        },
+        {
+          "id": 12,
+          "relatedLink": "/recipes/list/70",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «dfddffdfd» сохранен в твоих рецептах",
+          "title": "Рецепт создан",
+          "timestamp": "2023-11-01T19:21:00.549Z",
+          "read": true
+        },
+        {
+          "id": 13,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "success",
+          "message": "Ты удалил свой рецепт «dfddffdfd»",
+          "title": "Твой рецепт удален",
+          "timestamp": "2023-11-01T19:21:41.025Z",
+          "read": true
+        },
+        {
+          "id": 14,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "success",
+          "message": "Ты удалил свой рецепт «fddfdf»",
+          "title": "Твой рецепт удален",
+          "timestamp": "2023-11-01T19:21:43.805Z",
+          "read": true
+        },
+        {
+          "id": 15,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "success",
+          "message": "Ты удалил свой рецепт «fdssdfdfsfd»",
+          "title": "Твой рецепт удален",
+          "timestamp": "2023-11-01T19:21:46.964Z",
+          "read": true
+        },
+        {
+          "id": 16,
+          "relatedLink": "/recipes/list/68",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «gfggff» сохранен в твоих рецептах",
+          "title": "Рецепт создан",
+          "timestamp": "2023-11-01T19:22:13.305Z",
+          "read": true
+        },
+        {
+          "id": 17,
+          "relatedLink": "/recipes/list/69",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «dfdfdf» сохранен в твоих рецептах",
+          "title": "Рецепт создан",
+          "timestamp": "2023-11-01T19:23:17.909Z",
+          "read": true
+        },
+        {
+          "id": 18,
+          "relatedLink": "/recipes/list/70",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «fgfggff» сохранен в твоих рецептах",
+          "title": "Рецепт создан",
+          "timestamp": "2023-11-01T19:23:27.170Z",
+          "read": true
+        },
+        {
+          "id": 19,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "success",
+          "message": "Ты удалил свой рецепт «fgfggff»",
+          "title": "Твой рецепт удален",
+          "timestamp": "2023-11-01T19:23:37.811Z",
+          "read": true
+        },
+        {
+          "id": 20,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "success",
+          "message": "Ты удалил свой рецепт «dfdfdf»",
+          "title": "Твой рецепт удален",
+          "timestamp": "2023-11-01T19:23:40.603Z",
+          "read": true
+        },
+        {
+          "id": 21,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "success",
+          "message": "Ты удалил свой рецепт «gfggff»",
+          "title": "Твой рецепт удален",
+          "timestamp": "2023-11-01T19:23:43.635Z",
+          "read": true
+        },
+        {
+          "id": 22,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "success",
+          "message": "Ты удалил свой рецепт «fgfddff»",
+          "title": "Твой рецепт удален",
+          "timestamp": "2023-11-01T19:23:46.960Z",
+          "read": true
+        },
+        {
+          "id": 23,
+          "relatedLink": "/recipes/list/67",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «ggdff» сохранен в твоих рецептах",
+          "title": "Рецепт создан",
+          "timestamp": "2023-11-01T19:25:21.335Z",
+          "read": true
+        },
+        {
+          "id": 24,
+          "relatedLink": "/recipes/list/56",
+          "context": "comment",
+          "type": "success",
+          "message": "Твой комментарий «гавно» успешно опубликован под рецептом «Киш с тыквой и копчёным мясом»",
+          "title": "Комментарий опубликован",
+          "timestamp": "2023-11-01T19:31:46.459Z",
+          "read": true
+        },
+        {
+          "id": 25,
+          "relatedLink": "/cooks/list/5",
+          "context": "comment",
+          "type": "info",
+          "message": "Твой комментарий «гавно» под рецептом «Киш с тыквой и копчёным мясом» не понравился кулинару Лина",
+          "title": "Комментарий кому-то не понравился",
+          "timestamp": "2023-11-01T19:31:48.212Z",
+          "read": true
+        },
+        {
+          "id": 26,
+          "relatedLink": "",
+          "context": "category",
+          "type": "success",
+          "message": "Категория «Питание для бодибилдеров» для секции «Контроль веса» отправлена на проверку",
+          "title": "Категория отправлена на проверку",
+          "timestamp": "2023-11-01T20:04:17.722Z",
+          "read": true
+        },
+        {
+          "id": 27,
+          "relatedLink": "/categories/list/35",
+          "context": "category",
+          "type": "success",
+          "message": "Твоя категория «Питание для бодибилдеров» одобрена и теперь может просматриваться всеми кулинарами",
+          "title": "Категория одобрена",
+          "timestamp": "2023-11-01T20:06:01.526Z",
+          "read": true
+        },
+        {
+          "id": 28,
+          "relatedLink": "/recipes/list/68",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «пвпвппап» сохранен в твоих рецептах",
+          "title": "Рецепт создан",
+          "timestamp": "2023-11-01T20:06:45.028Z",
+          "read": true
+        },
+        {
+          "id": 29,
+          "relatedLink": "",
+          "context": "category",
+          "type": "success",
+          "message": "Категория «впааапвп» для секции «Контроль веса» отправлена на проверку",
+          "title": "Категория отправлена на проверку",
+          "timestamp": "2023-11-01T20:06:57.408Z",
+          "read": true
+        },
+        {
+          "id": 30,
+          "relatedLink": "",
+          "context": "category",
+          "type": "error",
+          "message": "Твоя категория «впааапвп» отклонена",
+          "title": "Категория отклонена",
+          "timestamp": "2023-11-01T20:07:57.004Z",
+          "read": true
+        },
+        {
+          "id": 31,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "success",
+          "message": "Ты удалил свой рецепт «пвпвппап»",
+          "title": "Твой рецепт удален",
+          "timestamp": "2023-11-01T20:09:01.202Z",
+          "read": true
+        },
+        {
+          "id": 32,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "success",
+          "message": "Ты удалил свой рецепт «ggdff»",
+          "title": "Твой рецепт удален",
+          "timestamp": "2023-11-01T20:09:03.808Z",
+          "read": true
+        },
+        {
+          "id": 33,
+          "relatedLink": "/recipes/list/24",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя @ «» под рецептом «Чизкейк с клубникой» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T20:09:24.091Z",
+          "read": true
+        },
+        {
+          "id": 34,
+          "relatedLink": "/recipes/list/17",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Леха Зимин 1000 «Превосходно» под рецептом «tempor magna amet»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:11:17.134Z",
+          "read": true
+        },
+        {
+          "id": 35,
+          "relatedLink": "/recipes/list/17",
+          "context": "comment",
+          "type": "error",
+          "message": "Твоя жалоба на комментарий пользователя Леха Зимин 1000Превосходно» под рецептом «tempor magna amet» отклонена",
+          "title": "Жалоба на комментарий отклонена",
+          "timestamp": "2023-11-01T20:13:17.867Z",
+          "read": true
+        },
+        {
+          "id": 36,
+          "relatedLink": "/recipes/list/17",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Леха Зимин 1000 «Превосходно» под рецептом «tempor magna amet»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:14:30.496Z",
+          "read": true
+        },
+        {
+          "id": 37,
+          "relatedLink": "/recipes/list/17",
+          "context": "comment",
+          "type": "error",
+          "message": "Твоя жалоба на комментарий пользователя Леха Зимин 1000 «Превосходно» под рецептом «tempor magna amet» отклонена",
+          "title": "Жалоба на комментарий отклонена",
+          "timestamp": "2023-11-01T20:16:11.059Z",
+          "read": true
+        },
+        {
+          "id": 38,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Леха Зимин 1000 «dfdfdf» под рецептом «cupidatat enim ipsum»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:16:35.026Z",
+          "read": true
+        },
+        {
+          "id": 39,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя @ «» под рецептом «cupidatat enim ipsum» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T20:16:42.791Z",
+          "read": true
+        },
+        {
+          "id": 40,
+          "relatedLink": "/recipes/list/17",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Леха Зимин 1000 «Превосходно» под рецептом «tempor magna amet»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:19:32.240Z",
+          "read": true
+        },
+        {
+          "id": 41,
+          "relatedLink": "/recipes/list/17",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя @ «» под рецептом «tempor magna amet» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T20:19:41.930Z",
+          "read": true
+        },
+        {
+          "id": 42,
+          "relatedLink": "/cooks/list/1",
+          "context": "comment",
+          "type": "info",
+          "message": "Твой комментарий «ававваа» под рецептом «et ea enim» не понравился кулинару Леха Зимин 1000",
+          "title": "Комментарий кому-то не понравился",
+          "timestamp": "2023-11-01T20:21:03.591Z",
+          "read": true
+        },
+        {
+          "id": 43,
+          "relatedLink": "/recipes/list/11",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «ававваа» под рецептом «et ea enim»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:21:05.157Z",
+          "read": true
+        },
+        {
+          "id": 44,
+          "relatedLink": "/recipes/list/11",
+          "context": "comment",
+          "type": "error",
+          "message": "Твой комментарий «ававваа» под рецептом «et ea enim» удален по жалобе",
+          "title": "Твой комментарий удален по жалобе",
+          "timestamp": "2023-11-01T20:26:34.746Z",
+          "read": true
+        },
+        {
+          "id": 45,
+          "relatedLink": "/recipes/list/11",
+          "context": "comment",
+          "type": "error",
+          "message": "Твой комментарий «ававваа» под рецептом «et ea enim» удален по жалобе",
+          "title": "Твой комментарий удален по жалобе",
+          "timestamp": "2023-11-01T20:27:41.803Z",
+          "read": true
+        },
+        {
+          "id": 46,
+          "relatedLink": "/recipes/list/4",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «всем привет» под рецептом «Lorem laborum nulla»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:29:43.613Z",
+          "read": true
+        },
+        {
+          "id": 47,
+          "relatedLink": "/recipes/list/56",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «гавно» под рецептом «Киш с тыквой и копчёным мясом»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:32:01.061Z",
+          "read": true
+        },
+        {
+          "id": 48,
+          "relatedLink": "/recipes/list/6",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «gfffdfd» под рецептом «laboris deserunt labore»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:33:02.208Z",
+          "read": true
+        },
+        {
+          "id": 49,
+          "relatedLink": "/cooks/list/1",
+          "context": "comment",
+          "type": "info",
+          "message": "Твой комментарий «не огнище» под рецептом «cupidatat enim ipsum» не понравился кулинару Леха Зимин 1000",
+          "title": "Комментарий кому-то не понравился",
+          "timestamp": "2023-11-01T20:34:51.149Z",
+          "read": true
+        },
+        {
+          "id": 50,
+          "relatedLink": "/cooks/list/1",
+          "context": "comment",
+          "type": "info",
+          "message": "Твой комментарий «не огнище» под рецептом «cupidatat enim ipsum» не понравился кулинару Леха Зимин 1000",
+          "title": "Комментарий кому-то не понравился",
+          "timestamp": "2023-11-01T20:34:52.110Z",
+          "read": true
+        },
+        {
+          "id": 51,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «не огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:34:57.687Z",
+          "read": true
+        },
+        {
+          "id": 52,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:41:50.043Z",
+          "read": true
+        },
+        {
+          "id": 53,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Леха Зимин 1000 «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T21:08:09.333Z",
+          "read": true
+        },
+        {
+          "id": 54,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя Леха Зимин 1000 «огнище» под рецептом «cupidatat enim ipsum» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T21:08:32.353Z",
+          "read": true
+        },
+        {
+          "id": 55,
+          "relatedLink": "/recipes/list/60",
+          "context": "comment",
+          "type": "success",
+          "message": "Твой комментарий «привет» успешно опубликован под рецептом «Кисси-мисси»",
+          "title": "Комментарий опубликован",
+          "timestamp": "2023-11-01T21:09:46.661Z",
+          "read": true
+        },
+        {
+          "id": 56,
+          "relatedLink": "/recipes/list/60",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Леха Зимин 1000 «пока» под рецептом «Кисси-мисси»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T21:10:12.067Z",
+          "read": true
+        },
+        {
+          "id": 57,
+          "relatedLink": "/recipes/list/60",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя Леха Зимин 1000 «пока» под рецептом «Кисси-мисси» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T21:10:27.376Z",
+          "read": true
+        },
+        {
+          "id": 58,
+          "relatedLink": "/recipes/list/60",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «привет» под рецептом «Кисси-мисси»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T21:12:29.791Z",
+          "read": true
+        },
+        {
+          "id": 59,
+          "relatedLink": "/recipes/list/60",
+          "context": "comment",
+          "type": "error",
+          "message": "Твой комментарий «привет» под рецептом «Кисси-мисси» удален по жалобе",
+          "title": "Твой комментарий удален по жалобе",
+          "timestamp": "2023-11-01T21:12:36.769Z",
+          "read": true
+        },
+        {
+          "id": 60,
+          "relatedLink": "/recipes/list/67",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «Глазунья» сохранен в твоих рецептах и успешно отправлен на проверку",
+          "title": "Рецепт создан и отправлен на проверку",
+          "timestamp": "2023-11-02T00:00:09.533Z",
+          "read": true
+        },
+        {
+          "id": 61,
+          "relatedLink": "/recipes/list/67",
+          "context": "recipe",
+          "type": "success",
+          "message": "Твой рецепт «Глазунья» одобрен и теперь может просматриваться всеми кулинарами",
+          "title": "Рецепт одобрен",
+          "timestamp": "2023-11-02T00:00:24.472Z",
+          "read": true
         }
       ]
     },
@@ -4594,7 +4359,19 @@
       "location": "Сидней, Австралия",
       "registrationDate": "2023-06-18",
       "profileViews": 4356,
-      "role": "user"
+      "role": "user",
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:44:03.378Z",
+          "read": false
+        }
+      ]
     },
     {
       "id": 7,

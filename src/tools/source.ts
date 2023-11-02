@@ -1,4 +1,4 @@
-const source = 'http://localhost:3000/';
+const source = 'http://127.0.0.1:3000/';
 
 export const usersUrl = source + 'users';
 export const recipesUrl = source + 'recipes';

@@ -123,6 +123,12 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.userService.users$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((data) => {
+        this.allUsers = data;
+      });
+
     this.route.data.subscribe((data) => {
       this.filter = data['filter'];
       this.setRecipeType(this.filter);
@@ -154,11 +160,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroyed$))
           .subscribe((user: IUser) => {
             this.currentUser = user;
-            this.userService.users$
-              .pipe(takeUntil(this.destroyed$))
-              .subscribe((data) => {
-                this.allUsers = data;
-              });
+
             this.recipeService.recipes$
               .pipe(takeUntil(this.destroyed$))
               .subscribe((data) => {
@@ -199,10 +201,13 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
                     this.recipesToShow = this.allRecipes.slice(0, 8);
                     break;
                   case RecipeType.Commented:
-                    this.allRecipes = this.recipeService
-                      .getCommentedRecipesByUser(publicRecipes, this.currentUser.id)
-                    
-                            this.recipesToShow = this.allRecipes.slice(0, 8);
+                    this.allRecipes =
+                      this.recipeService.getCommentedRecipesByUser(
+                        publicRecipes,
+                        this.currentUser.id,
+                      );
+
+                    this.recipesToShow = this.allRecipes.slice(0, 8);
                     break;
                   case RecipeType.Liked:
                     this.allRecipes = this.recipeService.getLikedRecipesByUser(
@@ -260,9 +265,10 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
               });
           });
       }
+      this.title.setTitle(this.getTitleByRecipeType(this.recipeType));
+
       this.dataLoad = true;
     });
-    this.title.setTitle(this.getTitleByRecipeType(this.recipeType));
   }
 
   loadMoreRecipes() {

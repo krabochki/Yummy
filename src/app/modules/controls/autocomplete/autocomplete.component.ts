@@ -1,11 +1,14 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
-import { CategoryService } from '../../recipes/services/category.service';
-import { SectionService } from '../../recipes/services/section.service';
-import { Subject, takeUntil } from 'rxjs';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+} from '@angular/core';
+import { Subject } from 'rxjs';
 import {
   ICategory,
   ISection,
-  nullSection,
 } from '../../recipes/models/categories';
 import { Router } from '@angular/router';
 import { trigger } from '@angular/animations';
@@ -31,7 +34,6 @@ export class AutocompleteComponent implements OnChanges {
   @Input() group: SectionGroup[] = [];
   @Input() sectionMode = false;
 
-  
   isSleep: boolean = false; //подсвечивается ли плейсхолдер
   isFocused = false; //есть ли фокус в инпуте (нужно ли подсвечивать плейсхолдер)
 
@@ -42,29 +44,16 @@ export class AutocompleteComponent implements OnChanges {
   sections: ISection[] = [];
   value = '';
 
- mySections: ISection[] = []
- @Input() allSections:ISection[] = []
+  mySections: ISection[] = [];
+  @Input() allSections: ISection[] = [];
 
   getFullGroup = false;
 
   constructor(private router: Router) {}
 
   ngOnChanges() {
-    if (!this.getFullGroup) {
-      if (this.sectionMode) {
-        if(this.allSections.length>0){
-          this.mySections = this.allSections;
-          
-        this.getFullGroup = true;}
-      }
-      else {
-        this.group.forEach((group) => {
-          if (group.categories.length === 0) return;
-        });
-        this.fullGroup = this.group;
-        this.getFullGroup = true;
-      }
-    }
+    this.mySections = this.allSections;
+    this.fullGroup = this.group;
   }
 
   focus() {
@@ -74,12 +63,11 @@ export class AutocompleteComponent implements OnChanges {
   }
 
   blur() {
-    this.autocompleteShow = false;
-
-    this.isFocused = false;
-    if (this.value != '') {
-      this.isFocused = true;
-      this.isSleep = true;
+  this.autocompleteShow = false;
+  this.isFocused = false;
+  if (this.value != '') {
+    this.isFocused = true;
+    this.isSleep = true;
     }
   }
 
@@ -99,8 +87,6 @@ export class AutocompleteComponent implements OnChanges {
   }
 
   search() {
-    
-
     if (!this.sectionMode) {
       if (this.value !== '') {
         this.group = [];
@@ -125,10 +111,9 @@ export class AutocompleteComponent implements OnChanges {
       } else {
         this.group = JSON.parse(JSON.stringify(this.fullGroup));
       }
-    }
-    else {
+    } else {
       if (this.value !== '') {
-        this.mySections = []
+        this.mySections = [];
         const search = this.value.toLowerCase().replace(/\s/g, '');
         const filterSections: ISection[] = [];
         const allSections: ISection[] = JSON.parse(
@@ -143,10 +128,7 @@ export class AutocompleteComponent implements OnChanges {
         filterSections.forEach((element) => {
           this.mySections.push(element);
         });
-      
-      }
-    
-      else {
+      } else {
         this.mySections = JSON.parse(JSON.stringify(this.allSections));
       }
     }

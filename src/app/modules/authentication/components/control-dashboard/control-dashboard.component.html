@@ -26,11 +26,49 @@
   </div>
 
  <div class="content-wrap">
-    <div *ngIf="awaitingRecipes.length > 0">
-      <h2>Рецепты на одобрение</h2>
+      <div class="reports-block" *ngIf="awaitingRecipes.length > 0">
+      <h2 (click)="showAwaitingRecipes = !showAwaitingRecipes">
+        Рецепты на проверку
+      </h2>
   
-      <app-vertical-recipe-list [moderMode]="true" [blocks]="awaitingRecipes"></app-vertical-recipe-list>
-    </div>
+      <div *ngIf="showAwaitingRecipes" @height>
+        <div class="reports">
+          <div class="report" *ngFor="let recipe of awaitingRecipesToShow">
+            <div class="report-header">
+              <a class="report-recipe" [routerLink]="'/recipes/list/' + recipe.id">
+                {{ recipe.name }}
+              </a>
+              <p class="report-date">
+                Рецепт отправлен {{ recipe.publicationDate | timePast | lowercase }}
+              </p>
+            </div>
+            <div class="report-users">
+              <p class="reporter">
+                Автор:
+                <a class="report-user" [routerLink]="'/cooks/list/' + recipe.authorId">{{
+                  getUser(recipe.authorId).fullName !== ""
+                  ? getUser(recipe.authorId).fullName
+                  : getUser(recipe.authorId).username
+                  }}</a>
+              </p>
+              
+              
+            </div>
+             <div class="recipe-image">
+  
+            </div>
+            <div class="report-buttons">
+              <app-button [text]="'Принять'" (click)="awaitingRecipeActionClick('approve',recipe)"  [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
+              <app-button [text]="'Отклонить'" (click)="awaitingRecipeActionClick('dismiss',recipe)" (click)="dismissRecipeModalShow=true"  [color]="currentUser.role" [style]="'filled-min'" [rounded]="true"></app-button>
+            </div>
+          </div>
+        </div>
+        <app-button class="more-reports-button" [text]="'Загрузить еще...'" (click)="loadMoreAwaitingRecipes()"
+          *ngIf="awaitingRecipes.length > awaitingRecipes.length" [rounded]="true" [style]="'outlined'" [color]="'prim'"></app-button>
+      </div>
+      </div> 
+
+
     <div class="reports-block" *ngIf="reports.length > 0">
       <h2 (click)="showCommentReports = !showCommentReports">
         Жалобы на комментарии
@@ -77,10 +115,10 @@
             </p>
             <div class="report-buttons">
               <app-button [text]="'Оставить'" (click)="
-                  reportCommentDismissModalShow = true; actionReport = report
+                 reportActionClick('dismiss',report)
                 " [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
               <app-button [text]="'Удалить'" (click)="
-                  reportCommentApproveModalShow = true; actionReport = report
+                   reportActionClick('approve',report)
                 " [color]="currentUser.role" [style]="'filled-min'" [rounded]="true"></app-button>
             </div>
           </div>
@@ -137,6 +175,10 @@
           [color]="'prim'"></app-button>
       </div>
     </div>
+
+    <div>
+      <app-button [text]="'Создать секцию'" (click)="sectionCreatingMode=true" [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
+    </div>
  </div>
 
 
@@ -175,3 +217,44 @@
     <app-modal @modal *ngIf="successDismissCategoryModalShow" [style]="'sec'" [title]="'Категория одобрена'" [type]="'Ok'"
   (resultEmit)="handleSuccessDismissCategoryModal()" [buttonsText]="['Хорошо']"
   [description]="'Категория успешно отклонена'"></app-modal>
+
+
+  <app-modal
+  @modal
+  *ngIf="dismissRecipeModalShow"
+  [style]="'prim'"
+  [title]="'Отклонение рецепта'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleDismissRecipeModal($event)"
+  [buttonsText]="['Да', 'Нет']"
+  [description]="'Вы уверены, что хотите отклонить рецепт?'"
+></app-modal>
+
+<app-modal
+  @modal
+  *ngIf="approveRecipeModalShow"
+  [style]="'sec'"
+  [title]="'Одобрение рецепта'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleApproveRecipeModal($event)"
+  [buttonsText]="['Да', 'Нет']"
+  [description]="'Вы уверены, что хотите одобрить рецепт?'"
+></app-modal>
+
+<app-modal
+  @modal
+  *ngIf="successRecipeActionModalShow"
+  [style]="'sec'"
+  [title]="
+    'Рецепт успешно ' + (adminAction === 'approve' ? 'одобрен' : 'отклонен')
+  "
+  [type]="'Ok'"
+  (resultEmit)="handleSuccessRecipeActionModal()"
+  [buttonsText]="['Хорошо']"
+  [description]="
+    'Вы успешно ' +
+    (adminAction === 'approve' ? 'одобрили' : 'отклонили') +' этот рецепт'
+  "
+></app-modal>
+
+<app-section-creating @modal (closeEmitter)="sectionCreatingMode=false" *ngIf="sectionCreatingMode" style="z-index:10; position:fixed"></app-section-creating>

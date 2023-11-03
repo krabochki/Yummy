@@ -37,6 +37,8 @@ import { SectionService } from '../../../services/section.service';
 import { SectionGroup } from 'src/app/modules/controls/autocomplete/autocomplete.component';
 import { Title } from '@angular/platform-browser';
 import { getCurrentDate } from 'src/tools/common';
+import { INotification } from 'src/app/modules/user-pages/models/notifications';
+import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 
 @Component({
   selector: 'app-recipe-create',
@@ -90,6 +92,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
   editMode: boolean = false;
 
   constructor(
+    private notifyService: NotificationService,
     private renderer: Renderer2,
     private cd: ChangeDetectorRef,
     private authService: AuthService,
@@ -156,7 +159,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
                 sectionGroup.section = section;
                 section.categories.forEach((element: number) => {
                   const finded = this.allCategories.find(
-                    (elem) => elem.id === element,
+                    (elem) => (elem.id === element && elem.status === 'public'),
                   );
                   if (finded) sectionGroup.categories.push(finded);
                 });
@@ -191,7 +194,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
             const objectURL = URL.createObjectURL(mainpicFile);
             this.mainImage = objectURL;
           }
-        } catch (error) {}
+        } catch (error) { }
       }
 
       for (let i = 1; i <= editedRecipe.nutritions.length; i++) {
@@ -250,7 +253,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
                 }
               }
             }
-          } catch (error) {}
+          } catch (error) { }
         }
       }
       for (const categoryId of editedRecipe.categories) {
@@ -312,7 +315,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     });
   }
 
-  
+
 
   //Работа с картинками
   //удаляем фото из инструкций рецепта по индеку инструкции и фото
@@ -516,6 +519,27 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
 
       this.recipeService.postRecipe(recipeData).subscribe(() => {
         this.successModalShow = true;
+
+
+        const author: IUser = this.currentUser;
+        
+        const title =
+          ('Рецепт «' +
+          recipeData.name +
+          '» сохранен в твоих рецептах' +
+          (this.isAwaitingApprove
+            ? ' и успешно отправлен на проверку'
+            : ''));
+        const notify: INotification = this.notifyService.buildNotification(
+          this.isAwaitingApprove ? 'Рецепт создан и отправлен на проверку' : 'Рецепт создан',
+          title,
+          'success',
+          'recipe',
+          '/recipes/list/' + recipeData.id,
+        );
+        this.notifyService.sendNotification(notify, author).subscribe();
+
+
         this.cd.markForCheck();
       });
     }

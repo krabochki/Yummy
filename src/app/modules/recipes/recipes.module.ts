@@ -18,7 +18,7 @@ import { ControlsModule } from '../controls/controls.module';
 import { CdkDropList, CdkDragHandle, CdkDrag } from '@angular/cdk/drag-drop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AsyncPipe } from '@angular/common';
-   
+
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
 import { DragScrollModule } from 'ngx-drag-scroll';
@@ -30,11 +30,13 @@ import { CommentComponent } from './components/comments/comment/comment.componen
 import { CommentsListComponent } from './components/comments/comments-list/comments-list.component';
 import { CUSTOM_TIME_DIFF_GENERATOR, TimePastPipe } from 'ng-time-past-pipe';
 import { timeDiffGenerator } from '../controls/time';
+import { SectionCreatingComponent } from './components/categories/section-creating/section-creating.component';
 
 @NgModule({
   declarations: [
     RecipesComponent,
-    CommentComponent,CommentsListComponent,
+    CommentComponent,
+    CommentsListComponent,
     RecipePageComponent,
 
     MatchRecipesComponent,
@@ -49,13 +51,14 @@ import { timeDiffGenerator } from '../controls/time';
     VerticalRecipeListComponent,
     VerticalCategoryListComponent,
     HorizontalCategoryListComponent,
+    SectionCreatingComponent,
   ],
   imports: [
     CommonModule,
     TimePastPipe,
     DragScrollModule,
     NgFor,
-    
+
     ControlsModule,
     RecipesRoutingModule,
     ScrollingModule,
@@ -80,12 +83,13 @@ import { timeDiffGenerator } from '../controls/time';
     provideAngularSvgIcon(),
     { provide: LOCALE_ID, useValue: 'ru' },
   ],
-  
+
   exports: [
     HorizontalRecipeListComponent,
     VerticalCategoryListComponent,
     HorizontalCategoryListComponent,
     VerticalRecipeListComponent,
+    SectionCreatingComponent,
     RecipeCreateComponent,
   ],
 })

@@ -106,7 +106,7 @@
                 <h3>Название категории</h3>
                 <app-usual-input
                   [inputRequired]="true"
-                  [max]="20"
+                  [max]="30"
                   id="name"
                   formControlName="name"
                   [placeholder]="'Придумай название категории'"
@@ -133,7 +133,7 @@
             <div><app-autocomplete [disabled]="selectedSection!==null" [sectionMode]="true" (sectionEmitter)="addCategory($event)"
                 [group]="group"
                 [allSections]="allSections"
-                [placeholder]="'Выбери соответствующую секцию для твоего рецепта'"></app-autocomplete>
+                [placeholder]="'Выбери соответствующую секцию для твоей категории'"></app-autocomplete>
             </div>
 
 

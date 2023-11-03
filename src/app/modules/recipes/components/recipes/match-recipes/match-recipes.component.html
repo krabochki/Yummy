@@ -1,0 +1,113 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="main-cont">
+        <h1>Подбор рецептов</h1>
+<div class="wrap">
+    
+        <div class="sections">
+    
+            <h2>Категории</h2>
+    
+            <div *ngFor="let item of group; let i = index" class="section">
+                    <button class="section-name" [ngClass]="{'active-section-name':sectionStates[i]}" (click)="toggleSection(i)">{{item.section.name}}</button>
+                    <div @height class="categories-list" *ngIf="sectionStates[i]">
+                            <button class="category" (click)="toggleCategory(i, j)" *ngFor="let category of item.categories;let j = index">
+            
+                               <div  class="toogle" >
+                                <svg-icon @modal [applyClass]="true" [class]="'checkbox'" *ngIf="categoryStates[i][j]" [src]="baseSvgPath+'checkbox.svg'"></svg-icon>
+                               </div>
+            
+                                <div class="category-name">{{category.name}}</div>
+            
+                                <span class="count"> {{getCategoryRecipesNumber(category.id)}}</span>
+                            </button>
+
+                </div>
+
+            </div>
+            <hr>
+            <div class="options">
+               <button class="option" (click)="toogleCondition(true)"> <button [ngClass]="{'check':haveToContainAllCategories}"  class="toogle"> </button> <p>Рецепт должен содержать все категории</p></button>
+                               <p class="error" *ngIf="selectedCategories.length>5 && haveToContainAllCategories">Один рецепт не может содержать более 5 категорий</p>
+
+                <button class="option" (click)="toogleCondition(false)"> <button [ngClass]="{'check':!haveToContainAllCategories}" class="toogle"> </button> <p>Рецепт должен содержать хотя бы одну из категорий</p></button>
+            </div>
+
+            <svg-icon class="cook" [applyClass]="true"  [src]="baseSvgPath+'tired-cook.svg'" />
+        </div>
+    
+    
+        <div class="ingredients-search">
+            
+            <h2>
+                <svg-icon [applyClass]="true" class="ingredients-svg" [src]="baseSvgPath+'all-ingredients.svg'"></svg-icon>
+                Все ингредиенты</h2>
+            <div class="ingredients" *ngIf="getIngredientNames().length>0;else noIngredients">
+                <button class="ingredient" *ngFor="let ingredient of getIngredientNames()"
+                    (click)="selectIngredient(ingredient)">
+                    + {{ ingredient }}
+                    <span class="count">{{
+                        uniqueIngredientsArray[ingredient]
+                        }}</span>
+                </button>
+            </div>
+            <ng-template #noIngredients>
+                
+                <p *ngIf="this.selectedIngredients.length===0;else allIngredientsSelected">Ингредиентов пока нет. Видимо, среди рецептов в выбранных категориях никто не указывал ингредиенты</p>
+                <ng-template #allIngredientsSelected>Ты выбрал все ингредиенты</ng-template>
+                
+            
+            </ng-template>
+    
+            <div class="select">
+                        <h2>
+                            <svg-icon [applyClass]="true" class="ingredients-svg" [src]="baseSvgPath+'selected-ingredients.svg'"></svg-icon>
+                            Выбранные ингредиенты</h2>
+    
+    
+                <div class="ingredients"   *ngIf="selectedIngredients.length>0 ; else noIngredientsSelected">
+                    <div class="ingredient selected" @modal *ngFor="let ingredient of selectedIngredients">
+                        {{ ingredient }}
+                    </div>
+                </div>
+                <ng-template  #noIngredientsSelected>
+                    <p class="noone">Ты пока не выбрал ни один ингредиент</p>
+                </ng-template>
+    
+                <app-button (click)="clearAllIngredients()" [disabled]="selectedIngredients.length>0" [style]="'filled-min'"
+                    [color]="'prim'" [text]="'Очистить все'" [rounded]="true"></app-button>
+            </div>
+    
+            <div class="select">
+                 
+                        <h2>
+                            <svg-icon [applyClass]="true" class="ingredients-svg" [src]="baseSvgPath+'categories.svg'"></svg-icon>
+                            Выбранные категории</h2>
+                <div class="selected-categories" *ngIf="selectedCategories.length>0; else noCategories">
+                    <div @modal  class="selected-category" *ngFor="let item of selectedCategories">
+                        {{item.name}}
+                    </div>
+                </div>
+                <ng-template #noCategories>
+                    <p class="noone">Ты пока не выбрал ни одну категорию</p>
+                </ng-template>
+                <app-button (click)="clearAllCategories()" [disabled]="selectedCategories.length>0" [style]="'filled-min'"
+                    [color]="'prim'" [text]="'Очистить все'" [rounded]="true"></app-button>
+            </div>
+    
+            <div class="match" *ngIf="matchingRecipes.length>0; else noRecipes">
+                <p class="match-count">Подобрано рецептов: <span>{{ matchingRecipes.length }}</span></p>
+                <app-button [style]="'filled'"
+                    (click)="matchingRecipes.length > 0?showMatchingRecipes=!showMatchingRecipes:null"
+                    [disabled]="matchingRecipes.length > 0" [color]="'sec'"
+                    [text]="!showMatchingRecipes?'Показать':'Скрыть'" [rounded]="true"></app-button>
+    
+                <div class="recipe-list" @height *ngIf="showMatchingRecipes">
+                    <app-vertical-recipe-list  [cols]="3" [blocks]="matchingRecipes">
+                    </app-vertical-recipe-list>
+                </div>
+            </div>
+            <ng-template #noRecipes>По твоему запросу не найдено ни одного рецепта</ng-template>
+        </div>
+</div>
+</div>

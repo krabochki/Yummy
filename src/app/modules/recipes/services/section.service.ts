@@ -72,8 +72,14 @@ export class SectionService {
     return this.http.delete<ISection>(`${this.urlSections}/${id}`);
   }
 
-  postSection(category: ISection) {
-    return this.http.post<ISection>(this.urlSections, category);
+  postSection(section: ISection) {
+    return this.http.post<ISection>(this.urlSections, section).pipe(
+      tap((newSection: ISection) => {
+        const currentSections = this.sectionsSubject.value;
+        const updatedSections = [...currentSections, newSection];
+        this.sectionsSubject.next(updatedSections);
+      }),
+    );
   }
 
   getNotEmptySections(sections: ISection[]): ISection[] {

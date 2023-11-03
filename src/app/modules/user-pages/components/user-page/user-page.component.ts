@@ -13,6 +13,8 @@ import localeRu from '@angular/common/locales/ru';
 import { RouteEventsService } from 'src/app/modules/controls/route-events.service';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
+import { NotificationService } from '../../services/notification.service';
+import { INotification } from '../../models/notifications';
 
 @Component({
   selector: 'app-user-page',
@@ -41,6 +43,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
     private titleService: Title,
     public router: Router,
     private cd: ChangeDetectorRef,
+    private notifyService:NotificationService,
     public routerEventsService: RouteEventsService,
   ) {
     registerLocaleData(localeRu);
@@ -89,6 +92,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
         .subscribe((data) => {
           this.currentUser = data;
         });
+      
 
       if (this.currentUser.id === this.user.id) {
         this.myPage = true;
@@ -100,11 +104,12 @@ export class UserPageComponent implements OnInit, OnDestroy {
         this.users = data;
         const findedUser = data.find((user) => user.id === this.userId);
 
-        if (findedUser) this.user = findedUser;
+        if (findedUser) { this.user = findedUser; }
 
         this.titleService.setTitle('@' + this.user.username);
 
         if (this.currentUser.id === this.user.id) {
+          this.currentUser =this.user;
           this.myPage = true;
         }
 
@@ -156,8 +161,9 @@ export class UserPageComponent implements OnInit, OnDestroy {
       });
       if (!this.myPage) {
         this.user.profileViews++;
+        this.userService.updateUsers(this.user).subscribe();
+
       }
-      this.userService.updateUsers(this.user).subscribe();
     });
   }
 
@@ -171,7 +177,22 @@ export class UserPageComponent implements OnInit, OnDestroy {
     this.user = this.userService.addFollower(this.user, this.currentUser.id);
     this.userService
       .updateUsers(this.user)
-      .subscribe();
+      .subscribe(
+        () => {
+           const author: IUser = this.user;
+          const title = 'Кулинар ' + (this.currentUser.fullName ? (this.currentUser.fullName):('@' + this.currentUser.username) )
+           + ' подписался на тебя';
+
+           const notify: INotification = this.notifyService.buildNotification(
+             'Новый подписчик',
+             title,
+             'info',
+             'user',
+             '/cooks/list/' + this.currentUser.id,
+           );
+           this.notifyService.sendNotification(notify, author).subscribe();
+        }
+      );
   }
 
   unfollow() {

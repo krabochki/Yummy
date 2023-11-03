@@ -16,11 +16,8 @@ import { AuthService } from '../../services/auth.service';
 import { modal } from 'src/tools/animations';
 import { customPatternValidator ,emailExistsValidator} from 'src/tools/validators';
 import {
-  AbstractControl,
   FormBuilder,
   FormGroup,
-  ValidationErrors,
-  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
@@ -134,6 +131,29 @@ export class RegisterComponent implements OnInit, OnDestroy {
   handleSuccessModalResult(): void {
     this.router.navigate(['/']);
     this.modalSuccessShow = false;
+  }
+  get passwordNotValidError():string
+  {
+    return this.form.get('password')?.invalid &&
+    (this.form.get('password')?.dirty || this.form.get('password')?.touched)
+      ? 'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'
+      : '';
+  }
+  get emailNotValidError(): string{
+    return !this.form.get('email')?.hasError('emailExists')
+      ? this.form.get('email')?.invalid &&
+        (this.form.get('email')?.dirty || this.form.get('email')?.touched)
+        ? 'Введи корректный адрес электронной почты'
+        : ''
+      : '';
+  }
+  get usernameNotValidError():string {
+    return !this.form.get('username')?.hasError('usernameExists')
+      ? this.form.get('username')?.invalid &&
+        (this.form.get('username')?.dirty || this.form.get('username')?.touched)
+        ? 'Имя пользователя должно содержать от 4 до 20 символов, среди которых могут быть буквы (минимум одна), цифры, а также нижние почеркивания и точки (не подряд)'
+        : ''
+      : '';
   }
 
   ngOnDestroy(): void {

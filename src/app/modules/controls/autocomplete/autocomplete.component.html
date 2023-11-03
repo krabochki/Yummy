@@ -17,7 +17,8 @@
     
     </div>
 
-   <ng-template *ngIf="!sectionMode;else sections">
+   <div *ngIf="!sectionMode;else sections">
+    
       <div  class="section" *ngFor="let item of group">
         <h2>{{ item.section.name }}</h2>
         
@@ -34,7 +35,7 @@
           </li>
         </ol>
       </div>
-   </ng-template>
+   </div>
    <ng-template #sections>
       <div  (mousedown)="
               addSection(item); this.value = ''; 

@@ -38,6 +38,8 @@ import {
 } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
+import { NotificationService } from '../../services/notification.service';
+import { INotification } from '../../models/notifications';
 
 @Component({
   selector: 'app-user-account-edit',
@@ -71,6 +73,7 @@ export class UserAccountEditComponent
     private renderer: Renderer2,
     private cdr: ChangeDetectorRef,
     private userService: UserService,
+    private notifyService:NotificationService,
     private authService: AuthService,
     private fb: FormBuilder,
   ) {
@@ -280,6 +283,21 @@ export class UserAccountEditComponent
             );
           };
         });
+
+
+         const author: IUser = this.newUser;
+         const title =
+           'Твой профиль успешно изменен'
+
+         const notify: INotification = this.notifyService.buildNotification(
+           'Профиль изменен',
+           title,
+           'success',
+           'user',
+           '/cooks/list/' + this.newUser.id,
+         );
+         this.notifyService.sendNotification(notify, author).subscribe();
+
       },
       (error: Error) => {
         console.error(

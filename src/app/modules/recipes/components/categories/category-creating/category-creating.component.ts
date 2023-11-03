@@ -16,18 +16,16 @@ import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
 import { CategoryService } from '../../../services/category.service';
 
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
-import { ICategory, ISection, nullCategory, nullSection } from '../../../models/categories';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ICategory, ISection, nullCategory } from '../../../models/categories';
 import { SectionGroup } from 'src/app/modules/controls/autocomplete/autocomplete.component';
 import { Subject, takeUntil } from 'rxjs';
 import { SectionService } from '../../../services/section.service';
 import { getCurrentDate } from 'src/tools/common';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
+import { INotification } from 'src/app/modules/user-pages/models/notifications';
+import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 
 @Component({
   selector: 'app-category-creating',
@@ -58,11 +56,12 @@ export class CategoryCreatingComponent
   }
 
   constructor(
+    private notifyService: NotificationService,
     private renderer: Renderer2,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private sectionService: SectionService,
-    private authService:AuthService,
+    private authService: AuthService,
     private categoryService: CategoryService,
   ) {
     this.form = this.fb.group({
@@ -122,14 +121,13 @@ export class CategoryCreatingComponent
           .pipe(takeUntil(this.destroyed$))
           .subscribe((data: ISection[]) => {
             this.allSections = data;
-
           });
       });
-    this.authService.currentUser$.pipe(takeUntil(this.destroyed$)).subscribe(
-      (data: IUser) =>
-        {this.currentUser = data;}
-      
-    )
+    this.authService.currentUser$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((data: IUser) => {
+        this.currentUser = data;
+      });
   }
 
   onUserpicChange(event: Event) {
@@ -166,28 +164,40 @@ export class CategoryCreatingComponent
   createCategory() {
     const userpicData = new FormData();
     userpicData.append('image', this.form.get('image')?.value);
-       const maxId = Math.max(...this.allCategories.map((u) => u.id));    
+    const maxId = Math.max(...this.allCategories.map((u) => u.id));
     this.newCategory = {
       name: this.form.value.name,
       photo: userpicData,
       sendDate: getCurrentDate(),
-      authorId:this.currentUser.id,
-      id: maxId+1,
+      authorId: this.currentUser.id,
+      id: maxId + 1,
       status: 'awaits',
     };
-    
-    console.log(this.selectedSection)
 
-    this.categoryService.postCategory(this.newCategory).subscribe(
-      () => {
-        this.successModal = true;
-        if (this.selectedSection) {
-          this.selectedSection.categories.push(this.newCategory.id);
-          this.sectionService.updateSections(this.selectedSection).subscribe()
-        }
+    this.categoryService.postCategory(this.newCategory).subscribe(() => {
+      this.successModal = true;
+      if (this.selectedSection) {
+        this.selectedSection.categories.push(this.newCategory.id);
+        this.sectionService.updateSections(this.selectedSection).subscribe();
+
+        const author: IUser = this.currentUser;
+        const title =
+          'Категория «' +
+          this.newCategory.name +
+          '» для секции «' +
+          this.selectedSection.name +
+          '» отправлена на проверку';
+
+        const notify: INotification = this.notifyService.buildNotification(
+          'Категория отправлена на проверку',
+          title,
+          'success',
+          'category',
+          '',
+        );
+        this.notifyService.sendNotification(notify, author).subscribe();
       }
-      
-    );
+    });
   }
 
   handleSaveModal(answer: boolean) {

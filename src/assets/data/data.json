@@ -1,4 +1,27 @@
 {
+  "plans": [
+    {
+      "user": 5,
+      "id": 5,
+      "plans": [],
+      "shoppingList": [
+        {
+          "id": null,
+          "name": "fdddffd",
+          "howMuch": "dfdffd",
+          "isBought": true,
+          "relatedRecipe": 0
+        },
+        {
+          "id": 1,
+          "name": "dsssd",
+          "howMuch": "ddffd",
+          "isBought": false,
+          "relatedRecipe": 0
+        }
+      ]
+    }
+  ],
   "categories": [
     {
       "status": "public",
@@ -136,7 +159,7 @@
       "sendDate": "2023-10-31T20:03:30.039Z",
       "authorId": 5,
       "id": 25,
-      "status": "awaits"
+      "status": "public"
     },
     {
       "name": "Американская кухня",
@@ -144,7 +167,119 @@
       "sendDate": "2023-10-31T20:03:45.657Z",
       "authorId": 5,
       "id": 26,
-      "status": "awaits"
+      "status": "public"
+    },
+    {
+      "name": "Друзья",
+      "photo": {},
+      "sendDate": "2023-10-31T23:08:48.358Z",
+      "authorId": 5,
+      "id": 28,
+      "status": "public"
+    },
+    {
+      "name": "Украинская кухня",
+      "photo": {},
+      "sendDate": "2023-11-01T00:31:44.976Z",
+      "authorId": 5,
+      "id": 29,
+      "status": "public"
+    },
+    {
+      "name": "Кухня",
+      "photo": {},
+      "sendDate": "2023-11-01T00:32:14.553Z",
+      "authorId": 5,
+      "id": 30,
+      "status": "public"
+    },
+    {
+      "name": "Питание для бодибилдеров",
+      "photo": {},
+      "sendDate": "2023-11-01T20:04:17.677Z",
+      "authorId": 5,
+      "id": 35,
+      "status": "public"
+    },
+    {
+      "name": "Казахская кухня",
+      "photo": {},
+      "sendDate": "2023-11-02T14:05:28.736Z",
+      "authorId": 5,
+      "id": 36,
+      "status": "public"
+    },
+    {
+      "name": "К чаю",
+      "photo": {},
+      "sendDate": "2023-11-02T15:25:48.009Z",
+      "authorId": 5,
+      "id": 37,
+      "status": "public"
+    },
+    {
+      "name": "Лето",
+      "photo": {},
+      "sendDate": "2023-11-02T21:52:47.917Z",
+      "authorId": 5,
+      "id": 38,
+      "status": "public"
+    },
+    {
+      "name": "Зима",
+      "photo": {},
+      "sendDate": "2023-11-02T21:52:58.915Z",
+      "authorId": 5,
+      "id": 39,
+      "status": "public"
+    },
+    {
+      "name": "Осень",
+      "photo": {},
+      "sendDate": "2023-11-02T21:53:11.836Z",
+      "authorId": 5,
+      "id": 40,
+      "status": "public"
+    },
+    {
+      "name": "Весна",
+      "photo": {},
+      "sendDate": "2023-11-02T21:53:44.669Z",
+      "authorId": 5,
+      "id": 42,
+      "status": "public"
+    },
+    {
+      "name": "Завтраки",
+      "photo": {},
+      "sendDate": "2023-11-03T00:38:14.576Z",
+      "authorId": 5,
+      "id": 43,
+      "status": "public"
+    },
+    {
+      "name": "Ужины",
+      "photo": {},
+      "sendDate": "2023-11-03T00:38:24.735Z",
+      "authorId": 5,
+      "id": 44,
+      "status": "public"
+    },
+    {
+      "name": "Обеды",
+      "photo": {},
+      "sendDate": "2023-11-03T00:38:36.749Z",
+      "authorId": 5,
+      "id": 45,
+      "status": "public"
+    },
+    {
+      "name": "Перекусы",
+      "photo": {},
+      "sendDate": "2023-11-03T00:38:52.808Z",
+      "authorId": 5,
+      "id": 46,
+      "status": "public"
     }
   ],
   "sections": [
@@ -159,7 +294,8 @@
         13,
         14,
         17,
-        15
+        15,
+        16
       ]
     },
     {
@@ -179,7 +315,8 @@
       "categories": [
         6,
         7,
-        8
+        8,
+        35
       ]
     },
     {
@@ -188,20 +325,32 @@
       "photoUrl": "",
       "categories": [
         25,
-        26
+        26,
+        29,
+        36
       ]
     },
     {
       "id": 5,
       "name": "Сезонные",
       "photoUrl": "",
-      "categories": []
+      "categories": [
+        38,
+        39,
+        40,
+        42
+      ]
     },
     {
       "id": 6,
       "name": "По времени",
       "photoUrl": "",
-      "categories": []
+      "categories": [
+        43,
+        44,
+        45,
+        46
+      ]
     },
     {
       "id": 9,
@@ -224,10 +373,32 @@
       "photoUrl": "",
       "categories": [
         10,
-        16,
         18,
         19
       ]
+    },
+    {
+      "id": 10,
+      "name": "Сериальное",
+      "categories": [
+        28,
+        30
+      ],
+      "photo": {},
+      "status": "public",
+      "authorId": 0,
+      "sendDate": ""
+    },
+    {
+      "id": 11,
+      "name": "Нежданные гости",
+      "categories": [
+        37
+      ],
+      "photo": {},
+      "status": "public",
+      "authorId": 0,
+      "sendDate": ""
     }
   ],
   "recipes": [
@@ -297,53 +468,7 @@
           "unit": "magna"
         }
       ],
-      "ingredients": [
-        {
-          "name": "est",
-          "quantity": 47,
-          "unit": "sint"
-        },
-        {
-          "name": "nisi",
-          "quantity": 12,
-          "unit": "officia"
-        },
-        {
-          "name": "sint",
-          "quantity": 29,
-          "unit": "Lorem"
-        },
-        {
-          "name": "fugiat",
-          "quantity": 25,
-          "unit": "sit"
-        },
-        {
-          "name": "ut",
-          "quantity": 47,
-          "unit": "officia"
-        },
-        {
-          "name": "est",
-          "quantity": 17,
-          "unit": "amet"
-        },
-        {
-          "name": "enim",
-          "quantity": 17,
-          "unit": "voluptate"
-        },
-        {
-          "name": "in",
-          "quantity": 8,
-          "unit": "laboris"
-        },
-        {
-          "name": "laborum",
-          "quantity": 35,
-          "unit": "sunt"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 2,
@@ -416,68 +541,7 @@
           "unit": "tempor"
         }
       ],
-      "ingredients": [
-        {
-          "name": "cillum",
-          "quantity": 26,
-          "unit": "incididunt"
-        },
-        {
-          "name": "irure",
-          "quantity": 17,
-          "unit": "deserunt"
-        },
-        {
-          "name": "nulla",
-          "quantity": 13,
-          "unit": "ut"
-        },
-        {
-          "name": "id",
-          "quantity": 45,
-          "unit": "et"
-        },
-        {
-          "name": "cupidatat",
-          "quantity": 4,
-          "unit": "eiusmod"
-        },
-        {
-          "name": "et",
-          "quantity": 40,
-          "unit": "veniam"
-        },
-        {
-          "name": "qui",
-          "quantity": 28,
-          "unit": "id"
-        },
-        {
-          "name": "sunt",
-          "quantity": 10,
-          "unit": "anim"
-        },
-        {
-          "name": "ut",
-          "quantity": 34,
-          "unit": "mollit"
-        },
-        {
-          "name": "ex",
-          "quantity": 32,
-          "unit": "ullamco"
-        },
-        {
-          "name": "velit",
-          "quantity": 40,
-          "unit": "ad"
-        },
-        {
-          "name": "laborum",
-          "quantity": 42,
-          "unit": "dolore"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 3,
@@ -566,69 +630,12 @@
           "unit": "ut"
         }
       ],
-      "ingredients": [
-        {
-          "name": "et",
-          "quantity": 10,
-          "unit": "exercitation"
-        },
-        {
-          "name": "duis",
-          "quantity": 22,
-          "unit": "voluptate"
-        },
-        {
-          "name": "amet",
-          "quantity": 17,
-          "unit": "velit"
-        },
-        {
-          "name": "esse",
-          "quantity": 48,
-          "unit": "deserunt"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 4,
       "mainPhotoUrl": null,
-      "comments": [
-        {
-          "id": 3,
-          "text": "ereeeeeeee3",
-          "authorId": 3,
-          "date": "2023-10-30T18:30:09.021Z",
-          "likesId": [
-            1
-          ],
-          "dislikesId": [
-            5
-          ]
-        },
-        {
-          "id": 6,
-          "text": "ereeeeeeee3",
-          "authorId": 6,
-          "date": "2023-10-30T18:30:09.021Z",
-          "likesId": [
-            1
-          ],
-          "dislikesId": [
-            5
-          ]
-        },
-        {
-          "id": 7,
-          "text": "ereeeeeeee3",
-          "authorId": 7,
-          "date": "2023-10-30T18:30:09.021Z",
-          "likesId": [],
-          "dislikesId": [
-            5,
-            1
-          ]
-        }
-      ],
+      "comments": [],
       "categories": [],
       "name": "Lorem laborum nulla",
       "description": "Consequat quis commodo elit enim ad incididunt id officia reprehenderit in dolore nulla. Irure est dolore occaecat et laborum adipisicing eiusmod enim. Duis proident sunt nulla quis veniam pariatur aute laboris et amet in do nulla nisi.\r\nEt Lorem reprehenderit aliquip tempor qui mollit id eu ex ipsum proident. Id aliquip labore esse excepteur cillum cillum pariatur duis dolor laboris. Ut ad eu commodo nostrud enim duis fugiat do adipisicing enim anim sunt eu.\r\nLaborum cillum pariatur anim occaecat. Adipisicing eu labore adipisicing ipsum anim fugiat deserunt quis. Ex reprehenderit qui fugiat cupidatat. Ad in consequat irure ipsum reprehenderit laboris. Id eu amet non aliqua incididunt commodo incididunt sunt. Voluptate ex eiusmod occaecat commodo aliquip velit veniam incididunt anim pariatur.\r\n",
@@ -698,63 +705,8 @@
           "unit": "aliquip"
         }
       ],
-      "ingredients": [
-        {
-          "name": "aliqua",
-          "quantity": 5,
-          "unit": "pariatur"
-        },
-        {
-          "name": "pariatur",
-          "quantity": 23,
-          "unit": "officia"
-        },
-        {
-          "name": "mollit",
-          "quantity": 37,
-          "unit": "pariatur"
-        },
-        {
-          "name": "in",
-          "quantity": 34,
-          "unit": "aliqua"
-        },
-        {
-          "name": "reprehenderit",
-          "quantity": 26,
-          "unit": "id"
-        },
-        {
-          "name": "veniam",
-          "quantity": 16,
-          "unit": "non"
-        },
-        {
-          "name": "duis",
-          "quantity": 28,
-          "unit": "eiusmod"
-        }
-      ],
-      "reports": [
-        {
-          "id": 1,
-          "date": "2023-10-30T21:13:43.094Z",
-          "reporterId": 5,
-          "commentId": 3
-        },
-        {
-          "id": 4,
-          "date": "2023-10-30T21:14:18.398Z",
-          "reporterId": 5,
-          "commentId": 6
-        },
-        {
-          "id": 5,
-          "date": "2023-10-30T21:14:20.151Z",
-          "reporterId": 5,
-          "commentId": 7
-        }
-      ],
+      "ingredients": [],
+      "reports": [],
       "statistics": [
         {
           "userId": 5,
@@ -833,53 +785,7 @@
           "unit": "incididunt"
         }
       ],
-      "ingredients": [
-        {
-          "name": "eu",
-          "quantity": 42,
-          "unit": "duis"
-        },
-        {
-          "name": "nisi",
-          "quantity": 44,
-          "unit": "ipsum"
-        },
-        {
-          "name": "ex",
-          "quantity": 9,
-          "unit": "cillum"
-        },
-        {
-          "name": "ad",
-          "quantity": 33,
-          "unit": "incididunt"
-        },
-        {
-          "name": "do",
-          "quantity": 39,
-          "unit": "nulla"
-        },
-        {
-          "name": "elit",
-          "quantity": 31,
-          "unit": "occaecat"
-        },
-        {
-          "name": "est",
-          "quantity": 2,
-          "unit": "eiusmod"
-        },
-        {
-          "name": "officia",
-          "quantity": 46,
-          "unit": "proident"
-        },
-        {
-          "name": "occaecat",
-          "quantity": 14,
-          "unit": "magna"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 6,
@@ -913,7 +819,7 @@
       ],
       "status": "public",
       "origin": "Chad",
-      "publicationDate": "2019-10-30T23:58:43.609Z0",
+      "publicationDate": "2022-10-30T23:58:43.609Z",
       "instuctions": [
         "cillum",
         "laboris",
@@ -967,54 +873,14 @@
           "unit": "est"
         }
       ],
-      "ingredients": [
-        {
-          "name": "commodo",
-          "quantity": 15,
-          "unit": "eu"
-        },
-        {
-          "name": "pariatur",
-          "quantity": 17,
-          "unit": "est"
-        },
-        {
-          "name": "excepteur",
-          "quantity": 9,
-          "unit": "cupidatat"
-        },
-        {
-          "name": "eu",
-          "quantity": 21,
-          "unit": "anim"
-        },
-        {
-          "name": "ad",
-          "quantity": 39,
-          "unit": "voluptate"
-        },
-        {
-          "name": "quis",
-          "quantity": 12,
-          "unit": "ullamco"
-        },
-        {
-          "name": "laboris",
-          "quantity": 48,
-          "unit": "ad"
-        },
-        {
-          "name": "officia",
-          "quantity": 34,
-          "unit": "elit"
-        }
-      ],
+      "ingredients": [],
       "statistics": [
         {
           "userId": 5,
           "answer": true
         }
-      ]
+      ],
+      "reports": []
     },
     {
       "id": 7,
@@ -1043,15 +909,6 @@
       "status": "public",
       "origin": "Brunei Darussalam",
       "publicationDate": "2018-10-30T23:58:43.609Z",
-      "instuctions": [
-        "minim",
-        "do",
-        "eu",
-        "dolor",
-        "labore",
-        "cupidatat",
-        "reprehenderit"
-      ],
       "instructions": [
         {
           "images": [],
@@ -1090,33 +947,7 @@
           "unit": "cillum"
         }
       ],
-      "ingredients": [
-        {
-          "name": "commodo",
-          "quantity": 47,
-          "unit": "non"
-        },
-        {
-          "name": "Lorem",
-          "quantity": 50,
-          "unit": "sit"
-        },
-        {
-          "name": "quis",
-          "quantity": 13,
-          "unit": "eiusmod"
-        },
-        {
-          "name": "excepteur",
-          "quantity": 14,
-          "unit": "laborum"
-        },
-        {
-          "name": "consectetur",
-          "quantity": 38,
-          "unit": "veniam"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 8,
@@ -1136,7 +967,8 @@
         4,
         3,
         9,
-        7
+        7,
+        1
       ],
       "favoritesId": [
         2,
@@ -1147,7 +979,8 @@
       ],
       "likesId": [
         8,
-        6
+        6,
+        1
       ],
       "status": "public",
       "origin": "Tanzania",
@@ -1203,68 +1036,14 @@
           "unit": "deserunt"
         }
       ],
-      "ingredients": [
+      "ingredients": [],
+      "statistics": [
         {
-          "name": "velit",
-          "quantity": 15,
-          "unit": "sunt"
-        },
-        {
-          "name": "Lorem",
-          "quantity": 12,
-          "unit": "eiusmod"
-        },
-        {
-          "name": "nostrud",
-          "quantity": 38,
-          "unit": "eu"
-        },
-        {
-          "name": "enim",
-          "quantity": 38,
-          "unit": "pariatur"
-        },
-        {
-          "name": "sit",
-          "quantity": 12,
-          "unit": "irure"
-        },
-        {
-          "name": "exercitation",
-          "quantity": 48,
-          "unit": "id"
-        },
-        {
-          "name": "velit",
-          "quantity": 19,
-          "unit": "fugiat"
-        },
-        {
-          "name": "nostrud",
-          "quantity": 49,
-          "unit": "non"
-        },
-        {
-          "name": "magna",
-          "quantity": 5,
-          "unit": "cupidatat"
-        },
-        {
-          "name": "Lorem",
-          "quantity": 8,
-          "unit": "eu"
-        },
-        {
-          "name": "officia",
-          "quantity": 49,
-          "unit": "reprehenderit"
-        },
-        {
-          "name": "veniam",
-          "quantity": 50,
-          "unit": "veniam"
+          "userId": 1,
+          "answer": false
         }
-      ]
+      ],
+      "reports": []
     },
     {
       "id": 9,
@@ -1347,74 +1126,12 @@
           "unit": "ex"
         }
       ],
-      "ingredients": [
-        {
-          "name": "et",
-          "quantity": 10,
-          "unit": "nostrud"
-        },
-        {
-          "name": "magna",
-          "quantity": 8,
-          "unit": "esse"
-        },
-        {
-          "name": "officia",
-          "quantity": 41,
-          "unit": "et"
-        },
-        {
-          "name": "do",
-          "quantity": 12,
-          "unit": "fugiat"
-        },
-        {
-          "name": "aliqua",
-          "quantity": 35,
-          "unit": "consectetur"
-        },
-        {
-          "name": "Lorem",
-          "quantity": 2,
-          "unit": "excepteur"
-        },
-        {
-          "name": "deserunt",
-          "quantity": 39,
-          "unit": "fugiat"
-        },
-        {
-          "name": "cillum",
-          "quantity": 5,
-          "unit": "ipsum"
-        },
-        {
-          "name": "excepteur",
-          "quantity": 42,
-          "unit": "minim"
-        },
-        {
-          "name": "laborum",
-          "quantity": 36,
-          "unit": "minim"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 11,
       "mainPhotoUrl": null,
-      "comments": [
-        {
-          "id": 1,
-          "text": "ававваа",
-          "authorId": 5,
-          "date": "2023-10-30T18:12:41.095Z",
-          "likesId": [],
-          "dislikesId": [
-            5
-          ]
-        }
-      ],
+      "comments": [],
       "categories": [],
       "name": "et ea enim",
       "description": "Esse reprehenderit anim id Lorem ad velit cupidatat officia mollit nostrud officia officia. Eiusmod quis Lorem excepteur ea reprehenderit excepteur adipisicing eu id. Irure incididunt aute non quis qui nostrud officia nostrud ex.\r\nNostrud enim do proident reprehenderit eu ut ipsum dolor labore duis consequat est ipsum. Amet esse incididunt anim culpa anim officia sit. Esse cillum dolore nulla qui cupidatat ut incididunt laboris est. Ea deserunt aliqua nisi mollit enim et aliquip magna ex. Pariatur nostrud tempor aliquip nisi ipsum aliquip eu enim ex eiusmod.\r\nEa qui id ea culpa aute amet sunt non enim culpa mollit. Quis ex reprehenderit irure culpa nulla do dolore. Aute ea commodo cillum ipsum consequat adipisicing cupidatat irure mollit ullamco tempor aute proident. Voluptate fugiat sunt est non sint minim deserunt est. Ex dolore culpa ipsum consequat in enim et aliqua mollit. Sunt labore Lorem reprehenderit elit enim est nulla minim laborum cillum cillum nostrud adipisicing. Veniam sunt culpa dolore velit velit ut ut labore id esse.\r\n",
@@ -1426,7 +1143,8 @@
       "cooksId": [
         10,
         9,
-        5
+        5,
+        1
       ],
       "favoritesId": [
         10,
@@ -1437,10 +1155,10 @@
         8,
         10,
         6,
-        1,
         3,
         7,
-        4
+        4,
+        1
       ],
       "status": "public",
       "origin": "Haiti",
@@ -1497,34 +1215,14 @@
           "unit": "aliqua"
         }
       ],
-      "ingredients": [
+      "ingredients": [],
+      "reports": [],
+      "statistics": [
         {
-          "name": "esse",
-          "quantity": 15,
-          "unit": "deserunt"
-        },
-        {
-          "name": "exercitation",
-          "quantity": 1,
-          "unit": "id"
-        },
-        {
-          "name": "duis",
-          "quantity": 30,
-          "unit": "sunt"
-        },
-        {
-          "name": "ex",
-          "quantity": 29,
-          "unit": "reprehenderit"
-        },
-        {
-          "name": "occaecat",
-          "quantity": 16,
-          "unit": "sint"
+          "userId": 1,
+          "answer": true
         }
-      ],
-      "reports": []
+      ]
     },
     {
       "id": 12,
@@ -1584,58 +1282,7 @@
           "unit": "ullamco"
         }
       ],
-      "ingredients": [
-        {
-          "name": "ipsum",
-          "quantity": 25,
-          "unit": "tempor"
-        },
-        {
-          "name": "nulla",
-          "quantity": 29,
-          "unit": "non"
-        },
-        {
-          "name": "consequat",
-          "quantity": 45,
-          "unit": "ullamco"
-        },
-        {
-          "name": "id",
-          "quantity": 35,
-          "unit": "quis"
-        },
-        {
-          "name": "minim",
-          "quantity": 15,
-          "unit": "exercitation"
-        },
-        {
-          "name": "minim",
-          "quantity": 2,
-          "unit": "veniam"
-        },
-        {
-          "name": "adipisicing",
-          "quantity": 32,
-          "unit": "sit"
-        },
-        {
-          "name": "tempor",
-          "quantity": 46,
-          "unit": "deserunt"
-        },
-        {
-          "name": "minim",
-          "quantity": 37,
-          "unit": "dolor"
-        },
-        {
-          "name": "consequat",
-          "quantity": 1,
-          "unit": "est"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 13,
@@ -1718,63 +1365,7 @@
           "unit": "proident"
         }
       ],
-      "ingredients": [
-        {
-          "name": "laboris",
-          "quantity": 44,
-          "unit": "cupidatat"
-        },
-        {
-          "name": "anim",
-          "quantity": 34,
-          "unit": "dolore"
-        },
-        {
-          "name": "ex",
-          "quantity": 39,
-          "unit": "enim"
-        },
-        {
-          "name": "velit",
-          "quantity": 1,
-          "unit": "amet"
-        },
-        {
-          "name": "duis",
-          "quantity": 10,
-          "unit": "adipisicing"
-        },
-        {
-          "name": "deserunt",
-          "quantity": 14,
-          "unit": "tempor"
-        },
-        {
-          "name": "sint",
-          "quantity": 48,
-          "unit": "ex"
-        },
-        {
-          "name": "velit",
-          "quantity": 28,
-          "unit": "id"
-        },
-        {
-          "name": "pariatur",
-          "quantity": 30,
-          "unit": "et"
-        },
-        {
-          "name": "ex",
-          "quantity": 3,
-          "unit": "commodo"
-        },
-        {
-          "name": "irure",
-          "quantity": 9,
-          "unit": "velit"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 14,
@@ -1855,28 +1446,7 @@
           "unit": "id"
         }
       ],
-      "ingredients": [
-        {
-          "name": "elit",
-          "quantity": 28,
-          "unit": "aute"
-        },
-        {
-          "name": "quis",
-          "quantity": 42,
-          "unit": "ut"
-        },
-        {
-          "name": "aute",
-          "quantity": 14,
-          "unit": "ea"
-        },
-        {
-          "name": "incididunt",
-          "quantity": 46,
-          "unit": "laboris"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 15,
@@ -1960,43 +1530,7 @@
           "unit": "minim"
         }
       ],
-      "ingredients": [
-        {
-          "name": "id",
-          "quantity": 2,
-          "unit": "velit"
-        },
-        {
-          "name": "voluptate",
-          "quantity": 23,
-          "unit": "culpa"
-        },
-        {
-          "name": "proident",
-          "quantity": 8,
-          "unit": "esse"
-        },
-        {
-          "name": "excepteur",
-          "quantity": 18,
-          "unit": "ea"
-        },
-        {
-          "name": "id",
-          "quantity": 16,
-          "unit": "qui"
-        },
-        {
-          "name": "sint",
-          "quantity": 38,
-          "unit": "laborum"
-        },
-        {
-          "name": "labore",
-          "quantity": 49,
-          "unit": "magna"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 16,
@@ -2070,63 +1604,7 @@
           "unit": "qui"
         }
       ],
-      "ingredients": [
-        {
-          "name": "elit",
-          "quantity": 45,
-          "unit": "sint"
-        },
-        {
-          "name": "exercitation",
-          "quantity": 43,
-          "unit": "sit"
-        },
-        {
-          "name": "commodo",
-          "quantity": 9,
-          "unit": "labore"
-        },
-        {
-          "name": "dolor",
-          "quantity": 30,
-          "unit": "nisi"
-        },
-        {
-          "name": "exercitation",
-          "quantity": 4,
-          "unit": "cillum"
-        },
-        {
-          "name": "ea",
-          "quantity": 22,
-          "unit": "ex"
-        },
-        {
-          "name": "adipisicing",
-          "quantity": 16,
-          "unit": "fugiat"
-        },
-        {
-          "name": "officia",
-          "quantity": 36,
-          "unit": "officia"
-        },
-        {
-          "name": "nostrud",
-          "quantity": 41,
-          "unit": "est"
-        },
-        {
-          "name": "cupidatat",
-          "quantity": 24,
-          "unit": "enim"
-        },
-        {
-          "name": "Lorem",
-          "quantity": 22,
-          "unit": "magna"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 17,
@@ -2210,48 +1688,8 @@
           "unit": "exercitation"
         }
       ],
-      "ingredients": [
-        {
-          "name": "proident",
-          "quantity": 7,
-          "unit": "veniam"
-        },
-        {
-          "name": "ut",
-          "quantity": 13,
-          "unit": "elit"
-        },
-        {
-          "name": "non",
-          "quantity": 16,
-          "unit": "sint"
-        },
-        {
-          "name": "est",
-          "quantity": 39,
-          "unit": "sint"
-        },
-        {
-          "name": "consequat",
-          "quantity": 8,
-          "unit": "in"
-        },
-        {
-          "name": "quis",
-          "quantity": 6,
-          "unit": "adipisicing"
-        },
-        {
-          "name": "irure",
-          "quantity": 14,
-          "unit": "exercitation"
-        },
-        {
-          "name": "duis",
-          "quantity": 19,
-          "unit": "cillum"
-        }
-      ]
+      "ingredients": [],
+      "reports": []
     },
     {
       "id": 18,
@@ -2349,28 +1787,7 @@
           "unit": "aliqua"
         }
       ],
-      "ingredients": [
-        {
-          "name": "velit",
-          "quantity": 18,
-          "unit": "consequat"
-        },
-        {
-          "name": "aliquip",
-          "quantity": 13,
-          "unit": "sit"
-        },
-        {
-          "name": "incididunt",
-          "quantity": 20,
-          "unit": "irure"
-        },
-        {
-          "name": "cillum",
-          "quantity": 44,
-          "unit": "est"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 19,
@@ -2439,38 +1856,7 @@
           "unit": "proident"
         }
       ],
-      "ingredients": [
-        {
-          "name": "aliquip",
-          "quantity": 34,
-          "unit": "nostrud"
-        },
-        {
-          "name": "esse",
-          "quantity": 2,
-          "unit": "incididunt"
-        },
-        {
-          "name": "voluptate",
-          "quantity": 25,
-          "unit": "id"
-        },
-        {
-          "name": "ut",
-          "quantity": 43,
-          "unit": "velit"
-        },
-        {
-          "name": "aute",
-          "quantity": 5,
-          "unit": "dolore"
-        },
-        {
-          "name": "laborum",
-          "quantity": 44,
-          "unit": "esse"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 20,
@@ -2552,53 +1938,7 @@
           "unit": "labore"
         }
       ],
-      "ingredients": [
-        {
-          "name": "est",
-          "quantity": 2,
-          "unit": "veniam"
-        },
-        {
-          "name": "laborum",
-          "quantity": 50,
-          "unit": "reprehenderit"
-        },
-        {
-          "name": "occaecat",
-          "quantity": 23,
-          "unit": "eiusmod"
-        },
-        {
-          "name": "adipisicing",
-          "quantity": 20,
-          "unit": "exercitation"
-        },
-        {
-          "name": "nostrud",
-          "quantity": 34,
-          "unit": "incididunt"
-        },
-        {
-          "name": "laborum",
-          "quantity": 29,
-          "unit": "cupidatat"
-        },
-        {
-          "name": "fugiat",
-          "quantity": 37,
-          "unit": "enim"
-        },
-        {
-          "name": "laborum",
-          "quantity": 42,
-          "unit": "elit"
-        },
-        {
-          "name": "laborum",
-          "quantity": 27,
-          "unit": "anim"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 21,
@@ -2683,28 +2023,7 @@
           "unit": "consectetur"
         }
       ],
-      "ingredients": [
-        {
-          "name": "aliqua",
-          "quantity": 38,
-          "unit": "enim"
-        },
-        {
-          "name": "ex",
-          "quantity": 29,
-          "unit": "esse"
-        },
-        {
-          "name": "in",
-          "quantity": 46,
-          "unit": "tempor"
-        },
-        {
-          "name": "officia",
-          "quantity": 34,
-          "unit": "eiusmod"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 22,
@@ -2776,63 +2095,7 @@
           "unit": "tempor"
         }
       ],
-      "ingredients": [
-        {
-          "name": "quis",
-          "quantity": 11,
-          "unit": "ut"
-        },
-        {
-          "name": "tempor",
-          "quantity": 9,
-          "unit": "anim"
-        },
-        {
-          "name": "ullamco",
-          "quantity": 14,
-          "unit": "labore"
-        },
-        {
-          "name": "esse",
-          "quantity": 8,
-          "unit": "dolor"
-        },
-        {
-          "name": "sunt",
-          "quantity": 34,
-          "unit": "deserunt"
-        },
-        {
-          "name": "veniam",
-          "quantity": 22,
-          "unit": "veniam"
-        },
-        {
-          "name": "eu",
-          "quantity": 25,
-          "unit": "pariatur"
-        },
-        {
-          "name": "exercitation",
-          "quantity": 14,
-          "unit": "est"
-        },
-        {
-          "name": "anim",
-          "quantity": 33,
-          "unit": "nisi"
-        },
-        {
-          "name": "ullamco",
-          "quantity": 39,
-          "unit": "laboris"
-        },
-        {
-          "name": "dolor",
-          "quantity": 49,
-          "unit": "amet"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 24,
@@ -2858,13 +2121,14 @@
       ],
       "favoritesId": [
         6,
-        1,
-        8
+        8,
+        1
       ],
       "likesId": [
         3,
         10,
-        5
+        5,
+        1
       ],
       "status": "public",
       "origin": "Америка",
@@ -2960,9 +2224,10 @@
       "statistics": [
         {
           "userId": 1,
-          "answer": true
+          "answer": false
         }
-      ]
+      ],
+      "reports": []
     },
     {
       "id": 25,
@@ -3031,48 +2296,7 @@
           "unit": "id"
         }
       ],
-      "ingredients": [
-        {
-          "name": "ut",
-          "quantity": 19,
-          "unit": "labore"
-        },
-        {
-          "name": "amet",
-          "quantity": 22,
-          "unit": "elit"
-        },
-        {
-          "name": "occaecat",
-          "quantity": 33,
-          "unit": "cillum"
-        },
-        {
-          "name": "aute",
-          "quantity": 45,
-          "unit": "elit"
-        },
-        {
-          "name": "consectetur",
-          "quantity": 15,
-          "unit": "elit"
-        },
-        {
-          "name": "consectetur",
-          "quantity": 22,
-          "unit": "sunt"
-        },
-        {
-          "name": "labore",
-          "quantity": 30,
-          "unit": "incididunt"
-        },
-        {
-          "name": "incididunt",
-          "quantity": 16,
-          "unit": "dolor"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 26,
@@ -3150,58 +2374,7 @@
           "unit": "est"
         }
       ],
-      "ingredients": [
-        {
-          "name": "veniam",
-          "quantity": 28,
-          "unit": "irure"
-        },
-        {
-          "name": "irure",
-          "quantity": 14,
-          "unit": "adipisicing"
-        },
-        {
-          "name": "nostrud",
-          "quantity": 12,
-          "unit": "reprehenderit"
-        },
-        {
-          "name": "cupidatat",
-          "quantity": 49,
-          "unit": "ullamco"
-        },
-        {
-          "name": "veniam",
-          "quantity": 16,
-          "unit": "id"
-        },
-        {
-          "name": "velit",
-          "quantity": 3,
-          "unit": "officia"
-        },
-        {
-          "name": "dolore",
-          "quantity": 20,
-          "unit": "nisi"
-        },
-        {
-          "name": "ad",
-          "quantity": 17,
-          "unit": "voluptate"
-        },
-        {
-          "name": "do",
-          "quantity": 17,
-          "unit": "ea"
-        },
-        {
-          "name": "do",
-          "quantity": 24,
-          "unit": "nulla"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 27,
@@ -3257,53 +2430,7 @@
           "unit": "pariatur"
         }
       ],
-      "ingredients": [
-        {
-          "name": "est",
-          "quantity": 10,
-          "unit": "nulla"
-        },
-        {
-          "name": "ut",
-          "quantity": 24,
-          "unit": "id"
-        },
-        {
-          "name": "voluptate",
-          "quantity": 45,
-          "unit": "velit"
-        },
-        {
-          "name": "voluptate",
-          "quantity": 17,
-          "unit": "cupidatat"
-        },
-        {
-          "name": "laboris",
-          "quantity": 34,
-          "unit": "nostrud"
-        },
-        {
-          "name": "adipisicing",
-          "quantity": 3,
-          "unit": "cillum"
-        },
-        {
-          "name": "aute",
-          "quantity": 32,
-          "unit": "velit"
-        },
-        {
-          "name": "cillum",
-          "quantity": 22,
-          "unit": "consectetur"
-        },
-        {
-          "name": "ea",
-          "quantity": 18,
-          "unit": "nisi"
-        }
-      ]
+      "ingredients": []
     },
     {
       "id": 28,
@@ -3380,33 +2507,7 @@
           "unit": "minim"
         }
       ],
-      "ingredients": [
-        {
-          "name": "sit",
-          "quantity": 10,
-          "unit": "ullamco"
-        },
-        {
-          "name": "laboris",
-          "quantity": 25,
-          "unit": "quis"
-        },
-        {
-          "name": "cillum",
-          "quantity": 5,
-          "unit": "ea"
-        },
-        {
-          "name": "ipsum",
-          "quantity": 21,
-          "unit": "enim"
-        },
-        {
-          "name": "elit",
-          "quantity": 39,
-          "unit": "et"
-        }
-      ]
+      "ingredients": []
     },
     {
       "name": "Ананасовый тарт татен Бри Ходж из сериала \"Отчаянные домохозяйки\"",
@@ -3611,18 +2712,7 @@
       "likesId": [],
       "favoritesId": [],
       "id": 52,
-      "comments": [
-        {
-          "id": 1,
-          "text": "огонь",
-          "authorId": 24,
-          "date": "2023-10-30T20:54:15.944Z",
-          "likesId": [
-            5
-          ],
-          "dislikesId": []
-        }
-      ],
+      "comments": [],
       "publicationDate": "2023-10-30T23:58:43.609Z",
       "status": "public",
       "statistics": [
@@ -3630,7 +2720,8 @@
           "userId": 23,
           "answer": false
         }
-      ]
+      ],
+      "reports": []
     },
     {
       "name": "вавыавыввыаыва",
@@ -3679,7 +2770,255 @@
       "status": "public"
     },
     {
-      "name": "fggfgfgf",
+      "name": "Киш с тыквой и копчёным мясом",
+      "reports": [],
+      "statistics": [],
+      "ingredients": [
+        {
+          "name": "Тесто слоёное готовое (бездрожжевое) ",
+          "quantity": "300",
+          "unit": "г"
+        },
+        {
+          "name": "Тыква",
+          "quantity": "400",
+          "unit": "г"
+        },
+        {
+          "name": "Мясо копчёное (рулька, бекон или грудинка)",
+          "quantity": "200",
+          "unit": "г"
+        },
+        {
+          "name": "Лук репчатый",
+          "quantity": "1",
+          "unit": "шт"
+        },
+        {
+          "name": "Яйца",
+          "quantity": "1",
+          "unit": "шт"
+        },
+        {
+          "name": "Сметана",
+          "quantity": "100",
+          "unit": "г"
+        },
+        {
+          "name": "Сыр твёрдый",
+          "quantity": "100",
+          "unit": "г"
+        },
+        {
+          "name": "Соль ",
+          "quantity": "",
+          "unit": "по вкусу"
+        },
+        {
+          "name": "Перец чёрный молотый",
+          "quantity": "",
+          "unit": "по вкусу"
+        },
+        {
+          "name": "Масло растительное",
+          "quantity": "2",
+          "unit": "ст. л."
+        }
+      ],
+      "instructions": [
+        {
+          "name": "Подготавливаем необходимые ингредиенты для приготовления тыквенного киша.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Тыкву нарезаем кусочками, заливаем водой и отправляем тушиться на огонь, примерно 20-25 минут.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Раскатываем слоёное тесто и выкладываем в форму, смазанную растительным маслом. Делаем бортики высотой 5-6 см.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Лук нарезаем мелким кубиком и обжариваем на растительном масле.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Нарезаем копчёное мясо и добавляем его обжариваться к луку.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Блендерим тушёную тыкву, превращая её в пюре.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Перемешиваем тыквенное пюре с обжаренным луком и копчёным мясом.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Смешиваем яйца, сметану, соль и перец по вкусу.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Натираем в яично-сметанную массу половину сыра.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Смешиваем все ингредиенты начинки.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Выливаем приготовленную начинку в форму с тестом. Сверху натираем оставшийся сыр на крупной тёрке.\nОтправляем пирог с тыквой и копчёным мясом в духовку, разогретую до 180 градусов, примерно на 25-30 минут.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Тыквенный пирог-киш вкусен как в горячем, так и в холодном виде, но лучше разрезать его остывшим.\nПриятного аппетита!",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        }
+      ],
+      "mainImage": null,
+      "description": "В разгар сезона тыквы хочу предложить вам чудесный рецепт - тыквенный киш. Прекрасный открытый пирог из готового слоёного теста с вкусной и сочной начинкой. Не пирог, а просто объедение!",
+      "history": "",
+      "preparationTime": "35 минут",
+      "cookingTime": "1 час",
+      "origin": "Америка",
+      "nutritions": [],
+      "servings": 8,
+      "authorId": 5,
+      "categories": [
+        26,
+        15,
+        10
+      ],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 56,
+      "comments": [],
+      "publicationDate": "2023-11-01T02:14:01.721Z",
+      "status": "public"
+    },
+    {
+      "name": "Пок-мок",
       "reports": [],
       "statistics": [],
       "ingredients": [],
@@ -3692,15 +3031,896 @@
       "origin": "",
       "nutritions": [],
       "servings": 1,
+      "authorId": 1,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 58,
+      "comments": [],
+      "publicationDate": "",
+      "status": "private"
+    },
+    {
+      "name": "Кисси-мисси",
+      "reports": [],
+      "statistics": [
+        {
+          "userId": 1,
+          "answer": true
+        }
+      ],
+      "ingredients": [],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 1,
+      "categories": [],
+      "cooksId": [
+        1
+      ],
+      "likesId": [
+        1
+      ],
+      "favoritesId": [
+        1
+      ],
+      "id": 60,
+      "comments": [],
+      "publicationDate": "2023-11-01T14:29:29.034Z",
+      "status": "public"
+    },
+    {
+      "name": "fddff",
+      "reports": [],
+      "statistics": [],
+      "ingredients": [],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 1,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 63,
+      "comments": [],
+      "publicationDate": "2023-11-01T15:28:21.852Z",
+      "status": "private"
+    },
+    {
+      "name": "dgggddggdg",
+      "reports": [],
+      "statistics": [],
+      "ingredients": [],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 1,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 65,
+      "comments": [],
+      "publicationDate": "",
+      "status": "private"
+    },
+    {
+      "name": "аваавваав",
+      "reports": [],
+      "statistics": [],
+      "ingredients": [],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 1,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 66,
+      "comments": [],
+      "publicationDate": "2023-11-01T15:56:57.536Z",
+      "status": "private"
+    },
+    {
+      "name": "Глазунья",
+      "reports": [],
+      "statistics": [],
+      "ingredients": [
+        {
+          "name": "Яйца",
+          "quantity": "2",
+          "unit": "шт"
+        },
+        {
+          "name": "Соль",
+          "quantity": "",
+          "unit": "на глаз"
+        },
+        {
+          "name": "Специи",
+          "quantity": "",
+          "unit": "по вкусу"
+        }
+      ],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "1 минута",
+      "cookingTime": "10 минут",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
       "authorId": 5,
       "categories": [],
       "cooksId": [],
       "likesId": [],
       "favoritesId": [],
-      "id": 55,
+      "id": 67,
       "comments": [],
-      "publicationDate": "",
-      "status": "private"
+      "publicationDate": "2023-11-02T00:00:24.427Z",
+      "status": "public"
+    },
+    {
+      "name": "Картофельные драники с чесноком (без яиц и муки)",
+      "reports": [],
+      "statistics": [
+        {
+          "userId": 5,
+          "answer": true
+        }
+      ],
+      "ingredients": [
+        {
+          "name": "Картофель",
+          "quantity": "2200",
+          "unit": "г"
+        },
+        {
+          "name": "Лук репчатый",
+          "quantity": "412.5",
+          "unit": "г"
+        },
+        {
+          "name": "Сметана",
+          "quantity": "3.1",
+          "unit": "ст. л"
+        },
+        {
+          "name": "Соль",
+          "quantity": "1.2",
+          "unit": "ч.л"
+        },
+        {
+          "name": "Перец молотый",
+          "quantity": "3.1",
+          "unit": "щепотка"
+        },
+        {
+          "name": "Масло растительное",
+          "quantity": "11",
+          "unit": "ст. л"
+        },
+        {
+          "name": "Специи",
+          "quantity": "",
+          "unit": "по вкусу"
+        }
+      ],
+      "instructions": [
+        {
+          "name": "Подготовьте все для драников - картофель, лук, чеснок, сметану, специи и растительное масло для жарки.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Картофель очистите от кожуры. Репчатый лук и чеснок очистите от шелухи.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Репчатый лук и чеснок натрите на мелкой терке в глубокую миску.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Туда же натрите на мелкой тёрке картофель, периодически перемешивая его с луком. Добавьте соль, перемешайте.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Картофельно-луковую массу откиньте на дуршлаг или мелкое сито, сливая жидкость в миску. Оставьте на 2-3 минуты, слегка придавливая массу лопаткой. Сильно выжимать не нужно, чтобы драники получились сочными.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "У меня получилось примерно 120-130 мл жидкости. Аккуратно слейте верхний желтый слой.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "На дне остается примерно 1 столовая ложка белого крахмала. Он необходим в тесте, поэтому сливать его не нужно. Если картофель не крахмалистый, добавьте чайную ложку картофельного крахмала в натертый картофель.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "В миску с крахмалом переложите картофельную массу. Добавьте сметану и смесь перцев, перемешайте.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Из картофельного теста руками слепите круглый и плоский драник (толщина - около 1-1,5 см).",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Разогрейте в сковороде растительное масло. Выложите в горячее масло сформированные драники.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Обжаривайте на среднем огне примерно по 1-2 минуты с каждой стороны, до золотистой корочки.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Обжаренные драники переложите на бумажное полотенце, чтобы оно впитало лишнее масло. Обжарьте следующую порцию.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Идеальным соусом к драникам из картофеля является сметана. Подавайте драники к столу, пока они теплые, именно тогда их нежная сочная серединка отлично контрастирует с хрустящей корочкой.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Яркое, вкуснейшее, простое и очень вкусное блюдо из картофеля, которое не нуждается ни в мясном, ни в рыбном дополнении!",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Вкусно и экономно - это картофельные драники с чесноком.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        }
+      ],
+      "mainImage": null,
+      "description": "Рецепт этих картофельных драников максимально прост и понятен. Они готовятся без муки и яиц, но отлично держат форму, получаются хрустящими снаружи и мягкими внутри. Для остроты и аромата добавляется чеснок, а сочность придаст репчатый лук и сметана, но основной ингредиент, конечно же, - любимый всеми картофель.",
+      "history": "С достоверностью можно утверждать лишь одно – впервые рецепт драников был представлен публике в 1830 году знаменитым польским кулинаром Яном Шиттлером в своей книге, однако и он однозначно не является автором этого блюда. Оладьи из тёртой картошки чаще всего служили пищей простому народу, изредка попадая на господский стол в сопровождении сложносочинённых соусов и подлив. Само слово «драники» придумано белорусами.",
+      "preparationTime": "30 минут",
+      "cookingTime": "30 минут",
+      "origin": "Беларусь",
+      "nutritions": [],
+      "servings": 11,
+      "authorId": 5,
+      "categories": [
+        25,
+        4
+      ],
+      "cooksId": [
+        5
+      ],
+      "likesId": [
+        5
+      ],
+      "favoritesId": [],
+      "id": 68,
+      "comments": [],
+      "publicationDate": "2023-11-02T14:12:28.212Z",
+      "status": "public"
+    },
+    {
+      "name": "Колдуны",
+      "reports": [],
+      "statistics": [
+        {
+          "userId": 5,
+          "answer": true
+        }
+      ],
+      "ingredients": [
+        {
+          "name": "Картофель ",
+          "quantity": "1",
+          "unit": "кг"
+        },
+        {
+          "name": "Фарш ",
+          "quantity": "0.5",
+          "unit": "кг"
+        },
+        {
+          "name": "Яйца ",
+          "quantity": "2",
+          "unit": "шт"
+        },
+        {
+          "name": "Мука",
+          "quantity": "0.5",
+          "unit": "ст"
+        },
+        {
+          "name": "Соль ",
+          "quantity": "п",
+          "unit": "по вкусу"
+        },
+        {
+          "name": "Перец ",
+          "quantity": "",
+          "unit": "по вкусу"
+        },
+        {
+          "name": "Специи",
+          "quantity": "",
+          "unit": "по вкусу"
+        },
+        {
+          "name": "Масло сливочное",
+          "quantity": "70",
+          "unit": "г"
+        }
+      ],
+      "instructions": [
+        {
+          "name": "Картофель отварить в мундире.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Фарш обжарить с луком до готовности, но не зажаривать.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": " Картофель остудить и теплым натереть на крупной терке.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "В картофель вбить 2 яйца, посолить.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Добавить в картофель муку и замесить тесто.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Разделить тесто на колобки, размером с детский кулачок, каждый колобок превратить в лепешку.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "На картофельную лепешку выкладываем столовую ложку готового фарша и формируем пирожочек овальной формы.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "В кипящую воду кладем колдунчики так, чтобы им не было тесно. Варим примерно 5-7 минут.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Шумовкой достаем и выкладываем на блюдо, полив сверху обжаренным луком на сливочном масле. Лук нарезала полукольцами.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        }
+      ],
+      "mainImage": null,
+      "description": "Давно хотела приготовить колдуны, но только не жареные. И вот сегодня мечта сбылась. Понравилось, можно даже подать как праздничное блюдо. Готовится несложно и довольно быстро.\n\n",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 5,
+      "categories": [
+        25
+      ],
+      "cooksId": [
+        5
+      ],
+      "likesId": [
+        5
+      ],
+      "favoritesId": [
+        5
+      ],
+      "id": 69,
+      "comments": [],
+      "publicationDate": "2023-11-02T14:37:36.726Z",
+      "status": "public"
+    },
+    {
+      "name": "Картофельная бабка (запеканка) с курицей",
+      "reports": [],
+      "statistics": [],
+      "ingredients": [
+        {
+          "name": "Картофель ",
+          "quantity": "5",
+          "unit": "шт"
+        },
+        {
+          "name": "Грудка куриная",
+          "quantity": "200",
+          "unit": "г"
+        },
+        {
+          "name": "Масло растительное",
+          "quantity": "2",
+          "unit": "ст. л"
+        },
+        {
+          "name": "Масло сливочное",
+          "quantity": "1 ",
+          "unit": "ст.л"
+        },
+        {
+          "name": "Сметана ",
+          "quantity": "2",
+          "unit": "ст.л"
+        },
+        {
+          "name": "Мука",
+          "quantity": "2.5",
+          "unit": "ст.л"
+        },
+        {
+          "name": "Лук репчатый",
+          "quantity": "1",
+          "unit": "шт"
+        },
+        {
+          "name": "Соль ",
+          "quantity": "",
+          "unit": "по вкусу"
+        },
+        {
+          "name": "Перец чёрный молотый",
+          "quantity": "",
+          "unit": "по вкусу"
+        },
+        {
+          "name": "Специи",
+          "quantity": "",
+          "unit": "по вкусу"
+        },
+        {
+          "name": "Приправа для курицы",
+          "quantity": "",
+          "unit": "по вкусу"
+        }
+      ],
+      "instructions": [
+        {
+          "name": "Подготовьте продукты.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Как приготовить картофельную бабку с курицей:\n\nКартофель почистите, промойте. Лук почистите, разрежьте пополам. У меня была луковица крупная, средних понадобится 2 штуки.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Картофель и половину лука натрите на мелкой тёрке, часть выделившегося сока слейте, но не весь, чтобы бабка не была сухой.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Вторую часть лука нарежьте маленькими кубиками. Куриное филе также нарежьте кубиками. В сковороде разогрейте подсолнечное масло. Выложите в сковороду лук и куриное филе.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Обжарьте куриное филе с луком, помешивая, около 5 минут на сильном огне. В процессе обжаривания ингредиенты посолите, поперчите, посыпьте своими любимыми приправами.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "В миску с тёртым картофелем переложите со сковороды обжаренное куриное филе с луком, добавьте сметану, муку.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Перемешайте, при необходимости досолив картофельную массу.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Форму для запекания смажьте сливочным маслом и присыпьте мукой так, чтобы дно и стенки формы были как следует обработаны.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Выложите картофельную массу в подготовленную форму, разровняйте поверхность.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Выложите картофельную массу в подготовленную форму, разровняйте поверхность.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Подавайте картофельную бабку с курицей в горячем виде. Подавать блюдо можно как в форме, так и перевернув её и выложив бабку на блюдо.\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        }
+      ],
+      "mainImage": null,
+      "description": "Если вы любите драники, тогда такое блюдо как картофельная бабка вам непременно понравится. Ведь оно также готовится из тёртого картофеля, но не как оладьи, а в виде запеканки, да ещё и с кусочками жареного куриного филе в качестве добавки. Очень вкусное блюдо для семейного обеда, сытное, оригинальное и доступное!\n\n",
+      "history": "",
+      "preparationTime": "25 минут",
+      "cookingTime": "1 час 10 минут",
+      "origin": "Беларусь",
+      "nutritions": [],
+      "servings": 4,
+      "authorId": 5,
+      "categories": [
+        25
+      ],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 70,
+      "comments": [
+        {
+          "id": 1,
+          "text": "Спасибо. Очень вкусн",
+          "authorId": 5,
+          "date": "2023-11-02T22:24:17.693Z",
+          "likesId": [],
+          "dislikesId": []
+        }
+      ],
+      "publicationDate": "2023-11-02T14:43:40.562Z",
+      "status": "public"
     }
   ],
   "users": [
@@ -3711,28 +3931,467 @@
       "quote": "Когда вы допустили столько же ошибок, сколько и я, вы можете быть так же хороши, как и я.",
       "email": "alexey@example.com",
       "password": "Password300",
-      "fullName": "Алексей Зимин",
+      "fullName": "Леха Зимин 1000",
       "followersIds": [
-        2,
         3,
         4,
-        5
+        5,
+        2
       ],
       "socialNetworks": [
         {
           "name": "ВКонтакте",
           "link": "https://vk.com/chef_alexey_zimin"
-        },
-        {
-          "name": "instagram",
-          "link": "https://www.instagram.com/chef_alexey_zimin/"
         }
       ],
       "personalWebsite": "https://www.chefalexeyzimin.com/",
       "location": "Москва, Россия",
       "registrationDate": "2023-01-15",
-      "profileViews": 7642,
-      "role": "moderator"
+      "profileViews": 7653,
+      "role": "moderator",
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "/cooks/list/1",
+          "context": "recipe",
+          "type": "info",
+          "message": "Твой рецепт «cupidatat enim ipsum» понравился кулинару Леха Зими",
+          "title": "Твой рецепт оценили",
+          "timestamp": "2023-11-01T17:22:26.609Z",
+          "read": true
+        },
+        {
+          "id": 2,
+          "relatedLink": "/cooks/list/1",
+          "context": "recipe",
+          "type": "info",
+          "message": "Твой рецепт «cupidatat enim ipsum» понравился кулинару Леха Зими",
+          "title": "Твой рецепт оценили",
+          "timestamp": "2023-11-01T17:25:29.141Z",
+          "read": true
+        },
+        {
+          "id": 3,
+          "relatedLink": "/cooks/list/1",
+          "context": "recipe",
+          "type": "info",
+          "message": "Твой рецепт «cupidatat enim ipsum» понравился кулинару Леха Зими",
+          "title": "Твой рецепт оценили",
+          "timestamp": "2023-11-01T17:25:32.021Z",
+          "read": true
+        },
+        {
+          "id": 4,
+          "relatedLink": "/cooks/list/1",
+          "context": "recipe",
+          "type": "info",
+          "message": "Твой рецепт «cupidatat enim ipsum» приготовил кулинар Леха Зими и оставил положительный отзыв",
+          "title": "Твой рецепт приготовили",
+          "timestamp": "2023-11-01T17:25:36.190Z",
+          "read": true
+        },
+        {
+          "id": 5,
+          "relatedLink": "/cooks/list/1",
+          "context": "recipe",
+          "type": "info",
+          "message": "Твой рецепт «cupidatat enim ipsum» приготовил кулинар Леха Зимин и оставил негативный отзыв",
+          "title": "Твой рецепт приготовили",
+          "timestamp": "2023-11-01T17:26:32.990Z",
+          "read": true
+        },
+        {
+          "id": 6,
+          "relatedLink": "/recipes/list/8",
+          "context": "recipe",
+          "type": "info",
+          "message": "Твой рецепт «cupidatat enim ipsum» кто-то добавил в избранное",
+          "title": "Твой рецепт добавили в избранное",
+          "timestamp": "2023-11-01T17:26:45.393Z",
+          "read": true
+        },
+        {
+          "id": 7,
+          "relatedLink": "/cooks/list/1",
+          "context": "user",
+          "type": "success",
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-01T17:30:04.674Z",
+          "read": true
+        },
+        {
+          "id": 8,
+          "relatedLink": "/cooks/list/1",
+          "context": "user",
+          "type": "success",
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-01T17:52:54.760Z",
+          "read": true
+        },
+        {
+          "id": 9,
+          "relatedLink": "/cooks/list/2",
+          "context": "user",
+          "type": "info",
+          "message": "Кулинар Екатерина Петрова подписался на тебя",
+          "title": "Новый подписчик",
+          "timestamp": "2023-11-01T18:00:06.873Z",
+          "read": true
+        },
+        {
+          "id": 10,
+          "relatedLink": "/cooks/list/2",
+          "context": "user",
+          "type": "info",
+          "message": "Кулинар Екатерина Петрова подписался на тебя",
+          "title": "Новый подписчик",
+          "timestamp": "2023-11-01T18:06:51.747Z",
+          "read": true
+        },
+        {
+          "id": 11,
+          "relatedLink": "/recipes/list/4",
+          "context": "comment",
+          "type": "error",
+          "message": "Твоя жалоба на комментарий пользователя Линавсем привет» под рецептом «Lorem laborum nulla» отклонена",
+          "title": "Жалоба на комментарий отклонена",
+          "timestamp": "2023-11-01T20:09:19.293Z",
+          "read": true
+        },
+        {
+          "id": 12,
+          "relatedLink": "/recipes/list/6",
+          "context": "comment",
+          "type": "error",
+          "message": "Твоя жалоба на комментарий пользователя Леха Зимин 1000gfffdfd» под рецептом «laboris deserunt labore» отклонена",
+          "title": "Жалоба на комментарий отклонена",
+          "timestamp": "2023-11-01T20:11:03.025Z",
+          "read": true
+        },
+        {
+          "id": 13,
+          "relatedLink": "/recipes/list/17",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «Превосходно» под рецептом «tempor magna amet»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:11:17.131Z",
+          "read": true
+        },
+        {
+          "id": 14,
+          "relatedLink": "/recipes/list/17",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «Превосходно» под рецептом «tempor magna amet»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:14:30.495Z",
+          "read": true
+        },
+        {
+          "id": 15,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «dfdfdf» под рецептом «cupidatat enim ipsum»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:16:35.024Z",
+          "read": true
+        },
+        {
+          "id": 16,
+          "relatedLink": "/recipes/list/17",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «Превосходно» под рецептом «tempor magna amet»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:19:32.238Z",
+          "read": true
+        },
+        {
+          "id": 17,
+          "relatedLink": "/recipes/list/11",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Лина «ававваа» под рецептом «et ea enim»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:21:05.159Z",
+          "read": true
+        },
+        {
+          "id": 18,
+          "relatedLink": "/recipes/list/11",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя Лина «ававваа» под рецептом «et ea enim» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T20:26:34.746Z",
+          "read": true
+        },
+        {
+          "id": 19,
+          "relatedLink": "/recipes/list/11",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя Лина «ававваа» под рецептом «et ea enim» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T20:27:41.803Z",
+          "read": true
+        },
+        {
+          "id": 20,
+          "relatedLink": "/recipes/list/4",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Лина «всем привет» под рецептом «Lorem laborum nulla»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:29:43.616Z",
+          "read": true
+        },
+        {
+          "id": 21,
+          "relatedLink": "/recipes/list/56",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Лина «гавно» под рецептом «Киш с тыквой и копчёным мясом»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:32:01.071Z",
+          "read": true
+        },
+        {
+          "id": 22,
+          "relatedLink": "/recipes/list/6",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Лина «gfffdfd» под рецептом «laboris deserunt labore»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:33:02.220Z",
+          "read": true
+        },
+        {
+          "id": 23,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Твой комментарий «огнище» успешно опубликован под рецептом «cupidatat enim ipsum»",
+          "title": "Комментарий опубликован",
+          "timestamp": "2023-11-01T20:33:38.101Z",
+          "read": true
+        },
+        {
+          "id": 24,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Лина «не огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:34:57.695Z",
+          "read": true
+        },
+        {
+          "id": 25,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Анна Казакова «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:44:03.385Z",
+          "read": true
+        },
+        {
+          "id": 26,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Екатерина Петрова «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:49:45.904Z",
+          "read": true
+        },
+        {
+          "id": 27,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Екатерина Петрова «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:51:07.331Z",
+          "read": true
+        },
+        {
+          "id": 28,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя @ «» под рецептом «cupidatat enim ipsum» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T20:51:15.666Z",
+          "read": true
+        },
+        {
+          "id": 29,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Екатерина Петрова «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:52:08.540Z",
+          "read": true
+        },
+        {
+          "id": 30,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя @ «» под рецептом «cupidatat enim ipsum» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T20:52:14.573Z",
+          "read": true
+        },
+        {
+          "id": 31,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Екатерина Петрова «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:53:22.431Z",
+          "read": true
+        },
+        {
+          "id": 32,
+          "relatedLink": "",
+          "context": "category",
+          "type": "error",
+          "message": "Твоя категория «мяул» отклонена",
+          "title": "Категория отклонена",
+          "timestamp": "2023-11-01T20:55:36.324Z",
+          "read": true
+        },
+        {
+          "id": 33,
+          "relatedLink": "/categories/list/32",
+          "context": "category",
+          "type": "success",
+          "message": "Твоя категория «sffsdfdfd» одобрена и теперь может просматриваться всеми кулинарами",
+          "title": "Категория одобрена",
+          "timestamp": "2023-11-01T20:55:49.218Z",
+          "read": true
+        },
+        {
+          "id": 34,
+          "relatedLink": "",
+          "context": "category",
+          "type": "error",
+          "message": "Твоя категория «лололо» отклонена",
+          "title": "Категория отклонена",
+          "timestamp": "2023-11-01T20:55:52.871Z",
+          "read": true
+        },
+        {
+          "id": 35,
+          "relatedLink": "",
+          "context": "category",
+          "type": "error",
+          "message": "Твоя категория «fdffddf» отклонена",
+          "title": "Категория отклонена",
+          "timestamp": "2023-11-01T20:56:45.607Z",
+          "read": true
+        },
+        {
+          "id": 36,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя Екатерина Петрова «огнище» под рецептом «cupidatat enim ipsum» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T21:03:08.660Z",
+          "read": true
+        },
+        {
+          "id": 37,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T21:08:09.328Z",
+          "read": true
+        },
+        {
+          "id": 38,
+          "relatedLink": "/recipes/list/60",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «пока» под рецептом «Кисси-мисси»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T21:10:12.043Z",
+          "read": true
+        },
+        {
+          "id": 39,
+          "relatedLink": "/recipes/list/60",
+          "context": "comment",
+          "type": "error",
+          "message": "Твой комментарий «пока» под рецептом «Кисси-мисси» удален по жалобе",
+          "title": "Твой комментарий удален по жалобе",
+          "timestamp": "2023-11-01T21:10:27.376Z",
+          "read": true
+        },
+        {
+          "id": 40,
+          "relatedLink": "/recipes/list/60",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Лина «привет» под рецептом «Кисси-мисси»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T21:12:29.800Z",
+          "read": true
+        },
+        {
+          "id": 41,
+          "relatedLink": "/recipes/list/60",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя Лина «привет» под рецептом «Кисси-мисси» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T21:12:36.769Z",
+          "read": true
+        },
+        {
+          "id": 42,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "error",
+          "message": "Твой рецепт «fddff» отклонен",
+          "title": "Рецепт отклонен",
+          "timestamp": "2023-11-02T13:07:02.825Z",
+          "read": false
+        },
+        {
+          "id": 43,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "error",
+          "message": "Твой рецепт «аваавваав» отклонен",
+          "title": "Рецепт отклонен",
+          "timestamp": "2023-11-02T13:07:04.913Z",
+          "read": false
+        },
+        {
+          "id": 44,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "error",
+          "message": "Твой рецепт «dgggddggdg» отклонен",
+          "title": "Рецепт отклонен",
+          "timestamp": "2023-11-02T13:07:07.077Z",
+          "read": false
+        }
+      ],
+      "avatarUrl": {}
     },
     {
       "id": 2,
@@ -3740,13 +4399,13 @@
       "description": "Привет, я обожаю готовить и делиться своими рецептами с миром. Следите за моими кулинарными приключениями!",
       "quote": "Вкусная еда — это счастье. Давайте создадим счастье вместе.",
       "email": "foodie@example.com",
-      "password": "password2",
+      "password": "Password200",
       "fullName": "Екатерина Петрова",
       "followersIds": [
-        1,
         3,
         23,
-        5
+        5,
+        1
       ],
       "socialNetworks": [
         {
@@ -3761,8 +4420,90 @@
       "personalWebsite": "",
       "location": "Санкт-Петербург, Россия",
       "registrationDate": "2023-03-20",
-      "profileViews": 6487,
-      "role": "user"
+      "profileViews": 6502,
+      "role": "user",
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "/cooks/list/1",
+          "context": "user",
+          "type": "info",
+          "message": "Кулинар Леха Зимин 1000подписался на тебя",
+          "title": "Новый подписчик",
+          "timestamp": "2023-11-01T17:58:29.732Z",
+          "read": true
+        },
+        {
+          "id": 2,
+          "relatedLink": "/cooks/list/1",
+          "context": "user",
+          "type": "info",
+          "message": "Кулинар Леха Зимин 1000 подписался на тебя",
+          "title": "Новый подписчик",
+          "timestamp": "2023-11-01T18:01:28.730Z",
+          "read": true
+        },
+        {
+          "id": 3,
+          "relatedLink": "/cooks/list/1",
+          "context": "user",
+          "type": "info",
+          "message": "Кулинар Леха Зимин 1000 подписался на тебя",
+          "title": "Новый подписчик",
+          "timestamp": "2023-11-01T18:14:50.608Z",
+          "read": true
+        },
+        {
+          "id": 4,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:48:30.566Z",
+          "read": false
+        },
+        {
+          "id": 5,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:49:45.887Z",
+          "read": false
+        },
+        {
+          "id": 6,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:51:07.325Z",
+          "read": false
+        },
+        {
+          "id": 7,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:52:08.534Z",
+          "read": false
+        },
+        {
+          "id": 8,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:53:22.426Z",
+          "read": false
+        }
+      ]
     },
     {
       "id": 3,
@@ -3852,7 +4593,989 @@
       "personalWebsite": "",
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 1788
+      "profileViews": 1789,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "/recipes/list/4",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «всем привет» под рецептом «Lorem laborum nulla»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T16:42:07.192Z",
+          "read": true
+        },
+        {
+          "id": 2,
+          "relatedLink": "/recipes/list/6",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «gfffdfd» под рецептом «laboris deserunt labore»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T16:42:44.617Z",
+          "read": true
+        },
+        {
+          "id": 3,
+          "relatedLink": "/recipes/list/6",
+          "context": "comment",
+          "type": "success",
+          "message": "Твой комментарий «fdfdfdfd» успешно опубликован под рецептом «laboris deserunt labore»",
+          "title": "Комментарий опубликован",
+          "timestamp": "2023-11-01T16:44:05.624Z",
+          "read": true
+        },
+        {
+          "id": 4,
+          "relatedLink": "/recipes/list/6",
+          "context": "comment",
+          "type": "success",
+          "message": "Твой комментарий «gfggfggf» успешно опубликован под рецептом «laboris deserunt labore»",
+          "title": "Комментарий опубликован",
+          "timestamp": "2023-11-01T16:44:19.278Z",
+          "read": true
+        },
+        {
+          "id": 5,
+          "relatedLink": "/recipes/list/6",
+          "context": "comment",
+          "type": "success",
+          "message": "Твой комментарий «ggffggf» успешно опубликован под рецептом «laboris deserunt labore»",
+          "title": "Комментарий опубликован",
+          "timestamp": "2023-11-01T16:45:07.282Z",
+          "read": true
+        },
+        {
+          "id": 6,
+          "relatedLink": "/recipes/list/6",
+          "context": "comment",
+          "type": "success",
+          "message": "Твой комментарий «fdfdf» успешно опубликован под рецептом «laboris deserunt labore»",
+          "title": "Комментарий опубликован",
+          "timestamp": "2023-11-01T16:46:15.409Z",
+          "read": true
+        },
+        {
+          "id": 7,
+          "relatedLink": "/recipes/list/6",
+          "context": "comment",
+          "type": "success",
+          "message": "Твой комментарий «And i new tomorrow» успешно опубликован под рецептом «laboris deserunt labore»",
+          "title": "Комментарий опубликован",
+          "timestamp": "2023-11-01T16:47:05.590Z",
+          "read": true
+        },
+        {
+          "id": 8,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "success",
+          "message": "Ты удалил свой рецепт «fggfgfgf»",
+          "title": "Твой рецепт удален",
+          "timestamp": "2023-11-01T19:17:53.432Z",
+          "read": true
+        },
+        {
+          "id": 9,
+          "relatedLink": "/recipes/list/67",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «fgfddff» сохранен в твоих рецептах",
+          "title": "Рецепт создан",
+          "timestamp": "2023-11-01T19:18:11.944Z",
+          "read": true
+        },
+        {
+          "id": 10,
+          "relatedLink": "/recipes/list/68",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «fdssdfdfsfd» сохранен в твоих рецептах",
+          "title": "Рецепт создан",
+          "timestamp": "2023-11-01T19:20:12.156Z",
+          "read": true
+        },
+        {
+          "id": 11,
+          "relatedLink": "/recipes/list/69",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «fddfdf» сохранен в твоих рецептах",
+          "title": "Рецепт создан",
+          "timestamp": "2023-11-01T19:20:36.250Z",
+          "read": true
+        },
+        {
+          "id": 12,
+          "relatedLink": "/recipes/list/70",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «dfddffdfd» сохранен в твоих рецептах",
+          "title": "Рецепт создан",
+          "timestamp": "2023-11-01T19:21:00.549Z",
+          "read": true
+        },
+        {
+          "id": 13,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "success",
+          "message": "Ты удалил свой рецепт «dfddffdfd»",
+          "title": "Твой рецепт удален",
+          "timestamp": "2023-11-01T19:21:41.025Z",
+          "read": true
+        },
+        {
+          "id": 14,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "success",
+          "message": "Ты удалил свой рецепт «fddfdf»",
+          "title": "Твой рецепт удален",
+          "timestamp": "2023-11-01T19:21:43.805Z",
+          "read": true
+        },
+        {
+          "id": 15,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "success",
+          "message": "Ты удалил свой рецепт «fdssdfdfsfd»",
+          "title": "Твой рецепт удален",
+          "timestamp": "2023-11-01T19:21:46.964Z",
+          "read": true
+        },
+        {
+          "id": 16,
+          "relatedLink": "/recipes/list/68",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «gfggff» сохранен в твоих рецептах",
+          "title": "Рецепт создан",
+          "timestamp": "2023-11-01T19:22:13.305Z",
+          "read": true
+        },
+        {
+          "id": 17,
+          "relatedLink": "/recipes/list/69",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «dfdfdf» сохранен в твоих рецептах",
+          "title": "Рецепт создан",
+          "timestamp": "2023-11-01T19:23:17.909Z",
+          "read": true
+        },
+        {
+          "id": 18,
+          "relatedLink": "/recipes/list/70",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «fgfggff» сохранен в твоих рецептах",
+          "title": "Рецепт создан",
+          "timestamp": "2023-11-01T19:23:27.170Z",
+          "read": true
+        },
+        {
+          "id": 19,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "success",
+          "message": "Ты удалил свой рецепт «fgfggff»",
+          "title": "Твой рецепт удален",
+          "timestamp": "2023-11-01T19:23:37.811Z",
+          "read": true
+        },
+        {
+          "id": 20,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "success",
+          "message": "Ты удалил свой рецепт «dfdfdf»",
+          "title": "Твой рецепт удален",
+          "timestamp": "2023-11-01T19:23:40.603Z",
+          "read": true
+        },
+        {
+          "id": 21,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "success",
+          "message": "Ты удалил свой рецепт «gfggff»",
+          "title": "Твой рецепт удален",
+          "timestamp": "2023-11-01T19:23:43.635Z",
+          "read": true
+        },
+        {
+          "id": 22,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "success",
+          "message": "Ты удалил свой рецепт «fgfddff»",
+          "title": "Твой рецепт удален",
+          "timestamp": "2023-11-01T19:23:46.960Z",
+          "read": true
+        },
+        {
+          "id": 23,
+          "relatedLink": "/recipes/list/67",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «ggdff» сохранен в твоих рецептах",
+          "title": "Рецепт создан",
+          "timestamp": "2023-11-01T19:25:21.335Z",
+          "read": true
+        },
+        {
+          "id": 24,
+          "relatedLink": "/recipes/list/56",
+          "context": "comment",
+          "type": "success",
+          "message": "Твой комментарий «гавно» успешно опубликован под рецептом «Киш с тыквой и копчёным мясом»",
+          "title": "Комментарий опубликован",
+          "timestamp": "2023-11-01T19:31:46.459Z",
+          "read": true
+        },
+        {
+          "id": 25,
+          "relatedLink": "/cooks/list/5",
+          "context": "comment",
+          "type": "info",
+          "message": "Твой комментарий «гавно» под рецептом «Киш с тыквой и копчёным мясом» не понравился кулинару Лина",
+          "title": "Комментарий кому-то не понравился",
+          "timestamp": "2023-11-01T19:31:48.212Z",
+          "read": true
+        },
+        {
+          "id": 26,
+          "relatedLink": "",
+          "context": "category",
+          "type": "success",
+          "message": "Категория «Питание для бодибилдеров» для секции «Контроль веса» отправлена на проверку",
+          "title": "Категория отправлена на проверку",
+          "timestamp": "2023-11-01T20:04:17.722Z",
+          "read": true
+        },
+        {
+          "id": 27,
+          "relatedLink": "/categories/list/35",
+          "context": "category",
+          "type": "success",
+          "message": "Твоя категория «Питание для бодибилдеров» одобрена и теперь может просматриваться всеми кулинарами",
+          "title": "Категория одобрена",
+          "timestamp": "2023-11-01T20:06:01.526Z",
+          "read": true
+        },
+        {
+          "id": 28,
+          "relatedLink": "/recipes/list/68",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «пвпвппап» сохранен в твоих рецептах",
+          "title": "Рецепт создан",
+          "timestamp": "2023-11-01T20:06:45.028Z",
+          "read": true
+        },
+        {
+          "id": 29,
+          "relatedLink": "",
+          "context": "category",
+          "type": "success",
+          "message": "Категория «впааапвп» для секции «Контроль веса» отправлена на проверку",
+          "title": "Категория отправлена на проверку",
+          "timestamp": "2023-11-01T20:06:57.408Z",
+          "read": true
+        },
+        {
+          "id": 30,
+          "relatedLink": "",
+          "context": "category",
+          "type": "error",
+          "message": "Твоя категория «впааапвп» отклонена",
+          "title": "Категория отклонена",
+          "timestamp": "2023-11-01T20:07:57.004Z",
+          "read": true
+        },
+        {
+          "id": 31,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "success",
+          "message": "Ты удалил свой рецепт «пвпвппап»",
+          "title": "Твой рецепт удален",
+          "timestamp": "2023-11-01T20:09:01.202Z",
+          "read": true
+        },
+        {
+          "id": 32,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "success",
+          "message": "Ты удалил свой рецепт «ggdff»",
+          "title": "Твой рецепт удален",
+          "timestamp": "2023-11-01T20:09:03.808Z",
+          "read": true
+        },
+        {
+          "id": 33,
+          "relatedLink": "/recipes/list/24",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя @ «» под рецептом «Чизкейк с клубникой» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T20:09:24.091Z",
+          "read": true
+        },
+        {
+          "id": 34,
+          "relatedLink": "/recipes/list/17",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Леха Зимин 1000 «Превосходно» под рецептом «tempor magna amet»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:11:17.134Z",
+          "read": true
+        },
+        {
+          "id": 35,
+          "relatedLink": "/recipes/list/17",
+          "context": "comment",
+          "type": "error",
+          "message": "Твоя жалоба на комментарий пользователя Леха Зимин 1000Превосходно» под рецептом «tempor magna amet» отклонена",
+          "title": "Жалоба на комментарий отклонена",
+          "timestamp": "2023-11-01T20:13:17.867Z",
+          "read": true
+        },
+        {
+          "id": 36,
+          "relatedLink": "/recipes/list/17",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Леха Зимин 1000 «Превосходно» под рецептом «tempor magna amet»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:14:30.496Z",
+          "read": true
+        },
+        {
+          "id": 37,
+          "relatedLink": "/recipes/list/17",
+          "context": "comment",
+          "type": "error",
+          "message": "Твоя жалоба на комментарий пользователя Леха Зимин 1000 «Превосходно» под рецептом «tempor magna amet» отклонена",
+          "title": "Жалоба на комментарий отклонена",
+          "timestamp": "2023-11-01T20:16:11.059Z",
+          "read": true
+        },
+        {
+          "id": 38,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Леха Зимин 1000 «dfdfdf» под рецептом «cupidatat enim ipsum»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:16:35.026Z",
+          "read": true
+        },
+        {
+          "id": 39,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя @ «» под рецептом «cupidatat enim ipsum» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T20:16:42.791Z",
+          "read": true
+        },
+        {
+          "id": 40,
+          "relatedLink": "/recipes/list/17",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Леха Зимин 1000 «Превосходно» под рецептом «tempor magna amet»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:19:32.240Z",
+          "read": true
+        },
+        {
+          "id": 41,
+          "relatedLink": "/recipes/list/17",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя @ «» под рецептом «tempor magna amet» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T20:19:41.930Z",
+          "read": true
+        },
+        {
+          "id": 42,
+          "relatedLink": "/cooks/list/1",
+          "context": "comment",
+          "type": "info",
+          "message": "Твой комментарий «ававваа» под рецептом «et ea enim» не понравился кулинару Леха Зимин 1000",
+          "title": "Комментарий кому-то не понравился",
+          "timestamp": "2023-11-01T20:21:03.591Z",
+          "read": true
+        },
+        {
+          "id": 43,
+          "relatedLink": "/recipes/list/11",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «ававваа» под рецептом «et ea enim»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:21:05.157Z",
+          "read": true
+        },
+        {
+          "id": 44,
+          "relatedLink": "/recipes/list/11",
+          "context": "comment",
+          "type": "error",
+          "message": "Твой комментарий «ававваа» под рецептом «et ea enim» удален по жалобе",
+          "title": "Твой комментарий удален по жалобе",
+          "timestamp": "2023-11-01T20:26:34.746Z",
+          "read": true
+        },
+        {
+          "id": 45,
+          "relatedLink": "/recipes/list/11",
+          "context": "comment",
+          "type": "error",
+          "message": "Твой комментарий «ававваа» под рецептом «et ea enim» удален по жалобе",
+          "title": "Твой комментарий удален по жалобе",
+          "timestamp": "2023-11-01T20:27:41.803Z",
+          "read": true
+        },
+        {
+          "id": 46,
+          "relatedLink": "/recipes/list/4",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «всем привет» под рецептом «Lorem laborum nulla»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:29:43.613Z",
+          "read": true
+        },
+        {
+          "id": 47,
+          "relatedLink": "/recipes/list/56",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «гавно» под рецептом «Киш с тыквой и копчёным мясом»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:32:01.061Z",
+          "read": true
+        },
+        {
+          "id": 48,
+          "relatedLink": "/recipes/list/6",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «gfffdfd» под рецептом «laboris deserunt labore»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:33:02.208Z",
+          "read": true
+        },
+        {
+          "id": 49,
+          "relatedLink": "/cooks/list/1",
+          "context": "comment",
+          "type": "info",
+          "message": "Твой комментарий «не огнище» под рецептом «cupidatat enim ipsum» не понравился кулинару Леха Зимин 1000",
+          "title": "Комментарий кому-то не понравился",
+          "timestamp": "2023-11-01T20:34:51.149Z",
+          "read": true
+        },
+        {
+          "id": 50,
+          "relatedLink": "/cooks/list/1",
+          "context": "comment",
+          "type": "info",
+          "message": "Твой комментарий «не огнище» под рецептом «cupidatat enim ipsum» не понравился кулинару Леха Зимин 1000",
+          "title": "Комментарий кому-то не понравился",
+          "timestamp": "2023-11-01T20:34:52.110Z",
+          "read": true
+        },
+        {
+          "id": 51,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «не огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:34:57.687Z",
+          "read": true
+        },
+        {
+          "id": 52,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:41:50.043Z",
+          "read": true
+        },
+        {
+          "id": 53,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Леха Зимин 1000 «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T21:08:09.333Z",
+          "read": true
+        },
+        {
+          "id": 54,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя Леха Зимин 1000 «огнище» под рецептом «cupidatat enim ipsum» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T21:08:32.353Z",
+          "read": true
+        },
+        {
+          "id": 55,
+          "relatedLink": "/recipes/list/60",
+          "context": "comment",
+          "type": "success",
+          "message": "Твой комментарий «привет» успешно опубликован под рецептом «Кисси-мисси»",
+          "title": "Комментарий опубликован",
+          "timestamp": "2023-11-01T21:09:46.661Z",
+          "read": true
+        },
+        {
+          "id": 56,
+          "relatedLink": "/recipes/list/60",
+          "context": "comment",
+          "type": "success",
+          "message": "Ты отправил жалобу на комментарий кулинара Леха Зимин 1000 «пока» под рецептом «Кисси-мисси»",
+          "title": "Ты пожаловался на комментарий",
+          "timestamp": "2023-11-01T21:10:12.067Z",
+          "read": true
+        },
+        {
+          "id": 57,
+          "relatedLink": "/recipes/list/60",
+          "context": "comment",
+          "type": "success",
+          "message": "Твоя жалоба на комментарий пользователя Леха Зимин 1000 «пока» под рецептом «Кисси-мисси» принята",
+          "title": "Комментарий удален по твоей жалобе",
+          "timestamp": "2023-11-01T21:10:27.376Z",
+          "read": true
+        },
+        {
+          "id": 58,
+          "relatedLink": "/recipes/list/60",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «привет» под рецептом «Кисси-мисси»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T21:12:29.791Z",
+          "read": true
+        },
+        {
+          "id": 59,
+          "relatedLink": "/recipes/list/60",
+          "context": "comment",
+          "type": "error",
+          "message": "Твой комментарий «привет» под рецептом «Кисси-мисси» удален по жалобе",
+          "title": "Твой комментарий удален по жалобе",
+          "timestamp": "2023-11-01T21:12:36.769Z",
+          "read": true
+        },
+        {
+          "id": 60,
+          "relatedLink": "/recipes/list/67",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «Глазунья» сохранен в твоих рецептах и успешно отправлен на проверку",
+          "title": "Рецепт создан и отправлен на проверку",
+          "timestamp": "2023-11-02T00:00:09.533Z",
+          "read": true
+        },
+        {
+          "id": 61,
+          "relatedLink": "/recipes/list/67",
+          "context": "recipe",
+          "type": "success",
+          "message": "Твой рецепт «Глазунья» одобрен и теперь может просматриваться всеми кулинарами",
+          "title": "Рецепт одобрен",
+          "timestamp": "2023-11-02T00:00:24.472Z",
+          "read": true
+        },
+        {
+          "id": 62,
+          "relatedLink": "",
+          "context": "category",
+          "type": "success",
+          "message": "Категория «Казахская кухня» для секции «Кухни мира» отправлена на проверку",
+          "title": "Категория отправлена на проверку",
+          "timestamp": "2023-11-02T14:05:28.809Z",
+          "read": true
+        },
+        {
+          "id": 63,
+          "relatedLink": "/categories/list/36",
+          "context": "category",
+          "type": "success",
+          "message": "Твоя категория «Казахская кухня» одобрена и теперь может просматриваться всеми кулинарами",
+          "title": "Категория одобрена",
+          "timestamp": "2023-11-02T14:06:22.313Z",
+          "read": true
+        },
+        {
+          "id": 64,
+          "relatedLink": "/recipes/list/68",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «Картофельные драники с чесноком (без яиц и муки)» сохранен в твоих рецептах",
+          "title": "Рецепт создан",
+          "timestamp": "2023-11-02T14:11:53.154Z",
+          "read": true
+        },
+        {
+          "id": 65,
+          "relatedLink": "/recipes/list/68",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «Картофельные драники с чесноком (без яиц и муки)» успешно отправлен на проверку",
+          "title": "Рецепт отправлен на проверку",
+          "timestamp": "2023-11-02T14:12:22.930Z",
+          "read": true
+        },
+        {
+          "id": 66,
+          "relatedLink": "/recipes/list/68",
+          "context": "recipe",
+          "type": "success",
+          "message": "Твой рецепт «Картофельные драники с чесноком (без яиц и муки)» одобрен и теперь может просматриваться всеми кулинарами",
+          "title": "Рецепт одобрен",
+          "timestamp": "2023-11-02T14:12:28.233Z",
+          "read": true
+        },
+        {
+          "id": 67,
+          "relatedLink": "/cooks/list/5",
+          "context": "recipe",
+          "type": "info",
+          "message": "Твой рецепт «Картофельные драники с чесноком (без яиц и муки)» понравился пользователю Лина",
+          "title": "Твой рецепт оценили",
+          "timestamp": "2023-11-02T14:12:38.556Z",
+          "read": true
+        },
+        {
+          "id": 68,
+          "relatedLink": "/cooks/list/5",
+          "context": "recipe",
+          "type": "info",
+          "message": "Твой рецепт «Картофельные драники с чесноком (без яиц и муки)» приготовил кулинар Лина и оставил положительный отзыв",
+          "title": "Твой рецепт приготовили",
+          "timestamp": "2023-11-02T14:12:40.701Z",
+          "read": true
+        },
+        {
+          "id": 69,
+          "relatedLink": "/recipes/list/69",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «Колдуны» сохранен в твоих рецептах",
+          "title": "Рецепт создан",
+          "timestamp": "2023-11-02T14:37:23.407Z",
+          "read": true
+        },
+        {
+          "id": 70,
+          "relatedLink": "/recipes/list/69",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «Колдуны» успешно отправлен на проверку",
+          "title": "Рецепт отправлен на проверку",
+          "timestamp": "2023-11-02T14:37:30.874Z",
+          "read": true
+        },
+        {
+          "id": 71,
+          "relatedLink": "/recipes/list/69",
+          "context": "recipe",
+          "type": "success",
+          "message": "Твой рецепт «Колдуны» одобрен и теперь может просматриваться всеми кулинарами",
+          "title": "Рецепт одобрен",
+          "timestamp": "2023-11-02T14:37:36.776Z",
+          "read": true
+        },
+        {
+          "id": 72,
+          "relatedLink": "/cooks/list/5",
+          "context": "recipe",
+          "type": "info",
+          "message": "Твой рецепт «Колдуны» приготовил кулинар Лина и оставил положительный отзыв",
+          "title": "Твой рецепт приготовили",
+          "timestamp": "2023-11-02T14:38:02.658Z",
+          "read": true
+        },
+        {
+          "id": 73,
+          "relatedLink": "/cooks/list/5",
+          "context": "recipe",
+          "type": "info",
+          "message": "Твой рецепт «Колдуны» понравился пользователю Лина",
+          "title": "Твой рецепт оценили",
+          "timestamp": "2023-11-02T14:38:03.329Z",
+          "read": true
+        },
+        {
+          "id": 74,
+          "relatedLink": "/recipes/list/69",
+          "context": "recipe",
+          "type": "info",
+          "message": "Твой рецепт «Колдуны» кто-то добавил в избранное",
+          "title": "Твой рецепт добавили в избранное",
+          "timestamp": "2023-11-02T14:38:03.652Z",
+          "read": true
+        },
+        {
+          "id": 75,
+          "relatedLink": "/recipes/list/70",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «Картофельная бабка (запеканка) с курицей» сохранен в твоих рецептах",
+          "title": "Рецепт создан",
+          "timestamp": "2023-11-02T14:43:23.461Z",
+          "read": true
+        },
+        {
+          "id": 76,
+          "relatedLink": "/recipes/list/70",
+          "context": "recipe",
+          "type": "success",
+          "message": "Рецепт «Картофельная бабка (запеканка) с курицей» успешно отправлен на проверку",
+          "title": "Рецепт отправлен на проверку",
+          "timestamp": "2023-11-02T14:43:35.713Z",
+          "read": true
+        },
+        {
+          "id": 77,
+          "relatedLink": "/recipes/list/70",
+          "context": "recipe",
+          "type": "success",
+          "message": "Твой рецепт «Картофельная бабка (запеканка) с курицей» одобрен и теперь может просматриваться всеми кулинарами",
+          "title": "Рецепт одобрен",
+          "timestamp": "2023-11-02T14:43:40.605Z",
+          "read": true
+        },
+        {
+          "id": 78,
+          "relatedLink": "",
+          "context": "category",
+          "type": "success",
+          "message": "Категория «К чаю» для секции «Нежданные гости» отправлена на проверку",
+          "title": "Категория отправлена на проверку",
+          "timestamp": "2023-11-02T15:25:48.057Z",
+          "read": true
+        },
+        {
+          "id": 79,
+          "relatedLink": "/categories/list/37",
+          "context": "category",
+          "type": "success",
+          "message": "Твоя категория «К чаю» одобрена и теперь может просматриваться всеми кулинарами",
+          "title": "Категория одобрена",
+          "timestamp": "2023-11-02T15:25:54.485Z",
+          "read": true
+        },
+        {
+          "id": 80,
+          "relatedLink": "",
+          "context": "category",
+          "type": "success",
+          "message": "Категория «Лето» для секции «Сезонные» отправлена на проверку",
+          "title": "Категория отправлена на проверку",
+          "timestamp": "2023-11-02T21:52:48.009Z",
+          "read": true
+        },
+        {
+          "id": 81,
+          "relatedLink": "",
+          "context": "category",
+          "type": "success",
+          "message": "Категория «Зима» для секции «Сезонные» отправлена на проверку",
+          "title": "Категория отправлена на проверку",
+          "timestamp": "2023-11-02T21:52:58.961Z",
+          "read": true
+        },
+        {
+          "id": 82,
+          "relatedLink": "",
+          "context": "category",
+          "type": "success",
+          "message": "Категория «Осень» для секции «Сезонные» отправлена на проверку",
+          "title": "Категория отправлена на проверку",
+          "timestamp": "2023-11-02T21:53:11.880Z",
+          "read": true
+        },
+        {
+          "id": 83,
+          "relatedLink": "",
+          "context": "category",
+          "type": "success",
+          "message": "Категория «Осень» для секции «Сезонные» отправлена на проверку",
+          "title": "Категория отправлена на проверку",
+          "timestamp": "2023-11-02T21:53:24.320Z",
+          "read": true
+        },
+        {
+          "id": 84,
+          "relatedLink": "",
+          "context": "category",
+          "type": "success",
+          "message": "Категория «Весна» для секции «Сезонные» отправлена на проверку",
+          "title": "Категория отправлена на проверку",
+          "timestamp": "2023-11-02T21:53:44.717Z",
+          "read": true
+        },
+        {
+          "id": 85,
+          "relatedLink": "/categories/list/38",
+          "context": "category",
+          "type": "success",
+          "message": "Твоя категория «Лето» одобрена и теперь может просматриваться всеми кулинарами",
+          "title": "Категория одобрена",
+          "timestamp": "2023-11-02T21:53:51.220Z",
+          "read": true
+        },
+        {
+          "id": 86,
+          "relatedLink": "/categories/list/39",
+          "context": "category",
+          "type": "success",
+          "message": "Твоя категория «Зима» одобрена и теперь может просматриваться всеми кулинарами",
+          "title": "Категория одобрена",
+          "timestamp": "2023-11-02T21:53:54.074Z",
+          "read": true
+        },
+        {
+          "id": 87,
+          "relatedLink": "/categories/list/40",
+          "context": "category",
+          "type": "success",
+          "message": "Твоя категория «Осень» одобрена и теперь может просматриваться всеми кулинарами",
+          "title": "Категория одобрена",
+          "timestamp": "2023-11-02T21:53:58.212Z",
+          "read": true
+        },
+        {
+          "id": 88,
+          "relatedLink": "",
+          "context": "category",
+          "type": "error",
+          "message": "Твоя категория «Осень» отклонена",
+          "title": "Категория отклонена",
+          "timestamp": "2023-11-02T21:54:00.916Z",
+          "read": true
+        },
+        {
+          "id": 89,
+          "relatedLink": "/categories/list/42",
+          "context": "category",
+          "type": "success",
+          "message": "Твоя категория «Весна» одобрена и теперь может просматриваться всеми кулинарами",
+          "title": "Категория одобрена",
+          "timestamp": "2023-11-02T21:54:03.921Z",
+          "read": true
+        },
+        {
+          "id": 90,
+          "relatedLink": "/recipes/list/70",
+          "context": "comment",
+          "type": "success",
+          "message": "Твой комментарий «Спасибо. Очень вкусн» успешно опубликован под рецептом «Картофельная бабка (запеканка) с курицей»",
+          "title": "Комментарий опубликован",
+          "timestamp": "2023-11-02T22:24:17.764Z",
+          "read": true
+        },
+        {
+          "id": 91,
+          "relatedLink": "",
+          "context": "category",
+          "type": "success",
+          "message": "Категория «Завтраки» для секции «По времени» отправлена на проверку",
+          "title": "Категория отправлена на проверку",
+          "timestamp": "2023-11-03T00:38:14.637Z",
+          "read": true
+        },
+        {
+          "id": 92,
+          "relatedLink": "",
+          "context": "category",
+          "type": "success",
+          "message": "Категория «Ужины» для секции «По времени» отправлена на проверку",
+          "title": "Категория отправлена на проверку",
+          "timestamp": "2023-11-03T00:38:24.762Z",
+          "read": true
+        },
+        {
+          "id": 93,
+          "relatedLink": "",
+          "context": "category",
+          "type": "success",
+          "message": "Категория «Обеды» для секции «По времени» отправлена на проверку",
+          "title": "Категория отправлена на проверку",
+          "timestamp": "2023-11-03T00:38:36.780Z",
+          "read": true
+        },
+        {
+          "id": 94,
+          "relatedLink": "",
+          "context": "category",
+          "type": "success",
+          "message": "Категория «Перекусы» для секции «По времени» отправлена на проверку",
+          "title": "Категория отправлена на проверку",
+          "timestamp": "2023-11-03T00:38:52.839Z",
+          "read": true
+        },
+        {
+          "id": 95,
+          "relatedLink": "/categories/list/43",
+          "context": "category",
+          "type": "success",
+          "message": "Твоя категория «Завтраки» одобрена и теперь может просматриваться всеми кулинарами",
+          "title": "Категория одобрена",
+          "timestamp": "2023-11-03T00:39:00.558Z",
+          "read": true
+        },
+        {
+          "id": 96,
+          "relatedLink": "/categories/list/44",
+          "context": "category",
+          "type": "success",
+          "message": "Твоя категория «Ужины» одобрена и теперь может просматриваться всеми кулинарами",
+          "title": "Категория одобрена",
+          "timestamp": "2023-11-03T00:39:03.075Z",
+          "read": true
+        },
+        {
+          "id": 97,
+          "relatedLink": "/categories/list/46",
+          "context": "category",
+          "type": "success",
+          "message": "Твоя категория «Перекусы» одобрена и теперь может просматриваться всеми кулинарами",
+          "title": "Категория одобрена",
+          "timestamp": "2023-11-03T00:39:06.208Z",
+          "read": true
+        },
+        {
+          "id": 98,
+          "relatedLink": "/categories/list/45",
+          "context": "category",
+          "type": "success",
+          "message": "Твоя категория «Обеды» одобрена и теперь может просматриваться всеми кулинарами",
+          "title": "Категория одобрена",
+          "timestamp": "2023-11-03T00:39:08.424Z",
+          "read": true
+        }
+      ]
     },
     {
       "id": 6,
@@ -3885,8 +5608,20 @@
       "personalWebsite": "https://www.healthandnutrition.com/",
       "location": "Сидней, Австралия",
       "registrationDate": "2023-06-18",
-      "profileViews": 4355,
-      "role": "user"
+      "profileViews": 4356,
+      "role": "user",
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "/recipes/list/8",
+          "context": "comment",
+          "type": "warning",
+          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-01T20:44:03.378Z",
+          "read": false
+        }
+      ]
     },
     {
       "id": 7,
@@ -4035,7 +5770,7 @@
       "personalWebsite": "",
       "location": "Гродно",
       "registrationDate": "",
-      "profileViews": 7
+      "profileViews": 8
     },
     {
       "id": 23,
@@ -4054,7 +5789,7 @@
       "personalWebsite": "",
       "location": "Беларусь (Гомель)",
       "registrationDate": "2023-10-30",
-      "profileViews": 10
+      "profileViews": 12
     },
     {
       "id": 24,

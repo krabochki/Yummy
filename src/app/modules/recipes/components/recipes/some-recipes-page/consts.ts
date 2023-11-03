@@ -31,7 +31,7 @@ export const recipeTitles = {
    [RecipeType.Popular]: '',
    [RecipeType.My]: '',
    [RecipeType.Favorite]: '/recipes',
-   [RecipeType.Category]: '/sections',
+   [RecipeType.Category]: '',
    [RecipeType.All]: '',
    [RecipeType.Liked]: '/recipes',
    [RecipeType.Cooked]: '/recipes',
@@ -45,7 +45,7 @@ export const recipeNoRecipesButtonText = {
   [RecipeType.Popular]: '',
   [RecipeType.My]: 'Добавить рецепт',
   [RecipeType.Favorite]: 'Все рецепты',
-  [RecipeType.Category]: 'Все категории',
+  [RecipeType.Category]: 'Добавить рецепт',
   [RecipeType.All]: '',
   [RecipeType.Liked]: 'Все рецепты',
   [RecipeType.Cooked]: 'Все рецепты',
@@ -62,7 +62,7 @@ export const recipeNoRecipesText = {
   [RecipeType.Favorite]:
     'У тебя пока нет сохраненных рецептов. Попробуй добавить парочку рецептов в избранное и зайди сюда снова',
   [RecipeType.Category]:
-    'В этой категории пока нет рецептов. Следи за обновлениями, совсем скоро они появятся!',
+    '',
   [RecipeType.All]: '',
   [RecipeType.Liked]:
     'У тебя пока нет любимых рецептов. Попробуй отметить парочку рецептов как понравившиеся и зайди сюда снова',

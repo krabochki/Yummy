@@ -18,7 +18,7 @@ import { ControlsModule } from '../controls/controls.module';
 import { CdkDropList, CdkDragHandle, CdkDrag } from '@angular/cdk/drag-drop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AsyncPipe } from '@angular/common';
-   
+
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
 import { DragScrollModule } from 'ngx-drag-scroll';
@@ -35,7 +35,8 @@ import { SectionCreatingComponent } from './components/categories/section-creati
 @NgModule({
   declarations: [
     RecipesComponent,
-    CommentComponent,CommentsListComponent,
+    CommentComponent,
+    CommentsListComponent,
     RecipePageComponent,
 
     MatchRecipesComponent,
@@ -57,7 +58,7 @@ import { SectionCreatingComponent } from './components/categories/section-creati
     TimePastPipe,
     DragScrollModule,
     NgFor,
-    
+
     ControlsModule,
     RecipesRoutingModule,
     ScrollingModule,
@@ -82,7 +83,7 @@ import { SectionCreatingComponent } from './components/categories/section-creati
     provideAngularSvgIcon(),
     { provide: LOCALE_ID, useValue: 'ru' },
   ],
-  
+
   exports: [
     HorizontalRecipeListComponent,
     VerticalCategoryListComponent,

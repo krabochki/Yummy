@@ -23,6 +23,7 @@ import { Title } from '@angular/platform-browser';
   animations: [trigger('height', heightAnim()), trigger('modal', modal())],
 })
 export class MatchRecipesComponent implements OnInit, OnDestroy {
+  protected baseSvgPath: string = '../../../../../assets/images/svg/';
   private categories: ICategory[] = []; //изначальные данные
   private sections: ISection[] = [];
   private recipes: IRecipe[] = [];
@@ -152,7 +153,6 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
         acc[ingredient] = count;
         return acc;
       }, {});
-
   }
 
   getUniqueIngredients(recipes: IRecipe[]) {
@@ -262,7 +262,6 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
         this.selectedCategories.splice(index, 1);
       }
     }
-    
 
     this.matchingRecipes = this.filterRecipesByIngredients();
     this.updateIngredientsBasedOnCategory(
@@ -282,6 +281,29 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
 
     // Создаем объект для подсчета ингредиентов в выбранной категории
     const ingredientCounts: { [ingredient: string]: number } = {};
+
+    //сначала берем все ингредиенты подходящие по рецепту вообще
+    recipesInSelectedCategory.forEach((recipe) => {
+      recipe.ingredients.forEach((ingredient) => {
+        const ingredientName = ingredient.name.toLowerCase().trim();
+        if (ingredientCounts[ingredientName] !== undefined) {
+          ingredientCounts[ingredientName]++;
+        } else {
+          ingredientCounts[ingredientName] = 1;
+        }
+      });
+    });
+
+    //потом фильтруем выбранные ингредиенты только до тех которые есть в игредиентах выбранных категорий
+    if (state) {
+      const filteredIngredients = this.selectedIngredients
+        .map((ingredient) => ingredient.trim().toLowerCase())
+        .filter((ingredient) => ingredientCounts.hasOwnProperty(ingredient));
+
+      this.selectedIngredients = filteredIngredients;
+    }
+
+    //теперь фильтруем возможные ингредиенты убирая ингредиенты которые есть в списке выбранных
 
     recipesInSelectedCategory.forEach((recipe) => {
       recipe.ingredients.forEach((ingredient) => {
@@ -303,11 +325,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
 
     if (state) {
       if (this.selectedCategories.length > 1) {
-        // Фильтруем выбранные ингредиенты, чтобы убрать те, которые остались в категории
-        this.selectedIngredients = this.selectedIngredients.filter(
-          (ingredient) => !ingredientCounts.hasOwnProperty(ingredient),
-        );
-        this.uniqueIngredientsArray =this.sortIngredients( {
+        this.uniqueIngredientsArray = this.sortIngredients({
           ...this.uniqueIngredientsArray,
           ...ingredientCounts,
         });
@@ -320,6 +338,17 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
   }
 
   getActualIngredients() {
+    if (
+      this.matchingRecipes.length === 0 ||
+      this.selectedCategories.length === 0 ||
+      this.selectedIngredients.length > 0
+    ) {
+      // Если пользователь убирает категорию но кроме нее остается еще другая, и при этом выбраны ингредиенты по которым не совпадений среди рецептов, рецепты сначала фильтруются по выбранным категориям не учитывая рецепты
+      const buferIngredients = [...this.selectedIngredients];
+      this.selectedIngredients = [];
+      this.matchingRecipes = this.filterRecipesByIngredients();
+      this.selectedIngredients = buferIngredients;
+    }
     const updatedIngredients: { [ingredient: string]: number } =
       this.getUniqueIngredients(this.matchingRecipes);
     this.uniqueIngredientsArray = updatedIngredients;

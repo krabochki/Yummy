@@ -258,7 +258,7 @@
           <ng-container
             *ngFor="let ingredient of recipe.ingredients; let i = index"
           >
-            <div
+            <div 
               class="checkbox"
               (click)="iHaveIndgredient[i] = !iHaveIndgredient[i]"
             >
@@ -282,7 +282,7 @@
 
             <button
               [ngClass]="{ minus: basket[i] }"
-              (click)="basket[i] ? removeFromBasket(i) : addToBasket(i)"
+              (click)="basket[i] ? removeFromBasket(i,ingredient) : addToBasket(i,ingredient)"
               class="basket-button"
               *ngIf="basketMode"
             >

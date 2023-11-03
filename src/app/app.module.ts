@@ -18,6 +18,7 @@ import { RecipeService } from './modules/recipes/services/recipe.service';
 import { UserService } from './modules/user-pages/services/user.service';
 import { RecipesModule } from './modules/recipes/recipes.module';
 import { UserPagesModule } from './modules/user-pages/user-pages.module';
+import { PlanService } from './modules/planning/services/plan-service.service';
 
 export function initializeSections(sectionSerivce: SectionService) {
   return () => sectionSerivce.loadSectionData();
@@ -31,7 +32,9 @@ export function initializeRecipes(RecipeService: RecipeService) {
 export function initializeUsers(UserService: UserService) {
   return () => UserService.loadUsersData();
 }
-
+export function initializePlans(planService: PlanService) {
+  return () => planService.loadPlanData();
+}
 @NgModule({
   declarations: [AppComponent, HeaderComponent, FooterComponent],
   imports: [
@@ -75,7 +78,12 @@ export function initializeUsers(UserService: UserService) {
       deps: [RecipeService],
       multi: true,
     },
-
+    PlanService, {
+      provide: APP_INITIALIZER,
+      useFactory: initializePlans,
+      deps: [PlanService],
+      multi:true
+    },
     AdminGuard,
     ModeratorGuard,
     RouteEventsService,

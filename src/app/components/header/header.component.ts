@@ -9,7 +9,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { cookRouterLinks, cooksSelectItems, recipeRouterLinks, recipeSelectItems, recipeRoutes, userRoutes } from './consts';
+import { cookRouterLinks, cooksSelectItems, recipeRouterLinks, recipeSelectItems, recipeRoutes, userRoutes, planSelectItems, planRouterLinks, planRoutes } from './consts';
 import { NavigationEnd, Router } from '@angular/router';
 import { Subject, filter, takeUntil } from 'rxjs';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
@@ -36,6 +36,8 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   recipeSelectItems = recipeSelectItems;
   cooksSelectItems = cooksSelectItems;
   cookRouterLinks = cookRouterLinks;
+  planSelectItems = planSelectItems;
+  planRouterLinks = planRouterLinks
 
   creatingMode = false;
 
@@ -88,6 +90,9 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   }
   get userRoutes() {
     return userRoutes(this.currentUser.id)
+  }
+  get planRoutes() {
+    return planRoutes(this.currentUser.id)
   }
 
   get notificationCount() {

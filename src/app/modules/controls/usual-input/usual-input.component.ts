@@ -3,9 +3,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   ViewChild,
   forwardRef,
 } from '@angular/core';
@@ -34,6 +36,7 @@ export class UsualInputComponent implements OnInit, OnChanges {
   @Input() value = '';
   @Input() inputType: 'input' | 'textarea' | 'password' = 'input';
   @Input() inputRequired: boolean = false;
+  @Output() blurEmitter = new EventEmitter<boolean>()
 
   showPassword = true; //показывается ли пароль
 
@@ -78,7 +81,8 @@ export class UsualInputComponent implements OnInit, OnChanges {
     if (this.value != '') {
       this.isFocused = true;
       this.isSleep = true;
-    }
+    } 
+    this.blurEmitter.emit(true)
   }
 
   eye() {

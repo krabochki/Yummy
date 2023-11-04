@@ -3,7 +3,6 @@ import { BehaviorSubject, tap } from 'rxjs';
 import { IPlan, nullPlan } from '../models/plan';
 import { HttpClient } from '@angular/common/http';
 import { plansUrl } from 'src/tools/source';
-import { ICategory } from '../../recipes/models/categories';
 
 @Injectable({
   providedIn: 'root',

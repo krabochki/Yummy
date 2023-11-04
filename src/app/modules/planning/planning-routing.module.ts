@@ -3,6 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { PlanningComponent } from './planning.component';
 import { CollectionComponent } from './collection/collection.component';
 import { ShoppingListComponent } from './shopping-list/shopping-list.component';
+import { AuthGuard } from '../authentication/guards/auth.guard';
+import { CalendarComponent } from './calendar/calendar.component';
 
 const routes: Routes = [
   {
@@ -10,12 +12,17 @@ const routes: Routes = [
     component: PlanningComponent,
     children: [
       {
-        path: 'plan',
+        path: 'plan/collections',
         component: CollectionComponent,
+      },
+      {
+        path: 'plan/cooking-plan',
+        component: CalendarComponent
       },
       {
         path: 'plan/shopping-list',
         component: ShoppingListComponent,
+        canActivate: [AuthGuard]
       },
     ],
   },

@@ -2,24 +2,164 @@
   "plans": [
     {
       "user": 5,
-      "id": 5,
-      "plans": [],
+      "id": 1,
+      "calendarEvents": [],
+      "shoppingList": []
+    },
+    {
+      "user": 1,
+      "id": 2,
+      "calendarEvents": [],
+      "shoppingList": []
+    },
+    {
+      "id": 3,
+      "user": 25,
       "shoppingList": [
         {
-          "id": null,
-          "name": "fdddffd",
-          "howMuch": "dfdffd",
+          "id": 2,
+          "name": "Яблоки",
+          "howMuch": "1 кг",
+          "isBought": true,
+          "relatedRecipe": 0
+        },
+        {
+          "id": 3,
+          "name": "Мука",
+          "howMuch": "1 кг",
           "isBought": true,
           "relatedRecipe": 0
         },
         {
           "id": 1,
-          "name": "dsssd",
-          "howMuch": "ddffd",
-          "isBought": false,
+          "name": "Сахар",
+          "howMuch": "1 кг",
+          "isBought": true,
           "relatedRecipe": 0
         }
+      ],
+      "calendarEvents": [
+        {
+          "id": 1,
+          "recipeId": 24,
+          "start": "2023-11-16T21:00:00.000Z",
+          "title": "Чизкейк с клубникой",
+          "color": {
+            "primary": "#F83839",
+            "secondary": "#F83839"
+          },
+          "allDay": true,
+          "draggable": true,
+          "resizable": {
+            "beforeStart": true,
+            "afterEnd": true
+          }
+        },
+        {
+          "id": 3,
+          "recipeId": 68,
+          "start": "2023-11-03T21:00:00.000Z",
+          "title": "Драники",
+          "color": {
+            "primary": "#ff0080",
+            "secondary": "#ff0080"
+          },
+          "allDay": true,
+          "draggable": true,
+          "resizable": {
+            "beforeStart": true,
+            "afterEnd": true
+          }
+        },
+        {
+          "id": 5,
+          "recipeId": 0,
+          "start": "2023-11-03T21:00:00.000Z",
+          "title": "Салат",
+          "color": {
+            "primary": "#00c957",
+            "secondary": "#00c957"
+          },
+          "allDay": true,
+          "draggable": true,
+          "resizable": {
+            "beforeStart": true,
+            "afterEnd": true
+          }
+        }
       ]
+    },
+    {
+      "id": 4,
+      "user": 2,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 5,
+      "user": 3,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 6,
+      "user": 4,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 7,
+      "user": 6,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 8,
+      "user": 7,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 9,
+      "user": 9,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 10,
+      "user": 10,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 11,
+      "user": 20,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 12,
+      "user": 22,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 13,
+      "user": 23,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 14,
+      "user": 24,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 15,
+      "user": 25,
+      "shoppingList": [],
+      "calendarEvents": []
     }
   ],
   "categories": [
@@ -1148,7 +1288,8 @@
       ],
       "favoritesId": [
         10,
-        5
+        5,
+        25
       ],
       "likesId": [
         9,
@@ -2117,7 +2258,8 @@
         8,
         6,
         3,
-        1
+        1,
+        25
       ],
       "favoritesId": [
         6,
@@ -2225,6 +2367,10 @@
         {
           "userId": 1,
           "answer": false
+        },
+        {
+          "userId": 25,
+          "answer": true
         }
       ],
       "reports": []
@@ -3195,6 +3341,10 @@
         {
           "userId": 5,
           "answer": true
+        },
+        {
+          "userId": 25,
+          "answer": false
         }
       ],
       "ingredients": [
@@ -3460,12 +3610,16 @@
         4
       ],
       "cooksId": [
-        5
+        5,
+        25
       ],
       "likesId": [
-        5
+        5,
+        25
       ],
-      "favoritesId": [],
+      "favoritesId": [
+        25
+      ],
       "id": 68,
       "comments": [],
       "publicationDate": "2023-11-02T14:12:28.212Z",
@@ -3911,10 +4065,26 @@
       "id": 70,
       "comments": [
         {
+          "id": 2,
+          "text": "😁😁😁",
+          "authorId": 25,
+          "date": "2023-11-04T17:32:54.371Z",
+          "likesId": [],
+          "dislikesId": []
+        },
+        {
           "id": 1,
           "text": "Спасибо. Очень вкусн",
           "authorId": 5,
           "date": "2023-11-02T22:24:17.693Z",
+          "likesId": [],
+          "dislikesId": []
+        },
+        {
+          "id": 3,
+          "text": "Спасибо",
+          "authorId": 25,
+          "date": "2023-11-04T17:33:12.655Z",
           "likesId": [],
           "dislikesId": []
         }
@@ -4368,7 +4538,7 @@
           "message": "Твой рецепт «fddff» отклонен",
           "title": "Рецепт отклонен",
           "timestamp": "2023-11-02T13:07:02.825Z",
-          "read": false
+          "read": true
         },
         {
           "id": 43,
@@ -4378,7 +4548,7 @@
           "message": "Твой рецепт «аваавваав» отклонен",
           "title": "Рецепт отклонен",
           "timestamp": "2023-11-02T13:07:04.913Z",
-          "read": false
+          "read": true
         },
         {
           "id": 44,
@@ -4388,6 +4558,26 @@
           "message": "Твой рецепт «dgggddggdg» отклонен",
           "title": "Рецепт отклонен",
           "timestamp": "2023-11-02T13:07:07.077Z",
+          "read": true
+        },
+        {
+          "id": 45,
+          "relatedLink": "/cooks/list/25",
+          "context": "recipe",
+          "type": "info",
+          "message": "Твой рецепт «Чизкейк с клубникой» приготовил кулинар @plan_checking и оставил негативный отзыв",
+          "title": "Твой рецепт приготовили",
+          "timestamp": "2023-11-03T19:18:59.794Z",
+          "read": false
+        },
+        {
+          "id": 46,
+          "relatedLink": "/cooks/list/25",
+          "context": "recipe",
+          "type": "info",
+          "message": "Твой рецепт «Чизкейк с клубникой» приготовил кулинар @plan_checking и оставил положительный отзыв",
+          "title": "Твой рецепт приготовили",
+          "timestamp": "2023-11-03T19:19:25.108Z",
           "read": false
         }
       ],
@@ -4574,7 +4764,8 @@
       "quote": "В кулинарии может не хватать только аппетита.",
       "fullName": "Лина",
       "followersIds": [
-        23
+        23,
+        25
       ],
       "socialNetworks": [
         {
@@ -4593,7 +4784,7 @@
       "personalWebsite": "",
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 1789,
+      "profileViews": 1930,
       "notifications": [
         {
           "id": 1,
@@ -5574,6 +5765,126 @@
           "title": "Категория одобрена",
           "timestamp": "2023-11-03T00:39:08.424Z",
           "read": true
+        },
+        {
+          "id": 99,
+          "relatedLink": "/recipes/list/68",
+          "context": "recipe",
+          "type": "info",
+          "message": "Твой рецепт «Картофельные драники с чесноком (без яиц и муки)» кто-то добавил в избранное",
+          "title": "Твой рецепт добавили в избранное",
+          "timestamp": "2023-11-04T15:58:05.608Z",
+          "read": false
+        },
+        {
+          "id": 100,
+          "relatedLink": "/recipes/list/11",
+          "context": "recipe",
+          "type": "info",
+          "message": "Твой рецепт «et ea enim» кто-то добавил в избранное",
+          "title": "Твой рецепт добавили в избранное",
+          "timestamp": "2023-11-04T15:58:09.540Z",
+          "read": false
+        },
+        {
+          "id": 101,
+          "relatedLink": "/cooks/list/25",
+          "context": "recipe",
+          "type": "info",
+          "message": "Твой рецепт «Картофельные драники с чесноком (без яиц и муки)» понравился пользователю @plan_checking",
+          "title": "Твой рецепт оценили",
+          "timestamp": "2023-11-04T15:58:13.308Z",
+          "read": false
+        },
+        {
+          "id": 102,
+          "relatedLink": "/cooks/list/25",
+          "context": "recipe",
+          "type": "info",
+          "message": "Твой рецепт «Картофельные драники с чесноком (без яиц и муки)» приготовил кулинар @plan_checking и оставил положительный отзыв",
+          "title": "Твой рецепт приготовили",
+          "timestamp": "2023-11-04T15:58:19.329Z",
+          "read": false
+        },
+        {
+          "id": 103,
+          "relatedLink": "/cooks/list/25",
+          "context": "user",
+          "type": "info",
+          "message": "Кулинар @plan_checking подписался на тебя",
+          "title": "Новый подписчик",
+          "timestamp": "2023-11-04T16:17:47.212Z",
+          "read": false
+        },
+        {
+          "id": 104,
+          "relatedLink": "/cooks/list/25",
+          "context": "user",
+          "type": "info",
+          "message": "Кулинар @plan_checking подписался на тебя",
+          "title": "Новый подписчик",
+          "timestamp": "2023-11-04T16:17:53.134Z",
+          "read": false
+        },
+        {
+          "id": 105,
+          "relatedLink": "/cooks/list/25",
+          "context": "user",
+          "type": "info",
+          "message": "Кулинар @plan_checking подписался на тебя",
+          "title": "Новый подписчик",
+          "timestamp": "2023-11-04T16:21:34.976Z",
+          "read": false
+        },
+        {
+          "id": 106,
+          "relatedLink": "/cooks/list/25",
+          "context": "user",
+          "type": "info",
+          "message": "Кулинар @plan_checking подписался на тебя",
+          "title": "Новый подписчик",
+          "timestamp": "2023-11-04T16:24:31.341Z",
+          "read": false
+        },
+        {
+          "id": 107,
+          "relatedLink": "/cooks/list/25",
+          "context": "user",
+          "type": "info",
+          "message": "Кулинар @plan_checking подписался на тебя",
+          "title": "Новый подписчик",
+          "timestamp": "2023-11-04T16:24:35.994Z",
+          "read": false
+        },
+        {
+          "id": 108,
+          "relatedLink": "/cooks/list/25",
+          "context": "user",
+          "type": "info",
+          "message": "Кулинар @plan_checking подписался на тебя",
+          "title": "Новый подписчик",
+          "timestamp": "2023-11-04T16:24:37.942Z",
+          "read": false
+        },
+        {
+          "id": 109,
+          "relatedLink": "/cooks/list/25",
+          "context": "user",
+          "type": "info",
+          "message": "Кулинар @plan_checking подписался на тебя",
+          "title": "Новый подписчик",
+          "timestamp": "2023-11-04T16:24:38.688Z",
+          "read": false
+        },
+        {
+          "id": 110,
+          "relatedLink": "/cooks/list/25",
+          "context": "recipe",
+          "type": "info",
+          "message": "Твой рецепт «Картофельные драники с чесноком (без яиц и муки)» приготовил кулинар @plan_checking и оставил негативный отзыв",
+          "title": "Твой рецепт приготовили",
+          "timestamp": "2023-11-04T17:20:49.673Z",
+          "read": false
         }
       ]
     },
@@ -5807,6 +6118,45 @@
       "location": "",
       "registrationDate": "2023-10-30",
       "profileViews": 10
+    },
+    {
+      "id": 25,
+      "email": "plan_checking@mail.ru",
+      "password": "planChecking300",
+      "username": "plan_checking",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-03T08:52:32.196Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "/recipes/list/70",
+          "context": "comment",
+          "type": "success",
+          "message": "Твой комментарий «😁😁😁» успешно опубликован под рецептом «Картофельная бабка (запеканка) с курицей»",
+          "title": "Комментарий опубликован",
+          "timestamp": "2023-11-04T17:32:54.418Z",
+          "read": true
+        },
+        {
+          "id": 2,
+          "relatedLink": "/recipes/list/70",
+          "context": "comment",
+          "type": "success",
+          "message": "Твой комментарий «Спасибо» успешно опубликован под рецептом «Картофельная бабка (запеканка) с курицей»",
+          "title": "Комментарий опубликован",
+          "timestamp": "2023-11-04T17:33:12.707Z",
+          "read": true
+        }
+      ]
     }
   ]
 }

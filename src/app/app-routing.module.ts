@@ -24,7 +24,7 @@ const routes: Routes = [
         (m) => m.UserPagesModule,
       ),
   },
-  { path: '', canActivate:[AuthGuard],  loadChildren: () => import('./modules/planning/planning.module').then(m => m.PlanningModule) },
+  { path: '',  loadChildren: () => import('./modules/planning/planning.module').then(m => m.PlanningModule) },
 
   { path: '**', component: PageNotFoundComponent },
 ];

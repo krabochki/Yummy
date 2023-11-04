@@ -85,7 +85,7 @@
                             Выбранные категории</h2>
                 <div class="selected-categories" *ngIf="selectedCategories.length>0; else noCategories">
                     <div @modal  class="selected-category" *ngFor="let item of selectedCategories">
-                        {{item.name}}
+                       <a [routerLink]="'/categories/list/'+item.id"> {{item.name}}</a>
                     </div>
                 </div>
                 <ng-template #noCategories>

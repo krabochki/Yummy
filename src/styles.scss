@@ -177,3 +177,39 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 }
+
+@import "calendar.styles.css";
+
+input.calendar-event{
+  border-radius: calc(var(--space-l)  * 0.9);
+
+  width: 100%;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  background-color: var(--color-background-deeper-unactive);
+  padding: calc(0.65em * 0.9) calc(0.8rem * 0.9);
+  caret-color: var(--color-secondary);
+  border: 1px solid var(--color-foreground-unactive);
+  font-weight: 400;
+  transition: all 0.2s ease-in-out;
+  line-height: 1.4;
+  font-size: 0.9em;
+  &::placeholder{
+  
+    font-weight: 300;
+  }
+
+   &:focus {
+    border-color: var(--color-secondary);
+    background-color: var(--color-background-deeper);
+  }
+}
+
+.noselect{
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none;
+}

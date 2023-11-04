@@ -9,7 +9,7 @@
     <div class="menu-items">
       <app-select [items]="recipeSelectItems" [routes]="recipeRoutes" />
       <app-select [items]="cooksSelectItems" [routes]="userRoutes" />
-      <a (click)="linkClick('/plan')" class="cook-plan" [ngClass]="{ dsl: !this.currentUser.id }">План готовки</a>
+      <app-select [items]="planSelectItems" [routes]="planRoutes" />
     </div>
 
     <div class="buttons">

@@ -25,9 +25,9 @@ import { IComment } from '../../../models/comments';
 import { getFormattedDate } from 'src/tools/common';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
-import { PlanService } from 'src/app/modules/planning/services/plan-service.service';
+import { PlanService } from 'src/app/modules/planning/services/plan-service';
 import { IPlan, nullPlan } from 'src/app/modules/planning/models/plan';
-import { ShoppingListItem } from 'src/app/modules/planning/models/shopping-list';
+import { ShoppingListItem, nullProduct } from 'src/app/modules/planning/models/shopping-list';
 
 @Component({
   selector: 'app-recipe-page',
@@ -351,10 +351,10 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     );
     if (find) {
       const product: ShoppingListItem = {
+        ...nullProduct,
         id: maxId + 1,
         name: find.name,
-        howMuch: (find.quantity?(find.quantity+' '):'') + find.unit,
-        isBought: false,
+        howMuch: (find.quantity ? find.quantity + ' ' : '') + find.unit,
         relatedRecipe: this.recipe.id,
       };
       groceryList.push(product);

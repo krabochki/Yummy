@@ -8,7 +8,9 @@ app-modal{
   z-index: 10;
 }
 
-
+app-button{
+  width: fit-content;
+}
 .container {
   display: flex;
   flex-direction: column;
@@ -40,8 +42,18 @@ app-modal{
 
 .showFollowers {
   cursor: pointer;
+  transition: 0.2s ease-in-out;
   text-decoration: underline;
+
+  .bold{
+    font-weight: 600;
+  }
+
+ 
 }
+ button.showFollowers:focus,button.showFollowers:hover{
+    transform: translateY(-0.2em);
+  }
 .row {
   display: flex;
 }
@@ -56,23 +68,31 @@ app-modal{
   display: flex;
 
   column-gap: var(--space-m);
-}
-button {
+  button {
   border-bottom: 3px var(--color-foreground-unactive) solid;
   color: var(--color-foreground-unactive);
-  letter-spacing: 2px;
+  letter-spacing:3px;
   padding: var(--space-s) var(--space-m);
   width: 10em;
   font-weight: 500;
   font-size: var(--font-m);
   cursor: pointer;
   transition: all 0.3s ease-in-out;
+ &:hover,&:focus{
+    letter-spacing: 4px;
+  }
+  &.active-button:hover,&.active-button:focus{
+    border-color: var(--color-primary-focus);
+    color: var(--color-primary-focus);  letter-spacing: 5px;
+
+  }
 }
 .active-button {
   font-weight: 700;
   border-color: var(--color-primary);
   color: var(--color-primary);
   letter-spacing: 5px;
+}
 }
 
 ul {
@@ -136,12 +156,27 @@ app-recipes-list{
   display: flex;
   flex-direction: column;
   row-gap: 0.5em;
+svg{
+    transition: 0.2s ease-in-out;
+}
+  
 
   a {
+    transition: 0.2s ease-in-out;
+    &:hover,&:focus{
+      transform: translateY(-0.2em);
+       span{color: var(--color-primary-focus);}
+       svg{
+        fill: var(--color-primary-focus);
+       }
+      }
     span {
       color: var(--color-primary);
       font-weight: 600;
+      transition: 0.2s ease-in-out;
       text-decoration: underline;
+
+      
     }
   }
 }
@@ -152,8 +187,10 @@ app-recipes-list{
 
 svg {
   height: 1em;
-  width: 2em;
+  width: 2em;    
+
   fill: var(--color-primary);
+
 }
 
 .svg-additional,
@@ -178,6 +215,13 @@ svg {
     column-gap: var(--space-s);
     align-items: center;
     justify-content: center;
+
+    button{
+      transition: 0.2s ease-in-out;
+    }
+    button:hover,button:focus{
+      transform: translateY(-0.2em);
+    }
   }
 
   row-gap: var(--space-l);

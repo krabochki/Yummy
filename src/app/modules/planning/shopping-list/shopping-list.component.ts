@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { PlanService } from '../services/plan-service.service';
+import { PlanService } from '../services/plan-service';
 import { IPlan, nullPlan } from '../models/plan';
 import { AuthService } from '../../authentication/services/auth.service';
 import { IUser, nullUser } from '../../user-pages/models/users';
@@ -9,20 +9,27 @@ import { ShoppingListItem, nullProduct } from '../models/shopping-list';
 import { Subject, takeUntil } from 'rxjs';
 import { trigger } from '@angular/animations';
 import { heightAnim } from 'src/tools/animations';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-shopping-list',
   templateUrl: './shopping-list.component.html',
   styleUrls: ['./shopping-list.component.scss'],
-  animations:[trigger('height',heightAnim())]
+  animations: [trigger('height', heightAnim())],
 })
 export class ShoppingListComponent implements OnInit, OnDestroy {
   protected shoppingList: ShoppingListItem[] = [];
+  
   protected baseSvgPath: string = '../../../../../assets/images/svg/grocery/';
+
   private currentUser: IUser = nullUser;
   private currentUserPlan: IPlan = nullPlan;
+
   protected form: FormGroup;
+
   protected newProductCreatingMode: boolean = false;
+
+  protected actualShoppingList: ShoppingListItem[] = [];
 
   protected destroyed$: Subject<void> = new Subject<void>();
 
@@ -30,7 +37,10 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
     private planService: PlanService,
     private authService: AuthService,
     private fb: FormBuilder,
+    private title: Title,
   ) {
+    this.title.setTitle('Список покупок');
+
     this.form = this.initNewShoppingListItemForm();
   }
 
@@ -68,9 +78,9 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
         this.currentUser.id,
         data,
       );
-      this.shoppingList = this.currentUserPlan.shoppingList;
+      this.actualShoppingList = this.currentUserPlan.shoppingList;
     });
-    this.shoppingList = this.sortByBought(this.currentUserPlan.shoppingList);
+    this.shoppingList = this.sortByBought(this.actualShoppingList);
   }
 
   protected addShoppingListItem(): void {
@@ -81,7 +91,7 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
       howMuch: this.form.value.howMuch,
       id: maxId + 1,
     };
-    this.currentUserPlan.shoppingList.push(newProduct);
+    this.shoppingList.unshift(newProduct);
     this.planService.updatePlan(this.currentUserPlan).subscribe();
     this.resetFormProduct();
   }
@@ -89,17 +99,11 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
   protected resetFormProduct() {
     this.form.get('name')?.setValue('');
     this.form.get('howMuch')?.setValue('');
-    
     this.form.markAsPristine();
     this.form.markAsUntouched();
-
   }
 
-
-
-  private sortByBought(
-    shoppingList: ShoppingListItem[],
-  ): ShoppingListItem[] {
+  private sortByBought(shoppingList: ShoppingListItem[]): ShoppingListItem[] {
     return shoppingList.sort((a, b) => {
       if (a.isBought && !b.isBought) {
         return 1;
@@ -123,13 +127,13 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
     const findedProduct = this.shoppingList.find((g) => g.id === productId);
     if (findedProduct) {
       this.shoppingList = this.shoppingList.filter((g) => g.id !== productId);
-      this.currentUserPlan.shoppingList = this.shoppingList;
       this.planService.updatePlan(this.currentUserPlan).subscribe();
     }
   }
 
   protected removeAllProducts() {
     this.currentUserPlan.shoppingList = [];
+    this.shoppingList = [];
     this.planService.updatePlan(this.currentUserPlan).subscribe();
   }
 

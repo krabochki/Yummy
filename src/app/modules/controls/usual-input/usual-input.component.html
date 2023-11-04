@@ -52,7 +52,7 @@
       ></svg-icon>
     </span>
     
-  <p class="howmuch" *ngIf="max!==undefined">{{ value.length }}/{{ max }}</p>
+  <p class="howmuch" *ngIf="(max!==undefined) && value">{{ value.length }}/{{ max }}</p>
 </div>
 
 <div *ngIf="showError" class="error">{{ error }}</div>

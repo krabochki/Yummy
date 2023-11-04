@@ -1,0 +1,303 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+
+<div class="text-center">
+  <h1 class="noselect">Календарь рецептов</h1>
+
+  <app-button
+    class="info-button"
+    [style]="'outlined'"
+    [text]="'Подробнее'"
+    [iconStyle]="'as-text'"
+    [color]="'sec'"
+    (click)="showInfo = !showInfo"
+    [rounded]="true"
+    [icon]="'planning/question'"
+  >
+  </app-button>
+
+  <div class="how-to-use-it" @height *ngIf="showInfo">
+    <div>
+      <p>
+        Добро пожаловать в раздел «Календарь рецептов»! Этот раздел
+        предоставляет инструменты для организации процесса приготовления блюд и
+        управления рецептами в удобном гастрономическом календаре. Вот, как вы
+        можете использовать этот раздел:
+      </p>
+
+      <ol>
+        <li>
+          <div class="num">1</div>
+          <div>
+            <h2>Найдите рецепты, которые вас интересуют</h2>
+            <p>
+              Вы можете попробовать подобрать рецепт в специальном разделе
+              «Подбор рецептов» по ингредиентам и категориям, а также найти
+              рецепты по разделам, среди рецептов интересующих кулинаров, или по
+              поиску на страницах различных групп рецептов.
+            </p>
+            <ul class="links">
+              <li><a routerLink="/match">Подбор рецептов</a></li>
+              <li><a routerLink="/recipes">Все рецепты</a></li>
+              <li><a routerLink="/sections">Рецепты по разделам</a></li>
+              <li><a routerLink="/cooks">Все кулинары</a></li>
+            </ul>
+            <p>
+              Календарь рецептов позволяет добавлять блюда с привязкой к
+              рецептам Yummy, но это необязательно: вы можете также добавить в
+              план обычные рецепты, которых нет на сайте, чтобы не забыть их
+              приготовить. Например, из личной кулинарной книги.
+            </p>
+          </div>
+        </li>
+        <li>
+          <div class="num">2</div>
+          <div>
+            <h2>Добавьте рецепты в план</h2>
+            <p>
+              Находя интересующий вас рецепт, вы можете добавить его в свой
+              календарь. Это поможет вам планировать, когда именно вы хотите
+              приготовить это блюдо. Для этого на странице интересующего рецепта
+              выберите соответствующую опцию или добавьте рецепт в план с
+              помощью соответствующей кнопки на этой странице.
+            </p>
+            <p>
+              При создании рецепта вам нужно будет придумать название
+              рецепта-задачи: оно не обязательно должна совпадать с выбранным
+              рецептом. Потом выберите день, на который вы запланировали
+              приготовление рецепта. Также выберите соответствующий рецепт среди
+              рецептов Yummy и цвет маркера, благодаря которому ориентирование в
+              календаре станет проще.
+            </p>
+          </div>
+        </li>
+        <li>
+          <div class="num">3</div>
+          <div>
+            <h2>Просматривайте план в удобном формате</h2>
+            <p>
+              План поддерживает просмотр в формате месяца, недели и дня. Вы
+              всегда можете переключаться на более ранний и более поздний
+              промежуток времени. Переходите по ссылкам, которые установлены на
+              маркерах, чтобы просмотреть связанный рецепт Yummy
+            </p>
+          </div>
+        </li>
+        <li>
+          <div class="num">4</div>
+          <div>
+            <h2>Меняйте планы по мере необходимости</h2>
+            <p>
+              Если вы перепутали дату приготовления, название или просто хотите
+              изменить цвет, вы всегда можете найти запланированный рецепт в
+              списке на этой странице и изменить его параметры. Также, календарь
+              имеет одну очень удобную функцию: вы можете поменять дату
+              приготовления, просто перетащив маркер в календаре на нужный день!
+            </p>
+          </div>
+        </li>
+        <li>
+          <div class="num">5</div>
+          <div>
+            <h2>Получайте напоминания</h2>
+            <p>
+              Каждый раз, когда вы будете заходить на сайт, вам будут приходить
+              уведомления о рецептах, срок приготовления которых уже скоро
+              настанет. Это поможет вам не забывать о своих планах. Если вы не
+              хотите получать уведомления, отключите их в настройках.
+            </p>
+          </div>
+        </li>
+        <li>
+          <div class="num">6</div>
+          <div>
+            <h2>Удаляйте ненужные рецепты</h2>
+            <p>
+              Вы уже приготовили рецепт, и не хотите, чтобы он оставался в
+              календаре, или просто передумали его готовить? Ничего страшного -
+              просто удалите рецепт, найдя его в списке и выбрав соответствующую
+              опцию.
+            </p>
+          </div>
+        </li>
+      </ol>
+
+      <p>
+        Планирование и календарь рецептов позволит вам организовать ваше питание
+        и сделать приготовление блюд более удобным и приятным. Наслаждайтесь
+        приготовлением разнообразных и вкусных блюд!
+      </p>
+    </div>
+  </div>
+
+  <div class="btn-wrap">
+    <div>
+      <div class="btn-group noselect">
+        <button
+          class="btn"
+          mwlCalendarPreviousView
+          [view]="view"
+          [(viewDate)]="viewDate"
+          (viewDateChange)="closeOpenMonthViewDay()"
+        >
+          Ранее
+        </button>
+        <button class="btn primary" mwlCalendarToday [(viewDate)]="viewDate">
+          Сегодня
+        </button>
+        <button
+          class="btn"
+          mwlCalendarNextView
+          [view]="view"
+          [(viewDate)]="viewDate"
+          (viewDateChange)="closeOpenMonthViewDay()"
+        >
+          Далее
+        </button>
+      </div>
+    </div>
+    <div>
+      <h3>{{ viewDate | calendarDate: view + "ViewTitle" | titlecase }}</h3>
+    </div>
+    <div>
+      <div class="btn-group noselect">
+        <button
+          class="btn"
+          (click)="setView(CalendarView.Month)"
+          [class.active]="view === CalendarView.Month"
+        >
+          Месяц
+        </button>
+        <button
+          class="btn primary"
+          (click)="setView(CalendarView.Week)"
+          [class.active]="view === CalendarView.Week"
+        >
+          Неделя
+        </button>
+        <button
+          class="btn"
+          (click)="setView(CalendarView.Day)"
+          [class.active]="view === CalendarView.Day"
+        >
+          День
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div [ngSwitch]="view">
+    <mwl-calendar-month-view
+      *ngSwitchCase="CalendarView.Month"
+      [viewDate]="viewDate"
+      [events]="events"
+      [weekStartsOn]="1"
+      [locale]="locale"
+      [refresh]="refresh"
+      [activeDayIsOpen]="activeDayIsOpen"
+      (dayClicked)="dayClicked($event.day)"
+      (eventClicked)="handleEvent('Clicked', $event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)"
+    >
+    </mwl-calendar-month-view>
+    <mwl-calendar-week-view
+      [weekStartsOn]="1"
+      [locale]="locale"
+      *ngSwitchCase="CalendarView.Week"
+      [viewDate]="viewDate"
+      [events]="events"
+      [refresh]="refresh"
+      (eventClicked)="handleEvent('Clicked', $event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)"
+    >
+    </mwl-calendar-week-view>
+    <mwl-calendar-day-view
+      *ngSwitchCase="CalendarView.Day"
+      [viewDate]="viewDate"
+      [events]="events"
+      [refresh]="refresh"
+      [locale]="locale"
+      (eventClicked)="handleEvent('Clicked', $event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)"
+    >
+    </mwl-calendar-day-view>
+  </div>
+
+  <app-button
+    class="new-recipe-button noselect"
+    [text]="'Запланировать новый рецепт'"
+    (click)="createMode = true"
+    [color]="'sec'"
+    [style]="'outlined'"
+    [rounded]="true"
+  ></app-button>
+
+  <h3 class="edit-plan noselect">Все запланированные рецепты</h3>
+
+  <app-add-calendar-event
+    [currentUser]="currentUser"
+    [event]="targetEvent"
+    [plan]="currentUserPlan"
+    @modal
+    style="position: fixed; z-index: 10"
+    *ngIf="createMode"
+    (closeEmitter)="createMode = false"
+  ></app-add-calendar-event>
+
+  <div class="table">
+    <div></div>
+    <div class="head noselect">Название</div>
+    <div class="head noselect">Цвет</div>
+    <div class="head noselect">Дата</div>
+    <div class="head"></div>
+
+    <ng-container *ngFor="let event of events">
+      <div>
+        <button
+          (click)="targetEvent = event; createMode = true"
+          class="noselect clear-all-button"
+        >
+          <svg-icon
+            [applyClass]="true"
+            class="clear-all-icon edit"
+            [src]="'../../../../../assets/images/svg/grocery/edit.svg'"
+          ></svg-icon>
+        </button>
+      </div>
+      <div>
+        <a
+          [ngClass]="{ 'real-link': event.recipeId }"
+          [routerLink]="
+            event.recipeId ? '/recipes/list/' + event.recipeId : null
+          "
+          ><p>{{ event.title }}</p></a
+        >
+      </div>
+
+      <div>
+        <div
+          class="color"
+          [ngStyle]="{ 'background-color': event.color!.primary }"
+          readonly
+          disabled
+        ></div>
+      </div>
+
+      <div>
+        <p class="fulldate">{{ event.start | date: "fullDate" }}</p>
+      </div>
+
+      <div>
+        <button (click)="deleteEvent(event)" class="noselect clear-all-button">
+          <svg-icon
+            [applyClass]="true"
+            class="clear-all-icon"
+            [src]="
+              '../../../../../assets/images/svg/grocery/delete-product.svg'
+            "
+          ></svg-icon>
+        </button>
+      </div>
+    </ng-container>
+  </div>
+</div>

@@ -1,7 +1,7 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <ng-template #skeleton>
-  <div class="container skeleton" @fadeIn>
+  <div class="container skeleton" class="noselect" @fadeIn>
     <div class="block block1">
       <div class="row main">
         <img src="../../../../../assets/images/userpic.png" alt="User Photo" />
@@ -24,19 +24,13 @@
       </div>
       <div class="row" class="statistics">
         <div class="col">
-          <p>
-            0 рецептов
-          </p>
+          <p>0 рецептов</p>
         </div>
         <div class="col">
-          <p>
-            0 подписчиков
-          </p>
+          <p>0 подписчиков</p>
         </div>
         <div class="col">
-          <p>
-0 подписок
-          </p>
+          <p>0 подписок</p>
         </div>
       </div>
     </div>
@@ -106,12 +100,12 @@
 
       <div>
         <h3>Поделиться этим аккаунтом</h3>
-        <div >
-          <div ></div>
-             <div ></div>
-                <div ></div>
-                   <div></div>
-                      <div ></div>
+        <div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
         </div>
       </div>
     </div>
@@ -119,7 +113,6 @@
 </ng-template>
 
 <div class="container" *ngIf="dataLoaded; else skeleton">
- 
   <app-settings
     (closeEmitter)="settingsClose($event)"
     @modal
@@ -128,34 +121,37 @@
   />
 
   <div class="block block1">
-     <div
-    class="svg-button exit"
-    [ngClass]="{'no-path':
-      (this.router.url === this.routerEventsService.previousRoutePath.value)
-  }"
-    (click)="(this.router.url === this.routerEventsService.previousRoutePath.value)?null:onSkipHandler()"
-  >
-    <svg-icon
-      [applyClass]="true"
-      class="svg"
-      [src]="'../../../../../assets/images/svg/go-back.svg'"
+    <div
+      class="svg-button exit"
+      [ngClass]="{
+        'no-path':
+          this.router.url === this.routerEventsService.previousRoutePath.value
+      }"
+      (click)="
+        this.router.url === this.routerEventsService.previousRoutePath.value
+          ? null
+          : onSkipHandler()
+      "
     >
-    </svg-icon>
-  </div>
-  <div class="svg-button settings" *ngIf="myPage">
-    <svg-icon
-      (click)="settingsShow = !settingsShow"
-      [applyClass]="true"
-      class="svg"
-      [src]="'../../../../../assets/images/svg/settings.svg'"
-    >
-    </svg-icon>
-  </div>
+      <svg-icon
+        [applyClass]="true"
+        class="svg"
+        [src]="'../../../../../assets/images/svg/go-back.svg'"
+      >
+      </svg-icon>
+    </div>
+    <div class="svg-button settings" *ngIf="myPage">
+      <svg-icon
+        (click)="settingsShow = !settingsShow"
+        [applyClass]="true"
+        class="svg"
+        [src]="'../../../../../assets/images/svg/settings.svg'"
+      >
+      </svg-icon>
+    </div>
     <div class="row main">
-      <img
-        [src]="
-            '../../../../../assets/images/userpic.png'
-        "
+      <img  class="noselect"
+        [src]="'../../../../../assets/images/userpic.png'"
         alt="User Photo"
       />
       <div class="col info">
@@ -166,9 +162,16 @@
 
         <p class="quote" *ngIf="user?.quote">{{ user.quote }}</p>
 
-        <app-button
-
-        (click)="currentUser.id ===0 ? noAccessModalShow =true: myPage? edit() :       (userService.isUserSubscriber(user, currentUser.id) ? unfollow() : follow())"
+        <app-button class="noselect"
+          (click)="
+            currentUser.id === 0
+              ? (noAccessModalShow = true)
+              : myPage
+              ? edit()
+              : userService.isUserSubscriber(user, currentUser.id)
+              ? unfollow()
+              : follow()
+          "
           [disabled]="!(currentUser.id === 0)"
           [color]="'prim'"
           [style]="
@@ -187,10 +190,10 @@
         ></app-button>
       </div>
     </div>
-    <div class="row" class="statistics">
+    <div class="row" class="statistics noselect">
       <div class="col">
         <p>
-          <span>{{ userRecipes.length }} </span>
+          <span class="bold">{{ userRecipes.length }} </span>
 
           <span
             appPluralRu=""
@@ -199,38 +202,38 @@
           ></span>
         </p>
       </div>
-      <div class="col">
-        <p
+      <div class="col" >
+        <button 
           class="showFollowers"
           (click)="obj = 'followers'; showFollows = true"
         >
-          <span>{{ userFollowers!.length }} </span>
+          <span class="bold">{{ userFollowers!.length }} </span>
 
           <span
             appPluralRu=""
             [value]="userFollowers!.length"
             [arVariants]="['подписчик', 'подписчика', 'подписчиков']"
           ></span>
-        </p>
+        </button>
       </div>
       <div class="col">
-        <p
+        <button
           class="showFollowers"
           (click)="obj = 'following'; showFollows = true"
         >
-          <span>{{ userFollowing!.length }} </span>
+          <span class="bold">{{ userFollowing!.length }} </span>
 
           <span
             appPluralRu=""
             [value]="userFollowing!.length"
             [arVariants]="['подписка', 'подписки', 'подписок']"
           ></span>
-        </p>
+        </button>
       </div>
     </div>
   </div>
 
-  <div class="block block2">
+  <div class="block block2 noselect">
     <button
       [ngClass]="{ 'active-button': recipesEnabled }"
       (click)="recipesEnabled = true; moreInfoEnabled = false"
@@ -255,19 +258,22 @@
           [svgStyle]="{
             'height.em': '12',
             'width.em': '12',
-            fill: 'var(--color-foreground)'}"></svg-icon>
-      </div></ng-template>
+            fill: 'var(--color-foreground)'
+          }"
+        ></svg-icon></div
+    ></ng-template>
 
-    
-    <app-vertical-recipe-list *ngIf="userRecipes.length > 0; else noRecipes"
-      [cols]="3" 
-      [blocks]="userRecipes" [showAuthor]="false"></app-vertical-recipe-list>
-   
+    <app-vertical-recipe-list
+      *ngIf="userRecipes.length > 0; else noRecipes"
+      [cols]="3"
+      [blocks]="userRecipes"
+      [showAuthor]="false"
+    ></app-vertical-recipe-list>
   </ng-template>
 
   <div class="block block3" *ngIf="moreInfoEnabled; else recipes">
     <div class="col description" *ngIf="user?.description">
-      <h3>Описание</h3>
+      <h3 class="noselect">Описание</h3>
       <p>{{ user.description }}</p>
     </div>
     <div
@@ -280,7 +286,7 @@
       }"
     >
       <div class="col" *ngIf="user?.socialNetworks?.length! > 0">
-        <h3>Социальные сети</h3>
+        <h3 class="noselect">Социальные сети</h3>
         <ul class="col" class="links">
           <li
             class="link"
@@ -295,8 +301,7 @@
                   '.svg'
                 "
                 [class]="'svg'"
-                ></svg-icon
-              >
+              ></svg-icon>
 
               <span>{{ social.name | titlecase }}</span>
             </a>
@@ -304,7 +309,7 @@
         </ul>
       </div>
       <div class="col additional">
-        <h3
+        <h3 class="noselect"
           [ngStyle]="{
             'text-align': !user.socialNetworks ? 'center' : 'left'
           }"
@@ -319,8 +324,9 @@
                 'width.em': '1.2',
                 'height.em': '1',
                 fill: 'var(--color-primary)'
-              }">
-              </svg-icon>
+              }"
+            >
+            </svg-icon>
             <a [href]="user.personalWebsite">Личный сайт</a>
           </li>
           <li class="row center" *ngIf="user?.location">
@@ -342,9 +348,10 @@
                 'height.em': '1',
                 fill: 'var(--color-foreground)'
               }"
-              ></svg-icon
-            >
-            <p>Аккаунт создан {{ user.registrationDate | date }}</p>
+            ></svg-icon>
+            <p [title]="validRegistrationDate">
+              Аккаунт создан {{ user.registrationDate | timePast | lowercase }}
+            </p>
           </li>
           <li class="row center">
             <svg-icon
@@ -364,41 +371,47 @@
                 [value]="user.profileViews"
                 [arVariants]="['просмотр', 'просмотра', 'просмотров']"
               ></span>
-              профиля,
+              профиля
               <br />
-              {{ likes }}
-
               <span
-                appPluralRu=""
-                [value]="likes"
-                [arVariants]="['оценка', 'оценки', 'оценок']"
-              ></span>
-              «Мне нравится», <br />
-              {{ comments }}
-              <span
-                appPluralRu=""
-                [value]="comments"
-                [arVariants]="['комментарий', 'комментария', 'комментариев']"
-              ></span
-              >,
-
-              <br />
-              {{ cooks }}
-              <span
-                appPluralRu=""
-                [value]="cooks"
-                [arVariants]="['рецепт', 'рецепта', 'рецептов']"
+                style="margin-top: 0.5em; display: inline-block"
+                *ngIf="userPublicRecipes.length > 0"
               >
+                <p style="font-weight: 500; margin-bottom: 0.25rem">
+                  Рецепты кулинара:
+                </p>
+                <p>
+                  оценили
+                  {{ likes }}
+
+                  <span
+                    appPluralRu=""
+                    [value]="likes"
+                    [arVariants]="['раз', 'раза', 'раз']"
+                  ></span
+                  >,
+                </p>
+                 <p>
+                  приготовили
+                  {{ cooks }}
+                  <span
+                    appPluralRu=""
+                    [value]="cooks"
+                    [arVariants]="[' раз', ' раза', ' раз']"
+                  ></span>,
+                </p>
+                <p>
+                  прокомментировали
+                  {{ comments }}
+                  <span
+                    appPluralRu=""
+                    [value]="comments"
+                    [arVariants]="['раз', 'раза', 'раз']"
+                  ></span
+                  >
+                </p>
+               
               </span>
-              <span
-                appPluralRu=""
-                [value]="cooks"
-                [arVariants]="[
-                  ' приготовлен',
-                  ' приготовлено',
-                  ' приготовлено'
-                ]"
-              ></span>
             </p>
           </li>
         </ul>
@@ -406,26 +419,39 @@
     </div>
 
     <div>
-      <h3>Поделиться этим аккаунтом</h3>
-      <div class="row social">
-        <app-social-button [url]="linkForSocials"></app-social-button>
-        <app-social-button
-          [url]="linkForSocials"
-          [social]="'pinterest'"
-        ></app-social-button>
-        <app-social-button
-          [url]="linkForSocials"
-          [social]="'vk'"
-        ></app-social-button>
-        <app-social-button
-          [url]="linkForSocials"
-          [social]="'twitter'"
-        ></app-social-button>
+      <h3 class="noselect">Поделиться этим аккаунтом</h3>
+      <div class="noselect" class="row social">
+       <button> <app-social-button   tabindex="-1" 
+ [url]="linkForSocials"></app-social-button></button>
+        <button>
+          <app-social-button  tabindex="-1"
 
-        <app-social-button
-          [url]="linkForSocials"
-          [social]="'facebook'"
-        ></app-social-button>
+            [url]="linkForSocials"
+            [social]="'pinterest'"
+          ></app-social-button>
+        </button>
+       <button>
+          <app-social-button  tabindex="-1"
+
+            [url]="linkForSocials"
+            [social]="'vk'"
+          ></app-social-button>
+       </button>
+        <button>
+        <app-social-button  tabindex="-1"
+
+      
+            [url]="linkForSocials"
+            [social]="'twitter'"></app-social-button>
+  
+       </button>
+        <button>
+          <app-social-button   tabindex="-1"
+
+            [url]="linkForSocials"
+            [social]="'facebook'"
+          ></app-social-button>
+        </button>
       </div>
     </div>
   </div>
@@ -442,8 +468,12 @@
   (closeEmitter)="closeFollows()"
 ></app-followers-and-following>
 
-
-<app-user-account-edit @modal (closeEmitter)="closeEdit()"  [editableUser]="currentUser" *ngIf="editModalShow"></app-user-account-edit>
+<app-user-account-edit
+  @modal
+  (closeEmitter)="closeEdit()"
+  [editableUser]="currentUser"
+  *ngIf="editModalShow"
+></app-user-account-edit>
 
 <app-modal
   @modal

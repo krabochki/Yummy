@@ -1,68 +1,86 @@
 <div class="main-cont">
   <div class="grocery-list">
-    <h2>Твой список покупок</h2>
+    <h1 class="noselect">Список покупок</h1>
 
+   <div class="img-cont">
    
-
-    <button class="clear-all-button" (click)="removeAllProducts()">Очистить все
-
-      <svg-icon [applyClass]="true" class="clear-all-icon" [src]="baseSvgPath + 'delete-product.svg'"></svg-icon>
-    </button>
-    <ul class="product-list" cdkDropList (cdkDropListDropped)="drop($event)">
-      <li cdkDragBoundary=".grocery-list" cdkDrag *ngFor="let product of shoppingList" [ngClass]="{
-          purchased: product.isBought
-        }">
-        <div tabindex="-1" class="drag" cdkDragHandle>
-          <svg-icon [applyClass]="true" class="svg-drag" [src]="'../../../../../assets/images/svg/drag.svg'">
-          </svg-icon>
-        </div>
-
-        <button (click)="markProductAsBought(product.id)" class="buy-button">
-          <svg-icon *ngIf="product.isBought" [applyClass]="true" class="checkbox-svg"
-            [src]="baseSvgPath + 'checkbox.svg'"></svg-icon>
-        </button>
-        <a tabindex="-1" [ngClass]="{ link: product.relatedRecipe }" [routerLink]="
-            product.relatedRecipe
-              ? '/recipes/list/' + product.relatedRecipe
-              : null
-          " class="product-name">{{ product.name }}</a>
-        <div class="product-quantity">
-          {{ product.howMuch }}
-        </div>
-  
-        <button (click)="removeProduct(product.id)">
-          <svg-icon [applyClass]="true" class="remove-icon" [src]="baseSvgPath + 'remove.svg'"></svg-icon>
-        </button>
-      </li>
-    </ul>
-
-     <div class="new-product">
-      <app-button [color]="'sec'" [rounded]="true" [text]="'Добавить продукт'" class="new-product-button-add" (click)="newProductCreatingMode = !newProductCreatingMode">
-      
-      </app-button>
-
-      <div class="new-product-popup" @height *ngIf="newProductCreatingMode">
-        <form [formGroup]="form">
-          <button class="form-btn eraser" (click)="resetFormProduct()">
-            <svg-icon class="svg" [applyClass]="true" [src]="baseSvgPath + 'eraser.svg'"></svg-icon>
-          </button>
-          <app-usual-input [value]="form.get('name')?.value" [inputRequired]="true" formControlName="name"
-            required [error]="
-              form.get('name')?.invalid &&
-              (form.get('name')?.dirty || form.get('name')?.touched)
-                ? ' '
-                : ''
-            " [max]="50" [placeholder]="'Название'"></app-usual-input>
+      <div class="content">
+        <ng-template #noProducts>
+          <p class="no-products">
+            В вашем списке ингредиентов пока нет продуктов.
+            
+            
+            
+            Попробуйте создать новый продукт сами или добавить его из ингредиентов рецептов</p>
+        </ng-template>
         
-          <app-usual-input [value]="form.get('howMuch')?.value" [max]="17"  formControlName="howMuch"
-            [placeholder]="'Количество'"></app-usual-input>
-
-          <button (click)="addShoppingListItem()" [disabled]="form.invalid" [ngClass]="{ disabled: form.invalid }"
-            class="form-btn plus">
-            <svg-icon class="svg" [applyClass]="true" [src]="baseSvgPath + 'add.svg'"></svg-icon>
-          </button>
-        </form>
+        <ul class="product-list" cdkDropList (cdkDropListDropped)="drop($event)" *ngIf="shoppingList.length>0; else noProducts">
+          <li @height cdkDragBoundary=".product-list" cdkDrag *ngFor="let product of shoppingList" [class.purchased]="product.isBought">
+            <div tabindex="-1" class="drag" cdkDragHandle>
+              <svg-icon [applyClass]="true" class="svg-drag" [src]="'../../../../../assets/images/svg/drag.svg'">
+              </svg-icon>
+            </div>
+    
+            <button (click)="markProductAsBought(product.id)" class="buy-button">
+              <svg-icon *ngIf="product.isBought" [applyClass]="true" class="checkbox-svg"
+                [src]="baseSvgPath + 'checkbox.svg'"></svg-icon>
+            </button>
+            <a tabindex="-1" [ngClass]="{ link: product.relatedRecipe }" [routerLink]="
+                product.relatedRecipe
+                  ? '/recipes/list/' + product.relatedRecipe
+                  : null
+              " class="product-name">{{ product.name }}</a>
+            <div class="product-quantity">
+              {{ product.howMuch }}
+            </div>
+      
+            <button (click)="removeProduct(product.id)" class="cross-button">
+              <svg-icon [applyClass]="true" class="cross-icon" [src]="baseSvgPath + 'remove.svg'"></svg-icon>
+            </button>
+          </li>
+        </ul>
+    
+        <button *ngIf="shoppingList.length>0" class="clear-all-button" (click)="removeAllProducts()">Очистить весь список
+    
+          <svg-icon [applyClass]="true" class="clear-all-icon" [src]="baseSvgPath + 'delete-product.svg'"></svg-icon>
+        </button>
+    
+         <div class="new-product">
+          <app-button [color]="'sec'" [rounded]="true" [text]="'Добавить продукт'" class="new-product-button-add" (click)="newProductCreatingMode = !newProductCreatingMode">
+          
+          </app-button>
+    
+          <div class="new-product-popup" @height *ngIf="newProductCreatingMode">
+            <form [formGroup]="form">
+              <button class="form-btn eraser" (click)="resetFormProduct()">
+                <svg-icon class="svg" [applyClass]="true" [src]="baseSvgPath + 'eraser.svg'"></svg-icon>
+              </button>
+              <app-usual-input [value]="form.get('name')?.value" [inputRequired]="true" formControlName="name"
+                required [error]="
+                  form.get('name')?.invalid &&
+                  (form.get('name')?.dirty || form.get('name')?.touched)
+                    ? ' '
+                    : ''
+                " [max]="50" [placeholder]="'Название'"></app-usual-input>
+            
+              <app-usual-input [value]="form.get('howMuch')?.value" [max]="17"  formControlName="howMuch"
+                [placeholder]="'Количество'"></app-usual-input>
+    
+              <button (click)="addShoppingListItem()" [disabled]="form.invalid" [ngClass]="{ disabled: form.invalid }"
+                class="form-btn plus">
+                <svg-icon class="svg" [applyClass]="true" [src]="baseSvgPath + 'add.svg'"></svg-icon>
+              </button>
+            </form>
+          </div>
+        </div>
       </div>
-    </div>
+
+         <div class="img-content"><img  src="../../../../assets/images/cook.png" class="cook noselect" alt="">
+      <div>
+        <h2>Организовывайте продуктовую корзину вместе с Yummy</h2>
+            <p>Приготовление вкусных блюд начинается с правильной подготовки. Наш список покупок поможет вам организовать покупку всех необходимых ингредиентов для выбранных рецептов. С этим инструментом вы легко сможете составить список продуктов, который позволит вам экономить время и избегать забывать что-то важное. Начните планировать и готовить вкусные блюда с нашим списком покупок!</p>
+      </div>
+      </div>
+   </div>
   </div>
 </div>

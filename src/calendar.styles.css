@@ -28,7 +28,7 @@ b::first-letter{
   display: block;
   white-space: nowrap;
   margin-bottom: 1em;
-  margin-top: 1em;
+  margin-top: 0;
   cursor: default;
   
     text-transform: lowercase;
@@ -112,10 +112,12 @@ b::first-letter{
 .cal-month-view .cal-day-number {
   font-size: 1.2em;
   font-weight: 400;
+  margin-top: 1em;
+  margin-right:1em;
   opacity: 0.5;
-  margin-top: 0.75rem;
-  margin-right: 0.75rem;
+    float: right;  
 }
+
 .cal-month-view .cal-events {
   -webkit-box-flex: 1;
       -ms-flex: 1;
@@ -128,7 +130,10 @@ b::first-letter{
   line-height: 1;
   display: -webkit-box;
   display: -ms-flexbox;
+  align-items: center;
+  
   display: flex;
+  column-gap: 0.3em;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
 }
@@ -137,6 +142,18 @@ b::first-letter{
   height: 0.5em;
   border-radius: 100%;
   display: inline-block;
+
+
+}
+.cal-month-view .cal-event:nth-child(2n){
+  border-radius: 0%;
+}
+.cal-month-view .cal-event:nth-child(3n){
+  border-radius: 0%;
+    transform: rotate(45deg);
+    width: 0.4em;
+    height: 0.4em;
+
 }
 .cal-month-view .cal-day-cell.cal-in-month.cal-has-events {
   cursor: pointer;
@@ -150,11 +167,15 @@ b::first-letter{
   font-weight: 700;
 }
 .cal-month-view .cal-open-day-events {
-  padding: 0.5em 1em;
+  padding:0 1em
  
 }
 .cal-month-view .cal-open-day-events div {
-  padding:  0;
+  padding-top:  0.5em ;
+
+  &:last-of-type{
+    padding-bottom: 0.5em;
+  }
  
 }
 .cal-month-view .cal-open-day-events .cal-event {
@@ -185,11 +206,23 @@ b::first-letter{
     transition: 0.2s ease-in-out;
 }
 .cal-month-view .cal-cell-row:hover {
+  
   background-color: var(--color-background-deeper-unactive);
+}
+.cal-month-view .cal-header.cal-cell-row:hover{
+  background: none !important;
 }
 .cal-month-view .cal-cell-row .cal-cell:hover,
 .cal-month-view .cal-cell.cal-has-events.cal-open {
   background-color: var(--color-background-deeper);
+}
+
+.cal-day-number {
+  transition: 0.2s ease-in-out;
+}
+.cal-month-view .cal-cell-row .cal-cell:hover *{
+    opacity: 1 !important;
+
 }
 .cal-month-view .cal-days {
   border-color: var(--color-background-deeper);
@@ -221,13 +254,12 @@ b::first-letter{
  color: var(--color-secondary);}
 .cal-month-view .cal-day-cell.cal-weekend:hover .cal-day-number {
 
- color:var(--color-foreground);
    color: var(--color-secondary-focus) !important;
 
 }
 .cal-month-view .cal-day-cell.cal-today.cal-weekend:hover .cal-day-number {
 
- color:var(--color-background) !important
+ color:var(--color-foreground) !important
 
 }
 
@@ -241,7 +273,7 @@ b::first-letter{
 }
 .cal-month-view .cal-day-cell.cal-today:hover{
     background-color:var(--color-secondary);
-    color: var(--color-background) !important;
+    color: var(--color-secondary-focus) !important;
 }
 .cal-month-view .cal-day-cell.cal-drag-over {
   background-color: var(--color-primary-lighter) !important;

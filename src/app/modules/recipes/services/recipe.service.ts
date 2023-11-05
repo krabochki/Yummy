@@ -69,18 +69,16 @@ export class RecipeService {
   }
 
   deleteRecipe(id: number) {
-    return this.http
-      .delete(`${this.url}/${id}`)
-      .pipe(
-        tap(() =>
-          this.recipesSubject.next(
-            this.recipesSubject.value.filter((recipe) => recipe.id !== id),
-          ),
+    return this.http.delete(`${this.url}/${id}`).pipe(
+      tap(() =>
+        this.recipesSubject.next(
+          this.recipesSubject.value.filter((recipe) => recipe.id !== id),
         ),
-        catchError((error) => {
-          return throwError(error);
-        }),
-      );
+      ),
+      catchError((error) => {
+        return throwError(error);
+      }),
+    );
   }
 
   postRecipe(recipe: IRecipe) {
@@ -130,11 +128,17 @@ export class RecipeService {
   getCommentedRecipesByUser(recipes: IRecipe[], userId: number) {
     recipes = recipes.filter((recipe) => recipe.comments.length > 0);
     const userCommentedRecipes: IRecipe[] = [];
+    const addedRecipeIds = new Set<number>(); 
+
     recipes.forEach((element) => {
       element.comments.forEach((comment) => {
-        if (comment.authorId === userId) userCommentedRecipes.push(element);
+        if (comment.authorId === userId && !addedRecipeIds.has(element.id)) {
+          userCommentedRecipes.push(element);
+          addedRecipeIds.add(element.id); 
+        }
       });
     });
+
     return userCommentedRecipes;
   }
 
@@ -143,14 +147,16 @@ export class RecipeService {
       userId: userId,
       answer: userChoice,
     };
-    if(!recipe.statistics) recipe.statistics=[]
+    if (!recipe.statistics) recipe.statistics = [];
     recipe.statistics.push(statistic);
     return recipe;
   }
   removeVote(recipe: IRecipe, userId: number): IRecipe {
-        if (!recipe.statistics) recipe.statistics = [];
+    if (!recipe.statistics) recipe.statistics = [];
 
-    recipe.statistics = recipe.statistics.filter((stat)=>stat.userId!==userId);
+    recipe.statistics = recipe.statistics.filter(
+      (stat) => stat.userId !== userId,
+    );
     return recipe;
   }
   getCookedRecipesByUser(recipes: IRecipe[], user: number) {
@@ -178,14 +184,9 @@ export class RecipeService {
     return recipes.filter((recipe) => recipe.status !== 'private');
   }
   getRecentRecipes(recipes: IRecipe[]) {
-
-  
-    
-
     return recipes.sort((a, b) => {
       const date1 = new Date(a.publicationDate);
       const date2 = new Date(b.publicationDate);
-      
 
       if (date1 > date2) {
         return -1; // Если дата публикации первого рецепта позже, он будет первым в отсортированном массиве.

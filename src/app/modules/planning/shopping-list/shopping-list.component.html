@@ -2,85 +2,292 @@
   <div class="grocery-list">
     <h1 class="noselect">Список покупок</h1>
 
-   <div class="img-cont">
-   
+    <h2 class="main">Ваш список покупок</h2>
+
+    <div class="img-cont">
       <div class="content">
         <ng-template #noProducts>
           <p class="no-products">
-            В вашем списке ингредиентов пока нет продуктов.
-            
-            
-            
-            Попробуйте создать новый продукт сами или добавить его из ингредиентов рецептов</p>
+            В вашем списке ингредиентов пока нет продуктов. Попробуйте создать
+            новый продукт сами или добавить его из ингредиентов на странице
+            какого-нибудь рецепта
+          </p>
         </ng-template>
-        
-        <ul class="product-list" cdkDropList (cdkDropListDropped)="drop($event)" *ngIf="shoppingList.length>0; else noProducts">
-          <li @height cdkDragBoundary=".product-list" cdkDrag *ngFor="let product of shoppingList" [class.purchased]="product.isBought">
-            <div tabindex="-1" class="drag" cdkDragHandle>
-              <svg-icon [applyClass]="true" class="svg-drag" [src]="'../../../../../assets/images/svg/drag.svg'">
-              </svg-icon>
-            </div>
-    
-            <button (click)="markProductAsBought(product.id)" class="buy-button">
-              <svg-icon *ngIf="product.isBought" [applyClass]="true" class="checkbox-svg"
-                [src]="baseSvgPath + 'checkbox.svg'"></svg-icon>
-            </button>
-            <a tabindex="-1" [ngClass]="{ link: product.relatedRecipe }" [routerLink]="
-                product.relatedRecipe
-                  ? '/recipes/list/' + product.relatedRecipe
-                  : null
-              " class="product-name">{{ product.name }}</a>
-            <div class="product-quantity">
-              {{ product.howMuch }}
-            </div>
-      
-            <button (click)="removeProduct(product.id)" class="cross-button">
-              <svg-icon [applyClass]="true" class="cross-icon" [src]="baseSvgPath + 'remove.svg'"></svg-icon>
-            </button>
-          </li>
-        </ul>
-    
-        <button *ngIf="shoppingList.length>0" class="clear-all-button" (click)="removeAllProducts()">Очистить весь список
-    
-          <svg-icon [applyClass]="true" class="clear-all-icon" [src]="baseSvgPath + 'delete-product.svg'"></svg-icon>
-        </button>
-    
-         <div class="new-product">
-          <app-button [color]="'sec'" [rounded]="true" [text]="'Добавить продукт'" class="new-product-button-add" (click)="newProductCreatingMode = !newProductCreatingMode">
-          
-          </app-button>
-    
-          <div class="new-product-popup" @height *ngIf="newProductCreatingMode">
-            <form [formGroup]="form">
-              <button class="form-btn eraser" (click)="resetFormProduct()">
-                <svg-icon class="svg" [applyClass]="true" [src]="baseSvgPath + 'eraser.svg'"></svg-icon>
-              </button>
-              <app-usual-input [value]="form.get('name')?.value" [inputRequired]="true" formControlName="name"
-                required [error]="
-                  form.get('name')?.invalid &&
-                  (form.get('name')?.dirty || form.get('name')?.touched)
-                    ? ' '
+
+        <div *ngIf="actualShoppingList.length > 0; else noProducts">
+          <div class="type" *ngFor="let type of groupedProducts | keyvalue">
+            <h4 class="type-name" [style]="{ color: findType(type.key)?.color }">
+              <svg-icon
+                [applyClass]="true"
+                class="category-svg"
+                [applyClass]="true"
+                [ngStyle]="{ fill: findType(type.key)?.color }"
+                [src]="
+                  findType(type.key)?.image
+                    ? baseSvgPath + findType(type.key)?.image + '.svg'
                     : ''
-                " [max]="50" [placeholder]="'Название'"></app-usual-input>
-            
-              <app-usual-input [value]="form.get('howMuch')?.value" [max]="17"  formControlName="howMuch"
-                [placeholder]="'Количество'"></app-usual-input>
-    
-              <button (click)="addShoppingListItem()" [disabled]="form.invalid" [ngClass]="{ disabled: form.invalid }"
-                class="form-btn plus">
-                <svg-icon class="svg" [applyClass]="true" [src]="baseSvgPath + 'add.svg'"></svg-icon>
+                "
+              ></svg-icon>
+
+              {{ type.key }}
+            </h4>
+
+            <ul
+              class="product-list"
+              
+              *ngIf="shoppingList.length > 0; else noProducts"
+            >
+              <li class="product-info"
+              [class.purchased]="product.isBought"
+                *ngFor="let product of type.value"
+                
+              >
+               <div class="main-product-info">
+                  <button [ngStyle]="{'border-color':findType(type.key)?.color}"
+                    (click)="markProductAsBought(product.id)"
+                    class="buy-button"
+                  >
+                    <svg-icon
+                    [ngStyle]="{'fill':findType(type.key)?.color}"
+                      *ngIf="product.isBought"
+                      [applyClass]="true"
+                      class="checkbox-svg"
+                      [src]="baseSvgPath + 'checkbox.svg'"
+                    ></svg-icon>
+                  </button>
+                  <a
+                    tabindex="-1"
+                    [ngClass]="{ 'link': product.relatedRecipe }"
+                    [routerLink]="
+                      product.relatedRecipe
+                        ? '/recipes/list/' + product.relatedRecipe
+                        : null
+                    "
+                    class="product-name"
+                    >{{ product.name }}</a
+                  >
+                  <div class="product-quantity">
+                    {{ product.howMuch }}
+                  </div>
+                  
+  
+                  <button 
+                    (click)="removeProduct(product.id)"
+                    class="cross-button"
+                  >
+                    <svg-icon
+                    [ngStyle]="{'fill':findType(type.key)?.color}"
+                      [applyClass]="true"
+                      class="cross-icon"
+                      [src]="baseSvgPath + 'remove.svg'"
+                    ></svg-icon>
+                  </button>
+               </div>
+               <div *ngIf="product.note" class="note">
+                <svg-icon class="note-svg" [applyClass]="true" [src]="baseSvgPath+'note.svg'"></svg-icon>
+                {{product.note}}</div>
+
+              </li>
+              
+            </ul>
+          </div>
+        </div>
+
+        <button
+          *ngIf="shoppingList.length > 0"
+          class="clear-all-button"
+          (click)="removeAllProducts()"
+        >
+          Очистить весь список
+
+          <svg-icon
+            [applyClass]="true"
+            class="clear-all-icon"
+            [src]="baseSvgPath + 'delete-product.svg'"
+          ></svg-icon>
+        </button>
+
+        <div class="new-product">
+          <app-button
+            [color]="'sec'"
+            [rounded]="true"
+            [text]="'Добавить продукт'"
+            class="new-product-button-add"
+            (click)="newProductCreatingMode = !newProductCreatingMode"
+          >
+          </app-button>
+
+          <div class="new-product-popup" @height *ngIf="newProductCreatingMode">
+            <div class="form">
+              <button class="form-btn eraser" (click)="resetFormProduct()">
+                <svg-icon
+                  class="svg"
+                  [applyClass]="true"
+                  [src]="baseSvgPath + 'eraser.svg'"
+                ></svg-icon>
               </button>
-            </form>
+              <div class="main-inputs">
+                <div class="search-block">
+                  <div class="search">
+                    <app-usual-input
+                      (focusEmitter)="focus()"
+                      [error]="
+                        searchQuery && focused && selectedType.id === 0
+                          ? ' '
+                          : ''
+                      "
+                      (blurEmitter)="blur()"
+                      [(ngModel)]="searchQuery"
+                      [value]="searchQuery"
+                      (ngModelChange)="recipeSearching()"
+                      type="text"
+                      placeholder="Выбери тип из результатов поиска"
+                    />
+                  </div>
+
+                  <div class="autocomplete-list"  style="overflow: hidden;">
+                    <ul @height *ngIf="autocompleteShow">
+                      <div *ngIf="autocompleteTypes.length === 0">
+                        <div class="no-found-recipes">
+                          <p>Ничего не найдено</p>
+                        </div>
+                      </div>
+                      <li
+                        *ngFor="let item of autocompleteTypes"
+                        (mousedown)="chooseRecipe(item)"
+                      >
+                        <p class="text">
+                          <svg-icon
+                            class="autocomplete-svg"
+                            [applyClass]="true"
+                            [src]="
+                              item.image
+                                ? baseSvgPath + item?.image + '.svg'
+                                : ''
+                            "
+                          ></svg-icon>
+                          {{ item.name }}
+                        </p>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <form [formGroup]="form" class="col">
+                  <div class="row">
+                    <app-usual-input
+                      [inputRequired]="true"
+                      formControlName="name"
+                      required
+                                            [value]="form.value.name"
+
+                      [error]="
+                        form.get('name')?.invalid &&
+                        (form.get('name')?.dirty || form.get('name')?.touched)
+                          ? ' '
+                          : ''
+                      "
+                      [max]="50"
+                      [placeholder]="'Название'"
+                    ></app-usual-input>
+
+                    <app-usual-input
+                      [max]="17"
+                      formControlName="howMuch"
+                      [value]="form.value.howMuch"
+                      [placeholder]="'Количество'"
+                    ></app-usual-input>
+                  </div>
+                  <app-usual-input
+                                        [value]="form.value.note"
+
+                    [max]="100"
+                    formControlName="note"
+                    
+                    [placeholder]="'Заметка'"
+                  ></app-usual-input>
+                </form>
+              </div>
+
+              <button
+                (click)="addShoppingListItem()"
+                [disabled]="form.invalid"
+                [ngClass]="{ disabled: form.invalid }"
+                class="form-btn plus"
+              >
+                <svg-icon
+                  class="svg"
+                  [applyClass]="true"
+                  [src]="baseSvgPath + 'add.svg'"
+                ></svg-icon>
+              </button>
+
+              <div></div>
+            </div>
           </div>
         </div>
       </div>
 
-         <div class="img-content"><img  src="../../../../assets/images/cook.png" class="cook noselect" alt="">
-      <div>
-        <h2>Организовывайте продуктовую корзину вместе с Yummy</h2>
-            <p>Приготовление вкусных блюд начинается с правильной подготовки. Наш список покупок поможет вам организовать покупку всех необходимых ингредиентов для выбранных рецептов. С этим инструментом вы легко сможете составить список продуктов, который позволит вам экономить время и избегать забывать что-то важное. Начните планировать и готовить вкусные блюда с нашим списком покупок!</p>
+      <div class="cont">
+        <h2>Почему это <span>важно</span>?</h2>
+
+        <p class="center">
+          Раздел «Список продуктов» — это ваш надежный помощник в планировании и
+          ведении здорового образа жизни, а также в создании вкусных и
+          сбалансированных блюд. В этом разделе мы предоставляем вам удобный
+          инструмент для создания и управления списками продуктов. Вот почему
+          это так важно и какие плюсы он предоставляет:
+        </p>
+
+        <div class="rows">
+          <div class="row right">
+            <div>
+              <h3>Здоровое питание</h3>
+              <p>
+                Список продуктов способствует нашему здоровому образу жизни и
+                благополучию. Мы можем включать в него продукты, богатые
+                питательными веществами и витаминами, что помогает нам создавать
+                сбалансированные блюда и следить за качеством нашей пищи. Это
+                особенно важно, когда мы следим за диетой или стремимся к
+                определенным пищевым привычкам. Тажке происходит сокращение
+                потребления вредных продуктов путем внимательного отслеживания
+                того, что вы покупаете. Вы можете уменьшить потребление
+                нежелательных продуктов, таких как быстрая еда, высококалорийные
+                закуски и сладости.
+              </p>
+            </div>
+            <svg-icon
+              style="transform: scale(-1, 1)"
+              class="infopic-svg noselect"
+              [src]="baseSvgPath + 'info2.svg'"
+            ></svg-icon>
+          </div>
+          <div class="row">
+            <svg-icon
+              class="infopic-svg noselect"
+              [src]="baseSvgPath + 'info3.svg'"
+            ></svg-icon>
+            <div>
+              <h3>Экономия времени и ресурсов</h3>
+              <p>
+                Составление списка продуктов также экономит наше время и
+                ресурсы. Мы точно знаем, что нам нужно при планировании покупок,
+                и это помогает нам избежать бесцельных походов в магазин и
+                импульсных покупок. Такой подход не только сэкономит наши
+                деньги, но и облегчит нашу повседневную жизнь, сделав ее более
+                структурированной и продуктивной.
+              </p>
+            </div>
+          </div>
+        </div>
+        <p class="center">
+          В заключение, список продуктов - это не просто перечень продуктов, это
+          инструмент, способствующий нашей организации, здоровью и экономии.
+          Этот простой инструмент помогает нам управлять нашим питанием,
+          позволяет нам следить за тем, что мы едим, и приносит множество
+          практических польз в нашей повседневной жизни.
+        </p>
       </div>
-      </div>
-   </div>
+    </div>
   </div>
 </div>

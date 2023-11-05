@@ -37,6 +37,7 @@ export class UsualInputComponent implements OnInit, OnChanges {
   @Input() inputType: 'input' | 'textarea' | 'password' = 'input';
   @Input() inputRequired: boolean = false;
   @Output() blurEmitter = new EventEmitter<boolean>()
+  @Output() focusEmitter = new EventEmitter<boolean>()
 
   showPassword = true; //показывается ли пароль
 
@@ -73,6 +74,7 @@ export class UsualInputComponent implements OnInit, OnChanges {
     });
     this.isFocused = true;
     this.isSleep = false;
+    this.focusEmitter.emit(true)
   }
 
   //Исчезновение фокуса

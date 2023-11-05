@@ -51,14 +51,14 @@ ol{
     }
   }
   .num{
-    font-size: 0.8em;
+    font-size: 1em;
     @include flex;
     min-width: 1.3rem;
     height:1.3rem;
     color: var(--color-background);
     border-radius: 100%;
     background-color: var(--color-secondary);
-    font-weight: 700;
+    font-weight: 800;
   }
   h2{
     font-size: 1.2em;
@@ -93,8 +93,9 @@ ol{
 }
 h3 {
   line-height: 1;
-  font-size: var(--font-xl);
+  font-size: var(--font-l);
   font-weight: 700;
+  padding:  0 1em;
   text-align: center;
 }
 .btn-wrap {
@@ -102,7 +103,11 @@ h3 {
   margin-top: 1em;
   align-items: center;
   justify-content: space-between;
+
+    margin-bottom:1em;
+
 }
+
 
 .edit-plan {
   margin-bottom: 1em;

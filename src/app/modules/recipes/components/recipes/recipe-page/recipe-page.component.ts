@@ -345,7 +345,9 @@ export class RecipePageComponent implements OnInit, OnDestroy {
 
   addToBasket(i: number, ingredient: Ingredient) {
     const groceryList = this.myPlan.shoppingList;
-    const maxId = Math.max(...groceryList.map((g) => g.id));
+    let maxId = 0;
+    if(groceryList.length>0)
+    maxId = Math.max(...groceryList.map((g) => g.id));
     const find = this.recipe.ingredients.find(
       (ingr) => ingr.name === ingredient.name,
     );

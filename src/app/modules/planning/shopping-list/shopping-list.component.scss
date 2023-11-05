@@ -23,6 +23,11 @@
   }
 }
 
+.modal{
+  position: fixed;
+  z-index: 10;
+}
+
 .product-list {
   list-style: none;
   padding: 0;

@@ -19,7 +19,7 @@
             
                                 <div class="category-name">{{category.name}}</div>
             
-                                <span class="count"> {{getCategoryRecipesNumber(category.id)}}</span>
+                                <span class="count noselect"> {{getCategoryRecipesNumber(category.id)}}</span>
                             </button>
 
                 </div>
@@ -46,7 +46,7 @@
                 <button class="ingredient" *ngFor="let ingredient of getIngredientNames()"
                     (click)="selectIngredient(ingredient)">
                     + {{ ingredient }}
-                    <span class="count">{{
+                    <span class="count noselect">{{
                         uniqueIngredientsArray[ingredient]
                         }}</span>
                 </button>
@@ -96,7 +96,7 @@
             </div>
     
             <div class="match" *ngIf="matchingRecipes.length>0; else noRecipes">
-                <p class="match-count">Подобрано рецептов: <span>{{ matchingRecipes.length }}</span></p>
+                <p class="match-count">Подобрано рецептов: <span class="noselect">{{ matchingRecipes.length }}</span></p>
                 <app-button [style]="'filled'"
                     (click)="matchingRecipes.length > 0?showMatchingRecipes=!showMatchingRecipes:null"
                     [disabled]="matchingRecipes.length > 0" [color]="'sec'"

@@ -157,7 +157,7 @@
       </div>
     </div>
     <div>
-      <h3>{{ viewDate | calendarDate: view + "ViewTitle" | titlecase }}</h3>
+      <h3 class="title">{{ viewDate | calendarDate: view + "ViewTitle" }}</h3>
     </div>
     <div>
       <div class="btn-group noselect">
@@ -217,6 +217,8 @@
       [events]="events"
       [refresh]="refresh"
       [locale]="locale"
+    
+      
       (eventClicked)="handleEvent('Clicked', $event.event)"
       (eventTimesChanged)="eventTimesChanged($event)"
     >
@@ -225,10 +227,10 @@
 
   <app-button
     class="new-recipe-button noselect"
-    [text]="'Запланировать новый рецепт'"
+    [text]="'Добавить рецепт в план'"
     (click)="createMode = true"
     [color]="'sec'"
-    [style]="'outlined'"
+    [style]="'filled'"
     [rounded]="true"
   ></app-button>
 
@@ -241,18 +243,18 @@
     @modal
     style="position: fixed; z-index: 10"
     *ngIf="createMode"
-    (closeEmitter)="createMode = false"
+    (closeEmitter)="closeCreateModal()"
   ></app-add-calendar-event>
 
   <div class="table">
-    <div></div>
+    <div class="head"></div>
     <div class="head noselect">Название</div>
     <div class="head noselect">Цвет</div>
     <div class="head noselect">Дата</div>
     <div class="head"></div>
 
     <ng-container *ngFor="let event of events">
-      <div>
+      <div class="edit">
         <button
           (click)="targetEvent = event; createMode = true"
           class="noselect clear-all-button"
@@ -264,7 +266,7 @@
           ></svg-icon>
         </button>
       </div>
-      <div>
+      <div class="name">
         <a
           [ngClass]="{ 'real-link': event.recipeId }"
           [routerLink]="
@@ -274,7 +276,7 @@
         >
       </div>
 
-      <div>
+      <div  class="color-block">
         <div
           class="color"
           [ngStyle]="{ 'background-color': event.color!.primary }"
@@ -283,11 +285,20 @@
         ></div>
       </div>
 
-      <div>
-        <p class="fulldate">{{ event.start | date: "fullDate" }}</p>
+      <div class="date">
+          <p class="fulldate"><span>Начало: </span>  {{event.start | date: "shortTime"}}  {{ event.start | date: "fullDate" }}
+                 ({{ event.start.toString() | timePast | lowercase }})</p>
+
+
+                 <p class="fulldate"><span>Конец: </span>
+ {{event.end? (event.end | date: "shortTime"): ''}}
+                  {{ event.end? ((event.end | date: "fullDate"))  :'не установлен' }}
+
+                  <ng-container *ngIf="event.end">({{ event.end.toString() | timePast | lowercase }})</ng-container></p>
+
       </div>
 
-      <div>
+      <div class="delete">
         <button (click)="deleteEvent(event)" class="noselect clear-all-button">
           <svg-icon
             [applyClass]="true"

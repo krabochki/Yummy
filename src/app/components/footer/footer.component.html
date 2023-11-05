@@ -1,6 +1,6 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<div class="footer">
+<div class="footer noselect">
 
     <div class="main-info">
         <div>
@@ -25,15 +25,18 @@
                 <ul>
                     <a (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" [routerLink]="this.currentUser.id >0?'/cooks/list/'+currentUser.id:null">Твой профиль</a>
                     <a routerLink="/cooks">Все кулинары</a>
-                    <a routerLink="/cooks/updates">Обновления</a>
+                    <a [routerLink]="this.currentUser.id >0?'/cooks/updates':null" (click)="linkClick()"  [ngClass]="{'disabling':currentUser.id===0}" >Обновления</a>
                 </ul>
             </div>
             <div>
-                <p>Другое</p>
+                <p>Планнер</p>
                 <ul>
-                    <a [routerLink]="this.currentUser.id >0?'plan':null" (click)="linkClick()"  [ngClass]="{'disabling':currentUser.id===0}">План готовки</a>
-                    <a routerLink="/about">О сайте</a>
-                    <a routerLink="/user-policy">Пользовательское соглашение</a>
+                    <a routerLink="/plan/collections" >Подборки</a>
+                    <a routerLink="/plan/tips" >Советы</a>
+                    <a [routerLink]="this.currentUser.id >0?'/plan/calendar':null" (click)="linkClick()"  [ngClass]="{'disabling':currentUser.id===0}">Календарь рецептов</a>
+                    <a [routerLink]="this.currentUser.id >0?'/plan/shopping-list':null" (click)="linkClick()"  [ngClass]="{'disabling':currentUser.id===0}">Список покупок</a>
+                    <!-- <a routerLink="/about">О сайте</a>
+                    <a routerLink="/user-policy">Пользовательское соглашение</a> -->
                 </ul>
             </div>
         </div>

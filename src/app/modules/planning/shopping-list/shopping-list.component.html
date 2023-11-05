@@ -2,12 +2,12 @@
   <div class="grocery-list">
     <h1 class="noselect">Список покупок</h1>
 
-    <h2 class="main">Ваш список покупок</h2>
+    <h2 class="main noselect">Ваш список покупок</h2>
 
     <div class="img-cont">
       <div class="content">
         <ng-template #noProducts>
-          <p class="no-products">
+          <p class="no-products noselect">
             В вашем списке ингредиентов пока нет продуктов. Попробуйте создать
             новый продукт сами или добавить его из ингредиентов на странице
             какого-нибудь рецепта
@@ -96,7 +96,7 @@
         <button
           *ngIf="shoppingList.length > 0"
           class="clear-all-button"
-          (click)="removeAllProducts()"
+          (click)="deletingAllProductsModalShow=true;"
         >
           Очистить весь список
 
@@ -228,7 +228,7 @@
         </div>
       </div>
 
-      <div class="cont">
+      <div class="cont noselect">
         <h2>Почему это <span>важно</span>?</h2>
 
         <p class="center">
@@ -291,3 +291,6 @@
     </div>
   </div>
 </div>
+
+
+<app-modal @modal *ngIf="deletingAllProductsModalShow" class="modal" [style]="'prim'" [buttonsText]="['Да','Отмена']" [description]="'Вы уверены, что хотите удалить все продукты из вашего списка покупок?'" [type]="'yesOrNo'" [title]="'Подтвердите удаление всех продуктов'" (resultEmit)="handleDeletingAllProductsModal($event)"></app-modal>

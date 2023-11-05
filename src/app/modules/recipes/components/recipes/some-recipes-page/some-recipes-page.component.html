@@ -73,6 +73,33 @@
       </div>
 
       <ng-template #all>
+
+         <div class="block" *ngIf="currentUser.id > 0 && plannedRecipes.length > 0">
+          <a routerLink="/recipes/planned" class="head">
+            <h2>Запланированные рецепты</h2>
+
+            <svg-icon
+              class="arrow-svg"
+              [applyClass]="true"
+              [src]="'../../../../../assets/images/svg/go-back.svg'"
+            ></svg-icon>
+          </a>
+          <div
+            class="recipes"
+            [ngClass]="{ horizontal: plannedRecipes.length >= 5 }"
+          >
+            <app-horizontal-recipe-list
+              *ngIf="plannedRecipes.length >= 5; else vertical"
+              [recipes]="plannedRecipes"
+            ></app-horizontal-recipe-list>
+            <ng-template #vertical>
+              <app-vertical-recipe-list
+                [blocks]="plannedRecipes"
+              ></app-vertical-recipe-list>
+            </ng-template>
+          </div>
+        </div>
+
         <div class="block" *ngIf="currentUser.id > 0 && myRecipes.length > 0">
           <a routerLink="/recipes/yours" class="head">
             <h2>Твои рецепты</h2>

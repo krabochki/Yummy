@@ -55,6 +55,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
 
   @Input() editedRecipe: IRecipe = { ...nullRecipe };
 
+
   currentStep: number = 0;
   showInfo = false;
   steps: Step[] = steps;
@@ -587,9 +588,12 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     if (answer) {
       this.editRecipe();
     } else {
-      this.renderer.addClass(document.body, 'hide-overflow');
-      (<HTMLElement>document.querySelector('.header')).style.width =
-        'calc(100% - 16px)';
+      setTimeout(() => {
+         this.renderer.addClass(document.body, 'hide-overflow');
+         (<HTMLElement>document.querySelector('.header')).style.width =
+           'calc(100% - 16px)';
+      }, 0);
+     
     }
 
     this.editModalShow = false;

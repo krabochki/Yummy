@@ -26,7 +26,7 @@ export const planSelectItems: string[] = [
   'Планнер',
   'Подборки',
   'Советы',
-  'План рецептов',
+  'Календарь рецептов',
   'Список покупок',
 ];
 
@@ -39,7 +39,7 @@ export const cookRouterLinks: string[] = [
 export const planRouterLinks: string[] = [
   '/plan/collections',
   '/plan/tips',
-  '/plan/cooking-plan',
+  '/plan/calendar',
   '/plan/shopping-list',
 ];
 

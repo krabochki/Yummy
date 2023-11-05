@@ -5,10 +5,7 @@ import {
   ChangeDetectorRef,
   OnDestroy,
 } from '@angular/core';
-import {
-  isSameDay,
-  isSameMonth,
-} from 'date-fns';
+import { isSameDay, isSameMonth } from 'date-fns';
 import localeRu from '@angular/common/locales/ru';
 
 import { Subject, takeUntil } from 'rxjs';
@@ -89,22 +86,35 @@ export class CalendarComponent implements OnInit, OnDestroy {
           receivedPlans,
         );
         this.events = this.getEventsWithNormalData();
+        this.events = this.events.sort((e1, e2) => {
+          {
+            if (e1.start > e2.start) return 1;
+            else return -1;
+          }
+        }); //сортируем по времени(прошедшие раньше)
         this.cd.markForCheck();
+        this.refresh.next();
       });
   }
 
-  private getEventsWithNormalData():CalendarEvent[] {
-     const eventsWithModifyNormalData = this.currentUserPlan.calendarEvents;
-     //дата извлекается из обьекта после запроса не в корректном формате даты
-     //календарь не может ее преобразовать, поэтому преобразовываю тут
-     eventsWithModifyNormalData.forEach((event) => {
-       event.start = new Date(event.start);
-       if (event.end) event.end = new Date(event.end);
-     });
-     return eventsWithModifyNormalData;
+  private getEventsWithNormalData(): CalendarEvent[] {
+    const eventsWithModifyNormalData = this.currentUserPlan.calendarEvents;
+    //дата извлекается из обьекта после запроса не в корректном формате даты
+    //календарь не может ее преобразовать, поэтому преобразовываю тут
+    eventsWithModifyNormalData.forEach((event) => {
+      event.start = new Date(event.start);
+      if (event.end) event.end = new Date(event.end);
+    });
+    return eventsWithModifyNormalData;
   }
 
-  protected dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
+  protected dayClicked({
+    date,
+    events,
+  }: {
+    date: Date;
+    events: CalendarEvent[];
+  }): void {
     if (isSameMonth(date, this.viewDate)) {
       if (
         (isSameDay(this.viewDate, date) && this.activeDayIsOpen === true) ||
@@ -118,7 +128,8 @@ export class CalendarComponent implements OnInit, OnDestroy {
     }
   }
 
-  protected eventTimesChanged({ //перетаскивание события и изменение его даты
+  protected eventTimesChanged({
+    //перетаскивание события и изменение его даты
     event,
     newStart,
     newEnd,
@@ -134,15 +145,14 @@ export class CalendarComponent implements OnInit, OnDestroy {
       }
       return iEvent;
     });
-    this.handleEvent('Dropped or resized', event);
 
-    const endChanged = before.end?.toDateString() !== newEnd?.toDateString();
-    const startChanged =
-      before.start.toDateString() !== newStart.toDateString();
+    const endChanged = before.end?.toString() !== newEnd?.toString();
+    const startChanged = before.start.toString() !== newStart.toString();
 
     if (endChanged || startChanged) {
       this.currentUserPlan.calendarEvents = this.events;
       this.planService.updatePlan(this.currentUserPlan).subscribe();
+      this.handleEvent('Dropped or resized', event);
     }
   }
 
@@ -165,6 +175,11 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
   setView(view: CalendarView) {
     this.view = view;
+  }
+
+  closeCreateModal() {
+    this.createMode = false;
+    this.targetEvent = nullCalendarEvent;
   }
 
   closeOpenMonthViewDay() {

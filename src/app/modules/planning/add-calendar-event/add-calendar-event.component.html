@@ -2,148 +2,220 @@
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <div class="background" (click)="clickBackgroundNotContent($event)">
   <div class="main-cont">
-    <div class="close-button" (click)="closeEmitter.emit(true)">
+    <div class="close-button" (click)="noChanges?this.closeEmitter.emit(true):modalExitShow=true">
       <svg-icon
         class="close-svg"
         [applyClass]="true"
         [src]="'../../../../assets/images/svg/close.svg'"
       ></svg-icon>
     </div>
-    <h1>
+    <h1 class="noselect">
       {{ editMode ? "Изменение рецепта в плане" : "Добавление рецепта в план" }}
     </h1>
 
-    <p class="description begin">
+    <p class="description begin noselect">
       {{
         editMode
-          ? "Тут ты можешь изменить существующий рецепт в твоем плане готовки. Измени нужные поля ниже, чтобы обновленный рецепт попал в план."
-          : "Тут ты можешь добавить новый рецепт в твой план готовки. Заполни необходимые поля ниже, чтобы интегрировать рецепт в твой гастрономический календарь."
+          ? "Тут вы можете изменить существующий рецепт в вашем плане готовки. Измените нужные поля ниже, чтобы обновленный рецепт попал в план."
+          : "Тут вы можете добавить новый рецепт в ваш план готовки. Заполните необходимые поля ниже, чтобы интегрировать рецепт в твой гастрономический календарь."
       }}
-       После заполнения всех полей, нажми «{{
-          editMode ? "Обновить рецепт в плане" : "Добавить рецепт в план"
-        }}» для сохранения. 
+      После заполнения всех полей, нажмите «{{
+        editMode ? "Обновить рецепт в плане" : "Добавить рецепт в план"
+      }}» для сохранения.
     </p>
 
     <hr />
 
     <div>
-      <div class="img-cont">
-        <div class="first-col">
-          <div class="section">
-            <h2>Название рецепта</h2>
-            <app-usual-input
-              [(ngModel)]="title"
-              [max]="50"
-              [value]="title"
-              [placeholder]="'Введите название предстоящего шедевра'"
-              type="text"
-              [inputRequired]="true"
-              class="form-control"
-              [(ngModel)]="title"
-            />
-          </div>
-
-           <div class="section">
-            <h2>Связанный рецепт Yummy</h2>
-
-            <div class="search-block">
-              <div class="search">
-                <app-usual-input
-                  (focus)="focus()"
-                  [error]="searchQuery&&focused&&(selectedRecipe.id===0)?' ':''"
-                  (blurEmitter)="blur()"
-                  [(ngModel)]="searchQuery"
-                  [value]="searchQuery"
-                  (ngModelChange)="recipeSearching()"
-                  type="text"
-                  placeholder="Введи название и выбери рецепт из результатов поиска"
-                />
-              </div>
-
-              <div class="autocomplete-list">
-                <ul @auto-complete *ngIf="autocompleteShow">
-                  <div *ngIf="autocompleteRecipes.length === 0">
-                    <div class="no-found-recipes">
-                
-                      <p>
-                       По твоему запросу нет никаких рецептов.
-                        Попробуй изменить параметры поиска или подобрать рецепт
-                        в специальном разделе!
-                      </p>
-                      <app-button
-                        [text]="'Подбор рецептов'"
-                        (mousedown)="navigateTo('/recipes/match')"
-                        [style]="'filled'"
-                        [color]="'prim'"
-                        [rounded]="true"
-                      ></app-button>
-                    </div>
-                  </div>
-                  <li *ngFor="let item of autocompleteRecipes" (mousedown)="chooseRecipe(item)">
-                    <p>{{ item.name }}</p>
-                    <span>{{
-                      getUser(item.authorId).fullName !== ""
-                        ? getUser(item.authorId).fullName
-                        : "@" + getUser(item.authorId).username
-                    }}</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div class="section">
-            <h2>Цвет</h2>
-            <div class="palette">
-              <button
-                class="color"
-                *ngFor="let color of colors; let i = index"
-                (click)="selectColor(i)"
-                [ngClass]="{ selected: i === selectedColorIndex }"
-                [ngStyle]="{ 'background-color': color }"
-              > </button>
-            </div>
-          </div>
-
-          <div class="section">
-            <h2>Дата</h2>
-            <div>
-              <input
-                class="calendar-event"
+      <div class="for-effect">
+        <div class="img-cont">
+          <div class="first-col">
+            <div class="section">
+              <h2 class="noselect">Название рецепта</h2>
+              <app-usual-input
+                [(ngModel)]="title"
+                [max]="50"
+                [value]="title"
+                [placeholder]="'Введите название предстоящего шедевра'"
                 type="text"
-                mwlFlatpickr
-                [(ngModel)]="date"
-                [altInput]="true"
-                [convertModelValue]="true"
-                [enableTime]="false"
-                dateFormat="Y-m-d"
-                altFormat="F j, Y"
-                placeholder="Выберите дату*"
+                [inputRequired]="true"
+                class="form-control"
+                [(ngModel)]="title"
               />
             </div>
-          </div>
-         
 
-          <app-button
-            [style]="'filled'"
-            [color]="'sec'"
-            [rounded]="true"
-            [text]="
-              editMode ? 'Обновить рецепт в плане' : 'Добавить рецепт в план'
+            <div class="section">
+              <h2 class="noselect">Связанный рецепт Yummy</h2>
+
+              <div class="search-block">
+                <div class="search">
+                  <app-usual-input
+                  [inputDisabled]="event.id>-1?false:true"
+                    (focus)="focus()"
+                    [error]="
+                      searchQuery && focused && selectedRecipe.id === 0
+                        ? ' '
+                        : ''
+                    "
+                    (blurEmitter)="blur()"
+                    [(ngModel)]="searchQuery"
+                    [value]="searchQuery"
+                    (ngModelChange)="recipeSearching()"
+                    type="text"
+                    placeholder="Введите название и выбери рецепт из результатов поиска"
+                  />
+                </div>
+
+                <div class="autocomplete-list">
+                  <ul @auto-complete *ngIf="autocompleteShow">
+                    <div *ngIf="autocompleteRecipes.length === 0">
+                      <div class="no-found-recipes">
+                        <p class="noselect">
+                          По вашему запросу нет никаких рецептов. Попробуйте
+                          изменить параметры поиска или подобрать рецепт в
+                          специальном разделе!
+                        </p>
+                        <app-button 
+                          [text]="'Подбор рецептов'"
+                          (mousedown)="navigateTo('/recipes/match')"
+                          [style]="'filled'"
+                          [color]="'prim'"
+                          [rounded]="true"
+                        ></app-button>
+                      </div>
+                    </div>
+                    <li
+                      *ngFor="let item of autocompleteRecipes"
+                      (mousedown)="chooseRecipe(item)"
+                    >
+                      <p>{{ item.name }}</p>
+                      <span>{{
+                        getUser(item.authorId).fullName !== ""
+                          ? getUser(item.authorId).fullName
+                          : "@" + getUser(item.authorId).username
+                      }}</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <h2 class="noselect">Цвет</h2>
+              <div class="palette">
+                <button
+                  class="color"
+                  *ngFor="let color of colors; let i = index"
+                  (click)="selectColor(i)"
+                  [ngClass]="{
+                    selected:
+                      i === selectedColorIndex && colorSource === 'palette'
+                  }"
+                  [ngStyle]="{ 'background-color': color }"
+                > </button>
+              </div>
+              <div class="custom-color">
+                <p class="noselect" style="zoom: 0.9">Или выберите собственный цвет:</p>
+                <input
+                  [ngClass]="{ selected: colorSource === 'custom' }"
+                  (blur)="selectCustomColor()"
+                  [(ngModel)]="customColor"
+                  type="color"
+                  class="color-picker"
+                />
+              </div>
+            </div>
+
+            <div class="dates">
+              <div class="section">
+                <h2 class="noselect">Начало</h2>
+                <div>
+                  <input
+                    class="calendar-event"
+                    type="text"
+                    mwlFlatpickr
+                    [(ngModel)]="start"
+                    [altInput]="true"
+                    [convertModelValue]="true"
+                    [enableTime]="true"
+                    [time24hr]="true"
+                    dateFormat="Y-m-dTH:i"
+                    altFormat="F j, Y H:i"
+                    placeholder="Выберите начало*"
+                  />
+                </div>
+              </div>
+              <div class="section">
+                <h2 class="noselect">Конец</h2>
+                <div>
+                  <input
+                    class="calendar-event"
+                    type="text"
+                    mwlFlatpickr
+                    [(ngModel)]="end"
+                    [altInput]="true"
+                    [convertModelValue]="true"
+                    [enableTime]="true"
+                    [time24hr]="true"
+                    dateFormat="Y-m-dTH:i"
+                    altFormat="F j, Y H:i"
+                    placeholder="Выберите конец*"
+                  />
+                </div>
+              </div>
+
+              <p 
+                class="error noselect"
+                *ngIf="end && start ? start >= end : null || !start"
+              >
+                {{
+                  (end ? start >= end : null)
+                    ? "Приготовление не может заканчиваться раньше, чем начинается!"
+                    : "Дата начала приготовления обязательна"
+                }}
+              </p>
+            </div>
+          </div>
+          <svg-icon
+            class="icon"
+            [applyClass]="true"
+            [src]="
+              '../../../../assets/images/svg/planning/cook-and-ingredients.svg'
             "
-            (click)="editMode ? editEvent() : addEvent()"
-          >
-          </app-button>
+          ></svg-icon>
         </div>
-        <svg-icon
-          class="icon"
-          [applyClass]="true"
-          [src]="
-            '../../../../assets/images/svg/planning/cook-and-ingredients.svg'
-          "
-        ></svg-icon>
       </div>
-     
+
+      <app-button
+        [style]="'filled'"
+        [color]="'sec'"
+        [disabled]="
+          (title.length>4) && start && (end ? start <= end : true) ? true : false
+        "
+        [rounded]="true"
+        [text]="editMode ? 'Обновить рецепт в плане' : 'Добавить рецепт в план'"
+        (click)="
+          (title.length>4) && start && (end ? start <= end : true)
+            ? modalSaveShow = true
+            : null
+        "
+      >
+      </app-button>
     </div>
   </div>
 </div>
+
+
+<app-modal @modal (resultEmit)="handleExitModal($event)" *ngIf="modalExitShow" [style]="'prim'" [type]="'yesOrNo'" [buttonsText]="['Да','Отмена']" 
+
+[title]="'Подтвердите выход'"
+[description]="'Вы уверены, что не хотите сохранять запланированный рецепт?'" > </app-modal>
+
+<app-modal @modal (resultEmit)="handleSaveModal($event)" *ngIf="modalSaveShow" [style]="'prim'" [type]="'yesOrNo'" [buttonsText]="['Да','Отмена']" 
+[title]="'Подтвердите добавление рецепта'"
+[description]="'Вы уверены, что хотите добавь рецепт в план?'" > </app-modal>
+
+
+<app-modal
+[title]="'Рецепт добавлен'"
+@modal (resultEmit)="handleSuccessSaveModal()" *ngIf="modalSuccessSaveShow" [style]="'sec'" [type]="'Ok'" [buttonsText]="['Хорошо']" [description]="'Рецепт успешно добавлен в «Календарь рецептов»!'" > </app-modal>

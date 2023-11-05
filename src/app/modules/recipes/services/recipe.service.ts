@@ -4,6 +4,7 @@ import { IRecipe, IRecipeStatistics } from '../models/recipes';
 import { BehaviorSubject, catchError, map, mergeMap, switchMap, take, tap, throwError } from 'rxjs';
 import { recipesUrl } from 'src/tools/source';
 import { getCurrentDate } from 'src/tools/common';
+import { IPlan } from '../../planning/models/plan';
 
 @Injectable({
   providedIn: 'root',
@@ -168,6 +169,28 @@ export class RecipeService {
   getMostDiscussedRecipes(recipes: IRecipe[]): IRecipe[] {
     recipes = recipes.filter((recipe) => recipe.comments.length > 0);
     return recipes.sort((a, b) => b.comments.length - a.comments.length);
+  }
+  getPlannedRecipes(recipes: IRecipe[], plan: IPlan) {
+    const plannedRecipeIds: number[] = [];
+    
+    console.log(recipes)
+    console.log(plan)
+
+       for (const calendarEvent of plan.calendarEvents) {
+         plannedRecipeIds.push(calendarEvent.recipeId);
+       }
+    console.log(plannedRecipeIds)
+
+    const plannedRecipes:IRecipe[]  = []
+
+    recipes.forEach(element => {
+      if (plannedRecipeIds.includes(element.id))
+        plannedRecipes.push(element)
+    });
+
+      
+
+       return plannedRecipes;
   }
   getPublicRecipes(recipes: IRecipe[]) {
     return recipes.filter((recipe) => recipe.status === 'public');

@@ -44,7 +44,7 @@ export const timeDiffGenerator: TimeDiffGenerator = (diff): string => {
   if (diff.minutes < 90) {
     return '1 час назад';
   }
-  if (diff.hours < 22) {
+  if (diff.hours < 24) {
     if (diff.isFuture)
       return (
         'Через '+diff.hours +

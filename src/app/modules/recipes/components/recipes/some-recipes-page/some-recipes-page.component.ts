@@ -17,9 +17,10 @@ import {
   recipeTitles,
 } from './consts';
 import { Subject, takeUntil } from 'rxjs';
+import { PlanService } from 'src/app/modules/planning/services/plan-service';
+import { IPlan, nullPlan } from 'src/app/modules/planning/models/plan';
 
 @Component({
-  selector: 'app-some-recipes-page',
   templateUrl: './some-recipes-page.component.html',
   styleUrls: [
     './some-recipes-page.component.scss',
@@ -38,6 +39,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private title: Title,
     private router: Router,
+    private planService: PlanService,
   ) {}
 
   dataLoad: boolean = false;
@@ -47,6 +49,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
   allRecipes: IRecipe[] = [];
   category: ICategory = nullCategory;
   recentRecipes: IRecipe[] = [];
+  plannedRecipes: IRecipe[] = [];
   popularRecipes: IRecipe[] = [];
   discussedRecipes: IRecipe[] = [];
   commentedRecipes: IRecipe[] = [];
@@ -62,6 +65,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
   allUsers: IUser[] = [];
   currentUserFollowing: IUser[] = [];
   recipeType: RecipeType = RecipeType.All;
+  currentUserPlan: IPlan = nullPlan;
   protected destroyed$: Subject<void> = new Subject<void>();
 
   getTitleByRecipeType(recipeType: RecipeType): string {
@@ -88,6 +92,9 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     switch (filter) {
       case 'recent':
         this.recipeType = RecipeType.Recent;
+        break;
+      case 'planned':
+        this.recipeType = RecipeType.Planning;
         break;
       case 'all':
         this.recipeType = RecipeType.All;
@@ -129,6 +136,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
         this.allUsers = data;
       });
 
+
     this.route.data.subscribe((data) => {
       this.filter = data['filter'];
       this.setRecipeType(this.filter);
@@ -160,12 +168,34 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroyed$))
           .subscribe((user: IUser) => {
             this.currentUser = user;
+            
+    this.planService.plans$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedPlans) => {
+        this.currentUserPlan = this.planService.getPlanByUser(
+          this.currentUser.id,
+          receivedPlans,
+        );
+      });
 
             this.recipeService.recipes$
               .pipe(takeUntil(this.destroyed$))
               .subscribe((data) => {
                 const publicRecipes = this.recipeService.getPublicRecipes(data);
+                const publicAndAllMyRecipes =
+                  this.recipeService.getPublicAndAllMyRecipes(
+                    data,
+                    this.currentUser.id,
+                  );
                 switch (this.recipeType) {
+                  case RecipeType.Planning:
+                    this.allRecipes = this.recipeService.getPlannedRecipes(
+                      publicAndAllMyRecipes,
+                      this.currentUserPlan,
+                    );
+                    this.recipesToShow = this.allRecipes.slice(0, 8);
+
+                    break;
                   case RecipeType.Discussed:
                     this.allRecipes =
                       this.recipeService.getMostDiscussedRecipes(publicRecipes);
@@ -228,6 +258,12 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
                     this.recipesToShow = publicRecipes;
                     this.popularRecipes = this.recipeService
                       .getPopularRecipes(this.allRecipes)
+                      .slice(0, 8);
+                    this.plannedRecipes = this.recipeService
+                      .getPlannedRecipes(
+                        publicAndAllMyRecipes,
+                        this.currentUserPlan,
+                      )
                       .slice(0, 8);
                     this.discussedRecipes = this.recipeService
                       .getMostDiscussedRecipes(publicRecipes)

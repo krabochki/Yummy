@@ -20,7 +20,7 @@ import { UserService } from '../../user-pages/services/user.service';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
 import { Subject, takeUntil } from 'rxjs';
-import { startOfDay } from 'date-fns';
+import { endOfDay, startOfDay } from 'date-fns';
 @Component({
   selector: 'app-add-calendar-event',
   templateUrl: './add-calendar-event.component.html',
@@ -38,8 +38,12 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
 
   protected title: string = '';
   protected colors: string[] = palette;
-  protected date: Date = startOfDay(new Date());
+  protected start: Date = startOfDay(new Date());
+  protected end: Date | undefined = endOfDay(new Date());
   protected selectedColorIndex: number = 0;
+
+  protected customColor = '#ff3867';
+  protected colorSource: 'palette' | 'custom' = 'palette';
 
   protected editMode: boolean = false;
 
@@ -53,6 +57,10 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
   private allRecipes: IRecipe[] = [];
 
   protected destroyed$: Subject<void> = new Subject<void>();
+
+  protected modalExitShow: boolean = false;
+  protected modalSuccessSaveShow: boolean = false;
+  protected modalSaveShow: boolean = false;
 
   constructor(
     private planService: PlanService,
@@ -72,13 +80,21 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
 
   private editingRecipeInit() {
     if (this.event.id !== 0) {
-      this.editMode = true;
+      if (this.event.id > 0) {
+        this.editMode = true;
+        this.start = this.event.start;
+        if (this.event.end) this.end = this.event.end;
+        else this.end = undefined;
+        this.selectedColorIndex = this.colors.findIndex(
+          (i) => i === this.colors.find((c) => c === this.event.color?.primary),
+        );
+        if (this.selectedColorIndex === -1 && this.event.color) {
+          this.customColor = this.event.color.primary;
+          this.colorSource = 'custom';
+        }
+      }
       this.title = this.event.title;
-      this.date = this.event.start;
-      this.selectedColorIndex = this.colors.findIndex(
-        (i) => i === this.colors.find((c) => c === this.event.color?.primary),
-      );
-      const findedRecipe = this.allRecipes.find(
+      const findedRecipe: IRecipe | undefined = this.allRecipes.find(
         (r) => r.id === this.event.recipeId,
       );
       if (findedRecipe) {
@@ -116,40 +132,69 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
 
   protected clickBackgroundNotContent(elem: Event): void {
     if (elem.target !== elem.currentTarget) return;
-    this.closeEmitter.emit(true);
+
+    if (this.noChanges) this.closeEmitter.emit(true);
+    this.modalExitShow = true;
+  }
+
+  get noChanges(): boolean {
+    if (
+      this.selectedColorIndex === 0 &&
+      this.colorSource === 'palette' &&
+      this.title === '' &&
+      this.selectedRecipe.id < 1 &&
+      this.start?.toString() === startOfDay(new Date()).toString() &&
+      this.end?.toString() === endOfDay(new Date()).toString()
+    )
+      return true;
+    return false;
   }
 
   protected selectColor(index: number): void {
     this.selectedColorIndex = index;
+    this.colorSource = 'palette';
+  }
+  protected selectCustomColor(): void {
+    this.colorSource = 'custom';
   }
 
   protected editEvent(): void {
     const color = this.colors[this.selectedColorIndex];
     const newEvent = this.calendarService.createCalendarEvent(
-      this.event.recipeId,
-      this.date,
+      this.selectedRecipe.id,
+      this.start,
       this.title,
       color,
+      this.end,
     );
-    if (this.selectedRecipe.id !== 0)
-      newEvent.recipeId = this.selectedRecipe.id;
     newEvent.id = this.event.id;
     const findedEventIndex = this.plan.calendarEvents.findIndex(
-      (c) => c === this.plan.calendarEvents.find((event) => event.id === newEvent.id),
+      (c) =>
+        c ===
+        this.plan.calendarEvents.find((event) => event.id === newEvent.id),
     );
     this.plan.calendarEvents[findedEventIndex] = newEvent;
-    this.planService.updatePlan(this.plan).subscribe();
-    this.closeEmitter.emit(true);
+    this.planService
+      .updatePlan(this.plan)
+      .subscribe(() => (this.modalSuccessSaveShow = true));
   }
 
   protected addEvent(): void {
     const color = this.colors[this.selectedColorIndex];
     const newEvent = this.calendarService.createCalendarEvent(
       0,
-      this.date,
+      this.start,
       this.title,
-      color,
+      this.colorSource === 'custom' ? this.customColor : color,
+      this.end,
     );
+    if (
+      (this.start.toString() === startOfDay(new Date()).toString() &&
+        this.end?.toString() === endOfDay(new Date()).toString()) ||
+      !this.end
+    ) {
+      newEvent.allDay = true;
+    }
 
     if (this.selectedRecipe.id !== 0)
       newEvent.recipeId = this.selectedRecipe.id;
@@ -158,12 +203,16 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
       maxId = Math.max(...this.plan.calendarEvents.map((e) => e.id));
     newEvent.id = maxId + 1;
     this.plan.calendarEvents = [...this.plan.calendarEvents, newEvent];
-    this.planService.updatePlan(this.plan).subscribe();
-    this.closeEmitter.emit(true);
+    this.planService
+      .updatePlan(this.plan)
+      .subscribe(() => (this.modalSuccessSaveShow = true));
   }
 
   //поиск рецептов
-  protected blur():void {
+  protected blur(): void {
+    if (this.searchQuery.length === 0) {
+      this.selectedRecipe = { ...nullRecipe };
+    }
     if (this.selectedRecipe.id === 0) this.searchQuery = '';
     this.autocompleteShow = false;
     this.focused = false;
@@ -173,19 +222,19 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
     if (finded) return finded;
     return { ...nullUser };
   }
-  protected focus():void {
+  protected focus(): void {
     if (this.searchQuery !== '') {
       this.autocompleteShow = true;
     }
   }
-  protected navigateTo(link: string):void {
+  protected navigateTo(link: string): void {
     this.router.navigateByUrl(link);
   }
-  protected chooseRecipe(recipe: IRecipe):void {
+  protected chooseRecipe(recipe: IRecipe): void {
     this.searchQuery = recipe.name;
     this.selectedRecipe = recipe;
   }
-  protected recipeSearching():void {
+  protected recipeSearching(): void {
     this.autocompleteShow = true;
     this.focused = true;
 
@@ -195,7 +244,7 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
     });
     if (this.searchQuery && this.searchQuery !== '') {
       this.autocompleteRecipes = [];
-      this.selectedRecipe = nullRecipe;
+      this.selectedRecipe = { ...nullRecipe };
 
       const search = this.searchQuery.toLowerCase().replace(/\s/g, '');
 
@@ -216,6 +265,30 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
         this.autocompleteRecipes.push(element);
       });
     } else this.autocompleteShow = false;
+  }
+
+  handleSaveModal(answer: boolean) {
+    if (answer) {
+      if (this.editMode) this.editEvent();
+      else this.addEvent();
+    } else
+      setTimeout(() => {
+        this.applyModalStyle();
+      }, 0);
+    this.modalSaveShow = false;
+  }
+  handleExitModal(answer: boolean) {
+    if (answer) this.closeEmitter.emit(true);
+    else
+      setTimeout(() => {
+        this.applyModalStyle();
+      }, 0);
+
+    this.modalExitShow = false;
+  }
+  handleSuccessSaveModal() {
+    this.modalSuccessSaveShow = false;
+    this.closeEmitter.emit(true);
   }
 
   public ngOnDestroy(): void {

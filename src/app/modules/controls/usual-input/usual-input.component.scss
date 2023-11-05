@@ -53,6 +53,10 @@ input,textarea{
     caret-color: var(--color-primary);
     border-color: var(--color-primary);
   }
+  &:disabled{
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 textarea {
 

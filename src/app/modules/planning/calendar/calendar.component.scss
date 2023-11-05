@@ -18,6 +18,10 @@ table {
   margin: 0 auto;
   width: fit-content;
  }
+
+ .title::first-letter{
+  text-transform: uppercase;
+ }
 .how-to-use-it
 {
   margin: 2em 0;
@@ -143,9 +147,6 @@ h1 {
     }
   }
 }
-td {
-  text-align: center;
-}
 
 @mixin flex{
   display: flex;
@@ -190,6 +191,7 @@ justify-content: center
   text-transform: uppercase;
 }
 
+
 .new-recipe-button{
   display: flex;
   width: fit-content;
@@ -205,25 +207,77 @@ justify-content: center
 }
 
 .table{
+      background-color: var(--color-background-deeper);
+
   div{
+    background-color: var(--color-background);
     vertical-align: middle;
     display: flex;
     align-items: center;
-    justify-content: center;
-  }
-  .head{
+    justify-content: right;
+    text-align: right;
+    padding: 0.5em;
+
+     &.head{
+      justify-content: center;
+      height: 100%;
+    text-align: center;
+    align-self: center;
+    justify-self: center;
+    width: 100%;
+    font-size: 1.1em;
     text-align: center;
     font-weight: 600;
+
+
   }
-  p{
-    text-align: center;
+  }
+  .date{
+    display:flex;flex-direction: column;
+    text-align: left;
+    row-gap: 0.5em;
   
+    justify-content: center;
+    align-items: start;
+   span{
+      font-weight: 600;
+    }
+
+    &:nth-child(2n+1){
+      background-color: var(--color-background-deeper-unactive);
+    }
   }
-  row-gap: 1em;
-  column-gap: 1em;
+  .color-block{
+     &:nth-child(2n){
+      background-color: var(--color-background-deeper-unactive);
+    }
+  }
+  .edit,.delete{
+     &:nth-child(2n){
+      background-color: var(--color-background-deeper-unactive);
+    }
+  }
+  .name{
+    &:nth-child(2n+1){
+      background-color: var(--color-background-deeper-unactive);
+    }
+  }
+  .color{
+    align-self: center;
+    justify-self: center;
+    
+  }
+
+  *{
+    max-width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  row-gap: 2px;
+  column-gap: 2px;
   width: 100%;
   display: grid;
-  grid-template-columns: 3em 1fr 3em 1fr 3em;
+  grid-template-columns: 3em 0.5fr 3em 1fr  3em;
 }
 
 .row{
@@ -251,9 +305,59 @@ justify-content: center
 
 @media(max-width:480px){
   
+  .table .date{
+   align-items: flex-start;
+   justify-content: center;
+   align-self: flex-start;
+   justify-self: center;
+   text-align: left;
+
+
+ row-gap: 0;
+   width: 100%;
+   height: 100%;
+    grid-column-start:1;
+    grid-column-end: 4;
+  }
+  .table div{
+    text-align: center;
+    justify-self: center;
+    align-self: center;
+  }
+ 
 .table{
-  column-gap: 1em;
-  grid-template-columns: max-content 1fr max-content 1fr max-content;
+  grid-template-columns:2em 1fr max-content ;
+  column-gap: 0;
+
+  row-gap: 0;
+  background:none;
+   div.head{
+    display: none;
+  }
+  .color-block{
+      width: 100%;
+      height: 100%;
+  }
+  .edit,.name{
+    width: 100%;
+    align-items: center;
+    height: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+  .delete{
+    width: 100%;
+    grid-column-start: 1;
+    grid-column-end: 4;
+    justify-self: end;
+    align-self: flex-end;
+    justify-content: end;
+    align-items: flex-end;
+margin-bottom: 1em;
+    .clear-all-button{
+      margin: 0;
+    }
+  }
 }
 
 }

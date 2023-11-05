@@ -26,8 +26,9 @@ import { getFormattedDate } from 'src/tools/common';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { PlanService } from 'src/app/modules/planning/services/plan-service';
-import { IPlan, nullPlan } from 'src/app/modules/planning/models/plan';
+import { IPlan, nullCalendarEvent, nullPlan } from 'src/app/modules/planning/models/plan';
 import { ShoppingListItem, nullProduct } from 'src/app/modules/planning/models/shopping-list';
+import { CalendarEvent } from 'angular-calendar';
 
 @Component({
   selector: 'app-recipe-page',
@@ -39,6 +40,9 @@ import { ShoppingListItem, nullProduct } from 'src/app/modules/planning/models/s
 export class RecipePageComponent implements OnInit, OnDestroy {
   protected destroyed$: Subject<void> = new Subject<void>();
 
+
+  protected addingToPlanMode: boolean = false;
+  
   recipe: IRecipe = nullRecipe;
 
   categories: ICategory[] = [];
@@ -76,6 +80,8 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   voteModalShow: boolean = false;
   successVoteModalShow: boolean = false;
   commentsToShow: IComment[] = [];
+
+  protected alsoFromThisCook: IRecipe[] = []
 
   loadMoreComments() {
     const currentLength = this.commentsToShow.length;
@@ -116,6 +122,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   myPlan: IPlan = nullPlan;
 
   ngOnInit() {
+    
     this.route.data.subscribe((data: Data) => {
       this.recipe = data['RecipeResolver'];
       this.linkForSocials = window.location.href;
@@ -126,6 +133,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroyed$))
         .subscribe((data: IUser) => {
           this.currentUser = data;
+
 
           this.userService.users$
             .pipe(takeUntil(this.destroyed$))
@@ -156,6 +164,9 @@ export class RecipePageComponent implements OnInit, OnDestroy {
             const publicRecipes = this.recipeService.getPublicRecipes(recipes);
             this.downRecipes = this.getSimilarRecipes(publicRecipes, 4);
           }
+          this.alsoFromThisCook = this.recipeService.getRecipesByUser(
+            this.recipeService.getPublicRecipes(recipes),
+            this.author.id).filter((r)=>r.id!==this.recipe.id).slice(0,4);
           this.recentRecipes = this.recipeService.getRecentRecipes(
             this.recipeService.getPublicRecipes(recipes),
           );
@@ -194,6 +205,15 @@ export class RecipePageComponent implements OnInit, OnDestroy {
           this.cd.markForCheck();
         });
     });
+  }
+ 
+  protected targetCalendarEvent: CalendarEvent = nullCalendarEvent;
+
+  protected addToPlan(): void {
+    this.targetCalendarEvent.id = -1;
+    this.targetCalendarEvent.recipeId = this.recipe.id;
+    this.targetCalendarEvent.title = this.recipe.name;
+    this.addingToPlanMode = true;
   }
 
   get date() {

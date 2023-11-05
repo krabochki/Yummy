@@ -13,6 +13,11 @@
   }
 }
 
+.plan-button{
+  zoom:0.9;
+  overflow: visible;
+}
+
 app-modal{
   z-index: 10;
   position: fixed;
@@ -608,6 +613,8 @@ h1 {
     }
   }
 
+
+
   .fav-button {
     align-items: center;
     justify-content: center;
@@ -620,6 +627,10 @@ h1 {
     background-color: var(--color-primary);
     height: 2.5rem;
 
+    &.plan{
+      background-color: var(--color-secondary);
+    }
+
     .fav-icon {
       fill: white;
       height: 1.5rem;
@@ -629,6 +640,10 @@ h1 {
     &:hover::after {
       width: 100%;
       height: 100%;
+    }
+
+    &.plan::after {
+      background-color: var(--color-secondary-focus);
     }
 
     &::after {
@@ -642,8 +657,10 @@ h1 {
       border-radius: 100%;
       height: 0px;
       content: "";
-      background-color: rgb(255, 56, 56);
+      background-color: var(--color-primary-focus);
       transition: 0.3s ease-in-out;
+
+      
     }
   }
 }

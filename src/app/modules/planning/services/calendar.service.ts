@@ -14,6 +14,7 @@ export class CalendarService {
     start: Date,
     title: string,
     color: string,
+    end?:Date
   ): CalendarEvent {
     const eventColor: EventColor = { primary: color, secondary: color };
     return {
@@ -22,9 +23,10 @@ export class CalendarService {
       start,
       title,
       color: eventColor,
-      allDay: true,
+      allDay: end?false:true,//если нет конца то событие идет целый день, если нет то нет
       draggable: true,
 
+      end:end,
       resizable: {
         beforeStart: true,
         afterEnd: true,

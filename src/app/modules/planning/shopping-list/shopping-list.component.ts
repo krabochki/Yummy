@@ -12,14 +12,14 @@ import {
 } from '../models/shopping-list';
 import { Subject, takeUntil } from 'rxjs';
 import { trigger } from '@angular/animations';
-import { heightAnim } from 'src/tools/animations';
+import { heightAnim, modal } from 'src/tools/animations';
 import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-shopping-list',
   templateUrl: './shopping-list.component.html',
   styleUrls: ['./shopping-list.component.scss'],
-  animations: [trigger('height', heightAnim())],
+  animations: [trigger('height', heightAnim()), trigger('modal',modal())]
 })
 export class ShoppingListComponent implements OnInit, OnDestroy {
   protected shoppingList: ShoppingListItem[] = [];
@@ -243,5 +243,12 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
         this.autocompleteTypes.push(element);
       });
     } else this.autocompleteTypes = [...this.productTypes];
+  }
+
+  protected deletingAllProductsModalShow = false;
+
+  handleDeletingAllProductsModal(answer:boolean) {
+    if (answer) this.removeAllProducts();
+    this.deletingAllProductsModalShow = false;
   }
 }

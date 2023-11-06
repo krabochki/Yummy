@@ -13,7 +13,7 @@ import { onlyHeight } from 'src/tools/animations';
 })
 export class NotificationsListComponent {
   @Input() notifies: INotification[] = [];
-  @Input() user: IUser = nullUser;
+  @Input() user: IUser = {...nullUser};
 
   @Output() closeEmitter = new EventEmitter<boolean>();
 

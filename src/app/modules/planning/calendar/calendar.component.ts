@@ -49,7 +49,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   protected createMode = false; //открыто ли создание/изменение календарного события
 
   protected events: CalendarEvent[] = []; //список календарных событий юзера
-  protected currentUser: IUser = nullUser;
+  protected currentUser: IUser = {...nullUser};
   protected currentUserPlan: IPlan = nullPlan; //план текущего юзера
 
   private destroyed$: Subject<void> = new Subject<void>();

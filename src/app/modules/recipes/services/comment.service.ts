@@ -42,8 +42,8 @@ export class CommentService {
     const report: ICommentReport = {
       id: maxId+1,
       date: new Date().toJSON(),
-      reporterId: reporter.id,
-      commentId: comment.id,
+      reporter: reporter.id,
+      comment: comment.id,
     };
     if(!recipe.reports) recipe.reports = []
     recipe.reports.push(report);

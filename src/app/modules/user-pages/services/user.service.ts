@@ -155,22 +155,32 @@ export class UserService {
     return this.http.put<IUser>(`${this.url}/${user.id}`, user);
   }
 
-  deleteUser() {
-    //исправить: не удаляет юзера и выдает ошибки если у него более 1 своего рецепта
-    // this.deleteDataAboutDeletingUser(deletableUser.id);
-    // this.recipeService.deleteDataAboutDeletingUser(deletableUser.id);
-    // return this.http
-    //   .delete(`${this.url}/${deletableUser.id}`)
-    //   .pipe(
-    //     tap((answer) =>
-    //       this.usersSubject.next(
-    //         this.usersSubject.value.filter(
-    //           (user) => user.id !== deletableUser.id,
-    //         ),
-    //       ),
-    //     ),
-    //   )
-    //   .subscribe();
+  getUsersWhichWillBeUpdatedWhenUserDeleting(users: IUser[], user: IUser): IUser[] {
+    const usersToUpdate:IUser[] = []
+    users.forEach(
+      u => {
+        if (u.followersIds.includes(user.id))
+        {
+          u.followersIds = u.followersIds.filter(f => f !== user.id)
+          usersToUpdate.push(u);
+        }
+      } 
+    )
+    return usersToUpdate;
+  }
+
+  deleteUser(deletableUser:IUser) {
+    return this.http
+      .delete(`${this.url}/${deletableUser.id}`)
+      .pipe(
+        tap(() =>
+          this.usersSubject.next(
+            this.usersSubject.value.filter(
+              (user) => user.id !== deletableUser.id,
+            ),
+          ),
+        ),
+      );
   }
 
   postUser(user: IUser) {

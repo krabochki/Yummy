@@ -78,8 +78,8 @@
         <div class="reports">
           <div class="report" *ngFor="let report of reports">
             <div class="report-header">
-              <a class="report-recipe" [routerLink]="'/recipes/list/' + getRecipe(report.recipeId).id">
-                {{ getRecipe(report.recipeId).name }}
+              <a class="report-recipe" [routerLink]="'/recipes/list/' + getRecipe(report.recipe).id">
+                {{ getRecipe(report.recipe).name }}
               </a>
               <p class="report-date">
                 Жалоба подана {{ report.date | timePast | lowercase }}
@@ -88,10 +88,10 @@
             <div class="report-users">
               <p class="reporter">
                 Пожаловался:
-                <a class="report-user" [routerLink]="'/cooks/list/' + getUser(report.reporterId).id">{{
-                  getUser(report.reporterId).fullName !== ""
-                  ? getUser(report.reporterId).fullName
-                  : getUser(report.reporterId).username
+                <a class="report-user" [routerLink]="'/cooks/list/' + getUser(report.reporter).id">{{
+                  getUser(report.reporter).fullName !== ""
+                  ? getUser(report.reporter).fullName
+                  : getUser(report.reporter).username
                   }}</a>
               </p>
               <p class="reporter">
@@ -109,7 +109,7 @@
             <p class="report-content">
               Содержание комментария:
               <span>«{{
-                getComment(report.commentId, getRecipe(report.recipeId)).text
+                getComment(report.comment, getRecipe(report.recipe)).text
                 }}»
               </span>
             </p>

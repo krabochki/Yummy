@@ -26,7 +26,7 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
 
   protected baseSvgPath: string = '../../../../../assets/images/svg/grocery/';
 
-  private currentUser: IUser = nullUser;
+  private currentUser: IUser = {...nullUser};
   private currentUserPlan: IPlan = nullPlan;
 
   protected productTypes = productTypes;

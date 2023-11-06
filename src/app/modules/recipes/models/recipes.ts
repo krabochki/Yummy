@@ -27,7 +27,7 @@ export interface IRecipe {
 }
 
 export interface IRecipeStatistics{
-  userId: number,
+  user: number,
   answer:boolean
 } 
 export const nullRecipe: IRecipe = {

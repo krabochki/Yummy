@@ -12,13 +12,13 @@ import { AuthService } from 'src/app/modules/authentication/services/auth.servic
   styleUrls: ['./users-list-item.component.scss'],
 })
 export class UsersListItemComponent implements OnInit, OnDestroy {
-  @Input() public user: IUser = nullUser;
+  @Input() public user: IUser = {...nullUser};
 
   private destroyed$: Subject<void> = new Subject<void>();
   followingLength: number = 0;
   userRecipesLength: number = 0;
   isFollower: boolean = false;
-  currentUser: IUser = nullUser;
+  currentUser: IUser = {...nullUser};
 
   constructor(
     private userService: UserService,

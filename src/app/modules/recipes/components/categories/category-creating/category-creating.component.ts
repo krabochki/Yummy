@@ -106,7 +106,7 @@ export class CategoryCreatingComponent
   allCategories: ICategory[] = [];
   protected destroyed$: Subject<void> = new Subject<void>();
 
-  currentUser: IUser = nullUser;
+  currentUser: IUser = {...nullUser};
   ngOnInit() {
     this.renderer.addClass(document.body, 'hide-overflow');
     (<HTMLElement>document.querySelector('.header')).style.width =

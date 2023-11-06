@@ -357,47 +357,11 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
     });
   }
   handleSuccessDeleteModal() {
-    this.plans.forEach((plan) => {
-      //изменение календаря
-      const user = this.users.find((u) => u.id === plan.user);
-      if (user) {
-        let anyChangesInEvents = false;
-        plan.calendarEvents.forEach((calendarEvent) => {
-          if (calendarEvent.recipe === this.recipe.id) {
-            calendarEvent.recipe = 0;
-            anyChangesInEvents = true;
-          }
-        });
-        //изменение списка продуктов
-        let anyChangesInShoppingList = false;
-        plan.shoppingList.forEach((shoppingListItem) => {
-          if (shoppingListItem.relatedRecipe === this.recipe.id) {
-            shoppingListItem.relatedRecipe = 0;
-            anyChangesInShoppingList = true;
-          }
-        });
-        if (anyChangesInShoppingList || anyChangesInEvents) {
-          //обновляем план и уведомляем что рецепт был удален и ссылка на него больше не работает
-          this.planService.updatePlan(plan).subscribe();
-
-          const notify = this.notifyService.buildNotification(
-            'Связанный рецепт удален',
-            user.id !== this.author.id
-              ? `Обратите внимание: рецепт «${this.recipe.name}» автора ${
-                  this.author.fullName
-                    ? this.author.fullName
-                    : '@' + this.author.username
-                } был удален. Все ссылки на этот рецепт удалены из календаря рецептов и списка покупок. Сами запланированные рецепты и продукты в списке покупок не удалены`
-              : `Обратите внимание: ваш рецепт «${this.recipe.name}» был удален. Все ссылки на этот рецепт удалены из ваших календаря рецептов и списка покупок. Сами запланированные рецепты и продукты в списке покупок не удалены`,
-            'warning',
-            'recipe',
-            '',
-          );
-
-          this.notifyService.sendNotification(notify, user).subscribe();
-        }
-      }
-    });
+    this.planService.updatePlansAfterDeletingRecipe(
+      this.plans,
+      this.users,
+      this.recipe,
+    );
 
     this.notifyService
       .sendNotification(
@@ -410,15 +374,9 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
         ),
         this.author,
       )
-      .pipe(
-        switchMap(() => {
-          return this.recipeService.deleteRecipe(this.recipe.id);
-        }),
-    ).subscribe(
-      () => {
-        console.log('subscribe success')
-        }
-      );
+
+      .subscribe();
+    this.recipeService.deleteRecipe(this.recipe).subscribe();
   }
 
   @HostListener('document:click', ['$event']) //скрываем авторские батоны если нажато куда-то вне этого мини-рецепта

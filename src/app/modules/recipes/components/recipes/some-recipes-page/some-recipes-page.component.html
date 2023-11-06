@@ -257,10 +257,10 @@
             [ngClass]="{ horizontal: cookedRecipes.length >= 5 }"
           >
             <app-horizontal-recipe-list
-              *ngIf="cookedRecipes.length >= 5; else vertical"
+              *ngIf="cookedRecipes.length >= 5; else verticalCooked"
               [recipes]="cookedRecipes"
             ></app-horizontal-recipe-list>
-            <ng-template #vertical>
+            <ng-template #verticalCooked>
               <app-vertical-recipe-list
                 [blocks]="cookedRecipes"
               ></app-vertical-recipe-list>

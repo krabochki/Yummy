@@ -39,7 +39,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   protected destroyed$: Subject<void> = new Subject<void>();
   private plans: IPlan[] = [];
 
-  createUser: IUser = nullUser;
+  createUser: IUser = {...nullUser};
 
   usernameValidator = usernameExistsValidator;
 
@@ -86,7 +86,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
           Validators.minLength(4),
           Validators.maxLength(20),
           customPatternValidator(usernameMask),
-          usernameExistsValidator(this.users, nullUser),
+          usernameExistsValidator(this.users, {...nullUser}),
         ],
       ],
       password: [
@@ -105,7 +105,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     if (this.form.valid) {
       const maxId = Math.max(...this.users.map((u) => u.id));
       const userData: IUser = {
-        ...nullUser,
+        ...{...nullUser},
         username: this.form.value.username,
         email: this.form.value.email,
         password: this.form.value.password,

@@ -83,7 +83,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   loginUser(): void {
     if (this.form.valid) {
       const userData: IUser = {
-        ...nullUser,
+        ...{...nullUser},
         username: this.form.value.login,
         email: this.form.value.login,
         password: this.form.value.password,

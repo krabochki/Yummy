@@ -32,7 +32,7 @@ export class UsersPageComponent implements OnInit, OnDestroy {
   protected currentUserFollowingUsers: IUser[] = [];
   protected moreViewedUsers: IUser[] = [];
   protected currentUserFollowersUsers: IUser[] = [];
-  protected currentUser: IUser = nullUser;
+  protected currentUser: IUser = {...nullUser};
   protected filter: string = '';
   protected userType: UsersType = UsersType.All;
   protected showUsers: IUser[] = [];

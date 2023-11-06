@@ -31,8 +31,8 @@ export class CommentComponent implements OnInit, OnDestroy {
   @Input() comment: IComment = nullComment;
   @Input() recipe: IRecipe = nullRecipe;
   protected destroyed$: Subject<void> = new Subject<void>();
-  public currentUser: IUser = nullUser;
-  public author: IUser = nullUser;
+  public currentUser: IUser = {...nullUser};
+  public author: IUser = {...nullUser};
   public copyState = false; //скопирован ли текст комментария
   protected deleteCommentModalShow: boolean = false;
   protected reportCommentModalShow: boolean = false;
@@ -68,7 +68,7 @@ export class CommentComponent implements OnInit, OnDestroy {
   deleteComment() {
     if (this.recipe.reports) {
       this.recipe.reports = this.recipe.reports.filter(
-        (item) => item.commentId !== this.comment.id,
+        (item) => item.comment !== this.comment.id,
       );
     }
 
@@ -208,8 +208,8 @@ export class CommentComponent implements OnInit, OnDestroy {
   get haveReport(): boolean {
     return !!this.recipe?.reports?.find(
       (item) =>
-        item.reporterId === this.currentUser.id &&
-        item.commentId === this.comment.id,
+        item.reporter === this.currentUser.id &&
+        item.comment === this.comment.id,
     );
   }
 

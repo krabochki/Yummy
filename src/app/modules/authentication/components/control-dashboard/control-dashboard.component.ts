@@ -105,7 +105,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
             recipe.reports.forEach((element) => {
               const reportForAdmin: ICommentReportForAdmin = {
                 ...element,
-                recipeId: recipe.id,
+                recipe: recipe.id,
               };
               this.allReports = [...this.allReports, reportForAdmin];
             });
@@ -276,14 +276,14 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
 
   getAuthorOfReportedComment(report: ICommentReportForAdmin): IUser {
     return this.getUser(
-      this.getComment(report.commentId, this.getRecipe(report.recipeId))
+      this.getComment(report.comment, this.getRecipe(report.recipe))
         .authorId,
     );
   }
   getUser(userId: number): IUser {
     const find = this.users.find((item) => item.id === userId);
     if (find) return find;
-    return nullUser;
+    return {...nullUser};
   }
   getSection(category: number): ISection {
     const find = this.sections.find((section) =>
@@ -361,26 +361,26 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
 
     if (report) {
       const comment = this.getComment(
-        report.commentId,
-        this.getRecipe(report.recipeId),
+        report.comment,
+        this.getRecipe(report.recipe),
       );
-      const recipe = this.getRecipe(report.recipeId);
+      const recipe = this.getRecipe(report.recipe);
 
       this.recipeService
         .updateRecipe({
           ...recipe,
           comments: recipe.comments.filter(
-            (item) => item.id !== report.commentId,
+            (item) => item.id !== report.comment,
           ),
           reports: recipe.reports.filter(
-            (item) => item.commentId !== report.commentId,
+            (item) => item.comment !== report.comment,
           ),
         })
         .subscribe(() => {
           this.successReportCommentApproveModalShow = true;
           if (this.actionReport) {
-            const recipe: IRecipe = this.getRecipe(report.recipeId);
-            const reporter: IUser = this.getUser(report.reporterId);
+            const recipe: IRecipe = this.getRecipe(report.recipe);
+            const reporter: IUser = this.getUser(report.reporter);
             const author: IUser = this.getUser(comment.authorId);
             const notify1: INotification = this.notifyService.buildNotification(
               'Твой комментарий удален по жалобе',
@@ -406,29 +406,29 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     const report = this.actionReport;
 
     if (report) {
-      const recipe = this.getRecipe(report.recipeId);
+      const recipe = this.getRecipe(report.recipe);
 
       this.recipeService
         .updateRecipe({
           ...recipe,
           reports: recipe.reports.filter(
-            (item) => item.commentId !== report.commentId,
+            (item) => item.comment !== report.comment,
           ),
         })
         .subscribe(() => {
           this.successReportCommentDismissModalShow = true;
 
           if (this.actionReport) {
-            const recipe: IRecipe = this.getRecipe(this.actionReport.recipeId);
-            const reporter: IUser = this.getUser(this.actionReport.reporterId);
+            const recipe: IRecipe = this.getRecipe(this.actionReport.recipe);
+            const reporter: IUser = this.getUser(this.actionReport.reporter);
             const comment: IComment = this.getComment(
-              this.actionReport.commentId,
+              this.actionReport.comment,
               recipe,
             );
             const author: IUser = this.getUser(
               this.getComment(
-                this.actionReport.commentId,
-                this.getRecipe(this.actionReport.recipeId),
+                this.actionReport.comment,
+                this.getRecipe(this.actionReport.recipe),
               ).authorId,
             );
 

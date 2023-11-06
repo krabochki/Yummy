@@ -5,13 +5,13 @@
       "id": 1,
       "calendarEvents": [
         {
-          "id": 7,
+          "id": 10,
           "recipe": 0,
           "start": "2023-11-05T21:00:00.000Z",
-          "title": "Глазунья",
+          "title": "Мармелад",
           "color": {
-            "primary": "#FBEE0F",
-            "secondary": "#FBEE0F"
+            "primary": "#ff3867",
+            "secondary": "#ff3867"
           },
           "allDay": true,
           "draggable": true,
@@ -22,13 +22,13 @@
           }
         },
         {
-          "id": 5,
-          "recipe": 1,
+          "id": 9,
+          "recipe": 0,
           "start": "2023-11-05T21:00:00.000Z",
-          "title": "Шоколадное мороженое",
+          "title": "Глазунья 2.0",
           "color": {
-            "primary": "#5e3608",
-            "secondary": "#5e3608"
+            "primary": "#FFC5D0",
+            "secondary": "#FFC5D0"
           },
           "allDay": true,
           "draggable": true,
@@ -56,13 +56,13 @@
           }
         },
         {
-          "id": 9,
-          "recipe": 0,
+          "id": 5,
+          "recipe": 1,
           "start": "2023-11-05T21:00:00.000Z",
-          "title": "Глазунья 2.0",
+          "title": "Шоколадное мороженое",
           "color": {
-            "primary": "#FFC5D0",
-            "secondary": "#FFC5D0"
+            "primary": "#5e3608",
+            "secondary": "#5e3608"
           },
           "allDay": true,
           "draggable": true,
@@ -73,13 +73,13 @@
           }
         },
         {
-          "id": 10,
+          "id": 7,
           "recipe": 0,
           "start": "2023-11-05T21:00:00.000Z",
-          "title": "Мармелад",
+          "title": "Глазунья",
           "color": {
-            "primary": "#ff3867",
-            "secondary": "#ff3867"
+            "primary": "#FBEE0F",
+            "secondary": "#FBEE0F"
           },
           "allDay": true,
           "draggable": true,
@@ -141,17 +141,17 @@
           }
         },
         {
-          "id": 11,
-          "recipe": 0,
-          "start": "2023-11-15T21:00:00.000Z",
-          "title": "Салат с сухариками",
+          "id": 12,
+          "recipe": 76,
+          "start": "2023-11-10T21:00:00.000Z",
+          "title": "Банановый хлеб",
           "color": {
-            "primary": "#00ffd5",
-            "secondary": "#00ffd5"
+            "primary": "#FBEE0F",
+            "secondary": "#FBEE0F"
           },
-          "allDay": true,
+          "allDay": false,
           "draggable": true,
-          "end": "2023-11-17T20:59:59.999Z",
+          "end": "2023-11-11T09:00:59.999Z",
           "resizable": {
             "beforeStart": true,
             "afterEnd": true
@@ -169,6 +169,40 @@
           "allDay": true,
           "draggable": true,
           "end": "2023-11-17T20:59:59.999Z",
+          "resizable": {
+            "beforeStart": true,
+            "afterEnd": true
+          }
+        },
+        {
+          "id": 11,
+          "recipe": 0,
+          "start": "2023-11-15T21:00:00.000Z",
+          "title": "Салат с сухариками",
+          "color": {
+            "primary": "#00ffd5",
+            "secondary": "#00ffd5"
+          },
+          "allDay": true,
+          "draggable": true,
+          "end": "2023-11-17T20:59:59.999Z",
+          "resizable": {
+            "beforeStart": true,
+            "afterEnd": true
+          }
+        },
+        {
+          "id": 13,
+          "recipe": 0,
+          "start": "2023-11-06T21:00:00.000Z",
+          "title": "Домашний рецепт",
+          "color": {
+            "primary": "#FFC5D0",
+            "secondary": "#FFC5D0"
+          },
+          "allDay": true,
+          "draggable": true,
+          "end": "2023-11-07T20:59:59.999Z",
           "resizable": {
             "beforeStart": true,
             "afterEnd": true
@@ -328,6 +362,15 @@
           "isBought": false,
           "relatedRecipe": 0,
           "type": 0
+        },
+        {
+          "id": 20,
+          "name": "Бананы",
+          "note": "",
+          "howMuch": "",
+          "isBought": false,
+          "relatedRecipe": 76,
+          "type": 0
         }
       ]
     },
@@ -466,6 +509,23 @@
           "allDay": true,
           "draggable": true,
           "end": "2023-11-17T20:59:59.999Z",
+          "resizable": {
+            "beforeStart": true,
+            "afterEnd": true
+          }
+        },
+        {
+          "id": 9,
+          "recipe": 0,
+          "start": "2023-11-06T21:00:00.000Z",
+          "title": "Домашний рецепт",
+          "color": {
+            "primary": "#FFC5D0",
+            "secondary": "#FFC5D0"
+          },
+          "allDay": true,
+          "draggable": true,
+          "end": "2023-11-07T20:59:59.999Z",
           "resizable": {
             "beforeStart": true,
             "afterEnd": true
@@ -905,6 +965,12 @@
     {
       "id": 15,
       "user": 25,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 16,
+      "user": 26,
       "shoppingList": [],
       "calendarEvents": []
     }
@@ -1598,11 +1664,11 @@
       "reports": [],
       "statistics": [
         {
-          "userId": 5,
+          "user": 5,
           "answer": false
         },
         {
-          "userId": 25,
+          "user": 25,
           "answer": false
         }
       ]
@@ -1837,7 +1903,7 @@
       "ingredients": [],
       "statistics": [
         {
-          "userId": 1,
+          "user": 1,
           "answer": false
         }
       ],
@@ -2311,11 +2377,11 @@
       "ingredients": [],
       "statistics": [
         {
-          "userId": 25,
+          "user": 25,
           "answer": false
         },
         {
-          "userId": 5,
+          "user": 5,
           "answer": false
         }
       ]
@@ -2870,11 +2936,11 @@
       ],
       "statistics": [
         {
-          "userId": 1,
+          "user": 1,
           "answer": false
         },
         {
-          "userId": 25,
+          "user": 25,
           "answer": true
         }
       ],
@@ -3190,7 +3256,7 @@
       "status": "public",
       "statistics": [
         {
-          "userId": 25,
+          "user": 25,
           "answer": true
         }
       ]
@@ -3312,7 +3378,7 @@
       "status": "public",
       "statistics": [
         {
-          "userId": 23,
+          "user": 23,
           "answer": false
         }
       ],
@@ -3347,7 +3413,7 @@
       "reports": [],
       "statistics": [
         {
-          "userId": 1,
+          "user": 1,
           "answer": true
         }
       ],
@@ -3454,11 +3520,11 @@
       "reports": [],
       "statistics": [
         {
-          "userId": 25,
+          "user": 25,
           "answer": false
         },
         {
-          "userId": 5,
+          "user": 5,
           "answer": true
         }
       ],
@@ -3745,7 +3811,7 @@
       "reports": [],
       "statistics": [
         {
-          "userId": 5,
+          "user": 5,
           "answer": true
         }
       ],
@@ -4216,30 +4282,6 @@
       "status": "public"
     },
     {
-      "name": "Домашний рецепт",
-      "reports": [],
-      "statistics": [],
-      "ingredients": [],
-      "instructions": [],
-      "mainImage": null,
-      "description": "",
-      "history": "",
-      "preparationTime": "",
-      "cookingTime": "",
-      "origin": "",
-      "nutritions": [],
-      "servings": 1,
-      "authorId": 5,
-      "categories": [],
-      "cooksId": [],
-      "likesId": [],
-      "favoritesId": [],
-      "id": 72,
-      "comments": [],
-      "publicationDate": "2023-11-06T15:54:22.685Z",
-      "status": "private"
-    },
-    {
       "name": "На публикацию",
       "reports": [],
       "statistics": [],
@@ -4261,7 +4303,119 @@
       "id": 73,
       "comments": [],
       "publicationDate": "2023-11-06T15:54:45.911Z",
-      "status": "awaits"
+      "status": "private"
+    },
+    {
+      "name": "Призрак прошлого",
+      "reports": [],
+      "statistics": [],
+      "ingredients": [],
+      "instructions": [],
+      "mainImage": null,
+      "description": "Автор у этого рецепта скоро будет удален",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": -1,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 75,
+      "comments": [],
+      "publicationDate": "2023-11-06T20:25:52.359Z",
+      "status": "public"
+    },
+    {
+      "name": "Хит: банановый хлеб",
+      "reports": [],
+      "statistics": [
+        {
+          "user": 5,
+          "answer": true
+        }
+      ],
+      "ingredients": [
+        {
+          "name": "Хлеб",
+          "quantity": "",
+          "unit": ""
+        },
+        {
+          "name": "Бананы",
+          "quantity": "",
+          "unit": ""
+        }
+      ],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": -1,
+      "categories": [],
+      "cooksId": [
+        5
+      ],
+      "likesId": [
+        5
+      ],
+      "favoritesId": [
+        5
+      ],
+      "id": 76,
+      "comments": [],
+      "publicationDate": "2023-11-06T21:07:50.189Z",
+      "status": "public"
+    },
+    {
+      "name": "Апельсиновый фреш",
+      "reports": [],
+      "statistics": [],
+      "ingredients": [
+        {
+          "name": "Апельсины",
+          "quantity": "",
+          "unit": ""
+        },
+        {
+          "name": "Вода",
+          "quantity": "",
+          "unit": ""
+        },
+        {
+          "name": "Сахар",
+          "quantity": "",
+          "unit": ""
+        }
+      ],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": -1,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [
+        5
+      ],
+      "favoritesId": [],
+      "id": 77,
+      "comments": [],
+      "publicationDate": "2023-11-06T21:07:53.002Z",
+      "status": "public"
     }
   ],
   "users": [
@@ -4951,7 +5105,79 @@
           "message": "Обратите внимание: рецепт «Салат с сухариками» автора Лина был удален. Все ссылки на этот рецепт удалены из календаря рецептов и списка покупок. Сами запланированные рецепты и продукты в списке покупок не удалены",
           "title": "Связанный рецепт удален",
           "timestamp": "2023-11-06T18:31:37.482Z",
-          "read": false,
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 64,
+          "relatedLink": "/cooks/list/26",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «cupidatat enim ipsum» приготовил кулинар @willBeDelete и оставил положительный отзыв",
+          "title": "Твой рецепт приготовили",
+          "timestamp": "2023-11-06T18:58:15.936Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 65,
+          "relatedLink": "/cooks/list/26",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «cupidatat enim ipsum» понравился кулинару @willBeDelete",
+          "title": "Твой рецепт оценили",
+          "timestamp": "2023-11-06T18:58:26.419Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 66,
+          "relatedLink": "/recipes/list/8",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «cupidatat enim ipsum» кто-то добавил в избранное",
+          "title": "Твой рецепт добавили в избранное",
+          "timestamp": "2023-11-06T18:58:30.991Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 67,
+          "relatedLink": "/cooks/list/26",
+          "context": "user",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар @NPC. подписался на тебя",
+          "title": "Новый подписчик",
+          "timestamp": "2023-11-06T20:53:05.987Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 68,
+          "relatedLink": "/plan/calendar",
+          "context": "plan-reminder-start",
+          "type": "warning",
+          "relatedId": 9,
+          "message": "Время начала запланированного вами рецепта Домашний рецепт уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
+          "title": "Время начала запланированного рецепта настало!",
+          "timestamp": "2023-11-06T21:17:54.523Z",
+          "read": true,
+          "notificationDate": "Tue Nov 07 2023"
+        },
+        {
+          "id": 69,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "warning",
+          "relatedId": 0,
+          "message": "Обратите внимание: рецепт «Домашний рецепт» автора Лина был удален. Все ссылки на этот рецепт удалены из календаря рецептов и списка покупок. Сами запланированные рецепты и продукты в списке покупок не удалены",
+          "title": "Связанный рецепт удален",
+          "timestamp": "2023-11-06T21:18:19.924Z",
+          "read": true,
           "notificationDate": ""
         }
       ],
@@ -5114,6 +5340,18 @@
           "timestamp": "2023-11-06T17:34:21.995Z",
           "read": true,
           "notificationDate": ""
+        },
+        {
+          "id": 13,
+          "relatedLink": "/recipes/list/2",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «sit occaecat et» кто-то добавил в избранное",
+          "title": "Твой рецепт добавили в избранное",
+          "timestamp": "2023-11-06T18:58:34.184Z",
+          "read": false,
+          "notificationDate": ""
         }
       ]
     },
@@ -5172,7 +5410,7 @@
       "personalWebsite": "https://www.cookingadventures.com/",
       "location": "Лондон, Великобритания",
       "registrationDate": "2023-04-02",
-      "profileViews": 4967,
+      "profileViews": 4969,
       "role": "user",
       "notifications": [
         {
@@ -5294,6 +5532,66 @@
           "timestamp": "2023-11-06T13:16:33.830Z",
           "read": false,
           "notificationDate": ""
+        },
+        {
+          "id": 11,
+          "relatedLink": "/cooks/list/26",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «aliqua labore velit» понравился кулинару @willBeDelete",
+          "title": "Твой рецепт оценили",
+          "timestamp": "2023-11-06T18:57:58.312Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 12,
+          "relatedLink": "/cooks/list/26",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «aliqua labore velit» приготовил кулинар @willBeDelete и оставил положительный отзыв",
+          "title": "Твой рецепт приготовили",
+          "timestamp": "2023-11-06T18:58:02.125Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 13,
+          "relatedLink": "/cooks/list/26",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «Lorem laborum nulla» понравился кулинару @willBeDelete",
+          "title": "Твой рецепт оценили",
+          "timestamp": "2023-11-06T18:58:19.297Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 14,
+          "relatedLink": "/cooks/list/26",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «aliqua labore velit» понравился кулинару @willBeDelete",
+          "title": "Твой рецепт оценили",
+          "timestamp": "2023-11-06T18:58:27.513Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 15,
+          "relatedLink": "/recipes/list/4",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «Lorem laborum nulla» кто-то добавил в избранное",
+          "title": "Твой рецепт добавили в избранное",
+          "timestamp": "2023-11-06T18:58:32.082Z",
+          "read": false,
+          "notificationDate": ""
         }
       ]
     },
@@ -5328,7 +5626,7 @@
       "personalWebsite": "",
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 1936,
+      "profileViews": 1938,
       "notifications": [
         {
           "id": 128,
@@ -5739,30 +6037,6 @@
           "notificationDate": "Mon Nov 06 2023"
         },
         {
-          "id": 163,
-          "relatedLink": "",
-          "context": "recipe",
-          "type": "warning",
-          "relatedId": 0,
-          "message": "Обратите внимание: ваш рецепт «Мармелад» был удален. Все ссылки на этот рецепт удалены из ваших календаря рецептов и списка покупок. Сами запланированные рецепты и продукты в списке покупок не удалены",
-          "title": "Связанный рецепт удален",
-          "timestamp": "2023-11-06T18:19:53.050Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 163,
-          "relatedLink": "",
-          "context": "recipe",
-          "type": "warning",
-          "relatedId": 0,
-          "message": "Обратите внимание: ваш рецепт «Мармелад» был удален. Все ссылки на этот рецепт удалены из ваших календаря рецептов и списка покупок. Сами запланированные рецепты и продукты в списке покупок не удалены",
-          "title": "Связанный рецепт удален",
-          "timestamp": "2023-11-06T18:19:53.050Z",
-          "read": false,
-          "notificationDate": ""
-        },
-        {
           "id": 164,
           "relatedLink": "/recipes/list/74",
           "context": "recipe",
@@ -5807,6 +6081,198 @@
           "message": "Вы успешно удалили свой рецепт «Салат с сухариками».",
           "title": "Твой рецепт удален",
           "timestamp": "2023-11-06T18:31:37.484Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 168,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "error",
+          "relatedId": 0,
+          "message": "Твой рецепт «На публикацию» отклонен",
+          "title": "Рецепт отклонен",
+          "timestamp": "2023-11-06T18:40:51.197Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 169,
+          "relatedLink": "/recipes/list/69",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «Колдуны» кто-то добавил в избранное",
+          "title": "Твой рецепт добавили в избранное",
+          "timestamp": "2023-11-06T18:58:39.214Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 170,
+          "relatedLink": "/recipes/list/68",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «Картофельные драники с чесноком (без яиц и муки)» кто-то добавил в избранное",
+          "title": "Твой рецепт добавили в избранное",
+          "timestamp": "2023-11-06T18:58:40.297Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 171,
+          "relatedLink": "/cooks/list/26",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «Картофельные драники с чесноком (без яиц и муки)» приготовил кулинар @willBeDelete и оставил положительный отзыв",
+          "title": "Твой рецепт приготовили",
+          "timestamp": "2023-11-06T18:58:42.598Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 172,
+          "relatedLink": "/cooks/list/26",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «Колдуны» понравился кулинару @willBeDelete",
+          "title": "Твой рецепт оценили",
+          "timestamp": "2023-11-06T18:58:43.477Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 173,
+          "relatedLink": "/cooks/list/26",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «Картофельная бабка (запеканка) с курицей» приготовил кулинар @NPC. и оставил положительный отзыв",
+          "title": "Твой рецепт приготовили",
+          "timestamp": "2023-11-06T20:58:30.652Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 174,
+          "relatedLink": "/cooks/list/26",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «Картофельная бабка (запеканка) с курицей» приготовил кулинар @NPC. и оставил положительный отзыв",
+          "title": "Твой рецепт приготовили",
+          "timestamp": "2023-11-06T21:01:44.463Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 175,
+          "relatedLink": "/plan/calendar",
+          "context": "plan-reminder-start",
+          "type": "warning",
+          "relatedId": 3,
+          "message": "Время начала запланированного вами рецепта Борщ уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
+          "title": "Время начала запланированного рецепта настало!",
+          "timestamp": "2023-11-06T21:06:48.906Z",
+          "read": true,
+          "notificationDate": "Tue Nov 07 2023"
+        },
+        {
+          "id": 176,
+          "relatedLink": "/plan/calendar",
+          "context": "plan-reminder",
+          "type": "warning",
+          "relatedId": 0,
+          "message": "Хотим вас предупредить, что у вас запланированы рецепты на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению этих вкусных блюд.<br>Запланированные рецепты:<br>ㅤ1) Хлеб (начало через 2 дня)",
+          "title": "Начало запланированного рецепта уже скоро!",
+          "timestamp": "2023-11-06T21:06:49.030Z",
+          "read": true,
+          "notificationDate": "Tue Nov 07 2023"
+        },
+        {
+          "id": 177,
+          "relatedLink": "/recipes/list/72",
+          "context": "recipe",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Рецепт «Домашний рецепт» успешно отправлен на проверку",
+          "title": "Рецепт отправлен на проверку",
+          "timestamp": "2023-11-06T21:14:38.506Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 178,
+          "relatedLink": "/recipes/list/72",
+          "context": "recipe",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой рецепт «Домашний рецепт» одобрен и теперь может просматриваться всеми кулинарами",
+          "title": "Рецепт одобрен",
+          "timestamp": "2023-11-06T21:14:45.966Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 179,
+          "relatedLink": "/cooks/list/5",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «Домашний рецепт» понравился пользователю Лина",
+          "title": "Твой рецепт оценили",
+          "timestamp": "2023-11-06T21:14:56.953Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 180,
+          "relatedLink": "/plan/calendar",
+          "context": "plan-reminder-start",
+          "type": "warning",
+          "relatedId": 13,
+          "message": "Время начала запланированного вами рецепта Домашний рецепт уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
+          "title": "Время начала запланированного рецепта настало!",
+          "timestamp": "2023-11-06T21:15:26.231Z",
+          "read": true,
+          "notificationDate": "Tue Nov 07 2023"
+        },
+        {
+          "id": 181,
+          "relatedLink": "/cooks/list/5",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «Домашний рецепт» приготовил кулинар Лина и оставил положительный отзыв",
+          "title": "Твой рецепт приготовили",
+          "timestamp": "2023-11-06T21:16:01.803Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 182,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "warning",
+          "relatedId": 0,
+          "message": "Обратите внимание: ваш рецепт «Домашний рецепт» был удален. Все ссылки на этот рецепт удалены из ваших календаря рецептов и списка покупок. Сами запланированные рецепты и продукты в списке покупок не удалены",
+          "title": "Связанный рецепт удален",
+          "timestamp": "2023-11-06T21:18:19.921Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 183,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Вы успешно удалили свой рецепт «Домашний рецепт».",
+          "title": "Твой рецепт удален",
+          "timestamp": "2023-11-06T21:18:19.931Z",
           "read": true,
           "notificationDate": ""
         }
@@ -5855,6 +6321,18 @@
           "title": "Кто-то пожаловался на комментарий",
           "timestamp": "2023-11-01T20:44:03.378Z",
           "read": false
+        },
+        {
+          "id": 2,
+          "relatedLink": "/cooks/list/26",
+          "context": "user",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар @NPC. подписался на тебя",
+          "title": "Новый подписчик",
+          "timestamp": "2023-11-06T20:53:06.728Z",
+          "read": false,
+          "notificationDate": ""
         }
       ]
     },
@@ -5914,7 +6392,33 @@
       "location": "Милан, Италия",
       "registrationDate": "2023-08-12",
       "profileViews": 3223,
-      "role": "user"
+      "role": "user",
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "/cooks/list/26",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «exercitation aute eiusmod» понравился кулинару @willBeDelete",
+          "title": "Твой рецепт оценили",
+          "timestamp": "2023-11-06T18:58:28.189Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 2,
+          "relatedLink": "/cooks/list/26",
+          "context": "user",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар @NPC. подписался на тебя",
+          "title": "Новый подписчик",
+          "timestamp": "2023-11-06T20:53:07.393Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
     },
     {
       "id": 9,
@@ -5943,7 +6447,21 @@
       "location": "Сан-Франциско, США",
       "registrationDate": "2023-09-03",
       "profileViews": 2793,
-      "role": "user"
+      "role": "user",
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "/cooks/list/26",
+          "context": "user",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар @NPC. подписался на тебя",
+          "title": "Новый подписчик",
+          "timestamp": "2023-11-06T20:53:08.028Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
     },
     {
       "id": 10,
@@ -6070,7 +6588,7 @@
       "personalWebsite": "",
       "location": "",
       "registrationDate": "2023-11-03T08:52:32.196Z",
-      "profileViews": 3,
+      "profileViews": 4,
       "notifications": [
         {
           "id": 1,
@@ -6314,8 +6832,74 @@
           "timestamp": "2023-11-06T12:35:03.304Z",
           "read": false,
           "notificationDate": ""
+        },
+        {
+          "id": 22,
+          "relatedLink": "/recipes/list/70",
+          "context": "comment",
+          "type": "warning",
+          "relatedId": 0,
+          "message": "Кто-то пожаловался на твой комментарий «Спасибо» под рецептом «Картофельная бабка (запеканка) с курицей»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-06T19:13:29.229Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 23,
+          "relatedLink": "/cooks/list/26",
+          "context": "comment",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой комментарий «Спасибо» под рецептом «Картофельная бабка (запеканка) с курицей» понравился кулинару @NPC.",
+          "title": "Комментарий кому-то понравился",
+          "timestamp": "2023-11-06T21:05:50.975Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 24,
+          "relatedLink": "/cooks/list/26",
+          "context": "comment",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой комментарий «rtrrttrtr» под рецептом «Картофельная бабка (запеканка) с курицей» понравился кулинару @NPC.",
+          "title": "Комментарий кому-то понравился",
+          "timestamp": "2023-11-06T21:05:56.324Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 25,
+          "relatedLink": "/recipes/list/70",
+          "context": "comment",
+          "type": "warning",
+          "relatedId": 0,
+          "message": "Кто-то пожаловался на твой комментарий «rtrrttrtr» под рецептом «Картофельная бабка (запеканка) с курицей»",
+          "title": "Кто-то пожаловался на комментарий",
+          "timestamp": "2023-11-06T21:05:59.353Z",
+          "read": false,
+          "notificationDate": ""
         }
       ]
+    },
+    {
+      "id": 26,
+      "email": "gfgfgffgfggfgh@mail.ru",
+      "password": "fdfdffdfdfdH5",
+      "username": "gfgfgffg",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-06T21:46:32.629Z",
+      "profileViews": 0,
+      "notifications": []
     }
   ]
 }

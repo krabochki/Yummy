@@ -33,7 +33,7 @@ import { endOfDay, startOfDay } from 'date-fns';
 export class AddCalendarEventComponent implements OnInit, OnDestroy {
   @Input() plan: IPlan = nullPlan;
   @Input() event: CalendarEvent = nullCalendarEvent;
-  @Input() currentUser: IUser = nullUser;
+  @Input() currentUser: IUser = {...nullUser};
   @Output() closeEmitter = new EventEmitter<boolean>();
 
   protected title: string = '';

@@ -206,6 +206,19 @@ justify-content: center
   text-decoration: underline;
 }
 
+.status{
+  font-size: 0.9em;
+  &.future{
+    color: rgb(115, 208, 255);
+  }
+  &.past{
+    color: rgb(255, 94, 94);
+  }
+  &.now{
+    color:rgb(179, 255, 112)
+  }
+}
+
 .table{
       background-color: var(--color-background-deeper);
 

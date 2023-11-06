@@ -217,8 +217,6 @@
       [events]="events"
       [refresh]="refresh"
       [locale]="locale"
-    
-      
       (eventClicked)="handleEvent('Clicked', $event.event)"
       (eventTimesChanged)="eventTimesChanged($event)"
     >
@@ -246,14 +244,14 @@
     (closeEmitter)="closeCreateModal()"
   ></app-add-calendar-event>
 
-  <div class="table">
+  <div class="table" *ngIf="events.length>0; else noEvents">
     <div class="head"></div>
     <div class="head noselect">Название</div>
     <div class="head noselect">Цвет</div>
     <div class="head noselect">Дата</div>
     <div class="head"></div>
 
-    <ng-container *ngFor="let event of events">
+    <ng-container *ngFor="let event of events" >
       <div class="edit">
         <button
           (click)="targetEvent = event; createMode = true"
@@ -276,7 +274,7 @@
         >
       </div>
 
-      <div  class="color-block">
+      <div class="color-block">
         <div
           class="color"
           [ngStyle]="{ 'background-color': event.color!.primary }"
@@ -286,16 +284,32 @@
       </div>
 
       <div class="date">
-          <p class="fulldate"><span>Начало: </span>  {{event.start | date: "shortTime"}}  {{ event.start | date: "fullDate" }}
-                 ({{ event.start.toString() | timePast | lowercase }})</p>
+        <p *ngIf="eventInPast(event)" class="status past" >Событие уже прошло</p>
+        <p *ngIf="eventIsNow(event)" class="status now">Событие актуально</p>
+        <p *ngIf="eventInFuture(event)" class="status future">Событие предстоит</p>
+        <ng-container *ngIf="!event.allDay">
+          <p class="fulldate">
+            <span>Начало: </span> {{ event.start | date: "shortTime" }}
+            {{ event.start | date: "fullDate" }} ({{
+              event.start.toString() | timePast | lowercase
+            }})
+          </p>
 
+          <p class="fulldate">
+            <span>Конец: </span>
+            {{ event.end ? (event.end | date: "shortTime") : "" }}
+            {{ event.end ? (event.end | date: "fullDate") : "не установлен" }}
 
-                 <p class="fulldate"><span>Конец: </span>
- {{event.end? (event.end | date: "shortTime"): ''}}
-                  {{ event.end? ((event.end | date: "fullDate"))  :'не установлен' }}
-
-                  <ng-container *ngIf="event.end">({{ event.end.toString() | timePast | lowercase }})</ng-container></p>
-
+            <ng-container *ngIf="event.end"
+              >({{ event.end.toString() | timePast | lowercase }})</ng-container
+            >
+          </p>
+        </ng-container>
+        <ng-container *ngIf="event.allDay">
+          Весь день: {{event.start | date:"fullDate"}}
+          (начало {{event.start.toString() | timePast | lowercase}})
+        </ng-container>
+        
       </div>
 
       <div class="delete">
@@ -311,4 +325,7 @@
       </div>
     </ng-container>
   </div>
+  <ng-template #noEvents>
+    <p>Вы пока не запланировали ни одного рецепта</p>
+  </ng-template>
 </div>

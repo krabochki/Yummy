@@ -10,8 +10,12 @@
 .success{
     --main:#5eed62; 
 }
-
-
+.plan{
+    --main:pink
+}
+.plan-start{
+    --main: #0abab5
+}
 .error{
     --main:var(--color-primary); 
 }

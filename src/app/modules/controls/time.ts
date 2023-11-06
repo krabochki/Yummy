@@ -31,9 +31,16 @@ export const timeDiffGenerator: TimeDiffGenerator = (diff): string => {
     );
   }
   if (diff.seconds < 90) {
+    if(diff.isFuture) return 'Через 1 минуту'
     return 'Около минуты назад';
   }
   if (diff.minutes < 45) {
+    if(diff.isFuture) return (
+      'Через' +
+      diff.minutes +
+      ' ' +
+      pluralRu(diff.minutes, ['минуту', 'минуты', 'минут'])
+    );
     return (
       diff.minutes +
       ' ' +
@@ -42,6 +49,8 @@ export const timeDiffGenerator: TimeDiffGenerator = (diff): string => {
     );
   }
   if (diff.minutes < 90) {
+    if (diff.isFuture)
+      return ('Через 1 час')
     return '1 час назад';
   }
   if (diff.hours < 24) {

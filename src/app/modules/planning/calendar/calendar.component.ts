@@ -5,7 +5,7 @@ import {
   ChangeDetectorRef,
   OnDestroy,
 } from '@angular/core';
-import { isSameDay, isSameMonth } from 'date-fns';
+import { endOfDay, isSameDay, isSameMonth } from 'date-fns';
 import localeRu from '@angular/common/locales/ru';
 
 import { Subject, takeUntil } from 'rxjs';
@@ -23,6 +23,7 @@ import { IPlan, nullCalendarEvent, nullPlan } from '../models/plan';
 import { Title } from '@angular/platform-browser';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
+import { CalendarService } from '../services/calendar.service';
 
 @Component({
   selector: 'app-calendar',
@@ -58,6 +59,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     private router: Router,
     private planService: PlanService,
     private authService: AuthService,
+    private calendarService: CalendarService,
     private cd: ChangeDetectorRef,
   ) {
     this.title.setTitle('План рецептов');
@@ -88,10 +90,11 @@ export class CalendarComponent implements OnInit, OnDestroy {
         this.events = this.getEventsWithNormalData();
         this.events = this.events.sort((e1, e2) => {
           {
-            if (e1.start > e2.start) return 1;
+            if (new Date(e1.start) > new Date(e2.start)) return 1;
             else return -1;
           }
         }); //сортируем по времени(прошедшие раньше)
+
         this.cd.markForCheck();
         this.refresh.next();
       });
@@ -156,6 +159,19 @@ export class CalendarComponent implements OnInit, OnDestroy {
     }
   }
 
+  eventIsNow(event: CalendarEvent): boolean {
+        return this.calendarService.eventIsNow(event);
+
+  }
+
+  eventInFuture(event: CalendarEvent): boolean {
+    return this.calendarService.eventInFuture(event)
+  }
+
+  eventInPast(event: CalendarEvent): boolean {
+       return this.calendarService.eventInPast(event);
+
+  }
   handleEvent(action: string, event: CalendarEvent): void {
     if (action === 'Clicked') {
       if (event.recipeId !== 0)

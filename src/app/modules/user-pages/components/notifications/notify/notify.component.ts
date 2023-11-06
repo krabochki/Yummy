@@ -19,6 +19,8 @@ export class NotifyComponent  {
   getClass() {
     const styleClasses = [];
     if (!this.notify.read) styleClasses.push('not-readed');
+     if (this.notify.context === 'plan-reminder') return ['plan'];
+     if (this.notify.context === 'plan-reminder-start') return ['plan-start'];
     switch (this.notify.type) {
       case 'info':
         styleClasses.push('info');
@@ -39,6 +41,9 @@ export class NotifyComponent  {
   }
 
   get icon() {
+    if (this.notify.context === 'plan-reminder')
+      return '../../../../../assets/images/svg/' + 'pot.svg';
+    if(this.notify.context === 'plan-reminder-start') return '../../../../../assets/images/svg/'+'clocks.svg';
     return '../../../../../assets/images/svg/' + this.notify.type + '.svg';
   }
 }

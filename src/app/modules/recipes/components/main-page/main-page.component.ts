@@ -11,6 +11,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
 import { CategoryService } from '../../services/category.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-main-page',
@@ -25,6 +26,9 @@ export class MainPageComponent implements OnInit, OnDestroy {
   allSections: ISection[] = [];
   popularRecipes: IRecipe[] = [];
   recentRecipes: IRecipe[] = [];
+  noAccessModalShow = false;
+  favoriteRecipes: IRecipe[] = [];
+  cookedRecipes: IRecipe[] = [];
   currentUser: IUser = { ...nullUser };
   popularRecipesLoaded = false;
   userRecipes: IRecipe[] = [];
@@ -34,6 +38,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
     private recipeService: RecipeService,
     private sectionService: SectionService,
     private categoryService: CategoryService,
+    private router:Router,
 
     private titleService: Title,
     private authService: AuthService,
@@ -76,6 +81,12 @@ export class MainPageComponent implements OnInit, OnDestroy {
               .slice(0, 8);
             this.popularRecipesLoaded = true;
           }
+          this.favoriteRecipes = this.recipeService
+            .getMostFavoriteRecipes(publicRecipes)
+            .slice(0, 8);
+          this.cookedRecipes = this.recipeService
+            .getMostCookedRecipes(publicRecipes)
+            .slice(0, 8);
           this.recentRecipes = this.recipeService
             .getRecentRecipes(publicRecipes)
             .slice(0, 8);
@@ -85,7 +96,9 @@ export class MainPageComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroyed$))
           .subscribe((data: ISection[]) => {
             this.allSections = data;
-               this.allSections = this.sectionService.getNotEmptySections(this.allSections)
+            this.allSections = this.sectionService.getNotEmptySections(
+              this.allSections,
+            );
           });
       });
   }
@@ -96,5 +109,12 @@ export class MainPageComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroyed$.next();
     this.destroyed$.complete();
+  }
+
+  handleNoAccessModal(event: boolean) {
+    if (event) {
+      this.router.navigateByUrl('/greetings');
+    }
+    this.noAccessModalShow = false;
   }
 }

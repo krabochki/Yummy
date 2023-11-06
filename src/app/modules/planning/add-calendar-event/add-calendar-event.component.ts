@@ -164,10 +164,20 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
       this.selectedRecipe.id,
       this.start,
       this.title,
-      color,
+      this.colorSource === 'custom' ? this.customColor : color,
       this.end,
     );
     newEvent.id = this.event.id;
+
+    if (!this.end) newEvent.allDay = true;
+    else if (
+      this.start.toString() === startOfDay(this.start).toString() &&
+      this.end?.setSeconds(59, 999).toString() ===
+        endOfDay(this.end).setSeconds(59).toString()
+    ) {
+      newEvent.allDay = true;
+    }
+
     const findedEventIndex = this.plan.calendarEvents.findIndex(
       (c) =>
         c ===
@@ -188,10 +198,12 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
       this.colorSource === 'custom' ? this.customColor : color,
       this.end,
     );
-    if (
-      (this.start.toString() === startOfDay(new Date()).toString() &&
-        this.end?.toString() === endOfDay(new Date()).toString()) ||
-      !this.end
+
+    if (!this.end) newEvent.allDay = true;
+    else if (
+      this.start.toString() === startOfDay(this.start).toString() &&
+      this.end?.setSeconds(59, 999).toString() ===
+        endOfDay(this.end).setSeconds(59).toString()
     ) {
       newEvent.allDay = true;
     }
@@ -202,6 +214,7 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
     if (this.plan.calendarEvents.length > 0)
       maxId = Math.max(...this.plan.calendarEvents.map((e) => e.id));
     newEvent.id = maxId + 1;
+
     this.plan.calendarEvents = [...this.plan.calendarEvents, newEvent];
     this.planService
       .updatePlan(this.plan)
@@ -289,6 +302,47 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
   handleSuccessSaveModal() {
     this.modalSuccessSaveShow = false;
     this.closeEmitter.emit(true);
+  }
+
+  getModalDescription(type: 'success' | 'save' | 'exit'): string {
+    if (this.editMode) {
+      switch (type) {
+        case 'success':
+          return 'Рецепт в «Календаре рецептов» успешно изменен!';
+        case 'save':
+          return 'Вы уверены, что хотите изменить рецепт в плане?';
+        default:
+          return 'Вы уверены, что не хотите изменять рецепт в плане?';
+      }
+    } else {
+      switch (type) {
+        case 'success':
+          return 'Рецепт успешно добавлен в «Календарь рецептов»!';
+        case 'save':
+          return 'Вы уверены, что хотите добавить рецепт в план?';
+        default:
+          return 'Вы уверены, что не хотите добавить рецепт в план?';
+      }
+    }
+  }
+
+  getModalTitle(type: 'success' | 'save' | 'exit'): string {
+    if (this.editMode) {
+      switch (type) {
+        case 'success':
+          return 'Рецепт изменен';
+        case 'save':
+          return 'Подтвердите изменение';
+      }
+    } else {
+      switch (type) {
+        case 'success':
+          return 'Рецепт добавлен';
+        case 'save':
+          return 'Подтвердите добавление';
+      }
+    }
+    return 'Подтвердите выход';
   }
 
   public ngOnDestroy(): void {

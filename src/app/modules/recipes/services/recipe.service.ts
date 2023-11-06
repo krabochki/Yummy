@@ -129,13 +129,13 @@ export class RecipeService {
   getCommentedRecipesByUser(recipes: IRecipe[], userId: number) {
     recipes = recipes.filter((recipe) => recipe.comments.length > 0);
     const userCommentedRecipes: IRecipe[] = [];
-    const addedRecipeIds = new Set<number>(); 
+    const addedRecipeIds = new Set<number>();
 
     recipes.forEach((element) => {
       element.comments.forEach((comment) => {
         if (comment.authorId === userId && !addedRecipeIds.has(element.id)) {
           userCommentedRecipes.push(element);
-          addedRecipeIds.add(element.id); 
+          addedRecipeIds.add(element.id);
         }
       });
     });
@@ -166,31 +166,31 @@ export class RecipeService {
   getPopularRecipes(recipes: IRecipe[]) {
     return recipes.sort((a, b) => b.likesId.length - a.likesId.length);
   }
+  getMostCookedRecipes(recipes: IRecipe[]) {
+    return recipes.sort((a, b) => b.cooksId.length - a.cooksId.length);
+  }
+  getMostFavoriteRecipes(recipes: IRecipe[]) {
+    return recipes.sort((a, b) => b.favoritesId.length - a.favoritesId.length);
+  }
   getMostDiscussedRecipes(recipes: IRecipe[]): IRecipe[] {
     recipes = recipes.filter((recipe) => recipe.comments.length > 0);
     return recipes.sort((a, b) => b.comments.length - a.comments.length);
   }
   getPlannedRecipes(recipes: IRecipe[], plan: IPlan) {
     const plannedRecipeIds: number[] = [];
-    
-    console.log(recipes)
-    console.log(plan)
 
-       for (const calendarEvent of plan.calendarEvents) {
-         plannedRecipeIds.push(calendarEvent.recipeId);
-       }
-    console.log(plannedRecipeIds)
+    for (const calendarEvent of plan.calendarEvents) {
+      plannedRecipeIds.push(calendarEvent.recipeId);
+    }
+    console.log(plannedRecipeIds);
 
-    const plannedRecipes:IRecipe[]  = []
+    const plannedRecipes: IRecipe[] = [];
 
-    recipes.forEach(element => {
-      if (plannedRecipeIds.includes(element.id))
-        plannedRecipes.push(element)
+    recipes.forEach((element) => {
+      if (plannedRecipeIds.includes(element.id)) plannedRecipes.push(element);
     });
 
-      
-
-       return plannedRecipes;
+    return plannedRecipes;
   }
   getPublicRecipes(recipes: IRecipe[]) {
     return recipes.filter((recipe) => recipe.status === 'public');

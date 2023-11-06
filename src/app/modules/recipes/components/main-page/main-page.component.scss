@@ -10,6 +10,10 @@
 
 }
 
+app-modal{
+  position: fixed;
+  z-index: 10;
+}
 .head{
   display: flex;
   align-items: center;

@@ -13,28 +13,31 @@ export class NotificationService {
   constructor(
     private userService: UserService,
     private authService: AuthService,
-  ) { 
-    this.userService.users$.subscribe(
-       (data)=>
-      this.users = data
-    )
+  ) {
+    this.userService.users$.subscribe((data) => (this.users = data));
   }
 
-  users:IUser[] = []
+  users: IUser[] = [];
 
   buildNotification(
     title: string,
     text: string,
     type: 'info' | 'warning' | 'error' | 'success',
-    context: 'category' | 'recipe' | 'without'|'comment'|'user',
-    link:string
-    
+    context:
+      | 'category'
+      | 'recipe'
+      | 'without'
+      | 'comment'
+      | 'user'
+      | 'plan-reminder'
+      | 'plan-reminder-start',
+    link: string,
   ): INotification {
     const notification: INotification = {
       ...nullNotification,
       title: title,
-      relatedLink:link,
-      context:context,
+      relatedLink: link,
+      context: context,
       message: text,
       type: type,
       timestamp: getCurrentDate(),
@@ -43,8 +46,7 @@ export class NotificationService {
   }
 
   sendNotification(notification: INotification, user: IUser) {
-
-    const actualUser = this.users.find((u)=>u.id===user.id)
+    const actualUser = this.users.find((u) => u.id === user.id);
 
     if (actualUser) {
       if (!actualUser.notifications) {
@@ -56,9 +58,7 @@ export class NotificationService {
       notification.id = maxId + 1;
       actualUser.notifications.push(notification);
     }
-    if(actualUser)
-      return this.userService.updateUsers(actualUser);
-    else return EMPTY
-    
+    if (actualUser) return this.userService.updateUsers(actualUser);
+    else return EMPTY;
   }
 }

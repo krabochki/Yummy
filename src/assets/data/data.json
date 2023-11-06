@@ -17,6 +17,15 @@
       "user": 25,
       "shoppingList": [
         {
+          "id": 4,
+          "name": "Рыба",
+          "note": "Скумбрия",
+          "howMuch": "1 штука",
+          "isBought": false,
+          "relatedRecipe": 0,
+          "type": 6
+        },
+        {
           "id": 1,
           "name": "Песочное печенье",
           "note": "",
@@ -46,66 +55,136 @@
       ],
       "calendarEvents": [
         {
-          "id": 1,
-          "recipeId": 24,
-          "start": "2023-11-03T21:00:00.000Z",
-          "title": "Чизкейк с клубникой",
+          "id": 5,
+          "recipeId": 0,
+          "start": "2023-11-04T21:00:00.000Z",
+          "title": "Торт ",
           "color": {
-            "primary": "#F83839",
-            "secondary": "#F83839"
+            "primary": "#FFC5D0",
+            "secondary": "#FFC5D0"
           },
-          "allDay": true,
+          "allDay": false,
           "draggable": true,
+          "end": "2023-11-05T23:00:59.999Z",
           "resizable": {
             "beforeStart": true,
             "afterEnd": true
           }
         },
         {
-          "id": 13,
+          "id": 2,
+          "recipeId": 0,
+          "start": "2023-11-05T01:00:00.000Z",
+          "title": "Сырники",
+          "color": {
+            "primary": "#40e0d0",
+            "secondary": "#40e0d0"
+          },
+          "allDay": false,
+          "draggable": true,
+          "end": "2023-11-05T17:00:00.000Z",
+          "resizable": {
+            "beforeStart": true,
+            "afterEnd": true
+          }
+        },
+        {
+          "id": 6,
           "recipeId": 0,
           "start": "2023-11-05T21:00:00.000Z",
-          "title": "fggfgfgf",
+          "title": "Суп  ",
           "color": {
-            "primary": "#C55FFC",
-            "secondary": "#C55FFC"
+            "primary": "#ff0000",
+            "secondary": "#ff0000"
+          },
+          "allDay": false,
+          "draggable": true,
+          "end": "2023-11-05T22:59:59.999Z",
+          "resizable": {
+            "beforeStart": true,
+            "afterEnd": true
+          }
+        },
+        {
+          "id": 1,
+          "recipeId": 0,
+          "start": "2023-11-05T21:00:00.000Z",
+          "title": "Блинчики",
+          "color": {
+            "primary": "#ff3867",
+            "secondary": "#ff3867"
+          },
+          "allDay": false,
+          "draggable": true,
+          "end": "2023-11-06T07:00:59.999Z",
+          "resizable": {
+            "beforeStart": true,
+            "afterEnd": true
+          }
+        },
+        {
+          "id": 3,
+          "recipeId": 0,
+          "start": "2023-11-05T21:00:00.000Z",
+          "title": "Пирог",
+          "color": {
+            "primary": "#ffdd00",
+            "secondary": "#ffdd00"
           },
           "allDay": true,
           "draggable": true,
+          "end": "2023-11-06T20:59:59.999Z",
           "resizable": {
             "beforeStart": true,
             "afterEnd": true
           }
         },
         {
-          "id": 12,
-          "recipeId": 68,
-          "start": "2023-11-08T07:00:00.000Z",
-          "title": "Картофельные драники с чесноком (без яиц и муки)",
-          "color": {
-            "primary": "#1e00ff",
-            "secondary": "#1e00ff"
-          },
-          "allDay": false,
-          "draggable": true,
-          "end": "2023-11-08T09:00:00.000Z",
-          "resizable": {
-            "beforeStart": true,
-            "afterEnd": true
-          }
-        },
-        {
-          "id": 14,
+          "id": 8,
           "recipeId": 0,
-          "start": "2023-11-06T09:00:00.000Z",
-          "title": "gfgfg",
+          "start": "2023-11-06T06:00:00.000Z",
+          "title": "Эчпочмак",
           "color": {
-            "primary": "#ffa500",
-            "secondary": "#ffa500"
+            "primary": "#F205C7",
+            "secondary": "#F205C7"
           },
           "allDay": false,
           "draggable": true,
-          "end": "2023-11-06T13:59:00.000Z",
+          "end": "2023-11-06T07:20:00.000Z",
+          "resizable": {
+            "beforeStart": true,
+            "afterEnd": true
+          }
+        },
+        {
+          "id": 4,
+          "recipeId": 0,
+          "start": "2023-11-06T21:00:00.000Z",
+          "title": "Плов ",
+          "color": {
+            "primary": "#00bfff",
+            "secondary": "#00bfff"
+          },
+          "allDay": true,
+          "draggable": true,
+          "end": "2023-11-07T20:59:59.999Z",
+          "resizable": {
+            "beforeStart": true,
+            "afterEnd": true
+          }
+        },
+        {
+          "id": 7,
+          "recipeId": 0,
+          "start": "2023-12-31T07:00:00.000Z",
+          "title": "Селедка под шубой",
+          "color": {
+            "primary": "#00c957",
+            "secondary": "#00c957"
+          },
+          "allDay": false,
+          "draggable": true,
+          "end": "2023-12-31T09:00:00.000Z",
           "resizable": {
             "beforeStart": true,
             "afterEnd": true
@@ -811,7 +890,8 @@
       "cooksId": [
         2,
         13,
-        5
+        5,
+        25
       ],
       "favoritesId": [
         1,
@@ -874,6 +954,10 @@
       "statistics": [
         {
           "userId": 5,
+          "answer": false
+        },
+        {
+          "userId": 25,
           "answer": false
         }
       ]
@@ -1308,7 +1392,8 @@
         10,
         9,
         5,
-        1
+        1,
+        25
       ],
       "favoritesId": [
         10,
@@ -1323,7 +1408,8 @@
         3,
         7,
         4,
-        1
+        1,
+        25
       ],
       "status": "public",
       "origin": "Haiti",
@@ -1385,6 +1471,10 @@
       "statistics": [
         {
           "userId": 1,
+          "answer": true
+        },
+        {
+          "userId": 25,
           "answer": true
         }
       ]
@@ -1715,7 +1805,8 @@
         1,
         6,
         13,
-        5
+        5,
+        25
       ],
       "favoritesId": [
         10,
@@ -1769,7 +1860,13 @@
           "unit": "qui"
         }
       ],
-      "ingredients": []
+      "ingredients": [],
+      "statistics": [
+        {
+          "userId": 25,
+          "answer": false
+        }
+      ]
     },
     {
       "id": 17,
@@ -1969,7 +2066,8 @@
       "cooksId": [
         9,
         7,
-        5
+        5,
+        25
       ],
       "favoritesId": [
         9,
@@ -2021,7 +2119,13 @@
           "unit": "proident"
         }
       ],
-      "ingredients": []
+      "ingredients": [],
+      "statistics": [
+        {
+          "userId": 25,
+          "answer": false
+        }
+      ]
     },
     {
       "id": 20,
@@ -4795,7 +4899,57 @@
       "location": "Лондон, Великобритания",
       "registrationDate": "2023-04-02",
       "profileViews": 4967,
-      "role": "user"
+      "role": "user",
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "/cooks/list/25",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «Lorem laborum nulla» приготовил кулинар @plan_checking и оставил положительный отзыв",
+          "title": "Твой рецепт приготовили",
+          "timestamp": "2023-11-06T02:12:09.018Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 2,
+          "relatedLink": "/cooks/list/25",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «Lorem laborum nulla» приготовил кулинар @plan_checking и оставил положительный отзыв",
+          "title": "Твой рецепт приготовили",
+          "timestamp": "2023-11-06T02:13:42.811Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 3,
+          "relatedLink": "/cooks/list/25",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «Lorem laborum nulla» приготовил кулинар @plan_checking и оставил негативный отзыв",
+          "title": "Твой рецепт приготовили",
+          "timestamp": "2023-11-06T02:59:00.258Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 4,
+          "relatedLink": "/cooks/list/25",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «aliqua labore velit» приготовил кулинар @plan_checking и оставил негативный отзыв",
+          "title": "Твой рецепт приготовили",
+          "timestamp": "2023-11-06T02:59:04.046Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
     },
     {
       "email": "polinaa.kuzmenokk@gmail.com",
@@ -4828,7 +4982,7 @@
       "personalWebsite": "",
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 1933,
+      "profileViews": 1936,
       "notifications": [
         {
           "id": 1,
@@ -5929,6 +6083,51 @@
           "title": "Твой рецепт приготовили",
           "timestamp": "2023-11-04T17:20:49.673Z",
           "read": false
+        },
+        {
+          "id": 111,
+          "relatedLink": "/cooks/list/25",
+          "context": "recipe",
+          "type": "info",
+          "message": "Твой рецепт «et ea enim» понравился пользователю @plan_checking",
+          "title": "Твой рецепт оценили",
+          "timestamp": "2023-11-06T01:28:10.762Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 112,
+          "relatedLink": "/cooks/list/25",
+          "context": "recipe",
+          "type": "info",
+          "message": "Твой рецепт «et ea enim» понравился пользователю @plan_checking",
+          "title": "Твой рецепт оценили",
+          "timestamp": "2023-11-06T01:28:21.327Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 113,
+          "relatedLink": "/cooks/list/25",
+          "context": "recipe",
+          "type": "info",
+          "message": "Твой рецепт «et ea enim» приготовил кулинар @plan_checking и оставил положительный отзыв",
+          "title": "Твой рецепт приготовили",
+          "timestamp": "2023-11-06T01:28:27.391Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 114,
+          "relatedLink": "/cooks/list/25",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «dolor mollit commodo» приготовил кулинар @plan_checking и оставил негативный отзыв",
+          "title": "Твой рецепт приготовили",
+          "timestamp": "2023-11-06T01:56:36.263Z",
+          "read": false,
+          "notificationDate": ""
         }
       ]
     },
@@ -6231,6 +6430,41 @@
           "title": "Комментарий удален",
           "timestamp": "2023-11-05T14:02:28.146Z",
           "read": true
+        },
+        {
+          "id": 5,
+          "relatedLink": "/plan/calendar",
+          "context": "plan-reminder",
+          "type": "warning",
+          "message": "Хотим вас предупредить, что у вас запланированы рецепты на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению этих вкусных блюд.<br>Запланированные рецепты:<br>ㅤ1) Плов (начало через 20 часов), <br>ㅤ2) Эчпочмак (начало через 5 часов)",
+          "title": "Начало запланированного рецепта уже скоро!",
+          "timestamp": "2023-11-06T01:25:11.073Z",
+          "read": true,
+          "notificationDate": "Mon Nov 06 2023"
+        },
+        {
+          "id": 6,
+          "relatedLink": "/plan/calendar",
+          "context": "plan-reminder-start",
+          "type": "warning",
+          "relatedId": 1,
+          "message": "Время начала запланированного вами рецепта Блинчики уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
+          "title": "Время начала запланированного рецепта настало!",
+          "timestamp": "2023-11-06T01:45:20.619Z",
+          "read": true,
+          "notificationDate": "Mon Nov 06 2023"
+        },
+        {
+          "id": 7,
+          "relatedLink": "/plan/calendar",
+          "context": "plan-reminder-start",
+          "type": "warning",
+          "relatedId": 3,
+          "message": "Время начала запланированного вами рецепта Пирог уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
+          "title": "Время начала запланированного рецепта настало!",
+          "timestamp": "2023-11-06T01:45:20.732Z",
+          "read": true,
+          "notificationDate": "Mon Nov 06 2023"
         }
       ]
     }

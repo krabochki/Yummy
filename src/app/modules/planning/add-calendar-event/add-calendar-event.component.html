@@ -2,7 +2,12 @@
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <div class="background" (click)="clickBackgroundNotContent($event)">
   <div class="main-cont">
-    <div class="close-button" (click)="noChanges?this.closeEmitter.emit(true):modalExitShow=true">
+    <div
+      class="close-button"
+      (click)="
+        noChanges ? this.closeEmitter.emit(true) : (modalExitShow = true)
+      "
+    >
       <svg-icon
         class="close-svg"
         [applyClass]="true"
@@ -50,7 +55,7 @@
               <div class="search-block">
                 <div class="search">
                   <app-usual-input
-                  [inputDisabled]="event.id>-1?false:true"
+                    [inputDisabled]="event.id > -1 ? false : true"
                     (focus)="focus()"
                     [error]="
                       searchQuery && focused && selectedRecipe.id === 0
@@ -75,7 +80,7 @@
                           изменить параметры поиска или подобрать рецепт в
                           специальном разделе!
                         </p>
-                        <app-button 
+                        <app-button
                           [text]="'Подбор рецептов'"
                           (mousedown)="navigateTo('/recipes/match')"
                           [style]="'filled'"
@@ -112,10 +117,12 @@
                       i === selectedColorIndex && colorSource === 'palette'
                   }"
                   [ngStyle]="{ 'background-color': color }"
-                > </button>
+                ></button>
               </div>
               <div class="custom-color">
-                <p class="noselect" style="zoom: 0.9">Или выберите собственный цвет:</p>
+                <p class="noselect" style="zoom: 0.9">
+                  Или выберите собственный цвет:
+                </p>
                 <input
                   [ngClass]="{ selected: colorSource === 'custom' }"
                   (blur)="selectCustomColor()"
@@ -164,7 +171,7 @@
                 </div>
               </div>
 
-              <p 
+              <p
                 class="error noselect"
                 *ngIf="end && start ? start >= end : null || !start"
               >
@@ -190,13 +197,15 @@
         [style]="'filled'"
         [color]="'sec'"
         [disabled]="
-          (title.length>4) && start && (end ? start <= end : true) ? true : false
+          title.length > 4 && start && (end ? start <= end : true)
+            ? true
+            : false
         "
         [rounded]="true"
         [text]="editMode ? 'Обновить рецепт в плане' : 'Добавить рецепт в план'"
         (click)="
-          (title.length>4) && start && (end ? start <= end : true)
-            ? modalSaveShow = true
+          title.length > 4 && start && (end ? start <= end : true)
+            ? (modalSaveShow = true)
             : null
         "
       >
@@ -205,17 +214,38 @@
   </div>
 </div>
 
-
-<app-modal @modal (resultEmit)="handleExitModal($event)" *ngIf="modalExitShow" [style]="'prim'" [type]="'yesOrNo'" [buttonsText]="['Да','Отмена']" 
-
-[title]="'Подтвердите выход'"
-[description]="'Вы уверены, что не хотите сохранять запланированный рецепт?'" > </app-modal>
-
-<app-modal @modal (resultEmit)="handleSaveModal($event)" *ngIf="modalSaveShow" [style]="'prim'" [type]="'yesOrNo'" [buttonsText]="['Да','Отмена']" 
-[title]="'Подтвердите добавление рецепта'"
-[description]="'Вы уверены, что хотите добавь рецепт в план?'" > </app-modal>
-
+<app-modal
+  @modal
+  (resultEmit)="handleExitModal($event)"
+  *ngIf="modalExitShow"
+  [style]="'prim'"
+  [type]="'yesOrNo'"
+  [buttonsText]="['Да', 'Отмена']"
+  [title]="getModalTitle('exit')"
+  [description]="getModalDescription('exit')"
+>
+</app-modal>
 
 <app-modal
-[title]="'Рецепт добавлен'"
-@modal (resultEmit)="handleSuccessSaveModal()" *ngIf="modalSuccessSaveShow" [style]="'sec'" [type]="'Ok'" [buttonsText]="['Хорошо']" [description]="'Рецепт успешно добавлен в «Календарь рецептов»!'" > </app-modal>
+  @modal
+  (resultEmit)="handleSaveModal($event)"
+  *ngIf="modalSaveShow"
+  [style]="'prim'"
+  [type]="'yesOrNo'"
+  [buttonsText]="['Да', 'Отмена']"
+  [title]="getModalTitle('save')"
+  [description]="getModalDescription('save')"
+>
+</app-modal>
+
+<app-modal
+  [title]="getModalTitle('success')"
+  @modal
+  (resultEmit)="handleSuccessSaveModal()"
+  *ngIf="modalSuccessSaveShow"
+  [style]="'sec'"
+  [type]="'Ok'"
+  [buttonsText]="['Хорошо']"
+  [description]="getModalDescription('success')"
+>
+</app-modal>

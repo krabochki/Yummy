@@ -165,14 +165,18 @@ b::first-letter{
   color: var(--color-secondary-focus) !important;
 }
 .cal-month-view .cal-open-day-events {
-  padding:0 1em
+  padding:0 1em;
+  display: flex;
+  flex-direction: column;
+  
  
 }
 .cal-month-view .cal-open-day-events div {
-  padding-top:  0.5em ;
-padding-bottom:0.5em;
 
- 
+ padding-top: 0.75em;
+}
+.cal-month-view .cal-open-day-events div:last-child{
+  padding-bottom: 0.75em;
 }
 .cal-month-view .cal-open-day-events .cal-event {
   position: relative;

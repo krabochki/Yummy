@@ -4,7 +4,225 @@
 <div class="text-center">
   <h1 class="noselect">Календарь рецептов</h1>
 
+
+  <div class="btn-wrap">
+    <div>
+      <div class="btn-group noselect">
+        <button
+          class="btn"
+          mwlCalendarPreviousView
+          [view]="view"
+          [(viewDate)]="viewDate"
+          (viewDateChange)="closeOpenMonthViewDay()"
+        >
+          Ранее
+        </button>
+        <button class="btn primary" mwlCalendarToday [(viewDate)]="viewDate">
+          Сегодня
+        </button>
+        <button
+          class="btn"
+          mwlCalendarNextView
+          [view]="view"
+          [(viewDate)]="viewDate"
+          (viewDateChange)="closeOpenMonthViewDay()"
+        >
+          Далее
+        </button>
+      </div>
+    </div>
+    <div>
+      <h3 class="title">{{ viewDate | calendarDate: view + "ViewTitle" }}</h3>
+    </div>
+    <div>
+      <div class="btn-group noselect">
+        <button
+          class="btn"
+          (click)="setView(CalendarView.Month)"
+          [class.active]="view === CalendarView.Month"
+        >
+          Месяц
+        </button>
+        <button
+          class="btn primary"
+          (click)="setView(CalendarView.Week)"
+          [class.active]="view === CalendarView.Week"
+        >
+          Неделя
+        </button>
+        <button
+          class="btn"
+          (click)="setView(CalendarView.Day)"
+          [class.active]="view === CalendarView.Day"
+        >
+          День
+        </button>
+      </div>
+    </div>
+
+    
+  </div>
+
+  <div [ngSwitch]="view">
+    <mwl-calendar-month-view
+      *ngSwitchCase="CalendarView.Month"
+      [viewDate]="viewDate"
+      [events]="events"
+      [weekStartsOn]="1"
+      [locale]="locale"
+      [refresh]="refresh"
+      [activeDayIsOpen]="activeDayIsOpen"
+      (dayClicked)="dayClicked($event.day)"
+      (eventClicked)="handleEvent('Clicked', $event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)"
+    >
+    </mwl-calendar-month-view>
+    <mwl-calendar-week-view
+      [weekStartsOn]="1"
+      [locale]="locale"
+      *ngSwitchCase="CalendarView.Week"
+      [viewDate]="viewDate"
+      [events]="events"
+      [refresh]="refresh"
+      (eventClicked)="handleEvent('Clicked', $event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)"
+    >
+    </mwl-calendar-week-view>
+    <mwl-calendar-day-view
+      *ngSwitchCase="CalendarView.Day"
+      [viewDate]="viewDate"
+      [events]="events"
+      [refresh]="refresh"
+      [locale]="locale"
+      (eventClicked)="handleEvent('Clicked', $event.event)"
+      (eventTimesChanged)="eventTimesChanged($event)"
+    >
+    </mwl-calendar-day-view>
+  </div>
+
   <app-button
+    class="new-recipe-button noselect"
+    [text]="'Добавить рецепт в план'"
+    (click)="createMode = true"
+    [color]="'sec'"
+    [style]="'filled'"
+    [rounded]="true"
+  ></app-button>
+
+  <h3 class="edit-plan noselect">Все запланированные рецепты</h3>
+
+  <app-add-calendar-event
+    [currentUser]="currentUser"
+    [event]="targetEvent"
+    [plan]="currentUserPlan"
+    @modal
+    style="position: fixed; z-index: 10"
+    *ngIf="createMode"
+    (closeEmitter)="closeCreateModal()"
+  ></app-add-calendar-event>
+
+  <div class="table" *ngIf="events.length>0; else noEvents">
+    <div class="head"></div>
+    <div class="head noselect">Название</div>
+    <div class="head noselect">Цвет</div>
+    <div class="head noselect">Дата</div>
+    <div class="head"></div>
+
+    <ng-container *ngFor="let event of events" >
+      <div class="edit">
+        <button
+          (click)="targetEvent = event; createMode = true"
+          class="noselect clear-all-button"
+        >
+          <svg-icon
+            [applyClass]="true"
+            class="clear-all-icon edit"
+            [src]="'../../../../../assets/images/svg/grocery/edit.svg'"
+          ></svg-icon>
+        </button>
+      </div>
+      <div class="name">
+        <a
+          [ngClass]="{ 'real-link': event.recipe }"
+          [routerLink]="
+            event.recipe ? '/recipes/list/' + event.recipe : null
+          "
+          ><p>{{ event.title }}</p></a
+        >
+      </div>
+
+      <div class="color-block">
+        <div
+          class="color"
+          [ngStyle]="{ 'background-color': event.color!.primary }"
+          readonly
+          disabled
+        ></div>
+      </div>
+
+      <div class="date">
+        <p *ngIf="eventInPast(event)" class="status past" >Событие уже прошло</p>
+        <p *ngIf="eventIsNow(event)" class="status now">Событие актуально</p>
+        <p *ngIf="eventInFuture(event)" class="status future">Событие предстоит</p>
+        <ng-container *ngIf="!event.allDay">
+          <p class="fulldate">
+            <span>Начало: </span> {{ event.start | date: "shortTime" }}
+            {{ event.start | date: "fullDate" }} ({{
+              event.start.toString() | timePast | lowercase
+            }})
+          </p>
+
+          <p class="fulldate">
+            <span>Конец: </span>
+            {{ event.end ? (event.end | date: "shortTime") : "" }}
+            {{ event.end ? (event.end | date: "fullDate") : "не установлен" }}
+
+            <ng-container *ngIf="event.end"
+              >({{ event.end.toString() | timePast | lowercase }})</ng-container
+            >
+          </p>
+        </ng-container>
+        <ng-container *ngIf="event.allDay">
+          <ng-container *ngIf="event.end && event.start.getDate()!==event.end.getDate()">
+               <p>
+                 Начало: {{event.start | date:"fullDate"}} 
+            ({{event.start.toString() | timePast | lowercase}})
+               </p>
+               <p>
+                Конец: {{event.end | date:"fullDate"}}
+          ({{event.end.toString() | timePast | lowercase}})
+               </p>
+          
+
+          </ng-container>
+             <ng-container *ngIf="!event.end || event.end.getDate()===event.start.getDate()">
+             Весь день: {{event.start | date:"fullDate"}}
+          (начало {{event.start.toString() | timePast | lowercase}})
+          </ng-container>
+         
+        </ng-container>
+        
+      </div>
+
+      <div class="delete">
+        <button (click)="deleteEvent(event)" class="noselect clear-all-button">
+          <svg-icon
+            [applyClass]="true"
+            class="clear-all-icon"
+            [src]="
+              '../../../../../assets/images/svg/grocery/delete-product.svg'
+            "
+          ></svg-icon>
+        </button>
+      </div>
+    </ng-container>
+  </div>
+  <ng-template #noEvents>
+    <p class="no-recipes">Вы пока не запланировали ни одного рецепта</p>
+  </ng-template>
+
+
+    <app-button
     class="info-button"
     [style]="'outlined'"
     [text]="'Подробнее'"
@@ -130,202 +348,4 @@
     </div>
   </div>
 
-  <div class="btn-wrap">
-    <div>
-      <div class="btn-group noselect">
-        <button
-          class="btn"
-          mwlCalendarPreviousView
-          [view]="view"
-          [(viewDate)]="viewDate"
-          (viewDateChange)="closeOpenMonthViewDay()"
-        >
-          Ранее
-        </button>
-        <button class="btn primary" mwlCalendarToday [(viewDate)]="viewDate">
-          Сегодня
-        </button>
-        <button
-          class="btn"
-          mwlCalendarNextView
-          [view]="view"
-          [(viewDate)]="viewDate"
-          (viewDateChange)="closeOpenMonthViewDay()"
-        >
-          Далее
-        </button>
-      </div>
-    </div>
-    <div>
-      <h3 class="title">{{ viewDate | calendarDate: view + "ViewTitle" }}</h3>
-    </div>
-    <div>
-      <div class="btn-group noselect">
-        <button
-          class="btn"
-          (click)="setView(CalendarView.Month)"
-          [class.active]="view === CalendarView.Month"
-        >
-          Месяц
-        </button>
-        <button
-          class="btn primary"
-          (click)="setView(CalendarView.Week)"
-          [class.active]="view === CalendarView.Week"
-        >
-          Неделя
-        </button>
-        <button
-          class="btn"
-          (click)="setView(CalendarView.Day)"
-          [class.active]="view === CalendarView.Day"
-        >
-          День
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <div [ngSwitch]="view">
-    <mwl-calendar-month-view
-      *ngSwitchCase="CalendarView.Month"
-      [viewDate]="viewDate"
-      [events]="events"
-      [weekStartsOn]="1"
-      [locale]="locale"
-      [refresh]="refresh"
-      [activeDayIsOpen]="activeDayIsOpen"
-      (dayClicked)="dayClicked($event.day)"
-      (eventClicked)="handleEvent('Clicked', $event.event)"
-      (eventTimesChanged)="eventTimesChanged($event)"
-    >
-    </mwl-calendar-month-view>
-    <mwl-calendar-week-view
-      [weekStartsOn]="1"
-      [locale]="locale"
-      *ngSwitchCase="CalendarView.Week"
-      [viewDate]="viewDate"
-      [events]="events"
-      [refresh]="refresh"
-      (eventClicked)="handleEvent('Clicked', $event.event)"
-      (eventTimesChanged)="eventTimesChanged($event)"
-    >
-    </mwl-calendar-week-view>
-    <mwl-calendar-day-view
-      *ngSwitchCase="CalendarView.Day"
-      [viewDate]="viewDate"
-      [events]="events"
-      [refresh]="refresh"
-      [locale]="locale"
-      (eventClicked)="handleEvent('Clicked', $event.event)"
-      (eventTimesChanged)="eventTimesChanged($event)"
-    >
-    </mwl-calendar-day-view>
-  </div>
-
-  <app-button
-    class="new-recipe-button noselect"
-    [text]="'Добавить рецепт в план'"
-    (click)="createMode = true"
-    [color]="'sec'"
-    [style]="'filled'"
-    [rounded]="true"
-  ></app-button>
-
-  <h3 class="edit-plan noselect">Все запланированные рецепты</h3>
-
-  <app-add-calendar-event
-    [currentUser]="currentUser"
-    [event]="targetEvent"
-    [plan]="currentUserPlan"
-    @modal
-    style="position: fixed; z-index: 10"
-    *ngIf="createMode"
-    (closeEmitter)="closeCreateModal()"
-  ></app-add-calendar-event>
-
-  <div class="table" *ngIf="events.length>0; else noEvents">
-    <div class="head"></div>
-    <div class="head noselect">Название</div>
-    <div class="head noselect">Цвет</div>
-    <div class="head noselect">Дата</div>
-    <div class="head"></div>
-
-    <ng-container *ngFor="let event of events" >
-      <div class="edit">
-        <button
-          (click)="targetEvent = event; createMode = true"
-          class="noselect clear-all-button"
-        >
-          <svg-icon
-            [applyClass]="true"
-            class="clear-all-icon edit"
-            [src]="'../../../../../assets/images/svg/grocery/edit.svg'"
-          ></svg-icon>
-        </button>
-      </div>
-      <div class="name">
-        <a
-          [ngClass]="{ 'real-link': event.recipeId }"
-          [routerLink]="
-            event.recipeId ? '/recipes/list/' + event.recipeId : null
-          "
-          ><p>{{ event.title }}</p></a
-        >
-      </div>
-
-      <div class="color-block">
-        <div
-          class="color"
-          [ngStyle]="{ 'background-color': event.color!.primary }"
-          readonly
-          disabled
-        ></div>
-      </div>
-
-      <div class="date">
-        <p *ngIf="eventInPast(event)" class="status past" >Событие уже прошло</p>
-        <p *ngIf="eventIsNow(event)" class="status now">Событие актуально</p>
-        <p *ngIf="eventInFuture(event)" class="status future">Событие предстоит</p>
-        <ng-container *ngIf="!event.allDay">
-          <p class="fulldate">
-            <span>Начало: </span> {{ event.start | date: "shortTime" }}
-            {{ event.start | date: "fullDate" }} ({{
-              event.start.toString() | timePast | lowercase
-            }})
-          </p>
-
-          <p class="fulldate">
-            <span>Конец: </span>
-            {{ event.end ? (event.end | date: "shortTime") : "" }}
-            {{ event.end ? (event.end | date: "fullDate") : "не установлен" }}
-
-            <ng-container *ngIf="event.end"
-              >({{ event.end.toString() | timePast | lowercase }})</ng-container
-            >
-          </p>
-        </ng-container>
-        <ng-container *ngIf="event.allDay">
-          Весь день: {{event.start | date:"fullDate"}}
-          (начало {{event.start.toString() | timePast | lowercase}})
-        </ng-container>
-        
-      </div>
-
-      <div class="delete">
-        <button (click)="deleteEvent(event)" class="noselect clear-all-button">
-          <svg-icon
-            [applyClass]="true"
-            class="clear-all-icon"
-            [src]="
-              '../../../../../assets/images/svg/grocery/delete-product.svg'
-            "
-          ></svg-icon>
-        </button>
-      </div>
-    </ng-container>
-  </div>
-  <ng-template #noEvents>
-    <p>Вы пока не запланировали ни одного рецепта</p>
-  </ng-template>
 </div>

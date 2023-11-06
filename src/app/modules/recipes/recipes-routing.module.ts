@@ -39,9 +39,19 @@ const routes: Routes = [
         component: SomeRecipesPageComponent,
       },
       {
+        path: 'recipes/most-cooked',
+        data: { filter: 'most-cooked' },
+        component: SomeRecipesPageComponent,
+      },
+      {
+        path: 'recipes/most-favorite',
+        data: { filter: 'most-favorite' },
+        component: SomeRecipesPageComponent,
+      },
+      {
         path: 'recipes/planned',
         data: { filter: 'planned' },
-        canActivate:[AuthGuard],
+        canActivate: [AuthGuard],
         component: SomeRecipesPageComponent,
       },
       {

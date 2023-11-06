@@ -2,6 +2,8 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  ElementRef,
+  HostListener,
   Input,
   OnDestroy,
   OnInit,
@@ -14,42 +16,53 @@ import { modal } from 'src/tools/animations';
 import { Router } from '@angular/router';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, switchMap, takeUntil } from 'rxjs';
 import { getCurrentDate } from 'src/tools/common';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
+import { CalendarService } from 'src/app/modules/planning/services/calendar.service';
+import { PlanService } from 'src/app/modules/planning/services/plan-service';
+import { IPlan, nullPlan } from 'src/app/modules/planning/models/plan';
 
 @Component({
   selector: 'app-recipe-list-item',
   templateUrl: './recipe-list-item.component.html',
   styleUrls: ['./recipe-list-item.component.scss'],
   animations: [trigger('modal', modal())],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecipeListItemComponent implements OnInit, OnDestroy {
   @Input() recipe: IRecipe = nullRecipe;
-  @Input() context: string = '';
   @Input() showAuthor: boolean = true;
+  @Input() shortView: boolean = false;
 
   protected destroyed$: Subject<void> = new Subject<void>();
 
-  likes: number = 0;
-  cooks: number = 0;
-  editMode: boolean = false;
-  isRecipeFavorite: boolean = false;
-  isRecipeLiked: boolean = false;
-  isRecipeCooked: boolean = false;
-  noAccessModalShow: boolean = false;
-  dataLoaded = false;
-  currentUserId = 0;
-  currentUser:IUser = {...nullUser};
-  author: IUser = { ...nullUser };
-  successEditModalShow: boolean = false;
-  moreAuthorButtons: boolean = false;
-  publishModalShow: boolean = false;
-  successPublishModalShow: boolean = false;
-  voteModalShow: boolean = false;
-  successVoteModalShow: boolean = false;
+  protected editMode: boolean = false;
+  protected isRecipeFavorite: boolean = false;
+  protected isRecipeLiked: boolean = false;
+  protected isRecipeCooked: boolean = false;
+  protected dataLoaded = false;
+  protected currentUser: IUser = { ...nullUser };
+  protected author: IUser = { ...nullUser };
+
+  private vote: boolean = false;
+
+  protected isAwaitingApprove: boolean = false;
+  private editedRecipe: IRecipe = nullRecipe;
+
+  protected noAccessModalShow: boolean = false;
+  protected deleteRecipeModalShow: boolean = false;
+  protected successDeleteModalShow: boolean = false;
+  protected successEditModalShow: boolean = false;
+  protected moreAuthorButtons: boolean = false;
+  protected publishModalShow: boolean = false;
+  protected successPublishModalShow: boolean = false;
+  protected voteModalShow: boolean = false;
+  private users: IUser[] = [];
+  protected successVoteModalShow: boolean = false;
+
+  private plans: IPlan[] = [];
 
   constructor(
     private recipeService: RecipeService,
@@ -57,99 +70,209 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private router: Router,
     private cd: ChangeDetectorRef,
+    private calendarService: CalendarService,
+    private planService: PlanService,
     private notifyService: NotificationService,
+    private eRef: ElementRef,
   ) {}
 
-  editModeOff() {
-    this.editMode = false;
-  }
   ngOnInit() {
+    this.currentUserInit();
+    this.usersInit();
+  }
+
+  private currentUserInit(): void {
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
-      .subscribe((currentUser) => {
-        this.currentUserId = currentUser.id;
-        this.currentUser = currentUser;
-        this.recipeService.recipes$
-          .pipe(takeUntil(this.destroyed$))
-          .subscribe((recipes) => {
-            const findedRecipe = recipes.find((recipe) => {
-              return recipe.id === this.recipe.id;
-            });
-            if (findedRecipe) this.recipe = findedRecipe;
-            if (this.currentUserId !== 0) {
-              this.isRecipeLiked = this.recipe.likesId.includes(
-                this.currentUserId,
-              );
-              this.isRecipeCooked = this.recipe.cooksId.includes(
-                this.currentUserId,
-              );
-              this.isRecipeFavorite = this.recipe.favoritesId.includes(
-                this.currentUserId,
-              );
-            }
-
-            this.cd.markForCheck();
-          });
+      .subscribe((receivedCurrentUser) => {
+        if (receivedCurrentUser.id) {
+          this.currentUser = receivedCurrentUser;
+          this.recipesInit();
+        }
       });
-
+  }
+  private recipesInit(): void {
+    this.recipeService.recipes$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receiverRecipes) => {
+        const findedRecipe = receiverRecipes.find((recipe) => {
+          return recipe.id === this.recipe.id;
+        });
+        if (findedRecipe) this.recipe = findedRecipe;
+        if (this.currentUser.id !== 0) {
+          this.isRecipeLiked = this.recipe.likesId.includes(
+            this.currentUser.id,
+          );
+          this.isRecipeCooked = this.recipe.cooksId.includes(
+            this.currentUser.id,
+          );
+          this.isRecipeFavorite = this.recipe.favoritesId.includes(
+            this.currentUser.id,
+          );
+        }
+        this.cd.markForCheck();
+      });
+  }
+  private usersInit(): void {
     this.userService.users$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((users) => {
+        this.users = users;
         const findedAuthor = users.find((user) => {
           if (user.id === this.recipe.authorId) return true;
           else return false;
         });
         if (findedAuthor) this.author = findedAuthor;
+        this.plansInit();
         this.dataLoaded = true;
         this.cd.markForCheck();
+      });
+  }
+  private plansInit(): void {
+    this.planService.plans$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedPlans) => {
+        this.plans = receivedPlans;
       });
   }
 
   //добавляем рецепт в избранное
   makeThisRecipeFavorite() {
-    if (this.currentUserId === 0) {
+    if (this.currentUser.id === 0) {
       this.noAccessModalShow = true;
       return;
     }
 
     this.isRecipeFavorite = !this.isRecipeFavorite;
     this.recipe = this.isRecipeFavorite
-      ? this.recipeService.addRecipeToFavorites(this.currentUserId, this.recipe)
+      ? this.recipeService.addRecipeToFavorites(
+          this.currentUser.id,
+          this.recipe,
+        )
       : this.recipeService.removeRecipeFromFavorites(
-          this.currentUserId,
+          this.currentUser.id,
           this.recipe,
         );
 
     this.recipeService
       .updateRecipe(this.recipe)
       .pipe(takeUntil(this.destroyed$))
-      .subscribe(
-        () => 
-        {
-          if (this.isRecipeFavorite) {
-            const author: IUser = this.author;
-            const title =
-              'Твой рецепт «' +
-              this.recipe.name +
-              '» кто-то добавил в избранное'
+      .subscribe(() => {
+        if (
+          this.isRecipeFavorite &&
+          this.recipe.authorId !== this.currentUser.id
+        ) {
+          const author: IUser = this.author;
+          const title =
+            'Твой рецепт «' + this.recipe.name + '» кто-то добавил в избранное';
 
+          const notify: INotification = this.notifyService.buildNotification(
+            'Твой рецепт добавили в избранное',
+            title,
+            'info',
+            'recipe',
+            '/recipes/list/' + this.recipe.id,
+          );
+          this.notifyService.sendNotification(notify, author).subscribe();
+        }
+      });
+  }
+
+  //лайкаем рецепт
+  likeThisRecipe() {
+    if (this.currentUser.id === 0) {
+      this.noAccessModalShow = true;
+      return;
+    }
+
+    this.isRecipeLiked = !this.isRecipeLiked;
+
+    this.recipe = this.isRecipeLiked
+      ? this.recipeService.likeRecipe(this.currentUser.id, this.recipe)
+      : this.recipeService.unlikeRecipe(this.currentUser.id, this.recipe);
+
+    this.recipeService
+      .updateRecipe(this.recipe)
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(
+        () => {
+          if (
+            this.isRecipeLiked &&
+            this.recipe.authorId !== this.currentUser.id
+          ) {
+            const author: IUser = this.author;
             const notify: INotification = this.notifyService.buildNotification(
-              'Твой рецепт добавили в избранное',
-              title,
+              'Твой рецепт оценили',
+              `Твой рецепт «${this.recipe.name}» понравился кулинару ${
+                this.currentUser.fullName
+                  ? this.currentUser.fullName
+                  : '@' + this.currentUser.username
+              }`,
               'info',
               'recipe',
-              '/recipes/list/' + this.recipe.id,
+              '/cooks/list/' + this.currentUser.id,
             );
             this.notifyService.sendNotification(notify, author).subscribe();
           }
         },
         (error: Error) =>
-          console.error(
-            'Ошибка добавления рецепта в избранное: ' + error.message,
-          ),
+          console.error('Ошибка оценки рецепта: ' + error.message),
       );
   }
+  //готовим рецепт
+  cookThisRecipe() {
+    if (this.currentUser.id === 0) {
+      this.noAccessModalShow = true;
+      return;
+    }
 
+    this.isRecipeCooked = !this.isRecipeCooked;
+
+    this.recipe = this.isRecipeCooked
+      ? this.recipeService.cookRecipe(this.currentUser.id, this.recipe)
+      : this.recipeService.uncookRecipe(this.currentUser.id, this.recipe);
+
+    if (!this.isRecipeCooked) {
+      this.recipe = this.recipeService.removeVote(
+        this.recipe,
+        this.currentUser.id,
+      );
+      this.recipeService
+        .updateRecipe(this.recipe)
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe();
+    }
+    if (this.isRecipeCooked) this.successVoteModalShow = true;
+  }
+
+  handlePublishRecipeModal(event: boolean) {
+    if (event) {
+      this.successPublishModalShow = true;
+    }
+    this.publishModalShow = false;
+  }
+  handleSuccessPublishModal() {
+    this.recipe.status = 'awaits';
+    this.recipe.publicationDate = getCurrentDate();
+    this.recipeService.updateRecipe(this.recipe).subscribe(() => {
+      const author: IUser = this.author;
+      const notify: INotification = this.notifyService.buildNotification(
+        'Рецепт отправлен на проверку',
+        `Рецепт «${this.recipe.name}» успешно отправлен на проверку`,
+        'success',
+        'recipe',
+        '/recipes/list/' + this.recipe.id,
+      );
+      this.notifyService.sendNotification(notify, author).subscribe();
+    });
+    this.successPublishModalShow = false;
+  }
+  handleNoAccessModal(result: boolean) {
+    if (result) {
+      this.router.navigateByUrl('/greetings');
+    }
+    this.noAccessModalShow = false;
+  }
   handleEditedRecipe(event: IRecipe) {
     this.editMode = false;
     this.editedRecipe = event;
@@ -158,12 +281,10 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
     }
     this.successEditModalShow = true;
   }
-
-  vote: boolean = false;
   handleVoteModal(event: boolean) {
     this.recipe = this.recipeService.voteForRecipe(
       this.recipe,
-      this.currentUserId,
+      this.currentUser.id,
       !!event,
     );
     this.vote = event;
@@ -174,46 +295,38 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
     this.recipeService
       .updateRecipe(this.recipe)
       .pipe(takeUntil(this.destroyed$))
-      .subscribe(
-        () => {
-           if (this.isRecipeCooked) {
-                 const author: IUser = this.author;
+      .subscribe(() => {
+        if (
+          this.isRecipeCooked &&
+          this.recipe.authorId !== this.currentUser.id
+        ) {
+          const author: IUser = this.author;
 
-                 const title =
-                   ('Твой рецепт «' +
-                   this.recipe.name +
-                   '» приготовил кулинар ' +
-                   (this.currentUser.fullName
-                     ? this.currentUser.fullName
-                     : '@' + this.currentUser.username) + (this.vote?' и оставил положительный отзыв':' и оставил негативный отзыв'));
+          const title =
+            'Твой рецепт «' +
+            this.recipe.name +
+            '» приготовил кулинар ' +
+            (this.currentUser.fullName
+              ? this.currentUser.fullName
+              : '@' + this.currentUser.username) +
+            (this.vote
+              ? ' и оставил положительный отзыв'
+              : ' и оставил негативный отзыв');
 
-                 const notify: INotification =
-                   this.notifyService.buildNotification(
-                     'Твой рецепт приготовили',
-                     title,
-                     'info',
-                     'recipe',
-                     '/cooks/list/' + this.currentUser.id,
-                   );
-                 this.notifyService
-                   .sendNotification(notify, author)
-                   .subscribe();
-             }
+          const notify: INotification = this.notifyService.buildNotification(
+            'Твой рецепт приготовили',
+            title,
+            'info',
+            'recipe',
+            '/cooks/list/' + this.currentUser.id,
+          );
+          this.notifyService.sendNotification(notify, author).subscribe();
+        }
 
-            this.vote = false;
-          }
-        ,
-        (error: Error) =>
-          console.error(
-            'Ошибка отметки рецепта приготовленным: ' + error.message,
-          ),
-      );
+        this.vote = false;
+      });
     this.successVoteModalShow = false;
   }
-  isAwaitingApprove: boolean = false;
-  editedRecipe: IRecipe = nullRecipe;
-  deleteRecipeModalShow: boolean = false;
-  successDeleteModalShow: boolean = false;
   handleDeleteRecipeModal(event: boolean) {
     if (event) {
       this.successDeleteModalShow = true;
@@ -225,10 +338,10 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
     this.recipeService.updateRecipe(this.editedRecipe).subscribe(() => {
       const author: IUser = this.currentUser;
       const title =
-        ('Рецепт «' +
+        'Рецепт «' +
         this.editedRecipe.name +
         '» изменен' +
-        (this.isAwaitingApprove ? ' и успешно отправлен на проверку' : ''));
+        (this.isAwaitingApprove ? ' и успешно отправлен на проверку' : '');
       const notify: INotification = this.notifyService.buildNotification(
         this.isAwaitingApprove
           ? 'Рецепт изменен и отправлен на проверку'
@@ -244,140 +357,75 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
     });
   }
   handleSuccessDeleteModal() {
-    //?????????????? если наоборот сначала удалить то это модальное окно пропускается
-    this.recipeService.deleteRecipe(this.recipe.id).subscribe(
-      () => {
-          const author: IUser = this.author;
-          const title =
-            'Ты удалил свой рецепт «' + this.recipe.name + '»';
+    this.plans.forEach((plan) => {
+      //изменение календаря
+      const user = this.users.find((u) => u.id === plan.user);
+      if (user) {
+        let anyChangesInEvents = false;
+        plan.calendarEvents.forEach((calendarEvent) => {
+          if (calendarEvent.recipe === this.recipe.id) {
+            calendarEvent.recipe = 0;
+            anyChangesInEvents = true;
+          }
+        });
+        //изменение списка продуктов
+        let anyChangesInShoppingList = false;
+        plan.shoppingList.forEach((shoppingListItem) => {
+          if (shoppingListItem.relatedRecipe === this.recipe.id) {
+            shoppingListItem.relatedRecipe = 0;
+            anyChangesInShoppingList = true;
+          }
+        });
+        if (anyChangesInShoppingList || anyChangesInEvents) {
+          //обновляем план и уведомляем что рецепт был удален и ссылка на него больше не работает
+          this.planService.updatePlan(plan).subscribe();
 
-          const notify: INotification = this.notifyService.buildNotification(
-            'Твой рецепт удален',
-            title,
-            'success',
+          const notify = this.notifyService.buildNotification(
+            'Связанный рецепт удален',
+            user.id !== this.author.id
+              ? `Обратите внимание: рецепт «${this.recipe.name}» автора ${
+                  this.author.fullName
+                    ? this.author.fullName
+                    : '@' + this.author.username
+                } был удален. Все ссылки на этот рецепт удалены из календаря рецептов и списка покупок. Сами запланированные рецепты и продукты в списке покупок не удалены`
+              : `Обратите внимание: ваш рецепт «${this.recipe.name}» был удален. Все ссылки на этот рецепт удалены из ваших календаря рецептов и списка покупок. Сами запланированные рецепты и продукты в списке покупок не удалены`,
+            'warning',
             'recipe',
             '',
           );
-          this.notifyService.sendNotification(notify, author).subscribe();
+
+          this.notifyService.sendNotification(notify, user).subscribe();
+        }
       }
-    );
-  }
-  handleInnerFunction(event: Event) {
-    // Этот метод вызывается при клике на внутренний элемент рецепта
-    // Останавливаем всплытие события, чтобы оно не дошло до внешнего контейнера
-    event.stopPropagation();
-  }
+    });
 
-  //лайкаем рецепт
-  likeThisRecipe() {
-    if (this.currentUserId === 0) {
-      this.noAccessModalShow = true;
-      return;
-    }
-
-    this.isRecipeLiked = !this.isRecipeLiked;
-
-    this.recipe = this.isRecipeLiked
-      ? this.recipeService.likeRecipe(this.currentUserId, this.recipe)
-      : this.recipeService.unlikeRecipe(this.currentUserId, this.recipe);
-
-    this.recipeService
-      .updateRecipe(this.recipe)
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe(
-        () => {
-
-          if (this.isRecipeLiked) {
-            const author: IUser = this.author;
-
-            const title =
-              ('Твой рецепт «' +
-                this.recipe.name +
-                '» понравился кулинару ' + (this.currentUser.fullName ? this.currentUser.fullName : ('@' + this.currentUser.username)));
-            
-            const notify: INotification = this.notifyService.buildNotification(
-           
-              'Твой рецепт оценили',
-              title,
-              'info',
-              'recipe',
-              '/cooks/list/' + this.currentUser.id,
-            );
-            this.notifyService.sendNotification(notify, author).subscribe();
-          }
-
-        },
-        (error: Error) =>
-          console.error('Ошибка оценки рецепта: ' + error.message),
-      );
-  }
-  //готовим рецепт
-  cookThisRecipe() {
-    if (this.currentUserId === 0) {
-      this.noAccessModalShow = true;
-      return;
-    }
-
-    this.isRecipeCooked = !this.isRecipeCooked;
-
-    this.recipe = this.isRecipeCooked
-      ? this.recipeService.cookRecipe(this.currentUserId, this.recipe)
-      : this.recipeService.uncookRecipe(this.currentUserId, this.recipe);
-
-    if (!this.isRecipeCooked) {
-      this.recipe = this.recipeService.removeVote(
-        this.recipe,
-        this.currentUserId,
-      );
-      this.recipeService
-        .updateRecipe(this.recipe)
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe(
-          () => {
-          },
-          (error: Error) =>
-            console.error(
-              'Ошибка отметки рецепта приготовленным: ' + error.message,
-            ),
-        );
-    }
-    if (this.isRecipeCooked) this.successVoteModalShow = true;
-  }
-
-  handlePublishRecipeModal(event: boolean) {
-    if (event) {
-      this.successPublishModalShow = true;
-    }
-    this.publishModalShow = false;
-  }
-  handleSuccessPublishModal() {
-    this.recipe.status = 'awaits';
-    this.recipe.publicationDate = getCurrentDate();
-    this.recipeService.updateRecipe(this.recipe).subscribe(
-
+    this.notifyService
+      .sendNotification(
+        this.notifyService.buildNotification(
+          'Твой рецепт удален',
+          `Вы успешно удалили свой рецепт «${this.recipe.name}».`,
+          'success',
+          'recipe',
+          '',
+        ),
+        this.author,
+      )
+      .pipe(
+        switchMap(() => {
+          return this.recipeService.deleteRecipe(this.recipe.id);
+        }),
+    ).subscribe(
       () => {
-         const author: IUser = this.author;
-         const title = 'Рецепт «' + this.recipe.name + '» успешно отправлен на проверку';
-
-         const notify: INotification = this.notifyService.buildNotification(
-           'Рецепт отправлен на проверку',
-           title,
-           'success',
-           'recipe',
-           '/recipes/list/'+this.recipe.id,
-         );
-         this.notifyService.sendNotification(notify, author).subscribe();
-      }
-    );
-    this.successPublishModalShow = false;
+        console.log('subscribe success')
+        }
+      );
   }
 
-  // модальное окно (пользователь не вошел в аккаунт)
-  handleNoAccessModal(result: boolean) {
-    if (result) {
-      this.router.navigateByUrl('/greetings');
+  @HostListener('document:click', ['$event']) //скрываем авторские батоны если нажато куда-то вне этого мини-рецепта
+  clickout(event: any) {
+    if (!this.eRef.nativeElement.contains(event.target)) {
+      this.moreAuthorButtons = false;
     }
-    this.noAccessModalShow = false;
   }
 
   ngOnDestroy(): void {

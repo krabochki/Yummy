@@ -10,7 +10,7 @@ export class CalendarService {
   constructor(private http: HttpClient) {}
 
   createCalendarEvent(
-    recipeId: number,
+    recipe: number,
     start: Date,
     title: string,
     color: string,
@@ -19,7 +19,7 @@ export class CalendarService {
     const eventColor: EventColor = { primary: color, secondary: color };
     return {
       id: 0,
-      recipeId,
+      recipe,
       start,
       title,
       color: eventColor,
@@ -75,6 +75,16 @@ export class CalendarService {
       // return false;
     }
     return false;
+  }
+  
+  getEventByRelatedRecipe(events:CalendarEvent[], recipeId:number): CalendarEvent[]{
+  
+  return events.filter((event) => event.recipe === recipeId);
+  
+  }
+
+  filterEventsByRecipe(events: CalendarEvent[], recipeId: number): CalendarEvent[]{
+    return events.filter((event)=> event.recipe !== recipeId)
   }
 
   eventInFuture(event: CalendarEvent): boolean {

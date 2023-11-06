@@ -16,7 +16,7 @@
         [rounded]="true"
       ></app-button>
 
-      <div class="search-block">
+      <div class="search-block noselect">
         <div class="search">
           <input
             (focus)="focus()"
@@ -48,7 +48,7 @@
                 </div>
                 <p>
                   В данном разделе по твоему запросу нет никаких рецептов.
-                  Попробуй изменить параметры поиска или подобрать рецепт в
+                  Попробуйте изменить параметры поиска или подобрать рецепт в
                   специальном разделе!
                 </p>
                 <app-button
@@ -102,7 +102,7 @@
 
         <div class="block" *ngIf="currentUser.id > 0 && myRecipes.length > 0">
           <a routerLink="/recipes/yours" class="head">
-            <h2>Твои рецепты</h2>
+            <h2>Ваши рецепты</h2>
 
             <svg-icon
               class="arrow-svg"
@@ -297,7 +297,7 @@
         </div>
          <div class="block"   *ngIf="currentUser.id > 0 && commentedRecipes.length > 0">
           <a  routerLink="/recipes/commented" class="head">
-            <h2>Ты комментировал эти рецепты</h2>
+            <h2>Вы комментировали эти рецепты</h2>
 
             <svg-icon
               class="arrow-svg"
@@ -317,6 +317,47 @@
               ></app-vertical-recipe-list>
             </ng-template>
          
+          </div>
+        </div>
+
+           <div
+          class="block"
+        >
+          <a routerLink="/recipes/most-cooked" class="head">
+            <h2>Готовят чаще всего</h2>
+
+            <svg-icon
+              class="arrow-svg"
+              [applyClass]="true"
+              [src]="'../../../../../assets/images/svg/go-back.svg'"
+            ></svg-icon>
+          </a>
+          <div
+            class="recipes horizontal">
+            <app-horizontal-recipe-list
+              [recipes]="mostCooked"
+            ></app-horizontal-recipe-list>
+          
+          </div>
+        </div>
+         <div
+          class="block"
+        >
+          <a routerLink="/recipes/most-favorite" class="head">
+            <h2>Сохраняют чаще всего</h2>
+
+            <svg-icon
+              class="arrow-svg"
+              [applyClass]="true"
+              [src]="'../../../../../assets/images/svg/go-back.svg'"
+            ></svg-icon>
+          </a>
+          <div
+            class="recipes horizontal">
+            <app-horizontal-recipe-list
+              [recipes]="mostFavorite"
+            ></app-horizontal-recipe-list>
+          
           </div>
         </div>
 

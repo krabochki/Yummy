@@ -36,7 +36,7 @@ export const timeDiffGenerator: TimeDiffGenerator = (diff): string => {
   }
   if (diff.minutes < 45) {
     if(diff.isFuture) return (
-      'Через' +
+      'Через ' +
       diff.minutes +
       ' ' +
       pluralRu(diff.minutes, ['минуту', 'минуты', 'минут'])

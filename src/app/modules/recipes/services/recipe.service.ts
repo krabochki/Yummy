@@ -180,7 +180,7 @@ export class RecipeService {
     const plannedRecipeIds: number[] = [];
 
     for (const calendarEvent of plan.calendarEvents) {
-      plannedRecipeIds.push(calendarEvent.recipeId);
+      plannedRecipeIds.push(calendarEvent.recipe);
     }
     console.log(plannedRecipeIds);
 

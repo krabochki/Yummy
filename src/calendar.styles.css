@@ -171,8 +171,12 @@ b::first-letter{
   
  
 }
+
 .cal-month-view .cal-open-day-events div {
 
+  display: flex;
+  align-items: center;
+  column-gap: 0.5em;
  padding-top: 0.75em;
 }
 .cal-month-view .cal-open-day-events div:last-child{
@@ -330,6 +334,13 @@ b::first-letter{
 .cal-week-view .cal-day-headers span {
   font-weight: 400;
   opacity: 0.5;
+  color: var(--color-foreground);
+}
+.cal-week-view .cal-day-headers .cal-header.cal-today span {
+  font-weight: 400;
+  opacity: 0.5;
+  color: var(--color-secondary);
+  font-weight: 600;
 }
 .cal-week-view .cal-day-column {
   -webkit-box-flex: 1;
@@ -378,6 +389,15 @@ b::first-letter{
   position: relative;
   height: 31px;
   margin-left: 5em;
+  border-radius: 1em;
+}
+.cal-week-view .cal-all-day-events{
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.5em;
+}
+.cal-week-view .cal-all-day-events .cal-event{
+  border-radius: 1em !important;
 }
 [dir=rtl] .cal-week-view .cal-all-day-events .cal-events-row {
   margin-left: initial;
@@ -404,8 +424,10 @@ b::first-letter{
   line-height: 1.2;
 }
 .cal-week-view .cal-all-day-events .cal-starts-within-week .cal-event {
-  border-top-left-radius: 1em;
+  border-top-right-radius: 1em;
+  border-bottom-right-radius: 1em;
   border-bottom-left-radius: 1em;
+  border-top-left-radius: 1em;
 }
 [dir=rtl] .cal-week-view .cal-all-day-events .cal-starts-within-week .cal-event {
   border-top-left-radius: initial;
@@ -416,12 +438,16 @@ b::first-letter{
 .cal-week-view .cal-all-day-events .cal-ends-within-week .cal-event {
   border-top-right-radius: 1em;
   border-bottom-right-radius: 1em;
+  border-bottom-left-radius: 1em;
+  border-top-left-radius: 1em;
 }
 [dir=rtl] .cal-week-view .cal-all-day-events .cal-ends-within-week .cal-event {
   border-top-right-radius: initial;
   border-bottom-right-radius: initial;
-  border-top-left-radius: 1em;
+  border-top-right-radius: 1em;
+  border-bottom-right-radius: 1em;
   border-bottom-left-radius: 1em;
+  border-top-left-radius: 1em;
 }
 .cal-week-view .cal-all-day-events .cal-time-label-column {
   display: -webkit-box;

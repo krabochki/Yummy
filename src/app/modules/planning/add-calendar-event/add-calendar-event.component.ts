@@ -95,7 +95,7 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
       }
       this.title = this.event.title;
       const findedRecipe: IRecipe | undefined = this.allRecipes.find(
-        (r) => r.id === this.event.recipeId,
+        (r) => r.id === this.event.recipe,
       );
       if (findedRecipe) {
         this.chooseRecipe(findedRecipe);
@@ -201,15 +201,18 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
 
     if (!this.end) newEvent.allDay = true;
     else if (
-      this.start.toString() === startOfDay(this.start).toString() &&
-      this.end?.setSeconds(59, 999).toString() ===
-        endOfDay(this.end).setSeconds(59).toString()
+      (this.start.toString() === startOfDay(this.start).toString() &&
+        this.end?.setSeconds(59, 999).toString() ===
+          endOfDay(this.start).setSeconds(59).toString()) ||
+      (this.start.toString() === startOfDay(this.start).toString() &&
+        this.end?.setSeconds(59, 999).toString() ===
+          endOfDay(this.end).setSeconds(59).toString())
     ) {
       newEvent.allDay = true;
     }
 
     if (this.selectedRecipe.id !== 0)
-      newEvent.recipeId = this.selectedRecipe.id;
+      newEvent.recipe = this.selectedRecipe.id;
     let maxId = 0;
     if (this.plan.calendarEvents.length > 0)
       maxId = Math.max(...this.plan.calendarEvents.map((e) => e.id));

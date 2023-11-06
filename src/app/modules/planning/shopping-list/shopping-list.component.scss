@@ -168,7 +168,6 @@ a {
 }
 
 .row {
-  zoom: 0.94;
   display: flex;
   align-items: center;
   column-gap: 2em;
@@ -331,6 +330,10 @@ h2 {
       }
     }
   }
+}
+
+.zoom{
+  zoom:0.8
 }
 
 .product-name,

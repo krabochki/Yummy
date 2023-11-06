@@ -19,6 +19,10 @@ h1 {
   background-size: cover;
 }
 
+.disabled {
+  opacity: 0.5;
+}
+
 .content {
   width: 100%;
   display: flex;
@@ -36,10 +40,38 @@ h1 {
 .text {
   line-height: 1;
 }
-.likes .liked {
-  * {
+
+.likes {
+
+  button.like:hover,button.like:focus {
+    *{
     color: var(--color-secondary);
     fill: var(--color-secondary);
+    }
+  }
+  button.like.liked:hover,button.like.liked:focus {
+    *{
+    color: var(--color-secondary-focus);
+    fill: var(--color-secondary-focus);
+    }
+  }
+   button.like-dislike.disliked:hover,button.like-dislike.disliked:focus {
+    *{
+    color: var(--color-primary-focus);
+    fill: var(--color-primary-focus);
+    }
+  }
+  button.like-dislike:hover,button.like-dislike:focus {
+    *{
+    color: var(--color-primary);
+    fill: var(--color-primary);
+    }
+  }
+  .liked {
+    * {
+      color: var(--color-secondary);
+      fill: var(--color-secondary);
+    }
   }
 }
 
@@ -51,6 +83,11 @@ h1 {
 }
 
 .header {
+  &:hover, &:focus{
+    margin-left:0.25em
+  }
+   
+  transition:  0.2s ease-in-out;
   display: flex;
   cursor: pointer;
   flex-direction: column;
@@ -126,7 +163,7 @@ app-modal {
     fill: var(--color-primary-focus);
   }
 }
-.action:hover {
+.action:hover,.action:focus {
   .like-svg {
     fill: var(--color-secondary);
   }
@@ -135,7 +172,7 @@ app-modal {
     color: var(--color-secondary);
   }
 }
-.action.red:hover {
+.action.red:hover,.action:focus {
   .like-svg {
     fill: var(--color-primary);
   }
@@ -145,34 +182,31 @@ app-modal {
   }
 }
 
-
 .like-svg {
   fill: var(--color-foreground);
   height: 1em;
   width: 1.2em;
 }
 
-.action.haveReport{
+.action.haveReport {
   opacity: 0.5;
-  &:hover{
-  .like-svg
-  {
-    fill: var(--color-foreground);
-  }
-  span{
-    color: var(--color-foreground);
-  }
-  cursor: default;
-
+  &:hover {
+    .like-svg {
+      fill: var(--color-foreground);
+    }
+    span {
+      color: var(--color-foreground);
+    }
+    cursor: default;
   }
 }
 
-
-@media(max-width:480px){
-  .action span{
+@media (max-width: 480px) {
+  .action span {
     display: none;
   }
-  .likes,.actions{
+  .likes,
+  .actions {
     column-gap: 1em;
   }
 }

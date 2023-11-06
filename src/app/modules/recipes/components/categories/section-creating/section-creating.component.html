@@ -50,19 +50,19 @@
             </div>
             <div class="main-info-controls">
               <div class="form-control">
-                <h3>Название категории</h3>
+                <h3>Название секции</h3>
                 <app-usual-input
                   [inputRequired]="true"
                   [max]="30"
                   id="name"
                   formControlName="name"
-                  [placeholder]="'Придумай название категории'"
+                  [placeholder]="'Придумай название секции'"
                   required
                   [value]="form.get('name')?.value"
                   [error]="
                     form.get('name')?.invalid &&
                     (form.get('name')?.dirty || form.get('name')?.touched)
-                      ? 'Название категории должно содержать от 4 до 30 символов'
+                      ? 'Название секции должно содержать от 4 до 30 символов'
                       : ''
                   "
                 ></app-usual-input>

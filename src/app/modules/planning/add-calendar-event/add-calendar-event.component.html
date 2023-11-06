@@ -117,7 +117,7 @@
                       i === selectedColorIndex && colorSource === 'palette'
                   }"
                   [ngStyle]="{ 'background-color': color }"
-                ></button>
+                > </button>
               </div>
               <div class="custom-color">
                 <p class="noselect" style="zoom: 0.9">
@@ -197,14 +197,14 @@
         [style]="'filled'"
         [color]="'sec'"
         [disabled]="
-          title.length > 4 && start && (end ? start <= end : true)
+          title.length > 2 && start && (end ? start <= end : true)
             ? true
             : false
         "
         [rounded]="true"
         [text]="editMode ? 'Обновить рецепт в плане' : 'Добавить рецепт в план'"
         (click)="
-          title.length > 4 && start && (end ? start <= end : true)
+          title.length > 2 && start && (end ? start <= end : true)
             ? (modalSaveShow = true)
             : null
         "

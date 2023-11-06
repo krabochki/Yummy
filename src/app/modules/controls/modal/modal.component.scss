@@ -1,5 +1,8 @@
 @import "../../../../tools/UI/UI.scss";
 .modal-dialog {
+  zoom:1 !important;
+  scale: 1 !important;
+
   display: flex;
   justify-content: center;
   align-items: center;
@@ -11,6 +14,8 @@
   background: var(--modal-black);
   z-index: 9999;
 }
+
+
 
 
 *{
@@ -26,7 +31,7 @@ hr {
   background: var(--color-background);
   max-width: 30em;
 
-  border-radius: var(--space-m);
+  border-radius: var(--space-l);
   box-shadow: 0 3px 8px var(--modal-black);
   text-align: center;
   display: flex;

@@ -211,7 +211,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
 
   protected addToPlan(): void {
     this.targetCalendarEvent.id = -1;
-    this.targetCalendarEvent.recipeId = this.recipe.id;
+    this.targetCalendarEvent.recipe = this.recipe.id;
     this.targetCalendarEvent.title = this.recipe.name;
     this.addingToPlanMode = true;
   }
@@ -342,7 +342,6 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   }
 
   basketInit(): void {
-    console.log(this.basket);
 
     this.basket = Array.from(
       { length: this.recipe.ingredients.length },
@@ -351,7 +350,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
 
     this.recipe.ingredients.forEach((ingredient, index) => {
       const matchingProduct = this.myPlan.shoppingList.find(
-        (product) => product.name === ingredient.name,
+        (product) => (product.name === ingredient.name && product.relatedRecipe === this.recipe.id),
       );
 
       if (matchingProduct) {

@@ -7,6 +7,11 @@ table {
 
  
 }
+
+.no-recipes{
+  color: var(--color-foreground-unactive);
+  text-align: center;
+}
   
 @mixin flex{
   display: flex;
@@ -16,7 +21,8 @@ table {
  .info-button{
   display: flex;
   margin: 0 auto;
-  width: fit-content;
+  width: fit-content;  margin-top: 2em;
+
  }
 
  .title::first-letter{

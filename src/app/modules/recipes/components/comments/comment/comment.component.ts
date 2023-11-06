@@ -18,6 +18,7 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { modal } from 'src/tools/animations';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-comment',
@@ -36,9 +37,11 @@ export class CommentComponent implements OnInit, OnDestroy {
   protected deleteCommentModalShow: boolean = false;
   protected reportCommentModalShow: boolean = false;
   protected successReportCommentModalShow: boolean = false;
+  protected noAccessModalShow:boolean = false;
 
   constructor(
     private userService: UserService,
+    private router:Router,
     private cd: ChangeDetectorRef,
     private authService: AuthService,
     private notifyService: NotificationService,
@@ -97,25 +100,27 @@ export class CommentComponent implements OnInit, OnDestroy {
       .likeComment(this.currentUser, this.comment, this.recipe)
       .pipe(takeUntil(this.destroyed$))
       .subscribe(() => {
-        const author: IUser = this.author;
-        const title =
-          'Твой комментарий «' +
-          this.comment.text +
-          '» под рецептом «' +
-          this.recipe.name +
-          '» понравился кулинару ' +
-          (this.currentUser.fullName
-            ? this.currentUser.fullName
-            : '@' + this.currentUser.username);
+        if (this.comment.likesId.includes(this.currentUser.id) && this.comment.authorId!==this.currentUser.id) {
+          const author: IUser = this.author;
+          const title =
+            'Твой комментарий «' +
+            this.comment.text +
+            '» под рецептом «' +
+            this.recipe.name +
+            '» понравился кулинару ' +
+            (this.currentUser.fullName
+              ? this.currentUser.fullName
+              : '@' + this.currentUser.username);
 
-        const notify: INotification = this.notifyService.buildNotification(
-          'Комментарий кому-то понравился',
-          title,
-          'info',
-          'comment',
-          '/cooks/list/' + this.currentUser.id,
-        );
-        this.notifyService.sendNotification(notify, author).subscribe();
+          const notify: INotification = this.notifyService.buildNotification(
+            'Комментарий кому-то понравился',
+            title,
+            'info',
+            'comment',
+            '/cooks/list/' + this.currentUser.id,
+          );
+          this.notifyService.sendNotification(notify, author).subscribe();
+        }
       });
   }
   dislikeComment() {
@@ -123,25 +128,28 @@ export class CommentComponent implements OnInit, OnDestroy {
       .dislikeComment(this.currentUser, this.comment, this.recipe)
       .pipe(takeUntil(this.destroyed$))
       .subscribe(() => {
-        const author: IUser = this.author;
-        const title =
-          'Твой комментарий «' +
-          this.comment.text +
-          '» под рецептом «' +
-          this.recipe.name +
-          '» не понравился кулинару ' +
-          (this.currentUser.fullName
-            ? this.currentUser.fullName
-            : '@' + this.currentUser.username);
+        if (this.comment.dislikesId.includes(this.currentUser.id) && this.comment.authorId !==this.currentUser.id) {
 
-        const notify: INotification = this.notifyService.buildNotification(
-          'Комментарий кому-то не понравился',
-          title,
-          'info',
-          'comment',
-          '/cooks/list/' + this.currentUser.id,
-        );
-        this.notifyService.sendNotification(notify, author).subscribe();
+          const author: IUser = this.author;
+          const title =
+            'Твой комментарий «' +
+            this.comment.text +
+            '» под рецептом «' +
+            this.recipe.name +
+            '» не понравился кулинару ' +
+            (this.currentUser.fullName
+              ? this.currentUser.fullName
+              : '@' + this.currentUser.username);
+
+          const notify: INotification = this.notifyService.buildNotification(
+            'Комментарий кому-то не понравился',
+            title,
+            'info',
+            'comment',
+            '/cooks/list/' + this.currentUser.id,
+          );
+          this.notifyService.sendNotification(notify, author).subscribe();
+        }
       });
   }
 
@@ -172,7 +180,11 @@ export class CommentComponent implements OnInit, OnDestroy {
 
         author = this.currentUser;
         title =
-          'Ты отправил жалобу на комментарий кулинара '+ (this.author.fullName?this.author.fullName:('@'+this.author.username)) + ' «' +
+          'Ты отправил жалобу на комментарий кулинара ' +
+          (this.author.fullName
+            ? this.author.fullName
+            : '@' + this.author.username) +
+          ' «' +
           this.comment.text +
           '» под рецептом «' +
           this.recipe.name +
@@ -185,8 +197,7 @@ export class CommentComponent implements OnInit, OnDestroy {
           'comment',
           '/recipes/list/' + this.recipe.id,
         );
-        this.notifyService.sendNotification(notify,author).subscribe()
-
+        this.notifyService.sendNotification(notify, author).subscribe();
       });
   }
 
@@ -238,5 +249,12 @@ export class CommentComponent implements OnInit, OnDestroy {
   public ngOnDestroy(): void {
     this.destroyed$.next();
     this.destroyed$.complete();
+  }
+
+  handleNoAccessModal(event: boolean) {
+    if (event) {
+      this.router.navigateByUrl('/greetings');
+    }
+    this.noAccessModalShow = false;
   }
 }

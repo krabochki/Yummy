@@ -14,7 +14,7 @@
                 <p>Рецепты</p>
                 <ul>
                     <a (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" routerLink="/recipes/yours">Твои рецепты</a>
-                    <a  routerLink="/recipes">Все рецепты</a>
+                    <a  routerLink="/recipes">Ваши рецепты</a>
                     <a routerLink="/sections">Разделы</a>
                     <a (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" routerLink="/recipes/favorite">Закладки</a>
                     <a  routerLink="/match">Подбор рецептов</a>
@@ -23,7 +23,7 @@
             <div>
                 <p>Кулинары</p>
                 <ul>
-                    <a (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" [routerLink]="this.currentUser.id >0?'/cooks/list/'+currentUser.id:null">Твой профиль</a>
+                    <a (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" [routerLink]="this.currentUser.id >0?'/cooks/list/'+currentUser.id:null">Ваш профиль</a>
                     <a routerLink="/cooks">Все кулинары</a>
                     <a [routerLink]="this.currentUser.id >0?'/cooks/updates':null" (click)="linkClick()"  [ngClass]="{'disabling':currentUser.id===0}" >Обновления</a>
                 </ul>

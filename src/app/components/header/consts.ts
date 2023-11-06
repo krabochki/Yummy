@@ -1,6 +1,6 @@
 export const cooksSelectItems: string[] = [
   'Кулинары',
-  'Твой профиль',
+  'Ваш профиль',
   'Все кулинары',
   'Обновления',
 ];
@@ -15,7 +15,7 @@ export const recipeRouterLinks: string[] = [
 
 export const recipeSelectItems: string[] = [
   'Рецепты',
-  'Твои рецепты',
+  'Ваши рецепты',
   'Все рецепты',
   'Разделы',
   'Закладки',

@@ -66,6 +66,12 @@ const routes: Routes = [
         component: UsersPageComponent,
       },
       {
+        path: 'cooks/new',
+        data: { filter: 'new' },
+
+        component: UsersPageComponent,
+      },
+      {
         path: 'cooks/list/:id',
         component: UserPageComponent,
         resolve: { user: UserResolver },

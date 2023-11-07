@@ -176,11 +176,22 @@
       </div>
     </div>
 
+    <div  class="content-wrap" *ngIf="currentUser.role==='admin'">
+     <h2 (click)="showManagers= !showManagers">
+        Модераторы
+        </h2>
+  <div @height *ngIf="showManagers " class="users"> 
+    <app-users-list   [adminpanel]="true" (demoteClick)="demote($event)" [users]="managers"></app-users-list>
+  </div>
+  </div>
+
     <div>
       <app-button [text]="'Создать секцию'" (click)="sectionCreatingMode=true" [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
     </div>
  </div>
 
+
+  
 
 
 </div>
@@ -258,3 +269,7 @@
 ></app-modal>
 
 <app-section-creating @modal (closeEmitter)="sectionCreatingMode=false" *ngIf="sectionCreatingMode" style="z-index:10; position:fixed"></app-section-creating>
+
+<app-modal (resultEmit)="handleDemoteModal($event)" @modal *ngIf="demoteModalShow" [title]="'Подтвердите действие'" [style]="'prim'" [type]="'yesOrNo'" [buttonsText]="['Да','Отмена']" [description]="'Вы уверены, что хотите разжаловать модератора '+getName(targetDemotedUser)+'?'"></app-modal>
+
+<app-modal (resultEmit)="handleSuccessDemoteModal()" @modal *ngIf="demoteSuccessModalShow" [title]="'Успешное разжалование'" [style]="'sec'" [type]="'Ok'" [buttonsText]="['Хорошо']" [description]="'Вы успешно разжаловали модератора '+getName(targetDemotedUser)+'. Теперь он является простым пользователем'"></app-modal>

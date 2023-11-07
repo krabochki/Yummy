@@ -1,20 +1,27 @@
 
 .info{
-    --main: #3da4ff;
+    --main: #59aef3;
 }
 
 .warning{
-    --main:#faf55d; 
+    --main:#faf571; 
+}
+.calendar-recipe{
+    --main: #da71fa; 
 }
 
+.hire{
+        --main: var(--color-moderator); 
+
+}
 .success{
-    --main:#5eed62; 
+    --main:rgb(113, 218, 117); 
 }
 .plan{
     --main:pink
 }
 .plan-start{
-    --main: #0abab5
+    --main:rgb(189, 255, 82); 
 }
 .error{
     --main:var(--color-primary); 
@@ -23,16 +30,45 @@
 background-color: var(--not-read)
 }
 
-.time{
+.main{
+    position: relative;
+}
+.time,.explain{
     margin-top: 0.5em;
     color: var(--color-foreground-unactive);
     text-align: right;
+    font-size: 0.75rem;
+
+    
+    
 }
 
+.explain{
+    font-size: 0.7rem;
+    text-align: left;
+    line-height: 1;
+}
+.delete-button{
+    width: 0.5em;
+    top:0.5em;right:1em;
+    opacity: 0.5;
+    height: 0.5em;
+    position: absolute;
+    transition: 0.2s;
 
-.body{
+    &:hover,&:focus{
+        opacity: 1;
+    }
+}
+
+.delete{
+    fill: var(--color-foreground-unactive);
+}
+
+a.body{
+    display: block;
     border-left:4px solid var(--main);
-    padding: 0.5em 1em 0.5em 1em;
+    padding: 0.5em 1em;
 }
 
 .title{
@@ -53,7 +89,8 @@ background-color: var(--not-read)
 }
 .head{
     align-items: center;
-        margin-bottom: 0.25em;
+        margin-bottom: 0.75em;
+        margin-right: 1em;
 
     display: flex;
     column-gap: 0.5em;

@@ -1,6 +1,16 @@
 import { trigger } from '@angular/animations';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { slide, slideReverse, modal, heightAnim } from 'src/tools/animations';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  Renderer2,
+} from '@angular/core';
+import { IPermission, PermissionContext } from '../../models/users';
+import { modal } from 'src/tools/animations';
 import { IUser, nullUser } from '../../models/users';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { Router } from '@angular/router';
@@ -9,35 +19,44 @@ import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
 import { PlanService } from 'src/app/modules/planning/services/plan-service';
 import { IPlan } from 'src/app/modules/planning/models/plan';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
+import { sections, social, steps } from './conts';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss'],
-  animations: [
-    trigger('slide', slide()),
-    trigger('slideReverse', slideReverse()),
-    trigger('modal', modal()),
-    trigger('heightAnim', heightAnim()),
-  ],
+  animations: [trigger('modal', modal())],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent implements OnInit, OnDestroy {
   @Output() closeEmitter: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Input() user: IUser = { ...nullUser };
 
-  currentPage: number = 0;
-  exitModalShow: boolean = false;
-  deleteModalShow: boolean = false;
-  location = '';
-  nightMode = false;
+  permissionNotificationSections = sections;
+
+  protected exitModalShow: boolean = false;
+  protected deleteModalShow: boolean = false;
+
+  protected location: string = '';
+
   private users: IUser[] = [];
   private plans: IPlan[] = [];
   private recipes: IRecipe[] = [];
+  private permissions: IPermission[] = [];
+
+  protected socials: social[] = ['pinterest', 'vk', 'twitter', 'facebook'];
+
+  protected steps = steps;
+  protected step: number = 0;
+
+  private destroyed$: Subject<void> = new Subject<void>();
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private recipeService: RecipeService,
+    private renderer: Renderer2,
     private userService: UserService,
     private planService: PlanService,
   ) {
@@ -45,40 +64,92 @@ export class SettingsComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.recipeService.recipes$.subscribe(
-      (receivedRecipes:IRecipe[]) => this.recipes = receivedRecipes
-    )
-    this.userService.users$.subscribe(
-      (receivedUsers: IUser[]) => (this.users = receivedUsers),
-    );
-    this.planService.plans$.subscribe(
-      (receivedPlans: IPlan[]) => (this.plans = receivedPlans),
+    this.addModalStyle();
+    this.getRecipes();
+    this.getUsers();
+    this.getPlans()
+  }
+
+  private getPlans(): void{
+    this.planService.plans$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedPlans: IPlan[]) => (this.plans = receivedPlans));
+  }
+
+  private getRecipes():void {
+    this.recipeService.recipes$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(
+        (receivedRecipes: IRecipe[]) => (this.recipes = receivedRecipes),
     );
   }
 
-  nightModeEmit(event: boolean) {
-    this.nightMode = event;
-    if (this.nightMode) {
+  private getUsers(): void{
+    this.userService.users$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedUsers: IUser[]) => {
+        this.users = receivedUsers;
+        if (this.user.id > 0) {
+          const updatedCurrentUser = this.users.find(
+            (u) => u.id === this.user.id,
+          );
+          this.user = updatedCurrentUser ? updatedCurrentUser : this.user;
+          this.permissions = this.user.permissions ? this.user.permissions : [];
+        }
+      });
+  }
+
+  protected nightModeEmit(nightModeDisabled: boolean) {
+    if (!nightModeDisabled) {
       document.body.classList.add('dark-mode');
       localStorage.setItem('theme', 'dark');
     } else {
       document.body.classList.remove('dark-mode');
       localStorage.setItem('theme', 'light');
     }
+  } //переключ темной темы
+
+  protected userPermissionEnabled(context: PermissionContext): boolean { //разрешены ли конкретные уведомления 
+    //если уведов нет или оно не установлено то считаю что можно
+    if(this.permissions) {
+      const findedPermisstion = this.permissions.find((p) => p.context === context);
+      if (findedPermisstion) return findedPermisstion.enabled;
+    }
+    return true;
   }
 
-  handleExitModal(event: boolean) {
+  protected tooglePermission( //изменение значения разрешения на уведомления
+    context: PermissionContext,
+    enabled: boolean,
+  ): void { 
+    if (!this.user.permissions) this.user.permissions = [];
+    const permissionExist = this.permissions.find((p) => p.context === context);
+    if (permissionExist) permissionExist.enabled = enabled;
+    else {
+      const permission: IPermission = { context: context, enabled: enabled };
+      this.permissions.push(permission);
+    }
+    this.user.permissions = this.permissions;
+    this.userService.updateUsers(this.user).subscribe();
+  }
+
+  protected handleExitModal(event: boolean): void {
+    this.exitModalShow = false; 
     if (event) {
       this.authService.logoutUser();
       this.router.navigateByUrl('/');
+    } else {
+      setTimeout(() => {
+        this.addModalStyle();
+      });
     }
-    this.exitModalShow = false;
   }
 
-  handleDeleteModal(event: boolean) {
-    
+  protected handleDeleteModal(event: boolean): void {
+    this.deleteModalShow = false;
+
     if (event) {
-                                this.authService.logoutUser();
+      this.authService.logoutUser();
 
       if (this.user.id !== 0 && this.users.find((u) => u.id === this.user.id)) {
         //находим рецепты с лайками комментами приготовлениями  и тп от удаляемого пользователя
@@ -126,18 +197,38 @@ export class SettingsComponent implements OnInit {
 
         this.userService.deleteUser(this.user).subscribe();
 
-          this.router.navigateByUrl('/');
-        
+        this.router.navigateByUrl('/');
       }
+    } else {
+      setTimeout(() => {
+        this.addModalStyle();
+      });
     }
-    this.deleteModalShow = false;
   }
 
-  clickBackgroundNotContent(elem: Event) {
+  protected clickBackgroundNotContent(elem: Event): void {
     //обработка нажатия на фон настроек, но не на блок с настройками
     if (elem.target !== elem.currentTarget) return;
     this.closeEmitter.emit(true);
   }
 
-  showSocialShare = false;
+
+  //cкрытие/добавление прокрутки к основному содержимому
+
+  private removeModalStyle(): void { 
+    this.renderer.removeClass(document.body, 'hide-overflow');
+    (<HTMLElement>document.querySelector('.header')).style.width = '100%';
+  }
+
+  private addModalStyle(): void {
+    this.renderer.addClass(document.body, 'hide-overflow');
+    (<HTMLElement>document.querySelector('.header')).style.width =
+      'calc(100% - 16px)';
+  }
+
+  public ngOnDestroy(): void {
+    this.removeModalStyle();
+    this.destroyed$.next();
+    this.destroyed$.complete();
+  }
 }

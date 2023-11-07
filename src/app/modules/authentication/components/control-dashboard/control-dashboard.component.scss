@@ -3,7 +3,7 @@
 .content-wrap{
   display: flex;
   flex-direction: column;
-  row-gap: 2em;
+  row-gap: 1em;
   margin-top: 1.5em;
 }
 .main {
@@ -23,6 +23,13 @@
 }
 .recipe-image{
     background-image: url('../../../../../assets/images/svg/pancakes.png');
+
+}
+
+
+
+
+.users{
 
 }
 h1 {
@@ -45,6 +52,13 @@ h1 {
     display: flex;
     justify-content: center;
   }
+}
+
+app-button{
+  display: flex;
+  width: fit-content;
+  margin: 0 auto;
+  margin-top: 1.5em;
 }
 app-modal{
   position: fixed;
@@ -134,6 +148,7 @@ h2,.circles *{
 
 h2 {
   line-height: 1;
+  cursor: pointer;
   font-weight: 600;
   font-size: 1.5em;
 }

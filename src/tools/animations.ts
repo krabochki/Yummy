@@ -91,14 +91,14 @@ export function onlyHeight() {
 export function heightAnim() {
   return [
     transition(':enter', [
-      style({ height: '0', opacity: '0' }),
-      animate('300ms ease-in', style({ height: '*', opacity: '1'})),
+      style({ height: '0', opacity: '0',overflow:'hidden' }),
+      animate('300ms ease-in', style({ height: '*', opacity: '1',overflow:'visible'})),
     ]),
     transition(':leave',
     
       
       [
-      animate('300ms ease-in', style({ height: '0', opacity: '0' })),
+      animate('300ms ease-in', style({ height: '0', opacity: '0',overflow:'hidden' })),
     ]),
   ];
 }

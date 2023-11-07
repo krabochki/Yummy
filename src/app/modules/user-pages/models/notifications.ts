@@ -2,12 +2,15 @@ export interface INotification {
   id: number;
   type: 'info' | 'warning' | 'error' | 'success';
   context:
-    | 'category'
+  | 'category'
+  |'hire'
     | 'recipe'
     | 'without'
     | 'comment'
     | 'user'
-    | 'plan-reminder'
+  | 'plan-reminder'
+  | 'calendar-recipe'
+  |'demote'
   | 'plan-reminder-start',
   relatedId:number,
   relatedLink: string;

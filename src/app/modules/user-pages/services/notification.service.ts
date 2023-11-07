@@ -28,7 +28,10 @@ export class NotificationService {
       | 'recipe'
       | 'without'
       | 'comment'
+      | 'hire'
       | 'user'
+      | 'calendar-recipe'
+      | 'demote'
       | 'plan-reminder'
       | 'plan-reminder-start',
     link: string,
@@ -45,6 +48,24 @@ export class NotificationService {
     return notification;
   }
 
+  removeNotification(notification: INotification, user: IUser) {
+    const actualUser = this.users.find((u) => u.id === user.id);
+
+    if (actualUser) {
+      actualUser.notifications = actualUser?.notifications.filter(
+        (n) => n.id !== notification.id,
+      );
+      return this.userService.updateUsers(actualUser);
+    } else return EMPTY;
+  }
+
+  clearAll(user: IUser) {
+    user.notifications = user.notifications.filter(
+      (n) =>
+        n.context === 'plan-reminder-start' || n.context === 'plan-reminder',
+    );
+    return this.userService.updateUsers(user);
+  }
   sendNotification(notification: INotification, user: IUser) {
     const actualUser = this.users.find((u) => u.id === user.id);
 

@@ -67,7 +67,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
   protected destroyed$: Subject<void> = new Subject<void>();
 
   userRecipes: IRecipe[] = [];
-  userPublicRecipes:IRecipe[] = []
+  userPublicRecipes: IRecipe[] = [];
 
   allRecipes: IRecipe[] = [];
 
@@ -99,7 +99,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
         this.myPage = false;
       }
 
-      this.userService.users$.subscribe((data) => {
+      this.userService.users$.pipe(takeUntil(this.destroyed$)).subscribe((data) => {
         this.users = data;
         const findedUser = data.find((user) => user.id === this.userId);
 
@@ -230,6 +230,33 @@ export class UserPageComponent implements OnInit, OnDestroy {
 
   protected get validRegistrationDate(): string {
     return getFormattedDate(this.user.registrationDate);
+  }
+
+  protected getName(user: IUser): string {
+    return user.fullName ? user.fullName : '@' + user.username;
+  }
+  hireModalShow = false;
+  hireSuccessModalShow = false;
+  protected handleHireModal(answer: boolean) {
+    if (answer) {
+      this.user.role = 'moderator';
+      const notify: INotification = this.notifyService.buildNotification(
+        'Вас назначили модератором',
+        `Вы теперь являетесь модератором сайта Yummy. Вас назначил администратор ${this.getName(
+          this.currentUser,
+        )}`,
+        'info',
+        'hire',
+        `/cooks/list/${this.currentUser.id}`,
+      );
+      this.userService.updateUsers(this.user).subscribe();
+      this.notifyService.sendNotification(notify, this.user).subscribe();
+      this.hireSuccessModalShow = true;
+    }
+    this.hireModalShow = false;
+  }
+  protected handleSuccessHireModal() {
+    this.hireSuccessModalShow = false;
   }
 
   ngOnDestroy(): void {

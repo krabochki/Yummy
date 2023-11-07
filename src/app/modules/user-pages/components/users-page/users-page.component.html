@@ -198,10 +198,28 @@
           [src]="'../../../../../assets/images/svg/go-back.svg'"
         ></svg-icon>
       </div>
-    </div>
-
-    <app-users-list
+      <app-users-list
       [users]="administratorsAndModerators.slice(0, 6)"
     ></app-users-list>
-  </div>
+    </div>
+
+ 
+
+  <div class="block">
+      <div routerLink="/cooks/new" class="head">
+        <h2>Новенькие</h2>
+
+        <svg-icon
+          class="arrow-svg"
+          [applyClass]="true"
+          [src]="'../../../../../assets/images/svg/go-back.svg'"
+        ></svg-icon>
+      </div>
+
+      
+    <app-users-list
+      [users]="newUsers.slice(0, 6)"
+    ></app-users-list>
+    </div>
+
 </div>

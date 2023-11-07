@@ -17,6 +17,7 @@ import { SvgIconComponent, provideAngularSvgIcon } from 'angular-svg-icon';
 import { RecipesModule } from '../recipes/recipes.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TimePastPipe } from 'ng-time-past-pipe';
+import { UserPagesModule } from '../user-pages/user-pages.module';
 @NgModule({
   declarations: [
 
@@ -37,7 +38,8 @@ import { TimePastPipe } from 'ng-time-past-pipe';
     SvgIconComponent,
     TimePastPipe,
     ReactiveFormsModule,
-    RecipesModule
+    RecipesModule,
+    UserPagesModule
   ],
   providers: [  provideAngularSvgIcon(),AuthGuard, AdminGuard, ModeratorGuard, OnlyNoAuthGuard]
 

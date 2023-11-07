@@ -12,10 +12,12 @@ import { AuthService } from 'src/app/modules/authentication/services/auth.servic
   styleUrls: ['./users-list-item.component.scss'],
 })
 export class UsersListItemComponent implements OnInit, OnDestroy {
-  @Input() public user: IUser = {...nullUser};
+  @Input() public user: IUser = { ...nullUser };
+  @Output() demoteClick = new EventEmitter<IUser>();
 
   private destroyed$: Subject<void> = new Subject<void>();
   followingLength: number = 0;
+  @Input() adminpanel = false;
   userRecipesLength: number = 0;
   isFollower: boolean = false;
   currentUser: IUser = {...nullUser};
@@ -57,6 +59,10 @@ export class UsersListItemComponent implements OnInit, OnDestroy {
           this.user.id,
         ).length;
       });
+  }
+
+  protected demote() {
+    this.demoteClick.emit(this.user);
   }
 
   protected follow(): void {

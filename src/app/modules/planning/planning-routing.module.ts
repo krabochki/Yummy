@@ -19,7 +19,8 @@ const routes: Routes = [
       },
       {
         path: 'plan/calendar',
-        component: CalendarComponent
+        component: CalendarComponent,
+        canActivate:[AuthGuard]
       },
       {
         path: 'plan/shopping-list',

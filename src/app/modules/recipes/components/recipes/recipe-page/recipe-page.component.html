@@ -54,15 +54,15 @@
     <div class="column main-info">
       <div class="full-user-info column">
         <div class="row" class="short-info row">
-          <a class="row user-info" [routerLink]="'/cooks/list/' + author.id">
-            <img
+          <a [ngClass]="{'no-link':author.id===0}" class="row user-info" [routerLink]="author.id>0?'/cooks/list/' + author.id:null">
+            <img *ngIf="author.id>0"
               class="userpic noselect"
               src="../../../../../../assets/images/userpic.png"
               alt="Фото пользователя"
             />
             <p>
               {{
-                author.fullName === "" ? "@" + author.username : author.fullName
+               author.id<1?'Автор удален':author.fullName === "" ? "@" + author.username : author.fullName
               }}
             </p>
           </a>

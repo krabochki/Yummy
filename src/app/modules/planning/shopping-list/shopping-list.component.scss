@@ -167,6 +167,19 @@ a {
   row-gap: 1em;
 }
 
+.bottom{
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+
+.howMuch{
+  text-align: center;
+  font-size: 0.9em;
+  &,*{ color: var(--color-foreground-unactive);
+  }
+  margin-bottom: 1.5em;
+}
 .row {
   display: flex;
   align-items: center;
@@ -211,7 +224,7 @@ a {
 
 h2 {
   font-weight: 700;
-  margin-bottom: 1em;
+  
   margin-top: 1em;
   font-size: 1.5em;
   text-align: center;

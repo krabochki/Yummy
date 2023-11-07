@@ -49,12 +49,12 @@
         <p class="copyright">© 2023 Yummy. Никакие права не защищены</p>
 
         <ul class="links">
-            <a *ngFor="let link of links, let i=index">
-                <a [href]="link[1]">
+            <a *ngFor="let link of links, let i=index" [href]="link[1]">
+                <div class="link">
                     <svg-icon [src]="'../../../assets/images/svg/'+link[0]+'.svg'"
                     [class]="'svg'"
                     ></svg-icon>
-                </a>
+                </div>
            
             </a>
         </ul>

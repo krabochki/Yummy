@@ -38,6 +38,10 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   private recipes: IRecipe[] = [];
   protected reports: ICommentReportForAdmin[] = [];
 
+  protected managers: IUser[] = [];
+  protected targetDemotedUser: IUser = nullUser;
+  protected showManagers: boolean = false;
+
   //расскрыт ли раздел
   protected showCommentReports: boolean = false;
   protected showAwaitingRecipes: boolean = false;
@@ -69,6 +73,8 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   protected approveCategoryActionModalShow: boolean = false;
   protected successApproveCategoryModalShow: boolean = false;
   protected successDismissCategoryModalShow: boolean = false;
+  protected demoteModalShow = false;
+  protected demoteSuccessModalShow = false;
 
   protected destroyed$: Subject<void> = new Subject<void>();
 
@@ -124,7 +130,8 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
             ? this.awaitingRecipesToShow.length
             : 3,
         );
-        this.awaitingRecipesToShow = this.awaitingRecipes;        this.cd.markForCheck();
+        this.awaitingRecipesToShow = this.awaitingRecipes;
+        this.cd.markForCheck();
       });
   }
 
@@ -133,7 +140,43 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe((users) => {
         this.users = users;
+        this.managers = users.filter((element) => element.role === 'moderator');
       });
+  }
+
+  protected demote(user: IUser) {
+    this.targetDemotedUser = user;
+    this.demoteModalShow = true;
+  }
+
+  protected getName(user: IUser): string {
+    return user.fullName ? user.fullName : '@' + user.username;
+  }
+  protected handleDemoteModal(answer: boolean) {
+    if (answer) {
+      this.targetDemotedUser.role = 'user';
+      const notify: INotification = this.notifyService.buildNotification(
+        'Вас разжаловали',
+        `Вы теперь не являетесь модератором сайта Yummy. Вас разжаловал администратор ${this.getName(
+          this.currentUser,
+        )}`,
+        'warning',
+        'demote',
+        `/cooks/list/${this.currentUser.id}`,
+      );
+      this.userService.updateUsers(this.targetDemotedUser).subscribe();
+      this.notifyService
+        .sendNotification(notify, this.targetDemotedUser)
+        .subscribe();
+      this.demoteSuccessModalShow = true;
+    } else {
+      this.targetDemotedUser = nullUser;
+    }
+    this.demoteModalShow = false;
+  }
+  protected handleSuccessDemoteModal() {
+    this.demoteSuccessModalShow = false;
+    this.targetDemotedUser = nullUser;
   }
 
   private categoriesInit(): void {
@@ -276,14 +319,13 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
 
   getAuthorOfReportedComment(report: ICommentReportForAdmin): IUser {
     return this.getUser(
-      this.getComment(report.comment, this.getRecipe(report.recipe))
-        .authorId,
+      this.getComment(report.comment, this.getRecipe(report.recipe)).authorId,
     );
   }
   getUser(userId: number): IUser {
     const find = this.users.find((item) => item.id === userId);
     if (find) return find;
-    return {...nullUser};
+    return { ...nullUser };
   }
   getSection(category: number): ISection {
     const find = this.sections.find((section) =>
@@ -356,7 +398,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   }
 
   //Работа с категориями
-  private blockComment():void {
+  private blockComment(): void {
     const report = this.actionReport;
 
     if (report) {
@@ -391,7 +433,9 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
             );
             const notify2: INotification = this.notifyService.buildNotification(
               'Комментарий удален по твоей жалобе',
-              `Твоя жалоба на комментарий пользователя ${(author.fullName ? author.fullName : '@' + author.username)} «${comment.text}» под рецептом «${recipe.name}» принята`,
+              `Твоя жалоба на комментарий пользователя ${
+                author.fullName ? author.fullName : '@' + author.username
+              } «${comment.text}» под рецептом «${recipe.name}» принята`,
               'success',
               'comment',
               '/recipes/list/' + recipe.id,
@@ -402,7 +446,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
         });
     }
   }
-  private leaveComment():void {
+  private leaveComment(): void {
     const report = this.actionReport;
 
     if (report) {
@@ -432,8 +476,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
               ).authorId,
             );
 
-
-            const notify: INotification = this.notifyService.buildNotification(
+            let notify: INotification = this.notifyService.buildNotification(
               'Жалоба на комментарий отклонена',
               `Твоя жалоба на комментарий пользователя ${
                 author.fullName ? author.fullName : '@' + author.username
@@ -443,6 +486,18 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
               '/recipes/list/' + recipe.id,
             );
             this.notifyService.sendNotification(notify, reporter).subscribe();
+
+
+            notify = this.notifyService.buildNotification(
+              'Жалоба на комментарий отклонена',
+              `Жалоба на ваш комментарий «${comment.text}» под рецептом «${
+                recipe.name
+              }» отклонена модератором. Комментарий сохранен!`,
+              'info',
+              'comment',
+              '/recipes/list/' + recipe.id,
+            );
+            this.notifyService.sendNotification(notify, author).subscribe();
           }
           this.actionReport = null;
         });
@@ -451,7 +506,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   protected reportActionClick(
     action: 'approve' | 'dismiss',
     report: ICommentReportForAdmin,
-  ):void {
+  ): void {
     if (action === 'approve') {
       this.reportCommentApproveModalShow = true;
     } else {
@@ -461,7 +516,10 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   }
 
   //Работа с рецептами
-  protected awaitingRecipeActionClick(action: 'approve' | 'dismiss', recipe: IRecipe):void {
+  protected awaitingRecipeActionClick(
+    action: 'approve' | 'dismiss',
+    recipe: IRecipe,
+  ): void {
     if (action === 'approve') {
       this.approveRecipeModalShow = true;
     } else {
@@ -471,7 +529,9 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   }
   private approveRecipe(): void {
     if (this.actionRecipe) {
-      const approvedRecipe = this.recipeService.approveRecipe(this.actionRecipe);
+      const approvedRecipe = this.recipeService.approveRecipe(
+        this.actionRecipe,
+      );
       this.recipeService.updateRecipe(approvedRecipe).subscribe(() => {
         if (this.actionRecipe) {
           const recipeAuthor: IUser = this.getUser(this.actionRecipe?.authorId);
@@ -489,7 +549,9 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   }
   private dismissRecipe(): void {
     if (this.actionRecipe) {
-      const dismissedRecipe = this.recipeService.dismissRecipe(this.actionRecipe);
+      const dismissedRecipe = this.recipeService.dismissRecipe(
+        this.actionRecipe,
+      );
       this.recipeService.updateRecipe(dismissedRecipe).subscribe(() => {
         if (this.actionRecipe) {
           const recipeAuthor: IUser = this.getUser(this.actionRecipe?.authorId);

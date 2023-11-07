@@ -31,8 +31,8 @@ import { RecipeService } from '../../../services/recipe.service';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { ICategory, ISection, nullSection } from '../../../models/categories';
 import { CategoryService } from '../../../services/category.service';
-import { Observable, Subject } from 'rxjs';
-import { startWith, map, takeUntil, max } from 'rxjs/operators';
+import {  Subject } from 'rxjs';
+import {  takeUntil } from 'rxjs/operators';
 import { SectionService } from '../../../services/section.service';
 import { SectionGroup } from 'src/app/modules/controls/autocomplete/autocomplete.component';
 import { Title } from '@angular/platform-browser';
@@ -54,7 +54,6 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
   @Output() closeEmitter = new EventEmitter<boolean>();
 
   @Input() editedRecipe: IRecipe = { ...nullRecipe };
-
 
   currentStep: number = 0;
   showInfo = false;
@@ -160,7 +159,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
                 sectionGroup.section = section;
                 section.categories.forEach((element: number) => {
                   const finded = this.allCategories.find(
-                    (elem) => (elem.id === element && elem.status === 'public'),
+                    (elem) => elem.id === element && elem.status === 'public',
                   );
                   if (finded) sectionGroup.categories.push(finded);
                 });
@@ -195,7 +194,9 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
             const objectURL = URL.createObjectURL(mainpicFile);
             this.mainImage = objectURL;
           }
-        } catch (error) { }
+        } catch (error) {
+          //
+        }
       }
 
       for (let i = 1; i <= editedRecipe.nutritions.length; i++) {
@@ -254,7 +255,9 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
                 }
               }
             }
-          } catch (error) { }
+          } catch (error) {
+            //
+          }
         }
       }
       for (const categoryId of editedRecipe.categories) {
@@ -297,7 +300,6 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     );
   }
 
-
   //Работа с категориями
   addCategory(event: ICategory) {
     if (this.selectedCategories.length < 5) {
@@ -315,8 +317,6 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       else return false;
     });
   }
-
-
 
   //Работа с картинками
   //удаляем фото из инструкций рецепта по индеку инструкции и фото
@@ -521,25 +521,23 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       this.recipeService.postRecipe(recipeData).subscribe(() => {
         this.successModalShow = true;
 
-
         const author: IUser = this.currentUser;
-        
+
         const title =
-          ('Рецепт «' +
+          'Рецепт «' +
           recipeData.name +
           '» сохранен в твоих рецептах' +
-          (this.isAwaitingApprove
-            ? ' и успешно отправлен на проверку'
-            : ''));
+          (this.isAwaitingApprove ? ' и успешно отправлен на проверку' : '');
         const notify: INotification = this.notifyService.buildNotification(
-          this.isAwaitingApprove ? 'Рецепт создан и отправлен на проверку' : 'Рецепт создан',
+          this.isAwaitingApprove
+            ? 'Рецепт создан и отправлен на проверку'
+            : 'Рецепт создан',
           title,
           'success',
           'recipe',
           '/recipes/list/' + recipeData.id,
         );
         this.notifyService.sendNotification(notify, author).subscribe();
-
 
         this.cd.markForCheck();
       });
@@ -589,11 +587,10 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       this.editRecipe();
     } else {
       setTimeout(() => {
-         this.renderer.addClass(document.body, 'hide-overflow');
-         (<HTMLElement>document.querySelector('.header')).style.width =
-           'calc(100% - 16px)';
+        this.renderer.addClass(document.body, 'hide-overflow');
+        (<HTMLElement>document.querySelector('.header')).style.width =
+          'calc(100% - 16px)';
       }, 0);
-     
     }
 
     this.editModalShow = false;

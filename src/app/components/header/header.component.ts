@@ -148,8 +148,12 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   }
 
   planRemindersInit(plan: IPlan) {
+
+    let editUser = false;
+
     const today = new Date();
     const todayDay = today.getDate();
+
     const result = new Date();
     result.setDate(todayDay + 3); //текущая дата + следующие три дня
     const eventsInFuture = plan.calendarEvents.filter((event) => {
@@ -180,9 +184,9 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
           const reminder = {
             ...this.notifyService.buildNotification(
               'Время начала запланированного рецепта настало!',
-              'Время начала запланированного вами рецепта ' +
+              'Время начала запланированного вами рецепта «' +
                 event.title +
-                ' уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!',
+                '» уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!',
               'warning',
               'plan-reminder-start',
               '/plan/calendar',
@@ -196,6 +200,10 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
         }
       });
     }
+
+   
+
+    
     if (eventsIn3Days.length > 0) {
       //если че то есть :
       const shortTodayDate = today.toDateString(); //сегодняшняя дата без часов
@@ -209,8 +217,19 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
           alreadySentReminder = true; //если уже есть уведомление с типом напоминалка и прислано оно сегодня
       });
 
+      //очищаем старые напоминалки
+
+      
+
       if (!alreadySentReminder) {
         //если сегодня не напоминали
+        
+
+        if (this.currentUser.notifications.length !== this.currentUser.notifications.filter(n => n.context !== 'plan-reminder').length)
+          editUser=true
+        this.currentUser.notifications = this.currentUser.notifications.filter(
+          (n) => n.context !== 'plan-reminder',
+        );
 
         let counter = 0;
         const eventTitles = eventsIn3Days.map((event) => {
@@ -218,10 +237,25 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
           const when = ` (начало ${this.timePastService
             .timePast(event.start)
             .toLowerCase()})`;
-          return 'ㅤ' + counter + ') ' + event.title.trim() + when;
+          return (
+            'ㅤ' +
+            (eventsIn3Days.length > 1 ? counter + ') ' : '') +
+            event.title.trim() +
+            when
+          );
         });
         const eventString = eventTitles.join(', <br>');
-        const reminderText = `Хотим вас предупредить, что у вас запланированы рецепты на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению этих вкусных блюд.<br>Запланированные рецепты:<br>${eventString}`;
+        const reminderText = `Хотим вас предупредить, что у вас запланирован${
+          eventsIn3Days.length > 1 ? 'ы' : ''
+        } рецепт${
+          eventsIn3Days.length > 1 ? 'ы' : ''
+        } на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению ${
+          eventsIn3Days.length > 1
+            ? 'этих вкусных блюд'
+            : 'этого вкусного блюда'
+        }.<br>Запланированны${eventsIn3Days.length > 1 ? 'е' : 'й'} рецепт${
+          eventsIn3Days.length > 1 ? 'ы' : ''
+        }:<br>${eventString}`;
 
         const reminder = {
           ...this.notifyService.buildNotification(
@@ -233,12 +267,44 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
           ),
           notificationDate: shortTodayDate,
         };
+
         //присылаем увед
         this.notifyService
           .sendNotification(reminder, this.currentUser)
           .subscribe();
       }
+
     }
+
+    
+    //очищаем напоминания о начале событий которые уже прошли
+      this.currentUser.notifications.forEach((n) => {
+        if (n.context === 'plan-reminder-start') {
+          const findedEvent = this.currentUserPlan.calendarEvents.find(
+            (e) => e.recipe === n.relatedId,
+          );
+          if (findedEvent) {
+            if (
+              (findedEvent.end && today > findedEvent.end) ||
+              (!findedEvent.end &&
+                today.getDate() !== findedEvent.start.getDate())
+            ) {
+              editUser = true;
+              this.currentUser.notifications =
+                this.currentUser.notifications.filter(
+                  (n) =>
+                    n.context !== 'plan-reminder-start' &&
+                    n.relatedId !== findedEvent.recipe,
+                );
+            }
+          }
+        }
+      });
+    
+  
+    if(editUser)
+    this.userService.updateUser(this.currentUser).subscribe();
+
   }
 
   currentUserInit() {

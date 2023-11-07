@@ -150,10 +150,16 @@
       </svg-icon>
     </div>
     <div class="row main">
-      <img  class="noselect"
-        [src]="'../../../../../assets/images/userpic.png'"
-        alt="User Photo"
-      />
+     
+      <div class="img-cont">
+         <button class="hire-button" *ngIf="currentUser.role==='admin' && this.user.role==='user'" (click)="hireModalShow=true"> 
+        <svg-icon class="hire-svg" [applyClass]="true" [src]="'../../../../../assets/images/svg/case.svg'"></svg-icon>
+      </button>
+        <img  class="noselect"
+          [src]="'../../../../../assets/images/userpic.png'"
+          alt="User Photo"
+        />
+      </div>
       <div class="col info">
         <div class="col name">
           <h1>{{ user.fullName }}</h1>
@@ -487,3 +493,7 @@
     'Взаимодействовать с кулинарами могут только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'
   "
 ></app-modal>
+
+<app-modal (resultEmit)="handleHireModal($event)" @modal *ngIf="hireModalShow" [title]="'Подтвердите действие'" [style]="'sec'" [type]="'yesOrNo'" [buttonsText]="['Да','Отмена']" [description]="'Вы уверены, что хотите назначить модератора '+getName(this.user)+'?'"></app-modal>
+
+<app-modal (resultEmit)="handleSuccessHireModal()" @modal *ngIf="hireSuccessModalShow" [title]="'Успешное назначение'" [style]="'sec'" [type]="'Ok'" [buttonsText]="['Хорошо']" [description]="'Вы успешно назначили модератора '+getName(this.user)+''"></app-modal>

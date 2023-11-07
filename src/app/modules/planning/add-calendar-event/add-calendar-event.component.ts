@@ -19,8 +19,10 @@ import { RecipeService } from '../../recipes/services/recipe.service';
 import { UserService } from '../../user-pages/services/user.service';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, find, takeUntil } from 'rxjs';
 import { endOfDay, startOfDay } from 'date-fns';
+import { NotificationService } from '../../user-pages/services/notification.service';
+import { getFormattedDate } from 'src/tools/common';
 @Component({
   selector: 'app-add-calendar-event',
   templateUrl: './add-calendar-event.component.html',
@@ -67,6 +69,7 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
     private calendarService: CalendarService,
     private renderer: Renderer2,
     private router: Router,
+    private notifyService: NotificationService,
     private recipeService: RecipeService,
     private userService: UserService,
   ) {}
@@ -222,6 +225,34 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
     this.planService
       .updatePlan(this.plan)
       .subscribe(() => (this.modalSuccessSaveShow = true));
+    
+    const notify = this.notifyService.buildNotification(
+      'Вы успешно запланировали рецепт',
+      `Вы успешно запланировали рецепт ${newEvent.title} в «Календаре рецептов»`,
+      'success',
+      'calendar-recipe',
+      '/plan/calendar',
+    );
+            this.notifyService
+              .sendNotification(notify, this.currentUser)
+              .subscribe();
+
+    
+    
+    if (newEvent.recipe) {
+      
+      const findRecipe = this.allRecipes.find((r) => r.id === newEvent.recipe);
+      
+      if (findRecipe?.authorId !== this.currentUser.id) {
+
+        const author = this.allUsers.find((u) => u.id === findRecipe?.authorId);
+
+        if (author) {
+          const notify = this.notifyService.buildNotification('Ваш рецепт запланировали', `Ваш рецепт «${findRecipe?.name}» кто-то запланировал!`, 'info', 'calendar-recipe', '/recipes/list/' + findRecipe?.id)
+          this.notifyService.sendNotification(notify, author).subscribe()
+        }
+      }
+    }
   }
 
   //поиск рецептов

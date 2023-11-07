@@ -3,7 +3,7 @@ import { INotification } from "./notifications";
 export interface IUser {
   id: number; // Уникальный идентификатор пользователя
   username: string; // Имя пользователя
-  avatarUrl: FormData|null; // URL аватара пользователя
+  avatarUrl: FormData | null; // URL аватара пользователя
   description: string; // Описание пользователя
   quote: string; // Цитата пользователя
   email: string; // Почта пользователя
@@ -16,8 +16,40 @@ export interface IUser {
   registrationDate: string; // Дата регистрации пользователя
   profileViews: number; // Количество просмотров профиля
   role: 'admin' | 'moderator' | 'user';
-  notifications: INotification[]
+  notifications: INotification[];
+  permissions?: IPermission[];
 }
+
+export interface IPermission {
+  context: PermissionContext;
+  enabled: boolean;
+}
+
+export type PermissionContext =
+  | 'like-on-your-recipe'
+  | 'cook-on-your-recipe'
+  | 'plan-on-your-recipe'
+  | 'fav-on-your-recipe'
+  | 'you-create-new-recipe'
+  | 'you-publish-recipe'
+  | 'manager-review-your-recipe'
+  | 'you-delete-your-recipe'
+  | 'you-edit-your-recipe'
+  | 'new-follower'
+  | 'new-recipe-from-following'
+  | 'you-plan-recipe'
+  | 'start-of-planned-recipe'
+  | 'planned-recipes-in-3-days'
+  | 'you-create-category'
+       | 'your-recipe-commented'
+      |            'your-reports-publish'
+       |           'your-reports-reviewed-moderator'
+        |         'your-commented-liked'
+         |        'you-commented-recipe'
+  | 'manager-reviewed-your-category';
+
+
+
 
 export const nullUser: IUser = {
   id: 0,

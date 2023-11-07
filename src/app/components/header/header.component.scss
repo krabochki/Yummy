@@ -10,6 +10,7 @@
   column-gap: var(--space-m);
 }
 
+
 .label {
   font-size: var(--font-xl);
   cursor: pointer;
@@ -371,6 +372,7 @@ p {
   }
 
 
+
   .admin-panel{
     position: static;
     margin: 0;
@@ -418,3 +420,5 @@ app-modal {
   z-index: 10;
   position: fixed;
 }
+
+

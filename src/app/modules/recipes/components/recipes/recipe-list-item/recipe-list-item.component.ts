@@ -16,13 +16,13 @@ import { modal } from 'src/tools/animations';
 import { Router } from '@angular/router';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
-import { Subject, switchMap, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { getCurrentDate } from 'src/tools/common';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { CalendarService } from 'src/app/modules/planning/services/calendar.service';
 import { PlanService } from 'src/app/modules/planning/services/plan-service';
-import { IPlan, nullPlan } from 'src/app/modules/planning/models/plan';
+import { IPlan } from 'src/app/modules/planning/models/plan';
 
 @Component({
   selector: 'app-recipe-list-item',

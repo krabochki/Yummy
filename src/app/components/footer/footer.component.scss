@@ -121,10 +121,8 @@ svg {
   fill: var(--color-foreground);
   border-radius: 100%;
 
-  transition: 0.3s ease-in-out;
-  &:hover {
-    scale: 1.1;
-  }
+
+
 }
 
 @media (max-width: 900px) {
@@ -205,4 +203,21 @@ app-modal{
 .head-icon{
   height: 100%;
   fill: var(--color-foreground);
+}
+
+a{
+  width: fit-content;
+  transition: color 0.2s ease-in-out;
+
+  svg{
+    transition: fill 0.2s ease-in-out;
+  }
+
+  &:focus, &:hover{
+    svg{
+    fill: var(--color-secondary);
+
+    }
+    color: var(--color-secondary);
+  }
 }

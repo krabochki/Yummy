@@ -183,6 +183,21 @@ export class UserService {
       );
   }
 
+  getPermission(context: string, user: IUser): boolean {
+    const permissions = user.permissions;
+
+    //возвращаем что уведомление включено true, только если оно конкретно не установлено false
+
+    if (permissions && permissions.length) {
+          const permissionExist = permissions.find(
+            (p) => p.context === context,
+      );
+      if (permissionExist) return permissionExist.enabled;
+      else return true;
+    }
+    return true;
+  }
+
   postUser(user: IUser) {
     return this.http
       .post<IUser>(this.url, user)

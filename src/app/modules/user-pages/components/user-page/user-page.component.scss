@@ -15,26 +15,28 @@ app-modal {
 .img-cont {
   position: relative;
 
-
   & .hire-button:hover ~ img {
-
-    box-shadow:  0 0 0px 3px  var(--color-admin-focus);
-
+    box-shadow: 0 0 0px 3px var(--color-admin-focus);
   }
 
   .hire-button {
-    &::after{
+    &::after {
       width: 0;
       height: 0;
       border-radius: 100%;
       position: absolute;
-      top:0;left:0;bottom:0;right:0;margin:auto;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      margin: auto;
       transition: 0.2s;
-      content:'';
-      background-color: var(--color-admin-focus)
+      content: "";
+      background-color: var(--color-admin-focus);
     }
-    &:hover, &:focus{
-      &::after{
+    &:hover,
+    &:focus {
+      &::after {
         width: 100%;
         height: 100%;
       }
@@ -156,12 +158,12 @@ img {
   width: 10em;
   border-radius: 100%;
   height: fit-content;
-  transition: 0.2s ease-in-out ;
+  transition: 0.2s ease-in-out;
 }
 
 .center {
   display: flex;
-  align-items: start;
+  align-items: flex-start;
   column-gap: var(--space-xs);
 }
 
@@ -227,6 +229,32 @@ app-recipes-list {
     }
   }
 }
+
+.additional ul .website {
+  transition: 0.2s ease-in-out;
+  a{
+      transition: 0.2s ease-in-out;
+
+  }
+  .red-svg {
+    width: 1.2em;
+    height: 1em;
+    fill: var(--color-primary);  transition: 0.1s ease-in-out;
+
+  }
+  &:hover,
+  &:focus {
+    transform: translateY(-0.2em);
+
+    a {
+      color: var(--color-primary-focus);
+    }
+    .red-svg {
+      fill: var(--color-primary-focus);
+    }
+  }
+}
+
 .description,
 .share * {
   text-align: center;
@@ -383,7 +411,7 @@ svg {
   .container .socialAndAdd {
     flex-direction: column-reverse;
     display: flex;
-    align-items: start;
+    align-items: flex-start;
     row-gap: var(--space-l);
   }
 

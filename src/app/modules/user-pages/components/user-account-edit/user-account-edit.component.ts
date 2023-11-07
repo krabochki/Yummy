@@ -1,4 +1,3 @@
-
 import {
   AfterContentChecked,
   ChangeDetectionStrategy,
@@ -14,8 +13,11 @@ import {
   ViewChild,
 } from '@angular/core';
 
-import { customPatternValidator,customLinkPatternValidator } from 'src/tools/validators';
-import { steps,Step } from './consts';
+import {
+  customPatternValidator,
+  customLinkPatternValidator,
+} from 'src/tools/validators';
+import { steps, Step } from './consts';
 import { usernameMask } from 'src/tools/regex';
 import { IUser, nullUser, SocialNetwork } from '../../models/users';
 import { trigger } from '@angular/animations';
@@ -45,7 +47,7 @@ import { INotification } from '../../models/notifications';
   selector: 'app-user-account-edit',
   templateUrl: './user-account-edit.component.html',
   styleUrls: ['./user-account-edit.component.scss'],
-  animations: [trigger('modal', modal()),trigger('height',heightAnim())],
+  animations: [trigger('modal', modal()), trigger('height', heightAnim())],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserAccountEditComponent
@@ -73,7 +75,7 @@ export class UserAccountEditComponent
     private renderer: Renderer2,
     private cdr: ChangeDetectorRef,
     private userService: UserService,
-    private notifyService:NotificationService,
+    private notifyService: NotificationService,
     private authService: AuthService,
     private fb: FormBuilder,
   ) {
@@ -145,7 +147,7 @@ export class UserAccountEditComponent
       this.scrollTop();
     }
   }
-  
+
   ngOnInit() {
     this.renderer.addClass(document.body, 'hide-overflow');
     (<HTMLElement>document.querySelector('.header')).style.width =
@@ -192,7 +194,7 @@ export class UserAccountEditComponent
     this.userService.users$.subscribe((data: IUser[]) => {
       this.users = data;
     });
-    this.cdr.markForCheck()
+    this.cdr.markForCheck();
     this.myImage = this.defaultImage;
   }
 
@@ -284,27 +286,19 @@ export class UserAccountEditComponent
           };
         });
 
-
-         const author: IUser = this.newUser;
-         const title =
-           'Твой профиль успешно изменен'
-
-         const notify: INotification = this.notifyService.buildNotification(
-           'Профиль изменен',
-           title,
-           'success',
-           'user',
-           '/cooks/list/' + this.newUser.id,
-         );
-         this.notifyService.sendNotification(notify, author).subscribe();
-
-      },
-      (error: Error) => {
-        console.error(
-          'Изменение пользователя | Ошибка при обновлении пользователя: ' +
-            error.message,
-        );
-      },
+        if (
+          this.userService.getPermission('you-edit-your-account', this.newUser)
+        ) {
+          const notify: INotification = this.notifyService.buildNotification(
+            'Профиль изменен',
+            'Твой профиль успешно изменен',
+            'success',
+            'user',
+            '/cooks/list/' + this.newUser.id,
+          );
+          this.notifyService.sendNotification(notify, this.newUser).subscribe();
+        }
+      }
     );
   }
 
@@ -313,11 +307,11 @@ export class UserAccountEditComponent
       this.updateUser();
       this.successModal = true;
     }
-      setTimeout(() => {
-        this.renderer.addClass(document.body, 'hide-overflow');
-        (<HTMLElement>document.querySelector('.header')).style.width =
-          'calc(100% - 16px)';
-      }, 0);
+    setTimeout(() => {
+      this.renderer.addClass(document.body, 'hide-overflow');
+      (<HTMLElement>document.querySelector('.header')).style.width =
+        'calc(100% - 16px)';
+    }, 0);
     this.saveModal = false;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -329,21 +323,20 @@ export class UserAccountEditComponent
   handleCloseModal(answer: boolean) {
     if (answer) {
       this.closeEmitter.emit(true);
-    }
-    else {
+    } else {
       setTimeout(() => {
         this.renderer.addClass(document.body, 'hide-overflow');
         (<HTMLElement>document.querySelector('.header')).style.width =
           'calc(100% - 16px)';
       }, 0);
-      }
+    }
     this.closeModal = false;
   }
 
   closeEditModal() {
     this.areObjectsEqual()
-          ? (this.closeModal = true)
-          : this.closeEmitter.emit(true)
+      ? (this.closeModal = true)
+      : this.closeEmitter.emit(true);
   }
 
   clickBackgroundNotContent(elem: Event) {

@@ -70,7 +70,6 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private router: Router,
     private cd: ChangeDetectorRef,
-    private calendarService: CalendarService,
     private planService: PlanService,
     private notifyService: NotificationService,
     private eRef: ElementRef,
@@ -161,6 +160,7 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
         if (
           this.isRecipeFavorite &&
           this.recipe.authorId !== this.currentUser.id
+          && this.userService.getPermission('fav-on-your-recipe',this.author)
         ) {
           const author: IUser = this.author;
           const title =
@@ -198,7 +198,8 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
         () => {
           if (
             this.isRecipeLiked &&
-            this.recipe.authorId !== this.currentUser.id
+            this.recipe.authorId !== this.currentUser.id &&
+            this.userService.getPermission('like-on-your-recipe', this.author)
           ) {
             const author: IUser = this.author;
             const notify: INotification = this.notifyService.buildNotification(
@@ -255,15 +256,18 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
     this.recipe.status = 'awaits';
     this.recipe.publicationDate = getCurrentDate();
     this.recipeService.updateRecipe(this.recipe).subscribe(() => {
-      const author: IUser = this.author;
-      const notify: INotification = this.notifyService.buildNotification(
-        'Рецепт отправлен на проверку',
-        `Рецепт «${this.recipe.name}» успешно отправлен на проверку`,
-        'success',
-        'recipe',
-        '/recipes/list/' + this.recipe.id,
-      );
-      this.notifyService.sendNotification(notify, author).subscribe();
+      if (
+        this.userService.getPermission('you-publish-recipe', this.author)
+      ) {
+        const notify: INotification = this.notifyService.buildNotification(
+          'Рецепт отправлен на проверку',
+          `Рецепт «${this.recipe.name}» успешно отправлен на проверку`,
+          'success',
+          'recipe',
+          '/recipes/list/' + this.recipe.id,
+        );
+        this.notifyService.sendNotification(notify, this.author).subscribe();
+      }
     });
     this.successPublishModalShow = false;
   }
@@ -299,28 +303,26 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
         if (
           this.isRecipeCooked &&
           this.recipe.authorId !== this.currentUser.id
+          && this.userService.getPermission('cook-on-your-recipe',this.author)
         ) {
-          const author: IUser = this.author;
 
-          const title =
-            'Твой рецепт «' +
-            this.recipe.name +
-            '» приготовил кулинар ' +
-            (this.currentUser.fullName
-              ? this.currentUser.fullName
-              : '@' + this.currentUser.username) +
-            (this.vote
-              ? ' и оставил положительный отзыв'
-              : ' и оставил негативный отзыв');
 
           const notify: INotification = this.notifyService.buildNotification(
             'Твой рецепт приготовили',
-            title,
+            `Твой рецепт «${this.recipe.name}» приготовил кулинар ${
+              this.currentUser.fullName
+                ? this.currentUser.fullName
+                : '@' + this.currentUser.username
+            }${
+              this.vote
+                ? ' и оставил положительный отзыв'
+                : ' и оставил негативный отзыв'
+            }`,
             'info',
             'recipe',
             '/cooks/list/' + this.currentUser.id,
           );
-          this.notifyService.sendNotification(notify, author).subscribe();
+          this.notifyService.sendNotification(notify, this.author).subscribe();
         }
 
         this.vote = false;
@@ -336,22 +338,19 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
   handleSuccessEditModal() {
     //?????????????? если наоборот сначала обновить то это модальное окно пропускается
     this.recipeService.updateRecipe(this.editedRecipe).subscribe(() => {
-      const author: IUser = this.currentUser;
-      const title =
-        'Рецепт «' +
-        this.editedRecipe.name +
-        '» изменен' +
-        (this.isAwaitingApprove ? ' и успешно отправлен на проверку' : '');
-      const notify: INotification = this.notifyService.buildNotification(
-        this.isAwaitingApprove
-          ? 'Рецепт изменен и отправлен на проверку'
-          : 'Рецепт изменен',
-        title,
-        'success',
-        'recipe',
-        '/recipes/list/' + this.editedRecipe.id,
-      );
-      this.notifyService.sendNotification(notify, author).subscribe();
+      if (this.userService.getPermission('you-edit-your-recipe', this.currentUser)) {
+        const notify: INotification = this.notifyService.buildNotification(
+          this.isAwaitingApprove
+            ? 'Рецепт изменен и отправлен на проверку'
+            : 'Рецепт изменен',
+          `Рецепт «${this.editedRecipe.name}» изменен ${this.isAwaitingApprove ? ' и успешно отправлен на проверку' : ''
+          }`,
+          'success',
+          'recipe',
+          '/recipes/list/' + this.editedRecipe.id,
+        );
+        this.notifyService.sendNotification(notify, this.currentUser).subscribe();
+      }
 
       this.router.navigateByUrl('recipes/list/' + this.editedRecipe.id);
     });
@@ -363,6 +362,7 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
       this.recipe,
     );
 
+    if(this.userService.getPermission('you-delete-your-recipe',this.author))
     this.notifyService
       .sendNotification(
         this.notifyService.buildNotification(

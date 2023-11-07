@@ -98,7 +98,7 @@ h2 {
 
   overflow: visible;
   column-gap: 1em;
-  justify-content: start;
+  justify-content: flex-start;
 
   .name,
   .count,
@@ -239,7 +239,7 @@ h2 {
 
 .center {
   margin-top: 2em;
-  align-items: start;
+  align-items: flex-start;
   column-gap: 3em;
   display: grid;
   grid-template-columns: 18em max-content;
@@ -256,7 +256,7 @@ h2 {
     display: grid;
 
     grid-template-columns: max-content 1fr;
-    align-items: start;
+    align-items: flex-start;
     column-gap: 1em;
     justify-content: center;
     .num {
@@ -439,7 +439,7 @@ app-social-button,.social{
   }
   .short-info {
     display: flex;
-    justify-content: start;
+    justify-content: flex-start;
     column-gap: 0.8em;
     .row {
       align-items: center;
@@ -578,7 +578,7 @@ app-social-button,.social{
   margin-bottom: 0.75em;
   align-items: center;
   column-gap: 1em;
-  justify-content: start;
+  justify-content: flex-start;
 }
 
 .about {
@@ -589,7 +589,7 @@ app-social-button,.social{
   align-items: center;
   font-size: 1.4em;
   font-weight: 500;
-  justify-content: start;
+  justify-content: flex-start;
   column-gap: 1.5em;
 
   margin: 0 0 1em 0;

@@ -7,6 +7,13 @@
         Очистить все</button>
     
     <hr></div>
+    <div class="no-notifies" *ngIf="!notifies.length">
+        
+        
+        У вас пока нет уведомлений
+    <svg-icon class="mail-cook" [applyClass]="true" [src]="'/assets/images/svg/mail-cook.svg'"></svg-icon>
+    
+    </div>
     <div class="notifies"><app-notify [user]="user"  *ngFor="let notify of notifies" [notify]="notify"></app-notify></div>
 </div>
 

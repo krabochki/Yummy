@@ -39,6 +39,7 @@ import { Title } from '@angular/platform-browser';
 import { getCurrentDate } from 'src/tools/common';
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
+import { UserService } from 'src/app/modules/user-pages/services/user.service';
 
 @Component({
   selector: 'app-recipe-create',
@@ -98,6 +99,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private categoryService: CategoryService,
     private sectionService: SectionService,
+    private userService:UserService,
     private recipeService: RecipeService,
     private fb: FormBuilder,
     public router: Router,
@@ -521,23 +523,21 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       this.recipeService.postRecipe(recipeData).subscribe(() => {
         this.successModalShow = true;
 
-        const author: IUser = this.currentUser;
-
-        const title =
-          'Рецепт «' +
-          recipeData.name +
-          '» сохранен в твоих рецептах' +
-          (this.isAwaitingApprove ? ' и успешно отправлен на проверку' : '');
-        const notify: INotification = this.notifyService.buildNotification(
-          this.isAwaitingApprove
-            ? 'Рецепт создан и отправлен на проверку'
-            : 'Рецепт создан',
-          title,
-          'success',
-          'recipe',
-          '/recipes/list/' + recipeData.id,
-        );
-        this.notifyService.sendNotification(notify, author).subscribe();
+        if (this.userService.getPermission('you-create-new-recipe', this.currentUser)) {
+         
+          const notify: INotification = this.notifyService.buildNotification(
+            this.isAwaitingApprove
+              ? 'Рецепт создан и отправлен на проверку'
+              : 'Рецепт создан',
+            `Рецепт «${recipeData.name}» успешно сохранен в ваших рецептах${
+              this.isAwaitingApprove ? ' и отправлен на проверку' : ''
+            }`,
+            'success',
+            'recipe',
+            '/recipes/list/' + recipeData.id,
+          );
+          this.notifyService.sendNotification(notify, this.currentUser).subscribe();
+        }
 
         this.cd.markForCheck();
       });

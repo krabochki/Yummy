@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IUser } from '../models/users';
+import { IUser, PermissionContext } from '../models/users';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, map, switchMap, take, tap, throwError } from 'rxjs';
 import { usersUrl } from 'src/tools/source';
@@ -183,7 +183,7 @@ export class UserService {
       );
   }
 
-  getPermission(context: string, user: IUser): boolean {
+  getPermission(context: PermissionContext, user: IUser): boolean {
     const permissions = user.permissions;
 
     //возвращаем что уведомление включено true, только если оно конкретно не установлено false

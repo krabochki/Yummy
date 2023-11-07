@@ -8,7 +8,7 @@ import {
 import { endOfDay, isSameDay, isSameMonth } from 'date-fns';
 import localeRu from '@angular/common/locales/ru';
 
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, take, takeUntil } from 'rxjs';
 import {
   CalendarEvent,
   CalendarEventTimesChangedEvent,
@@ -24,6 +24,7 @@ import { Title } from '@angular/platform-browser';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
 import { CalendarService } from '../services/calendar.service';
+import { UserService } from '../../user-pages/services/user.service';
 
 @Component({
   selector: 'app-calendar',
@@ -61,6 +62,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private calendarService: CalendarService,
     private cd: ChangeDetectorRef,
+    private userService:UserService
   ) {
     this.title.setTitle('План рецептов');
     registerLocaleData(localeRu);
@@ -72,11 +74,18 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
   private getCurrentUser(): void {
-    this.authService.currentUser$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((receivedUser: IUser) => {
-        this.currentUser = receivedUser;
-      });
+
+    this.userService.users$.pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedUsers: IUser[]) => {
+        this.authService.currentUser$
+          .pipe(takeUntil(this.destroyed$))
+          .subscribe((receivedUser: IUser) => {
+            const actualUser = receivedUsers.find(u => u.id === receivedUser.id);
+            this.currentUser = actualUser?actualUser:nullUser;
+          });
+      
+    })
+    
   }
 
   private getPlans(): void {
@@ -87,21 +96,25 @@ export class CalendarComponent implements OnInit, OnDestroy {
           this.currentUser.id,
           receivedPlans,
         );
-        this.events = this.getEventsWithNormalData();
-        this.events = this.events.sort((e1, e2) => {
+        let buferEvents = this.getEventsWithNormalData(this.currentUserPlan.calendarEvents);
+        buferEvents = buferEvents.sort((e1, e2) => {
           {
             if (new Date(e1.start) > new Date(e2.start)) return 1;
+            if (new Date(e1.start) === new Date(e2.start)) {
+              if (e1.id > e2.id) return 1; else return -1;
+            }
             else return -1;
           }
         }); //сортируем по времени(прошедшие раньше)
 
+        this.events = [...buferEvents]
         this.cd.markForCheck();
         this.refresh.next();
       });
   }
 
-  private getEventsWithNormalData(): CalendarEvent[] {
-    const eventsWithModifyNormalData = this.currentUserPlan.calendarEvents;
+  private getEventsWithNormalData(events:CalendarEvent[]): CalendarEvent[] {
+    const eventsWithModifyNormalData = events;
     //дата извлекается из обьекта после запроса не в корректном формате даты
     //календарь не может ее преобразовать, поэтому преобразовываю тут
     eventsWithModifyNormalData.forEach((event) => {
@@ -185,9 +198,16 @@ export class CalendarComponent implements OnInit, OnDestroy {
     this.events = this.events.filter(
       (event: CalendarEvent) => event !== eventToDelete,
     );
+    const reminderNotify = this.currentUser.notifications.find((n) => n.relatedId === eventToDelete.id);
+    if(reminderNotify) this.currentUser.notifications = this.currentUser.notifications.filter(n => n.id!==reminderNotify.id)
     this.currentUserPlan.calendarEvents = this.events;
+    this.userService.updateUser(this.currentUser)
     this.planService.updatePlan(this.currentUserPlan).subscribe();
+
   }
+
+
+  
 
   setView(view: CalendarView) {
     this.view = view;

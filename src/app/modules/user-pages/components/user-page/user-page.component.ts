@@ -182,23 +182,19 @@ export class UserPageComponent implements OnInit, OnDestroy {
   follow() {
     this.user = this.userService.addFollower(this.user, this.currentUser.id);
     this.userService.updateUsers(this.user).subscribe(() => {
-      const author: IUser = this.user;
-      const title =
-        'Кулинар ' +
-        (this.currentUser.fullName
-          ? this.currentUser.fullName
-          : '@' + this.currentUser.username) +
-        ' подписался на тебя';
 
-      const notify: INotification = this.notifyService.buildNotification(
-        'Новый подписчик',
-        title,
-        'info',
-        'user',
-        '/cooks/list/' + this.currentUser.id,
-      );
-      this.notifyService.sendNotification(notify, author).subscribe();
-    });
+      if (this.userService.getPermission('new-follower', this.user)) {
+        const notify: INotification = this.notifyService.buildNotification(
+          'Новый подписчик',
+          `Кулинар ${(this.currentUser.fullName?this.currentUser.fullName:('@' + this.currentUser.username))} подписался на тебя`,
+          'info',
+          'user',
+          '/cooks/list/' + this.currentUser.id,
+        );
+        this.notifyService.sendNotification(notify, this.user).subscribe();
+      }
+      });
+    
   }
 
   unfollow() {

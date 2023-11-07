@@ -28,6 +28,7 @@ export class NotifyComponent  {
     const styleClasses = [];
     if (!this.notify.read) styleClasses.push('not-readed');
      if (this.notify.context === 'plan-reminder') return ['plan'];
+     if (this.notify.context === 'born') return ['born'];
      if (this.notify.context === 'plan-reminder-start') return ['plan-start'];
      if (this.notify.context === 'calendar-recipe') return ['calendar-recipe'];
      if (this.notify.context === 'hire') return ['hire'];
@@ -54,6 +55,7 @@ export class NotifyComponent  {
   get icon() {
     const basePath = '../../../../../assets/images/svg/';
     if (this.notify.context === 'hire') return basePath + 'case.svg';
+    if (this.notify.context === 'born') return basePath + 'champagne.svg';
     if (this.notify.context === 'demote') return basePath + 'demote.svg';
     if (this.notify.context === 'plan-reminder')
       return basePath + 'pot.svg';

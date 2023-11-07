@@ -35,7 +35,7 @@ import { getFormattedDate } from 'src/tools/common';
 export class AddCalendarEventComponent implements OnInit, OnDestroy {
   @Input() plan: IPlan = nullPlan;
   @Input() event: CalendarEvent = nullCalendarEvent;
-  @Input() currentUser: IUser = {...nullUser};
+  @Input() currentUser: IUser = { ...nullUser };
   @Output() closeEmitter = new EventEmitter<boolean>();
 
   protected title: string = '';
@@ -214,8 +214,7 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
       newEvent.allDay = true;
     }
 
-    if (this.selectedRecipe.id !== 0)
-      newEvent.recipe = this.selectedRecipe.id;
+    if (this.selectedRecipe.id !== 0) newEvent.recipe = this.selectedRecipe.id;
     let maxId = 0;
     if (this.plan.calendarEvents.length > 0)
       maxId = Math.max(...this.plan.calendarEvents.map((e) => e.id));
@@ -225,31 +224,36 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
     this.planService
       .updatePlan(this.plan)
       .subscribe(() => (this.modalSuccessSaveShow = true));
-    
-    const notify = this.notifyService.buildNotification(
-      'Вы успешно запланировали рецепт',
-      `Вы успешно запланировали рецепт ${newEvent.title} в «Календаре рецептов»`,
-      'success',
-      'calendar-recipe',
-      '/plan/calendar',
-    );
-            this.notifyService
-              .sendNotification(notify, this.currentUser)
-              .subscribe();
 
-    
-    
-    if (newEvent.recipe) {
-      
-      const findRecipe = this.allRecipes.find((r) => r.id === newEvent.recipe);
-      
-      if (findRecipe?.authorId !== this.currentUser.id) {
+    if (this.userService.getPermission('you-plan-recipe', this.currentUser)) {
+      const notify = this.notifyService.buildNotification(
+        'Вы успешно запланировали рецепт',
+        `Вы успешно запланировали рецепт «${newEvent.title}» в «Календаре рецептов»`,
+        'success',
+        'calendar-recipe',
+        '/plan/calendar',
+      );
+      this.notifyService.sendNotification(notify, this.currentUser).subscribe();
+    }
 
-        const author = this.allUsers.find((u) => u.id === findRecipe?.authorId);
+    const findRecipe = this.allRecipes.find((r) => r.id === newEvent.recipe);
 
-        if (author) {
-          const notify = this.notifyService.buildNotification('Ваш рецепт запланировали', `Ваш рецепт «${findRecipe?.name}» кто-то запланировал!`, 'info', 'calendar-recipe', '/recipes/list/' + findRecipe?.id)
-          this.notifyService.sendNotification(notify, author).subscribe()
+    if (findRecipe?.authorId !== this.currentUser.id) {
+      const author = this.allUsers.find((u) => u.id === findRecipe?.authorId);
+
+      if (author) {
+        if (
+          newEvent.recipe &&
+          this.userService.getPermission('plan-on-your-recipe', author)
+        ) {
+          const notify = this.notifyService.buildNotification(
+            'Ваш рецепт запланировали',
+            `Ваш рецепт «${findRecipe?.name}» кто-то запланировал!`,
+            'info',
+            'calendar-recipe',
+            '/recipes/list/' + findRecipe?.id,
+          );
+          this.notifyService.sendNotification(notify, author).subscribe();
         }
       }
     }

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { AuthService } from '../../authentication/services/auth.service';
 import { UserService } from './user.service';
 import { INotification, nullNotification } from '../models/notifications';
 import { getCurrentDate } from 'src/tools/common';
@@ -12,7 +11,6 @@ import { EMPTY } from 'rxjs';
 export class NotificationService {
   constructor(
     private userService: UserService,
-    private authService: AuthService,
   ) {
     this.userService.users$.subscribe((data) => (this.users = data));
   }
@@ -29,6 +27,7 @@ export class NotificationService {
       | 'without'
       | 'comment'
       | 'hire'
+      |'born'
       | 'user'
       | 'calendar-recipe'
       | 'demote'

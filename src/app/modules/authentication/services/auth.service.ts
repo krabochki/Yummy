@@ -35,16 +35,9 @@ export class AuthService {
         const currentUser: IUser = JSON.parse(savedUser);
         if (currentUser && currentUser.id > 0) {
 
-          const foundUser = {
-            ...users.find(
-              (u) =>
-                u.email === currentUser.email &&
-                u.password === currentUser.password &&
-                u.username === currentUser.username,
-            )
-          }
+          const foundUser=users.find(u=> u.email===currentUser.email&&u.password===currentUser.password)
           if (foundUser) {
-            this.setCurrentUser({ ...currentUser });
+            this.setCurrentUser(foundUser);
             console.log(
               'Автоматический вход в аккаунт пользователя ' +
               currentUser.username +

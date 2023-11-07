@@ -24,6 +24,7 @@ import { usernameExistsValidator } from 'src/tools/validators';
 import { getCurrentDate } from 'src/tools/common';
 import { PlanService } from 'src/app/modules/planning/services/plan-service';
 import { IPlan, nullPlan } from 'src/app/modules/planning/models/plan';
+import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
@@ -47,6 +48,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
     private authService: AuthService,
     private titleService: Title,
+    private notifyService: NotificationService,
     private router: Router,
     private usersService: UserService,
     private fb: FormBuilder,
@@ -124,12 +126,16 @@ export class RegisterComponent implements OnInit, OnDestroy {
           user: userData.id,
         };
         this.planService.addPlan(newUserPlan).subscribe();
+
+        const notify = this.notifyService.buildNotification(
+          'Добро пожаловать',
+          `Добро пожаловать в Yummy, @${userData.username} 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!`,
+          'success',
+          'born',
+          '',
+        );
+        this.notifyService.sendNotification(notify,userData).subscribe()
         this.cd.markForCheck();
-        (error: Error) => {
-          console.error(
-            'Регистрация | Ошибка в AuthService (loginUser): ' + error.message,
-          );
-        };
       });
     }
   }

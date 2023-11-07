@@ -728,7 +728,7 @@ background-color: var(--color-secondary-lighter);
 }
 .cal-day-view .cal-current-time-marker {
   margin-left: 5em;
-  width: calc(100% - 70px);
+  width: calc(100% - 5em);
 }
 [dir=rtl] .cal-day-view .cal-current-time-marker {
   margin-left: initial;

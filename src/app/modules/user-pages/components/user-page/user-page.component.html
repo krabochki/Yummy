@@ -323,14 +323,12 @@
           Доп. сведения
         </h3>
         <ul>
-          <li class="row center" *ngIf="user?.personalWebsite">
+          <li class="row center website" *ngIf="user?.personalWebsite">
             <svg-icon
               [src]="'../../../../../assets/images/svg/planet.svg'"
-              [svgStyle]="{
-                'width.em': '1.2',
-                'height.em': '1',
-                fill: 'var(--color-primary)'
-              }"
+            
+              class="red-svg"
+              [applyClass]="true"
             >
             </svg-icon>
             <a [href]="user.personalWebsite">Личный сайт</a>

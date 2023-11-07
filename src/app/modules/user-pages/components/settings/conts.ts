@@ -12,7 +12,7 @@ export interface NotificationSettingsSectionItems {
 
 export const sections: NotificationSettingsSections[] = [
   {
-    title: 'Ваши публичные рецепты',
+    title: 'Ваши публикованные рецепты',
     icon: 'lock-open',
     items: [
       {
@@ -29,7 +29,7 @@ export const sections: NotificationSettingsSections[] = [
       },
       {
         description: 'Кто-то запланировал ваш рецепт в «Календаре рецептов»',
-        area: 'fav-on-your-recipe',
+        area: 'plan-on-your-recipe',
       },
     ],
   },
@@ -62,10 +62,13 @@ export const sections: NotificationSettingsSections[] = [
     ],
   },
   {
-    title: 'Подписчики и подписки',
+    title: 'Аккаунт, подписчики, подписки',
     icon: 'diversity',
-
     items: [
+      {
+        description: 'Вы изменили свой аккаунт',
+        area: 'you-edit-your-account',
+      },
       {
         description: 'У вас появился новый подписчик',
         area: 'new-follower',
@@ -116,23 +119,30 @@ export const sections: NotificationSettingsSections[] = [
     title: 'Комментарии',
     items: [
       {
-        description: 'Кулинар прокомментировал ваш рецепт',
+        description: 'Ваш рецепт прокомментировали',
         area: 'your-recipe-commented',
       },
       {
-        description: 'Вы оставили комментарий под рецептом',
+        description: 'Вы оставили комментарий ',
         area: 'you-commented-recipe',
       },
+
       {
-        description: 'Ваш комментарий оценил кулинар',
+        description: 'Вы удалили свой комментарий',
+        area: 'you-delete-your-comment',
+      },
+      {
+        description: 'Ваш комментарий оценили',
         area: 'your-commented-liked',
       },
+
       {
-        description: 'Ваши жалобы на чужие комментарии (отправка и решение)',
+        description: 'Ваши жалобы на чужие комментарии',
         area: 'your-reports-publish',
       },
+
       {
-        description: 'Жалобы на ваши комментарии (отправка и решение)',
+        description: 'Жалобы на ваши комментарии',
         area: 'your-reports-reviewed-moderator',
       },
     ],

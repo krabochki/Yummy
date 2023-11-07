@@ -76,22 +76,18 @@ export class CommentComponent implements OnInit, OnDestroy {
       .deleteComment(this.comment, this.recipe)
       .pipe(takeUntil(this.destroyed$))
       .subscribe(() => {
-        const author: IUser = this.author;
-        const title =
-          'Ты успешно удалил свой комментарий «' +
-          this.comment.text +
-          '» под рецептом «' +
-          this.recipe.name +
-          '»';
 
-        const notify: INotification = this.notifyService.buildNotification(
-          'Комментарий удален',
-          title,
-          'success',
-          'comment',
-          '/recipes/list/' + this.recipe.id,
-        );
-        this.notifyService.sendNotification(notify, author).subscribe();
+        if (this.userService.getPermission('you-delete-your-comment', this.author)) {
+        
+          const notify: INotification = this.notifyService.buildNotification(
+            'Комментарий удален',
+            `Ты успешно удалил свой комментарий «${this.comment.text}» под рецептом «${this.recipe.name}»`,
+            'success',
+            'comment',
+            '/recipes/list/' + this.recipe.id,
+          );
+          this.notifyService.sendNotification(notify, this.author).subscribe();
+        }
       });
   }
 
@@ -100,26 +96,23 @@ export class CommentComponent implements OnInit, OnDestroy {
       .likeComment(this.currentUser, this.comment, this.recipe)
       .pipe(takeUntil(this.destroyed$))
       .subscribe(() => {
-        if (this.comment.likesId.includes(this.currentUser.id) && this.comment.authorId!==this.currentUser.id) {
-          const author: IUser = this.author;
-          const title =
-            'Твой комментарий «' +
-            this.comment.text +
-            '» под рецептом «' +
-            this.recipe.name +
-            '» понравился кулинару ' +
-            (this.currentUser.fullName
-              ? this.currentUser.fullName
-              : '@' + this.currentUser.username);
-
+        if (this.comment.likesId.includes(this.currentUser.id) && this.comment.authorId !== this.currentUser.id
+        && (this.userService.getPermission('your-commented-liked', this.author))) {
+      
           const notify: INotification = this.notifyService.buildNotification(
             'Комментарий кому-то понравился',
-            title,
+            `Твой комментарий «${this.comment.text}» под рецептом «${
+              this.recipe.name
+            }» понравился кулинару ${
+              this.currentUser.fullName
+                ? this.currentUser.fullName
+                : '@' + this.currentUser.username
+            }`,
             'info',
             'comment',
             '/cooks/list/' + this.currentUser.id,
           );
-          this.notifyService.sendNotification(notify, author).subscribe();
+          this.notifyService.sendNotification(notify, this.author).subscribe();
         }
       });
   }
@@ -128,27 +121,23 @@ export class CommentComponent implements OnInit, OnDestroy {
       .dislikeComment(this.currentUser, this.comment, this.recipe)
       .pipe(takeUntil(this.destroyed$))
       .subscribe(() => {
-        if (this.comment.dislikesId.includes(this.currentUser.id) && this.comment.authorId !==this.currentUser.id) {
-
-          const author: IUser = this.author;
-          const title =
-            'Твой комментарий «' +
-            this.comment.text +
-            '» под рецептом «' +
-            this.recipe.name +
-            '» не понравился кулинару ' +
-            (this.currentUser.fullName
-              ? this.currentUser.fullName
-              : '@' + this.currentUser.username);
-
+        if (this.comment.dislikesId.includes(this.currentUser.id) && this.comment.authorId !== this.currentUser.id
+        &&(this.userService.getPermission('your-commented-liked',this.author))) {
           const notify: INotification = this.notifyService.buildNotification(
             'Комментарий кому-то не понравился',
-            title,
+            `Твой комментарий «${this.comment.text}» под рецептом «${
+              this.recipe.name
+            }» не понравился кулинару
+            ${
+              this.currentUser.fullName
+                ? this.currentUser.fullName
+                : '@' + this.currentUser.username
+            }`,
             'info',
             'comment',
             '/cooks/list/' + this.currentUser.id,
           );
-          this.notifyService.sendNotification(notify, author).subscribe();
+          this.notifyService.sendNotification(notify, this.author).subscribe();
         }
       });
   }
@@ -161,43 +150,33 @@ export class CommentComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe(() => {
         this.successReportCommentModalShow = true;
-        let author: IUser = this.author;
-        let title =
-          'Кто-то пожаловался на твой комментарий «' +
-          this.comment.text +
-          '» под рецептом «' +
-          this.recipe.name +
-          '»';
+        if (this.userService.getPermission('your-reports-reviewed-moderator',this.author)) {
+        
+          const notify: INotification = this.notifyService.buildNotification(
+            'Кто-то пожаловался на комментарий',
+            `Кто-то пожаловался на твой комментарий «${this.comment.text}» под рецептом «${this.recipe.name}». Жалоба ожидает рассмотрения модератора`,
+            'warning',
+            'comment',
+            '/recipes/list/' + this.recipe.id,
+          );
+          this.notifyService.sendNotification(notify, this.author).subscribe()
+        }
 
-        let notify: INotification = this.notifyService.buildNotification(
-          'Кто-то пожаловался на комментарий',
-          title,
-          'warning',
-          'comment',
-          '/recipes/list/' + this.recipe.id,
-        );
-        this.notifyService.sendNotification(notify, author).subscribe();
-
-        author = this.currentUser;
-        title =
-          'Ты отправил жалобу на комментарий кулинара ' +
-          (this.author.fullName
-            ? this.author.fullName
-            : '@' + this.author.username) +
-          ' «' +
-          this.comment.text +
-          '» под рецептом «' +
-          this.recipe.name +
-          '»';
-
-        notify = this.notifyService.buildNotification(
-          'Ты пожаловался на комментарий',
-          title,
-          'success',
-          'comment',
-          '/recipes/list/' + this.recipe.id,
-        );
-        this.notifyService.sendNotification(notify, author).subscribe();
+        if (this.userService.getPermission('your-reports-publish', this.currentUser)) {
+         
+         const notify = this.notifyService.buildNotification(
+           'Ты пожаловался на комментарий',
+           `Ты отправил жалобу на комментарий кулинара ${
+             this.author.fullName
+               ? this.author.fullName
+               : '@' + this.author.username
+           } «${this.comment.text}» под рецептом «${this.recipe.name}»`,
+           'success',
+           'comment',
+           '/recipes/list/' + this.recipe.id,
+         );
+          this.notifyService.sendNotification(notify, this.currentUser).subscribe();
+        }
       });
   }
 

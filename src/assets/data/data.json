@@ -258,6 +258,23 @@
             "beforeStart": true,
             "afterEnd": true
           }
+        },
+        {
+          "id": 17,
+          "recipe": 24,
+          "start": "2023-11-06T21:00:00.000Z",
+          "title": "Чизкейк с клубникой",
+          "color": {
+            "primary": "#FFC5D0",
+            "secondary": "#FFC5D0"
+          },
+          "allDay": true,
+          "draggable": true,
+          "end": "2023-11-07T20:59:59.999Z",
+          "resizable": {
+            "beforeStart": true,
+            "afterEnd": true
+          }
         }
       ],
       "shoppingList": [
@@ -376,40 +393,6 @@
       "id": 2,
       "calendarEvents": [
         {
-          "id": 6,
-          "recipe": 0,
-          "start": "2023-11-05T21:00:00.000Z",
-          "title": "Глазунья 2.0",
-          "color": {
-            "primary": "#FFC5D0",
-            "secondary": "#FFC5D0"
-          },
-          "allDay": true,
-          "draggable": true,
-          "end": "2023-11-06T20:59:59.999Z",
-          "resizable": {
-            "beforeStart": true,
-            "afterEnd": true
-          }
-        },
-        {
-          "id": 4,
-          "recipe": 0,
-          "start": "2023-11-05T21:00:00.000Z",
-          "title": "Омлет",
-          "color": {
-            "primary": "#FBEE0F",
-            "secondary": "#FBEE0F"
-          },
-          "allDay": true,
-          "draggable": true,
-          "end": "2023-11-06T20:59:59.999Z",
-          "resizable": {
-            "beforeStart": true,
-            "afterEnd": true
-          }
-        },
-        {
           "id": 1,
           "recipe": 0,
           "start": "2023-11-05T21:00:00.000Z",
@@ -427,17 +410,17 @@
           }
         },
         {
-          "id": 8,
+          "id": 6,
           "recipe": 0,
-          "start": "2023-11-15T21:00:00.000Z",
-          "title": "Салат с сухариками",
+          "start": "2023-11-05T21:00:00.000Z",
+          "title": "Глазунья 2.0",
           "color": {
-            "primary": "#0400ff",
-            "secondary": "#0400ff"
+            "primary": "#FFC5D0",
+            "secondary": "#FFC5D0"
           },
           "allDay": true,
           "draggable": true,
-          "end": "2023-11-17T20:59:59.999Z",
+          "end": "2023-11-06T20:59:59.999Z",
           "resizable": {
             "beforeStart": true,
             "afterEnd": true
@@ -447,14 +430,65 @@
           "id": 9,
           "recipe": 0,
           "start": "2023-11-06T21:00:00.000Z",
-          "title": "Бошетунмай",
+          "title": "Привет",
           "color": {
-            "primary": "#00c957",
-            "secondary": "#00c957"
+            "primary": "#FFC5D0",
+            "secondary": "#FFC5D0"
           },
           "allDay": true,
           "draggable": true,
           "end": "2023-11-07T20:59:59.999Z",
+          "resizable": {
+            "beforeStart": true,
+            "afterEnd": true
+          }
+        },
+        {
+          "id": 7,
+          "recipe": 0,
+          "start": "2023-11-06T21:00:00.000Z",
+          "title": "Яйца",
+          "color": {
+            "primary": "#FBEE0F",
+            "secondary": "#FBEE0F"
+          },
+          "allDay": true,
+          "draggable": true,
+          "end": "2023-11-07T20:59:59.999Z",
+          "resizable": {
+            "beforeStart": true,
+            "afterEnd": true
+          }
+        },
+        {
+          "id": 8,
+          "recipe": 0,
+          "start": "2023-11-06T21:00:00.000Z",
+          "title": "Уооу",
+          "color": {
+            "primary": "#FFC5D0",
+            "secondary": "#FFC5D0"
+          },
+          "allDay": true,
+          "draggable": true,
+          "end": "2023-11-07T20:59:59.999Z",
+          "resizable": {
+            "beforeStart": true,
+            "afterEnd": true
+          }
+        },
+        {
+          "id": 10,
+          "recipe": 0,
+          "start": "2023-11-09T21:00:00.000Z",
+          "title": "уведа не долнжо быть",
+          "color": {
+            "primary": "#FFC5D0",
+            "secondary": "#FFC5D0"
+          },
+          "allDay": true,
+          "draggable": true,
+          "end": "2023-11-10T20:59:59.999Z",
           "resizable": {
             "beforeStart": true,
             "afterEnd": true
@@ -499,109 +533,10 @@
           "type": 0
         },
         {
-          "id": 2,
-          "name": "Помидоры ",
-          "note": "",
-          "howMuch": "2-3 шт",
-          "isBought": false,
-          "relatedRecipe": 0,
-          "type": 0
-        },
-        {
           "id": 3,
           "name": "Перец болгарский",
           "note": "",
           "howMuch": "2 шт",
-          "isBought": false,
-          "relatedRecipe": 0,
-          "type": 0
-        },
-        {
-          "id": 4,
-          "name": "Сыр фета",
-          "note": "",
-          "howMuch": "200 г",
-          "isBought": false,
-          "relatedRecipe": 0,
-          "type": 0
-        },
-        {
-          "id": 7,
-          "name": "Хмель",
-          "note": "",
-          "howMuch": "",
-          "isBought": false,
-          "relatedRecipe": 0,
-          "type": 0
-        },
-        {
-          "id": 8,
-          "name": "Мука",
-          "note": "",
-          "howMuch": "",
-          "isBought": false,
-          "relatedRecipe": 0,
-          "type": 0
-        },
-        {
-          "id": 9,
-          "name": "Соль",
-          "note": "",
-          "howMuch": "",
-          "isBought": false,
-          "relatedRecipe": 0,
-          "type": 0
-        },
-        {
-          "id": 10,
-          "name": "Фарш ",
-          "note": "",
-          "howMuch": "0.5 кг",
-          "isBought": false,
-          "relatedRecipe": 69,
-          "type": 0
-        },
-        {
-          "id": 11,
-          "name": "Перец ",
-          "note": "",
-          "howMuch": "по вкусу",
-          "isBought": false,
-          "relatedRecipe": 69,
-          "type": 0
-        },
-        {
-          "id": 12,
-          "name": "Яйца",
-          "note": "",
-          "howMuch": "2 шт",
-          "isBought": false,
-          "relatedRecipe": 0,
-          "type": 0
-        },
-        {
-          "id": 13,
-          "name": "Соль",
-          "note": "",
-          "howMuch": "на глаз",
-          "isBought": false,
-          "relatedRecipe": 0,
-          "type": 0
-        },
-        {
-          "id": 14,
-          "name": "Краситель (любой цвет)",
-          "note": "",
-          "howMuch": "5 г",
-          "isBought": false,
-          "relatedRecipe": 0,
-          "type": 0
-        },
-        {
-          "id": 15,
-          "name": "Сухарики",
-          "note": "",
-          "howMuch": "",
           "isBought": false,
           "relatedRecipe": 0,
           "type": 0
@@ -911,6 +846,12 @@
       "user": 26,
       "shoppingList": [],
       "calendarEvents": []
+    },
+    {
+      "id": 17,
+      "user": 27,
+      "shoppingList": [],
+      "calendarEvents": []
     }
   ],
   "categories": [
@@ -1171,6 +1112,30 @@
       "authorId": 5,
       "id": 46,
       "status": "public"
+    },
+    {
+      "name": "гггг",
+      "photo": {},
+      "sendDate": "2023-11-07T19:49:06.494Z",
+      "authorId": 1,
+      "id": 47,
+      "status": "public"
+    },
+    {
+      "name": "ооооо",
+      "photo": {},
+      "sendDate": "2023-11-07T19:52:59.298Z",
+      "authorId": 1,
+      "id": 48,
+      "status": "public"
+    },
+    {
+      "name": "рррр",
+      "photo": {},
+      "sendDate": "2023-11-07T19:53:52.318Z",
+      "authorId": 1,
+      "id": 50,
+      "status": "public"
     }
   ],
   "sections": [
@@ -1196,7 +1161,9 @@
       "categories": [
         3,
         4,
-        5
+        5,
+        47,
+        48
       ]
     },
     {
@@ -1207,7 +1174,8 @@
         6,
         7,
         8,
-        35
+        35,
+        50
       ]
     },
     {
@@ -1754,7 +1722,24 @@
     {
       "id": 8,
       "mainPhotoUrl": null,
-      "comments": [],
+      "comments": [
+        {
+          "id": 1,
+          "text": "мой любимый рецепт",
+          "authorId": 1,
+          "date": "2023-11-07T20:17:56.384Z",
+          "likesId": [],
+          "dislikesId": []
+        },
+        {
+          "id": 2,
+          "text": "супер",
+          "authorId": 1,
+          "date": "2023-11-07T20:18:59.737Z",
+          "likesId": [],
+          "dislikesId": []
+        }
+      ],
       "categories": [],
       "name": "cupidatat enim ipsum",
       "description": "Lorem sit duis irure amet consectetur nostrud fugiat et aute consequat quis culpa. Dolor veniam aute sit commodo consectetur eiusmod labore esse enim. Laborum culpa duis eu do. In duis est velit minim elit do sunt amet in reprehenderit aute sit. Nostrud et mollit magna proident voluptate irure deserunt qui Lorem exercitation ullamco. Sunt esse id et laboris voluptate. Officia anim esse enim esse dolor do fugiat officia dolor adipisicing.\r\nAnim velit id nostrud laboris ullamco anim dolore nisi cupidatat elit do. In exercitation et pariatur duis deserunt. Tempor proident culpa labore sunt elit in. Aliquip non sit mollit commodo fugiat enim laborum deserunt. Excepteur ea dolore cupidatat nostrud laborum esse Lorem ullamco duis ut pariatur ut duis. Nostrud consectetur pariatur consequat aute ex commodo aute ad excepteur et cillum. Exercitation sunt laborum ullamco veniam labore.\r\nDuis irure commodo magna exercitation. Elit incididunt consequat enim amet aliquip duis. Nulla in sint quis Lorem.\r\n",
@@ -1765,7 +1750,6 @@
       "authorId": 1,
       "cooksId": [
         8,
-        5,
         4,
         3,
         9,
@@ -1777,12 +1761,14 @@
         9,
         10,
         3,
-        1
+        1,
+        5
       ],
       "likesId": [
         8,
         6,
-        1
+        1,
+        5
       ],
       "status": "public",
       "origin": "Tanzania",
@@ -2756,7 +2742,16 @@
         11
       ],
       "mainPhotoUrl": null,
-      "comments": [],
+      "comments": [
+        {
+          "id": 1,
+          "text": "wow🧵🧵🎨🎈🎈пушка",
+          "authorId": 5,
+          "date": "2023-11-07T20:23:10.474Z",
+          "likesId": [],
+          "dislikesId": []
+        }
+      ],
       "name": "Чизкейк с клубникой",
       "description": "Вкусный чизкейк с клубникой можно приготовить и без выпечки — с желатином. От кусочка такого многослойного десерта не откажется ни одна сладкоежка. Подавайте его с горячим чаем либо кофе, латте. Описание приготовления: В летнее время такой десерт можно готовить хоть каждый день. Его основой может служить не только песочное печенье, но и бисквитный корж. По желанию часть клубники можно измельчить вместе с творогом и тогда получится клубнично-творожный слой.",
       "history": "Aliquip sit amet mollit occaecat cupidatat qui consequat. Magna ad deserunt est mollit. Veniam Lorem in cupidatat minim cillum dolore Lorem incididunt eiusmod est consectetur amet amet tempor. Cillum magna eu cupidatat eu velit. Officia sint incididunt sint amet consequat eu cupidatat consectetur fugiat cupidatat velit ipsum nisi. Et elit nostrud laboris commodo eu ex. Est dolor labore minim excepteur enim voluptate laboris.\r\nAliqua reprehenderit ad voluptate labore. Incididunt consequat sunt commodo non anim irure ad dolore et ut labore et aliquip incididunt. Nulla occaecat in consequat anim sunt qui voluptate. Ut sunt cillum dolor veniam excepteur eu deserunt sunt dolor aliqua consectetur incididunt officia.\r\n",
@@ -2769,13 +2764,14 @@
         6,
         3,
         1,
-        25
+        25,
+        5
       ],
       "favoritesId": [
         6,
         8,
-        1,
-        25
+        25,
+        5
       ],
       "likesId": [
         3,
@@ -2881,6 +2877,10 @@
         },
         {
           "user": 25,
+          "answer": true
+        },
+        {
+          "user": 5,
           "answer": true
         }
       ],
@@ -3323,137 +3323,6 @@
         }
       ],
       "reports": []
-    },
-    {
-      "name": "Пок-мок",
-      "reports": [],
-      "statistics": [],
-      "ingredients": [],
-      "instructions": [],
-      "mainImage": null,
-      "description": "",
-      "history": "",
-      "preparationTime": "",
-      "cookingTime": "",
-      "origin": "",
-      "nutritions": [],
-      "servings": 1,
-      "authorId": 1,
-      "categories": [],
-      "cooksId": [],
-      "likesId": [],
-      "favoritesId": [],
-      "id": 58,
-      "comments": [],
-      "publicationDate": "2023-11-07T18:52:48.364Z",
-      "status": "private"
-    },
-    {
-      "name": "Кисси-мисси",
-      "reports": [],
-      "statistics": [
-        {
-          "user": 1,
-          "answer": true
-        }
-      ],
-      "ingredients": [],
-      "instructions": [],
-      "mainImage": null,
-      "description": "",
-      "history": "",
-      "preparationTime": "",
-      "cookingTime": "",
-      "origin": "",
-      "nutritions": [],
-      "servings": 1,
-      "authorId": 1,
-      "categories": [],
-      "cooksId": [
-        1
-      ],
-      "likesId": [
-        1
-      ],
-      "favoritesId": [
-        1
-      ],
-      "id": 60,
-      "comments": [],
-      "publicationDate": "2023-11-01T14:29:29.034Z",
-      "status": "public"
-    },
-    {
-      "name": "fddff",
-      "reports": [],
-      "statistics": [],
-      "ingredients": [],
-      "instructions": [],
-      "mainImage": null,
-      "description": "",
-      "history": "",
-      "preparationTime": "",
-      "cookingTime": "",
-      "origin": "",
-      "nutritions": [],
-      "servings": 1,
-      "authorId": 1,
-      "categories": [],
-      "cooksId": [],
-      "likesId": [],
-      "favoritesId": [],
-      "id": 63,
-      "comments": [],
-      "publicationDate": "2023-11-01T15:28:21.852Z",
-      "status": "private"
-    },
-    {
-      "name": "dgggddggdg",
-      "reports": [],
-      "statistics": [],
-      "ingredients": [],
-      "instructions": [],
-      "mainImage": null,
-      "description": "",
-      "history": "",
-      "preparationTime": "",
-      "cookingTime": "",
-      "origin": "",
-      "nutritions": [],
-      "servings": 1,
-      "authorId": 1,
-      "categories": [],
-      "cooksId": [],
-      "likesId": [],
-      "favoritesId": [],
-      "id": 65,
-      "comments": [],
-      "publicationDate": "",
-      "status": "private"
-    },
-    {
-      "name": "аваавваав",
-      "reports": [],
-      "statistics": [],
-      "ingredients": [],
-      "instructions": [],
-      "mainImage": null,
-      "description": "",
-      "history": "",
-      "preparationTime": "",
-      "cookingTime": "",
-      "origin": "",
-      "nutritions": [],
-      "servings": 1,
-      "authorId": 1,
-      "categories": [],
-      "cooksId": [],
-      "likesId": [],
-      "favoritesId": [],
-      "id": 66,
-      "comments": [],
-      "publicationDate": "2023-11-01T15:56:57.536Z",
-      "status": "private"
     },
     {
       "name": "Картофельные драники с чесноком (без яиц и муки)",
@@ -4391,6 +4260,526 @@
       "comments": [],
       "publicationDate": "2023-11-07T02:18:42.391Z",
       "status": "private"
+    },
+    {
+      "name": "Кныш с картофелем",
+      "reports": [],
+      "statistics": [
+        {
+          "user": 1,
+          "answer": true
+        }
+      ],
+      "ingredients": [
+        {
+          "name": "Мука ",
+          "quantity": "400",
+          "unit": "г"
+        },
+        {
+          "name": "Разрыхлитель ",
+          "quantity": "0,5",
+          "unit": "ч.л."
+        },
+        {
+          "name": "Соль ",
+          "quantity": "0,5",
+          "unit": "ч.л"
+        },
+        {
+          "name": "Яйца ",
+          "quantity": "2",
+          "unit": "шт"
+        },
+        {
+          "name": "Вода ",
+          "quantity": "125",
+          "unit": "мл"
+        },
+        {
+          "name": "Уксус ",
+          "quantity": "1",
+          "unit": "ч.л."
+        },
+        {
+          "name": "Масло растительное",
+          "quantity": "125",
+          "unit": "мл"
+        },
+        {
+          "name": "Картофель",
+          "quantity": "0.5",
+          "unit": "кг"
+        },
+        {
+          "name": "Лук репчатый",
+          "quantity": "1",
+          "unit": "шт"
+        }
+      ],
+      "instructions": [
+        {
+          "name": "Подготовим продукты для мини-пирожков с картофелем.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Как приготовить кныш с картофелем:\n\nВ объёмную миску просеем муку, засыплем разрыхлитель, добавим соль. Ложкой превратим ингредиенты в однородную смесь, хорошо всё размешав.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Как приготовить кныш с картофелем:\n\nВ объёмную миску просеем муку, засыплем разрыхлитель, добавим соль. Ложкой превратим ингредиенты в однородную смесь, хорошо всё размешав.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "В другой ёмкости сделаем жидкую смесь: нальём воду, разобьём яйцо, добавим уксус и введём растительное масло. Венчиком всё перемешаем.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Приготовленную жидкую смесь зальём к сухим компонентам. Замесим тесто.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Тесто получается очень эластичным. Охладим тесто минут 20 в холодильнике, предварительно обернув пищевой пленкой.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Почистим картофель, выложим в кастрюльку, зальём водой. Поставим на огонь. Минут через 20-25 от момента закипания он сварится (на умеренном огне).\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Нашинкуем луковицу мелко.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Обжарим лук в разогретом на сковороде растительном масле.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Горячий отваренный картофель выложим в миску. Туда же добавим обжаренный лук вместе с растительным маслом.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Истолчём картошку с луком. Картофельная начинка готова.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Выложим половину охлаждённого эластичного теста (предварительно удалив плёнку) на рабочую поверхность стола, которую чуть присыпали мукой. Скалкой раскатаем пласт. Размер сторон пласта приблизительно 30х40 см.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Ближе к одному из краёв выложим половину начинки, как указанно на фото.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Аккуратно скатаем рулетиком.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Сформированный рулет ножом поделим на 6 частей.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Берём в руки одну часть. Защипываем края с обеих сторон и пальчиками чуть вдавливаем места защипов. Получаются своеобразные бочонки.\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Выкладываем каждый сформированный пирожок-кныш на противень, покрытый пергаментом. Желток оставшегося яйца взболтаем с 1 ч. ложкой воды и смажем все кныши.\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Готовые кныши с картофелем подаем чуть остывшими.\nПриятного аппетита!",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        }
+      ],
+      "mainImage": null,
+      "description": "Большинство источников сходятся на том, что кныш - это блюдо белорусской кухни. Но где бы не родились кныши, вкус у этих пирожков бесподобный. Начинка для пирожков-кнышей может быть различной. Я выношу на ваш суд кныш с картофелем.\n\n",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "Беларусь",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 1,
+      "categories": [
+        25,
+        4,
+        3,
+        45,
+        40
+      ],
+      "cooksId": [
+        1
+      ],
+      "likesId": [
+        1
+      ],
+      "favoritesId": [],
+      "id": 79,
+      "comments": [],
+      "publicationDate": "2023-11-07T22:36:58.733Z",
+      "status": "public"
+    },
+    {
+      "name": "Куриные котлеты с сыром «Папараць кветка»",
+      "reports": [],
+      "statistics": [
+        {
+          "user": 1,
+          "answer": true
+        }
+      ],
+      "ingredients": [
+        {
+          "name": "Куриное филе",
+          "quantity": "750",
+          "unit": "г"
+        },
+        {
+          "name": "Лук репчатый",
+          "quantity": "1-2",
+          "unit": "шт"
+        },
+        {
+          "name": "Яйцо",
+          "quantity": "1",
+          "unit": "шт"
+        },
+        {
+          "name": "Сыр твердый",
+          "quantity": "100",
+          "unit": "г"
+        },
+        {
+          "name": "Масло сливочное",
+          "quantity": "100",
+          "unit": "г"
+        },
+        {
+          "name": "Батон",
+          "quantity": "",
+          "unit": ""
+        },
+        {
+          "name": "Масло растительное",
+          "quantity": "100",
+          "unit": "г"
+        },
+        {
+          "name": "Соль",
+          "quantity": "",
+          "unit": ""
+        },
+        {
+          "name": "Перец черный молотый",
+          "quantity": "",
+          "unit": ""
+        }
+      ],
+      "instructions": [
+        {
+          "name": "Продукты для куриных котлет с сыром \"Папараць кветка\".\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Как приготовить куриные котлеты с сыром:\n\nСначала займемся подготовительными работами.\nМелкими кубиками порежем батон. Хорошо взять нарезной батон. Выложим сухарики на противень и подсушим в духовке. Или частями будем сушить в микроволновке.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Размягченное масло смешаем с тертым сыром, сделаем колбаску, толщиной 2-2,5см и поместим ее в морозилку.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Куриное филе пропустим через мясорубку вместе с луком. Добавим соль и перец, яйцо. Все тщательно перемешаем и отобьем.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "На ладонь кладем немного фарша и делаем из него лепешку. На середину помещаем небольшой кусочек (до 3см) мясляно-сырной колбаски. Накрываем сверху небольшим количеством фарша и формируем овальную котлету.\n\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Обваляем котлеты в приготовленных сухариках, немного вдавливая их в фарш.\nХорошо разогреваем жир в сковороде. А вот тут не зевайте, котлеты надо обжарить со всех сторон очень быстро.\nКонечно, за такое короткое время, котлеты не успевают прожариться внутри. Дальше есть два варианта. Сложить обжаренные котлеты в сковороду, подлить немного воды и тушить под крышкой 30 минут. Или разложить котлеты на противне, накрыть фольгой и поставить куриные котлеты с сыром в духовку на 25-30 минут при температуре 175 градусов. Я выбрала второй вариант, потому что при тушении с водой не хотелось потерять хрустящие сухарики.",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        },
+        {
+          "name": "Еще одно замечание. Для мамы две котлеты обваляла в панировочных сухарях, вдруг сухарики будут твердыми. Так вот, котлеты в сухариках более мягкие и сухарики сами рассыпаются, а котлеты в панировочных сухарях более плотные. Лучший гарнир к куриным котлетам с сыром – картофель.\n",
+          "images": [
+            {
+              "file": null
+            },
+            {
+              "file": null
+            },
+            {
+              "file": null
+            }
+          ]
+        }
+      ],
+      "mainImage": null,
+      "description": "Вкусные, не сложные в приготовлении, белорусские куриные котлеты с поэтическим названием «папараць кветка», т.е. «цветок папороти». В середину котлеты заворачиваем сыр с маслом.\n\n",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 1,
+      "categories": [
+        25
+      ],
+      "cooksId": [
+        1
+      ],
+      "likesId": [
+        1
+      ],
+      "favoritesId": [
+        1
+      ],
+      "id": 80,
+      "comments": [],
+      "publicationDate": "2023-11-07T22:47:06.608Z",
+      "status": "public"
     }
   ],
   "users": [
@@ -4401,15 +4790,23 @@
       "quote": "Когда вы допустили столько же ошибок, сколько и я, вы можете быть так же хороши, как и я.",
       "email": "alexey@example.com",
       "password": "Password300",
-      "fullName": "Леха Зимин 1000",
+      "fullName": "Алексей Зимин",
       "followersIds": [
         3,
         4,
-        5,
         2,
-        25
+        25,
+        5
       ],
       "socialNetworks": [
+        {
+          "name": "pinterest",
+          "link": "https://pinterest.com/alex_zimin"
+        },
+        {
+          "name": "twitter",
+          "link": "https://twitter.com/chef_zimin"
+        },
         {
           "name": "ВКонтакте",
           "link": "https://vk.com/chef_alexey_zimin"
@@ -4418,849 +4815,103 @@
       "personalWebsite": "https://www.chefalexeyzimin.com/",
       "location": "Москва, Россия",
       "registrationDate": "2023-01-15",
-      "profileViews": 7660,
+      "profileViews": 7662,
       "role": "moderator",
       "notifications": [
         {
           "id": 1,
-          "relatedLink": "/cooks/list/1",
-          "context": "recipe",
-          "type": "info",
-          "message": "Твой рецепт «cupidatat enim ipsum» понравился кулинару Леха Зими",
-          "title": "Твой рецепт оценили",
-          "timestamp": "2023-11-01T17:22:26.609Z",
-          "read": true
+          "relatedLink": "/plan/calendar",
+          "context": "plan-reminder-start",
+          "type": "warning",
+          "relatedId": 8,
+          "message": "Время начала запланированного вами рецепта «Уооу» уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
+          "title": "Время начала запланированного рецепта настало!",
+          "timestamp": "2023-11-07T19:48:17.866Z",
+          "read": true,
+          "notificationDate": "Tue Nov 07 2023"
         },
         {
           "id": 2,
-          "relatedLink": "/cooks/list/1",
-          "context": "recipe",
-          "type": "info",
-          "message": "Твой рецепт «cupidatat enim ipsum» понравился кулинару Леха Зими",
-          "title": "Твой рецепт оценили",
-          "timestamp": "2023-11-01T17:25:29.141Z",
-          "read": true
-        },
-        {
-          "id": 3,
-          "relatedLink": "/cooks/list/1",
-          "context": "recipe",
-          "type": "info",
-          "message": "Твой рецепт «cupidatat enim ipsum» понравился кулинару Леха Зими",
-          "title": "Твой рецепт оценили",
-          "timestamp": "2023-11-01T17:25:32.021Z",
-          "read": true
-        },
-        {
-          "id": 4,
-          "relatedLink": "/cooks/list/1",
-          "context": "recipe",
-          "type": "info",
-          "message": "Твой рецепт «cupidatat enim ipsum» приготовил кулинар Леха Зими и оставил положительный отзыв",
-          "title": "Твой рецепт приготовили",
-          "timestamp": "2023-11-01T17:25:36.190Z",
-          "read": true
-        },
-        {
-          "id": 5,
-          "relatedLink": "/cooks/list/1",
-          "context": "recipe",
-          "type": "info",
-          "message": "Твой рецепт «cupidatat enim ipsum» приготовил кулинар Леха Зимин и оставил негативный отзыв",
-          "title": "Твой рецепт приготовили",
-          "timestamp": "2023-11-01T17:26:32.990Z",
-          "read": true
-        },
-        {
-          "id": 6,
-          "relatedLink": "/recipes/list/8",
-          "context": "recipe",
-          "type": "info",
-          "message": "Твой рецепт «cupidatat enim ipsum» кто-то добавил в избранное",
-          "title": "Твой рецепт добавили в избранное",
-          "timestamp": "2023-11-01T17:26:45.393Z",
-          "read": true
-        },
-        {
-          "id": 7,
-          "relatedLink": "/cooks/list/1",
-          "context": "user",
-          "type": "success",
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-01T17:30:04.674Z",
-          "read": true
-        },
-        {
-          "id": 8,
-          "relatedLink": "/cooks/list/1",
-          "context": "user",
-          "type": "success",
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-01T17:52:54.760Z",
-          "read": true
-        },
-        {
-          "id": 9,
-          "relatedLink": "/cooks/list/2",
-          "context": "user",
-          "type": "info",
-          "message": "Кулинар Екатерина Петрова подписался на тебя",
-          "title": "Новый подписчик",
-          "timestamp": "2023-11-01T18:00:06.873Z",
-          "read": true
-        },
-        {
-          "id": 10,
-          "relatedLink": "/cooks/list/2",
-          "context": "user",
-          "type": "info",
-          "message": "Кулинар Екатерина Петрова подписался на тебя",
-          "title": "Новый подписчик",
-          "timestamp": "2023-11-01T18:06:51.747Z",
-          "read": true
-        },
-        {
-          "id": 11,
-          "relatedLink": "/recipes/list/4",
-          "context": "comment",
-          "type": "error",
-          "message": "Твоя жалоба на комментарий пользователя Линавсем привет» под рецептом «Lorem laborum nulla» отклонена",
-          "title": "Жалоба на комментарий отклонена",
-          "timestamp": "2023-11-01T20:09:19.293Z",
-          "read": true
-        },
-        {
-          "id": 12,
-          "relatedLink": "/recipes/list/6",
-          "context": "comment",
-          "type": "error",
-          "message": "Твоя жалоба на комментарий пользователя Леха Зимин 1000gfffdfd» под рецептом «laboris deserunt labore» отклонена",
-          "title": "Жалоба на комментарий отклонена",
-          "timestamp": "2023-11-01T20:11:03.025Z",
-          "read": true
-        },
-        {
-          "id": 13,
-          "relatedLink": "/recipes/list/17",
-          "context": "comment",
-          "type": "warning",
-          "message": "Кто-то пожаловался на твой комментарий «Превосходно» под рецептом «tempor magna amet»",
-          "title": "Кто-то пожаловался на комментарий",
-          "timestamp": "2023-11-01T20:11:17.131Z",
-          "read": true
-        },
-        {
-          "id": 14,
-          "relatedLink": "/recipes/list/17",
-          "context": "comment",
-          "type": "warning",
-          "message": "Кто-то пожаловался на твой комментарий «Превосходно» под рецептом «tempor magna amet»",
-          "title": "Кто-то пожаловался на комментарий",
-          "timestamp": "2023-11-01T20:14:30.495Z",
-          "read": true
-        },
-        {
-          "id": 15,
-          "relatedLink": "/recipes/list/8",
-          "context": "comment",
-          "type": "warning",
-          "message": "Кто-то пожаловался на твой комментарий «dfdfdf» под рецептом «cupidatat enim ipsum»",
-          "title": "Кто-то пожаловался на комментарий",
-          "timestamp": "2023-11-01T20:16:35.024Z",
-          "read": true
-        },
-        {
-          "id": 16,
-          "relatedLink": "/recipes/list/17",
-          "context": "comment",
-          "type": "warning",
-          "message": "Кто-то пожаловался на твой комментарий «Превосходно» под рецептом «tempor magna amet»",
-          "title": "Кто-то пожаловался на комментарий",
-          "timestamp": "2023-11-01T20:19:32.238Z",
-          "read": true
-        },
-        {
-          "id": 17,
-          "relatedLink": "/recipes/list/11",
-          "context": "comment",
-          "type": "success",
-          "message": "Ты отправил жалобу на комментарий кулинара Лина «ававваа» под рецептом «et ea enim»",
-          "title": "Ты пожаловался на комментарий",
-          "timestamp": "2023-11-01T20:21:05.159Z",
-          "read": true
-        },
-        {
-          "id": 18,
-          "relatedLink": "/recipes/list/11",
-          "context": "comment",
-          "type": "success",
-          "message": "Твоя жалоба на комментарий пользователя Лина «ававваа» под рецептом «et ea enim» принята",
-          "title": "Комментарий удален по твоей жалобе",
-          "timestamp": "2023-11-01T20:26:34.746Z",
-          "read": true
-        },
-        {
-          "id": 19,
-          "relatedLink": "/recipes/list/11",
-          "context": "comment",
-          "type": "success",
-          "message": "Твоя жалоба на комментарий пользователя Лина «ававваа» под рецептом «et ea enim» принята",
-          "title": "Комментарий удален по твоей жалобе",
-          "timestamp": "2023-11-01T20:27:41.803Z",
-          "read": true
-        },
-        {
-          "id": 20,
-          "relatedLink": "/recipes/list/4",
-          "context": "comment",
-          "type": "success",
-          "message": "Ты отправил жалобу на комментарий кулинара Лина «всем привет» под рецептом «Lorem laborum nulla»",
-          "title": "Ты пожаловался на комментарий",
-          "timestamp": "2023-11-01T20:29:43.616Z",
-          "read": true
-        },
-        {
-          "id": 21,
-          "relatedLink": "/recipes/list/56",
-          "context": "comment",
-          "type": "success",
-          "message": "Ты отправил жалобу на комментарий кулинара Лина «гавно» под рецептом «Киш с тыквой и копчёным мясом»",
-          "title": "Ты пожаловался на комментарий",
-          "timestamp": "2023-11-01T20:32:01.071Z",
-          "read": true
-        },
-        {
-          "id": 22,
-          "relatedLink": "/recipes/list/6",
-          "context": "comment",
-          "type": "success",
-          "message": "Ты отправил жалобу на комментарий кулинара Лина «gfffdfd» под рецептом «laboris deserunt labore»",
-          "title": "Ты пожаловался на комментарий",
-          "timestamp": "2023-11-01T20:33:02.220Z",
-          "read": true
-        },
-        {
-          "id": 23,
-          "relatedLink": "/recipes/list/8",
-          "context": "comment",
-          "type": "success",
-          "message": "Твой комментарий «огнище» успешно опубликован под рецептом «cupidatat enim ipsum»",
-          "title": "Комментарий опубликован",
-          "timestamp": "2023-11-01T20:33:38.101Z",
-          "read": true
-        },
-        {
-          "id": 24,
-          "relatedLink": "/recipes/list/8",
-          "context": "comment",
-          "type": "success",
-          "message": "Ты отправил жалобу на комментарий кулинара Лина «не огнище» под рецептом «cupidatat enim ipsum»",
-          "title": "Ты пожаловался на комментарий",
-          "timestamp": "2023-11-01T20:34:57.695Z",
-          "read": true
-        },
-        {
-          "id": 25,
-          "relatedLink": "/recipes/list/8",
-          "context": "comment",
-          "type": "success",
-          "message": "Ты отправил жалобу на комментарий кулинара Анна Казакова «огнище» под рецептом «cupidatat enim ipsum»",
-          "title": "Ты пожаловался на комментарий",
-          "timestamp": "2023-11-01T20:44:03.385Z",
-          "read": true
-        },
-        {
-          "id": 26,
-          "relatedLink": "/recipes/list/8",
-          "context": "comment",
-          "type": "success",
-          "message": "Ты отправил жалобу на комментарий кулинара Екатерина Петрова «огнище» под рецептом «cupidatat enim ipsum»",
-          "title": "Ты пожаловался на комментарий",
-          "timestamp": "2023-11-01T20:49:45.904Z",
-          "read": true
-        },
-        {
-          "id": 27,
-          "relatedLink": "/recipes/list/8",
-          "context": "comment",
-          "type": "success",
-          "message": "Ты отправил жалобу на комментарий кулинара Екатерина Петрова «огнище» под рецептом «cupidatat enim ipsum»",
-          "title": "Ты пожаловался на комментарий",
-          "timestamp": "2023-11-01T20:51:07.331Z",
-          "read": true
-        },
-        {
-          "id": 28,
-          "relatedLink": "/recipes/list/8",
-          "context": "comment",
-          "type": "success",
-          "message": "Твоя жалоба на комментарий пользователя @ «» под рецептом «cupidatat enim ipsum» принята",
-          "title": "Комментарий удален по твоей жалобе",
-          "timestamp": "2023-11-01T20:51:15.666Z",
-          "read": true
-        },
-        {
-          "id": 29,
-          "relatedLink": "/recipes/list/8",
-          "context": "comment",
-          "type": "success",
-          "message": "Ты отправил жалобу на комментарий кулинара Екатерина Петрова «огнище» под рецептом «cupidatat enim ipsum»",
-          "title": "Ты пожаловался на комментарий",
-          "timestamp": "2023-11-01T20:52:08.540Z",
-          "read": true
-        },
-        {
-          "id": 30,
-          "relatedLink": "/recipes/list/8",
-          "context": "comment",
-          "type": "success",
-          "message": "Твоя жалоба на комментарий пользователя @ «» под рецептом «cupidatat enim ipsum» принята",
-          "title": "Комментарий удален по твоей жалобе",
-          "timestamp": "2023-11-01T20:52:14.573Z",
-          "read": true
-        },
-        {
-          "id": 31,
-          "relatedLink": "/recipes/list/8",
-          "context": "comment",
-          "type": "success",
-          "message": "Ты отправил жалобу на комментарий кулинара Екатерина Петрова «огнище» под рецептом «cupidatat enim ipsum»",
-          "title": "Ты пожаловался на комментарий",
-          "timestamp": "2023-11-01T20:53:22.431Z",
-          "read": true
-        },
-        {
-          "id": 32,
-          "relatedLink": "",
-          "context": "category",
-          "type": "error",
-          "message": "Твоя категория «мяул» отклонена",
-          "title": "Категория отклонена",
-          "timestamp": "2023-11-01T20:55:36.324Z",
-          "read": true
-        },
-        {
-          "id": 33,
-          "relatedLink": "/categories/list/32",
-          "context": "category",
-          "type": "success",
-          "message": "Твоя категория «sffsdfdfd» одобрена и теперь может просматриваться всеми кулинарами",
-          "title": "Категория одобрена",
-          "timestamp": "2023-11-01T20:55:49.218Z",
-          "read": true
-        },
-        {
-          "id": 34,
-          "relatedLink": "",
-          "context": "category",
-          "type": "error",
-          "message": "Твоя категория «лололо» отклонена",
-          "title": "Категория отклонена",
-          "timestamp": "2023-11-01T20:55:52.871Z",
-          "read": true
-        },
-        {
-          "id": 35,
-          "relatedLink": "",
-          "context": "category",
-          "type": "error",
-          "message": "Твоя категория «fdffddf» отклонена",
-          "title": "Категория отклонена",
-          "timestamp": "2023-11-01T20:56:45.607Z",
-          "read": true
-        },
-        {
-          "id": 36,
-          "relatedLink": "/recipes/list/8",
-          "context": "comment",
-          "type": "success",
-          "message": "Твоя жалоба на комментарий пользователя Екатерина Петрова «огнище» под рецептом «cupidatat enim ipsum» принята",
-          "title": "Комментарий удален по твоей жалобе",
-          "timestamp": "2023-11-01T21:03:08.660Z",
-          "read": true
-        },
-        {
-          "id": 37,
-          "relatedLink": "/recipes/list/8",
-          "context": "comment",
-          "type": "warning",
-          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
-          "title": "Кто-то пожаловался на комментарий",
-          "timestamp": "2023-11-01T21:08:09.328Z",
-          "read": true
-        },
-        {
-          "id": 38,
-          "relatedLink": "/recipes/list/60",
-          "context": "comment",
-          "type": "warning",
-          "message": "Кто-то пожаловался на твой комментарий «пока» под рецептом «Кисси-мисси»",
-          "title": "Кто-то пожаловался на комментарий",
-          "timestamp": "2023-11-01T21:10:12.043Z",
-          "read": true
-        },
-        {
-          "id": 39,
-          "relatedLink": "/recipes/list/60",
-          "context": "comment",
-          "type": "error",
-          "message": "Твой комментарий «пока» под рецептом «Кисси-мисси» удален по жалобе",
-          "title": "Твой комментарий удален по жалобе",
-          "timestamp": "2023-11-01T21:10:27.376Z",
-          "read": true
-        },
-        {
-          "id": 40,
-          "relatedLink": "/recipes/list/60",
-          "context": "comment",
-          "type": "success",
-          "message": "Ты отправил жалобу на комментарий кулинара Лина «привет» под рецептом «Кисси-мисси»",
-          "title": "Ты пожаловался на комментарий",
-          "timestamp": "2023-11-01T21:12:29.800Z",
-          "read": true
-        },
-        {
-          "id": 41,
-          "relatedLink": "/recipes/list/60",
-          "context": "comment",
-          "type": "success",
-          "message": "Твоя жалоба на комментарий пользователя Лина «привет» под рецептом «Кисси-мисси» принята",
-          "title": "Комментарий удален по твоей жалобе",
-          "timestamp": "2023-11-01T21:12:36.769Z",
-          "read": true
-        },
-        {
-          "id": 42,
-          "relatedLink": "",
-          "context": "recipe",
-          "type": "error",
-          "message": "Твой рецепт «fddff» отклонен",
-          "title": "Рецепт отклонен",
-          "timestamp": "2023-11-02T13:07:02.825Z",
-          "read": true
-        },
-        {
-          "id": 43,
-          "relatedLink": "",
-          "context": "recipe",
-          "type": "error",
-          "message": "Твой рецепт «аваавваав» отклонен",
-          "title": "Рецепт отклонен",
-          "timestamp": "2023-11-02T13:07:04.913Z",
-          "read": true
-        },
-        {
-          "id": 44,
-          "relatedLink": "",
-          "context": "recipe",
-          "type": "error",
-          "message": "Твой рецепт «dgggddggdg» отклонен",
-          "title": "Рецепт отклонен",
-          "timestamp": "2023-11-02T13:07:07.077Z",
-          "read": true
-        },
-        {
-          "id": 45,
-          "relatedLink": "/cooks/list/25",
-          "context": "recipe",
-          "type": "info",
-          "message": "Твой рецепт «Чизкейк с клубникой» приготовил кулинар @plan_checking и оставил негативный отзыв",
-          "title": "Твой рецепт приготовили",
-          "timestamp": "2023-11-03T19:18:59.794Z",
-          "read": true
-        },
-        {
-          "id": 46,
-          "relatedLink": "/cooks/list/25",
-          "context": "recipe",
-          "type": "info",
-          "message": "Твой рецепт «Чизкейк с клубникой» приготовил кулинар @plan_checking и оставил положительный отзыв",
-          "title": "Твой рецепт приготовили",
-          "timestamp": "2023-11-03T19:19:25.108Z",
-          "read": true
-        },
-        {
-          "id": 47,
-          "relatedLink": "/recipes/list/24",
-          "context": "recipe",
-          "type": "info",
-          "message": "Твой рецепт «Чизкейк с клубникой» кто-то добавил в избранное",
-          "title": "Твой рецепт добавили в избранное",
-          "timestamp": "2023-11-05T19:42:46.176Z",
-          "read": true
-        },
-        {
-          "id": 48,
-          "relatedLink": "/plan/calendar",
-          "context": "plan-reminder-start",
-          "type": "warning",
-          "relatedId": 1,
-          "message": "Время начала запланированного вами рецепта Греческий салат уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
-          "title": "Время начала запланированного рецепта настало!",
-          "timestamp": "2023-11-06T16:51:35.696Z",
-          "read": true,
-          "notificationDate": "Mon Nov 06 2023"
-        },
-        {
-          "id": 49,
-          "relatedLink": "/plan/calendar",
-          "context": "plan-reminder-start",
-          "type": "warning",
-          "relatedId": 2,
-          "message": "Время начала запланированного вами рецепта Хлеб уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
-          "title": "Время начала запланированного рецепта настало!",
-          "timestamp": "2023-11-06T17:31:57.475Z",
-          "read": true,
-          "notificationDate": "Mon Nov 06 2023"
-        },
-        {
-          "id": 50,
-          "relatedLink": "",
-          "context": "recipe",
-          "type": "warning",
-          "relatedId": 0,
-          "message": "Обратите внимание: рецепт «Хлеб хрустящий» автора Екатерина Петрова был удален. Все ссылки на этот рецепт удалены из календаря рецептов и списка покупок. Сами запланированные рецепты и продукты в списке покупок не удалены",
-          "title": "Связанный рецепт удален",
-          "timestamp": "2023-11-06T17:34:21.691Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 51,
-          "relatedLink": "/plan/calendar",
-          "context": "plan-reminder-start",
-          "type": "warning",
-          "relatedId": 3,
-          "message": "Время начала запланированного вами рецепта Колдуны уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
-          "title": "Время начала запланированного рецепта настало!",
-          "timestamp": "2023-11-06T17:37:44.461Z",
-          "read": true,
-          "notificationDate": "Mon Nov 06 2023"
-        },
-        {
-          "id": 52,
-          "relatedLink": "/recipes/list/74",
-          "context": "recipe",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Рецепт «Омлет» сохранен в твоих рецептах",
-          "title": "Рецепт создан",
-          "timestamp": "2023-11-06T17:46:55.427Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 53,
-          "relatedLink": "/recipes/list/74",
-          "context": "recipe",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Рецепт «Омлет» успешно отправлен на проверку",
-          "title": "Рецепт отправлен на проверку",
-          "timestamp": "2023-11-06T17:47:01.770Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 54,
-          "relatedLink": "/recipes/list/74",
-          "context": "recipe",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой рецепт «Омлет» одобрен и теперь может просматриваться всеми кулинарами",
-          "title": "Рецепт одобрен",
-          "timestamp": "2023-11-06T17:47:09.378Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 55,
-          "relatedLink": "/plan/calendar",
-          "context": "plan-reminder-start",
-          "type": "warning",
-          "relatedId": 4,
-          "message": "Время начала запланированного вами рецепта Омлет уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
-          "title": "Время начала запланированного рецепта настало!",
-          "timestamp": "2023-11-06T17:47:28.166Z",
-          "read": true,
-          "notificationDate": "Mon Nov 06 2023"
-        },
-        {
-          "id": 56,
-          "relatedLink": "",
-          "context": "recipe",
-          "type": "warning",
-          "relatedId": 0,
-          "message": "Обратите внимание: ваш рецепт рецепт «Омлет» был удален. Все ссылки на этот рецепт удалены из ваших календаря рецептов и списка покупок. Сами запланированные рецепты и продукты в списке покупок не удалены",
-          "title": "Связанный рецепт удален",
-          "timestamp": "2023-11-06T17:49:50.675Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 57,
-          "relatedLink": "",
-          "context": "recipe",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Вы успешно удалили свой рецепт «Омлет».",
-          "title": "Твой рецепт удален",
-          "timestamp": "2023-11-06T17:49:50.944Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 58,
-          "relatedLink": "/plan/calendar",
-          "context": "plan-reminder-start",
-          "type": "warning",
-          "relatedId": 5,
-          "message": "Время начала запланированного вами рецепта Глазунья уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
-          "title": "Время начала запланированного рецепта настало!",
-          "timestamp": "2023-11-06T17:54:28.167Z",
-          "read": true,
-          "notificationDate": "Mon Nov 06 2023"
-        },
-        {
-          "id": 59,
-          "relatedLink": "/plan/calendar",
-          "context": "plan-reminder-start",
-          "type": "warning",
-          "relatedId": 6,
-          "message": "Время начала запланированного вами рецепта Глазунья 2.0 уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
-          "title": "Время начала запланированного рецепта настало!",
-          "timestamp": "2023-11-06T18:00:20.725Z",
-          "read": true,
-          "notificationDate": "Mon Nov 06 2023"
-        },
-        {
-          "id": 60,
-          "relatedLink": "",
-          "context": "recipe",
-          "type": "warning",
-          "relatedId": 0,
-          "message": "Обратите внимание: рецепт «Глазунья 2.0» автора Лина был удален. Все ссылки на этот рецепт удалены из календаря рецептов и списка покупок. Сами запланированные рецепты и продукты в списке покупок не удалены",
-          "title": "Связанный рецепт удален",
-          "timestamp": "2023-11-06T18:01:19.023Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 61,
           "relatedLink": "/plan/calendar",
           "context": "plan-reminder-start",
           "type": "warning",
           "relatedId": 7,
-          "message": "Время начала запланированного вами рецепта Мармелад уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
+          "message": "Время начала запланированного вами рецепта «Яйца» уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
           "title": "Время начала запланированного рецепта настало!",
-          "timestamp": "2023-11-06T18:19:14.220Z",
+          "timestamp": "2023-11-07T19:48:17.867Z",
           "read": true,
-          "notificationDate": "Mon Nov 06 2023"
+          "notificationDate": "Tue Nov 07 2023"
         },
         {
-          "id": 62,
-          "relatedLink": "",
-          "context": "recipe",
-          "type": "warning",
-          "relatedId": 0,
-          "message": "Обратите внимание: рецепт «Мармелад» автора Лина был удален. Все ссылки на этот рецепт удалены из календаря рецептов и списка покупок. Сами запланированные рецепты и продукты в списке покупок не удалены",
-          "title": "Связанный рецепт удален",
-          "timestamp": "2023-11-06T18:19:53.053Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 63,
-          "relatedLink": "",
-          "context": "recipe",
-          "type": "warning",
-          "relatedId": 0,
-          "message": "Обратите внимание: рецепт «Салат с сухариками» автора Лина был удален. Все ссылки на этот рецепт удалены из календаря рецептов и списка покупок. Сами запланированные рецепты и продукты в списке покупок не удалены",
-          "title": "Связанный рецепт удален",
-          "timestamp": "2023-11-06T18:31:37.482Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 64,
-          "relatedLink": "/cooks/list/26",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «cupidatat enim ipsum» приготовил кулинар @willBeDelete и оставил положительный отзыв",
-          "title": "Твой рецепт приготовили",
-          "timestamp": "2023-11-06T18:58:15.936Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 65,
-          "relatedLink": "/cooks/list/26",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «cupidatat enim ipsum» понравился кулинару @willBeDelete",
-          "title": "Твой рецепт оценили",
-          "timestamp": "2023-11-06T18:58:26.419Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 66,
-          "relatedLink": "/recipes/list/8",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «cupidatat enim ipsum» кто-то добавил в избранное",
-          "title": "Твой рецепт добавили в избранное",
-          "timestamp": "2023-11-06T18:58:30.991Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 67,
-          "relatedLink": "/cooks/list/26",
-          "context": "user",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар @NPC. подписался на тебя",
-          "title": "Новый подписчик",
-          "timestamp": "2023-11-06T20:53:05.987Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 68,
+          "id": 3,
           "relatedLink": "/plan/calendar",
           "context": "plan-reminder-start",
           "type": "warning",
           "relatedId": 9,
-          "message": "Время начала запланированного вами рецепта Домашний рецепт уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
+          "message": "Время начала запланированного вами рецепта «Привет» уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
           "title": "Время начала запланированного рецепта настало!",
-          "timestamp": "2023-11-06T21:17:54.523Z",
+          "timestamp": "2023-11-07T19:48:17.868Z",
           "read": true,
           "notificationDate": "Tue Nov 07 2023"
         },
         {
-          "id": 69,
-          "relatedLink": "",
-          "context": "recipe",
-          "type": "warning",
-          "relatedId": 0,
-          "message": "Обратите внимание: рецепт «Домашний рецепт» автора Лина был удален. Все ссылки на этот рецепт удалены из календаря рецептов и списка покупок. Сами запланированные рецепты и продукты в списке покупок не удалены",
-          "title": "Связанный рецепт удален",
-          "timestamp": "2023-11-06T21:18:19.924Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 70,
-          "relatedLink": "/cooks/list/krabochka",
-          "context": "demote",
-          "type": "warning",
-          "relatedId": 0,
-          "message": "Вы теперь не являетесь модератором сайта Yummy. Вас разжаловал администратор Лина",
-          "title": "Вас разжаловали",
-          "timestamp": "2023-11-07T01:40:38.866Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 71,
-          "relatedLink": "/cooks/list/5",
-          "context": "demote",
-          "type": "warning",
-          "relatedId": 0,
-          "message": "Вы теперь не являетесь модератором сайта Yummy. Вас разжаловал администратор Лина",
-          "title": "Вас разжаловали",
-          "timestamp": "2023-11-07T01:42:17.928Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 72,
-          "relatedLink": "/cooks/list/5",
-          "context": "hire",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Вы теперь являетесь модератором сайта Yummy. Вас назначил администратор Лина",
-          "title": "Вас назначили модератором",
-          "timestamp": "2023-11-07T02:10:22.799Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 73,
+          "id": 4,
           "relatedLink": "/plan/calendar",
           "context": "plan-reminder-start",
           "type": "warning",
           "relatedId": 10,
-          "message": "Время начала запланированного вами рецепта «Клубничный пуддинг» уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
+          "message": "Время начала запланированного вами рецепта «уведа не долнжо быть» уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
           "title": "Время начала запланированного рецепта настало!",
-          "timestamp": "2023-11-07T15:42:46.450Z",
+          "timestamp": "2023-11-07T19:48:17.868Z",
           "read": true,
           "notificationDate": "Tue Nov 07 2023"
         },
         {
-          "id": 74,
+          "id": 5,
+          "relatedLink": "/recipes/list/97",
+          "context": "recipe",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой рецепт «jkkjjk» одобрен и теперь может просматриваться всеми кулинарами",
+          "title": "Рецепт одобрен",
+          "timestamp": "2023-11-07T22:26:34.841Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 6,
+          "relatedLink": "/recipes/list/79",
+          "context": "recipe",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой рецепт «Кныш с картофелем» одобрен и теперь может просматриваться всеми кулинарами",
+          "title": "Рецепт одобрен",
+          "timestamp": "2023-11-07T22:36:58.751Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 7,
           "relatedLink": "/plan/calendar",
           "context": "plan-reminder",
           "type": "warning",
           "relatedId": 0,
-          "message": "Хотим вас предупредить, что у вас запланирован рецепт на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению этого вкусного блюда.<br>Запланированный рецепт:<br>ㅤКлубничный морс (начало через 5 часов)",
+          "message": "Хотим вас предупредить, что у вас запланирован рецепт на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению этого вкусного блюда.<br>Запланированный рецепт:<br>ㅤуведа не долнжо быть (начало через 22 часа)",
           "title": "Начало запланированного рецепта уже скоро!",
-          "timestamp": "2023-11-07T15:43:07.148Z",
+          "timestamp": "2023-11-07T22:52:14.362Z",
           "read": true,
-          "notificationDate": "Tue Nov 07 2023"
-        },
-        {
-          "id": 75,
-          "relatedLink": "/plan/calendar",
-          "context": "calendar-recipe",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Вы успешно запланировали рецепт Бошетунмай. Дата начала: 07.11.2023 00:00",
-          "title": "Вы успешно запланировали рецепт",
-          "timestamp": "2023-11-07T15:50:01.564Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 76,
-          "relatedLink": "/recipes/list/58",
-          "context": "recipe",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Рецепт «Пок-мок» успешно отправлен на проверку",
-          "title": "Рецепт отправлен на проверку",
-          "timestamp": "2023-11-07T18:52:48.427Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 77,
-          "relatedLink": "",
-          "context": "recipe",
-          "type": "error",
-          "relatedId": 0,
-          "message": "Твой рецепт «Пок-мок» отклонен",
-          "title": "Рецепт отклонен",
-          "timestamp": "2023-11-07T18:52:56.154Z",
-          "read": true,
-          "notificationDate": ""
+          "notificationDate": "Wed Nov 08 2023"
         }
       ],
       "avatarUrl": {},
       "permissions": [
         {
           "context": "cook-on-your-recipe",
-          "enabled": true
+          "enabled": false
         },
         {
           "context": "fav-on-your-recipe",
-          "enabled": true
+          "enabled": false
         },
         {
           "context": "plan-on-your-recipe",
@@ -5272,7 +4923,7 @@
         },
         {
           "context": "you-create-new-recipe",
-          "enabled": true
+          "enabled": false
         },
         {
           "context": "you-publish-recipe",
@@ -5292,7 +4943,7 @@
         },
         {
           "context": "new-follower",
-          "enabled": true
+          "enabled": false
         },
         {
           "context": "new-recipe-from-following",
@@ -5300,19 +4951,19 @@
         },
         {
           "context": "you-plan-recipe",
-          "enabled": true
-        },
-        {
-          "context": "start-of-planned-recipe",
           "enabled": false
         },
         {
-          "context": "your-recipe-commented",
+          "context": "start-of-planned-recipe",
           "enabled": true
         },
         {
+          "context": "your-recipe-commented",
+          "enabled": false
+        },
+        {
           "context": "you-commented-recipe",
-          "enabled": true
+          "enabled": false
         },
         {
           "context": "your-commented-liked",
@@ -5332,183 +4983,15 @@
         },
         {
           "context": "manager-reviewed-your-category",
-          "enabled": true
+          "enabled": false
         },
         {
           "context": "planned-recipes-in-3-days",
+          "enabled": true
+        },
+        {
+          "context": "you-edit-your-account",
           "enabled": false
-        }
-      ]
-    },
-    {
-      "id": 2,
-      "username": "foodie_lover",
-      "description": "Привет, я обожаю готовить и делиться своими рецептами с миром. Следите за моими кулинарными приключениями!",
-      "quote": "Вкусная еда — это счастье. Давайте создадим счастье вместе.",
-      "email": "foodie@example.com",
-      "password": "Password200",
-      "fullName": "Екатерина Петрова",
-      "followersIds": [
-        3,
-        23,
-        5,
-        1
-      ],
-      "socialNetworks": [
-        {
-          "name": "instagram",
-          "link": "https://www.instagram.com/foodie_lover/"
-        },
-        {
-          "name": "pinterest",
-          "link": "https://www.pinterest.com/foodie_lover/"
-        }
-      ],
-      "personalWebsite": "",
-      "location": "Санкт-Петербург, Россия",
-      "registrationDate": "2023-03-20",
-      "profileViews": 6656,
-      "role": "moderator",
-      "notifications": [
-        {
-          "id": 1,
-          "relatedLink": "/cooks/list/1",
-          "context": "user",
-          "type": "info",
-          "message": "Кулинар Леха Зимин 1000подписался на тебя",
-          "title": "Новый подписчик",
-          "timestamp": "2023-11-01T17:58:29.732Z",
-          "read": true
-        },
-        {
-          "id": 2,
-          "relatedLink": "/cooks/list/1",
-          "context": "user",
-          "type": "info",
-          "message": "Кулинар Леха Зимин 1000 подписался на тебя",
-          "title": "Новый подписчик",
-          "timestamp": "2023-11-01T18:01:28.730Z",
-          "read": true
-        },
-        {
-          "id": 3,
-          "relatedLink": "/cooks/list/1",
-          "context": "user",
-          "type": "info",
-          "message": "Кулинар Леха Зимин 1000 подписался на тебя",
-          "title": "Новый подписчик",
-          "timestamp": "2023-11-01T18:14:50.608Z",
-          "read": true
-        },
-        {
-          "id": 4,
-          "relatedLink": "/recipes/list/8",
-          "context": "comment",
-          "type": "warning",
-          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
-          "title": "Кто-то пожаловался на комментарий",
-          "timestamp": "2023-11-01T20:48:30.566Z",
-          "read": true
-        },
-        {
-          "id": 5,
-          "relatedLink": "/recipes/list/8",
-          "context": "comment",
-          "type": "warning",
-          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
-          "title": "Кто-то пожаловался на комментарий",
-          "timestamp": "2023-11-01T20:49:45.887Z",
-          "read": true
-        },
-        {
-          "id": 6,
-          "relatedLink": "/recipes/list/8",
-          "context": "comment",
-          "type": "warning",
-          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
-          "title": "Кто-то пожаловался на комментарий",
-          "timestamp": "2023-11-01T20:51:07.325Z",
-          "read": true
-        },
-        {
-          "id": 7,
-          "relatedLink": "/recipes/list/8",
-          "context": "comment",
-          "type": "warning",
-          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
-          "title": "Кто-то пожаловался на комментарий",
-          "timestamp": "2023-11-01T20:52:08.534Z",
-          "read": true
-        },
-        {
-          "id": 8,
-          "relatedLink": "/recipes/list/8",
-          "context": "comment",
-          "type": "warning",
-          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
-          "title": "Кто-то пожаловался на комментарий",
-          "timestamp": "2023-11-01T20:53:22.426Z",
-          "read": true
-        },
-        {
-          "id": 9,
-          "relatedLink": "/plan/calendar",
-          "context": "plan-reminder-start",
-          "type": "warning",
-          "relatedId": 1,
-          "message": "Время начала запланированного вами рецепта Греческий салат уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
-          "title": "Время начала запланированного рецепта настало!",
-          "timestamp": "2023-11-06T16:53:24.733Z",
-          "read": true,
-          "notificationDate": "Mon Nov 06 2023"
-        },
-        {
-          "id": 10,
-          "relatedLink": "/recipes/list/74",
-          "context": "recipe",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Рецепт «Хлеб хрустящий» сохранен в твоих рецептах и успешно отправлен на проверку",
-          "title": "Рецепт создан и отправлен на проверку",
-          "timestamp": "2023-11-06T17:30:17.473Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 11,
-          "relatedLink": "/recipes/list/74",
-          "context": "recipe",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой рецепт «Хлеб хрустящий» одобрен и теперь может просматриваться всеми кулинарами",
-          "title": "Рецепт одобрен",
-          "timestamp": "2023-11-06T17:31:03.167Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 12,
-          "relatedLink": "",
-          "context": "recipe",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Вы успешно удалили свой рецепт «Хлеб хрустящий».",
-          "title": "Твой рецепт удален",
-          "timestamp": "2023-11-06T17:34:21.995Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 13,
-          "relatedLink": "/recipes/list/2",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «sit occaecat et» кто-то добавил в избранное",
-          "title": "Твой рецепт добавили в избранное",
-          "timestamp": "2023-11-06T18:58:34.184Z",
-          "read": false,
-          "notificationDate": ""
         }
       ]
     },
@@ -5539,7 +5022,213 @@
       "location": "Нью-Йорк, США",
       "registrationDate": "2023-05-10",
       "profileViews": 5814,
-      "role": "user"
+      "role": "user",
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "/recipes/list/81",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New Recipe!!! 💯💯💯 Fantastic »",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:51:37.380Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 2,
+          "relatedLink": "/recipes/list/82",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:53:30.739Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 3,
+          "relatedLink": "/recipes/list/83",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «gfgfg»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:54:35.153Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 4,
+          "relatedLink": "/recipes/list/84",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «ваавава»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:56:12.162Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 5,
+          "relatedLink": "/recipes/list/85",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «fdfddfdf»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:58:05.763Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 6,
+          "relatedLink": "/recipes/list/86",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New Recipe»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:58:51.180Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 7,
+          "relatedLink": "/recipes/list/87",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New Recipe»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:01:07.259Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 8,
+          "relatedLink": "/recipes/list/90",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «👽🛸»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:15:46.106Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 9,
+          "relatedLink": "/recipes/list/89",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «fddfdfdfdf»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:16:45.749Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 10,
+          "relatedLink": "/recipes/list/91",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «reerer»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:17:45.226Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 11,
+          "relatedLink": "/recipes/list/92",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «ffddffd»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:18:10.982Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 12,
+          "relatedLink": "/recipes/list/93",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «ffddffd»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:18:52.917Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 13,
+          "relatedLink": "/recipes/list/94",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «fddfffdf»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:21:54.348Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 14,
+          "relatedLink": "/recipes/list/95",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «jjkjjkkj»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:24:14.107Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 15,
+          "relatedLink": "/recipes/list/96",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «erreerre»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:25:13.056Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 16,
+          "relatedLink": "/recipes/list/97",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «jkkjjk»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:26:34.841Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 17,
+          "relatedLink": "/recipes/list/79",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «Кныш с картофелем»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:36:58.751Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
     },
     {
       "id": 4,
@@ -5798,6 +5487,210 @@
           "timestamp": "2023-11-07T16:43:20.270Z",
           "read": false,
           "notificationDate": ""
+        },
+        {
+          "id": 20,
+          "relatedLink": "/recipes/list/81",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New Recipe!!! 💯💯💯 Fantastic »",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:51:37.380Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 21,
+          "relatedLink": "/recipes/list/82",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:53:30.739Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 22,
+          "relatedLink": "/recipes/list/83",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «gfgfg»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:54:35.153Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 23,
+          "relatedLink": "/recipes/list/84",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «ваавава»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:56:12.162Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 24,
+          "relatedLink": "/recipes/list/85",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «fdfddfdf»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:58:05.763Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 25,
+          "relatedLink": "/recipes/list/86",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New Recipe»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:58:51.180Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 26,
+          "relatedLink": "/recipes/list/87",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New Recipe»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:01:07.260Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 27,
+          "relatedLink": "/recipes/list/90",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «👽🛸»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:15:46.106Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 28,
+          "relatedLink": "/recipes/list/89",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «fddfdfdfdf»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:16:45.749Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 29,
+          "relatedLink": "/recipes/list/91",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «reerer»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:17:45.230Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 30,
+          "relatedLink": "/recipes/list/92",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «ffddffd»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:18:10.988Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 31,
+          "relatedLink": "/recipes/list/93",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «ffddffd»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:18:52.920Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 32,
+          "relatedLink": "/recipes/list/94",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «fddfffdf»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:21:54.348Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 33,
+          "relatedLink": "/recipes/list/95",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «jjkjjkkj»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:24:14.107Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 34,
+          "relatedLink": "/recipes/list/96",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «erreerre»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:25:13.056Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 35,
+          "relatedLink": "/recipes/list/97",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «jkkjjk»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:26:34.841Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 36,
+          "relatedLink": "/recipes/list/79",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «Кныш с картофелем»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:36:58.751Z",
+          "read": false,
+          "notificationDate": ""
         }
       ]
     },
@@ -5976,6 +5869,246 @@
           "title": "Рецепт отклонен",
           "timestamp": "2023-11-07T02:34:10.746Z",
           "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 188,
+          "relatedLink": "/recipes/list/60",
+          "context": "comment",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой комментарий «wow пушка🔥🔥🔥» успешно опубликован под рецептом «Кисси-мисси»",
+          "title": "Комментарий опубликован",
+          "timestamp": "2023-11-07T20:20:26.590Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 189,
+          "relatedLink": "/recipes/list/24",
+          "context": "comment",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой комментарий «wow🧵🧵🎨🎈🎈пушка» успешно опубликован под рецептом «Чизкейк с клубникой»",
+          "title": "Комментарий опубликован",
+          "timestamp": "2023-11-07T20:23:10.524Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 190,
+          "relatedLink": "/plan/calendar",
+          "context": "plan-reminder-start",
+          "type": "warning",
+          "relatedId": 17,
+          "message": "Время начала запланированного вами рецепта «Чизкейк с клубникой» уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
+          "title": "Время начала запланированного рецепта настало!",
+          "timestamp": "2023-11-07T20:23:15.740Z",
+          "read": true,
+          "notificationDate": "Tue Nov 07 2023"
+        },
+        {
+          "id": 191,
+          "relatedLink": "/recipes/list/81",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New Recipe!!! 💯💯💯 Fantastic »",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:51:37.380Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 192,
+          "relatedLink": "/recipes/list/82",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:53:30.739Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 193,
+          "relatedLink": "/recipes/list/83",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «gfgfg»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:54:35.153Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 194,
+          "relatedLink": "/recipes/list/84",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «ваавава»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:56:12.162Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 195,
+          "relatedLink": "/recipes/list/85",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «fdfddfdf»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:58:05.763Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 196,
+          "relatedLink": "/recipes/list/86",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New Recipe»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:58:51.180Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 197,
+          "relatedLink": "/recipes/list/87",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New Recipe»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:01:07.260Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 198,
+          "relatedLink": "/recipes/list/90",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «👽🛸»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:15:46.106Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 199,
+          "relatedLink": "/recipes/list/89",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «fddfdfdfdf»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:16:45.749Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 200,
+          "relatedLink": "/recipes/list/91",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «reerer»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:17:45.236Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 201,
+          "relatedLink": "/recipes/list/92",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «ffddffd»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:18:10.991Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 202,
+          "relatedLink": "/recipes/list/93",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «ffddffd»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:18:52.925Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 203,
+          "relatedLink": "/recipes/list/94",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «fddfffdf»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:21:54.348Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 204,
+          "relatedLink": "/recipes/list/95",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «jjkjjkkj»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:24:14.107Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 205,
+          "relatedLink": "/recipes/list/96",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «erreerre»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:25:13.056Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 206,
+          "relatedLink": "/recipes/list/97",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «jkkjjk»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:26:34.841Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 207,
+          "relatedLink": "/recipes/list/79",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «Кныш с картофелем»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:36:58.751Z",
+          "read": false,
           "notificationDate": ""
         }
       ]
@@ -6586,6 +6719,210 @@
           "timestamp": "2023-11-06T21:05:59.353Z",
           "read": false,
           "notificationDate": ""
+        },
+        {
+          "id": 26,
+          "relatedLink": "/recipes/list/81",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New Recipe!!! 💯💯💯 Fantastic »",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:51:37.380Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 27,
+          "relatedLink": "/recipes/list/82",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:53:30.739Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 28,
+          "relatedLink": "/recipes/list/83",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «gfgfg»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:54:35.153Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 29,
+          "relatedLink": "/recipes/list/84",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «ваавава»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:56:12.162Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 30,
+          "relatedLink": "/recipes/list/85",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «fdfddfdf»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:58:05.763Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 31,
+          "relatedLink": "/recipes/list/86",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New Recipe»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T21:58:51.180Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 32,
+          "relatedLink": "/recipes/list/87",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New Recipe»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:01:07.260Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 33,
+          "relatedLink": "/recipes/list/90",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «👽🛸»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:15:46.106Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 34,
+          "relatedLink": "/recipes/list/89",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «fddfdfdfdf»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:16:45.749Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 35,
+          "relatedLink": "/recipes/list/91",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «reerer»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:17:45.271Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 36,
+          "relatedLink": "/recipes/list/92",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «ffddffd»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:18:10.994Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 37,
+          "relatedLink": "/recipes/list/93",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «ffddffd»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:18:52.931Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 38,
+          "relatedLink": "/recipes/list/94",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «fddfffdf»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:21:54.348Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 39,
+          "relatedLink": "/recipes/list/95",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «jjkjjkkj»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:24:14.107Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 40,
+          "relatedLink": "/recipes/list/96",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «erreerre»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:25:13.056Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 41,
+          "relatedLink": "/recipes/list/97",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «jkkjjk»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:26:34.841Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 42,
+          "relatedLink": "/recipes/list/79",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «Кныш с картофелем»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-07T22:36:58.751Z",
+          "read": false,
+          "notificationDate": ""
         }
       ]
     },
@@ -6605,6 +6942,24 @@
       "location": "",
       "registrationDate": "2023-11-06T21:46:32.629Z",
       "profileViews": 14,
+      "notifications": []
+    },
+    {
+      "id": 27,
+      "email": "newborn@mail.ru",
+      "password": "newborn000A",
+      "username": "newborn",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-07T23:12:38.398Z",
+      "profileViews": 0,
       "notifications": []
     }
   ]

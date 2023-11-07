@@ -422,3 +422,13 @@ app-modal {
 }
 
 
+
+.popups{
+  position: fixed;
+  width: 15em;
+  top:0;
+  left:0;
+  height: 100vh;
+  background-color: red;
+  z-index: 10;
+}

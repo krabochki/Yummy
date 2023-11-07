@@ -58,14 +58,14 @@
                     form.get('recipeName')?.touched)
                     ? 'Название рецепта должно содержать от 3 до 100 символов'
                     : ''
-                " [placeholder]="'Введи название твоего вкусного блюда'"></app-usual-input>
+                " [placeholder]="'Введите название вашего вкусного блюда'"></app-usual-input>
           </div>
           <div class="form-control">
             <h3>Описание рецепта</h3>
             <app-usual-input [inputType]="'textarea'" [max]="5000" [value]="this.form.get('description')?.value"
               type="text" id="description" formControlName="description" [error]="form.get('description')?.invalid && form.get('description')?.touched
                             ? 'Описание рецепта не должно превышать 5000 символов':
-                            ''" [placeholder]="'Опиши твой рецепт, его вкус и особенности'"> </app-usual-input>
+                            ''" [placeholder]="'Опишите ваш рецепт, его вкус и особенности'"> </app-usual-input>
           </div>
           <div class="form-control">
             <h3>История рецепта</h3>
@@ -74,7 +74,7 @@
               form.get('history')?.invalid && form.get('history')?.touched
                 ? 'История рецепта не должна превышать 5000 символов'
                 : ''" [placeholder]=" 
-                  'Расскажи немного о истории происхождении рецепта. Быть может, он приснился тебе во сне? Это семейный рецепт, передающийся на протяжении нескольких поколений? Или тибетский монах по секрету поведал тебе тонкости его приготовления?'
+                  'Расскажите немного о истории происхождении рецепта. Быть может, он приснился вам во сне? Это семейный рецепт, передающийся на протяжении нескольких поколений? Или тибетский монах по секрету поведал вам тонкости его приготовления?'
                 "></app-usual-input>
           </div>
           <div class="form-control">
@@ -93,7 +93,7 @@
             <h3>Время подготовки</h3>
             <app-usual-input [value]="this.form.get('preparationTime')?.value" [max]="20" type="text"
               id="preparationTime" formControlName="preparationTime"
-              [placeholder]="'Введи время подготовки, например, 30 минут'" [error]="
+              [placeholder]="'Введите время подготовки, например, 30 минут'" [error]="
                 form.get('preparationTime')?.invalid &&
                 form.get('preparationTime')?.touched
                   ? 'Значение времени подготовки не должно превышать 20 символов'
@@ -103,7 +103,7 @@
           <div class="form-control">
             <h3>Время готовки</h3>
             <app-usual-input [value]="this.form.get('cookingTime')?.value" [max]="20" type="text" id="cookingTime"
-              formControlName="cookingTime" [placeholder]="'Введи время готовки, например, 1 час и 30 минут'" [error]="
+              formControlName="cookingTime" [placeholder]="'Введите время готовки, например, 1 час и 30 минут'" [error]="
                 form.get('cookingTime')?.invalid && form.get('cookingTime')?.touched
                   ? 'Значение времени готовки не должно превышать 20 символов'
                   : ''
@@ -112,7 +112,7 @@
           <div class="form-control">
             <h3>Количество порций</h3>
             <div class="portions">
-              <p class="counter-label">Укажи, на сколько порций рассчитано блюдо: </p>
+              <p class="counter-label">Укажите, на сколько порций рассчитано блюдо: </p>
               <app-count-input [value]="this.form.get('portions')?.value" [readonly]="true" formControlName="portions"
                 [min]="1" [max]="100"></app-count-input>
               <p appPluralRu="" [value]="this.form.get('portions')?.value"
@@ -123,7 +123,7 @@
           <div class="form-control">
             <h3>Место происхождения</h3>
             <app-usual-input [value]="this.form.get('origin')?.value" [max]="20" type="text" id="origin"
-              formControlName="origin" [placeholder]="'Укажи место происхождения блюда, например, страну или регион'"
+              formControlName="origin" [placeholder]="'Укажите место происхождения блюда, например, страну или регион'"
               [error]="
               form.get('origin')?.invalid && form.get('origin')?.touched
                 ? 'Значение места происхождения не должно превышать 20 символов'
@@ -137,19 +137,19 @@
 
             <div><app-autocomplete [disabled]="selectedCategories.length===5" (categoryEmitter)="addCategory($event)"
                 [group]="group"
-                [placeholder]="'Выбери соответствующие категории для твоего рецепта'"></app-autocomplete>
+                [placeholder]="'Выберите соответствующие категории для вашего рецепта'"></app-autocomplete>
             </div>
 
 
 
           </div>
           <div class="form-control">
-            <h3>Список категорий твоего рецепта</h3>
+            <h3>Список категорий вашего рецепта</h3>
             <div *ngIf="selectedCategories.length===5" class="max-categories">Выбрано максимальное
               количество категорий</div>
           </div>
 
-          <div *ngIf="selectedCategories.length===0" class="no-categories">Ты пока не выбрал ни одну
+          <div *ngIf="selectedCategories.length===0" class="no-categories">Вы пока не выбрали ни одну
             категорию</div>
           <div class="tags">
             <div class="tag" *ngFor="let selected of selectedCategories">
@@ -165,7 +165,7 @@
         <div *ngIf="currentStep === 3" class="step-container">
 
           <div class="form-control ingred">
-            <h3>Список ингредиентов твоего рецепта</h3>
+            <h3>Список ингредиентов вашего рецепта</h3>
 
             <div cdkDropList (cdkDropListDropped)="drop('ingredients',$event)" id="ingredients" class="ingredients"
               formArrayName="ingredients">
@@ -236,7 +236,7 @@
         <div *ngIf="currentStep===4">
 
           <div class="form-control ingred">
-            <h3>Список нутриентов твоего рецепта </h3>
+            <h3>Список нутриентов вашего рецепта </h3>
 
             <div cdkDropList (cdkDropListDropped)="drop('nutritions',$event)" id="nutritions" class="nutritions"
               formArrayName="nutritions">
@@ -380,22 +380,22 @@
 
         <div *ngIf="currentStep===6">
           <div class="buttons">
-            <p>Если ты хочешь, чтобы рецепт увидели другие пользователи и могли с ним взаимодействовать,
+            <p>Если вы хотите, чтобы рецепт увидели другие пользователи и могли с ним взаимодействовать,
               <em>опубликуй</em> его. После нажатия на кнопку рецепт {{editMode?'':' появится в твоих личных рецептах и'}} будет
               опубликован после <em>одобрения модератора</em></p>
             <app-button [disabled]="editMode? form.valid : areObjectsEqual() && form.valid"  [title]="!form.valid?'Рецепт должен содержать как минимум имя. Если в рецепте есть нутриенты, ингредиенты или инструкции, они должны также содержать как минимум навание (содержание для инструкции)':''" (click)="form.valid ? (approveModalShow = true) : null" [text]="'Опубликовать'" [color]="'sec'"
               [style]="'outlined'"  [rounded]="true"></app-button>
-            <p *ngIf="!editMode">Если ты не хочешь, чтобы рецепт увидели другие пользователи (прямо сейчас), просто <em>сохрани</em>
-              его. После нажатия на кнопку рецепт появится в твоих личных рецептах. Ты <em>всегда</em> сможешь
+            <p *ngIf="!editMode">Если вы не хотите, чтобы рецепт увидели другие пользователи (прямо сейчас), просто <em>сохрани</em>
+              его. После нажатия на кнопку рецепт появится в твоих личных рецептах. Вы <em>всегда</em> сможешь
               опубликовать его позже</p>
 
-            <p *ngIf="editMode">После нажатия на кнопку рецепт обновится в твоих личных рецептах, но не станет виден другим пользователям. Ты <em>всегда</em> сможешь
+            <p *ngIf="editMode">После нажатия на кнопку рецепт обновится в твоих личных рецептах, но не станет виден другим пользователям. Вы <em>всегда</em> сможешь
               опубликовать его позже.</p>
 
             <app-button class="main" (click)="form.valid ? submitForm() : null" [text]="editMode?'Изменить':'Сохранить'"
 [title]="!form.valid?'Рецепт должен содержать как минимум имя. Если в рецепте есть нутриенты, ингредиенты или инструкции, они должны также содержать как минимум навание (содержание для инструкции)':''"              [color]="'sec'" [disabled]="areObjectsEqual() && form.valid" [style]="'filled'" [rounded]="true"></app-button>
-            <p>Если ты передумал {{editMode?' менять ':' добавлять '}} рецепт, <em>отмени</em> его {{editMode?' изменение':' добавление'}}. Все данные придется
-              вводить повторно, если ты захочешь {{editMode?' изменить ':' добавить '}}  этот рецепт снова </p>
+            <p>Если вы передумал {{editMode?' менять ':' добавлять '}} рецепт, <em>отмени</em> его {{editMode?' изменение':' добавление'}}. Все данные придется
+              вводить повторно, если вы захотите {{editMode?' изменить ':' добавить '}}  этот рецепт снова </p>
 
             <app-button  (click)="exitModalShow = true" [text]="'Отменить'" [color]="'prim'" [style]="'outlined'"
               [rounded]="true"></app-button>
@@ -416,31 +416,27 @@
 
 <app-modal @modal *ngIf="exitModalShow" [style]="'prim'" [title]="'Отмена'+ (editMode?' изменения ':' сохранения ')+ 'рецепта'" [type]="'yesOrNo'"
   (resultEmit)="handleExitModal($event)" [buttonsText]="['Да', 'Нет']"
-  [description]="'Ты уверен, что не хочешь '+(editMode?' изменить ':' сохранить ') + 'рецепт?'"></app-modal>
+  [description]="'Вы уверены, что не хотите '+(editMode?' изменить ':' сохранить ') + 'рецепт?'"></app-modal>
 <app-modal @modal *ngIf="successModalShow" [style]="'sec'" [title]="'Рецепт успешно сохранен'" [type]="'Ok'"
   (resultEmit)="handleSuccessModal()" [buttonsText]="['Хорошо']" [description]="
-  'Твой рецепт успешно'+(editMode?' изменен':' сохранен в твоей личной коллекции') +
+  'Ваш рецепт успешно'+(editMode?' изменен':' сохранен в вашей личной коллекции') +
     (isAwaitingApprove ? ' и ожидает одобрения модератора' : '')
   "></app-modal>
 
-<app-modal @modal *ngIf="createModalShow" [style]="'prim'" [title]="'Подтверди создание рецепта'" [type]="'yesOrNo'"
+<app-modal @modal *ngIf="createModalShow" [style]="'prim'" [title]="'Подтвердите создание рецепта'" [type]="'yesOrNo'"
   (resultEmit)="handleCreateRecipeModal($event)" [buttonsText]="['Да', 'Нет']"
-  [description]="'Ты уверен, что хочешь сохранить рецепт в своей коллекции?'"></app-modal>
+  [description]="'Вы уверены, что хотите сохранить рецепт в своей коллекции?'"></app-modal>
 
-<app-modal @modal *ngIf="approveModalShow" [style]="'prim'" [title]="'Подтверди публикацию рецепта'"
+<app-modal @modal *ngIf="approveModalShow" [style]="'sec'" [title]="'Подтвердите публикацию рецепта'"
   [type]="'yesOrNo'" (resultEmit)="handleApproveModal($event)" [buttonsText]="['Да', 'Нет']" [description]="
-    'Ты уверен, что хочешь ' +(editMode?'изменить':'сохранить') + ' рецепт и отправить его на рассмотрение к модератору?'
+    'Вы уверены, что хотите ' +(editMode?'изменить':'сохранить') + ' рецепт и отправить его на рассмотрение к модератору?'
   "></app-modal>
 
   
 
 
-  <app-modal @modal *ngIf="editModalShow" [style]="'prim'" [title]="'Подтвердите изменение рецепта'" [type]="'yesOrNo'"
-  (resultEmit)="handleEditRecipeModal($event)" [buttonsText]="['Да', 'Нет']"
-  [description]="'Вы уверены, что хотите изменить рецепт?'"></app-modal>
-
   
-  <app-modal @modal *ngIf="editModalShow" [style]="'prim'" [title]="'Подтвердите изменение рецепта'" [type]="'yesOrNo'"
+  <app-modal @modal *ngIf="editModalShow" [style]="'sec'" [title]="'Подтвердите изменение рецепта'" [type]="'yesOrNo'"
   (resultEmit)="handleEditRecipeModal($event)" [buttonsText]="['Да', 'Нет']"
   [description]="'Вы уверены, что хотите изменить рецепт?'"></app-modal>
 

@@ -45,6 +45,8 @@ import { TimePastService } from 'ng-time-past-pipe';
 export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   @Output() headerHeight: EventEmitter<number> = new EventEmitter();
 
+
+  popups:string[] = []
   activePage: 'cooks' | 'recipes' | 'match' | 'main' = 'main';
 
   recipeRouterLinks = recipeRouterLinks;
@@ -70,6 +72,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
 
   protected destroyed$: Subject<void> = new Subject<void>();
 
+  private remindedAlready = false;
   constructor(
     public authService: AuthService,
     public userService: UserService,
@@ -149,135 +152,139 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
 
   planRemindersInit(plan: IPlan) {
 
-    let editUser = false;
+      let editUser = false;
 
-    const today = new Date();
-    const todayDay = today.getDate();
+      const today = new Date();
+      const todayDay = today.getDate();
 
-    const result = new Date();
-    result.setDate(todayDay + 3); //текущая дата + следующие три дня
-    const eventsInFuture = plan.calendarEvents.filter((event) => {
-      return this.calendarService.eventInFuture(event);
-    }); //получаем все события в будущем
-    const eventsIn3Days = eventsInFuture.filter(
-      (e) => new Date(e.start) < result,
-    ); //получаем события в будущем только в следующие 3 дня
+      const result = new Date();
+      result.setDate(todayDay + 3); //текущая дата + следующие три дня
+      const eventsInFuture = plan.calendarEvents.filter((event) => {
+        return this.calendarService.eventInFuture(event);
+      }); //получаем все события в будущем
+      const eventsIn3Days = eventsInFuture.filter(
+        (e) => new Date(e.start) < result,
+      ); //получаем события в будущем только в следующие 3 дня
 
-    const currentEvents = plan.calendarEvents.filter((event) => {
-      return this.calendarService.eventIsNow(event); //события которые прошли
-    });
-    if (currentEvents.length > 0) {
-      const shortTodayDate = today.toDateString(); //сегодняшняя дата без часов
+      const currentEvents = plan.calendarEvents.filter((event) => {
+        return this.calendarService.eventIsNow(event); //события которые прошли
+      });
 
-      currentEvents.forEach((event) => {
-        const currentUserNotifications = this.currentUser.notifications;
+      const currentUserNotifications = this.currentUser.notifications;
+
+      if (
+        this.userService.getPermission(
+          'start-of-planned-recipe',
+          this.currentUser,
+        )
+      ) {
+        if (currentEvents.length > 0) {
+          const shortTodayDate = today.toDateString(); //сегодняшняя дата без часов
+
+          currentEvents.forEach((event) => {
+            let alreadySentReminder = false; //прислано ли уже уведомление
+
+            currentUserNotifications.forEach((notify) => {
+              if (
+                notify.context === 'plan-reminder-start' &&
+                notify.relatedId === event.id
+              )
+                alreadySentReminder = true; //если уже есть уведомление с типом напоминалка и прислано оно сегодня
+            });
+            if (!alreadySentReminder) {
+              const reminder = {
+                ...this.notifyService.buildNotification(
+                  'Время начала запланированного рецепта настало!',
+                  'Время начала запланированного вами рецепта «' +
+                  event.title +
+                  '» уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!',
+                  'warning',
+                  'plan-reminder-start',
+                  '/plan/calendar',
+                ),
+                relatedId: event.id,
+                notificationDate: shortTodayDate,
+              };
+              this.notifyService
+                .sendNotification(reminder, this.currentUser)
+                .subscribe();
+            }
+          });
+        }
+      }
+    
+    if (this.userService.getPermission('planned-recipes-in-3-days', this.currentUser)) {
+
+      if (eventsIn3Days.length > 0) {
+        //если че то есть :
+        const shortTodayDate = today.toDateString(); //сегодняшняя дата без часов
         let alreadySentReminder = false; //прислано ли уже уведомление
-
+        const currentUserNotifications = this.currentUser.notifications;
         currentUserNotifications.forEach((notify) => {
           if (
-            notify.context === 'plan-reminder-start' &&
-            notify.relatedId === event.id
+            notify.context === 'plan-reminder' &&
+            notify.notificationDate === shortTodayDate
           )
             alreadySentReminder = true; //если уже есть уведомление с типом напоминалка и прислано оно сегодня
         });
+
+        //очищаем старые напоминалки
+
         if (!alreadySentReminder) {
+          //если сегодня не напоминали
+
+          if (
+            this.currentUser.notifications.length !==
+            this.currentUser.notifications.filter(
+              (n) => n.context !== 'plan-reminder',
+            ).length
+          )
+            editUser = true;
+          this.currentUser.notifications = this.currentUser.notifications.filter(
+            (n) => n.context !== 'plan-reminder',
+          );
+
+          let counter = 0;
+          const eventTitles = eventsIn3Days.map((event) => {
+            counter++;
+            const when = ` (начало ${this.timePastService
+              .timePast(event.start)
+              .toLowerCase()})`;
+            return (
+              'ㅤ' +
+              (eventsIn3Days.length > 1 ? counter + ') ' : '') +
+              event.title.trim() +
+              when
+            );
+          });
+          const eventString = eventTitles.join(', <br>');
+          const reminderText = `Хотим вас предупредить, что у вас запланирован${eventsIn3Days.length > 1 ? 'ы' : ''
+            } рецепт${eventsIn3Days.length > 1 ? 'ы' : ''
+            } на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению ${eventsIn3Days.length > 1
+              ? 'этих вкусных блюд'
+              : 'этого вкусного блюда'
+            }.<br>Запланированны${eventsIn3Days.length > 1 ? 'е' : 'й'} рецепт${eventsIn3Days.length > 1 ? 'ы' : ''
+            }:<br>${eventString}`;
+
           const reminder = {
             ...this.notifyService.buildNotification(
-              'Время начала запланированного рецепта настало!',
-              'Время начала запланированного вами рецепта «' +
-                event.title +
-                '» уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!',
+              'Начало запланированного рецепта уже скоро!',
+              reminderText,
               'warning',
-              'plan-reminder-start',
+              'plan-reminder',
               '/plan/calendar',
             ),
-            relatedId: event.id,
             notificationDate: shortTodayDate,
           };
-         this.notifyService
-           .sendNotification(reminder, this.currentUser)
-           .subscribe();
+
+          //присылаем увед
+          this.notifyService
+            .sendNotification(reminder, this.currentUser)
+            .subscribe();
         }
-      });
-    }
-
-   
-
-    
-    if (eventsIn3Days.length > 0) {
-      //если че то есть :
-      const shortTodayDate = today.toDateString(); //сегодняшняя дата без часов
-      let alreadySentReminder = false; //прислано ли уже уведомление
-      const currentUserNotifications = this.currentUser.notifications;
-      currentUserNotifications.forEach((notify) => {
-        if (
-          notify.context === 'plan-reminder' &&
-          notify.notificationDate === shortTodayDate
-        )
-          alreadySentReminder = true; //если уже есть уведомление с типом напоминалка и прислано оно сегодня
-      });
-
-      //очищаем старые напоминалки
-
-      
-
-      if (!alreadySentReminder) {
-        //если сегодня не напоминали
-        
-
-        if (this.currentUser.notifications.length !== this.currentUser.notifications.filter(n => n.context !== 'plan-reminder').length)
-          editUser=true
-        this.currentUser.notifications = this.currentUser.notifications.filter(
-          (n) => n.context !== 'plan-reminder',
-        );
-
-        let counter = 0;
-        const eventTitles = eventsIn3Days.map((event) => {
-          counter++;
-          const when = ` (начало ${this.timePastService
-            .timePast(event.start)
-            .toLowerCase()})`;
-          return (
-            'ㅤ' +
-            (eventsIn3Days.length > 1 ? counter + ') ' : '') +
-            event.title.trim() +
-            when
-          );
-        });
-        const eventString = eventTitles.join(', <br>');
-        const reminderText = `Хотим вас предупредить, что у вас запланирован${
-          eventsIn3Days.length > 1 ? 'ы' : ''
-        } рецепт${
-          eventsIn3Days.length > 1 ? 'ы' : ''
-        } на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению ${
-          eventsIn3Days.length > 1
-            ? 'этих вкусных блюд'
-            : 'этого вкусного блюда'
-        }.<br>Запланированны${eventsIn3Days.length > 1 ? 'е' : 'й'} рецепт${
-          eventsIn3Days.length > 1 ? 'ы' : ''
-        }:<br>${eventString}`;
-
-        const reminder = {
-          ...this.notifyService.buildNotification(
-            'Начало запланированного рецепта уже скоро!',
-            reminderText,
-            'warning',
-            'plan-reminder',
-            '/plan/calendar',
-          ),
-          notificationDate: shortTodayDate,
-        };
-
-        //присылаем увед
-        this.notifyService
-          .sendNotification(reminder, this.currentUser)
-          .subscribe();
       }
 
-    }
-
-    
-    //очищаем напоминания о начале событий которые уже прошли
+      //очищаем напоминания о начале событий которые уже прошли
       this.currentUser.notifications.forEach((n) => {
         if (n.context === 'plan-reminder-start') {
           const findedEvent = this.currentUserPlan.calendarEvents.find(
@@ -299,12 +306,11 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
             }
           }
         }
-      });
-    
-  
-    if(editUser)
-    this.userService.updateUser(this.currentUser).subscribe();
+      })
+    }
 
+      if (editUser) this.userService.updateUser(this.currentUser).subscribe();
+    
   }
 
   currentUserInit() {
@@ -321,19 +327,25 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
           }
         } else this.currentUser = receivedUser;
 
-        if (this.currentUser.id > 0)
-          this.planService.plans$
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe((receivedPlans: IPlan[]) => {
-              this.currentUserPlan = this.planService.getPlanByUser(
-                this.currentUser.id,
-                receivedPlans,
-              );
-
-              if (this.currentUserPlan.id > 0)
-                this.planRemindersInit(this.currentUserPlan);
-            });
+        
       });
+    
+    if (this.currentUser.id > 0)
+      this.planService.plans$
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe((receivedPlans: IPlan[]) => {
+          this.currentUserPlan = this.planService.getPlanByUser(
+            this.currentUser.id,
+            receivedPlans,
+          );
+
+          if (!this.remindedAlready)
+            if (this.currentUserPlan.id > 0) {
+              this.planRemindersInit(this.currentUserPlan);
+              this.remindedAlready = true;
+              this.cd.markForCheck()
+            }
+        });
   }
 
   usersInit() {
@@ -368,8 +380,12 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
         userNotifies.forEach((notification) => {
           if (!this.notifies.some((n) => n.id === notification.id)) {
             this.notifies.unshift(notification);
+                   
+
           }
+          
         });
+      
       } else {
         this.notifies = userNotifies;
         this.cd.markForCheck();

@@ -11,7 +11,7 @@ import {
 } from 'src/app/modules/recipes/models/categories';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { SectionService } from 'src/app/modules/recipes/services/section.service';
-import { Subject, takeUntil } from 'rxjs';
+import { Observable, Subject, forkJoin, takeUntil } from 'rxjs';
 import {
   IComment,
   ICommentReportForAdmin,
@@ -155,6 +155,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   protected handleDemoteModal(answer: boolean) {
     if (answer) {
       this.targetDemotedUser.role = 'user';
+      this.userService.updateUsers(this.targetDemotedUser).subscribe();
       const notify: INotification = this.notifyService.buildNotification(
         'Вас разжаловали',
         `Вы теперь не являетесь модератором сайта Yummy. Вас разжаловал администратор ${this.getName(
@@ -164,7 +165,6 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
         'demote',
         `/cooks/list/${this.currentUser.id}`,
       );
-      this.userService.updateUsers(this.targetDemotedUser).subscribe();
       this.notifyService
         .sendNotification(notify, this.targetDemotedUser)
         .subscribe();
@@ -351,8 +351,15 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     if (this.actionCategory) {
       this.actionCategory.status = 'public';
       this.categoryService.updateCategory(this.actionCategory).subscribe(() => {
-        if (this.actionCategory) {
-          this.successApproveCategoryModalShow = true;
+        this.successApproveCategoryModalShow = true;
+
+        if (
+          this.actionCategory &&
+          this.userService.getPermission(
+            'manager-reviewed-your-category',
+            this.currentUser,
+          )
+        ) {
           const author: IUser = this.getUser(this.actionCategory?.authorId);
           const link: string = '/categories/list/' + this.actionCategory.id;
           const notify: INotification = this.notifyService.buildNotification(
@@ -363,8 +370,8 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
             link,
           );
           this.notifyService.sendNotification(notify, author).subscribe();
-          this.cd.markForCheck();
         }
+        this.cd.markForCheck();
       });
     }
   }
@@ -381,7 +388,13 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
           this.sectionService.updateSections(section).subscribe(() => {
             this.successDismissCategoryModalShow = true;
           });
-          if (this.actionCategory) {
+          if (
+            this.actionCategory &&
+            this.userService.getPermission(
+              'manager-reviewed-your-category',
+              this.currentUser,
+            )
+          ) {
             const author: IUser = this.getUser(this.actionCategory?.authorId);
             const notify: INotification = this.notifyService.buildNotification(
               'Категория отклонена',
@@ -391,8 +404,8 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
               '',
             );
             this.notifyService.sendNotification(notify, author).subscribe();
-            this.cd.markForCheck();
           }
+          this.cd.markForCheck();
         });
     }
   }
@@ -440,8 +453,20 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
               'comment',
               '/recipes/list/' + recipe.id,
             );
-            this.notifyService.sendNotification(notify2, reporter).subscribe();
-            this.notifyService.sendNotification(notify1, author).subscribe();
+
+            if (
+              this.userService.getPermission('your-reports-publish', reporter)
+            )
+              this.notifyService
+                .sendNotification(notify2, reporter)
+                .subscribe();
+            if (
+              this.userService.getPermission(
+                'your-reports-reviewed-moderator',
+                author,
+              )
+            )
+              this.notifyService.sendNotification(notify1, author).subscribe();
           }
         });
     }
@@ -476,28 +501,37 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
               ).authorId,
             );
 
-            let notify: INotification = this.notifyService.buildNotification(
-              'Жалоба на комментарий отклонена',
-              `Твоя жалоба на комментарий пользователя ${
-                author.fullName ? author.fullName : '@' + author.username
-              } «${comment.text}» под рецептом «${recipe.name}» отклонена`,
-              'error',
-              'comment',
-              '/recipes/list/' + recipe.id,
-            );
-            this.notifyService.sendNotification(notify, reporter).subscribe();
+            if (
+              this.userService.getPermission('your-reports-publish', reporter)
+            ) {
+              const notify: INotification =
+                this.notifyService.buildNotification(
+                  'Жалоба на комментарий отклонена',
+                  `Твоя жалоба на комментарий пользователя ${
+                    author.fullName ? author.fullName : '@' + author.username
+                  } «${comment.text}» под рецептом «${recipe.name}» отклонена`,
+                  'error',
+                  'comment',
+                  '/recipes/list/' + recipe.id,
+                );
+              this.notifyService.sendNotification(notify, reporter).subscribe();
+            }
 
-
-            notify = this.notifyService.buildNotification(
-              'Жалоба на комментарий отклонена',
-              `Жалоба на ваш комментарий «${comment.text}» под рецептом «${
-                recipe.name
-              }» отклонена модератором. Комментарий сохранен!`,
-              'info',
-              'comment',
-              '/recipes/list/' + recipe.id,
-            );
-            this.notifyService.sendNotification(notify, author).subscribe();
+            if (
+              this.userService.getPermission(
+                'your-reports-reviewed-moderator',
+                reporter,
+              )
+            ) {
+              const notify = this.notifyService.buildNotification(
+                'Жалоба на комментарий отклонена',
+                `Жалоба на ваш комментарий «${comment.text}» под рецептом «${recipe.name}» отклонена модератором. Комментарий сохранен!`,
+                'info',
+                'comment',
+                '/recipes/list/' + recipe.id,
+              );
+              this.notifyService.sendNotification(notify, author).subscribe();
+            }
           }
           this.actionReport = null;
         });
@@ -532,9 +566,20 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
       const approvedRecipe = this.recipeService.approveRecipe(
         this.actionRecipe,
       );
-      this.recipeService.updateRecipe(approvedRecipe).subscribe(() => {
-        if (this.actionRecipe) {
-          const recipeAuthor: IUser = this.getUser(this.actionRecipe?.authorId);
+              const subscribes: Observable<any>[] = [];
+
+      subscribes.push(
+        this.recipeService.updateRecipe(approvedRecipe));
+
+      if (this.actionRecipe) {
+        const recipeAuthor: IUser = this.getUser(this.actionRecipe?.authorId);
+
+        if (
+          this.userService.getPermission(
+            'manager-review-your-recipe',
+            recipeAuthor,
+          )
+        ) {
           const notify: INotification = this.notifyService.buildNotification(
             'Рецепт одобрен',
             `Твой рецепт «${this.actionRecipe.name}» одобрен и теперь может просматриваться всеми кулинарами`,
@@ -542,9 +587,50 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
             'recipe',
             '/recipes/list/' + this.actionRecipe.id,
           );
-          this.notifyService.sendNotification(notify, recipeAuthor).subscribe();
+
+
+          subscribes.push(
+            this.notifyService.sendNotification(notify, recipeAuthor),
+          );
         }
-      });
+        const authorFollowers = this.userService.getFollowers(
+          this.users,
+          recipeAuthor.id,
+        );
+
+        authorFollowers.forEach((follower) => {
+          if (
+            this.userService.getPermission(
+              'new-recipe-from-following',
+              follower,
+            )
+          ) {
+            const notify = this.notifyService.buildNotification(
+              'Новый рецепт от кулинара',
+              `Кулинар ${this.getName(
+                recipeAuthor,
+              )}, на которого вы подписаны, поделился новым рецептом «${approvedRecipe.name
+              }»`,
+              'info',
+              'recipe',
+              '/recipes/list/' + approvedRecipe.id,
+            );
+            subscribes.push(
+              this.notifyService.sendNotification(notify, follower),
+            );
+          }
+        });
+          
+          
+        
+      }
+      
+      forkJoin(subscribes).subscribe(
+        {
+          next(){},
+          error(erorr: Error) { console.error(erorr); console.error(erorr.message) }
+        }
+      );
     }
   }
   private dismissRecipe(): void {
@@ -555,14 +641,23 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
       this.recipeService.updateRecipe(dismissedRecipe).subscribe(() => {
         if (this.actionRecipe) {
           const recipeAuthor: IUser = this.getUser(this.actionRecipe?.authorId);
-          const notify: INotification = this.notifyService.buildNotification(
-            'Рецепт отклонен',
-            `Твой рецепт «${this.actionRecipe.name}» отклонен`,
-            'error',
-            'recipe',
-            '',
-          );
-          this.notifyService.sendNotification(notify, recipeAuthor).subscribe();
+          if (
+            this.userService.getPermission(
+              'manager-review-your-recipe',
+              recipeAuthor,
+            )
+          ) {
+            const notify: INotification = this.notifyService.buildNotification(
+              'Рецепт отклонен',
+              `Твой рецепт «${this.actionRecipe.name}» отклонен`,
+              'error',
+              'recipe',
+              '',
+            );
+            this.notifyService
+              .sendNotification(notify, recipeAuthor)
+              .subscribe();
+          }
         }
       });
     }

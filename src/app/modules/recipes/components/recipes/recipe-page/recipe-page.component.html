@@ -54,7 +54,7 @@
     <div class="column main-info">
       <div class="full-user-info column">
         <div class="row" class="short-info row">
-          <a [ngClass]="{'no-link':author.id===0}" class="row user-info" [routerLink]="author.id>0?'/cooks/list/' + author.id:null">
+          <a [ngClass]="{'no-link':author.id<1}" class="row user-info" [routerLink]="author.id>0?'/cooks/list/' + author.id:null">
             <img *ngIf="author.id>0"
               class="userpic noselect"
               src="../../../../../../assets/images/userpic.png"
@@ -553,7 +553,7 @@
 <app-modal
   @modal
   *ngIf="commentModalShow"
-  [style]="'prim'"
+  [style]="'sec'"
   [title]="'Публикация комментария'"
   [type]="'yesOrNo'"
   (resultEmit)="handleCommentModal($event)"

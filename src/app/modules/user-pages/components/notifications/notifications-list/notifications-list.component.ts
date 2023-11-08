@@ -8,7 +8,7 @@ import { NotificationService } from '../../../services/notification.service';
   selector: 'app-notifications-list',
   templateUrl: './notifications-list.component.html',
   styleUrls: ['./notifications-list.component.scss'],
-  changeDetection:ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NotificationsListComponent {
   @Input() notifies: INotification[] = [];

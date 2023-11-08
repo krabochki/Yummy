@@ -32,6 +32,9 @@
 .not-readed .body{
 background-color: var(--not-read)
 }
+.popup .body{
+    background-color: var(--not-read);
+}
 
 .main{
     position: relative;
@@ -42,8 +45,6 @@ background-color: var(--not-read)
     text-align: right;
     font-size: 0.75rem;
 
-    
-    
 }
 
 .explain{
@@ -97,4 +98,21 @@ a.body{
 
     display: flex;
     column-gap: 0.5em;
+}
+
+@media(max-width:768px){
+    .main{
+        zoom:1.2
+    }
+
+    
+}
+
+@media(max-width:480px){
+    .popup
+{
+    opacity: 0.75;
+    width: 100%;
+
+}
 }

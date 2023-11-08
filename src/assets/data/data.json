@@ -961,6 +961,54 @@
       "user": 28,
       "shoppingList": [],
       "calendarEvents": []
+    },
+    {
+      "id": 19,
+      "user": 29,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 20,
+      "user": 30,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 21,
+      "user": 31,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 22,
+      "user": 32,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 23,
+      "user": 33,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 24,
+      "user": 34,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 25,
+      "user": 35,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 26,
+      "user": 36,
+      "shoppingList": [],
+      "calendarEvents": []
     }
   ],
   "categories": [
@@ -1847,127 +1895,6 @@
       "ingredients": []
     },
     {
-      "id": 8,
-      "mainPhotoUrl": null,
-      "comments": [
-        {
-          "id": 1,
-          "text": "мой любимый рецепт",
-          "authorId": 1,
-          "date": "2023-11-07T20:17:56.384Z",
-          "likesId": [],
-          "dislikesId": []
-        },
-        {
-          "id": 2,
-          "text": "супер",
-          "authorId": 1,
-          "date": "2023-11-07T20:18:59.737Z",
-          "likesId": [],
-          "dislikesId": []
-        }
-      ],
-      "categories": [],
-      "name": "cupidatat enim ipsum",
-      "description": "Lorem sit duis irure amet consectetur nostrud fugiat et aute consequat quis culpa. Dolor veniam aute sit commodo consectetur eiusmod labore esse enim. Laborum culpa duis eu do. In duis est velit minim elit do sunt amet in reprehenderit aute sit. Nostrud et mollit magna proident voluptate irure deserunt qui Lorem exercitation ullamco. Sunt esse id et laboris voluptate. Officia anim esse enim esse dolor do fugiat officia dolor adipisicing.\r\nAnim velit id nostrud laboris ullamco anim dolore nisi cupidatat elit do. In exercitation et pariatur duis deserunt. Tempor proident culpa labore sunt elit in. Aliquip non sit mollit commodo fugiat enim laborum deserunt. Excepteur ea dolore cupidatat nostrud laborum esse Lorem ullamco duis ut pariatur ut duis. Nostrud consectetur pariatur consequat aute ex commodo aute ad excepteur et cillum. Exercitation sunt laborum ullamco veniam labore.\r\nDuis irure commodo magna exercitation. Elit incididunt consequat enim amet aliquip duis. Nulla in sint quis Lorem.\r\n",
-      "history": "Sit enim dolor eiusmod mollit pariatur sint nostrud do Lorem ullamco. Sint anim culpa nostrud cillum deserunt sint aliquip Lorem aute. Laborum laborum veniam officia enim labore ex. Veniam ea voluptate aliqua laboris ad. Cillum labore amet non cillum exercitation culpa aliqua ad consequat commodo dolore consectetur amet. Non ad anim esse consectetur ipsum officia amet consequat officia tempor aliqua pariatur laborum.\r\nIncididunt dolore cupidatat amet eiusmod et veniam velit consequat ullamco eiusmod commodo. Irure et et voluptate non in do esse in magna nulla eiusmod ea non culpa. In cillum consequat cupidatat sint laborum. Qui incididunt pariatur labore sit cillum ex. Cillum ut velit esse commodo labore ad ullamco tempor officia. Culpa eiusmod amet ut cillum dolor labore officia.\r\n",
-      "preparationTime": "mollit enim exercitation occaecat ea",
-      "cookingTime": "anim irure velit cupidatat adipisicing",
-      "servings": 9,
-      "authorId": 1,
-      "cooksId": [
-        8,
-        4,
-        3,
-        9,
-        7,
-        1,
-        28
-      ],
-      "favoritesId": [
-        2,
-        9,
-        10,
-        3,
-        1,
-        5,
-        28
-      ],
-      "likesId": [
-        8,
-        6,
-        1,
-        5,
-        28
-      ],
-      "status": "public",
-      "origin": "Tanzania",
-      "publicationDate": "2019-10-30T23:58:43.609Z",
-      "instuctions": [
-        "non",
-        "fugiat",
-        "nulla",
-        "exercitation",
-        "laborum",
-        "deserunt",
-        "incididunt"
-      ],
-      "instructions": [
-        {
-          "images": [],
-          "name": "Est eiusmod laborum velit eiusmod commodo anim minim enim ex in fugiat adipisicing. Laborum do eu occaecat esse ea magna commodo. Non cillum sunt tempor consequat excepteur anim eu. Nulla in sit culpa do nulla. Sit consequat culpa sit quis Lorem. Lorem qui minim consectetur elit in ea in labore ex ex excepteur cillum.\r\n"
-        },
-        {
-          "images": [],
-          "name": "Exercitation mollit adipisicing enim incididunt commodo duis. Aliquip cupidatat ea non occaecat reprehenderit deserunt duis. Nisi sit ea et ut et laborum. Quis laborum est elit ea ut. Fugiat esse irure ullamco eiusmod anim sunt voluptate non Lorem in qui ut aute. Incididunt Lorem nostrud elit sint eiusmod in laboris irure adipisicing quis sint sit.\r\n"
-        },
-        {
-          "images": [],
-          "name": "Ea enim adipisicing ut veniam officia qui cupidatat eu exercitation anim do non. Proident laborum ullamco ex ullamco eu tempor in enim cupidatat laborum sunt. Exercitation ullamco tempor nostrud voluptate cupidatat voluptate consectetur labore sit officia.\r\n"
-        },
-        {
-          "images": [],
-          "name": "Consequat elit cupidatat nostrud culpa et et et velit eiusmod pariatur. Duis proident dolor do anim enim. Cupidatat anim et dolore eu ipsum officia anim cillum mollit ex amet do. Proident sint Lorem adipisicing ea cillum irure enim quis veniam consequat cupidatat enim. Excepteur ullamco quis qui deserunt quis laborum ad. Aliquip ut ea non eu.\r\n"
-        },
-        {
-          "images": [],
-          "name": "Ut ex aute occaecat aute nulla. Adipisicing voluptate veniam est aliqua culpa reprehenderit deserunt aliqua mollit magna eiusmod. Esse non elit velit in ad veniam ea non. Reprehenderit quis laboris ipsum aute ea adipisicing tempor laborum dolore esse fugiat non occaecat. Commodo deserunt reprehenderit nulla incididunt veniam pariatur est officia anim quis Lorem velit.\r\n"
-        },
-        {
-          "images": [],
-          "name": "Sit ullamco ea esse adipisicing id ullamco pariatur quis. Aliquip officia eu incididunt consequat aliquip amet fugiat. In culpa do veniam ex magna amet veniam id irure sint consectetur culpa qui ipsum.\r\n"
-        },
-        {
-          "images": [],
-          "name": "Consectetur do deserunt laborum nostrud ea consequat officia officia cillum eiusmod magna esse dolore. Ipsum elit non reprehenderit veniam fugiat excepteur Lorem ea cupidatat. Laborum irure cupidatat cupidatat ea do exercitation. Aliqua aute reprehenderit reprehenderit velit labore ex pariatur proident velit laborum sunt voluptate incididunt.\r\n"
-        }
-      ],
-      "nutritions": [
-        {
-          "name": "officia",
-          "quantity": 34,
-          "unit": "adipisicing"
-        },
-        {
-          "name": "in",
-          "quantity": 24,
-          "unit": "deserunt"
-        }
-      ],
-      "ingredients": [],
-      "statistics": [
-        {
-          "user": 1,
-          "answer": false
-        },
-        {
-          "user": 28,
-          "answer": true
-        }
-      ],
-      "reports": []
-    },
-    {
       "id": 9,
       "mainPhotoUrl": null,
       "comments": [],
@@ -2378,8 +2305,7 @@
         13,
         25,
         5,
-        27,
-        28
+        27
       ],
       "favoritesId": [
         10,
@@ -2388,8 +2314,7 @@
         13,
         5,
         1,
-        27,
-        28
+        27
       ],
       "likesId": [
         10,
@@ -2399,8 +2324,7 @@
         6,
         13,
         5,
-        27,
-        28
+        27
       ],
       "status": "public",
       "origin": "Sweden",
@@ -2452,10 +2376,6 @@
         },
         {
           "user": 27,
-          "answer": true
-        },
-        {
-          "user": 28,
           "answer": true
         }
       ]
@@ -2919,8 +2839,7 @@
         6,
         8,
         25,
-        5,
-        28
+        5
       ],
       "likesId": [
         3,
@@ -4993,7 +4912,7 @@
       "quote": "Когда вы допустили столько же ошибок, сколько и я, вы можете быть так же хороши, как и я.",
       "email": "alexey@example.com",
       "password": "Password300",
-      "fullName": "Алексей Зимин",
+      "fullName": "Але",
       "followersIds": [
         3,
         4,
@@ -5018,7 +4937,7 @@
       "personalWebsite": "https://www.chefalexeyzimin.com/",
       "location": "Москва, Россия",
       "registrationDate": "2023-01-15",
-      "profileViews": 7662,
+      "profileViews": 7664,
       "role": "moderator",
       "notifications": [
         {
@@ -5070,40 +4989,160 @@
           "notificationDate": "Tue Nov 07 2023"
         },
         {
-          "id": 5,
-          "relatedLink": "/recipes/list/97",
-          "context": "recipe",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой рецепт «jkkjjk» одобрен и теперь может просматриваться всеми кулинарами",
-          "title": "Рецепт одобрен",
-          "timestamp": "2023-11-07T22:26:34.841Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 6,
-          "relatedLink": "/recipes/list/79",
-          "context": "recipe",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой рецепт «Кныш с картофелем» одобрен и теперь может просматриваться всеми кулинарами",
-          "title": "Рецепт одобрен",
-          "timestamp": "2023-11-07T22:36:58.751Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
           "id": 7,
           "relatedLink": "/plan/calendar",
           "context": "plan-reminder",
           "type": "warning",
           "relatedId": 0,
-          "message": "Хотим вас предупредить, что у вас запланирован рецепт на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению этого вкусного блюда.<br>Запланированный рецепт:<br>ㅤуведа не долнжо быть (начало через 22 часа)",
+          "message": "Хотим вас предупредить, что у вас запланирован рецепт на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению этого вкусного блюда.<br>Запланированный рецепт:<br>ㅤуведа не долнжо быть (начало через 23 часа)",
           "title": "Начало запланированного рецепта уже скоро!",
-          "timestamp": "2023-11-07T22:52:14.362Z",
+          "timestamp": "2023-11-08T22:28:56.761Z",
           "read": true,
-          "notificationDate": "Wed Nov 08 2023"
+          "notificationDate": "Thu Nov 09 2023"
+        },
+        {
+          "id": 8,
+          "relatedLink": "/cooks/list/1",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T22:41:24.954Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 9,
+          "relatedLink": "/cooks/list/1",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T22:41:35.708Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 10,
+          "relatedLink": "/cooks/list/1",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T22:42:17.932Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 11,
+          "relatedLink": "/cooks/list/1",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T22:42:27.108Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 12,
+          "relatedLink": "/cooks/list/1",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T22:42:38.802Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 13,
+          "relatedLink": "/cooks/list/1",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T22:42:44.356Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 14,
+          "relatedLink": "/cooks/list/1",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T22:42:50.593Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 15,
+          "relatedLink": "/cooks/list/1",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T22:43:03.323Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 16,
+          "relatedLink": "/cooks/list/1",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T22:43:20.076Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 17,
+          "relatedLink": "/cooks/list/1",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T22:43:35.620Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 18,
+          "relatedLink": "/cooks/list/1",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T22:43:59.478Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 19,
+          "relatedLink": "/cooks/list/1",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T22:44:04.600Z",
+          "read": false,
+          "notificationDate": ""
         }
       ],
       "avatarUrl": {},
@@ -5138,7 +5177,7 @@
         },
         {
           "context": "you-delete-your-recipe",
-          "enabled": false
+          "enabled": true
         },
         {
           "context": "you-edit-your-recipe",
@@ -5194,7 +5233,7 @@
         },
         {
           "context": "you-edit-your-account",
-          "enabled": false
+          "enabled": true
         }
       ]
     },
@@ -5428,6 +5467,18 @@
           "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «Кныш с картофелем»",
           "title": "Новый рецепт от кулинара",
           "timestamp": "2023-11-07T22:36:58.751Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 18,
+          "relatedLink": "/recipes/list/83",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «Я справлюсь сам»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-08T22:37:41.374Z",
           "read": false,
           "notificationDate": ""
         }
@@ -5966,6 +6017,18 @@
           "timestamp": "2023-11-08T14:43:56.877Z",
           "read": false,
           "notificationDate": ""
+        },
+        {
+          "id": 43,
+          "relatedLink": "/recipes/list/83",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «Я справлюсь сам»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-08T22:37:41.374Z",
+          "read": false,
+          "notificationDate": ""
         }
       ]
     },
@@ -5978,7 +6041,7 @@
       "avatarUrl": {},
       "description": "",
       "quote": "В кулинарии может не хватать только аппетита.",
-      "fullName": "Лина",
+      "fullName": "Полина 🎀",
       "followersIds": [
         23,
         25
@@ -6000,32 +6063,8 @@
       "personalWebsite": "",
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 1939,
+      "profileViews": 1941,
       "notifications": [
-        {
-          "id": 215,
-          "relatedLink": "/categories/list/51",
-          "context": "category",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твоя категория «Американское» одобрена и теперь может просматриваться всеми кулинарами",
-          "title": "Категория одобрена",
-          "timestamp": "2023-11-08T17:47:27.162Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 214,
-          "relatedLink": "/categories/list/51",
-          "context": "category",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твоя категория «Американское» одобрена и теперь может просматриваться всеми кулинарами",
-          "title": "Категория одобрена",
-          "timestamp": "2023-11-08T17:47:25.146Z",
-          "read": true,
-          "notificationDate": ""
-        },
         {
           "id": 145,
           "relatedLink": "/plan/calendar",
@@ -6152,58 +6191,34 @@
           "context": "plan-reminder",
           "type": "warning",
           "relatedId": 0,
-          "message": "Хотим вас предупредить, что у вас запланированы рецепты на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению этих вкусных блюд.<br>Запланированные рецепты:<br>ㅤ1) Хлеб (начало через 3 часа), <br>ㅤ2) Банановый хлеб (начало через 2 дня)",
+          "message": "Хотим вас предупредить, что у вас запланирован рецепт на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению этого вкусного блюда.<br>Запланированный рецепт:<br>ㅤБанановый хлеб (начало через 2 дня)",
           "title": "Начало запланированного рецепта уже скоро!",
-          "timestamp": "2023-11-08T17:45:59.630Z",
+          "timestamp": "2023-11-08T22:22:42.873Z",
           "read": true,
-          "notificationDate": "Wed Nov 08 2023"
+          "notificationDate": "Thu Nov 09 2023"
         },
         {
           "id": 212,
-          "relatedLink": "",
-          "context": "category",
+          "relatedLink": "/cooks/list/5",
+          "context": "user",
           "type": "success",
           "relatedId": 0,
-          "message": "Созданная вами категория «Американское» для секции «Кухни мира» отправлена на проверку",
-          "title": "Категория отправлена на проверку",
-          "timestamp": "2023-11-08T17:47:12.969Z",
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T22:24:36.975Z",
           "read": true,
           "notificationDate": ""
         },
         {
           "id": 213,
-          "relatedLink": "/categories/list/51",
-          "context": "category",
-          "type": "success",
+          "relatedLink": "/recipes/list/83",
+          "context": "recipe",
+          "type": "info",
           "relatedId": 0,
-          "message": "Твоя категория «Американское» одобрена и теперь может просматриваться всеми кулинарами",
-          "title": "Категория одобрена",
-          "timestamp": "2023-11-08T17:47:22.590Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 216,
-          "relatedLink": "",
-          "context": "category",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Созданная вами категория «Английская кухня» для секции «Кухни мира» отправлена на проверку",
-          "title": "Категория отправлена на проверку",
-          "timestamp": "2023-11-08T17:48:05.224Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 217,
-          "relatedLink": "/categories/list/52",
-          "context": "category",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твоя категория «Английская кухня» одобрена и теперь может просматриваться всеми кулинарами",
-          "title": "Категория одобрена",
-          "timestamp": "2023-11-08T17:48:11.096Z",
-          "read": true,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «Я справлюсь сам»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-08T22:37:41.374Z",
+          "read": false,
           "notificationDate": ""
         }
       ]
@@ -6293,7 +6308,21 @@
       "location": "Лиссабон, Португалия",
       "registrationDate": "2023-07-24",
       "profileViews": 3948,
-      "role": "user"
+      "role": "user",
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "/recipes/list/7",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «id in amet» кто-то добавил в избранное",
+          "title": "Твой рецепт добавили в избранное",
+          "timestamp": "2023-11-08T19:54:30.664Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
     },
     {
       "id": 8,
@@ -6402,7 +6431,7 @@
       "personalWebsite": "https://www.techenthusiast.com/",
       "location": "Сан-Франциско, США",
       "registrationDate": "2023-09-03",
-      "profileViews": 2793,
+      "profileViews": 2794,
       "role": "user",
       "notifications": [
         {
@@ -6558,7 +6587,7 @@
       "personalWebsite": "",
       "location": "",
       "registrationDate": "2023-11-03T08:52:32.196Z",
-      "profileViews": 4,
+      "profileViews": 5,
       "notifications": [
         {
           "id": 1,
@@ -7054,6 +7083,18 @@
           "timestamp": "2023-11-07T22:36:58.751Z",
           "read": false,
           "notificationDate": ""
+        },
+        {
+          "id": 43,
+          "relatedLink": "/recipes/list/83",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «Я справлюсь сам»",
+          "title": "Новый рецепт от кулинара",
+          "timestamp": "2023-11-08T22:37:41.374Z",
+          "read": false,
+          "notificationDate": ""
         }
       ]
     },
@@ -7174,11 +7215,11 @@
     },
     {
       "id": 28,
-      "email": "fdffdf@fdffddf.rrer",
-      "password": "dffdddfFg54fdfd",
-      "username": "newborn",
+      "email": "new@mail.ru",
+      "password": "fdkdfdjH6",
+      "username": "neww",
       "role": "user",
-      "avatarUrl": {},
+      "avatarUrl": null,
       "description": "",
       "quote": "",
       "fullName": "",
@@ -7186,9 +7227,270 @@
       "socialNetworks": [],
       "personalWebsite": "",
       "location": "",
-      "registrationDate": "2023-11-08T04:39:05.106Z",
+      "registrationDate": "2023-11-08T22:26:31.099Z",
       "profileViews": 0,
-      "notifications": []
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @neww 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-08T22:26:31.153Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "email": "dfdfdffd@mail.ru",
+      "password": "fddffddfG45",
+      "username": "ffdhfdhfd",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-08T22:27:00.334Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @ffdhfdhfd 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-08T22:27:00.387Z",
+          "read": true,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "email": "privetik@mail.ri",
+      "password": "privet1000P",
+      "username": "pr1v3t1k",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-08T22:28:05.118Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @pr1v3t1k 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-08T22:28:05.179Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "email": "dfdffddf@mail.ruq",
+      "password": "sfffsf34G5",
+      "username": "dsfsf",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-08T22:29:24.203Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @dsfsf 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-08T22:29:24.273Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "email": "sdsdsd@mail.ru",
+      "password": "fdfdffdfd3F4",
+      "username": "saasas",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-08T22:29:48.054Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @saasas 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-08T22:29:48.102Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "email": "fdfdfd@mail.rusd",
+      "password": "fdfddf3434G",
+      "username": "dfdfdfd",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-08T22:30:29.058Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @dfdfdfd 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-08T22:30:29.132Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 34,
+      "email": "fdffd@Mail.ru",
+      "password": "ffddfffd%437H",
+      "username": "fdffff",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-08T22:34:03.712Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @fdffff 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-08T22:34:03.782Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 35,
+      "email": "ffdfd@mail.ru",
+      "password": "ddfddffdf$53gG",
+      "username": "gfffgf",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-08T22:34:43.176Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @gfffgf 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-08T22:34:43.238Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 36,
+      "email": "ddssdds@mail.ruq",
+      "password": "dsssd$5.hf%HH",
+      "username": "AAAA",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-08T22:35:09.725Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @AAAA 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-08T22:35:09.776Z",
+          "read": true,
+          "notificationDate": ""
+        }
+      ]
     }
   ]
 }

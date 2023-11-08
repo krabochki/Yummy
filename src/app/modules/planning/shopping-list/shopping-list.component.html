@@ -13,7 +13,9 @@
             В вашем списке ингредиентов пока нет продуктов. Попробуйте создать
             новый продукт сами или добавить его из ингредиентов на странице
             какого-нибудь рецепта
+            
           </p>
+         <div class="no-reps-icon"> <svg-icon class="no-recipes-svg" [applyClass]="true" [src]="'assets/images/svg/grocery/no-recipes.svg'"></svg-icon></div>
         </ng-template>
 
         <div *ngIf="actualShoppingList.length > 0; else noProducts">

@@ -50,7 +50,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   protected createMode = false; //открыто ли создание/изменение календарного события
 
   protected events: CalendarEvent[] = []; //список календарных событий юзера
-  protected currentUser: IUser = {...nullUser};
+  protected currentUser: IUser = { ...nullUser };
   protected currentUserPlan: IPlan = nullPlan; //план текущего юзера
 
   private destroyed$: Subject<void> = new Subject<void>();
@@ -62,7 +62,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private calendarService: CalendarService,
     private cd: ChangeDetectorRef,
-    private userService:UserService
+    private userService: UserService,
   ) {
     this.title.setTitle('План рецептов');
     registerLocaleData(localeRu);
@@ -74,18 +74,18 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
   private getCurrentUser(): void {
-
-    this.userService.users$.pipe(takeUntil(this.destroyed$))
+    this.userService.users$
+      .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedUsers: IUser[]) => {
         this.authService.currentUser$
           .pipe(takeUntil(this.destroyed$))
           .subscribe((receivedUser: IUser) => {
-            const actualUser = receivedUsers.find(u => u.id === receivedUser.id);
-            this.currentUser = actualUser?actualUser:nullUser;
+            const actualUser = receivedUsers.find(
+              (u) => u.id === receivedUser.id,
+            );
+            this.currentUser = actualUser ? actualUser : nullUser;
           });
-      
-    })
-    
+      });
   }
 
   private getPlans(): void {
@@ -96,24 +96,25 @@ export class CalendarComponent implements OnInit, OnDestroy {
           this.currentUser.id,
           receivedPlans,
         );
-        let buferEvents = this.getEventsWithNormalData(this.currentUserPlan.calendarEvents);
+        let buferEvents = this.getEventsWithNormalData(
+          this.currentUserPlan.calendarEvents,
+        );
         buferEvents = buferEvents.sort((e1, e2) => {
           {
-            if (new Date(e1.start) > new Date(e2.start)) return 1;
-            if (new Date(e1.start) === new Date(e2.start)) {
-              if (e1.id > e2.id) return 1; else return -1;
-            }
-            else return -1;
+            return new Date(e1.start) > new Date(e2.start) ? 1
+              : new Date(e1.start) === new Date(e2.start) ?
+                e1.id > e2.id ? 1 : -1
+              : -1;
           }
-        }); //сортируем по времени(прошедшие раньше)
+        });
 
-        this.events = [...buferEvents]
-        this.cd.markForCheck();
+        this.events = [...buferEvents];
         this.refresh.next();
+        this.cd.markForCheck();
       });
   }
 
-  private getEventsWithNormalData(events:CalendarEvent[]): CalendarEvent[] {
+  private getEventsWithNormalData(events: CalendarEvent[]): CalendarEvent[] {
     const eventsWithModifyNormalData = events;
     //дата извлекается из обьекта после запроса не в корректном формате даты
     //календарь не может ее преобразовать, поэтому преобразовываю тут
@@ -132,14 +133,9 @@ export class CalendarComponent implements OnInit, OnDestroy {
     events: CalendarEvent[];
   }): void {
     if (isSameMonth(date, this.viewDate)) {
-      if (
+      this.activeDayIsOpen =
         (isSameDay(this.viewDate, date) && this.activeDayIsOpen === true) ||
-        events.length === 0
-      ) {
-        this.activeDayIsOpen = false;
-      } else {
-        this.activeDayIsOpen = true;
-      }
+        events.length === 0;
       this.viewDate = date;
     }
   }
@@ -151,15 +147,14 @@ export class CalendarComponent implements OnInit, OnDestroy {
     newEnd,
   }: CalendarEventTimesChangedEvent): void {
     const before = { ...event };
-    this.events = this.events.map((iEvent: CalendarEvent) => {
-      if (iEvent === event) {
-        return {
-          ...event,
-          start: newStart,
-          end: newEnd,
-        };
-      }
-      return iEvent;
+    this.events = this.events.map((e: CalendarEvent) => {
+      return e === event
+        ? {
+            ...event,
+            start: newStart,
+            end: newEnd,
+          }
+        : e;
     });
 
     const endChanged = before.end?.toString() !== newEnd?.toString();
@@ -173,17 +168,15 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
   eventIsNow(event: CalendarEvent): boolean {
-        return this.calendarService.eventIsNow(event);
-
+    return this.calendarService.eventIsNow(event);
   }
 
   eventInFuture(event: CalendarEvent): boolean {
-    return this.calendarService.eventInFuture(event)
+    return this.calendarService.eventInFuture(event);
   }
 
   eventInPast(event: CalendarEvent): boolean {
-       return this.calendarService.eventInPast(event);
-
+    return this.calendarService.eventInPast(event);
   }
   handleEvent(action: string, event: CalendarEvent): void {
     if (action === 'Clicked') {
@@ -198,16 +191,17 @@ export class CalendarComponent implements OnInit, OnDestroy {
     this.events = this.events.filter(
       (event: CalendarEvent) => event !== eventToDelete,
     );
-    const reminderNotify = this.currentUser.notifications.find((n) => n.relatedId === eventToDelete.id);
-    if(reminderNotify) this.currentUser.notifications = this.currentUser.notifications.filter(n => n.id!==reminderNotify.id)
+    const reminderNotify = this.currentUser.notifications.find(
+      (n) => n.relatedId === eventToDelete.id,
+    );
+    if (reminderNotify)
+      this.currentUser.notifications = this.currentUser.notifications.filter(
+        (n) => n.id !== reminderNotify.id,
+      );
     this.currentUserPlan.calendarEvents = this.events;
-    this.userService.updateUser(this.currentUser)
+    this.userService.updateUser(this.currentUser);
     this.planService.updatePlan(this.currentUserPlan).subscribe();
-
   }
-
-
-  
 
   setView(view: CalendarView) {
     this.view = view;

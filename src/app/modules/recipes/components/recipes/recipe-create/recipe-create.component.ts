@@ -196,8 +196,8 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
             const objectURL = URL.createObjectURL(mainpicFile);
             this.mainImage = objectURL;
           }
-        } catch (error) {
-          //
+        } catch  {
+          console.error('Ошибка при извлечении главной фотографии')
         }
       }
 
@@ -257,8 +257,8 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
                 }
               }
             }
-          } catch (error) {
-            //
+          } catch {
+            console.error('Ошибка при извлечении фотографии инструкции')
           }
         }
       }

@@ -19,14 +19,14 @@ import { Title } from '@angular/platform-browser';
   selector: 'app-shopping-list',
   templateUrl: './shopping-list.component.html',
   styleUrls: ['./shopping-list.component.scss'],
-  animations: [trigger('height', heightAnim()), trigger('modal',modal())]
+  animations: [trigger('height', heightAnim()), trigger('modal', modal())],
 })
 export class ShoppingListComponent implements OnInit, OnDestroy {
   protected shoppingList: ShoppingListItem[] = [];
 
   protected baseSvgPath: string = '../../../../../assets/images/svg/grocery/';
 
-  private currentUser: IUser = {...nullUser};
+  private currentUser: IUser = { ...nullUser };
   private currentUserPlan: IPlan = nullPlan;
 
   protected productTypes = productTypes;
@@ -47,7 +47,9 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
     private title: Title,
   ) {
     this.title.setTitle('Список покупок');
-    this.productTypes.sort((t1, t2) => { if(t1.name > t2.name) return 1; else return -1})
+    this.productTypes.sort((t1, t2) => {
+     return (t1.name > t2.name) ? 1: -1;
+    });
 
     this.form = this.initNewShoppingListItemForm();
   }
@@ -96,7 +98,7 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
         this.groupedProducts = this.divideShoppingListByTypes(
           this.sortByBought(this.actualShoppingList),
         );
-    this.shoppingList = [...this.sortByBought(this.actualShoppingList)];
+        this.shoppingList = [...this.sortByBought(this.actualShoppingList)];
       }
       //если добавили или удалили что-то то обновляю список, если просто отметили купленным то нет(чтобы анимация работала)
     });
@@ -149,15 +151,10 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
 
   private sortByBought(shoppingList: ShoppingListItem[]): ShoppingListItem[] {
     const filter = shoppingList.sort((a, b) => {
-      if (a.id > b.id) return 1;
-      else return -1;
+      return (a.id > b.id) ? 1 : -1;
     });
     return filter.sort((a, b) => {
-      if (a.isBought && !b.isBought) {
-        return 1;
-      } else {
-        return -1;
-      }
+      return (a.isBought && !b.isBought) ? 1 : -1;
     });
   }
 
@@ -169,20 +166,16 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
       const purchasedProduct = this.shoppingList[findedProductIndex];
       purchasedProduct.isBought = !purchasedProduct.isBought;
 
-      
       this.planService.updatePlan(this.currentUserPlan).subscribe();
     }
   }
   protected removeProduct(productId: number) {
     const findedProduct = this.shoppingList.find((g) => g.id === productId);
-    
+
     if (findedProduct) {
+      this.currentUserPlan.shoppingList =
+        this.currentUserPlan.shoppingList.filter((g) => g.id !== productId);
 
-
-
-      this.currentUserPlan.shoppingList = this.currentUserPlan.shoppingList.filter((g) => g.id !== productId);;
-
-      
       this.planService.updatePlan(this.currentUserPlan).subscribe();
     }
   }
@@ -206,10 +199,7 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
   protected selectedType: ProductType = productTypes[0];
   //поиск рецептов
   protected blur(): void {
-    if (
-      this.searchQuery !== '' &&
-      this.searchQuery !== this.selectedType.name 
-    )
+    if (this.searchQuery !== '' && this.searchQuery !== this.selectedType.name)
       this.searchQuery = '';
 
     this.autocompleteShow = false;
@@ -229,9 +219,12 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
     this.focused = true;
     if (this.searchQuery) {
       this.autocompleteTypes = [];
-      if (this.selectedType.name !== this.searchQuery)
-        this.selectedType = this.productTypes[0];
-
+      if (this.selectedType.name !== this.searchQuery) {
+        const without = this.productTypes.find(
+          (p) => p.name === 'Без категории',
+        );
+        if (without) this.selectedType = without;
+      }
       const search = this.searchQuery.toLowerCase().replace(/\s/g, '');
 
       const filterTypes: ProductType[] = this.productTypes.filter(
@@ -247,7 +240,7 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
 
   protected deletingAllProductsModalShow = false;
 
-  handleDeletingAllProductsModal(answer:boolean) {
+  handleDeletingAllProductsModal(answer: boolean) {
     if (answer) this.removeAllProducts();
     this.deletingAllProductsModalShow = false;
   }

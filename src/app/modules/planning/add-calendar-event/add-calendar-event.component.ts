@@ -23,6 +23,7 @@ import { Subject, find, takeUntil } from 'rxjs';
 import { endOfDay, startOfDay } from 'date-fns';
 import { NotificationService } from '../../user-pages/services/notification.service';
 import { getFormattedDate } from 'src/tools/common';
+import { getModalDescription, getModalTitle } from './const';
 @Component({
   selector: 'app-add-calendar-event',
   templateUrl: './add-calendar-event.component.html',
@@ -343,44 +344,15 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
   }
 
   getModalDescription(type: 'success' | 'save' | 'exit'): string {
-    if (this.editMode) {
-      switch (type) {
-        case 'success':
-          return 'Рецепт в «Календаре рецептов» успешно изменен!';
-        case 'save':
-          return 'Вы уверены, что хотите изменить рецепт в плане?';
-        default:
-          return 'Вы уверены, что не хотите изменять рецепт в плане?';
-      }
-    } else {
-      switch (type) {
-        case 'success':
-          return 'Рецепт успешно добавлен в «Календарь рецептов»!';
-        case 'save':
-          return 'Вы уверены, что хотите добавить рецепт в план?';
-        default:
-          return 'Вы уверены, что не хотите добавить рецепт в план?';
-      }
-    }
+    return getModalDescription(type, this.editMode);
   }
 
   getModalTitle(type: 'success' | 'save' | 'exit'): string {
-    if (this.editMode) {
-      switch (type) {
-        case 'success':
-          return 'Рецепт изменен';
-        case 'save':
-          return 'Подтвердите изменение';
-      }
-    } else {
-      switch (type) {
-        case 'success':
-          return 'Рецепт добавлен';
-        case 'save':
-          return 'Подтвердите добавление';
-      }
-    }
-    return 'Подтвердите выход';
+    return getModalTitle(this.editMode, type);
+  }
+
+  protected close(){
+   return this.noChanges ? this.closeEmitter.emit(true) : (this.modalExitShow = true);  
   }
 
   public ngOnDestroy(): void {

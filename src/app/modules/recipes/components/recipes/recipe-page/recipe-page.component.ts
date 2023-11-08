@@ -74,8 +74,6 @@ export class RecipePageComponent implements OnInit, OnDestroy {
 
   showHistory = false;
 
-  
-
   readingTimeInMinutes: number = 0;
 
   commentForm: FormGroup;
@@ -89,16 +87,15 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   successVoteModalShow: boolean = false;
   commentsToShow: IComment[] = [];
 
-  protected alsoFromThisCook: IRecipe[] = [];
+  myPlan: IPlan = nullPlan;
+  protected targetCalendarEvent: CalendarEvent = nullCalendarEvent;
+  vote: boolean = false;
 
-  loadMoreComments() {
-    const currentLength = this.commentsToShow.length;
-    const nextComments = this.recipe.comments.slice(
-      currentLength,
-      currentLength + 2,
-    );
-    this.commentsToShow = [...this.commentsToShow, ...nextComments];
+  get date() {
+    return getFormattedDate(this.recipe.publicationDate);
   }
+
+  protected alsoFromThisCook: IRecipe[] = [];
 
   constructor(
     private notifyService: NotificationService,
@@ -127,8 +124,6 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     });
   }
 
-  myPlan: IPlan = nullPlan;
-
   ngOnInit() {
     this.route.data.subscribe((data: Data) => {
       this.recipe = data['RecipeResolver'];
@@ -136,107 +131,90 @@ export class RecipePageComponent implements OnInit, OnDestroy {
 
       this.titleService.setTitle(this.recipe.name);
 
+      this.userService.users$
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe((data) => {
+          if (this.recipe.authorId !== -1) {
+            const findedUser = data.find(
+              (user) => user.id === this.recipe.authorId,
+            );
+            if (findedUser) {
+              this.author = findedUser;
+            }
+          } else {
+            this.author = { ...nullUser };
+            this.author.id = -1;
+          }
+          this.authService.currentUser$
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe((data: IUser) => {
+              this.currentUser = data;
 
+              this.recipeService.recipes$
+                .pipe(takeUntil(this.destroyed$))
+                .subscribe((recipes: IRecipe[]) => {
+                  this.statisticPercent = Number(
+                    this.getStatictics().toFixed(0),
+                  );
 
-       this.userService.users$
-         .pipe(takeUntil(this.destroyed$))
-         .subscribe((data) => {
-           if (this.recipe.authorId !== -1) {
-             const findedUser = data.find(
-               (user) => user.id === this.recipe.authorId,
-             );
-             if (findedUser) {
-               this.author = findedUser;
-             }
-           } else {
-             this.author = { ...nullUser };
-             this.author.id = -1;
-           }
-           this.authService.currentUser$
-             .pipe(takeUntil(this.destroyed$))
-             .subscribe((data: IUser) => {
-               this.currentUser = data;
+                  if (this.recipe.categories.length > 0) {
+                    const publicRecipes =
+                      this.recipeService.getPublicRecipes(recipes);
+                    this.downRecipes = this.getSimilarRecipes(publicRecipes, 4);
+                  }
+                  this.alsoFromThisCook = this.recipeService
+                    .getRecipesByUser(
+                      this.recipeService.getPublicRecipes(recipes),
+                      this.author.id,
+                    )
+                    .filter((r) => r.id !== this.recipe.id)
+                    .slice(0, 4);
+                  this.recentRecipes = this.recipeService.getRecentRecipes(
+                    this.recipeService.getPublicRecipes(recipes),
+                  );
 
+                  this.recentRecipes = this.recentRecipes.filter(
+                    (recipe) => recipe.authorId !== this.currentUser.id,
+                  );
+                  this.recentRecipes = this.recentRecipes.filter(
+                    (recipe) => recipe.id !== this.recipe.id,
+                  );
+                  this.recentRecipes = this.recentRecipes.slice(0, 3);
 
-                  this.recipeService.recipes$
-                    .pipe(takeUntil(this.destroyed$))
-                    .subscribe((recipes: IRecipe[]) => {
-                      this.statisticPercent = Number(
-                        this.getStatictics().toFixed(0),
-                      );
+                  this.recipe.comments = this.commentService.sortComments([
+                    ...this.recipe.comments,
+                  ]);
+                  if (this.commentsToShow.length > 4)
+                    this.commentsToShow = this.recipe.comments.slice(
+                      0,
+                      this.commentsToShow.length + 1,
+                    );
+                  else {
+                    this.commentsToShow = this.recipe.comments.slice(0, 4);
+                  }
 
-                      if (this.recipe.categories.length > 0) {
-                        const publicRecipes =
-                          this.recipeService.getPublicRecipes(recipes);
-                        this.downRecipes = this.getSimilarRecipes(
-                          publicRecipes,
-                          4,
-                        );
-                      }
-                      this.alsoFromThisCook = this.recipeService
-                        .getRecipesByUser(
-                          this.recipeService.getPublicRecipes(recipes),
-                          this.author.id,
-                        )
-                        .filter((r) => r.id !== this.recipe.id)
-                        .slice(0, 4);
-                      this.recentRecipes = this.recipeService.getRecentRecipes(
-                        this.recipeService.getPublicRecipes(recipes),
-                      );
+                  this.setCategories();
+                  this.setReadingTimeInMinutes();
+                  this.setStatistics();
+                  this.iHaveIndgredient = Array.from(
+                    { length: this.recipe.ingredients.length },
+                    () => false,
+                  );
 
-                      this.recentRecipes = this.recentRecipes.filter(
-                        (recipe) => recipe.authorId !== this.currentUser.id,
-                      );
-                      this.recentRecipes = this.recentRecipes.filter(
-                        (recipe) => recipe.id !== this.recipe.id,
-                      );
-                      this.recentRecipes = this.recentRecipes.slice(0, 3);
+                  this.cd.markForCheck();
+                });
 
-                      this.recipe.comments = this.recipe.comments.sort(
-                        (commentA, commentB) => {
-                          if (commentA.date < commentB.date) return 1;
-                          if (commentA.date > commentB.date) return -1;
-                          else return 0;
-                        },
-                      );
-                      if (this.commentsToShow.length > 4)
-                        this.commentsToShow = this.recipe.comments.slice(
-                          0,
-                          this.commentsToShow.length + 1,
-                        );
-                      else {
-                        this.commentsToShow = this.recipe.comments.slice(0, 4);
-                      }
-
-                      this.setCategories();
-                      this.setReadingTimeInMinutes();
-                      this.setStatistics();
-                      this.iHaveIndgredient = Array.from(
-                        { length: this.recipe.ingredients.length },
-                        () => false,
-                      );
-
-                      this.cd.markForCheck();
-                    });
-
-               this.planService.plans$
-                 .pipe(takeUntil(this.destroyed$))
-                 .subscribe((data) => {
-                   const find = data.find(
-                     (p) => p.user === this.currentUser.id,
-                   );
-                   this.myPlan = find ? find : nullPlan;
-                   this.basketInit();
-                 });
-             });
-         });
-      
-
-   
+              this.planService.plans$
+                .pipe(takeUntil(this.destroyed$))
+                .subscribe((data) => {
+                  const find = data.find((p) => p.user === this.currentUser.id);
+                  this.myPlan = find ? find : nullPlan;
+                  this.basketInit();
+                });
+            });
+        });
     });
   }
-
-  protected targetCalendarEvent: CalendarEvent = nullCalendarEvent;
 
   protected addToPlan(): void {
     this.targetCalendarEvent.id = -1;
@@ -245,11 +223,6 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     this.addingToPlanMode = true;
   }
 
-  get date() {
-    return getFormattedDate(this.recipe.publicationDate);
-  }
-
-  vote: boolean = false;
   handleVoteModal(event: boolean) {
     this.vote = event;
     if (event) {
@@ -758,7 +731,14 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   onSkipHandler() {
     this.router.navigate([this.routerEventsService.previousRoutePath.value]);
   }
-
+  loadMoreComments() {
+    const currentLength = this.commentsToShow.length;
+    const nextComments = this.recipe.comments.slice(
+      currentLength,
+      currentLength + 2,
+    );
+    this.commentsToShow = [...this.commentsToShow, ...nextComments];
+  }
   ngOnDestroy(): void {
     this.destroyed$.next();
     this.destroyed$.complete();

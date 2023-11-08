@@ -91,13 +91,15 @@ export class CommentComponent implements OnInit, OnDestroy {
       });
   }
 
+
+
   likeComment() {
     this.commentService
       .likeComment(this.currentUser, this.comment, this.recipe)
       .pipe(takeUntil(this.destroyed$))
       .subscribe(() => {
         if (this.comment.likesId.includes(this.currentUser.id) && this.comment.authorId !== this.currentUser.id
-        && (this.userService.getPermission('your-commented-liked', this.author))) {
+        && this.userService.getPermission('your-commented-liked', this.author)) {
       
           const notify: INotification = this.notifyService.buildNotification(
             'Комментарий кому-то понравился',

@@ -122,7 +122,7 @@ export class UsersPageComponent implements OnInit, OnDestroy {
   }
 
   private getNewUsers(users: IUser[]): IUser[]{
-    users = users.sort((u1, u2) =>{if (u1.registrationDate < u2.registrationDate) return 1;else return -1})
+    users = users.sort((u1, u2) => { return (u1.registrationDate < u2.registrationDate)? 1 : -1})
     return users;
   }
 

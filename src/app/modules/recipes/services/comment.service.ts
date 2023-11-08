@@ -28,24 +28,26 @@ export class CommentService {
     recipe.comments = recipe.comments.filter((item) => item.id !== comment.id);
     return this.recipeService.updateRecipe(recipe);
   }
-
+  sortComments(comments: IComment[]): IComment[] {
+    return comments.sort((commentA, commentB) => {
+      if (commentA.date < commentB.date) return 1;
+      if (commentA.date > commentB.date) return -1;
+      else return 0;
+    });
+  }
   reportComment(comment: IComment, recipe: IRecipe, reporter: IUser) {
-
     let maxId: number = 0;
     if (recipe.reports) {
-      maxId = recipe.reports.reduce(
-        (max, c) => (c.id > max ? c.id : max),
-        0,
-      );
+      maxId = recipe.reports.reduce((max, c) => (c.id > max ? c.id : max), 0);
     }
-    
+
     const report: ICommentReport = {
-      id: maxId+1,
+      id: maxId + 1,
       date: new Date().toJSON(),
       reporter: reporter.id,
       comment: comment.id,
     };
-    if(!recipe.reports) recipe.reports = []
+    if (!recipe.reports) recipe.reports = [];
     recipe.reports.push(report);
     return this.recipeService.updateRecipe(recipe);
   }

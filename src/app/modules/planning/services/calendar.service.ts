@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { CalendarEvent } from 'angular-calendar';
 import { EventColor } from 'calendar-utils';
 
@@ -7,7 +6,6 @@ import { EventColor } from 'calendar-utils';
   providedIn: 'root',
 })
 export class CalendarService {
-  constructor(private http: HttpClient) {}
 
   createCalendarEvent(
     recipe: number,
@@ -25,7 +23,6 @@ export class CalendarService {
       color: eventColor,
       allDay: end ? false : true, //если нет конца то событие идет целый день, если нет то нет
       draggable: true,
-
       end: end,
       resizable: {
         beforeStart: true,
@@ -40,19 +37,14 @@ export class CalendarService {
 
     if (!event.end) {
       if (now > start) {
-        //if (now.getDate() > event.start.getDate()) return false; //дата начала события не сегодняшний день. конец не установлен. считаем что событие длилось весь свой день. возвращаем что прошло
         if (now.getDate() === start.getDate()) {
-          return true; //событие началось сегодня, но еще не закончилось, так как длится весь день
+          return true;
         }
-        //return false;
-      } //else return false;
+      }
     } else if (event.end) {
       const end = new Date(event.end);
-
-      if (now < start) return false; //событие еще не началось
-      if (now > start && now < end) return true; //событие началось но не закончилось
-      //if ((now > event.start) && (now > event.end)) return false; //событие и началось, и закончилось
-      //return false;
+      if (now < start) return false;
+      if (now > start && now < end) return true;
     }
     return false;
   }
@@ -61,30 +53,20 @@ export class CalendarService {
     const now = new Date();
     if (!event.end) {
       if (now > event.start) {
-        if (now.getDate() > event.start.getDate()) return true; //дата начала события не сегодняшний день. конец не установлен. считаем что событие длилось весь свой день. возвращаем что прошло
-        //  if (now.getDate() === event.start.getDate()) {
-        //    return false; //событие началось сегодня, но еще не закончилось, так как длится весь день
-        //  }
-        //        return false;
+        if (now.getDate() > event.start.getDate()) return true;
       }
-      // else return false;
     } else if (event.end) {
-      // if (now < event.start) return false;
-      //  if ((now > event.start) && (now < event.end)) return false //событие началось но не закончилось
-      if (now > event.start && now > event.end) return true; //событие и началось, и закончилось
-      // return false;
+      if (now > event.start && now > event.end) return true;
     }
     return false;
   }
-  
-  getEventByRelatedRecipe(events:CalendarEvent[], recipeId:number): CalendarEvent[]{
-  
-  return events.filter((event) => event.recipe === recipeId);
-  
+
+  getEventByRelatedRecipe(events: CalendarEvent[], recipeId: number): CalendarEvent[] {
+    return events.filter((event) => event.recipe === recipeId);
   }
 
-  filterEventsByRecipe(events: CalendarEvent[], recipeId: number): CalendarEvent[]{
-    return events.filter((event)=> event.recipe !== recipeId)
+  filterEventsByRecipe(events: CalendarEvent[], recipeId: number): CalendarEvent[] {
+    return events.filter((event) => event.recipe !== recipeId)
   }
 
   eventInFuture(event: CalendarEvent): boolean {
@@ -97,7 +79,7 @@ export class CalendarService {
     } else if (event.end) {
       const end = new Date(event.end);
 
-      if (now < start && now < end) return true;
+      if  (now < start && now < end) return true;
     }
     return false;
   }

@@ -611,3 +611,12 @@ a {
     border: 3px solid var(--scroll-body);
   }
 }
+
+.no-reps-icon{
+  @include flex;
+}
+.no-recipes-svg{
+  fill: var(--color-foreground-unactive);
+  width: 13em;
+  
+}

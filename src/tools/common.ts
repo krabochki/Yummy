@@ -1,3 +1,5 @@
+import { CalendarEvent } from "angular-calendar";
+
 export function getCurrentDate():string{
      return new Date().toJSON()
 }
@@ -15,4 +17,9 @@ export function getCurrentDate():string{
     if (Number(hours) < 10) hours = '0' + hours;
 
     return `${day}.${month}.${year} ${hours}:${minutes}`;
-  }
+}
+  
+
+export function dateComparator(dateA:Date, dateB:Date) {
+return (dateA > dateB) ? 1 :-1;
+}  

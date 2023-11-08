@@ -234,13 +234,12 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
         const shortTodayDate = today.toDateString(); //сегодняшняя дата без часов
         let alreadySentReminder = false; //прислано ли уже уведомление
         const currentUserNotifications = this.currentUser.notifications;
-        currentUserNotifications.forEach((notify) => {
-          if (
-            notify.context === 'plan-reminder' &&
-            notify.notificationDate === shortTodayDate
-          )
-            alreadySentReminder = true; //если уже есть уведомление с типом напоминалка и прислано оно сегодня
-        });
+        alreadySentReminder =
+          currentUserNotifications.find(
+            (n) =>
+              n.context === 'plan-reminder' &&
+              n.notificationDate === shortTodayDate,
+          ) !== undefined;
 
         //очищаем старые напоминалки
 
@@ -343,11 +342,10 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     }
     const find = this.notifies.find((n) => n.id === popup.id);
     if (find && !find.read) {
-        find.read = true;
-        this.currentUser.notifications = this.notifies;
-        this.userService.updateUsers(this.currentUser).subscribe();
-      }
-    
+      find.read = true;
+      this.currentUser.notifications = this.notifies;
+      this.userService.updateUsers(this.currentUser).subscribe();
+    }
   }
 
   //добавление и автоудаление всплыв уведомления
@@ -396,13 +394,13 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
       .subscribe((users) => {
         this.users = users;
         this.currentUserInit();
-        const theSame =
+        const noChangesInNotifies =
           this.currentUser.notifications.length === this.notifies.length &&
           this.currentUser.notifications.every((element, index) => {
             return element === this.notifies[index];
           });
 
-        if (this.currentUser.id !== 0 && !theSame) {
+        if (this.currentUser.id !== 0 && !noChangesInNotifies) {
           this.updateNotifies();
         }
         this.cd.markForCheck();
@@ -411,7 +409,6 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
 
   makeNotifiesUnreaded() {
     let haveNotRead: boolean = false;
-    console.log(this.notifies);
     this.notifies.forEach((notification) => {
       if (notification.read === false) {
         haveNotRead = true;

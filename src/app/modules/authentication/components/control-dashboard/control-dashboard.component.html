@@ -181,7 +181,7 @@
         Модераторы
         </h2>
   <div @height *ngIf="showManagers " class="users"> 
-    <app-users-list   [adminpanel]="true" (demoteClick)="demote($event)" [users]="managers"></app-users-list>
+    <app-users-list   [adminpanel]="true" (demoteClick)="demoteActionClick($event)" [users]="managers"></app-users-list>
   </div>
   </div>
 

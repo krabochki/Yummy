@@ -76,20 +76,15 @@ export class AuthService {
   }
 
   loginUser(user: IUser) {
-    
-    
     return this.userService.users$.pipe(
       map((users) => {
-        if (users.length > 0) {
-          const foundUser = users.find(
-            (u) =>
-              (u.email === user.email && u.password === user.password) ||
-              (u.username === user.username && u.password === user.password),
-          );
-          if (!foundUser) return null;
-          return foundUser;
-        }
-        else return null
+        return (users.length > 0)?
+            users?.find(
+              (u) =>
+                (u.email === user.email && u.password === user.password) ||
+                (u.username === user.username && u.password === user.password),
+            ) || null
+        : null
       }),
     );
   }

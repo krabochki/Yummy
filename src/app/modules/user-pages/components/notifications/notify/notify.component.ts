@@ -1,6 +1,10 @@
-import { AfterContentChecked, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+} from '@angular/core';
 import { INotification, nullNotification } from '../../../models/notifications';
-import { style } from '@angular/animations';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { NotificationService } from '../../../services/notification.service';
 import { IUser, nullUser } from '../../../models/users';
@@ -9,66 +13,75 @@ import { IUser, nullUser } from '../../../models/users';
   selector: 'app-notify',
   templateUrl: './notify.component.html',
   styleUrls: ['./notify.component.scss'],
-changeDetection:ChangeDetectionStrategy.OnPush
-  
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NotifyComponent  {
+export class NotifyComponent {
   @Input() notify: INotification = nullNotification;
   @Input() user: IUser = nullUser;
   @Output() notifyDeleteClick = new EventEmitter();
   @Input() popup: boolean = false;
 
-
-  constructor(private notificationService:NotificationService){}
+  constructor(private notificationService: NotificationService) {}
   protected deleteNotify() {
-
     if (this.popup) {
       this.notifyDeleteClick.emit();
+    } else {
+      this.notificationService
+        .removeNotification(this.notify, this.user)
+        .subscribe();
     }
-    else {
-      this.notificationService.removeNotification(this.notify, this.user).subscribe()
-    }
-    
   }
 
   getClass() {
-    const styleClasses = [];
-    if (!this.notify.read) styleClasses.push('not-readed');
-     if (this.notify.context === 'plan-reminder') return ['plan'];
-     if (this.notify.context === 'born') return ['born'];
-     if (this.notify.context === 'plan-reminder-start') return ['plan-start'];
-     if (this.notify.context === 'calendar-recipe') return ['calendar-recipe'];
-     if (this.notify.context === 'hire') return ['hire'];
-     if (this.notify.context === 'demote') return ['error'];
-    switch (this.notify.type) {
-      case 'info':
-        styleClasses.push('info');
+    const styles: string[] = [];
+    if (!this.notify.read) styles.push('not-readed');
+    switch (this.notify.context) {
+      case 'plan-reminder':
+        styles.push('plan');
         break;
-      case 'warning':
-        styleClasses.push('warning');
+      case 'born':
+        styles.push('born');
         break;
-      case 'error':
-        styleClasses.push('error');
+      case 'plan-reminder-start':
+        styles.push('plan-start');
         break;
-      case 'success':
-        styleClasses.push('success');
+      case 'calendar-recipe':
+        styles.push('calendar-recipe');
         break;
-      default:
+      case 'hire':
+        styles.push('plan');
+        break;
+      case 'demote':
+        styles.push('error');
         break;
     }
-    return styleClasses;
+    switch (this.notify.type) {
+      case 'info':
+        styles.push('info');
+        break;
+      case 'warning':
+        styles.push('warning');
+        break;
+      case 'error':
+        styles.push('error');
+        break;
+      case 'success':
+        styles.push('success');
+        break;
+    }
+    return styles;
   }
 
   get icon() {
-    const basePath = '../../../../../assets/images/svg/';
+    const basePath = 'assets/images/svg/';
     if (this.notify.context === 'hire') return basePath + 'case.svg';
     if (this.notify.context === 'born') return basePath + 'champagne.svg';
     if (this.notify.context === 'demote') return basePath + 'demote.svg';
-    if (this.notify.context === 'plan-reminder')
-      return basePath + 'pot.svg';
+    if (this.notify.context === 'plan-reminder') return basePath + 'pot.svg';
     if (this.notify.context === 'calendar-recipe')
       return basePath + 'plan-notify.svg';
-    if(this.notify.context === 'plan-reminder-start') return basePath + 'clocks.svg';
+    if (this.notify.context === 'plan-reminder-start')
+      return basePath + 'clocks.svg';
     return basePath + this.notify.type + '.svg';
   }
 }

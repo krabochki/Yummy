@@ -1,21 +1,26 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <div class="list">
-    <div><h1>Уведомления ({{notifies.length}})</h1>
-    <button (click)="clearAll()" class="clear-all" *ngIf="isSomethingForClear">
-        <svg-icon  class="trash" [applyClass]="true" [src]="'../../../../assets/images/svg/trash.svg'"/>
-        Очистить все</button>
-    
-    <hr></div>
-    <div class="no-notifies" *ngIf="!notifies.length">
-        
-        
-        У вас пока нет уведомлений
-    <svg-icon class="mail-cook" [applyClass]="true" [src]="'/assets/images/svg/mail-cook.svg'"></svg-icon>
-    
+    <div class="close">
+        <svg-icon [applyClass]="true" class="close-svg" [src]="'assets/images/svg/close.svg'"></svg-icon>
     </div>
-    <div class="notifies"><app-notify [user]="user"  *ngFor="let notify of notifies" [notify]="notify"></app-notify></div>
+    <div>
+        <h1>Уведомления ({{ notifies.length }})</h1>
+        <button (click)="clearAll()" class="clear-all" *ngIf="isSomethingForClear">
+            <svg-icon class="trash" [applyClass]="true" [src]="'../../../../assets/images/svg/trash.svg'" />
+            Очистить все
+        </button>
+
+    <div *ngIf="notifies.length>0" class="notifies">
+        <app-notify [user]="user" *ngFor="let notify of notifies" [notify]="notify"></app-notify>
+    </div>
+        <div class="no-notifies" *ngIf="!notifies.length">
+            У вас пока нет уведомлений
+            <svg-icon class="mail-cook" [applyClass]="true" [src]="'/assets/images/svg/mail-cook.svg'"></svg-icon>
+        </div>
+        <hr />
+    </div>
+
 </div>
 
-<div class="background" (click)="closeEmitter.emit(false);"></div>
-
+<div class="background" (click)="closeEmitter.emit(false)"></div>

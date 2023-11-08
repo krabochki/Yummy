@@ -112,8 +112,49 @@ border-top: 1px solid var(--color-background-deeper-unactive);
   grid-template-rows: min-content 100%;
   padding: 0 0;
 }
+
+.close-svg{
+  display: none;
+}
 @media(max-width:480px){
   :host{
-    width:20em;
+    width:100%;
+  }
+  .no-notifies{
+    font-size: 1.1em;
+  }
+  .no-notifies .mail-cook{
+    width: 65%;
+  }
+  .close-svg{
+    @include flex;
+    height: 0.7em;
+    fill: var(--color-foreground);
+  }
+
+  .close{
+
+    zoom: 0.9;
+    font-weight: 1000;
+    right: 1.5em;
+    z-index: 10;
+    top: 1em;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+    width: 2em;
+    height: 2em;
+    border-radius: 100%;
+    cursor: pointer;
+    background-color: var(--color-primary);
+    transition: opacity 0.2s ease-in-out;    zoom: 1.1;
+    font-weight: 1000;
+    right: 0;
+    top: 0;
+    padding-bottom: 0.25em;
+    padding-left: 0.25em;
+    border-radius: 0 0 0 100%;
   }
 }

@@ -65,6 +65,22 @@ export class NotificationService {
     );
     return this.userService.updateUsers(user);
   }
+
+  addNotificationToUser(notify: INotification, user: IUser) {
+    const actualUser = this.users.find((u) => u.id === user.id);
+    if (actualUser) {
+      if (!actualUser.notifications) {
+        actualUser.notifications = [];
+      }
+      let maxId = 0;
+      if (actualUser.notifications.length > 0)
+        maxId = Math.max(...actualUser.notifications.map((n) => n.id));
+      notify.id = maxId + 1;
+      actualUser.notifications.push(notify);
+      return actualUser;
+    }
+    return user;
+  }
   sendNotification(notification: INotification, user: IUser) {
     const actualUser = this.users.find((u) => u.id === user.id);
 

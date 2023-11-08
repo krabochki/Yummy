@@ -2,8 +2,12 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Title } from '@angular/platform-browser';
 import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
-import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
-import { IRecipe, nullRecipe } from 'src/app/modules/recipes/models/recipes';
+import {
+  IUser,
+  PermissionContext,
+  nullUser,
+} from 'src/app/modules/user-pages/models/users';
+import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 import {
   ICategory,
   ISection,
@@ -11,11 +15,10 @@ import {
 } from 'src/app/modules/recipes/models/categories';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { SectionService } from 'src/app/modules/recipes/services/section.service';
-import { Observable, Subject, forkJoin, takeUntil } from 'rxjs';
+import { EMPTY, Observable, Subject, forkJoin, takeUntil } from 'rxjs';
 import {
   IComment,
   ICommentReportForAdmin,
-  nullComment,
 } from 'src/app/modules/recipes/models/comments';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { trigger } from '@angular/animations';
@@ -23,6 +26,26 @@ import { heightAnim, modal } from 'src/tools/animations';
 import { CategoryService } from 'src/app/modules/recipes/services/category.service';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
+import { AdminService } from '../../services/admin.service';
+import {
+  getAuthorOfReportedComment,
+  getComment,
+  getRecipe,
+  getUser,
+} from './quick-actions';
+import {
+  getName,
+  notifyForAuthorOfApprovedCategory,
+  notifyForAuthorOfApprovedRecipe,
+  notifyForAuthorOfBlockedComment,
+  notifyForAuthorOfDismissedCategory,
+  notifyForAuthorOfDismissedRecipe,
+  notifyForAuthorOfLeavedComment,
+  notifyForDemotedUser,
+  notifyForFollowersOfApprovedRecipeAuthor,
+  notifyForReporterOfBlockedComment,
+  notifyForReporterOfLeavedComment,
+} from './notifications';
 @Component({
   selector: 'app-control-dashboard',
   templateUrl: './control-dashboard.component.html',
@@ -37,8 +60,8 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   private users: IUser[] = [];
   private recipes: IRecipe[] = [];
   protected reports: ICommentReportForAdmin[] = [];
-
   protected managers: IUser[] = [];
+
   protected targetDemotedUser: IUser = nullUser;
   protected showManagers: boolean = false;
 
@@ -81,6 +104,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   constructor(
     private recipeService: RecipeService,
     private cd: ChangeDetectorRef,
+    private adminService: AdminService,
     private titleService: Title,
     private authService: AuthService,
     private userService: UserService,
@@ -144,41 +168,6 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
       });
   }
 
-  protected demote(user: IUser) {
-    this.targetDemotedUser = user;
-    this.demoteModalShow = true;
-  }
-
-  protected getName(user: IUser): string {
-    return user.fullName ? user.fullName : '@' + user.username;
-  }
-  protected handleDemoteModal(answer: boolean) {
-    if (answer) {
-      this.targetDemotedUser.role = 'user';
-      this.userService.updateUsers(this.targetDemotedUser).subscribe();
-      const notify: INotification = this.notifyService.buildNotification(
-        'Вас разжаловали',
-        `Вы теперь не являетесь модератором сайта Yummy. Вас разжаловал администратор ${this.getName(
-          this.currentUser,
-        )}`,
-        'warning',
-        'demote',
-        `/cooks/list/${this.currentUser.id}`,
-      );
-      this.notifyService
-        .sendNotification(notify, this.targetDemotedUser)
-        .subscribe();
-      this.demoteSuccessModalShow = true;
-    } else {
-      this.targetDemotedUser = nullUser;
-    }
-    this.demoteModalShow = false;
-  }
-  protected handleSuccessDemoteModal() {
-    this.demoteSuccessModalShow = false;
-    this.targetDemotedUser = nullUser;
-  }
-
   private categoriesInit(): void {
     this.categoryService.categories$
       .pipe(takeUntil(this.destroyed$))
@@ -223,87 +212,77 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   }
 
   //Загрузить больше чего-то ...
-
-  loadMoreCommentReports() {
-    const currentLength = this.reports.length;
-    const nextRecipes = this.allReports.slice(currentLength, currentLength + 3);
-    this.reports = [...this.reports, ...nextRecipes];
+  private loadMore(all: any[], current: any[], amount: number): any[] {
+    const currentLength = current.length;
+    const next = all.slice(currentLength, currentLength + amount);
+    return (current = [this.currentUser, ...next]);
   }
-
-  loadMoreAwaitingRecipes() {
-    const currentLength = this.awaitingRecipesToShow.length;
-    const nextRecipes = this.awaitingRecipes.slice(
-      currentLength,
-      currentLength + 3,
+  protected loadMoreCategories(): void {
+    this.categoriesForCheckToShow = this.loadMore(
+      this.categoriesForCheck,
+      this.categoriesForCheckToShow,
+      3,
     );
-    this.awaitingRecipesToShow = [
-      ...this.awaitingRecipesToShow,
-      ...nextRecipes,
-    ];
   }
-
-  loadMoreCategories() {
-    const currentLength = this.categoriesForCheckToShow.length;
-    const nextRecipes = this.categoriesForCheck.slice(
-      currentLength,
-      currentLength + 3,
+  protected loadMoreCommentReports(): void {
+    this.reports = this.loadMore(this.allReports, this.reports, 3);
+  }
+  protected loadMoreAwaitingRecipes(): void {
+    this.awaitingRecipesToShow = this.loadMore(
+      this.awaitingRecipes,
+      this.awaitingRecipesToShow,
+      3,
     );
-    this.categoriesForCheckToShow = [
-      ...this.categoriesForCheckToShow,
-      ...nextRecipes,
-    ];
   }
 
-  //Модальные окна
-
-  handleApproveCategoryModal(event: boolean) {
+  protected handleApproveCategoryModal(event: boolean): void {
     if (event) {
       this.approveCategory();
     }
     this.approveCategoryActionModalShow = false;
   }
-  handleDismissCategoryModal(event: boolean) {
+  protected handleDismissCategoryModal(event: boolean): void {
     if (event) {
       this.dismissCategory();
     }
     this.dismissCategoryActionModalShow = false;
   }
-  handleSuccessApproveCategoryModal() {
-    this.successApproveCategoryModalShow = false;
-  }
-  handleSuccessDismissCategoryModal() {
-    this.successDismissCategoryModalShow = false;
-  }
-  handleReportCommentDismissModal(event: boolean) {
+  protected handleReportCommentDismissModal(event: boolean): void {
     if (event) this.leaveComment();
     this.reportCommentDismissModalShow = false;
   }
-  handleReportCommentApproveModal(event: boolean) {
+  protected handleReportCommentApproveModal(event: boolean): void {
     if (event) this.blockComment();
     this.reportCommentApproveModalShow = false;
   }
-  handleSuccessReportCommentDismissModal() {
-    this.successReportCommentDismissModalShow = false;
-  }
-  handleSuccessReportCommentApproveModal() {
-    this.successReportCommentApproveModalShow = false;
-  }
-  handleDismissRecipeModal(answer: boolean): void {
+  protected handleDismissRecipeModal(answer: boolean): void {
     if (answer) {
       this.adminAction = 'dismiss';
-
       this.successRecipeActionModalShow = true;
     }
     this.dismissRecipeModalShow = false;
   }
-  handleApproveRecipeModal(answer: boolean): void {
+  protected handleApproveRecipeModal(answer: boolean): void {
     if (answer) {
       this.adminAction = 'approve';
       this.successRecipeActionModalShow = true;
     }
     this.approveRecipeModalShow = false;
   }
-  handleSuccessRecipeActionModal() {
+  protected handleDemoteModal(answer: boolean): void {
+    if (answer) {
+      this.demoteSuccessModalShow = true;
+    } else {
+      this.targetDemotedUser = nullUser;
+    }
+    this.demoteModalShow = false;
+  }
+
+  protected handleSuccessApproveCategoryModal(): void {
+    this.successApproveCategoryModalShow = false;
+    this.sendNotifyAfterApproveCategory();
+  }
+  protected handleSuccessRecipeActionModal(): void {
     this.successRecipeActionModalShow = false;
 
     if (this.actionRecipe) {
@@ -314,229 +293,246 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
       }
     }
   }
-
-  //Получить конкретный экземпляр
-
-  getAuthorOfReportedComment(report: ICommentReportForAdmin): IUser {
-    return this.getUser(
-      this.getComment(report.comment, this.getRecipe(report.recipe)).authorId,
-    );
+  protected handleSuccessDemoteModal(): void {
+    this.demoteSuccessModalShow = false;
+    this.demoteUser();
   }
-  getUser(userId: number): IUser {
-    const find = this.users.find((item) => item.id === userId);
-    if (find) return find;
-    return { ...nullUser };
+  protected handleSuccessReportCommentDismissModal(): void {
+    this.successReportCommentDismissModalShow = false;
+    this.sendNotifiesAfterDismissedReport();
   }
-  getSection(category: number): ISection {
-    const find = this.sections.find((section) =>
-      section.categories.includes(category),
-    );
-    if (find) return find;
-    else return nullSection;
+  protected handleSuccessReportCommentApproveModal(): void {
+    this.successReportCommentApproveModalShow = false;
+    this.sendNotifiesAfterApprovingReport();
   }
-  getComment(commentId: number, recipe: IRecipe): IComment {
-    const find = recipe.comments.find((item) => item.id === commentId);
-    if (find) return find;
-    return nullComment;
-  }
-  getRecipe(recipeId: number): IRecipe {
-    const find = this.recipes.find((item) => item.id === recipeId);
-    if (find) return find;
-    else return nullRecipe;
+  protected handleSuccessDismissCategoryModal(): void {
+    this.successDismissCategoryModalShow = false;
+    this.sendNotifyAfterDismissCategory();
   }
 
-  //Работа с категориями
+  private sendNotifiesAfterDismissedReport(): void {
+    if (this.actionReport) {
+      const recipe: IRecipe = this.getRecipe(this.actionReport.recipe);
+      const reporter: IUser = this.getUser(this.actionReport.reporter);
+      const comment: IComment = this.getComment(this.actionReport.comment, recipe);
+      const author: IUser = this.getUser(comment.authorId);
 
-  approveCategory() {
+      const subscribes: Observable<IUser>[] = [];
+
+      const notifyForReporter = notifyForReporterOfLeavedComment(
+        author,
+        recipe,
+        comment,
+        this.notifyService,
+      );
+      subscribes.push(
+        this.sendNotifyWithPermission(
+          notifyForReporter,
+          reporter,
+          'your-reports-publish',
+        ),
+      );
+
+      const notifyForAuthor = notifyForAuthorOfLeavedComment(
+        comment,
+        recipe,
+        this.notifyService,
+      );
+      subscribes.push(
+        this.sendNotifyWithPermission(
+          notifyForAuthor,
+          author,
+          'your-reports-reviewed-moderator',
+        ),
+      );
+
+      forkJoin(subscribes).subscribe(() => (this.actionReport = null));
+    }
+  }
+  private sendNotifiesAfterApprovingReport(): void {
+    if (this.actionReport) {
+      const recipe: IRecipe = this.getRecipe(this.actionReport.recipe);
+      const reporter: IUser = this.getUser(this.actionReport.reporter);
+      const comment: IComment = this.getComment(this.actionReport.comment, recipe);
+
+      const author: IUser = this.getUser(comment.authorId);
+
+      const notifyForAuthor = notifyForAuthorOfBlockedComment(
+        comment,
+        recipe,
+        this.notifyService,
+      );
+      const notifyForReporter = notifyForReporterOfBlockedComment(
+        comment,
+        recipe,
+        author,
+        this.notifyService,
+      );
+
+      const subscribes: Observable<IUser>[] = [];
+      subscribes.push(
+        this.sendNotifyWithPermission(
+          notifyForReporter,
+          reporter,
+          'your-reports-publish',
+        ),
+      );
+      subscribes.push(
+        this.sendNotifyWithPermission(
+          notifyForAuthor,
+          author,
+          'your-reports-reviewed-moderator',
+        ),
+      );
+      forkJoin(subscribes).subscribe(() => (this.actionReport = null));
+    }
+  }
+  private sendNotifyAfterApproveCategory(): void {
     if (this.actionCategory) {
-      this.actionCategory.status = 'public';
-      this.categoryService.updateCategory(this.actionCategory).subscribe(() => {
-        this.successApproveCategoryModalShow = true;
+      const author: IUser = this.getUser(this.actionCategory.authorId);
+      const notify = notifyForAuthorOfApprovedCategory(
+        this.actionCategory,
+        this.notifyService,
+      );
+      this.sendNotifyWithPermission(
+        notify,
+        author,
+        'manager-reviewed-your-category',
+      ).subscribe(() => (this.actionCategory = null));
+    }
+  }
+  private sendNotifyAfterDismissCategory(): void {
+    if (this.actionCategory) {
+      const author: IUser = this.getUser(this.actionCategory.authorId);
+      const notifyForAuthor = notifyForAuthorOfDismissedCategory(
+        this.actionCategory,
+        this.notifyService,
+      );
+      this.sendNotifyWithPermission(
+        notifyForAuthor,
+        author,
+        'manager-reviewed-your-category',
+      ).subscribe(() => (this.actionCategory = null));
+    }
+  }
+  private sendNotifiesAfterPublishingRecipe(approvedRecipe: IRecipe): void {
+    if (this.actionRecipe) {
+      const subscribes: Observable<IUser>[] = [];
+      const author: IUser = this.getUser(this.actionRecipe.authorId);
+      {
+        const notifyForAuthor: INotification = notifyForAuthorOfApprovedRecipe(
+          this.actionRecipe,
+          this.notifyService,
+        );
+        subscribes.push(
+          this.sendNotifyWithPermission(
+            notifyForAuthor,
+            author,
+            'manager-review-your-recipe',
+          ),
+        );
 
-        if (
-          this.actionCategory &&
-          this.userService.getPermission(
-            'manager-reviewed-your-category',
-            this.currentUser,
-          )
-        ) {
-          const author: IUser = this.getUser(this.actionCategory?.authorId);
-          const link: string = '/categories/list/' + this.actionCategory.id;
-          const notify: INotification = this.notifyService.buildNotification(
-            'Категория одобрена',
-            `Твоя категория «${this.actionCategory.name}» одобрена и теперь может просматриваться всеми кулинарами`,
-            'success',
-            'category',
-            link,
+        const authorFollowers = this.userService.getFollowers(
+          this.users,
+          author.id,
+        );
+        authorFollowers.forEach((follower) => {
+          const notifyForFollower = notifyForFollowersOfApprovedRecipeAuthor(
+            author,
+            approvedRecipe,
+            this.notifyService,
           );
-          this.notifyService.sendNotification(notify, author).subscribe();
+          subscribes.push(
+            this.sendNotifyWithPermission(
+              notifyForFollower,
+              follower,
+              'new-recipe-from-following',
+            ),
+          );
+        });
+      }
+      forkJoin(subscribes).subscribe(() => (this.actionRecipe = null));
+    }
+  }
+
+  private demoteUser() {
+    this.targetDemotedUser.role = 'user';
+    this.targetDemotedUser = this.notifyService.addNotificationToUser(
+      notifyForDemotedUser(this.currentUser, this.notifyService),
+      this.targetDemotedUser,
+    );
+    this.userService
+      .updateUsers(this.targetDemotedUser)
+      .subscribe(() => (this.targetDemotedUser = nullUser));
+  }
+  private approveCategory() {
+    if (this.actionCategory) {
+      this.adminService
+        .approveCategory(this.actionCategory)
+        .subscribe(() => (this.successApproveCategoryModalShow = true));
+    }
+  }
+  private dismissCategory() {
+    if (this.actionCategory) {
+      this.adminService.dismissCategory(this.actionCategory).subscribe(() => {
+        if (this.actionCategory) {
+          const section = { ...this.getSection(this.actionCategory.id) };
+          this.adminService
+            .updateSectionAfterDismissCategory(section, this.actionCategory)
+            .subscribe(() => (this.successDismissCategoryModalShow = true));
         }
-        this.cd.markForCheck();
       });
     }
   }
-  dismissCategory() {
-    if (this.actionCategory) {
-      const section = { ...this.getSection(this.actionCategory.id) };
-      section.categories = section.categories.filter(
-        (categoryId) => categoryId !== this.actionCategory?.id,
-      );
-
-      this.categoryService
-        .deleteCategory(this.actionCategory.id)
-        .subscribe(() => {
-          this.sectionService.updateSections(section).subscribe(() => {
-            this.successDismissCategoryModalShow = true;
-          });
-          if (
-            this.actionCategory &&
-            this.userService.getPermission(
-              'manager-reviewed-your-category',
-              this.currentUser,
-            )
-          ) {
-            const author: IUser = this.getUser(this.actionCategory?.authorId);
-            const notify: INotification = this.notifyService.buildNotification(
-              'Категория отклонена',
-              `Твоя категория «${this.actionCategory.name}» отклонена`,
-              'error',
-              'category',
-              '',
-            );
-            this.notifyService.sendNotification(notify, author).subscribe();
-          }
-          this.cd.markForCheck();
-        });
+  private approveRecipe(): void {
+    if (this.actionRecipe)
+      this.adminService
+        .approveRecipe(this.actionRecipe)
+        .subscribe(() =>
+          this.actionRecipe
+            ? this.sendNotifiesAfterPublishingRecipe(this.actionRecipe)
+            : null,
+        );
+  }
+  private dismissRecipe(): void {
+    if (this.actionRecipe) {
+      this.adminService.dismissRecipe(this.actionRecipe).subscribe(() => {
+        if (this.actionRecipe) {
+          const author: IUser = this.getUser(this.actionRecipe.authorId);
+          const notify = notifyForAuthorOfDismissedRecipe(
+            this.actionRecipe,
+            this.notifyService,
+          );
+          this.sendNotifyWithPermission(
+            notify,
+            author,
+            'manager-review-your-recipe',
+          ).subscribe(() => (this.actionRecipe = null));
+        }
+      });
     }
   }
-
-  //Работа с категориями
   private blockComment(): void {
-    const report = this.actionReport;
-
-    if (report) {
-      const comment = this.getComment(
-        report.comment,
-        this.getRecipe(report.recipe),
-      );
-      const recipe = this.getRecipe(report.recipe);
-
-      this.recipeService
-        .updateRecipe({
-          ...recipe,
-          comments: recipe.comments.filter(
-            (item) => item.id !== report.comment,
-          ),
-          reports: recipe.reports.filter(
-            (item) => item.comment !== report.comment,
-          ),
-        })
+    if (this.actionReport) {
+      this.adminService
+        .blockComment(this.actionReport, this.recipes)
         .subscribe(() => {
           this.successReportCommentApproveModalShow = true;
-          if (this.actionReport) {
-            const recipe: IRecipe = this.getRecipe(report.recipe);
-            const reporter: IUser = this.getUser(report.reporter);
-            const author: IUser = this.getUser(comment.authorId);
-            const notify1: INotification = this.notifyService.buildNotification(
-              'Твой комментарий удален по жалобе',
-              `Твоя комментарий «${comment.text}» под рецептом « ${recipe.name} » удален по жалобе`,
-              'error',
-              'comment',
-              '/recipes/list/' + recipe.id,
-            );
-            const notify2: INotification = this.notifyService.buildNotification(
-              'Комментарий удален по твоей жалобе',
-              `Твоя жалоба на комментарий пользователя ${
-                author.fullName ? author.fullName : '@' + author.username
-              } «${comment.text}» под рецептом «${recipe.name}» принята`,
-              'success',
-              'comment',
-              '/recipes/list/' + recipe.id,
-            );
-
-            if (
-              this.userService.getPermission('your-reports-publish', reporter)
-            )
-              this.notifyService
-                .sendNotification(notify2, reporter)
-                .subscribe();
-            if (
-              this.userService.getPermission(
-                'your-reports-reviewed-moderator',
-                author,
-              )
-            )
-              this.notifyService.sendNotification(notify1, author).subscribe();
-          }
         });
     }
   }
   private leaveComment(): void {
-    const report = this.actionReport;
-
-    if (report) {
-      const recipe = this.getRecipe(report.recipe);
-
-      this.recipeService
-        .updateRecipe({
-          ...recipe,
-          reports: recipe.reports.filter(
-            (item) => item.comment !== report.comment,
-          ),
-        })
+    if (this.actionReport) {
+      const recipe = this.getRecipe(this.actionReport.recipe);
+      this.adminService
+        .leaveComment(recipe, this.actionReport)
         .subscribe(() => {
           this.successReportCommentDismissModalShow = true;
-
-          if (this.actionReport) {
-            const recipe: IRecipe = this.getRecipe(this.actionReport.recipe);
-            const reporter: IUser = this.getUser(this.actionReport.reporter);
-            const comment: IComment = this.getComment(
-              this.actionReport.comment,
-              recipe,
-            );
-            const author: IUser = this.getUser(
-              this.getComment(
-                this.actionReport.comment,
-                this.getRecipe(this.actionReport.recipe),
-              ).authorId,
-            );
-
-            if (
-              this.userService.getPermission('your-reports-publish', reporter)
-            ) {
-              const notify: INotification =
-                this.notifyService.buildNotification(
-                  'Жалоба на комментарий отклонена',
-                  `Твоя жалоба на комментарий пользователя ${
-                    author.fullName ? author.fullName : '@' + author.username
-                  } «${comment.text}» под рецептом «${recipe.name}» отклонена`,
-                  'error',
-                  'comment',
-                  '/recipes/list/' + recipe.id,
-                );
-              this.notifyService.sendNotification(notify, reporter).subscribe();
-            }
-
-            if (
-              this.userService.getPermission(
-                'your-reports-reviewed-moderator',
-                reporter,
-              )
-            ) {
-              const notify = this.notifyService.buildNotification(
-                'Жалоба на комментарий отклонена',
-                `Жалоба на ваш комментарий «${comment.text}» под рецептом «${recipe.name}» отклонена модератором. Комментарий сохранен!`,
-                'info',
-                'comment',
-                '/recipes/list/' + recipe.id,
-              );
-              this.notifyService.sendNotification(notify, author).subscribe();
-            }
-          }
-          this.actionReport = null;
         });
     }
   }
+
+  //клики по кнопкам
   protected reportActionClick(
     action: 'approve' | 'dismiss',
     report: ICommentReportForAdmin,
@@ -548,8 +544,6 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     }
     this.actionReport = report;
   }
-
-  //Работа с рецептами
   protected awaitingRecipeActionClick(
     action: 'approve' | 'dismiss',
     recipe: IRecipe,
@@ -561,109 +555,48 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     }
     this.actionRecipe = recipe;
   }
-  private approveRecipe(): void {
-    if (this.actionRecipe) {
-      const approvedRecipe = this.recipeService.approveRecipe(
-        this.actionRecipe,
-      );
-              const subscribes: Observable<any>[] = [];
-
-      subscribes.push(
-        this.recipeService.updateRecipe(approvedRecipe));
-
-      if (this.actionRecipe) {
-        const recipeAuthor: IUser = this.getUser(this.actionRecipe?.authorId);
-
-        if (
-          this.userService.getPermission(
-            'manager-review-your-recipe',
-            recipeAuthor,
-          )
-        ) {
-          const notify: INotification = this.notifyService.buildNotification(
-            'Рецепт одобрен',
-            `Твой рецепт «${this.actionRecipe.name}» одобрен и теперь может просматриваться всеми кулинарами`,
-            'success',
-            'recipe',
-            '/recipes/list/' + this.actionRecipe.id,
-          );
-
-
-          subscribes.push(
-            this.notifyService.sendNotification(notify, recipeAuthor),
-          );
-        }
-        const authorFollowers = this.userService.getFollowers(
-          this.users,
-          recipeAuthor.id,
-        );
-
-        authorFollowers.forEach((follower) => {
-          if (
-            this.userService.getPermission(
-              'new-recipe-from-following',
-              follower,
-            )
-          ) {
-            const notify = this.notifyService.buildNotification(
-              'Новый рецепт от кулинара',
-              `Кулинар ${this.getName(
-                recipeAuthor,
-              )}, на которого вы подписаны, поделился новым рецептом «${approvedRecipe.name
-              }»`,
-              'info',
-              'recipe',
-              '/recipes/list/' + approvedRecipe.id,
-            );
-            subscribes.push(
-              this.notifyService.sendNotification(notify, follower),
-            );
-          }
-        });
-          
-          
-        
-      }
-      
-      forkJoin(subscribes).subscribe(
-        {
-          next(){},
-          error(erorr: Error) { console.error(erorr); console.error(erorr.message) }
-        }
-      );
-    }
-  }
-  private dismissRecipe(): void {
-    if (this.actionRecipe) {
-      const dismissedRecipe = this.recipeService.dismissRecipe(
-        this.actionRecipe,
-      );
-      this.recipeService.updateRecipe(dismissedRecipe).subscribe(() => {
-        if (this.actionRecipe) {
-          const recipeAuthor: IUser = this.getUser(this.actionRecipe?.authorId);
-          if (
-            this.userService.getPermission(
-              'manager-review-your-recipe',
-              recipeAuthor,
-            )
-          ) {
-            const notify: INotification = this.notifyService.buildNotification(
-              'Рецепт отклонен',
-              `Твой рецепт «${this.actionRecipe.name}» отклонен`,
-              'error',
-              'recipe',
-              '',
-            );
-            this.notifyService
-              .sendNotification(notify, recipeAuthor)
-              .subscribe();
-          }
-        }
-      });
-    }
+  protected demoteActionClick(user: IUser) {
+    this.targetDemotedUser = user;
+    this.demoteModalShow = true;
   }
 
-  ngOnDestroy(): void {
+  private sendNotifyWithPermission(
+    notify: INotification,
+    user: IUser,
+    permission?: PermissionContext,
+  ) {
+    if (permission)
+      return this.userService.getPermission(permission, user)
+        ? this.notifyService.sendNotification(notify, user)
+        : EMPTY;
+    return this.notifyService.sendNotification(notify, user);
+  }
+
+  //Получить конкретный экземпляр
+  protected getAuthorOfReportedComment(report: ICommentReportForAdmin): IUser {
+    return getAuthorOfReportedComment(report, this.users, this.recipes);
+  }
+  protected getSection(category: number): ISection {
+    return (
+      this.sections.find((section) => section.categories.includes(category)) ||
+      nullSection
+    );
+  }
+  protected getComment(commentId: number, recipe: IRecipe): IComment {
+    return getComment(commentId, recipe);
+  }
+  protected getRecipe(recipeId: number): IRecipe {
+    return getRecipe(recipeId, this.recipes);
+  }
+  protected getUser(userId: number): IUser {
+    return getUser(userId, this.users);
+  }
+
+  protected getName(user: IUser): string {
+    return getName(user);
+  }
+
+  public ngOnDestroy(): void {
     this.destroyed$.next();
     this.destroyed$.complete();
   }

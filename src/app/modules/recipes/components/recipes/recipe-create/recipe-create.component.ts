@@ -31,14 +31,15 @@ import { RecipeService } from '../../../services/recipe.service';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { ICategory, ISection, nullSection } from '../../../models/categories';
 import { CategoryService } from '../../../services/category.service';
-import { Observable, Subject } from 'rxjs';
-import { startWith, map, takeUntil, max } from 'rxjs/operators';
+import {  Subject } from 'rxjs';
+import {  takeUntil } from 'rxjs/operators';
 import { SectionService } from '../../../services/section.service';
 import { SectionGroup } from 'src/app/modules/controls/autocomplete/autocomplete.component';
 import { Title } from '@angular/platform-browser';
 import { getCurrentDate } from 'src/tools/common';
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
+import { UserService } from 'src/app/modules/user-pages/services/user.service';
 
 @Component({
   selector: 'app-recipe-create',
@@ -98,6 +99,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private categoryService: CategoryService,
     private sectionService: SectionService,
+    private userService:UserService,
     private recipeService: RecipeService,
     private fb: FormBuilder,
     public router: Router,
@@ -159,7 +161,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
                 sectionGroup.section = section;
                 section.categories.forEach((element: number) => {
                   const finded = this.allCategories.find(
-                    (elem) => (elem.id === element && elem.status === 'public'),
+                    (elem) => elem.id === element && elem.status === 'public',
                   );
                   if (finded) sectionGroup.categories.push(finded);
                 });
@@ -194,7 +196,9 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
             const objectURL = URL.createObjectURL(mainpicFile);
             this.mainImage = objectURL;
           }
-        } catch (error) { }
+        } catch  {
+          console.error('Ошибка при извлечении главной фотографии')
+        }
       }
 
       for (let i = 1; i <= editedRecipe.nutritions.length; i++) {
@@ -253,7 +257,9 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
                 }
               }
             }
-          } catch (error) { }
+          } catch {
+            console.error('Ошибка при извлечении фотографии инструкции')
+          }
         }
       }
       for (const categoryId of editedRecipe.categories) {
@@ -296,7 +302,6 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     );
   }
 
-
   //Работа с категориями
   addCategory(event: ICategory) {
     if (this.selectedCategories.length < 5) {
@@ -314,8 +319,6 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       else return false;
     });
   }
-
-
 
   //Работа с картинками
   //удаляем фото из инструкций рецепта по индеку инструкции и фото
@@ -518,27 +521,11 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       };
 
       this.recipeService.postRecipe(recipeData).subscribe(() => {
+            this.editedRecipe = recipeData;
+
         this.successModalShow = true;
 
-
-        const author: IUser = this.currentUser;
-        
-        const title =
-          ('Рецепт «' +
-          recipeData.name +
-          '» сохранен в твоих рецептах' +
-          (this.isAwaitingApprove
-            ? ' и успешно отправлен на проверку'
-            : ''));
-        const notify: INotification = this.notifyService.buildNotification(
-          this.isAwaitingApprove ? 'Рецепт создан и отправлен на проверку' : 'Рецепт создан',
-          title,
-          'success',
-          'recipe',
-          '/recipes/list/' + recipeData.id,
-        );
-        this.notifyService.sendNotification(notify, author).subscribe();
-
+      
 
         this.cd.markForCheck();
       });
@@ -587,9 +574,11 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     if (answer) {
       this.editRecipe();
     } else {
-      this.renderer.addClass(document.body, 'hide-overflow');
-      (<HTMLElement>document.querySelector('.header')).style.width =
-        'calc(100% - 16px)';
+      setTimeout(() => {
+        this.renderer.addClass(document.body, 'hide-overflow');
+        (<HTMLElement>document.querySelector('.header')).style.width =
+          'calc(100% - 16px)';
+      }, 0);
     }
 
     this.editModalShow = false;
@@ -616,6 +605,28 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
 
     this.successModalShow = false;
     this.closeEmitter.emit(true);
+
+      if (
+        this.userService.getPermission(
+          'you-create-new-recipe',
+          this.currentUser,
+        )
+      ) {
+        const notify: INotification = this.notifyService.buildNotification(
+          this.isAwaitingApprove
+            ? 'Рецепт создан и отправлен на проверку'
+            : 'Рецепт создан',
+          `Рецепт «${this.editedRecipe.name}» успешно сохранен в ваших рецептах${
+            this.isAwaitingApprove ? ' и отправлен на проверку' : ''
+          }`,
+          'success',
+          'recipe',
+          '/recipes/list/' + this.editedRecipe.id,
+        );
+        this.notifyService
+          .sendNotification(notify, this.currentUser)
+          .subscribe();
+      }
   }
   handleApproveModal(answer: boolean): void {
     if (answer) {

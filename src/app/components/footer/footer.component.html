@@ -1,6 +1,6 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<div class="footer">
+<div class="footer noselect">
 
     <div class="main-info">
         <div>
@@ -10,30 +10,33 @@
             </p>
         </div>
         <div class="sections">
-            <div>
+            <div class="left">
                 <p>Рецепты</p>
-                <ul>
+                <ul >
                     <a (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" routerLink="/recipes/yours">Твои рецепты</a>
-                    <a  routerLink="/recipes">Все рецепты</a>
+                    <a  routerLink="/recipes">Ваши рецепты</a>
                     <a routerLink="/sections">Разделы</a>
                     <a (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" routerLink="/recipes/favorite">Закладки</a>
                     <a  routerLink="/match">Подбор рецептов</a>
                 </ul>
             </div>
-            <div>
+            <div class="center">
                 <p>Кулинары</p>
-                <ul>
-                    <a (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" [routerLink]="this.currentUser.id >0?'/cooks/list/'+currentUser.id:null">Твой профиль</a>
+                <ul >
+                    <a (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" [routerLink]="this.currentUser.id >0?'/cooks/list/'+currentUser.id:null">Ваш профиль</a>
                     <a routerLink="/cooks">Все кулинары</a>
-                    <a routerLink="/cooks/updates">Обновления</a>
+                    <a [routerLink]="this.currentUser.id >0?'/cooks/updates':null" (click)="linkClick()"  [ngClass]="{'disabling':currentUser.id===0}" >Обновления</a>
                 </ul>
             </div>
-            <div>
-                <p>Другое</p>
+            <div  class="right">
+                <p>Планнер</p>
                 <ul>
-                    <a [routerLink]="this.currentUser.id >0?'plan':null" (click)="linkClick()"  [ngClass]="{'disabling':currentUser.id===0}">План готовки</a>
-                    <a routerLink="/about">О сайте</a>
-                    <a routerLink="/user-policy">Пользовательское соглашение</a>
+                    <a routerLink="/plan/collections" >Подборки</a>
+                    <a routerLink="/plan/tips" >Советы</a>
+                    <a [routerLink]="this.currentUser.id >0?'/plan/calendar':null" (click)="linkClick()"  [ngClass]="{'disabling':currentUser.id===0}">Календарь рецептов</a>
+                    <a [routerLink]="this.currentUser.id >0?'/plan/shopping-list':null" (click)="linkClick()"  [ngClass]="{'disabling':currentUser.id===0}">Список покупок</a>
+                    <!-- <a routerLink="/about">О сайте</a>
+                    <a routerLink="/user-policy">Пользовательское соглашение</a> -->
                 </ul>
             </div>
         </div>
@@ -46,12 +49,12 @@
         <p class="copyright">© 2023 Yummy. Никакие права не защищены</p>
 
         <ul class="links">
-            <a *ngFor="let link of links, let i=index">
-                <a [href]="link[1]">
+            <a *ngFor="let link of links, let i=index" [href]="link[1]">
+                <div class="link">
                     <svg-icon [src]="'../../../assets/images/svg/'+link[0]+'.svg'"
                     [class]="'svg'"
                     ></svg-icon>
-                </a>
+                </div>
            
             </a>
         </ul>

@@ -21,15 +21,15 @@ export const nullComment:IComment={
 }
 export interface ICommentReport{
   id: number,
-  reporterId: number,
+  reporter: number,
   date: string,
-  commentId: number
+  comment: number
 }
   
 export interface ICommentReportForAdmin {
-  recipeId:number,
+  recipe:number,
   id: number;
-  reporterId: number;
+  reporter: number;
   date: string;
-  commentId: number;
+  comment: number;
 }

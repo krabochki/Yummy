@@ -32,7 +32,8 @@ export class UsersPageComponent implements OnInit, OnDestroy {
   protected currentUserFollowingUsers: IUser[] = [];
   protected moreViewedUsers: IUser[] = [];
   protected currentUserFollowersUsers: IUser[] = [];
-  protected currentUser: IUser = nullUser;
+  protected newUsers: IUser[] = [];
+  protected currentUser: IUser = { ...nullUser };
   protected filter: string = '';
   protected userType: UsersType = UsersType.All;
   protected showUsers: IUser[] = [];
@@ -77,6 +78,7 @@ export class UsersPageComponent implements OnInit, OnDestroy {
         this.currentUserFollowersUsers = this.getCurrentUserFollowersUsers(
           this.users,
         );
+        this.newUsers = this.getNewUsers(this.users);
         this.moreViewedUsers = this.getMoreViewedUsers(this.users);
 
         switch (this.userType) {
@@ -84,35 +86,31 @@ export class UsersPageComponent implements OnInit, OnDestroy {
             this.allUsers = this.users;
             break;
           case UsersType.Nearby:
-            this.showUsers = this.nearbyUsers.slice(0,6);
             this.allUsers = this.nearbyUsers;
             break;
           case UsersType.Popular:
-            this.showUsers = this.popularUsers.slice(0, 6);
             this.allUsers = this.popularUsers;
             break;
           case UsersType.Followers:
-            this.showUsers = this.currentUserFollowersUsers.slice(0, 6);
             this.allUsers = this.currentUserFollowersUsers;
             break;
           case UsersType.Following:
-            this.showUsers = this.currentUserFollowingUsers.slice(0, 6);
             this.allUsers = this.currentUserFollowingUsers;
             break;
           case UsersType.MostViewed:
-            this.showUsers = this.moreViewedUsers.slice(0, 6);
             this.allUsers = this.moreViewedUsers;
             break;
           case UsersType.Productive:
-            this.showUsers = this.moreProductiveUsers.slice(0, 6);
             this.allUsers = this.moreProductiveUsers;
             break;
           case UsersType.Managers:
-            this.showUsers = this.administratorsAndModerators.slice(0, 6);
             this.allUsers = this.administratorsAndModerators;
             break;
+          case UsersType.New:
+            this.allUsers = this.newUsers;
         }
-        this.title.setTitle(this.getTitleByUserType(this.userType))
+        this.showUsers = this.allUsers.slice(0, 6);
+        this.title.setTitle(this.getTitleByUserType(this.userType));
       });
   }
 
@@ -123,8 +121,16 @@ export class UsersPageComponent implements OnInit, OnDestroy {
     return noUsersText[userType] || '';
   }
 
+  private getNewUsers(users: IUser[]): IUser[]{
+    users = users.sort((u1, u2) => { return (u1.registrationDate < u2.registrationDate)? 1 : -1})
+    return users;
+  }
+
   setUserType(filter: string): void {
     switch (filter) {
+      case 'new':
+        this.userType = UsersType.New;
+        break;
       case 'popular':
         this.userType = UsersType.Popular;
         break;
@@ -164,7 +170,7 @@ export class UsersPageComponent implements OnInit, OnDestroy {
     );
   }
   private getNearbyUsers(users: IUser[]): IUser[] {
-    return this.userService.getNearby(users,this.currentUser)
+    return this.userService.getNearby(users, this.currentUser);
   }
 
   private getMoreViewedUsers(users: IUser[]): IUser[] {

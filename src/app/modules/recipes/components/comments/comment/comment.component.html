@@ -11,23 +11,23 @@
             <h1>
                 {{ author.fullName !== "" ? author.fullName : "@" + author.username }}
 
-                <span *ngIf="comment.authorId === recipe.authorId">·</span>
+                <span *ngIf="comment.authorId === recipe.authorId" class="noselect">·</span>
                 <span *ngIf="comment.authorId === recipe.authorId">Автор рецепта</span>
             </h1>
             <p class="date">{{ date | timePast }}</p>
         </a>
         <p class="text">{{ comment.text }}</p>
-        <div class="footer">
-            <div class="likes">
-                <div class="like" (click)="likeComment()"
+        <div class="footer noselect">
+            <div class="likes" >
+                <button class="like" (click)="currentUser.id>0?likeComment():noAccessModalShow=true"
                     [ngClass]="{ liked: comment.likesId.includes(currentUser.id) }">
                     <svg-icon class="like-svg" *ngIf="!comment.likesId.includes(currentUser.id)" [applyClass]="true"
                         [src]="'../../../../../assets/images/svg/like-comment.svg'"></svg-icon>
                     <svg-icon class="like-svg" *ngIf="comment.likesId.includes(currentUser.id)" [applyClass]="true"
                         [src]="'../../../../../assets/images/svg/like-comment-fill.svg'"></svg-icon>
                     <span>{{ comment.likesId.length }}</span>
-                </div>
-                <div (click)="dislikeComment()" class="like"
+                </button>
+                <button (click)="currentUser.id>0?dislikeComment():noAccessModalShow=true" class="like like-dislike"
                     [ngClass]="{ disliked: comment.dislikesId.includes(currentUser.id) }">
                     <svg-icon class="like-svg" *ngIf="!comment.dislikesId.includes(currentUser.id)" [applyClass]="true"
                         [src]="'../../../../../assets/images/svg/dislike.svg'"></svg-icon>
@@ -38,25 +38,25 @@
                         ? 0
                         : "−" + comment.dislikesId.length
                         }}</span>
-                </div>
+                </button>
             </div>
             <div class="actions">
-                <div class="action" (click)="copy()">
+                <button class="action" (click)="copy()">
                     <svg-icon class="like-svg" [applyClass]="true"
                         [src]="'../../../../../assets/images/svg/copy.svg'"></svg-icon>
                     <span>{{ !copyState ? "Копировать" : "Скопировано" }}</span>
-                </div>
-                <div [ngClass]="{'haveReport':haveReport}" [title]="haveReport?'Вы уже подавали жалобу на этот комментарий':''" (click)="haveReport?null:reportCommentModalShow = true" class="action red" *ngIf=" currentUser.id !== comment.authorId; else remove">
+                </button>
+                <button  [ngClass]="{'haveReport':haveReport}" [title]="haveReport?'Вы уже подавали жалобу на этот комментарий':''" (click)="currentUser.id>0?(haveReport?null:reportCommentModalShow = true):noAccessModalShow=true" class="action red" *ngIf=" currentUser.id !== comment.authorId; else remove">
                     <svg-icon class="like-svg" [applyClass]="true"
                         [src]="'../../../../../assets/images/svg/report.svg'"></svg-icon>
                     <span>Жалоба</span>
-                </div>
+                </button>
                 <ng-template #remove>
-                    <div class="action red" (click)="deleteCommentModalShow=true">
+                    <button class="action red" (click)="deleteCommentModalShow=true">
                         <svg-icon class="like-svg" [applyClass]="true"
                             [src]="'../../../../../assets/images/svg/trash.svg'"></svg-icon>
                         <span>Удалить</span>
-                    </div>
+                    </button>
                 </ng-template>
             </div>
         </div>
@@ -74,3 +74,16 @@
         <app-modal @modal *ngIf="successReportCommentModalShow" [style]="'sec'" [title]="'Жалоба успешно отправлена'" [type]="'Ok'"
     (resultEmit)="handleSuccessReportCommentModal()" [buttonsText]="['Хорошо']"
     [description]="'Жалоба успешно отправлена модератору и будет обработана в ближайшее время'"></app-modal>
+
+
+    
+  <app-modal
+  @modal
+  *ngIf="noAccessModalShow"
+  [style]="'prim'"
+  [title]="'Доступ к комментариям ограничен'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleNoAccessModal($event)"
+  [buttonsText]="['Давайте','Не сейчас']"
+  [description]="'Взаимодействовать с комментариями  могут только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'"
+></app-modal>

@@ -1,12 +1,19 @@
-<a [routerLink]="notify.relatedLink?notify.relatedLink:null" [ngClass]="getClass()">
-    
-    <div class="body"  >
+<div class="main" [ngClass]="getClass()">
+    <button *ngIf="!notify.context.includes('plan')" class="delete-button" (click)="deleteNotify()">
+        <svg-icon class="delete" [applyClass]="true" [src]="'../../../../../assets/images/svg/close.svg'"></svg-icon>
+    </button>
+    <a class="body"  [routerLink]="notify.relatedLink?notify.relatedLink:null" >
+
         <div class="head">
             <svg-icon class="svg-notify" [applyClass]="true" [src]="icon"></svg-icon>
             <h1 class="title">{{notify.title}}</h1>
         </div>
-        <p class="text">{{notify.message}}</p>
+
+        <p class="text" [innerHTML]="notify.message"></p>
+
+                            <p *ngIf="notify.context.includes('plan')" class="text explain">*Уведомление удалится самостоятельно</p>
+
         <p class="text time">{{notify.timestamp|timePast}}</p>
-    </div>
+    </a>
     
-</a>
+</div>

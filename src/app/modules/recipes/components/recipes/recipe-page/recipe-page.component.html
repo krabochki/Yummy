@@ -44,7 +44,7 @@
             appPluralRu=""
             [value]="readingTimeInMinutes"
             [arVariants]="[' минуту', ' минуты', ' минут']"
-            >порций</span
+            ></span
           >
         </span>
       </p>
@@ -54,15 +54,15 @@
     <div class="column main-info">
       <div class="full-user-info column">
         <div class="row" class="short-info row">
-          <a class="row user-info" [routerLink]="'/cooks/list/' + author.id">
-            <img
-              class="userpic"
+          <a [ngClass]="{'no-link':author.id<1}" class="row user-info" [routerLink]="author.id>0?'/cooks/list/' + author.id:null">
+            <img *ngIf="author.id>0"
+              class="userpic noselect"
               src="../../../../../../assets/images/userpic.png"
               alt="Фото пользователя"
             />
             <p>
               {{
-                author.fullName === "" ? "@" + author.username : author.fullName
+               author.id<1?'Автор удален':author.fullName === "" ? "@" + author.username : author.fullName
               }}
             </p>
           </a>
@@ -80,7 +80,7 @@
             ></svg-icon>
             <p>{{ recipe.publicationDate | timePast }}</p>
           </div>
-          <div class="row date" *ngIf="this.recipe.status !== 'public'">
+          <div class="row date " *ngIf="this.recipe.status !== 'public'">
             <ng-container
               *ngIf="this.recipe.status === 'private'; else awaiting"
             >
@@ -103,7 +103,7 @@
             </ng-template>
           </div>
         </div>
-        <div class="short-info row" *ngIf="this.recipe.status === 'public'">
+        <div class="short-info row noselect" *ngIf="this.recipe.status === 'public'">
           <div class="row likes">
             <svg-icon
               class="head-icon"
@@ -134,7 +134,7 @@
           </div>
         </div>
       </div>
-      <ul *ngIf="categories.length > 0" class="categories">
+      <ul *ngIf="categories.length > 0" class="categories ">
         <li
           class="row"
           *ngFor="let category of categories"
@@ -148,7 +148,7 @@
         {{ recipe.description }}
       </p>
       <div *ngIf="recipe.history !== ''">
-        <button class="history-open" (click)="showHistory = !showHistory">
+        <button class="history-open noselect" (click)="showHistory = !showHistory">
           <svg-icon
             [src]="'../../../../../assets/images/svg/history.svg'"
             [applyClass]="true"
@@ -159,7 +159,7 @@
         <p *ngIf="showHistory" class="history" @history>{{ recipe.history }}</p>
       </div>
       <div
-        class="row cards"
+        class="row cards "
         *ngIf="
           recipe.preparationTime !== '' ||
           recipe.cookingTime !== '' ||
@@ -202,6 +202,7 @@
           </div>
         </span>
       </div>
+ 
     </div>
     <div class="column nutr" *ngIf="recipe.nutritions.length > 0">
       <h2>Пищевая ценность</h2>
@@ -221,15 +222,15 @@
   <div class="column main">
     <div class="row center">
       <img
-        class="main-photo"
+        class="main-photo noselect"
         src="../../../../../../assets/images/no-recipe-photo.png"
         alt=""
       />
 
       <div class="ingredients" *ngIf="recipe.ingredients.length > 0">
-        <h2>Ингредиенты</h2>
-        <div class="servings">
-          <button (click)="decreasePortions()">−</button>
+        <h2 >Ингредиенты</h2>
+        <div class="servings ">
+          <button class="noselect" (click)="decreasePortions()">−</button>
           <p>
             на {{ recipe.servings }}
             <span
@@ -239,10 +240,10 @@
               >порций</span
             >
           </p>
-          <button (click)="increasePortions()">+</button>
+          <button class="noselect" (click)="increasePortions()">+</button>
         </div>
-        <button
-          class="basket-open-button"
+        <button *ngIf="recipe.status==='public' || author.id===currentUser.id"
+          class="basket-open-button noselect"
           [ngClass]="{ 'basket-mode': basketMode }"
           (click)="basketMode = !basketMode"
         >
@@ -283,7 +284,7 @@
             <button
               [ngClass]="{ minus: basket[i] }"
               (click)="basket[i] ? removeFromBasket(i,ingredient) : addToBasket(i,ingredient)"
-              class="basket-button"
+              class="basket-button noselect"
               *ngIf="basketMode"
             >
               {{ basket[i] ? "−" : "+" }}
@@ -308,8 +309,8 @@
         </div>
       </div>
 
-      <div class="row buttons" *ngIf="this.recipe.status === 'public'">
-        <div class="fav-button" (click)="makeThisRecipeFavorite()">
+      <div class="row buttons noselect" *ngIf="this.recipe.status === 'public'">
+        <div title="Добавить рецепт в избранное" class="fav-button" (click)="makeThisRecipeFavorite()">
           <svg-icon
             class="fav-icon"
             [applyClass]="true"
@@ -324,7 +325,17 @@
             "
           ></svg-icon>
         </div>
-        <div class="row" (click)="likeThisRecipe()">
+        <div title="Запланировать рецепт" (click)="currentUser.id>0?addToPlan():noAccessModalShow=true" class="fav-button plan" *ngIf="(author===currentUser) || (recipe.status==='public')">
+          <svg-icon
+            class="fav-icon"
+            [applyClass]="true"
+            [src]="
+              '../../../../../assets/images/svg/planning/plan.svg'
+            "
+          ></svg-icon>
+
+        </div>
+        <div class="row" title="Отметить рецепт, как понравившийся" (click)="likeThisRecipe()">
           <svg-icon
             [class]="isRecipeLiked ? 'like-icon liked' : 'like-icon'"
             [applyClass]="true"
@@ -338,7 +349,7 @@
             {{ recipe.likesId.length }}
           </p>
         </div>
-        <div class="row" (click)="!isRecipeCooked?voteModalShow=true:cookThisRecipe()">
+        <div class="row" title="Отметить рецепт, как приготовленный" (click)="currentUser.id>0 ? (!isRecipeCooked?voteModalShow=true:cookThisRecipe()):noAccessModalShow = true">
           <svg-icon
             [class]="isRecipeCooked ? 'cook-icon cooked' : 'cook-icon'"
             [applyClass]="true"
@@ -354,8 +365,8 @@
         </div>
       </div>
 
-      <div class="socials" *ngIf="recipe.status === 'public'">
-        <h2>Поделиться этим рецептом</h2>
+      <div class="socials noselect" *ngIf="recipe.status === 'public'">
+        <h2 >Поделиться этим рецептом</h2>
         <div class="row social">
           <app-social-button [url]="linkForSocials"></app-social-button>
           <app-social-button
@@ -396,7 +407,7 @@
           </div>
 
           <div class="column i-comment">
-            <div class="policy">
+            <div class="policy noselect">
               <svg-icon
                 [src]="'../../../../../assets/images/svg/community.svg'"
                 [applyClass]="true"
@@ -412,15 +423,15 @@
             </div>
             <div class="row input-area" style="overflow: visible;">
               <a  [routerLink]="'/cooks/list/' + currentUser.id">
-                <img
+                <img 
                  
                   src="../../../../../../assets/images/userpic.png"
-                  class="userpic"
-                  alt=""
+                  class="userpic noselect"
+                  alt="userpic"
                 />
               </a >
 
-              <form                   style="width: 100%; overflow: visible;"
+              <form     class="noselect"              style="width: 100%; overflow: visible;"
  [formGroup]="commentForm">
                 <app-usual-input style="overflow: visible;"
                 [value]="commentForm.get('commentText')?.value"
@@ -466,32 +477,50 @@
       </div>
       <div
         *ngIf="this.recipe.status === 'public' && this.downRecipes.length !== 0"
-        class="ads-under-cont"
+        class="ads-under-cont noselect" 
       >
         <h2>Похожие рецепты</h2>
         <div class="row ads-under">
           <app-recipe-list-item
+          [shortView]="true"
             *ngFor="let downRecipe of downRecipes"
             [recipe]="downRecipe"
           ></app-recipe-list-item>
         </div>
       </div>
+
+       <div
+        *ngIf="this.recipe.status === 'public' && this.alsoFromThisCook.length !== 0"
+        class="ads-under-cont noselect"
+      >
+        <h2>Также от этого автора</h2>
+        <div class="row ads-under">
+          <app-recipe-list-item [shortView]="true"
+            *ngFor="let recipe of alsoFromThisCook"
+            [recipe]="recipe"
+          ></app-recipe-list-item>
+        </div>
+      </div>
     </div>
 
-    <div class="column ads" *ngIf="this.recipe.status === 'public'">
+    <div class="column ads noselect" *ngIf="this.recipe.status === 'public'">
       <h2>Новинки</h2>
 
       <app-recipe-list-item
         *ngFor="let recentRecipe of recentRecipes"
         [recipe]="recentRecipe"
+        [shortView]="true"
       ></app-recipe-list-item>
     </div>
+
+    
   </div>
 
 </div>
 
 <app-modal
   @modal
+  
   *ngIf="noAccessModalShow"
   [style]="'prim'"
   [title]="'Доступ к функции ограничен'"
@@ -524,7 +553,7 @@
 <app-modal
   @modal
   *ngIf="commentModalShow"
-  [style]="'prim'"
+  [style]="'sec'"
   [title]="'Публикация комментария'"
   [type]="'yesOrNo'"
   (resultEmit)="handleCommentModal($event)"
@@ -532,12 +561,17 @@
   [description]="'Вы уверены, что хотите опубликовать комментарий?'"
 ></app-modal>
 
-  <app-modal @modal *ngIf="voteModalShow" [style]="'prim'" [title]="'Оставьте отзыв'" [type]="'yesOrNo'"
+  <app-modal @modal *ngIf="voteModalShow" [style]="'sec'" [title]="'Оставьте отзыв'" [type]="'yesOrNo'"
   (resultEmit)="handleVoteModal($event)" [buttonsText]="['Да', 'Нет']" [description]="
-    'Ты бы приготовил этот рецепт снова?'
+    'В начале каждого рецепта вы можете увидеть, понравился ли он кулинарам, которые его приготовили. Поддержите функцию и проголосуйте тоже: вы бы приготовили этот рецепт снова?'
   "></app-modal>
 
-      <app-modal @modal *ngIf="successVoteModalShow" [style]="'sec'" [title]="'Твой отзыв сохранен'" [type]="'Ok'"
+      <app-modal @modal *ngIf="successVoteModalShow" [style]="'sec'" [title]="'Ваш отзыв сохранен'" [type]="'Ok'"
   (resultEmit)="handleSuccessVoteModal()" [buttonsText]="['Хорошо']" [description]="
-  'Спасибо! Твое мнение важно для нас'
+  'Спасибо! Ваше мнение важно для нас'
   "></app-modal>
+
+
+    <app-add-calendar-event [plan]="myPlan" [event]="targetCalendarEvent" @modal (closeEmitter)="addingToPlanMode = false" *ngIf="addingToPlanMode" style="position: fixed; z-index:10"/>
+
+    

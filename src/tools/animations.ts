@@ -1,4 +1,4 @@
-import { style, animate, transition } from '@angular/animations';
+import { style, animate, transition, keyframes } from '@angular/animations';
 
 export function fadeIn() {
   return [
@@ -12,12 +12,12 @@ export function fadeIn() {
 export function notifies() {
   return [
     transition(':enter', [
-      style({ 'transform': 'translateX(17em)' }),
-      animate('400ms ease-in-out', style({ 'transform': 'translateX(0)' })),
+      style({ transform: 'translateX(17em)' }),
+      animate('400ms ease-in-out', style({ transform: 'translateX(0)' })),
     ]),
     transition(':leave', [
-      style({ 'transform': 'translateX(0)' }),
-      animate('400ms ease-in-out', style({ 'transform': 'translateX(17em)' })),
+      style({ transform: 'translateX(0)' }),
+      animate('400ms ease-in-out', style({ transform: 'translateX(17em)' })),
     ]),
   ];
 }
@@ -25,18 +25,15 @@ export function notifies() {
 export function count() {
   return [
     transition(':enter', [
-      style({ 'scale': '0' }),
-      animate('300ms ease-in-out', style({ 'scale': '100%' })),
+      style({ scale: '0' }),
+      animate('300ms ease-in-out', style({ scale: '100%' })),
     ]),
     transition(':leave', [
-      style({ 'scale': '100%' }),
-      animate('300ms ease-in-out', style({ 'scale': '0' })),
+      style({ scale: '100%' }),
+      animate('300ms ease-in-out', style({ scale: '0' })),
     ]),
   ];
 }
-
-
-
 
 export function modal() {
   return [
@@ -78,12 +75,12 @@ export function slideReverse() {
 export function onlyHeight() {
   return [
     transition(':enter', [
-      style({ height: '0', overflow: 'hidden' }),
-      animate('300ms ease-out', style({ height: '*' , overflow:'visible'})),
+      style({ height: '0' }),
+      animate('300ms ease-out', style({ height: '*' })),
     ]),
     transition(':leave', [
-      style({ height: '*',overflow:'visible' }),
-      animate('300ms ease-in', style({ height: '20px',overflow:'hidden' })),
+      style({ height: '*' }),
+      animate('300ms ease-in', style({ height: '20px' })),
     ]),
   ];
 }
@@ -91,22 +88,41 @@ export function onlyHeight() {
 export function heightAnim() {
   return [
     transition(':enter', [
-      style({ height: '0', opacity: '0','overflow':'hidden' }),
-      animate('300ms ease-in', style({ height: '*', opacity: '1','overflow':'visible' })),
+      style({ height: '0', opacity: '0', overflow: 'hidden' }),
+      animate(
+        '300ms ease-in',
+        style({ height: '*', opacity: '1', overflow: 'visible' }),
+      ),
     ]),
-    transition(':leave',
-    
-      
+    transition(
+      ':leave',
+
       [
-      animate('300ms ease-in', style({ height: '0', opacity: '0','overflow':'hidden' })),
-    ]),
+        animate(
+          '300ms ease-in',
+          style({ height: '0', opacity: '0', overflow: 'hidden' }),
+        ),
+      ],
+    ),
   ];
 }
 
+export function popup() {
+    return [
+      transition(':enter', [
+        style({ opacity: '0',height:0 }),
+        animate('500ms ease-in-out', style({ opacity: '1',height:'*'})),
+      ]),
+      transition(':leave', [
+        style({ opacity: '1' }),
+        animate('250ms ease-in-out', style({ opacity: '0',height:'0' })),
+      ]),
+    ];
+}
 export function widthAnim() {
   return [
     transition(':enter', [
-      style({ opacity: '0', width: '0', overflow:'hidden' }),
+      style({ opacity: '0', width: '0', overflow: 'hidden' }),
       animate('500ms ease-out', style({ opacity: '1', width: '*' })),
     ]),
     transition(':leave', [

@@ -9,13 +9,16 @@ export enum RecipeType {
   Cooked = 'cooked',
   Updates = 'updates',
   Discussed = 'discussed',
-  Commented = 'commented'
+  Commented = 'commented',
+  Planning = 'planning',
+  MostCooked = 'most-cooked',
+  MostFavorite='most-favorite'
 }
 
 export const recipeTitles = {
   [RecipeType.Recent]: 'Свежие рецепты',
   [RecipeType.Popular]: 'Популярные рецепты',
-  [RecipeType.My]: 'Твои рецепты',
+  [RecipeType.My]: 'Ваши рецепты',
   [RecipeType.Favorite]: 'Закладки',
   [RecipeType.Category]: '',
   [RecipeType.All]: 'Все рецепты',
@@ -23,7 +26,10 @@ export const recipeTitles = {
   [RecipeType.Cooked]: 'Приготовленные рецепты',
   [RecipeType.Updates]: 'Обновления любимых кулинаров',
   [RecipeType.Discussed]: 'Самые обсуждаемые рецепты',
-  [RecipeType.Commented]: 'Ты комментировал эти рецепты',
+  [RecipeType.Commented]: 'Вы комментировали эти рецепты',
+  [RecipeType.Planning]: 'Запланированные рецепты',
+  [RecipeType.MostFavorite]: 'Наиболее сохраняемые рецепты',
+  [RecipeType.MostCooked]:'Готовят чаще всего'
 };
 
  export const recipeNoRecipesRouterLinkText = {
@@ -38,6 +44,9 @@ export const recipeTitles = {
    [RecipeType.Updates]: '/cooks',
    [RecipeType.Discussed]: '/recipes',
    [RecipeType.Commented]: '/recipes',
+   [RecipeType.Planning]: '/plan/calendar',
+   [RecipeType.MostCooked]: '',
+   [RecipeType.MostFavorite]:''
  };
 
 export const recipeNoRecipesButtonText = {
@@ -52,26 +61,32 @@ export const recipeNoRecipesButtonText = {
   [RecipeType.Updates]: 'Все кулинары',
   [RecipeType.Discussed]: 'Все рецепты',
   [RecipeType.Commented]: 'Все рецепты',
+  [RecipeType.Planning]: 'Календарь рецептов',
+  [RecipeType.MostCooked]: '',
+  [RecipeType.MostFavorite]:''
 };
 
 export const recipeNoRecipesText = {
   [RecipeType.Recent]: '',
   [RecipeType.Popular]: '',
   [RecipeType.My]:
-    'У тебя пока нет собственных рецептов. Попробуй создать парочку рецептов и зайди сюда снова',
+    'У вас пока нет собственных рецептов. Попробуйте создать парочку рецептов и зайдите сюда снова',
   [RecipeType.Favorite]:
-    'У тебя пока нет сохраненных рецептов. Попробуй добавить парочку рецептов в избранное и зайди сюда снова',
-  [RecipeType.Category]:
-    '',
+    'У вас пока нет сохраненных рецептов. Попробуйте добавить парочку рецептов в избранное и зайдите сюда снова',
+  [RecipeType.Category]: '',
   [RecipeType.All]: '',
   [RecipeType.Liked]:
-    'У тебя пока нет любимых рецептов. Попробуй отметить парочку рецептов как понравившиеся и зайди сюда снова',
+    'У вас пока нет любимых рецептов. Попробуйте отметить парочку рецептов как понравившиеся и зайдите сюда снова',
   [RecipeType.Cooked]:
-    'У тебя пока нет сохраненных рецептов. Попробуй отметить парочку рецептов как приготовленные и зайди сюда снова',
+    'У вас пока нет сохраненных рецептов. Попробуйте отметить парочку рецептов как приготовленные и зайдите сюда снова',
   [RecipeType.Updates]:
-    'Новых рецептов среди твоих подписок не найдено. Попробуй подписаться на более активных кулинаров и зайди сюда снова',
+    'Новых рецептов среди ваших подписок не найдено. Попробуйте подписаться на более активных кулинаров и зайдите сюда снова',
   [RecipeType.Discussed]:
-    'Пока никто не прокомментировал рецепты. Попробуй сам прокомментировать парочку рецептов и зайди сюда снова',
+    'Пока никто не прокомментировал рецепты. Попробуйте сами прокомментировать парочку рецептов и зайдите сюда снова',
   [RecipeType.Commented]:
-    'Ты пока не прокомментировал ни один рецепт. Попробуй прокомментировать парочку рецептов и зайди сюда снова',
+    'Вы пока не прокомментировали ни один рецепт. Попробуйте прокомментировать парочку рецептов и зайдите сюда снова',
+  [RecipeType.Planning]:
+    'Вы пока не запланировали ни один рецепт. Попробуйте запланировать парочку рецептов и зайдите сюда снова',
+  [RecipeType.MostCooked]: '',
+  [RecipeType.MostFavorite]:''
 };

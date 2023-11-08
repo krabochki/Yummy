@@ -2,6 +2,8 @@
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <div class="wrap">
   <input
+
+  
   *ngIf="inputType==='input' || inputType==='password';else textarea"
     [maxlength]="max ? max : null"
             [type]="showPassword && inputType==='password'?'password':'text'"
@@ -10,7 +12,7 @@
     [value]="value"
     (keyup)="change()"
     [(ngModel)]="value"
-    [disabled]="disabled"
+    [disabled]="disabled || inputDisabled"
     autocomplete="off"
     type="text"
     [ngClass]="{
@@ -52,7 +54,7 @@
       ></svg-icon>
     </span>
     
-  <p class="howmuch" *ngIf="max!==undefined">{{ value.length }}/{{ max }}</p>
+  <p class="howmuch noselect" *ngIf="(max!==undefined)">{{value? value.length:0 }}/{{ max }}</p>
 </div>
 
 <div *ngIf="showError" class="error">{{ error }}</div>

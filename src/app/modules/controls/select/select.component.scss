@@ -55,8 +55,14 @@
       }
     }
 
+    &.dsl li{
+      color: var(--color-foreground-unactive);
+    }
     &.dsl:hover {
       background-color: var(--color-primary);
+    }
+    &.dsl:hover li{
+      color: var(--color-background);
     }
   }
 }

@@ -26,6 +26,7 @@ import { AuthService } from 'src/app/modules/authentication/services/auth.servic
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
+import { UserService } from 'src/app/modules/user-pages/services/user.service';
 
 @Component({
   selector: 'app-category-creating',
@@ -58,6 +59,7 @@ export class CategoryCreatingComponent
   constructor(
     private notifyService: NotificationService,
     private renderer: Renderer2,
+    private userService: UserService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private sectionService: SectionService,
@@ -106,7 +108,7 @@ export class CategoryCreatingComponent
   allCategories: ICategory[] = [];
   protected destroyed$: Subject<void> = new Subject<void>();
 
-  currentUser: IUser = nullUser;
+  currentUser: IUser = { ...nullUser };
   ngOnInit() {
     this.renderer.addClass(document.body, 'hide-overflow');
     (<HTMLElement>document.querySelector('.header')).style.width =
@@ -180,22 +182,19 @@ export class CategoryCreatingComponent
         this.selectedSection.categories.push(this.newCategory.id);
         this.sectionService.updateSections(this.selectedSection).subscribe();
 
-        const author: IUser = this.currentUser;
-        const title =
-          'Категория «' +
-          this.newCategory.name +
-          '» для секции «' +
-          this.selectedSection.name +
-          '» отправлена на проверку';
+        if (this.userService.getPermission('you-create-category', this.currentUser)) {
+           const notify: INotification = this.notifyService.buildNotification(
+             'Категория отправлена на проверку',
+             `Созданная вами категория «${this.newCategory.name}» для секции «${this.selectedSection.name}» отправлена на проверку`,
+             'success',
+             'category',
+             '',
+           );
+           this.notifyService
+             .sendNotification(notify, this.currentUser)
+             .subscribe();
+        }
 
-        const notify: INotification = this.notifyService.buildNotification(
-          'Категория отправлена на проверку',
-          title,
-          'success',
-          'category',
-          '',
-        );
-        this.notifyService.sendNotification(notify, author).subscribe();
       }
     });
   }

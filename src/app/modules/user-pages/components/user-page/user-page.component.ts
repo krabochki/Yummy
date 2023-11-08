@@ -15,6 +15,7 @@ import { ChangeDetectionStrategy } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { NotificationService } from '../../services/notification.service';
 import { INotification } from '../../models/notifications';
+import { getFormattedDate } from 'src/tools/common';
 
 @Component({
   selector: 'app-user-page',
@@ -43,7 +44,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
     private titleService: Title,
     public router: Router,
     private cd: ChangeDetectorRef,
-    private notifyService:NotificationService,
+    private notifyService: NotificationService,
     public routerEventsService: RouteEventsService,
   ) {
     registerLocaleData(localeRu);
@@ -53,6 +54,9 @@ export class UserPageComponent implements OnInit, OnDestroy {
   onSkipHandler() {
     this.router.navigate([this.routerEventsService.previousRoutePath.value]);
   }
+
+  hireModalShow = false;
+  hireSuccessModalShow = false;
 
   currentUser: IUser = { ...nullUser };
   settingsShow = false;
@@ -66,6 +70,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
   protected destroyed$: Subject<void> = new Subject<void>();
 
   userRecipes: IRecipe[] = [];
+  userPublicRecipes: IRecipe[] = [];
 
   allRecipes: IRecipe[] = [];
 
@@ -85,14 +90,11 @@ export class UserPageComponent implements OnInit, OnDestroy {
       this.user = data['user'];
       this.userId = this.user.id;
 
-      this.titleService.setTitle('@' + this.user.username);
-
       this.authService.currentUser$
         .pipe(takeUntil(this.destroyed$))
         .subscribe((data) => {
           this.currentUser = data;
         });
-      
 
       if (this.currentUser.id === this.user.id) {
         this.myPage = true;
@@ -100,69 +102,78 @@ export class UserPageComponent implements OnInit, OnDestroy {
         this.myPage = false;
       }
 
-      this.userService.users$.subscribe((data) => {
-        this.users = data;
-        const findedUser = data.find((user) => user.id === this.userId);
+      this.userService.users$
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe((data) => {
+          this.users = data;
+          const findedUser = data.find((user) => user.id === this.userId);
 
-        if (findedUser) { this.user = findedUser; }
+          if (findedUser) {
+            this.user = findedUser;
+          }
 
-        this.titleService.setTitle('@' + this.user.username);
+          this.titleService.setTitle(
+            this.user.fullName ? this.user.fullName : '@' + this.user.username,
+          );
 
-        if (this.currentUser.id === this.user.id) {
-          this.currentUser =this.user;
-          this.myPage = true;
-        }
+          if (this.currentUser.id === this.user.id) {
+            this.currentUser = this.user;
+            this.myPage = true;
+          }
 
-        this.userFollowers = this.userService.getFollowers(data, this.userId);
+          this.userFollowers = this.userService.getFollowers(data, this.userId);
 
-        this.userFollowing = this.userService.getFollowing(data, this.userId);
+          this.userFollowing = this.userService.getFollowing(data, this.userId);
 
-        this.recipeService.recipes$
-          .pipe(takeUntil(this.destroyed$))
-          .subscribe((data) => {
-            this.allRecipes = this.recipeService.getPopularRecipes(data);
+          this.recipeService.recipes$
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe((data) => {
+              this.allRecipes = this.recipeService.getPopularRecipes(data);
 
-            this.userRecipes = this.recipeService.getRecipesByUser(
-              this.allRecipes,
-              this.userId,
-            );
-            if (
-              !this.myPage &&
-              (this.currentUser.role === 'admin' ||
-                this.currentUser.role === 'moderator')
-            ) {
-              this.userRecipes = this.recipeService.getNotPrivateRecipes(
+              this.userRecipes = this.recipeService.getRecipesByUser(
+                this.allRecipes,
+                this.userId,
+              );
+              this.userPublicRecipes = this.recipeService.getPublicRecipes(
                 this.userRecipes,
               );
-            } else if (
-              !this.myPage &&
-              this.currentUser.role !== 'admin' &&
-              this.currentUser.role !== 'moderator'
-            ) {
-              this.userRecipes = this.recipeService.getPublicRecipes(
-                this.userRecipes,
-              );
-            }
-            this.cooks = 0;
-            this.likes = 0;
-            this.comments = 0;
-            this.userRecipes.forEach((recipe) => {
-              this.cooks += recipe.cooksId?.length;
-              this.likes += recipe.likesId?.length;
-              this.comments += recipe.comments?.length;
-              if (!this.cooks) this.cooks = 0;
-              if (!this.likes) this.likes = 0;
-              if (!this.comments) this.comments = 0;
+
+              if (
+                !this.myPage &&
+                (this.currentUser.role === 'admin' ||
+                  this.currentUser.role === 'moderator')
+              ) {
+                this.userRecipes = this.recipeService.getNotPrivateRecipes(
+                  this.userRecipes,
+                );
+              } else if (
+                !this.myPage &&
+                this.currentUser.role !== 'admin' &&
+                this.currentUser.role !== 'moderator'
+              ) {
+                this.userRecipes = this.recipeService.getPublicRecipes(
+                  this.userRecipes,
+                );
+              }
+              this.cooks = 0;
+              this.likes = 0;
+              this.comments = 0;
+              this.userRecipes.forEach((recipe) => {
+                this.cooks += recipe.cooksId?.length;
+                this.likes += recipe.likesId?.length;
+                this.comments += recipe.comments?.length;
+                if (!this.cooks) this.cooks = 0;
+                if (!this.likes) this.likes = 0;
+                if (!this.comments) this.comments = 0;
+              });
+
+              this.cd.markForCheck();
+              this.dataLoaded = true;
             });
-
-            this.cd.markForCheck();
-            this.dataLoaded = true;
-          });
-      });
+        });
       if (!this.myPage) {
         this.user.profileViews++;
         this.userService.updateUsers(this.user).subscribe();
-
       }
     });
   }
@@ -175,34 +186,28 @@ export class UserPageComponent implements OnInit, OnDestroy {
   //подписка текущего пользователя на людей в списке
   follow() {
     this.user = this.userService.addFollower(this.user, this.currentUser.id);
-    this.userService
-      .updateUsers(this.user)
-      .subscribe(
-        () => {
-           const author: IUser = this.user;
-          const title = 'Кулинар ' + (this.currentUser.fullName ? (this.currentUser.fullName):('@' + this.currentUser.username) )
-           + ' подписался на тебя';
-
-           const notify: INotification = this.notifyService.buildNotification(
-             'Новый подписчик',
-             title,
-             'info',
-             'user',
-             '/cooks/list/' + this.currentUser.id,
-           );
-           this.notifyService.sendNotification(notify, author).subscribe();
-        }
-      );
+    this.userService.updateUsers(this.user).subscribe(() => {
+      if (this.userService.getPermission('new-follower', this.user)) {
+        const notify: INotification = this.notifyService.buildNotification(
+          'Новый подписчик',
+          `Кулинар ${
+            this.currentUser.fullName
+              ? this.currentUser.fullName
+              : '@' + this.currentUser.username
+          } подписался на тебя`,
+          'info',
+          'user',
+          '/cooks/list/' + this.currentUser.id,
+        );
+        this.notifyService.sendNotification(notify, this.user).subscribe();
+      }
+    });
   }
 
   unfollow() {
     this.user = this.userService.removeFollower(this.user, this.currentUser.id);
-    this.userService
-      .updateUsers(this.user)
-      .subscribe();
+    this.userService.updateUsers(this.user).subscribe();
   }
-
-  username: string = 'username';
 
   edit() {
     this.editModalShow = !this.editModalShow;
@@ -214,8 +219,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
   updateCurrentUser(updatedUser: IUser) {
     this.user = updatedUser;
     this.closeEdit();
-        this.cd.detectChanges();
-
+    this.cd.detectChanges();
   }
 
   handleNoAccessModal(result: boolean) {
@@ -223,6 +227,36 @@ export class UserPageComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl('/greetings');
     }
     this.noAccessModalShow = false;
+  }
+
+  protected get validRegistrationDate(): string {
+    return getFormattedDate(this.user.registrationDate);
+  }
+
+  protected getName(user: IUser): string {
+    return user.fullName ? user.fullName : '@' + user.username;
+  }
+
+  protected handleHireModal(answer: boolean) {
+    if (answer) {
+      this.user.role = 'moderator';
+      const notify: INotification = this.notifyService.buildNotification(
+        'Вас назначили модератором',
+        `Вы теперь являетесь модератором сайта Yummy. Вас назначил администратор ${this.getName(
+          this.currentUser,
+        )}`,
+        'info',
+        'hire',
+        `/cooks/list/${this.currentUser.id}`,
+      );
+      this.userService.updateUsers(this.user).subscribe();
+      this.notifyService.sendNotification(notify, this.user).subscribe();
+      this.hireSuccessModalShow = true;
+    }
+    this.hireModalShow = false;
+  }
+  protected handleSuccessHireModal() {
+    this.hireSuccessModalShow = false;
   }
 
   ngOnDestroy(): void {

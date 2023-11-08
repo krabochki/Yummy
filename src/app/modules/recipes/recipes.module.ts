@@ -31,6 +31,7 @@ import { CommentsListComponent } from './components/comments/comments-list/comme
 import { CUSTOM_TIME_DIFF_GENERATOR, TimePastPipe } from 'ng-time-past-pipe';
 import { timeDiffGenerator } from '../controls/time';
 import { SectionCreatingComponent } from './components/categories/section-creating/section-creating.component';
+import { PlanningModule } from '../planning/planning.module';
 
 @NgModule({
   declarations: [
@@ -58,7 +59,7 @@ import { SectionCreatingComponent } from './components/categories/section-creati
     TimePastPipe,
     DragScrollModule,
     NgFor,
-
+    PlanningModule,
     ControlsModule,
     RecipesRoutingModule,
     ScrollingModule,

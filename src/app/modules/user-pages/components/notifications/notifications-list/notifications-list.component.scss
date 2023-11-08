@@ -10,6 +10,58 @@
   
 
 }
+
+.trash{
+  width: 1em;
+  height: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  fill: var(--color-foreground);
+    transition: 0.15s ;
+  
+
+}
+@mixin flex{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.no-notifies{
+  @include flex;
+  flex-direction: column;
+  row-gap: 1.5em;
+  font-size: 0.9em;
+  color: var(--color-foreground-unactive);
+  height: 100%;
+  width: 100%;
+
+  .mail-cook{
+    @include flex;
+    fill: var(--color-foreground-unactive);
+    width: 85%;
+  }
+}
+
+
+.clear-all{
+  column-gap: 0.5em;
+  margin-left: 1.25em;
+  display: flex;
+  align-items: center;
+  margin-bottom:0.5em;
+  font-size: 0.9em;
+  justify-content: center;
+  width: fit-content;
+
+  transition: 0.3s ;
+  &:hover,&:focus{
+    color: var(--color-primary);
+    & .trash{
+      fill:var(--color-primary)
+    }
+  }
+}
 .background{
   position: fixed;
   top:0;left:0;
@@ -34,7 +86,7 @@
     align-items: start;
     align-content: start;
       padding-bottom: 0.5em;
-      margin-bottom: 2.5em;
+      margin-bottom: 4em;
 
 }
 h1 {
@@ -60,8 +112,49 @@ border-top: 1px solid var(--color-background-deeper-unactive);
   grid-template-rows: min-content 100%;
   padding: 0 0;
 }
+
+.close-svg{
+  display: none;
+}
 @media(max-width:480px){
   :host{
-    width:20em;
+    width:100%;
+  }
+  .no-notifies{
+    font-size: 1.1em;
+  }
+  .no-notifies .mail-cook{
+    width: 65%;
+  }
+  .close-svg{
+    @include flex;
+    height: 0.7em;
+    fill: var(--color-foreground);
+  }
+
+  .close{
+
+    zoom: 0.9;
+    font-weight: 1000;
+    right: 1.5em;
+    z-index: 10;
+    top: 1em;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
+    width: 2em;
+    height: 2em;
+    border-radius: 100%;
+    cursor: pointer;
+    background-color: var(--color-primary);
+    transition: opacity 0.2s ease-in-out;    zoom: 1.1;
+    font-weight: 1000;
+    right: 0;
+    top: 0;
+    padding-bottom: 0.25em;
+    padding-left: 0.25em;
+    border-radius: 0 0 0 100%;
   }
 }

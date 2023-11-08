@@ -1,12 +1,11 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IUser, nullUser } from '../../user-pages/models/users';
 import {
   BehaviorSubject,
+  EMPTY,
   Observable,
   map,
 } from 'rxjs';
-import { RecipeService } from '../../recipes/services/recipe.service';
 import { UserService } from '../../user-pages/services/user.service';
 import { IRecipe } from '../../recipes/models/recipes';
 import { usersUrl } from 'src/tools/source';
@@ -24,39 +23,36 @@ export class AuthService {
   usersUrl =  usersUrl
 
   constructor(
-    private http: HttpClient,
-    private recipeService: RecipeService,
     private userService: UserService,
   ) {
-    const savedUser = localStorage.getItem('currentUser');
+    
+    
 
-    if (savedUser) {
-      const currentUser: IUser = JSON.parse(savedUser);
-      this.userService.users$.subscribe((users) => {
-        const foundUser = users.find(
-          (u) =>
-            u.email === currentUser.email &&
-            u.password === currentUser.password &&
-            u.username === currentUser.username,
-        );
-        if (foundUser) {
-          this.setCurrentUser(currentUser);
-          console.log(
-            'Автоматический вход в аккаунт пользователя ' +
+    this.userService.users$.subscribe((users) => {
+      const savedUser = localStorage.getItem('currentUser');
+
+      if (savedUser) {
+        const currentUser: IUser = JSON.parse(savedUser);
+        if (currentUser && currentUser.id > 0) {
+
+          const foundUser=users.find(u=> u.email===currentUser.email&&u.password===currentUser.password)
+          if (foundUser) {
+            this.setCurrentUser(foundUser);
+            console.log(
+              'Автоматический вход в аккаунт пользователя ' +
               currentUser.username +
               ' выполнен успешно!',
-          );
-        } else {
-          console.log('Такого пользователя не существует');
+            );
+          }
         }
-      });
-    } else {
-      console.log('Пользователь не был сохранен в локальном хранилище');
-    }
+        
+      }
+    })
   }
 
   setCurrentUser(user: IUser) {
-    this.currentUserSubject.next(user);
+    this.currentUserSubject.next({ ...user });
+
   }
 
   getCurrentUser(): Observable<IUser> {
@@ -82,13 +78,13 @@ export class AuthService {
   loginUser(user: IUser) {
     return this.userService.users$.pipe(
       map((users) => {
-        const foundUser = users.find(
-          (u) =>
-            (u.email === user.email && u.password === user.password) ||
-            (u.username === user.username && u.password === user.password),
-        );
-        if (!foundUser) return null;
-        return foundUser;
+        return (users.length > 0)?
+            users?.find(
+              (u) =>
+                (u.email === user.email && u.password === user.password) ||
+                (u.username === user.username && u.password === user.password),
+            ) || null
+        : null
       }),
     );
   }

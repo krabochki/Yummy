@@ -12,7 +12,10 @@
 
 .recipe .fav.disabled {
   background-color: var(--color-foreground-unactive);
-  pointer-events: none;
+  cursor:default;
+  &::before{
+    display: none;
+  }
 }
 
 
@@ -185,7 +188,7 @@
       display: flex;
     align-items: center;
     justify-content: center;
-      fill: var(--color-foreground);
+      fill: white;
             height: 1.3em;
             width: 1em;
 

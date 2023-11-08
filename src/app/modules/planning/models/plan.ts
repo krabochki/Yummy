@@ -1,21 +1,25 @@
+import { CalendarEvent } from 'angular-calendar';
 import { ShoppingListItem } from './shopping-list';
 
 export interface IPlan {
   id: number;
   user: number;
   shoppingList: ShoppingListItem[];
-  plans: RecipePlan[];
+  calendarEvents: CalendarEvent[];
 }
 
-export interface RecipePlan {
-  id: number;
-  recipe: number;
-  dueDate: string;
+
+export const nullCalendarEvent: CalendarEvent = {
+  id: 0,
+  recipe: 0,
+  start: new Date(-8640000000000000),
+  title:''
 }
+  
 
 export const nullPlan: IPlan = {
   id: 0,
   user: 0,
   shoppingList: [],
-  plans: [],
+  calendarEvents: [],
 };

@@ -17,9 +17,10 @@ import {
   recipeTitles,
 } from './consts';
 import { Subject, takeUntil } from 'rxjs';
+import { PlanService } from 'src/app/modules/planning/services/plan-service';
+import { IPlan, nullPlan } from 'src/app/modules/planning/models/plan';
 
 @Component({
-  selector: 'app-some-recipes-page',
   templateUrl: './some-recipes-page.component.html',
   styleUrls: [
     './some-recipes-page.component.scss',
@@ -38,56 +39,58 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private title: Title,
     private router: Router,
+    private planService: PlanService,
   ) {}
 
-  dataLoad: boolean = false;
-  creatingMode = false;
-  filter: string = '';
-  recipesToShow: IRecipe[] = [];
-  allRecipes: IRecipe[] = [];
-  category: ICategory = nullCategory;
-  recentRecipes: IRecipe[] = [];
-  popularRecipes: IRecipe[] = [];
-  discussedRecipes: IRecipe[] = [];
-  commentedRecipes: IRecipe[] = [];
-  myRecipes: IRecipe[] = [];
-  likedRecipes: IRecipe[] = [];
-  cookedRecipes: IRecipe[] = [];
-  favoriteRecipes: IRecipe[] = [];
-  followingRecipes: IRecipe[] = [];
-  currentUser: IUser = { ...nullUser };
-  searchQuery: string = '';
-  autocompleteShow: boolean = false;
-  autocomplete: IRecipe[] = [];
-  allUsers: IUser[] = [];
-  currentUserFollowing: IUser[] = [];
-  recipeType: RecipeType = RecipeType.All;
-  protected destroyed$: Subject<void> = new Subject<void>();
+  protected dataLoad: boolean = false;
+  protected creatingMode: boolean = false;
+  protected filter: string = '';
 
-  getTitleByRecipeType(recipeType: RecipeType): string {
-    if (recipeType === RecipeType.Category) {
-      return this.category.name;
-    }
-    return recipeTitles[recipeType] || '';
-  }
-  getNoRecipesTextByRecipetype(recipeType: RecipeType): string {
-    return recipeNoRecipesText[recipeType] || '';
-  }
-  getNoRecipesButtonTextByRecipetype(recipeType: RecipeType): string {
-    return recipeNoRecipesButtonText[recipeType] || '';
-  }
-  getNoRecipesRouterLinkTextByRecipetype(recipeType: RecipeType): string {
-    return recipeNoRecipesRouterLinkText[recipeType] || '';
-  }
+  protected recipesToShow: IRecipe[] = [];
+  protected allRecipes: IRecipe[] = [];
 
-  navigateTo(link: string) {
-    this.router.navigateByUrl(link);
+  protected category: ICategory = nullCategory;
+
+  protected recentRecipes: IRecipe[] = [];
+  protected plannedRecipes: IRecipe[] = [];
+  protected popularRecipes: IRecipe[] = [];
+  protected discussedRecipes: IRecipe[] = [];
+  protected commentedRecipes: IRecipe[] = [];
+  protected myRecipes: IRecipe[] = [];
+  protected likedRecipes: IRecipe[] = [];
+  protected cookedRecipes: IRecipe[] = [];
+  protected favoriteRecipes: IRecipe[] = [];
+  protected followingRecipes: IRecipe[] = [];
+  protected mostCooked: IRecipe[] = [];
+  protected mostFavorite: IRecipe[] = [];
+
+  protected currentUser: IUser = { ...nullUser };
+  protected searchQuery: string = '';
+  protected autocompleteShow: boolean = false;
+  protected autocomplete: IRecipe[] = [];
+  private allUsers: IUser[] = [];
+  protected recipeType: RecipeType = RecipeType.All;
+  private currentUserPlan: IPlan = nullPlan;
+
+  private destroyed$: Subject<void> = new Subject<void>();
+
+  ngOnInit(): void {
+    this.usersInit();
+    this.route.data.subscribe((data) => {
+      this.filter = data['filter'];
+      this.setRecipeType(this.filter);
+      this.currentUserInit(data['CategoryResolver']);
+      this.dataLoad = true;
+    });
   }
 
-  setRecipeType(filter: string): void {
+  private setRecipeType(filter: string): void {
     switch (filter) {
       case 'recent':
         this.recipeType = RecipeType.Recent;
+        break;
+      case 'planned':
+        this.recipeType = RecipeType.Planning;
         break;
       case 'all':
         this.recipeType = RecipeType.All;
@@ -119,165 +122,215 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
       case 'commented':
         this.recipeType = RecipeType.Commented;
         break;
+      case 'most-cooked':
+        this.recipeType = RecipeType.MostCooked;
+        break;
+      case 'most-favorite':
+        this.recipeType = RecipeType.MostFavorite;
+        break;
     }
   }
 
-  ngOnInit(): void {
+  private categoryInit(categoryFromData: ICategory, recipes: IRecipe[]): void {
+    this.category = categoryFromData;
+
+    const publicAndMyRecipes = this.recipeService.getPublicAndAllMyRecipes(
+      recipes,
+      this.currentUser.id,
+    );
+    this.allRecipes = this.recipeService.getRecipesByCategory(
+      publicAndMyRecipes,
+      this.category.id,
+    );
+    this.recipesToShow = this.allRecipes.slice(0, 8);
+  }
+
+  private currentUserPlanInit(): void {
+    this.planService.plans$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedPlans: IPlan[]) => {
+        this.currentUserPlan = this.planService.getPlanByUser(
+          this.currentUser.id,
+          receivedPlans,
+        );
+      });
+  }
+
+  private getRecipesOfAllTypes(allRecipes: IRecipe[]): void {
+    const publicRecipes = this.recipeService.getPublicRecipes(allRecipes);
+    const publicAndAllMyRecipes = this.recipeService.getPublicAndAllMyRecipes(
+      allRecipes,
+      this.currentUser.id,
+    );
+
+    this.allRecipes = publicRecipes;
+    this.recipesToShow = publicRecipes;
+
+    this.allRecipes = publicRecipes;
+    this.recipesToShow = publicRecipes;
+
+    this.popularRecipes = this.recipeService.getPopularRecipes(this.allRecipes);
+    this.plannedRecipes = this.recipeService.getPlannedRecipes(
+      publicAndAllMyRecipes,
+      this.currentUserPlan,
+    );
+    this.discussedRecipes =
+      this.recipeService.getMostDiscussedRecipes(publicRecipes);
+    this.commentedRecipes = this.recipeService.getCommentedRecipesByUser(
+      publicRecipes,
+      this.currentUser.id,
+    );
+    this.mostCooked = this.recipeService.getMostCookedRecipes(publicRecipes);
+    this.mostFavorite =
+      this.recipeService.getMostFavoriteRecipes(publicRecipes);
+    this.recentRecipes = this.recipeService.getRecentRecipes(this.allRecipes);
+    this.cookedRecipes = this.recipeService.getCookedRecipesByUser(
+      this.allRecipes,
+      this.currentUser.id,
+    );
+    console.log(this.cookedRecipes)
+    this.likedRecipes = this.recipeService.getLikedRecipesByUser(
+      this.allRecipes,
+      this.currentUser.id,
+    );
+    this.favoriteRecipes = this.recipeService.getFavoriteRecipesByUser(
+      this.allRecipes,
+      this.currentUser.id,
+    );
+
+    this.myRecipes = this.recipeService.getRecipesByUser(
+      allRecipes,
+      this.currentUser.id,
+    );
+
+    this.followingRecipes = this.getFollowingRecipes(publicRecipes);
+  }
+
+  private setRecipesByType(): void {
+    switch (this.recipeType) {
+      case RecipeType.Planning:
+        this.allRecipes = this.plannedRecipes;
+        break;
+      case RecipeType.Discussed:
+        this.allRecipes = this.discussedRecipes;
+        break;
+      case RecipeType.MostCooked:
+        this.allRecipes = this.mostCooked;
+        break;
+      case RecipeType.MostFavorite:
+        this.allRecipes = this.mostFavorite;
+        break;
+      case RecipeType.Popular:
+        this.allRecipes = this.popularRecipes;
+        break;
+      case RecipeType.Updates:
+        this.allRecipes = this.followingRecipes;
+        break;
+      case RecipeType.Recent:
+        this.allRecipes = this.recentRecipes;
+        break;
+      case RecipeType.My:
+        this.allRecipes = this.myRecipes;
+        break;
+      case RecipeType.Favorite:
+        this.allRecipes = this.favoriteRecipes;
+        this.currentUser.id;
+        break;
+      case RecipeType.Commented:
+        this.allRecipes = this.commentedRecipes;
+        break;
+      case RecipeType.Liked:
+        this.allRecipes = this.likedRecipes;
+        break;
+      case RecipeType.Cooked:
+        this.allRecipes = this.cookedRecipes;
+        break;
+      case RecipeType.All:
+        this.allRecipes = [...this.allRecipes, ...this.myRecipes];
+        break;
+    }
+  }
+  private sliceAllRecipes(): void {
+    this.popularRecipes = this.popularRecipes.slice(0, 8);
+    this.plannedRecipes = this.plannedRecipes.slice(0, 8);
+    this.discussedRecipes = this.discussedRecipes.slice(0, 8);
+    this.mostCooked = this.mostCooked.slice(0, 8);
+    this.commentedRecipes = this.commentedRecipes.slice(0, 8);
+    this.mostFavorite = this.mostFavorite.slice(0, 8);
+    this.cookedRecipes = this.cookedRecipes.slice(0, 8);
+    this.likedRecipes = this.likedRecipes.slice(0, 8);
+    this.favoriteRecipes = this.favoriteRecipes.slice(0, 8);
+    this.myRecipes = this.myRecipes.slice(0, 8);
+    this.followingRecipes = this.followingRecipes.slice(0, 8);
+  }
+
+  private recipeSourceInit(categoryFromData: ICategory): void {
+    this.recipeService.recipes$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedRecipes: IRecipe[]) => {
+        if (this.recipeType === RecipeType.Category) {
+          this.categoryInit(categoryFromData, receivedRecipes);
+        } else {
+          this.currentUserPlanInit();
+          this.getRecipesOfAllTypes(receivedRecipes);
+          this.setRecipesByType();
+          if (this.recipeType === RecipeType.All) {
+            this.sliceAllRecipes();
+          } else {
+            this.recipesToShow = this.allRecipes.slice(0, 8);
+          }
+        }
+      });
+
+    this.title.setTitle(this.getTitleByRecipeType(this.recipeType));
+  }
+
+  private usersInit(): void {
     this.userService.users$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((data) => {
         this.allUsers = data;
       });
-
-    this.route.data.subscribe((data) => {
-      this.filter = data['filter'];
-      this.setRecipeType(this.filter);
-
-      if (this.recipeType === RecipeType.Category) {
-        this.category = data['CategoryResolver'];
-        this.recipeService.recipes$
-          .pipe(takeUntil(this.destroyed$))
-          .subscribe((data) => {
-            this.authService.currentUser$
-              .pipe(takeUntil(this.destroyed$))
-              .subscribe((user: IUser) => {
-                this.currentUser = user;
-
-                const publicAndMyRecipes =
-                  this.recipeService.getPublicAndAllMyRecipes(
-                    data,
-                    this.currentUser.id,
-                  );
-                this.allRecipes = this.recipeService.getRecipesByCategory(
-                  publicAndMyRecipes,
-                  this.category.id,
-                );
-                this.recipesToShow = this.allRecipes.slice(0, 8);
-              });
-          });
-      } else {
-        this.authService.currentUser$
-          .pipe(takeUntil(this.destroyed$))
-          .subscribe((user: IUser) => {
-            this.currentUser = user;
-
-            this.recipeService.recipes$
-              .pipe(takeUntil(this.destroyed$))
-              .subscribe((data) => {
-                const publicRecipes = this.recipeService.getPublicRecipes(data);
-                switch (this.recipeType) {
-                  case RecipeType.Discussed:
-                    this.allRecipes =
-                      this.recipeService.getMostDiscussedRecipes(publicRecipes);
-                    this.recipesToShow = this.allRecipes.slice(0, 8);
-                    break;
-                  case RecipeType.Popular:
-                    this.allRecipes =
-                      this.recipeService.getPopularRecipes(publicRecipes);
-                    this.recipesToShow = this.allRecipes.slice(0, 8);
-                    break;
-                  case RecipeType.Updates:
-                    this.allRecipes = this.getFollowingRecipes(publicRecipes);
-                    this.recipesToShow = this.allRecipes.slice(0, 8);
-                    break;
-                  case RecipeType.Recent:
-                    this.allRecipes =
-                      this.recipeService.getRecentRecipes(publicRecipes);
-                    this.recipesToShow = this.allRecipes.slice(0, 8);
-                    break;
-                  case RecipeType.My:
-                    this.allRecipes = this.recipeService.getRecipesByUser(
-                      data,
-                      this.currentUser.id,
-                    );
-                    this.recipesToShow = this.allRecipes.slice(0, 8);
-                    break;
-                  case RecipeType.Favorite:
-                    this.allRecipes =
-                      this.recipeService.getFavoriteRecipesByUser(
-                        data,
-                        this.currentUser.id,
-                      );
-                    this.recipesToShow = this.allRecipes.slice(0, 8);
-                    break;
-                  case RecipeType.Commented:
-                    this.allRecipes =
-                      this.recipeService.getCommentedRecipesByUser(
-                        publicRecipes,
-                        this.currentUser.id,
-                      );
-
-                    this.recipesToShow = this.allRecipes.slice(0, 8);
-                    break;
-                  case RecipeType.Liked:
-                    this.allRecipes = this.recipeService.getLikedRecipesByUser(
-                      publicRecipes,
-                      this.currentUser.id,
-                    );
-                    this.recipesToShow = this.allRecipes.slice(0, 8);
-                    break;
-                  case RecipeType.Cooked:
-                    this.allRecipes = this.recipeService.getCookedRecipesByUser(
-                      publicRecipes,
-                      this.currentUser.id,
-                    );
-                    this.recipesToShow = this.allRecipes.slice(0, 8);
-                    break;
-                  case RecipeType.All:
-                    this.allRecipes = publicRecipes;
-                    this.recipesToShow = publicRecipes;
-                    this.popularRecipes = this.recipeService
-                      .getPopularRecipes(this.allRecipes)
-                      .slice(0, 8);
-                    this.discussedRecipes = this.recipeService
-                      .getMostDiscussedRecipes(publicRecipes)
-                      .slice(0, 8);
-                    this.commentedRecipes = this.recipeService
-                      .getCommentedRecipesByUser(publicRecipes, user.id)
-                      .slice(0, 8);
-
-                    this.recentRecipes = this.recipeService
-                      .getRecentRecipes(this.allRecipes)
-                      .slice(0, 8);
-                    this.cookedRecipes = this.recipeService
-                      .getCookedRecipesByUser(this.allRecipes, user.id)
-                      .slice(0, 8);
-                    this.likedRecipes = this.recipeService
-                      .getLikedRecipesByUser(this.allRecipes, user.id)
-                      .slice(0, 8);
-                    this.favoriteRecipes = this.recipeService
-                      .getFavoriteRecipesByUser(this.allRecipes, user.id)
-                      .slice(0, 8);
-
-                    this.myRecipes = this.recipeService.getRecipesByUser(
-                      data,
-                      this.currentUser.id,
-                    );
-
-                    this.followingRecipes = this.getFollowingRecipes(
-                      publicRecipes,
-                    ).slice(0, 8);
-
-                    this.allRecipes = [...this.allRecipes, ...this.myRecipes];
-
-                    break;
-                }
-              });
-          });
-      }
-      this.title.setTitle(this.getTitleByRecipeType(this.recipeType));
-
-      this.dataLoad = true;
-    });
   }
 
-  loadMoreRecipes() {
+  private currentUserInit(categoryFromData: ICategory): void {
+    this.authService.currentUser$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((user: IUser) => {
+        this.currentUser = user;
+        this.recipeSourceInit(categoryFromData);
+      });
+  }
+
+  protected getTitleByRecipeType(recipeType: RecipeType): string {
+    if (recipeType === RecipeType.Category) {
+      return this.category.name;
+    }
+    return recipeTitles[recipeType] || '';
+  }
+  protected getNoRecipesTextByRecipetype(recipeType: RecipeType): string {
+    return recipeNoRecipesText[recipeType] || '';
+  }
+  protected getNoRecipesButtonTextByRecipetype(recipeType: RecipeType): string {
+    return recipeNoRecipesButtonText[recipeType] || '';
+  }
+  protected getNoRecipesRouterLinkTextByRecipetype(
+    recipeType: RecipeType,
+  ): string {
+    return recipeNoRecipesRouterLinkText[recipeType] || '';
+  }
+
+  protected navigateTo(link: string) {
+    this.router.navigateByUrl(link);
+  }
+
+  protected loadMoreRecipes() {
     const currentLength = this.recipesToShow.length;
     const nextRecipes = this.allRecipes.slice(currentLength, currentLength + 4);
     this.recipesToShow = [...this.recipesToShow, ...nextRecipes];
   }
 
-  getFollowingRecipes(recipes: IRecipe[]): IRecipe[] {
+  private getFollowingRecipes(recipes: IRecipe[]): IRecipe[] {
     const currentUserFollowings: IUser[] = this.userService.getFollowing(
       this.allUsers,
       this.currentUser.id,
@@ -296,25 +349,21 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     return followingRecipes;
   }
 
-  searchOff() {
-    this.searchQuery = '';
-  }
-
-  blur() {
-    this.autocompleteShow = false;
-  }
-  getUser(userId: number): IUser {
+  protected getUser(userId: number): IUser {
     const finded = this.allUsers.find((user) => user.id === userId);
     if (finded) return finded;
     return { ...nullUser };
   }
 
-  focus() {
+  protected focus(): void {
     if (this.searchQuery !== '') {
       this.autocompleteShow = true;
     }
   }
-  search() {
+  protected blur(): void {
+    this.autocompleteShow = false;
+  }
+  protected search(): void {
     this.autocompleteShow = true;
     const recipeAuthors: IUser[] = [];
     this.allRecipes.forEach((element) => {
@@ -343,7 +392,8 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
       });
     } else this.autocompleteShow = false;
   }
-  ngOnDestroy(): void {
+
+  public ngOnDestroy(): void {
     this.destroyed$.next();
     this.destroyed$.complete();
   }

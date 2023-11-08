@@ -7,6 +7,7 @@ export enum UsersType {
   Productive = 'productive',
   Nearby = 'nearby',
   All = 'all',
+  New = 'new'
 }
 
 export const userTitles = {
@@ -17,7 +18,8 @@ export const userTitles = {
   [UsersType.Following]: 'Ваши подписки',
   [UsersType.Productive]: 'Самые продуктивные кулинары',
   [UsersType.All]: 'Все кулинары',
-  [UsersType.Nearby]:'Кулинары рядом'
+  [UsersType.Nearby]: 'Кулинары рядом',
+  [UsersType.New]:'Новенькие'
 };
 
 
@@ -33,4 +35,5 @@ export const noUsersText = {
     'У тебя пока нет подписчиков. Попробуй подписаться на парочку кулинаров и зайди сюда снова',
   [UsersType.Productive]: '',
   [UsersType.All]: '',
+  [UsersType.New]:''
 };

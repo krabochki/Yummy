@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IUser } from '../models/users';
+import { IUser, PermissionContext } from '../models/users';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, map, switchMap, take, tap, throwError } from 'rxjs';
 import { usersUrl } from 'src/tools/source';
@@ -155,22 +155,47 @@ export class UserService {
     return this.http.put<IUser>(`${this.url}/${user.id}`, user);
   }
 
-  deleteUser() {
-    //исправить: не удаляет юзера и выдает ошибки если у него более 1 своего рецепта
-    // this.deleteDataAboutDeletingUser(deletableUser.id);
-    // this.recipeService.deleteDataAboutDeletingUser(deletableUser.id);
-    // return this.http
-    //   .delete(`${this.url}/${deletableUser.id}`)
-    //   .pipe(
-    //     tap((answer) =>
-    //       this.usersSubject.next(
-    //         this.usersSubject.value.filter(
-    //           (user) => user.id !== deletableUser.id,
-    //         ),
-    //       ),
-    //     ),
-    //   )
-    //   .subscribe();
+  getUsersWhichWillBeUpdatedWhenUserDeleting(users: IUser[], user: IUser): IUser[] {
+    const usersToUpdate:IUser[] = []
+    users.forEach(
+      u => {
+        if (u.followersIds.includes(user.id))
+        {
+          u.followersIds = u.followersIds.filter(f => f !== user.id)
+          usersToUpdate.push(u);
+        }
+      } 
+    )
+    return usersToUpdate;
+  }
+
+  deleteUser(deletableUser:IUser) {
+    return this.http
+      .delete(`${this.url}/${deletableUser.id}`)
+      .pipe(
+        tap(() =>
+          this.usersSubject.next(
+            this.usersSubject.value.filter(
+              (user) => user.id !== deletableUser.id,
+            ),
+          ),
+        ),
+      );
+  }
+
+  getPermission(context: PermissionContext, user: IUser): boolean {
+    const permissions = user.permissions;
+
+    //возвращаем что уведомление включено true, только если оно конкретно не установлено false
+
+    if (permissions && permissions.length) {
+          const permissionExist = permissions.find(
+            (p) => p.context === context,
+      );
+      if (permissionExist) return permissionExist.enabled;
+      else return true;
+    }
+    return true;
   }
 
   postUser(user: IUser) {

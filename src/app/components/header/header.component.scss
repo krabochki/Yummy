@@ -10,6 +10,7 @@
   column-gap: var(--space-m);
 }
 
+
 .label {
   font-size: var(--font-xl);
   cursor: pointer;
@@ -371,6 +372,7 @@ p {
   }
 
 
+
   .admin-panel{
     position: static;
     margin: 0;
@@ -418,3 +420,28 @@ app-modal {
   z-index: 10;
   position: fixed;
 }
+
+
+
+.popups{
+  position: fixed;
+  width: 17em;
+  bottom:0;
+  left:0;
+  height: fit-content;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+      
+
+  row-gap: 0.75em;
+  justify-content: end;
+  margin: 1em;
+  .popup{
+    overflow: hidden;
+   background-color: var(--color-background-deeper-unactive);
+
+  }
+}
+
+

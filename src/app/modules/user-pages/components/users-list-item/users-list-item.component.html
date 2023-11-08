@@ -20,11 +20,14 @@
                 
             </p>
        </div>
-       <button  *ngIf="currentUser.id!==user.id" (click)="!isFollower?follow():unfollow()"  class="follow-button" [ngClass]="{'follow-btn':!isFollower, 'unfollow-btn':isFollower}">{{!isFollower?'Подписаться':'Отписаться'}}</button>
-       <div (click)="!isFollower?follow():unfollow()" [title]="!isFollower?'Подписаться':'Отписаться'" [class]="!isFollower?'follow':'unfollow'"  *ngIf="currentUser.id!==user.id" >
+       <button  *ngIf="currentUser.id!==user.id" (click)="!isFollower?follow():unfollow()"  class="follow-button" [ngClass]="{'follow-btn':!isFollower && !adminpanel , 'unfollow-btn':adminpanel || isFollower}">{{!isFollower?'Подписаться':'Отписаться'}}</button>
+       <div (click)="!adminpanel?!isFollower?follow():unfollow():demote()" [title]="!isFollower?'Подписаться':'Отписаться'" [class]="!isFollower?'follow':'unfollow'"  *ngIf="currentUser.id!==user.id" >
         
-        <svg-icon *ngIf="!isFollower" class="follow-svg"  [src]="'../../../../../assets/images/svg/follow2.svg'"></svg-icon>
-        <svg-icon *ngIf="isFollower" class="follow-svg"  [src]="'../../../../../assets/images/svg/unfollow2.svg'"></svg-icon>
+        <ng-container *ngIf="!adminpanel">
+            <svg-icon *ngIf="!isFollower" class="follow-svg"  [src]="'../../../../../assets/images/svg/follow2.svg'"></svg-icon>
+            <svg-icon *ngIf="isFollower" class="follow-svg"  [src]="'../../../../../assets/images/svg/unfollow2.svg'"></svg-icon>
+        </ng-container>
+        <svg-icon *ngIf="adminpanel"  class="follow-svg"  [src]="'../../../../../assets/images/svg/demote.svg'"></svg-icon>
     
     </div>
    </div>

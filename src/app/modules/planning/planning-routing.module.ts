@@ -3,6 +3,10 @@ import { RouterModule, Routes } from '@angular/router';
 import { PlanningComponent } from './planning.component';
 import { CollectionComponent } from './collection/collection.component';
 import { ShoppingListComponent } from './shopping-list/shopping-list.component';
+import { AuthGuard } from '../authentication/guards/auth.guard';
+import { CalendarComponent } from './calendar/calendar.component';
+import { CalendarDateFormatter } from 'angular-calendar';
+import { CustomDateFormatter } from './custom-date-formatter';
 
 const routes: Routes = [
   {
@@ -10,12 +14,18 @@ const routes: Routes = [
     component: PlanningComponent,
     children: [
       {
-        path: 'plan',
+        path: 'plan/collections',
         component: CollectionComponent,
+      },
+      {
+        path: 'plan/calendar',
+        component: CalendarComponent,
+        canActivate:[AuthGuard]
       },
       {
         path: 'plan/shopping-list',
         component: ShoppingListComponent,
+        canActivate: [AuthGuard]
       },
     ],
   },
@@ -24,5 +34,6 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
+
 })
 export class PlanningRoutingModule {}

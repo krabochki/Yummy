@@ -3,7 +3,7 @@ import { INotification } from "./notifications";
 export interface IUser {
   id: number; // Уникальный идентификатор пользователя
   username: string; // Имя пользователя
-  avatarUrl: FormData|null; // URL аватара пользователя
+  avatarUrl: FormData | null; // URL аватара пользователя
   description: string; // Описание пользователя
   quote: string; // Цитата пользователя
   email: string; // Почта пользователя
@@ -15,9 +15,45 @@ export interface IUser {
   location: string; // Локация пользователя
   registrationDate: string; // Дата регистрации пользователя
   profileViews: number; // Количество просмотров профиля
-  role: 'admin' | 'moderator' | 'user';
-  notifications: INotification[]
+  role: role;
+  notifications: INotification[];
+  permissions?: IPermission[];
 }
+
+export interface IPermission {
+  context: PermissionContext;
+  enabled: boolean;
+}
+
+export type role = 'admin' | 'moderator' | 'user';
+
+export type PermissionContext =
+  | 'like-on-your-recipe'
+  | 'cook-on-your-recipe'
+  | 'plan-on-your-recipe'
+  | 'fav-on-your-recipe'
+  | 'you-create-new-recipe'
+   |'you-delete-your-comment'
+  | 'you-publish-recipe'
+  |'you-edit-your-account'
+  | 'manager-review-your-recipe'
+  | 'you-delete-your-recipe'
+  | 'you-edit-your-recipe'
+  | 'new-follower'
+  | 'new-recipe-from-following'
+  | 'you-plan-recipe'
+  | 'start-of-planned-recipe'
+  | 'planned-recipes-in-3-days'
+  | 'you-create-category'
+       | 'your-recipe-commented'
+      |            'your-reports-publish'
+       |           'your-reports-reviewed-moderator'
+        |         'your-commented-liked'
+         |        'you-commented-recipe'
+  | 'manager-reviewed-your-category';
+
+
+
 
 export const nullUser: IUser = {
   id: 0,

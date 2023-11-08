@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { IRecipe, IRecipeStatistics } from '../models/recipes';
-import { BehaviorSubject, catchError, map, mergeMap, switchMap, take, tap, throwError } from 'rxjs';
+import { BehaviorSubject, tap } from 'rxjs';
 import { recipesUrl } from 'src/tools/source';
 import { getCurrentDate } from 'src/tools/common';
+import { IPlan } from '../../planning/models/plan';
+import { IUser } from '../../user-pages/models/users';
 
 @Injectable({
   providedIn: 'root',
@@ -22,64 +24,116 @@ export class RecipeService {
     });
   }
 
-  deleteDataAboutDeletingUser(deletableId: number) {
-    let recipes: IRecipe[] = [];
-    this.recipes$.subscribe((data) => {
-      recipes = data;
+  getRecipesWhithIsEditedWhenUserDeleting(
+    recipes: IRecipe[],
+    user: IUser,
+  ): IRecipe[] {
+    const editedRecipes: IRecipe[] = [];
+    recipes.forEach((recipe) => {
+      let anyChanges: boolean = false;
 
-      recipes.forEach((recipe) => {
-        if (recipe.authorId === deletableId) {
-          this.deleteRecipe(recipe.id);
-        } else {
-          const before = { ...recipe };
-
-          if (recipe.likesId.includes(deletableId)) {
-            recipe.likesId = recipe.likesId.filter(
-              (element) => element !== deletableId,
-            );
-          }
-          if (recipe.favoritesId.includes(deletableId)) {
-            recipe.favoritesId = recipe.favoritesId.filter(
-              (element) => element !== deletableId,
-            );
-          }
-          if (recipe.cooksId.includes(deletableId)) {
-            recipe.cooksId = recipe.cooksId.filter(
-              (element) => element !== deletableId,
-            );
-          }
-          if (recipe.comments)
-            recipe.comments = recipe.comments.filter(
-              (element) => element.id !== deletableId,
-            );
-          if (
-            before.likesId !== recipe.likesId ||
-            before.cooksId !== recipe.cooksId ||
-            before.favoritesId !== recipe.favoritesId
-          ) {
-            this.updateRecipe(recipe);
-          }
+      if (recipe.authorId !== user.id || recipe.status === 'public') {
+        if (recipe.likesId.includes(user.id)) {
+          anyChanges = true;
+          recipe.likesId = recipe.likesId.filter(
+            (element) => element !== user.id,
+          );
         }
-      });
+        if (recipe.favoritesId.includes(user.id)) {
+          anyChanges = true;
+          recipe.favoritesId = recipe.favoritesId.filter(
+            (element) => element !== user.id,
+          );
+        }
+        if (recipe.cooksId.includes(user.id)) {
+          anyChanges = true;
+          recipe.cooksId = recipe.cooksId.filter(
+            (element) => element !== user.id,
+          );
+        }
+        if (recipe.comments) {
+          const beginLength = recipe.comments.length
+            ? recipe.comments.length
+            : 0;
+
+          recipe.comments.forEach((com) => {
+            if (
+              com.dislikesId.includes(user.id) ||
+              com.likesId.includes(user.id)
+            ) {
+              anyChanges = true;
+              com.dislikesId = com.dislikesId.filter((d) => d !== user.id);
+              com.likesId = com.likesId.filter((l) => l !== user.id);
+            }
+          });
+          recipe.comments = recipe.comments.filter(
+            (element) => element.authorId !== user.id,
+          );
+          const endLength = recipe.comments.length ? recipe.comments.length : 0;
+          if (endLength < beginLength) anyChanges = true;
+        }
+
+        if (recipe.reports) {
+          const beginLength = recipe.reports.length ? recipe.reports.length : 0;
+          recipe.reports = recipe.reports.filter(
+            (element) => element.reporter !== user.id,
+          );
+          const endLength = recipe.reports.length ? recipe.reports.length : 0;
+          if (endLength < beginLength) anyChanges = true;
+        }
+        if (recipe.statistics) {
+          const beginLength = recipe.statistics.length
+            ? recipe.statistics.length
+            : 0;
+          recipe.statistics = recipe.statistics.filter(
+            (element) => element.user !== user.id,
+          );
+          const endLength = recipe.statistics.length
+            ? recipe.statistics.length
+            : 0;
+          if (endLength < beginLength) anyChanges = true;
+        }
+
+        if (recipe.authorId === user.id && recipe.status === 'public') {
+          anyChanges = true;
+          recipe.authorId = -1;
+        }
+      }
+
+      if (anyChanges) {
+        editedRecipes.push(recipe);
+      }
     });
+    return editedRecipes;
+  }
+
+  getRecipesThatWillBeDeletedAfterUserDeleting(
+    recipes: IRecipe[],
+    user: IUser,
+  ): IRecipe[] {
+    const recipesForDeleting: IRecipe[] = [];
+    recipes.forEach((recipe) => {
+      if (recipe.authorId === user.id && recipe.status !== 'public')
+        recipesForDeleting.push(recipe);
+    });
+    return recipesForDeleting;
   }
 
   getRecipes() {
     return this.http.get<IRecipe[]>(this.url);
   }
 
-  deleteRecipe(id: number) {
+  deleteRecipe(deletingRecipe: IRecipe) {
     return this.http
-      .delete(`${this.url}/${id}`)
+      .delete(`${this.url}/${deletingRecipe.id}`)
       .pipe(
         tap(() =>
           this.recipesSubject.next(
-            this.recipesSubject.value.filter((recipe) => recipe.id !== id),
+            this.recipesSubject.value.filter(
+              (recipe) => recipe.id !== deletingRecipe.id,
+            ),
           ),
         ),
-        catchError((error) => {
-          return throwError(error);
-        }),
       );
   }
 
@@ -130,27 +184,35 @@ export class RecipeService {
   getCommentedRecipesByUser(recipes: IRecipe[], userId: number) {
     recipes = recipes.filter((recipe) => recipe.comments.length > 0);
     const userCommentedRecipes: IRecipe[] = [];
+    const addedRecipeIds = new Set<number>();
+
     recipes.forEach((element) => {
       element.comments.forEach((comment) => {
-        if (comment.authorId === userId) userCommentedRecipes.push(element);
+        if (comment.authorId === userId && !addedRecipeIds.has(element.id)) {
+          userCommentedRecipes.push(element);
+          addedRecipeIds.add(element.id);
+        }
       });
     });
+
     return userCommentedRecipes;
   }
 
   voteForRecipe(recipe: IRecipe, userId: number, userChoice: boolean): IRecipe {
     const statistic: IRecipeStatistics = {
-      userId: userId,
+      user: userId,
       answer: userChoice,
     };
-    if(!recipe.statistics) recipe.statistics=[]
+    if (!recipe.statistics) recipe.statistics = [];
     recipe.statistics.push(statistic);
     return recipe;
   }
   removeVote(recipe: IRecipe, userId: number): IRecipe {
-        if (!recipe.statistics) recipe.statistics = [];
+    if (!recipe.statistics) recipe.statistics = [];
 
-    recipe.statistics = recipe.statistics.filter((stat)=>stat.userId!==userId);
+    recipe.statistics = recipe.statistics.filter(
+      (stat) => stat.user !== userId,
+    );
     return recipe;
   }
   getCookedRecipesByUser(recipes: IRecipe[], user: number) {
@@ -159,9 +221,31 @@ export class RecipeService {
   getPopularRecipes(recipes: IRecipe[]) {
     return recipes.sort((a, b) => b.likesId.length - a.likesId.length);
   }
+  getMostCookedRecipes(recipes: IRecipe[]) {
+    return recipes.sort((a, b) => b.cooksId.length - a.cooksId.length);
+  }
+  getMostFavoriteRecipes(recipes: IRecipe[]) {
+    return recipes.sort((a, b) => b.favoritesId.length - a.favoritesId.length);
+  }
   getMostDiscussedRecipes(recipes: IRecipe[]): IRecipe[] {
     recipes = recipes.filter((recipe) => recipe.comments.length > 0);
     return recipes.sort((a, b) => b.comments.length - a.comments.length);
+  }
+  getPlannedRecipes(recipes: IRecipe[], plan: IPlan) {
+    const plannedRecipeIds: number[] = [];
+
+    for (const calendarEvent of plan.calendarEvents) {
+      plannedRecipeIds.push(calendarEvent.recipe);
+    }
+    console.log(plannedRecipeIds);
+
+    const plannedRecipes: IRecipe[] = [];
+
+    recipes.forEach((element) => {
+      if (plannedRecipeIds.includes(element.id)) plannedRecipes.push(element);
+    });
+
+    return plannedRecipes;
   }
   getPublicRecipes(recipes: IRecipe[]) {
     return recipes.filter((recipe) => recipe.status === 'public');
@@ -178,14 +262,9 @@ export class RecipeService {
     return recipes.filter((recipe) => recipe.status !== 'private');
   }
   getRecentRecipes(recipes: IRecipe[]) {
-
-  
-    
-
     return recipes.sort((a, b) => {
       const date1 = new Date(a.publicationDate);
       const date2 = new Date(b.publicationDate);
-      
 
       if (date1 > date2) {
         return -1; // Если дата публикации первого рецепта позже, он будет первым в отсортированном массиве.

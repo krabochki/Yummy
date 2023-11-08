@@ -15,7 +15,7 @@
         проверку</p>
     </div>
     <div class="circle"><span>{{reports.length}}</span>
-      <p><span appPluralRu="" [value]="reports.length" [arVariants]="['жалоба','жалобы','жалобы']"></span> на
+      <p><span appPluralRu="" [value]="reports.length" [arVariants]="['жалоба','жалобы','жалоб']"></span> на
         комментарии</p>
     </div>
     <div class="circle"><span>{{categoriesForCheck.length}}</span>
@@ -78,8 +78,8 @@
         <div class="reports">
           <div class="report" *ngFor="let report of reports">
             <div class="report-header">
-              <a class="report-recipe" [routerLink]="'/recipes/list/' + getRecipe(report.recipeId).id">
-                {{ getRecipe(report.recipeId).name }}
+              <a class="report-recipe" [routerLink]="'/recipes/list/' + getRecipe(report.recipe).id">
+                {{ getRecipe(report.recipe).name }}
               </a>
               <p class="report-date">
                 Жалоба подана {{ report.date | timePast | lowercase }}
@@ -88,10 +88,10 @@
             <div class="report-users">
               <p class="reporter">
                 Пожаловался:
-                <a class="report-user" [routerLink]="'/cooks/list/' + getUser(report.reporterId).id">{{
-                  getUser(report.reporterId).fullName !== ""
-                  ? getUser(report.reporterId).fullName
-                  : getUser(report.reporterId).username
+                <a class="report-user" [routerLink]="'/cooks/list/' + getUser(report.reporter).id">{{
+                  getUser(report.reporter).fullName !== ""
+                  ? getUser(report.reporter).fullName
+                  : getUser(report.reporter).username
                   }}</a>
               </p>
               <p class="reporter">
@@ -109,7 +109,7 @@
             <p class="report-content">
               Содержание комментария:
               <span>«{{
-                getComment(report.commentId, getRecipe(report.recipeId)).text
+                getComment(report.comment, getRecipe(report.recipe)).text
                 }}»
               </span>
             </p>
@@ -176,11 +176,22 @@
       </div>
     </div>
 
+    <div  class="content-wrap" *ngIf="currentUser.role==='admin'">
+     <h2 (click)="showManagers= !showManagers">
+        Модераторы
+        </h2>
+  <div @height *ngIf="showManagers " class="users"> 
+    <app-users-list   [adminpanel]="true" (demoteClick)="demoteActionClick($event)" [users]="managers"></app-users-list>
+  </div>
+  </div>
+
     <div>
       <app-button [text]="'Создать секцию'" (click)="sectionCreatingMode=true" [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
     </div>
  </div>
 
+
+  
 
 
 </div>
@@ -258,3 +269,7 @@
 ></app-modal>
 
 <app-section-creating @modal (closeEmitter)="sectionCreatingMode=false" *ngIf="sectionCreatingMode" style="z-index:10; position:fixed"></app-section-creating>
+
+<app-modal (resultEmit)="handleDemoteModal($event)" @modal *ngIf="demoteModalShow" [title]="'Подтвердите действие'" [style]="'prim'" [type]="'yesOrNo'" [buttonsText]="['Да','Отмена']" [description]="'Вы уверены, что хотите разжаловать модератора '+getName(targetDemotedUser)+'?'"></app-modal>
+
+<app-modal (resultEmit)="handleSuccessDemoteModal()" @modal *ngIf="demoteSuccessModalShow" [title]="'Успешное разжалование'" [style]="'sec'" [type]="'Ok'" [buttonsText]="['Хорошо']" [description]="'Вы успешно разжаловали модератора '+getName(targetDemotedUser)+'. Теперь он является простым пользователем'"></app-modal>

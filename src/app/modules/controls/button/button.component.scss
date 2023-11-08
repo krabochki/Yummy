@@ -195,19 +195,20 @@ button {
   color: var(--color-background);
   overflow: hidden;
   transition:
-    scale 0.2s,
+    transform 0.2s,
     background-color 0.2s ease-in-out,
     border-color 0.2s ease-in-out,
     color 0.2s ease-in-out;
 
   &:hover:not(.disabled) {
-    scale: 1.05;
+    transform: translateY(-0.2em);
   }
 }
 
 button.outlined {
   background: none;
-  transition:
+  transition:    transform 0.2s,
+
     scale 0.3s,
     background-color 0s,
     border-color 0.2s ease-in-out,
@@ -269,6 +270,7 @@ button.banner {
 
   &:hover {
     scale: 1;
+    transform:translateY(0);
     letter-spacing: 3px;
     background-color: rgba($color: white, $alpha: 0.15);
   }

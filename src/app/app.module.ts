@@ -18,8 +18,12 @@ import { RecipeService } from './modules/recipes/services/recipe.service';
 import { UserService } from './modules/user-pages/services/user.service';
 import { RecipesModule } from './modules/recipes/recipes.module';
 import { UserPagesModule } from './modules/user-pages/user-pages.module';
-import { PlanService } from './modules/planning/services/plan-service.service';
+import { PlanService } from './modules/planning/services/plan-service';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { NgbModalModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
+import { FlatpickrModule } from 'angularx-flatpickr';
 export function initializeSections(sectionSerivce: SectionService) {
   return () => sectionSerivce.loadSectionData();
 }
@@ -44,12 +48,12 @@ export function initializePlans(planService: PlanService) {
     HttpClientModule,
     RecipesModule,
     ControlsModule,
-   UserPagesModule,
+    UserPagesModule,
+    NgbModalModule,
+
     AngularSvgIconModule.forRoot(),
   ],
   providers: [
-      
-
     SectionService,
     {
       provide: APP_INITIALIZER,
@@ -78,11 +82,12 @@ export function initializePlans(planService: PlanService) {
       deps: [RecipeService],
       multi: true,
     },
-    PlanService, {
+    PlanService,
+    {
       provide: APP_INITIALIZER,
       useFactory: initializePlans,
       deps: [PlanService],
-      multi:true
+      multi: true,
     },
     AdminGuard,
     ModeratorGuard,

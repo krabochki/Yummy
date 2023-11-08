@@ -851,7 +851,110 @@
       "id": 17,
       "user": 27,
       "shoppingList": [],
-      "calendarEvents": []
+      "calendarEvents": [
+        {
+          "id": 5,
+          "recipe": 36,
+          "start": "2023-11-07T21:00:00.000Z",
+          "title": "Тарт татен",
+          "color": {
+            "primary": "#ffa500",
+            "secondary": "#ffa500"
+          },
+          "allDay": true,
+          "draggable": true,
+          "end": "2023-11-08T20:59:59.999Z",
+          "resizable": {
+            "beforeStart": true,
+            "afterEnd": true
+          }
+        },
+        {
+          "id": 3,
+          "recipe": 70,
+          "start": "2023-11-07T21:00:00.000Z",
+          "title": "Бабка",
+          "color": {
+            "primary": "#FBEE0F",
+            "secondary": "#FBEE0F"
+          },
+          "allDay": true,
+          "draggable": true,
+          "end": "2023-11-08T20:59:59.999Z",
+          "resizable": {
+            "beforeStart": true,
+            "afterEnd": true
+          }
+        },
+        {
+          "id": 1,
+          "recipe": 80,
+          "start": "2023-11-07T21:00:00.000Z",
+          "title": "Куриные котлеты с сыром «Папараць кветка»",
+          "color": {
+            "primary": "#F83839",
+            "secondary": "#F83839"
+          },
+          "allDay": true,
+          "draggable": true,
+          "end": "2023-11-08T20:59:59.999Z",
+          "resizable": {
+            "beforeStart": true,
+            "afterEnd": true
+          }
+        },
+        {
+          "id": 2,
+          "recipe": 68,
+          "start": "2023-11-07T21:00:00.000Z",
+          "title": "Драники",
+          "color": {
+            "primary": "#ffa500",
+            "secondary": "#ffa500"
+          },
+          "allDay": true,
+          "draggable": true,
+          "end": "2023-11-08T20:59:59.999Z",
+          "resizable": {
+            "beforeStart": true,
+            "afterEnd": true
+          }
+        },
+        {
+          "id": 4,
+          "recipe": 1,
+          "start": "2023-11-09T21:00:00.000Z",
+          "title": "Мороженое",
+          "color": {
+            "primary": "#ff3867",
+            "secondary": "#ff3867"
+          },
+          "allDay": true,
+          "draggable": true,
+          "end": "2023-11-10T20:59:59.999Z",
+          "resizable": {
+            "beforeStart": true,
+            "afterEnd": true
+          }
+        },
+        {
+          "id": 6,
+          "recipe": 1,
+          "start": "2023-11-07T21:00:00.000Z",
+          "title": "Еще мороженое",
+          "color": {
+            "primary": "#FFC5D0",
+            "secondary": "#FFC5D0"
+          },
+          "allDay": true,
+          "draggable": true,
+          "end": "2023-11-08T20:59:59.999Z",
+          "resizable": {
+            "beforeStart": true,
+            "afterEnd": true
+          }
+        }
+      ]
     }
   ],
   "categories": [
@@ -2243,7 +2346,8 @@
         6,
         13,
         25,
-        5
+        5,
+        27
       ],
       "favoritesId": [
         10,
@@ -2260,7 +2364,8 @@
         1,
         6,
         13,
-        5
+        5,
+        27
       ],
       "status": "public",
       "origin": "Sweden",
@@ -2309,6 +2414,10 @@
         {
           "user": 5,
           "answer": false
+        },
+        {
+          "user": 27,
+          "answer": true
         }
       ]
     },
@@ -4606,6 +4715,10 @@
         {
           "user": 1,
           "answer": true
+        },
+        {
+          "user": 27,
+          "answer": true
         }
       ],
       "ingredients": [
@@ -4768,10 +4881,12 @@
         25
       ],
       "cooksId": [
-        1
+        1,
+        27
       ],
       "likesId": [
-        1
+        1,
+        27
       ],
       "favoritesId": [
         1
@@ -4780,6 +4895,54 @@
       "comments": [],
       "publicationDate": "2023-11-07T22:47:06.608Z",
       "status": "public"
+    },
+    {
+      "name": "nnnbbnbnn",
+      "reports": [],
+      "statistics": [],
+      "ingredients": [],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 27,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 81,
+      "comments": [],
+      "publicationDate": "2023-11-08T01:56:35.372Z",
+      "status": "awaits"
+    },
+    {
+      "name": "fdfdfd",
+      "reports": [],
+      "statistics": [],
+      "ingredients": [],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 27,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 82,
+      "comments": [],
+      "publicationDate": "2023-11-08T01:59:14.140Z",
+      "status": "awaits"
     }
   ],
   "users": [
@@ -5691,6 +5854,30 @@
           "timestamp": "2023-11-07T22:36:58.751Z",
           "read": false,
           "notificationDate": ""
+        },
+        {
+          "id": 37,
+          "relatedLink": "/cooks/list/27",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «aliqua labore velit» понравился пользователю \n            Лунтик 🌙",
+          "title": "Твой рецепт оценили",
+          "timestamp": "2023-11-08T03:04:03.226Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 38,
+          "relatedLink": "/cooks/list/27",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «aliqua labore velit» приготовил кулинар Лунтик 🌙 и оставил положительный отзыв",
+          "title": "Твой рецепт приготовили",
+          "timestamp": "2023-11-08T03:25:56.901Z",
+          "read": false,
+          "notificationDate": ""
         }
       ]
     },
@@ -6110,6 +6297,30 @@
           "timestamp": "2023-11-07T22:36:58.751Z",
           "read": false,
           "notificationDate": ""
+        },
+        {
+          "id": 208,
+          "relatedLink": "/recipes/list/68",
+          "context": "calendar-recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Ваш рецепт «Картофельные драники с чесноком (без яиц и муки)» кто-то запланировал!",
+          "title": "Ваш рецепт запланировали",
+          "timestamp": "2023-11-08T03:28:02.282Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 209,
+          "relatedLink": "/recipes/list/70",
+          "context": "calendar-recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Ваш рецепт «Картофельная бабка (запеканка) с курицей» кто-то запланировал!",
+          "title": "Ваш рецепт запланировали",
+          "timestamp": "2023-11-08T03:29:33.739Z",
+          "read": false,
+          "notificationDate": ""
         }
       ]
     },
@@ -6253,6 +6464,30 @@
           "timestamp": "2023-11-06T20:53:07.393Z",
           "read": false,
           "notificationDate": ""
+        },
+        {
+          "id": 3,
+          "relatedLink": "/recipes/list/1",
+          "context": "calendar-recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Ваш рецепт «Шоколадное мороженое» кто-то запланировал!",
+          "title": "Ваш рецепт запланировали",
+          "timestamp": "2023-11-08T03:30:21.569Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 4,
+          "relatedLink": "/recipes/list/1",
+          "context": "calendar-recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Ваш рецепт «Шоколадное мороженое» кто-то запланировал!",
+          "title": "Ваш рецепт запланировали",
+          "timestamp": "2023-11-08T03:31:24.352Z",
+          "read": false,
+          "notificationDate": ""
         }
       ]
     },
@@ -6373,6 +6608,18 @@
           "title": "Твой рецепт приготовили",
           "timestamp": "2023-11-05T14:21:18.644Z",
           "read": false
+        },
+        {
+          "id": 2,
+          "relatedLink": "/recipes/list/36",
+          "context": "calendar-recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Ваш рецепт «Ананасовый тарт татен Бри Ходж из сериала \"Отчаянные домохозяйки\"» кто-то запланировал!",
+          "title": "Ваш рецепт запланировали",
+          "timestamp": "2023-11-08T03:31:06.162Z",
+          "read": false,
+          "notificationDate": ""
         }
       ]
     },
@@ -6948,19 +7195,554 @@
       "id": 27,
       "email": "newborn@mail.ru",
       "password": "newborn000A",
-      "username": "newborn",
+      "username": "newbj",
       "role": "user",
-      "avatarUrl": null,
+      "avatarUrl": {},
       "description": "",
       "quote": "",
-      "fullName": "",
+      "fullName": "Лунтик 🌙",
       "followersIds": [],
       "socialNetworks": [],
       "personalWebsite": "",
       "location": "",
       "registrationDate": "2023-11-07T23:12:38.398Z",
       "profileViews": 0,
-      "notifications": []
+      "notifications": [
+        {
+          "id": 48,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T03:33:03.679Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 43,
+          "relatedLink": "/plan/calendar",
+          "context": "plan-reminder",
+          "type": "warning",
+          "relatedId": 0,
+          "message": "Хотим вас предупредить, что у вас запланирован рецепт на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению этого вкусного блюда.<br>Запланированный рецепт:<br>ㅤМороженое (начало через 2 дня)",
+          "title": "Начало запланированного рецепта уже скоро!",
+          "timestamp": "2023-11-08T03:30:29.503Z",
+          "read": true,
+          "notificationDate": "Wed Nov 08 2023"
+        },
+        {
+          "id": 42,
+          "relatedLink": "/plan/calendar",
+          "context": "calendar-recipe",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Вы успешно запланировали рецепт «Мороженое» в «Календаре рецептов»",
+          "title": "Вы успешно запланировали рецепт",
+          "timestamp": "2023-11-08T03:30:22.635Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 39,
+          "relatedLink": "/plan/calendar",
+          "context": "plan-reminder-start",
+          "type": "warning",
+          "relatedId": 2,
+          "message": "Время начала запланированного вами рецепта «Драники» уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
+          "title": "Время начала запланированного рецепта настало!",
+          "timestamp": "2023-11-08T03:28:27.168Z",
+          "read": true,
+          "notificationDate": "Wed Nov 08 2023"
+        },
+        {
+          "id": 34,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T03:23:12.216Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 33,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T03:22:52.341Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 32,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T03:22:48.950Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 31,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T03:03:26.372Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 30,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T03:03:22.945Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 29,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T03:02:43.705Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 28,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T03:02:39.521Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 27,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T03:02:05.075Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 26,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T03:01:59.719Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 25,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T02:58:23.632Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 24,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T02:58:18.569Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 23,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T02:57:36.398Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 22,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T02:57:33.508Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 21,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T02:56:48.938Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 20,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T02:56:45.905Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 19,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T02:55:29.562Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 18,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T02:55:25.930Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 17,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T02:54:46.752Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 16,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T02:54:43.527Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 15,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T02:53:54.830Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 14,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T02:53:46.966Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 13,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T02:52:25.485Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 12,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T02:52:19.444Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 11,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T02:51:07.012Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 10,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T02:51:02.170Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 9,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T02:50:17.504Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 8,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T02:50:11.302Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 7,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T02:48:53.368Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 6,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T02:48:49.798Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 5,
+          "relatedLink": "/plan/calendar",
+          "context": "plan-reminder-start",
+          "type": "warning",
+          "relatedId": 1,
+          "message": "Время начала запланированного вами рецепта «Куриные котлеты с сыром «Папараць кветка»» уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
+          "title": "Время начала запланированного рецепта настало!",
+          "timestamp": "2023-11-08T01:53:43.058Z",
+          "read": true,
+          "notificationDate": "Wed Nov 08 2023"
+        },
+        {
+          "id": 35,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T03:23:22.320Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 36,
+          "relatedLink": "/cooks/list/27",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-08T03:23:25.567Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 37,
+          "relatedLink": "/plan/calendar",
+          "context": "calendar-recipe",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Вы успешно запланировали рецепт «fgfggfgf» в «Календаре рецептов»",
+          "title": "Вы успешно запланировали рецепт",
+          "timestamp": "2023-11-08T03:24:35.992Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 38,
+          "relatedLink": "/plan/calendar",
+          "context": "calendar-recipe",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Вы успешно запланировали рецепт «Драники» в «Календаре рецептов»",
+          "title": "Вы успешно запланировали рецепт",
+          "timestamp": "2023-11-08T03:28:03.013Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 40,
+          "relatedLink": "/plan/calendar",
+          "context": "calendar-recipe",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Вы успешно запланировали рецепт «Бабка» в «Календаре рецептов»",
+          "title": "Вы успешно запланировали рецепт",
+          "timestamp": "2023-11-08T03:29:34.394Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 41,
+          "relatedLink": "/plan/calendar",
+          "context": "plan-reminder-start",
+          "type": "warning",
+          "relatedId": 3,
+          "message": "Время начала запланированного вами рецепта «Бабка» уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
+          "title": "Время начала запланированного рецепта настало!",
+          "timestamp": "2023-11-08T03:29:38.041Z",
+          "read": true,
+          "notificationDate": "Wed Nov 08 2023"
+        },
+        {
+          "id": 44,
+          "relatedLink": "/plan/calendar",
+          "context": "calendar-recipe",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Вы успешно запланировали рецепт «Тарт татен» в «Календаре рецептов»",
+          "title": "Вы успешно запланировали рецепт",
+          "timestamp": "2023-11-08T03:31:06.847Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 45,
+          "relatedLink": "/plan/calendar",
+          "context": "plan-reminder-start",
+          "type": "warning",
+          "relatedId": 5,
+          "message": "Время начала запланированного вами рецепта «Тарт татен» уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
+          "title": "Время начала запланированного рецепта настало!",
+          "timestamp": "2023-11-08T03:31:10.332Z",
+          "read": true,
+          "notificationDate": "Wed Nov 08 2023"
+        },
+        {
+          "id": 46,
+          "relatedLink": "/plan/calendar",
+          "context": "calendar-recipe",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Вы успешно запланировали рецепт «Еще мороженое» в «Календаре рецептов»",
+          "title": "Вы успешно запланировали рецепт",
+          "timestamp": "2023-11-08T03:31:25.089Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 47,
+          "relatedLink": "/plan/calendar",
+          "context": "plan-reminder-start",
+          "type": "warning",
+          "relatedId": 6,
+          "message": "Время начала запланированного вами рецепта «Еще мороженое» уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
+          "title": "Время начала запланированного рецепта настало!",
+          "timestamp": "2023-11-08T03:31:57.721Z",
+          "read": true,
+          "notificationDate": "Wed Nov 08 2023"
+        }
+      ],
+      "permissions": [
+        {
+          "context": "you-edit-your-account",
+          "enabled": true
+        }
+      ]
     }
   ]
 }

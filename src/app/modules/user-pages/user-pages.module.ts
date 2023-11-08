@@ -51,6 +51,6 @@ import { TimePastPipe } from 'ng-time-past-pipe';
     provideAngularSvgIcon(),
     RouteEventsService,
   ],
-  exports: [NotificationsListComponent, UsersListComponent],
+  exports: [NotificationsListComponent, UsersListComponent, NotifyComponent],
 })
 export class UserPagesModule {}

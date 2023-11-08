@@ -1,8 +1,8 @@
 body {
   --color-primary: #f5484a;
-  --color-primary-focus: #ee0000;
+  --color-primary-focus: color-mix(in srgb, var(--color-primary), red 0%);
   --color-secondary: #ffab2c;
-  --color-secondary-focus: #ff9900;
+  --color-secondary-focus: #ff9900 ;
 
   --color-foreground: #212121;
   --color-background: #fff;
@@ -72,7 +72,6 @@ body {
   --color-moderator-lighter-focus: #acffe1;
   --color-moderator-focus: #00d184;
 
-  --color-primary-focus: #ff4b4b;
   --color-secondary-focus: #ff9c33;
 
   --color-primary-lighter-focus: #ff9191;

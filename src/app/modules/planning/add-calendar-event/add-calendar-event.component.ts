@@ -225,16 +225,7 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
       .updatePlan(this.plan)
       .subscribe(() => (this.modalSuccessSaveShow = true));
 
-    if (this.userService.getPermission('you-plan-recipe', this.currentUser)) {
-      const notify = this.notifyService.buildNotification(
-        'Вы успешно запланировали рецепт',
-        `Вы успешно запланировали рецепт «${newEvent.title}» в «Календаре рецептов»`,
-        'success',
-        'calendar-recipe',
-        '/plan/calendar',
-      );
-      this.notifyService.sendNotification(notify, this.currentUser).subscribe();
-    }
+   
 
     const findRecipe = this.allRecipes.find((r) => r.id === newEvent.recipe);
 
@@ -339,7 +330,16 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
   }
   handleSuccessSaveModal() {
     this.modalSuccessSaveShow = false;
-    this.closeEmitter.emit(true);
+    this.closeEmitter.emit(true); if (this.userService.getPermission('you-plan-recipe', this.currentUser)) {
+      const notify = this.notifyService.buildNotification(
+        'Вы успешно запланировали рецепт',
+        `Вы успешно запланировали рецепт «${this.title}» в «Календаре рецептов»`,
+        'success',
+        'calendar-recipe',
+        '/plan/calendar',
+      );
+      this.notifyService.sendNotification(notify, this.currentUser).subscribe();
+    }
   }
 
   getModalDescription(type: 'success' | 'save' | 'exit'): string {

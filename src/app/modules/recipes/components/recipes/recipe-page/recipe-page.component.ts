@@ -74,6 +74,8 @@ export class RecipePageComponent implements OnInit, OnDestroy {
 
   showHistory = false;
 
+  
+
   readingTimeInMinutes: number = 0;
 
   commentForm: FormGroup;

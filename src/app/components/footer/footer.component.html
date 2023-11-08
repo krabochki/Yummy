@@ -10,9 +10,9 @@
             </p>
         </div>
         <div class="sections">
-            <div>
+            <div class="left">
                 <p>Рецепты</p>
-                <ul>
+                <ul >
                     <a (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" routerLink="/recipes/yours">Твои рецепты</a>
                     <a  routerLink="/recipes">Ваши рецепты</a>
                     <a routerLink="/sections">Разделы</a>
@@ -20,15 +20,15 @@
                     <a  routerLink="/match">Подбор рецептов</a>
                 </ul>
             </div>
-            <div>
+            <div class="center">
                 <p>Кулинары</p>
-                <ul>
+                <ul >
                     <a (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" [routerLink]="this.currentUser.id >0?'/cooks/list/'+currentUser.id:null">Ваш профиль</a>
                     <a routerLink="/cooks">Все кулинары</a>
                     <a [routerLink]="this.currentUser.id >0?'/cooks/updates':null" (click)="linkClick()"  [ngClass]="{'disabling':currentUser.id===0}" >Обновления</a>
                 </ul>
             </div>
-            <div>
+            <div  class="right">
                 <p>Планнер</p>
                 <ul>
                     <a routerLink="/plan/collections" >Подборки</a>

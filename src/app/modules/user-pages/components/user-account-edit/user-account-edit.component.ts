@@ -278,26 +278,10 @@ export class UserAccountEditComponent
             this.authService.setCurrentUser(user);
             this.successModal = true;
           }
-          (error: Error) => {
-            console.error(
-              'Изменение пользователя | Ошибка при авторизации обновленного пользователя: ' +
-                error.message,
-            );
-          };
+        
         });
 
-        if (
-          this.userService.getPermission('you-edit-your-account', this.newUser)
-        ) {
-          const notify: INotification = this.notifyService.buildNotification(
-            'Профиль изменен',
-            'Твой профиль успешно изменен',
-            'success',
-            'user',
-            '/cooks/list/' + this.newUser.id,
-          );
-          this.notifyService.sendNotification(notify, this.newUser).subscribe();
-        }
+       
       }
     );
   }
@@ -319,6 +303,19 @@ export class UserAccountEditComponent
     this.closeEmitter.emit(true);
 
     this.successModal = false;
+
+     if (
+       this.userService.getPermission('you-edit-your-account', this.newUser)
+     ) {
+       const notify: INotification = this.notifyService.buildNotification(
+         'Профиль изменен',
+         'Твой профиль успешно изменен',
+         'success',
+         'user',
+         '/cooks/list/' + this.newUser.id,
+       );
+       this.notifyService.sendNotification(notify, this.newUser).subscribe();
+     }
   }
   handleCloseModal(answer: boolean) {
     if (answer) {

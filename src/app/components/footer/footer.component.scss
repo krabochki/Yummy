@@ -64,18 +64,17 @@
         display: flex;
         flex-direction: column;
         row-gap: var(--space-xs);
-                        max-width: 8em;
-
+        max-width: 8em;
 
         a {
           line-height: 1;
 
           text-decoration: underline;
 
-          &.disabling{
-    color:var(--color-foreground-unactive);
-    text-decoration: none;
-}
+          &.disabling {
+            color: var(--color-foreground-unactive);
+            text-decoration: none;
+          }
         }
       }
     }
@@ -103,7 +102,7 @@
   }
   .sections {
     .label {
-        cursor: pointer;
+      cursor: pointer;
       font-weight: 500;
     }
   }
@@ -111,8 +110,7 @@
   .label {
     font-family: var(--font-family-accent);
     font-size: var(--font-l);
-            cursor: pointer;
-
+    cursor: pointer;
   }
 }
 svg {
@@ -120,12 +118,14 @@ svg {
   height: var(--space-xl);
   fill: var(--color-foreground);
   border-radius: 100%;
-
-
-
 }
 
 @media (max-width: 900px) {
+  .label {
+    text-align: center;
+    justify-content: center;
+    margin: 0 auto;
+  }
   .footer {
     font-size: 1.1em;
     row-gap: var(--space-xl);
@@ -170,11 +170,23 @@ svg {
         flex-direction: row;
         column-gap: var(--space-m);
 
-        & div:nth-of-type(1) {
+        .left p,
+        .left a {
           text-align: right;
+          margin-left: auto;
+          justify-content: end;
         }
-        & div:nth-of-type(3) {
+        .center p,
+        .center a {
+          text-align: center;
+          justify-content: center;
+          margin: auto;
+        }
+        .right p,
+        .right a {
           text-align: left;
+          margin-right: auto;
+          justify-content: start;
         }
       }
     }
@@ -188,35 +200,35 @@ svg {
   .footer {
     padding: 0;
     height: 3em;
-    *{
+    * {
       display: none;
     }
   }
-
 }
 
-app-modal{
-    z-index: 10;
-    position: fixed;
+app-modal {
+  z-index: 10;
+  position: fixed;
 }
 
-.head-icon{
+.head-icon {
   height: 100%;
   fill: var(--color-foreground);
 }
 
-a{
+a {
   width: fit-content;
   transition: color 0.2s ease-in-out;
+  display: flex;
 
-  svg{
+  svg {
     transition: fill 0.2s ease-in-out;
   }
 
-  &:focus, &:hover{
-    svg{
-    fill: var(--color-secondary);
-
+  &:focus,
+  &:hover {
+    svg {
+      fill: var(--color-secondary);
     }
     color: var(--color-secondary);
   }

@@ -1,6 +1,15 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 
+<div class="popups">
+
+  <div class="popup" @popup  *ngFor="let item of popups">
+
+    <app-notify [popup]="true" (notifyDeleteClick)="removePopup(item)" [notify]="item" ></app-notify>
+  </div>
+
+
+</div>
 <div class="header">
 
   <a routerLink="/" class="label">Yummy</a>

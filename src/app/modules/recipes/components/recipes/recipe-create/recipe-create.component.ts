@@ -521,23 +521,11 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       };
 
       this.recipeService.postRecipe(recipeData).subscribe(() => {
+            this.editedRecipe = recipeData;
+
         this.successModalShow = true;
 
-        if (this.userService.getPermission('you-create-new-recipe', this.currentUser)) {
-         
-          const notify: INotification = this.notifyService.buildNotification(
-            this.isAwaitingApprove
-              ? 'Рецепт создан и отправлен на проверку'
-              : 'Рецепт создан',
-            `Рецепт «${recipeData.name}» успешно сохранен в ваших рецептах${
-              this.isAwaitingApprove ? ' и отправлен на проверку' : ''
-            }`,
-            'success',
-            'recipe',
-            '/recipes/list/' + recipeData.id,
-          );
-          this.notifyService.sendNotification(notify, this.currentUser).subscribe();
-        }
+      
 
         this.cd.markForCheck();
       });
@@ -617,6 +605,28 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
 
     this.successModalShow = false;
     this.closeEmitter.emit(true);
+
+      if (
+        this.userService.getPermission(
+          'you-create-new-recipe',
+          this.currentUser,
+        )
+      ) {
+        const notify: INotification = this.notifyService.buildNotification(
+          this.isAwaitingApprove
+            ? 'Рецепт создан и отправлен на проверку'
+            : 'Рецепт создан',
+          `Рецепт «${this.editedRecipe.name}» успешно сохранен в ваших рецептах${
+            this.isAwaitingApprove ? ' и отправлен на проверку' : ''
+          }`,
+          'success',
+          'recipe',
+          '/recipes/list/' + this.editedRecipe.id,
+        );
+        this.notifyService
+          .sendNotification(notify, this.currentUser)
+          .subscribe();
+      }
   }
   handleApproveModal(answer: boolean): void {
     if (answer) {

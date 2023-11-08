@@ -255,21 +255,23 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
   handleSuccessPublishModal() {
     this.recipe.status = 'awaits';
     this.recipe.publicationDate = getCurrentDate();
-    this.recipeService.updateRecipe(this.recipe).subscribe(() => {
-      if (
-        this.userService.getPermission('you-publish-recipe', this.author)
-      ) {
-        const notify: INotification = this.notifyService.buildNotification(
-          'Рецепт отправлен на проверку',
-          `Рецепт «${this.recipe.name}» успешно отправлен на проверку`,
-          'success',
-          'recipe',
-          '/recipes/list/' + this.recipe.id,
-        );
-        this.notifyService.sendNotification(notify, this.author).subscribe();
-      }
-    });
+ 
     this.successPublishModalShow = false;
+
+       this.recipeService.updateRecipe(this.recipe).subscribe(() => {
+         if (
+           this.userService.getPermission('you-publish-recipe', this.author)
+         ) {
+           const notify: INotification = this.notifyService.buildNotification(
+             'Рецепт отправлен на проверку',
+             `Рецепт «${this.recipe.name}» успешно отправлен на проверку`,
+             'success',
+             'recipe',
+             '/recipes/list/' + this.recipe.id,
+           );
+           this.notifyService.sendNotification(notify, this.author).subscribe();
+         }
+       });
   }
   handleNoAccessModal(result: boolean) {
     if (result) {

@@ -1,4 +1,4 @@
-import { AfterContentChecked, ChangeDetectorRef, Component, Input } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { INotification, nullNotification } from '../../../models/notifications';
 import { style } from '@angular/animations';
 import { ChangeDetectionStrategy } from '@angular/core';
@@ -15,13 +15,20 @@ changeDetection:ChangeDetectionStrategy.OnPush
 export class NotifyComponent  {
   @Input() notify: INotification = nullNotification;
   @Input() user: IUser = nullUser;
+  @Output() notifyDeleteClick = new EventEmitter();
+  @Input() popup: boolean = false;
 
 
   constructor(private notificationService:NotificationService){}
   protected deleteNotify() {
-        
 
-    this.notificationService.removeNotification(this.notify,this.user).subscribe()
+    if (this.popup) {
+      this.notifyDeleteClick.emit();
+    }
+    else {
+      this.notificationService.removeNotification(this.notify, this.user).subscribe()
+    }
+    
   }
 
   getClass() {

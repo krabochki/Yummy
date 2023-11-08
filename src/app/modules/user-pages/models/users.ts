@@ -15,7 +15,7 @@ export interface IUser {
   location: string; // Локация пользователя
   registrationDate: string; // Дата регистрации пользователя
   profileViews: number; // Количество просмотров профиля
-  role: 'admin' | 'moderator' | 'user';
+  role: role;
   notifications: INotification[];
   permissions?: IPermission[];
 }
@@ -24,6 +24,8 @@ export interface IPermission {
   context: PermissionContext;
   enabled: boolean;
 }
+
+export type role = 'admin' | 'moderator' | 'user';
 
 export type PermissionContext =
   | 'like-on-your-recipe'

@@ -245,7 +245,6 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
 
         if (!alreadySentReminder) {
           //если сегодня не напоминали
-
           if (
             this.currentUser.notifications.length !==
             this.currentUser.notifications.filter(

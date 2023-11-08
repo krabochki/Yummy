@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { INotification, nullNotification } from '../models/notifications';
 import { getCurrentDate } from 'src/tools/common';
 import { IUser } from '../models/users';
-import { EMPTY } from 'rxjs';
+import { EMPTY, take } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -94,7 +94,7 @@ export class NotificationService {
       notification.id = maxId + 1;
       actualUser.notifications.push(notification);
     }
-    if (actualUser) return this.userService.updateUsers(actualUser);
+    if (actualUser) return this.userService.updateUsers(actualUser).pipe(take(1));
     else return EMPTY;
   }
 }

@@ -497,13 +497,22 @@
       ],
       "shoppingList": [
         {
+          "id": 2,
+          "name": "Шампиньоны",
+          "note": "",
+          "howMuch": "",
+          "isBought": false,
+          "relatedRecipe": 0,
+          "type": 17
+        },
+        {
           "id": 1,
           "name": "Динамит",
           "note": "",
           "howMuch": "1 банка",
           "isBought": false,
           "relatedRecipe": 0,
-          "type": 17
+          "type": 24
         }
       ]
     },

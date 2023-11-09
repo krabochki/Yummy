@@ -8,6 +8,10 @@ export interface ShoppingListItem {
   note: string;
 }
 
+export interface typeGroup{
+  type: ProductType,
+  items:ShoppingListItem[]
+}
 
 export interface ProductType {
   id: number, 

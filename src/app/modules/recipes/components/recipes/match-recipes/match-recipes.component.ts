@@ -25,6 +25,7 @@ import {
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
 import { Router } from '@angular/router';
+import { dragStart } from 'src/tools/common';
 
 @Component({
   selector: 'app-match-recipes',
@@ -232,8 +233,10 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
   }
 
   toogleCondition(toogleTo: boolean) {
-    this.haveToContainAllCategories = toogleTo;
+    this.haveToContainAllCategories = toogleTo;    
+
     this.matchingRecipes = this.filterRecipesByIngredients();
+    this.getActualIngredients();
   }
 
   filterRecipesByIngredients() {
@@ -452,6 +455,10 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
     this.uniqueIngredientsArray = updatedIngredients;
   }
 
+  protected dragStart() {
+    dragStart()
+  }
+
   toggleSection(sectionIndex: number) {
     this.sectionStates[sectionIndex] = !this.sectionStates[sectionIndex];
   }
@@ -485,6 +492,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
       this.autoIngredients = allIngredients;
     }
   }
+  
 
   ngOnDestroy(): void {
     this.destroyed$.next();

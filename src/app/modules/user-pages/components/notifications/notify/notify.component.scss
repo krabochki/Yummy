@@ -20,11 +20,13 @@
 .born{
     --main:rgb(66, 170, 70); 
 }
+
+
 .plan{
-    --main:pink
+    --main: rgb(255, 105, 165); 
 }
 .plan-start{
-    --main:rgb(189, 255, 82); 
+    --main:rgb(147, 234, 7); 
 }
 .error{
     --main:var(--color-primary); 

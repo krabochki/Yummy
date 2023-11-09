@@ -23,3 +23,10 @@ export function getCurrentDate():string{
 export function dateComparator(dateA:Date, dateB:Date) {
 return (dateA > dateB) ? 1 :-1;
 }  
+
+
+export function dragStart() {
+   const bodyElement: HTMLElement = document.body;
+   bodyElement.classList.add('inheritCursors');
+   bodyElement.style.cursor = 'grabbing';
+  }

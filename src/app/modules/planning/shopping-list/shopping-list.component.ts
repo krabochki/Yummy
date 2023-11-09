@@ -9,11 +9,19 @@ import {
   ShoppingListItem,
   nullProduct,
   productTypes,
+  typeGroup,
 } from '../models/shopping-list';
 import { Subject, takeUntil } from 'rxjs';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
 import { Title } from '@angular/platform-browser';
+import {
+  CdkDragDrop,
+  CdkDragStart,
+  moveItemInArray,
+  transferArrayItem,
+} from '@angular/cdk/drag-drop';
+import { dragStart } from 'src/tools/common';
 
 @Component({
   selector: 'app-shopping-list',
@@ -33,12 +41,32 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
 
   protected form: FormGroup;
 
+  protected deletingAllProductsModalShow = false;
+  protected searchQuery: string = '';
+  protected autocompleteShow: boolean = false;
+  protected autocompleteTypes: ProductType[] = [];
+  protected focused: boolean = false;
+  protected selectedType: ProductType = productTypes[0];
+
   protected newProductCreatingMode: boolean = false;
+  protected note: string = '';
 
   protected actualShoppingList: ShoppingListItem[] = [];
   protected groupedProducts: { [key: string]: ShoppingListItem[] } = {};
 
   protected destroyed$: Subject<void> = new Subject<void>();
+
+  protected data: any[] = [];
+  bodyElement: HTMLElement = document.body;
+
+  //изменение курсора когда зажат элемент
+  dragStart() {
+    dragStart();
+  }
+
+  trackByItems(index: number, item: any): number {
+    return item.id;
+  }
 
   constructor(
     private planService: PlanService,
@@ -48,10 +76,43 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
   ) {
     this.title.setTitle('Список покупок');
     this.productTypes.sort((t1, t2) => {
-     return (t1.name > t2.name) ? 1: -1;
+      return t1.name > t2.name ? 1 : -1;
     });
 
     this.form = this.initNewShoppingListItemForm();
+  }
+
+  drop(events: CdkDragDrop<string[]>) {
+    this.bodyElement.classList.remove('inheritCursors');
+    this.bodyElement.style.cursor = 'unset';
+
+    if (events.previousContainer === events.container) {
+      moveItemInArray(
+        events.container.data,
+        events.previousIndex,
+        events.currentIndex,
+      );
+    } else {
+      transferArrayItem(
+        events.previousContainer.data,
+        events.container.data,
+        events.previousIndex,
+        events.currentIndex,
+      );
+      const droppedProduct: ShoppingListItem = JSON.parse(
+        JSON.stringify(events.container.data[events.currentIndex]),
+      );
+      const currentType: typeGroup = this.data.find(
+        (g) => g.items === events.container.data,
+      );
+      if (currentType.type.id !== droppedProduct.type) {
+        const findedProduct = this.currentUserPlan.shoppingList.find(
+          (i) => i.id === droppedProduct.id,
+        );
+        findedProduct ? (findedProduct.type = currentType.type.id) : null;
+        this.planService.updatePlan(this.currentUserPlan).subscribe();
+      }
+    }
   }
 
   private initNewShoppingListItemForm(): FormGroup {
@@ -69,7 +130,6 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
     });
   }
 
-  note: string = '';
   public ngOnInit(): void {
     this.initCurrentUser();
     this.initCurrentUserPlan();
@@ -98,6 +158,23 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
         this.groupedProducts = this.divideShoppingListByTypes(
           this.sortByBought(this.actualShoppingList),
         );
+
+        const shoppingList: ShoppingListItem[] = this.actualShoppingList;
+        const productTypes: ProductType[] = this.productTypes;
+        let itemsByCategory: typeGroup[] = [];
+        productTypes.forEach((type) => {
+          itemsByCategory.push({ type: type, items: [] });
+        });
+        shoppingList.forEach((item) => {
+          const findedTypeGroup = itemsByCategory.find(
+            (i) => i.type.id === item.type,
+          );
+          if (findedTypeGroup) findedTypeGroup.items.push(item);
+        });
+        console.log(itemsByCategory);
+        itemsByCategory = itemsByCategory.filter((i) => i.items.length !== 0);
+        this.data = itemsByCategory;
+
         this.shoppingList = [...this.sortByBought(this.actualShoppingList)];
       }
       //если добавили или удалили что-то то обновляю список, если просто отметили купленным то нет(чтобы анимация работала)
@@ -151,10 +228,10 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
 
   private sortByBought(shoppingList: ShoppingListItem[]): ShoppingListItem[] {
     const filter = shoppingList.sort((a, b) => {
-      return (a.id > b.id) ? 1 : -1;
+      return a.id > b.id ? 1 : -1;
     });
     return filter.sort((a, b) => {
-      return (a.isBought && !b.isBought) ? 1 : -1;
+      return a.isBought && !b.isBought ? 1 : -1;
     });
   }
 
@@ -191,12 +268,6 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
     this.destroyed$.complete();
   }
 
-  protected searchQuery: string = '';
-  protected autocompleteShow: boolean = false;
-  protected autocompleteTypes: ProductType[] = [];
-
-  protected focused: boolean = false;
-  protected selectedType: ProductType = productTypes[0];
   //поиск рецептов
   protected blur(): void {
     if (this.searchQuery !== '' && this.searchQuery !== this.selectedType.name)
@@ -237,8 +308,6 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
       });
     } else this.autocompleteTypes = [...this.productTypes];
   }
-
-  protected deletingAllProductsModalShow = false;
 
   handleDeletingAllProductsModal(answer: boolean) {
     if (answer) this.removeAllProducts();

@@ -1,12 +1,12 @@
 import { LOCALE_ID, NgModule } from '@angular/core';
 import { AsyncPipe, CommonModule, NgFor } from '@angular/common';
-
 import { PlanningRoutingModule } from './planning-routing.module';
 import { PlanningComponent } from './planning.component';
+import { CdkVirtualForOf,CdkVirtualForOfContext } from '@angular/cdk/scrolling';
 import { CollectionComponent } from './collection/collection.component';
 import { ShoppingListComponent } from './shopping-list/shopping-list.component';
 import { SvgIconComponent, provideAngularSvgIcon } from 'angular-svg-icon';
-import { CdkDropList, CdkDragHandle, CdkDrag } from '@angular/cdk/drag-drop';
+import { CdkDropList, CdkDragHandle, CdkDrag, moveItemInArray, transferArrayItem, CdkDropListGroup } from '@angular/cdk/drag-drop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ControlsModule } from '../controls/controls.module';
 import { CalendarComponent } from './calendar/calendar.component';
@@ -36,16 +36,19 @@ Flatpickr.localize(Russian);
     SvgIconComponent,
     TimePastPipe,
     ControlsModule,
+
     ReactiveFormsModule,
+    CdkVirtualForOf,
+
     AsyncPipe,
     CdkDropList,
     CdkDragHandle,
     CdkDropList,
+    CdkDropListGroup,
     CdkDrag,
     FormsModule,
     CdkDragHandle,
     NgFor,
-    CdkDrag,
     NgbModalModule,
     FlatpickrModule.forRoot(),
 
@@ -62,7 +65,10 @@ Flatpickr.localize(Russian);
       },
     ),
   ],
-  exports:[AddCalendarEventComponent],
-  providers: [{ provide: LOCALE_ID, useValue: 'ru' }, provideAngularSvgIcon()],
+  exports: [AddCalendarEventComponent],
+  providers: [
+    { provide: LOCALE_ID, useValue: 'ru' },
+    provideAngularSvgIcon()
+  ],
 })
 export class PlanningModule {}

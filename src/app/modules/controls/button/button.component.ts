@@ -8,7 +8,6 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges
 })
 export class ButtonComponent implements OnChanges {
   @Input() icon: string = '';
-
   @Input() iconStyle: 'white' | 'as-text' = 'white';
   @Input() iconSize: 'min' | 'max' = 'max';
   @Input() iconPosition: 'after' | 'before' = 'after';

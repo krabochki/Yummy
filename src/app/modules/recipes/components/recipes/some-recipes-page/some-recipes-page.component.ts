@@ -40,7 +40,13 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     private title: Title,
     private router: Router,
     private planService: PlanService,
-  ) {}
+  ) {
+    const matchRecipes =
+      this.router.getCurrentNavigation()?.extras.state?.['recipes'];
+    if (matchRecipes) {
+      this.matchRecipes = matchRecipes;
+    }
+  }
 
   protected dataLoad: boolean = false;
   protected creatingMode: boolean = false;
@@ -63,6 +69,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
   protected followingRecipes: IRecipe[] = [];
   protected mostCooked: IRecipe[] = [];
   protected mostFavorite: IRecipe[] = [];
+  protected matchRecipes: IRecipe[] = [];
 
   protected currentUser: IUser = { ...nullUser };
   protected searchQuery: string = '';
@@ -76,16 +83,24 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.usersInit();
+
     this.route.data.subscribe((data) => {
       this.filter = data['filter'];
+      if (this.filter === 'matching' && this.matchRecipes.length === 0)
+        this.router.navigateByUrl('/recipes');
       this.setRecipeType(this.filter);
+
       this.currentUserInit(data['CategoryResolver']);
+
       this.dataLoad = true;
     });
   }
 
   private setRecipeType(filter: string): void {
     switch (filter) {
+      case 'matching':
+        this.recipeType = RecipeType.Match;
+        break;
       case 'recent':
         this.recipeType = RecipeType.Recent;
         break;
@@ -209,6 +224,9 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     switch (this.recipeType) {
       case RecipeType.Planning:
         this.allRecipes = this.plannedRecipes;
+        break;
+      case RecipeType.Match:
+        this.allRecipes = this.matchRecipes;
         break;
       case RecipeType.Discussed:
         this.allRecipes = this.discussedRecipes;

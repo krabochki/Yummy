@@ -55,6 +55,12 @@ const routes: Routes = [
         component: SomeRecipesPageComponent,
       },
       {
+        path: 'recipes/matching',
+        data: { filter: 'matching' },
+
+        component: SomeRecipesPageComponent,
+      },
+      {
         path: 'recipes/yours',
         data: { filter: 'my-recipes' },
         component: SomeRecipesPageComponent,

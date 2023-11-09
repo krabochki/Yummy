@@ -20,7 +20,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AsyncPipe } from '@angular/common';
 
 import { ScrollingModule } from '@angular/cdk/scrolling';
-
 import { DragScrollModule } from 'ngx-drag-scroll';
 
 import { VerticalRecipeListComponent } from './components/recipes/vertical-recipe-list/vertical-recipe-list.component';

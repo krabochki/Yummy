@@ -3831,7 +3831,8 @@
         5
       ],
       "likesId": [
-        5
+        5,
+        1
       ],
       "favoritesId": [
         5
@@ -6027,6 +6028,18 @@
           "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «Я справлюсь сам»",
           "title": "Новый рецепт от кулинара",
           "timestamp": "2023-11-08T22:37:41.374Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 214,
+          "relatedLink": "/cooks/list/1",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «Колдуны» понравился кулинару Але",
+          "title": "Твой рецепт оценили",
+          "timestamp": "2023-11-09T13:22:17.576Z",
           "read": false,
           "notificationDate": ""
         }

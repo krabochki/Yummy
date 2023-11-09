@@ -152,4 +152,4 @@ export const sections: NotificationSettingsSections[] = [
 export type social = 'facebook'|'twitter'|'vk'|'pinterest'
                  
                 
-export const steps:string[] = ['Основное', 'Персональная информация','Уведомления']
+export const steps:string[] = ['Основное', 'Персональная информация','Уведомления','Предпочтения']

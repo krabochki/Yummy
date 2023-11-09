@@ -18,6 +18,8 @@ export interface IUser {
   role: role;
   notifications: INotification[];
   permissions?: IPermission[];
+  exclusions?: string[],
+  permanent?: string[]
 }
 
 export interface IPermission {

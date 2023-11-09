@@ -495,26 +495,7 @@
           }
         }
       ],
-      "shoppingList": [
-        {
-          "id": 2,
-          "name": "Шампиньоны",
-          "note": "",
-          "howMuch": "",
-          "isBought": false,
-          "relatedRecipe": 0,
-          "type": 17
-        },
-        {
-          "id": 1,
-          "name": "Динамит",
-          "note": "",
-          "howMuch": "1 банка",
-          "isBought": false,
-          "relatedRecipe": 0,
-          "type": 24
-        }
-      ]
+      "shoppingList": []
     },
     {
       "id": 3,
@@ -5077,6 +5058,13 @@
           "context": "you-edit-your-account",
           "enabled": true
         }
+      ],
+      "permanent": [
+        "масло",
+        "соль"
+      ],
+      "exclusions": [
+        "мука"
       ]
     },
     {
@@ -6028,18 +6016,6 @@
           "notificationDate": "Wed Nov 08 2023"
         },
         {
-          "id": 211,
-          "relatedLink": "/plan/calendar",
-          "context": "plan-reminder",
-          "type": "warning",
-          "relatedId": 0,
-          "message": "Хотим вас предупредить, что у вас запланирован рецепт на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению этого вкусного блюда.<br>Запланированный рецепт:<br>ㅤБанановый хлеб (начало через 2 дня)",
-          "title": "Начало запланированного рецепта уже скоро!",
-          "timestamp": "2023-11-08T22:22:42.873Z",
-          "read": true,
-          "notificationDate": "Thu Nov 09 2023"
-        },
-        {
           "id": 212,
           "relatedLink": "/cooks/list/5",
           "context": "user",
@@ -6074,6 +6050,18 @@
           "timestamp": "2023-11-09T13:22:17.576Z",
           "read": true,
           "notificationDate": ""
+        },
+        {
+          "id": 215,
+          "relatedLink": "/plan/calendar",
+          "context": "plan-reminder",
+          "type": "warning",
+          "relatedId": 0,
+          "message": "Хотим вас предупредить, что у вас запланирован рецепт на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению этого вкусного блюда.<br>Запланированный рецепт:<br>ㅤБанановый хлеб (начало через 23 часа)",
+          "title": "Начало запланированного рецепта уже скоро!",
+          "timestamp": "2023-11-09T22:05:10.852Z",
+          "read": false,
+          "notificationDate": "Fri Nov 10 2023"
         }
       ]
     },

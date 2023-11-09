@@ -65,7 +65,7 @@
               <p (mousedown)="navigateTo('/recipes/list/' + item.id)">{{ item.name }}</p>
               <span (mousedown)="navigateTo('/cooks/list/'+ getUser(item.authorId).id)"
                 *ngIf="filter !== 'my-recipes'"
-                >{{ (getUser(item.authorId).fullName!=='')?getUser(item.authorId).fullName:'@'+getUser(item.authorId).username }}</span
+                >{{ item.authorId!==-1?(getUser(item.authorId).fullName!=='')?getUser(item.authorId).fullName:'@'+getUser(item.authorId).username:'Автор удален' }}</span
               >
             </li>
           </ul>

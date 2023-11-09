@@ -188,7 +188,6 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
       this.allRecipes,
       this.currentUser.id,
     );
-    console.log(this.cookedRecipes)
     this.likedRecipes = this.recipeService.getLikedRecipesByUser(
       this.allRecipes,
       this.currentUser.id,

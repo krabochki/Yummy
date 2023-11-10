@@ -18,6 +18,8 @@ import { UserPagesRoutingModule } from './user-pages-routing.module';
 import { UserPagesComponent } from './user-pages.component';
 import { UserAccountEditComponent } from './components/user-account-edit/user-account-edit.component';
 import { TimePastPipe } from 'ng-time-past-pipe';
+import { PickerComponent } from '@ctrl/ngx-emoji-mart';
+import { EmojiComponent } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 
 @NgModule({
   declarations: [
@@ -38,8 +40,9 @@ import { TimePastPipe } from 'ng-time-past-pipe';
     ControlsModule,
     RecipesModule,
     TimePastPipe,
-
+    PickerComponent,
     SvgIconComponent,
+    EmojiComponent,
     FormsModule,
     ReactiveFormsModule,
   ],

@@ -7,6 +7,7 @@ import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { NotificationService } from '../../services/notification.service';
 import { INotification } from '../../models/notifications';
+import { EmojiData } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 
 @Component({
   selector: 'app-users-list-item',
@@ -16,6 +17,7 @@ import { INotification } from '../../models/notifications';
 export class UsersListItemComponent implements OnInit, OnDestroy {
   @Input() public user: IUser = { ...nullUser };
   @Output() demoteClick = new EventEmitter<IUser>();
+  emoji: EmojiData | null = null;
 
   private destroyed$: Subject<void> = new Subject<void>();
   followingLength: number = 0;
@@ -51,6 +53,7 @@ export class UsersListItemComponent implements OnInit, OnDestroy {
           users,
           this.user.id,
         ).length;
+        this.emoji = this.user.emojiStatus ? this.user.emojiStatus : null;
       });
 
     this.recipeService.recipes$

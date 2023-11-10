@@ -25,11 +25,13 @@ p{
     -webkit-touch-callout: none;
     -webkit-user-select: none; /* Disable selection/copy in UIWebView */
 }
+
 .admin {
     .star-svg{
         fill: var(--color-admin);
     }
      .userpic{
+       
         border: 3px solid var(--color-admin);
     }
     
@@ -156,6 +158,11 @@ align-items: center;
         height: 2em;
         background-size: cover;
         background-image: url('../../../../../assets/images/userpic.png');
+        position: relative;
+         .emoji{
+            position: absolute;
+            right:-0.4em;bottom:-0.5em
+        }
     }
 }
 .follows{

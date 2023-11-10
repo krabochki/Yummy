@@ -1,3 +1,4 @@
+import { EmojiData } from "@ctrl/ngx-emoji-mart/ngx-emoji";
 import { INotification } from "./notifications";
 
 export interface IUser {
@@ -19,7 +20,8 @@ export interface IUser {
   notifications: INotification[];
   permissions?: IPermission[];
   exclusions?: string[],
-  permanent?: string[]
+  permanent?: string[],
+  emojiStatus?:EmojiData
 }
 
 export interface IPermission {

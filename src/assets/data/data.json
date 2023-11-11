@@ -495,53 +495,7 @@
           }
         }
       ],
-      "shoppingList": [
-        {
-          "id": 16,
-          "name": "вино",
-          "note": "только не сантастефана",
-          "howMuch": "1 бутыл",
-          "isBought": false,
-          "relatedRecipe": 0,
-          "type": 18
-        },
-        {
-          "id": 6,
-          "name": "Протеин",
-          "note": null,
-          "howMuch": "1 пачка",
-          "isBought": false,
-          "relatedRecipe": 0,
-          "type": 15
-        },
-        {
-          "id": 5,
-          "name": "Мухоморы",
-          "note": "",
-          "howMuch": "10 г",
-          "isBought": false,
-          "relatedRecipe": 0,
-          "type": 24
-        },
-        {
-          "id": 1,
-          "name": "Огурцы свежие",
-          "note": "",
-          "howMuch": "2 шт",
-          "isBought": false,
-          "relatedRecipe": 0,
-          "type": 0
-        },
-        {
-          "id": 3,
-          "name": "Перец болгарский",
-          "note": "",
-          "howMuch": "2 шт",
-          "isBought": false,
-          "relatedRecipe": 0,
-          "type": 0
-        }
-      ]
+      "shoppingList": []
     },
     {
       "id": 3,
@@ -2313,7 +2267,6 @@
         3,
         13,
         5,
-        1,
         27
       ],
       "likesId": [
@@ -3878,7 +3831,8 @@
         5
       ],
       "likesId": [
-        5
+        5,
+        1
       ],
       "favoritesId": [
         5
@@ -4999,150 +4953,6 @@
           "timestamp": "2023-11-08T22:28:56.761Z",
           "read": true,
           "notificationDate": "Thu Nov 09 2023"
-        },
-        {
-          "id": 8,
-          "relatedLink": "/cooks/list/1",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-08T22:41:24.954Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 9,
-          "relatedLink": "/cooks/list/1",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-08T22:41:35.708Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 10,
-          "relatedLink": "/cooks/list/1",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-08T22:42:17.932Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 11,
-          "relatedLink": "/cooks/list/1",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-08T22:42:27.108Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 12,
-          "relatedLink": "/cooks/list/1",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-08T22:42:38.802Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 13,
-          "relatedLink": "/cooks/list/1",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-08T22:42:44.356Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 14,
-          "relatedLink": "/cooks/list/1",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-08T22:42:50.593Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 15,
-          "relatedLink": "/cooks/list/1",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-08T22:43:03.323Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 16,
-          "relatedLink": "/cooks/list/1",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-08T22:43:20.076Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 17,
-          "relatedLink": "/cooks/list/1",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-08T22:43:35.620Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 18,
-          "relatedLink": "/cooks/list/1",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-08T22:43:59.478Z",
-          "read": false,
-          "notificationDate": ""
-        },
-        {
-          "id": 19,
-          "relatedLink": "/cooks/list/1",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-08T22:44:04.600Z",
-          "read": false,
-          "notificationDate": ""
         }
       ],
       "avatarUrl": {},
@@ -6218,6 +6028,18 @@
           "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «Я справлюсь сам»",
           "title": "Новый рецепт от кулинара",
           "timestamp": "2023-11-08T22:37:41.374Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 214,
+          "relatedLink": "/cooks/list/1",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «Колдуны» понравился кулинару Але",
+          "title": "Твой рецепт оценили",
+          "timestamp": "2023-11-09T13:22:17.576Z",
           "read": false,
           "notificationDate": ""
         }

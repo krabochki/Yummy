@@ -1,8 +1,13 @@
+/* eslint-disable no-prototype-builtins */
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
+  ElementRef,
   OnDestroy,
   OnInit,
+  Renderer2,
+  ViewChild,
 } from '@angular/core';
 import { RecipeService } from '../../../services/recipe.service';
 import { Subject, takeUntil } from 'rxjs';
@@ -14,6 +19,13 @@ import { SectionGroup } from 'src/app/modules/controls/autocomplete/autocomplete
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
 import { Title } from '@angular/platform-browser';
+import {
+  CdkDragDrop,
+  moveItemInArray,
+  transferArrayItem,
+} from '@angular/cdk/drag-drop';
+import { Router } from '@angular/router';
+import { getZoom } from 'src/tools/common';
 
 @Component({
   selector: 'app-match-recipes',
@@ -23,16 +35,16 @@ import { Title } from '@angular/platform-browser';
   animations: [trigger('height', heightAnim()), trigger('modal', modal())],
 })
 export class MatchRecipesComponent implements OnInit, OnDestroy {
-  protected baseSvgPath: string = '../../../../../assets/images/svg/';
+  protected baseSvgPath: string = 'assets/images/svg/';
   private categories: ICategory[] = []; //изначальные данные
   private sections: ISection[] = [];
   private recipes: IRecipe[] = [];
   protected group: SectionGroup[] = []; //секции и соответствующие им группы
 
+  protected showIngredientsAutocomplete: boolean = false;
+
   //текущий список уникальных ингредиентов, которые есть в подходящих рецептах
   protected uniqueIngredientsArray: { [ingredient: string]: number } = {};
-
-  protected showMatchingRecipes: boolean = false; //расскрыты ли подходящие условию рецепты
 
   sectionStates: boolean[] = []; //расскрыты ли категории в секции
   categoryStates: boolean[][] = []; //выбрана ли категория
@@ -40,22 +52,48 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
 
   protected selectedCategories: ICategory[] = [];
   protected selectedIngredients: string[] = [];
+  protected excludedIngredients: string[] = [];
+
+  protected selectedIngredientsCopyForDragAndDrop: any[] = []; //для cdk drag and drop обычный массив строк не подходит поэтому так
+  protected excludedIngredientsCopyForDragAndDrop: any[] = [];
 
   protected matchingRecipes: IRecipe[] = []; //рецепты подходящие под запросы
 
+  protected searchQuery: string = '';
   protected destroyed$: Subject<void> = new Subject<void>();
 
+  @ViewChild('autocompleteBlock') autocomplete?: ElementRef;
+
   constructor(
+    private renderer: Renderer2,
     private recipeService: RecipeService,
     private categoryService: CategoryService,
     private sectionService: SectionService,
     private title: Title,
-  ) {}
+    private router: Router,
+    private cd: ChangeDetectorRef,
+  ) {
+    this.renderer.listen('window', 'click', (e: Event) => {
+      if (this.autocomplete) {
+        if (!this.autocomplete.nativeElement.contains(e.target)) {
+          this.showIngredientsAutocomplete = false;
+          this.cd.markForCheck();
+        }
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.title.setTitle('Подбор рецептов');
     this.recipesInit();
     this.categoriesInit();
+  }
+
+  goToMatchingRecipesPage() {
+    this.router.navigate(
+      ['/recipes/matching'],
+      { state: { recipes: this.matchingRecipes } },
+    );
   }
 
   getCategory(id: number) {
@@ -126,6 +164,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
           this.recipes = this.recipeService.getPublicRecipes(receivedRecipes);
           this.matchingRecipes = this.recipes;
           this.uniqueIngredientsArray = this.getUniqueIngredients(this.recipes);
+          this.autoIngredients = this.getIngredientNames();
         }
       });
   }
@@ -134,6 +173,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
     // проверяем, есть ли ингредиент уже в selectedIngredients
     if (!this.selectedIngredients.includes(ingredient)) {
       this.selectedIngredients.push(ingredient);
+      this.selectedIngredientsCopyForDragAndDrop.push(ingredient);
       const updatedIngredientsObject: { [ingredient: string]: number } = {};
       for (const key in this.uniqueIngredientsArray) {
         if (key !== ingredient) {
@@ -157,7 +197,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
 
   getUniqueIngredients(recipes: IRecipe[]) {
     //получаем ингредиенты рецептов которые подходят под выбранные категории
-    const ingredientCounts: { [ingredient: string]: number } = {};
+    let ingredientCounts: { [ingredient: string]: number } = {};
     recipes.forEach((recipe) => {
       recipe.ingredients.forEach((ingredient) => {
         const ingredientName = ingredient.name.toLowerCase().trim();
@@ -168,8 +208,35 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
         }
       });
     });
+    ingredientCounts = this.onlyNoSelectedIngredients(ingredientCounts);
 
     return this.sortIngredients(ingredientCounts);
+  }
+
+  onlyNoSelectedIngredients(ingredientCounts: {
+    [ingredient: string]: number;
+  }) {
+    this.selectedIngredients.forEach((selectedIngredient) => {
+      const ingredientName = selectedIngredient.trim().toLowerCase();
+      if (ingredientCounts.hasOwnProperty(ingredientName)) {
+        ingredientCounts = Object.fromEntries(
+          Object.entries(ingredientCounts).filter(
+            ([key]) => key !== ingredientName,
+          ),
+        );
+      }
+    });
+    this.excludedIngredients.forEach((excludedIngredient) => {
+      const ingredientName = excludedIngredient.trim().toLowerCase();
+      if (ingredientCounts.hasOwnProperty(ingredientName)) {
+         ingredientCounts = Object.fromEntries(
+           Object.entries(ingredientCounts).filter(
+             ([key]) => key !== ingredientName,
+           ),
+         );
+      }
+    });
+    return ingredientCounts;
   }
 
   toogleCondition(toogleTo: boolean) {
@@ -182,6 +249,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
       //чтобы рецепты не фильтровались до 0 если категорий и рецептов не выбрано
       const hasSelectedIngredients = this.selectedIngredients.length > 0;
       const hasSelectedCategories = this.selectedCategories.length > 0;
+      const hasExcludedIngredients = this.excludedIngredients.length > 0;
 
       if (hasSelectedIngredients) {
         const ingredientsCheck = this.selectedIngredients.every(
@@ -219,6 +287,20 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
         }
       }
 
+      if (hasExcludedIngredients) {
+        const ingredientsCheck = this.excludedIngredients.every(
+          (excludedIngredient) =>
+            recipe.ingredients.some(
+              (ingredient) =>
+                ingredient.name.toLowerCase().trim() === excludedIngredient,
+            ),
+        );
+
+        if (ingredientsCheck) {
+          return false; // рецепт не подходит под ингредиенты
+        }
+      }
+
       return true; // рецепт подходит под все условия
     });
   }
@@ -227,9 +309,41 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
     //убираем все ингредиенты
     this.uniqueIngredientsArray = this.getUniqueIngredients(this.recipes);
     this.selectedIngredients = [];
-    this.matchingRecipes = this.filterRecipesByIngredients();
+    this.selectedIngredientsCopyForDragAndDrop = [];
     this.getActualIngredients();
+    this.matchingRecipes = this.filterRecipesByIngredients();
   }
+
+  clearAllExcludedIngredients() {
+    this.excludedIngredients = [];
+    this.excludedIngredientsCopyForDragAndDrop = [];
+    this.getActualIngredients();
+
+    this.matchingRecipes = this.filterRecipesByIngredients();
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+    }
+    this.selectedIngredients = this.selectedIngredientsCopyForDragAndDrop;
+    this.excludedIngredients = this.excludedIngredientsCopyForDragAndDrop;
+    this.getActualIngredients();
+
+    this.matchingRecipes = this.filterRecipesByIngredients();
+  }
+
   clearAllCategories() {
     this.selectedCategories = [];
     this.categoryStates = this.group.map((sectionGroup) => {
@@ -255,7 +369,6 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
       this.selectedCategories.push(selectedCategory);
 
       // Обновляем список ингредиентов на основе выбранной категории
-      this.updateIngredientsBasedOnCategory(selectedCategory, true);
     } else {
       const index = this.selectedCategories.indexOf(selectedCategory);
       if (index !== -1) {
@@ -263,11 +376,14 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
       }
     }
 
-    this.matchingRecipes = this.filterRecipesByIngredients();
     this.updateIngredientsBasedOnCategory(
       selectedCategory,
       this.categoryStates[sectionIndex][categoryIndex],
     );
+  }
+
+  getZoom(count: number): number {
+    return getZoom(count, 0.1, 6, 0.9);
   }
 
   updateIngredientsBasedOnCategory(
@@ -280,7 +396,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
     );
 
     // Создаем объект для подсчета ингредиентов в выбранной категории
-    const ingredientCounts: { [ingredient: string]: number } = {};
+    let ingredientCounts: { [ingredient: string]: number } = {};
 
     //сначала берем все ингредиенты подходящие по рецепту вообще
     recipesInSelectedCategory.forEach((recipe) => {
@@ -298,43 +414,26 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
     if (state) {
       const filteredIngredients = this.selectedIngredients
         .map((ingredient) => ingredient.trim().toLowerCase())
+        // eslint-disable-next-line no-prototype-builtins
         .filter((ingredient) => ingredientCounts.hasOwnProperty(ingredient));
 
       this.selectedIngredients = filteredIngredients;
     }
 
-    //теперь фильтруем возможные ингредиенты убирая ингредиенты которые есть в списке выбранных
-
-    recipesInSelectedCategory.forEach((recipe) => {
-      recipe.ingredients.forEach((ingredient) => {
-        //не добавляем во все ингредиенты те ингредиенты, которые уже выбраны
-        if (
-          !this.selectedIngredients.includes(
-            ingredient.name.trim().toLowerCase(),
-          )
-        ) {
-          const ingredientName = ingredient.name.toLowerCase().trim();
-          if (ingredientCounts[ingredientName] !== undefined) {
-            ingredientCounts[ingredientName]++;
-          } else {
-            ingredientCounts[ingredientName] = 1;
-          }
-        }
-      });
-    });
+    ingredientCounts = this.onlyNoSelectedIngredients(ingredientCounts);
 
     if (state) {
       if (this.selectedCategories.length > 1) {
         this.uniqueIngredientsArray = this.sortIngredients({
-          ...this.uniqueIngredientsArray,
           ...ingredientCounts,
         });
       } else {
         this.uniqueIngredientsArray = this.sortIngredients(ingredientCounts);
       }
-    } else {
-      this.getActualIngredients();
     }
+
+    this.matchingRecipes = this.filterRecipesByIngredients();
+    this.getActualIngredients();
   }
 
   getActualIngredients() {
@@ -356,6 +455,33 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
 
   toggleSection(sectionIndex: number) {
     this.sectionStates[sectionIndex] = !this.sectionStates[sectionIndex];
+  }
+
+  focusIngredientSearch(): void {
+    if (this.searchQuery === '')
+      this.autoIngredients = this.getIngredientNames();
+    this.showIngredientsAutocomplete = true;
+  }
+
+  protected autoIngredients: string[] = [];
+  search(): void {
+    const allIngredients = this.getIngredientNames();
+    if (this.searchQuery && this.searchQuery !== '') {
+      this.autoIngredients = [];
+
+      const search = this.searchQuery.toLowerCase().replace(/\s/g, '');
+
+      const filteredIngredients: string[] = allIngredients.filter(
+        (ingredient: string) =>
+          ingredient.toLowerCase().replace(/\s/g, '').includes(search),
+      );
+
+      filteredIngredients.forEach((ingredient) => {
+        this.autoIngredients.push(ingredient);
+      });
+    } else {
+      this.autoIngredients = allIngredients;
+    }
   }
 
   ngOnDestroy(): void {

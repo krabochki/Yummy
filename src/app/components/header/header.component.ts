@@ -25,13 +25,11 @@ import { Subject, filter, takeUntil } from 'rxjs';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import {
   INotification,
-  nullNotification,
 } from 'src/app/modules/user-pages/models/notifications';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import {
   count,
-  heightAnim,
   modal,
   notifies,
   popup,

@@ -93,9 +93,9 @@
                     >
                       <p>{{ item.name }}</p>
                       <span>{{
-                        getUser(item.authorId).fullName !== ""
+                        item.authorId!==-1? getUser(item.authorId).fullName !== ""
                           ? getUser(item.authorId).fullName
-                          : "@" + getUser(item.authorId).username
+                          : "@" + getUser(item.authorId).username:'Автор удален'
                       }}</span>
                     </li>
                   </ul>

@@ -50,7 +50,6 @@
   width: var(--font-2xl);
   height: var(--font-2xl);
   position: relative;
-  transition: 0.3s ease-in-out;
   border-radius: 100%;
   overflow: hidden;
   cursor: pointer;
@@ -72,7 +71,6 @@
         background-color: var(--color-moderator-focus);
 
   }
-    transition: 0.3s ease-in-out;
 &:hover::after{
   height: 100%;
   width: 100%;

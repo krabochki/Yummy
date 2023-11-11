@@ -29,4 +29,11 @@ export function dragStart() {
    const bodyElement: HTMLElement = document.body;
    bodyElement.classList.add('inheritCursors');
    bodyElement.style.cursor = 'grabbing';
-  }
+}
+  
+export function dragEnd() {
+     const bodyElement: HTMLElement = document.body;
+
+  bodyElement.classList.remove('inheritCursors');
+  bodyElement.style.cursor = 'unset';
+}

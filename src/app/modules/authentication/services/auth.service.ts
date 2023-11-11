@@ -4,6 +4,7 @@ import {
   BehaviorSubject,
   EMPTY,
   Observable,
+  filter,
   map,
 } from 'rxjs';
 import { UserService } from '../../user-pages/services/user.service';
@@ -20,39 +21,42 @@ export class AuthService {
     new BehaviorSubject<IUser>({ ...nullUser });
   currentUser$ = this.currentUserSubject.asObservable();
 
-  usersUrl =  usersUrl
 
-  constructor(
-    private userService: UserService,
-  ) {
-    
-    
 
+ 
+
+  usersUrl = usersUrl;
+
+  constructor(private userService: UserService) {}
+
+  loadCurrentUserData() {
     this.userService.users$.subscribe((users) => {
       const savedUser = localStorage.getItem('currentUser');
 
       if (savedUser) {
         const currentUser: IUser = JSON.parse(savedUser);
         if (currentUser && currentUser.id > 0) {
-
-          const foundUser=users.find(u=> u.email===currentUser.email&&u.password===currentUser.password)
+          const foundUser = users.find(
+            (u) =>
+              u.email === currentUser.email &&
+              u.password === currentUser.password,
+          );
           if (foundUser) {
             this.setCurrentUser(foundUser);
+            
             console.log(
               'Автоматический вход в аккаунт пользователя ' +
-              currentUser.username +
-              ' выполнен успешно!',
+                currentUser.username +
+                ' выполнен успешно!',
             );
           }
         }
-        
       }
-    })
+    });
   }
 
   setCurrentUser(user: IUser) {
     this.currentUserSubject.next({ ...user });
-
   }
 
   getCurrentUser(): Observable<IUser> {
@@ -78,13 +82,13 @@ export class AuthService {
   loginUser(user: IUser) {
     return this.userService.users$.pipe(
       map((users) => {
-        return (users.length > 0)?
-            users?.find(
+        return users.length > 0
+          ? users?.find(
               (u) =>
                 (u.email === user.email && u.password === user.password) ||
                 (u.username === user.username && u.password === user.password),
             ) || null
-        : null
+          : null;
       }),
     );
   }

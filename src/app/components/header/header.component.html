@@ -26,7 +26,7 @@
       <div class="admin-panel" [ngClass]="{
           admin: currentUser.role === 'admin',
           moder: currentUser.role === 'moderator'
-        }" routerLink="/control-dashboard" *ngIf="currentUser.role === 'admin' || currentUser.role === 'moderator'">
+        }" routerLink="/control-dashboard" *ngIf="(currentUser.role === 'admin' || currentUser.role === 'moderator') && showAdminpanel">
         <a> <svg-icon class="admin-svg" [src]="svgPath('star')" [class]="'svg'" /></a>
       </div>
       <button (click)="notifiesOpen=true"
@@ -56,7 +56,7 @@
         <a class="admin-panel" [ngClass]="{
         admin: currentUser.role === 'admin',
         moder: currentUser.role === 'moderator'
-      }" routerLink="/control-dashboard" *ngIf="currentUser.role === 'admin' || currentUser.role === 'moderator'">
+      }" routerLink="/control-dashboard" *ngIf="(currentUser.role === 'admin' || currentUser.role === 'moderator') && showAdminpanel">
           <svg-icon class="admin-svg" [src]="svgPath('thick-star')" [class]="'svg'"></svg-icon>
         </a>
         <a class="acc" (click)="linkClick('/cooks/list/'+currentUser.id)">

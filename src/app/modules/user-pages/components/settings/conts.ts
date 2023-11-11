@@ -1,14 +1,101 @@
-import { PermissionContext } from "../../models/users"
+import { PermissionContext, role } from "../../models/users"
 
 export interface NotificationSettingsSections {
   title: string;
   icon: string;
+  role?: role[];
+
   items: NotificationSettingsSectionItems[];
 }
 export interface NotificationSettingsSectionItems {
     description: string,
-    area:PermissionContext
+  area: PermissionContext,
 }
+
+export const condifencialitySettings: NotificationSettingsSections[] = [
+  {
+    title: 'Анонимность',
+    icon: 'anonim',
+    items: [
+      {
+        description: 'Показывать вашу страницу на странице всех пользователей',
+        area: 'show-me-on-userspage',
+      },
+      {
+        description:
+          'Показывать вашу страницу в результатах поиска на странице всех пользователей',
+        area: 'search-me-on-userspage',
+      },
+      {
+        description: 'Разрешить просматривать вашу страницу',
+        area: 'show-my-page',
+      },
+      {
+        description: 'Показать авторство ваших комментариев',
+        area: 'comment-author',
+      },
+      {
+        description: 'Показать авторство ваших рецептов',
+        area: 'hide-author',
+      },
+    ],
+  },
+  {
+    title: 'Ваша должность',
+    role: ['admin', 'user'],
+    icon: 'anonimous',
+    items: [
+      {
+        description: 'Другие кулинары могут видеть вашу должность',
+        area: 'show-status',
+      },
+    ],
+  },
+];
+
+export const managersPreferences: NotificationSettingsSections[] = [
+  {
+    title: 'Общие настройки управляющих',
+    icon: 'common',
+    items: [
+      {
+        description: 'Показывать значок админ-панели',
+        area: 'show-adminpanel',
+      },
+      {
+        description: 'Показывать кнопку удаления категории',
+        area: 'show-category-deleting',
+      },
+      {
+        description: 'Показывать кнопку удаления секции',
+        area: 'show-section-deleting',
+      },
+    ],
+  },
+  {
+    title: 'Модераторы',
+    role: ['moderator'],
+    icon: 'star',
+    items: [
+      {
+        description: 'Уведомлять вас о потере вашего статуса модератора',
+        area: 'you-was-fired',
+      },
+    ],
+  },
+  {
+    title: 'Администратор',
+    role: ['admin'],
+    icon: 'star',
+    items: [
+      {
+        description: 'Показывать кнопку назначения модератора',
+        area: 'new-moder-button',
+      },
+    ],
+  },
+ 
+];
 
 export const sections: NotificationSettingsSections[] = [
   {
@@ -152,4 +239,4 @@ export const sections: NotificationSettingsSections[] = [
 export type social = 'facebook'|'twitter'|'vk'|'pinterest'
                  
                 
-export const steps:string[] = ['Основное', 'Персональная информация','Уведомления','Предпочтения']
+export const steps:string[] = ['Основное', 'Персональная информация','Уведомления','Предпочтения','Управление','Анонимность']

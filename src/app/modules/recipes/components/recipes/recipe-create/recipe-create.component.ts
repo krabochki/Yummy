@@ -31,8 +31,8 @@ import { RecipeService } from '../../../services/recipe.service';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { ICategory, ISection, nullSection } from '../../../models/categories';
 import { CategoryService } from '../../../services/category.service';
-import {  Subject } from 'rxjs';
-import {  takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { SectionService } from '../../../services/section.service';
 import { SectionGroup } from 'src/app/modules/controls/autocomplete/autocomplete.component';
 import { Title } from '@angular/platform-browser';
@@ -99,7 +99,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private categoryService: CategoryService,
     private sectionService: SectionService,
-    private userService:UserService,
+    private userService: UserService,
     private recipeService: RecipeService,
     private fb: FormBuilder,
     public router: Router,
@@ -196,8 +196,8 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
             const objectURL = URL.createObjectURL(mainpicFile);
             this.mainImage = objectURL;
           }
-        } catch  {
-          console.error('Ошибка при извлечении главной фотографии')
+        } catch {
+          console.error('Ошибка при извлечении главной фотографии');
         }
       }
 
@@ -258,7 +258,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
               }
             }
           } catch {
-            console.error('Ошибка при извлечении фотографии инструкции')
+            console.error('Ошибка при извлечении фотографии инструкции');
           }
         }
       }
@@ -517,15 +517,13 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
         id: this.recipeId,
         comments: [],
         publicationDate: getCurrentDate(),
-        status: this.isAwaitingApprove ? 'awaits' : 'private',
+        status: this.isAwaitingApprove ? this.currentUser.role==='user'?'awaits':'public' : 'private',
       };
 
       this.recipeService.postRecipe(recipeData).subscribe(() => {
-            this.editedRecipe = recipeData;
+        this.editedRecipe = recipeData;
 
         this.successModalShow = true;
-
-      
 
         this.cd.markForCheck();
       });
@@ -606,27 +604,22 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     this.successModalShow = false;
     this.closeEmitter.emit(true);
 
-      if (
-        this.userService.getPermission(
-          'you-create-new-recipe',
-          this.currentUser,
-        )
-      ) {
-        const notify: INotification = this.notifyService.buildNotification(
-          this.isAwaitingApprove
-            ? 'Рецепт создан и отправлен на проверку'
-            : 'Рецепт создан',
-          `Рецепт «${this.editedRecipe.name}» успешно сохранен в ваших рецептах${
-            this.isAwaitingApprove ? ' и отправлен на проверку' : ''
-          }`,
-          'success',
-          'recipe',
-          '/recipes/list/' + this.editedRecipe.id,
-        );
-        this.notifyService
-          .sendNotification(notify, this.currentUser)
-          .subscribe();
-      }
+    if ( 
+      this.userService.getPermission('you-create-new-recipe', this.currentUser)
+    ) {
+      const notify: INotification = this.notifyService.buildNotification(
+        this.isAwaitingApprove
+          ? (this.currentUser.role==='user'? 'Рецепт создан и отправлен на проверку':'Рецепт создан и опубликован')
+          : 'Рецепт создан',
+        `Рецепт «${this.editedRecipe.name}» успешно сохранен в ваших рецептах${
+          this.isAwaitingApprove ? (this.currentUser.role==='user'?' и отправлен на проверку':' и опубликован') : ''
+        }`,
+        'success',
+        'recipe',
+        '/recipes/list/' + this.editedRecipe.id,
+      );
+      this.notifyService.sendNotification(notify, this.currentUser).subscribe();
+    }
   }
   handleApproveModal(answer: boolean): void {
     if (answer) {

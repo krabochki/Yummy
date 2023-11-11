@@ -1,6 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, HostListener, Input, OnChanges, ViewChild } from '@angular/core';
 import { DragScrollComponent } from 'ngx-drag-scroll';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
+import { dragEnd, dragStart } from 'src/tools/common';
 
 @Component({
   selector: 'app-horizontal-recipe-list',
@@ -25,6 +26,14 @@ export class HorizontalRecipeListComponent implements OnChanges {
 
   scrollLeft() {
     this.ds?.moveLeft();
+  }
+
+  dragStart() {
+    dragStart();
+  }
+
+  dragEnd() {
+    dragEnd();
   }
 
   scrollRight() {

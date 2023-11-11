@@ -37,6 +37,7 @@ drag-scroll {
 
 .wrap {
   position: relative;
+  min-height:15em;
 
   .scroll-left {
     position: absolute;
@@ -70,6 +71,10 @@ drag-scroll {
   
   display: flex;
     cursor: grab;
+
+    &:active{
+      cursor: grabbing;
+    }
 
   app-recipe-list-item {
     height: 100%;

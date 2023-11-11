@@ -98,11 +98,10 @@ h1 {
 }
 app-notify{
       width: 100%;
-border-bottom: 1px solid var(--color-background-deeper-unactive);
 
-&:first-of-type{
-  border-top:  1px solid var(--color-background-deeper-unactive);
-}
+      &:nth-child(2n+1){
+        background-color: color-mix(in srgb, var(--color-background-deeper) 98%, var(--color-foreground) );
+      }
 }
 
 

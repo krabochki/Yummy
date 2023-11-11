@@ -173,7 +173,7 @@ export class CategoryCreatingComponent
       sendDate: getCurrentDate(),
       authorId: this.currentUser.id,
       id: maxId + 1,
-      status: 'awaits',
+      status: this.currentUser.role==='user'?'awaits':'public',
     };
 
     this.categoryService.postCategory(this.newCategory).subscribe(() => {
@@ -181,19 +181,6 @@ export class CategoryCreatingComponent
       if (this.selectedSection) {
         this.selectedSection.categories.push(this.newCategory.id);
         this.sectionService.updateSections(this.selectedSection).subscribe();
-
-        if (this.userService.getPermission('you-create-category', this.currentUser)) {
-           const notify: INotification = this.notifyService.buildNotification(
-             'Категория отправлена на проверку',
-             `Созданная вами категория «${this.newCategory.name}» для секции «${this.selectedSection.name}» отправлена на проверку`,
-             'success',
-             'category',
-             '',
-           );
-           this.notifyService
-             .sendNotification(notify, this.currentUser)
-             .subscribe();
-        }
 
       }
     });
@@ -215,6 +202,32 @@ export class CategoryCreatingComponent
   handleSuccessModal(answer: boolean) {
     this.closeEmitter.emit(true);
     this.successModal = false;
+
+    
+        if (
+          this.userService.getPermission(
+            'you-create-category',
+            this.currentUser,
+          ) && this.selectedSection
+        ) {
+          const notify: INotification = this.notifyService.buildNotification(
+            this.currentUser.role === 'user'?'Категория отправлена на проверку':'Категория опубликована',
+            `Созданная вами категория «${this.newCategory.name}» для секции «${
+              this.selectedSection.name
+            }» ${
+              this.currentUser.role === 'user'
+                ? 'отправлена на проверку'
+                : 'успешно опубликована'
+            }`,
+            'success',
+            'category',
+            '',
+          );
+          this.notifyService
+            .sendNotification(notify, this.currentUser)
+            .subscribe();
+        }
+
   }
   handleCloseModal(answer: boolean) {
     if (answer) {

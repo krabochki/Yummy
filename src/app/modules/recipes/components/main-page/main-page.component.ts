@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ICategory, ISection } from 'src/app/modules/recipes/models/categories';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
@@ -38,7 +38,8 @@ export class MainPageComponent implements OnInit, OnDestroy {
     private recipeService: RecipeService,
     private sectionService: SectionService,
     private categoryService: CategoryService,
-    private router:Router,
+    private router: Router,
+    private cd:ChangeDetectorRef,
 
     private titleService: Title,
     private authService: AuthService,
@@ -99,6 +100,8 @@ export class MainPageComponent implements OnInit, OnDestroy {
             this.allSections = this.sectionService.getNotEmptySections(
               this.allSections,
             );
+            this.cd.markForCheck();
+          
           });
       });
   }

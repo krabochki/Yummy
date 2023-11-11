@@ -202,7 +202,7 @@
         </div>
         <button
           class="hire-button"
-          *ngIf="currentUser.role === 'admin' && this.user.role === 'user'"
+          *ngIf="currentUser.role === 'admin' && this.user.role === 'user' && showHireButton"
           (click)="hireModalShow = true"
         >
           <svg-icon

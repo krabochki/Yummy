@@ -33,28 +33,41 @@ export type role = 'admin' | 'moderator' | 'user';
 
 export type PermissionContext =
   | 'like-on-your-recipe'
+  | 'show-adminpanel'
   | 'cook-on-your-recipe'
   | 'plan-on-your-recipe'
+  | 'show-category-deleting'
+  | 'show-section-deleting'
   | 'fav-on-your-recipe'
   | 'you-create-new-recipe'
-   |'you-delete-your-comment'
+  | 'you-delete-your-comment'
   | 'you-publish-recipe'
-  |'you-edit-your-account'
+  | 'you-edit-your-account'
   | 'manager-review-your-recipe'
   | 'you-delete-your-recipe'
   | 'you-edit-your-recipe'
   | 'new-follower'
+  | 'you-was-fired'
+  | 'new-moder-button'
+  | 'show-status'
   | 'new-recipe-from-following'
   | 'you-plan-recipe'
   | 'start-of-planned-recipe'
   | 'planned-recipes-in-3-days'
   | 'you-create-category'
-       | 'your-recipe-commented'
-      |            'your-reports-publish'
-       |           'your-reports-reviewed-moderator'
-        |         'your-commented-liked'
-         |        'you-commented-recipe'
+  | 'your-recipe-commented'
+  | 'your-reports-publish'
+  | 'your-reports-reviewed-moderator'
+  | 'your-commented-liked'
+  | 'you-commented-recipe'
+  | 'show-me-on-userspage'
+  | 'search-me-on-userspage'
+  | 'show-my-page'
+  | 'hide-author'
+  | 'comment-author'
   | 'manager-reviewed-your-category';
+
+
 
 
 

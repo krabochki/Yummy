@@ -241,12 +241,12 @@
   @modal
   *ngIf="saveModal"
   [style]="'prim'"
-  [title]="'Изменение аккаунта'"
+  [title]="'Создание категории'"
   [type]="'yesOrNo'"
   (resultEmit)="handleSaveModal($event)"
   [buttonsText]="['Да', 'Нет']"
   [description]="
-    'Вы уверены, что хотите отправить категорию на рассмотрение модератору?'
+    'Вы уверены, что хотите создать категорию' + (currentUser.role==='user'?' и отправить её на рассмотрение модератору':'') + '?'
   "
 ></app-modal>
 
@@ -254,9 +254,9 @@
   @modal
   *ngIf="successModal"
   [style]="'sec'"
-  [title]="'Категория успешно отправлена'"
+  [title]="'Категория успешно создана'"
   [type]="'Ok'"
   (resultEmit)="handleSuccessModal($event)"
   [buttonsText]="['Хорошо']"
-  [description]="'Категория успешно отправлена модератору на рассмотрение'"
+  [description]="'Категория успешно создана'+(currentUser.role==='user'?' и отправлена модератору на рассмотрение':'')"
 ></app-modal>

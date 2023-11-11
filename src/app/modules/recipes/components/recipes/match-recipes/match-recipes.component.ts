@@ -285,9 +285,6 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
       const hasSelectedCategories = this.selectedCategories.length > 0;
       const hasExcludedIngredients = this.excludedIngredients.length > 0;
 
-      const hadPermanentExcludedIngredients =
-        this.permanentExcludedIngredients.length > 0;
-
       if (hasSelectedIngredients) {
         const ingredientsCheck = this.selectedIngredients.every(
           (selectedIngredient) =>
@@ -433,8 +430,8 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
   getZoom(count: number): number {
     const baseZoom = 0.9;
     if (count > 1) {
-      if (count > 6) count = 6;
-      const zoomValue = baseZoom + (count - 1) * 0.1;
+      if (count > 7) count = 7;
+      const zoomValue = baseZoom + (count - 1) * 0.15;
       return zoomValue;
     } else {
       return baseZoom;

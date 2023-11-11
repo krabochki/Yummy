@@ -67,6 +67,7 @@ export class UsualInputComponent implements OnInit, OnChanges {
 
   //Появление фокуса
   focus() {
+    if(this.inputType === 'password')
     setTimeout(() => {
       this.input?.nativeElement.setSelectionRange(
         this.value.length,

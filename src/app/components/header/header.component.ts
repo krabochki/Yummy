@@ -406,6 +406,11 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     if (haveNotRead) this.userService.updateUsers(this.currentUser).subscribe();
   }
 
+
+  get showAdminpanel() {
+    return (this.userService.getPermission('show-adminpanel',this.currentUser))
+  }
+
   updateNotifies() {
     if (this.currentUser.notifications) {
       const userNotifies = [...this.currentUser.notifications];

@@ -382,7 +382,7 @@
           <div class="buttons">
             <p>Если вы хотите, чтобы рецепт увидели другие пользователи и могли с ним взаимодействовать,
               <em>опубликуй</em> его. После нажатия на кнопку рецепт {{editMode?'':' появится в твоих личных рецептах и'}} будет
-              опубликован после <em>одобрения модератора</em></p>
+              опубликован {{currentUser.role==='user'?'после одобрения модератора':''}}</p>
             <app-button [disabled]="editMode? form.valid : areObjectsEqual() && form.valid"  [title]="!form.valid?'Рецепт должен содержать как минимум имя. Если в рецепте есть нутриенты, ингредиенты или инструкции, они должны также содержать как минимум навание (содержание для инструкции)':''" (click)="form.valid ? (approveModalShow = true) : null" [text]="'Опубликовать'" [color]="'sec'"
               [style]="'outlined'"  [rounded]="true"></app-button>
             <p *ngIf="!editMode">Если вы не хотите, чтобы рецепт увидели другие пользователи (прямо сейчас), просто <em>сохрани</em>
@@ -420,7 +420,7 @@
 <app-modal @modal *ngIf="successModalShow" [style]="'sec'" [title]="'Рецепт успешно сохранен'" [type]="'Ok'"
   (resultEmit)="handleSuccessModal()" [buttonsText]="['Хорошо']" [description]="
   'Ваш рецепт успешно'+(editMode?' изменен':' сохранен в вашей личной коллекции') +
-    (isAwaitingApprove ? ' и ожидает одобрения модератора' : '')
+    (isAwaitingApprove ?(currentUser.role==='user' ? ' и ожидает одобрения модератора' : ' и опубликован' ): '')
   "></app-modal>
 
 <app-modal @modal *ngIf="createModalShow" [style]="'prim'" [title]="'Подтвердите создание рецепта'" [type]="'yesOrNo'"
@@ -429,7 +429,7 @@
 
 <app-modal @modal *ngIf="approveModalShow" [style]="'sec'" [title]="'Подтвердите публикацию рецепта'"
   [type]="'yesOrNo'" (resultEmit)="handleApproveModal($event)" [buttonsText]="['Да', 'Нет']" [description]="
-    'Вы уверены, что хотите ' +(editMode?'изменить':'сохранить') + ' рецепт и отправить его на рассмотрение к модератору?'
+    'Вы уверены, что хотите ' +(editMode?'изменить':'сохранить') + ' рецепт и '+ (currentUser.role==='user'?'отправить его на рассмотрение к модератору?':'опубликовать его?')
   "></app-modal>
 
   

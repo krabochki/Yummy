@@ -89,7 +89,7 @@
         </h2>
         <div class="ingredients" *ngIf="getIngredientNames().length > 0; else noIngredients">
           <button [ngStyle]="{ zoom: getZoom(uniqueIngredientsArray[ingredient]) }" class="ingredient"
-            *ngFor="let ingredient of getIngredientNames().slice(0, 20)" (click)="selectIngredient(ingredient)">
+            *ngFor="let ingredient of getIngredientNames().slice(0,40)" (click)="selectIngredient(ingredient)">
             + {{ ingredient }}
             <span class="count noselect">{{
               uniqueIngredientsArray[ingredient]

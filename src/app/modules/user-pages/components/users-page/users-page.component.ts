@@ -75,6 +75,10 @@ export class UsersPageComponent implements OnInit, OnDestroy {
         this.administratorsAndModerators = this.getAdministratorssAndModerators(
           this.users,
         );
+        this.administratorsAndModerators =
+          this.administratorsAndModerators.filter((m) =>
+            this.showStatus(m),
+          );
         this.currentUserFollowersUsers = this.getCurrentUserFollowersUsers(
           this.users,
         );
@@ -113,6 +117,9 @@ export class UsersPageComponent implements OnInit, OnDestroy {
         this.title.setTitle(this.getTitleByUserType(this.userType));
       });
   }
+  showStatus(user:IUser) {
+    return this.userService.getPermission('show-status', user);
+  }
 
   getTitleByUserType(userType: UsersType): string {
     return userTitles[userType] || '';
@@ -121,8 +128,10 @@ export class UsersPageComponent implements OnInit, OnDestroy {
     return noUsersText[userType] || '';
   }
 
-  private getNewUsers(users: IUser[]): IUser[]{
-    users = users.sort((u1, u2) => { return (u1.registrationDate < u2.registrationDate)? 1 : -1})
+  private getNewUsers(users: IUser[]): IUser[] {
+    users = users.sort((u1, u2) => {
+      return u1.registrationDate < u2.registrationDate ? 1 : -1;
+    });
     return users;
   }
 

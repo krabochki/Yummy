@@ -56,7 +56,8 @@ import {
 export class ControlDashboardComponent implements OnInit, OnDestroy {
   protected currentUser: IUser = { ...nullUser };
 
-  private sections: ISection[] = [];
+  protected sections: ISection[] = [];
+  protected sectionsToShow: ISection[] = [];
   private users: IUser[] = [];
   private recipes: IRecipe[] = [];
   protected reports: ICommentReportForAdmin[] = [];
@@ -69,6 +70,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   protected showCommentReports: boolean = false;
   protected showAwaitingRecipes: boolean = false;
   protected showCategoriesForCheck: boolean = false;
+  protected showSections: boolean = false;
 
   protected adminAction: 'approve' | 'dismiss' = 'dismiss';
 
@@ -207,6 +209,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
       .subscribe((receivedSections: ISection[]) => {
         {
           this.sections = receivedSections;
+          this.sectionsToShow=this.sections.slice(0,10)
         }
       });
   }
@@ -215,7 +218,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   private loadMore(all: any[], current: any[], amount: number): any[] {
     const currentLength = current.length;
     const next = all.slice(currentLength, currentLength + amount);
-    return (current = [this.currentUser, ...next]);
+    return (current = [...current, ...next]);
   }
   protected loadMoreCategories(): void {
     this.categoriesForCheckToShow = this.loadMore(
@@ -224,6 +227,16 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
       3,
     );
   }
+
+  protected loadMoreSections(): void{
+    console.log(this.sections)
+    this.sectionsToShow = this.loadMore(
+      this.sections,
+      this.sectionsToShow,
+      4
+    )
+  }
+
   protected loadMoreCommentReports(): void {
     this.reports = this.loadMore(this.allReports, this.reports, 3);
   }
@@ -457,10 +470,12 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
 
   private demoteUser() {
     this.targetDemotedUser.role = 'user';
-    this.targetDemotedUser = this.notifyService.addNotificationToUser(
-      notifyForDemotedUser(this.currentUser, this.notifyService),
-      this.targetDemotedUser,
-    );
+    if (this.userService.getPermission('you-was-fired', this.targetDemotedUser)) {
+      this.targetDemotedUser = this.notifyService.addNotificationToUser(
+        notifyForDemotedUser(this.currentUser, this.notifyService),
+        this.targetDemotedUser,
+      );
+    }
     this.userService
       .updateUsers(this.targetDemotedUser)
       .subscribe(() => (this.targetDemotedUser = nullUser));

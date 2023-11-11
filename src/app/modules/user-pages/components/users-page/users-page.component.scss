@@ -191,7 +191,7 @@ h2 {
 
   max-height: 50vh;
   margin-top: 0.5em;
-  overflow-y: scroll;
+  overflow-y: scroll !important;
   position: absolute;
   border-radius: 1.5em 5px 5px 1.5em;
   display: flex;

@@ -3,7 +3,16 @@
   [title]="category.name + ' [' + recipesNumber + ']'"
   *ngIf="category.id > 0; else nullCategory"
 >
-  <div class="category" *ngIf="category.id > 0; else nullCategory"></div>
+ <div class="category-wrap">
+    <div class="category" *ngIf="category.id > 0; else nullCategory">
+    
+     
+    </div>
+     <button class="delete" 
+     (click)="deleteModalShow=true" *ngIf="currentUser.role!=='user' && showDeletingButton">
+        <svg-icon class="trash-svg" [applyClass]="true" [src]="'assets/images/svg/trash.svg'"/>
+      </button>
+ </div>
   <a  [routerLink]="
         context === 'category'
           ? '/categories/list/' + category.id
@@ -24,7 +33,10 @@
     <svg-icon
       [applyClass]="true"
       class="svg"
-      [src]="'../../../../../assets/images/svg/no-category.svg'"
+      [src]="'assets/images/svg/no-category.svg'"
     ></svg-icon>
   </div>
 </ng-template>
+
+<app-modal @modal (resultEmit)="handleDeleteModal($event)" [type]="'yesOrNo'" [buttonsText]="['Да','Отмена']" [style]="'prim'" [description]="'Вы уверены, что хотите удалить эту ' + (context==='category'?'категорию?':'секцию?')" [title]="'Удаление '+(context==='category'?'категории':'секции')" *ngIf="deleteModalShow"></app-modal>
+<app-modal @modal (resultEmit)="handleSuccessDeleteModal()" [type]="'Ok'" [buttonsText]="['Хорошо']" [style]="'sec'" [description]="(context==='category'?'Категория':'Секция')+' успешно удалена'" [title]="(context==='category'?'Категория':'Секция')+' удалена'" *ngIf="successDeleteModalShow"></app-modal>

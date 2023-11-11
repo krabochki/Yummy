@@ -41,8 +41,8 @@
           *ngFor="let item of autocompleteUsersList"
           (mousedown)="navigateTo('/cooks/list/' + item.id)"
         >
-          <p>{{ item.fullName }}</p>
-          <span>@{{ item.username }}</span>
+          <p>{{ item.fullName?item.fullName:'@'+item.username }}</p>
+          <span *ngIf="item.fullName">@{{ item.username }}</span>
         </li>
       </ul>
     </div>
@@ -188,7 +188,7 @@
       </div>
       <app-users-list [users]="moreViewedUsers.slice(0, 6)"></app-users-list>
     </div>
-    <div class="block">
+    <div class="block" *ngIf="administratorsAndModerators.length>0">
       <div routerLink="/cooks/managers" class="head">
         <h2>Управляющие</h2>
 

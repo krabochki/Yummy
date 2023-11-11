@@ -63,6 +63,26 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   private destroyed$: Subject<void> = new Subject<void>();
 
+    get permanentIngredientExist(): boolean {
+    const formattedIngredients = this.permanentIngredients.map((ingredient) =>
+      ingredient.trim().toLowerCase(),
+    );
+    const formattedIngredient = this.permanentIngredient.trim().toLowerCase();
+    const isIngredientAlreadyAdded =
+      formattedIngredients.includes(formattedIngredient);
+    return isIngredientAlreadyAdded;
+  }
+  get excludedIngredientExist(): boolean {
+    const formattedIngredients = this.excludingIngredients.map((ingredient) =>
+      ingredient.trim().toLowerCase(),
+    );
+    const formattedIngredient = this.excludedIngredient.trim().toLowerCase();
+    const isIngredientAlreadyAdded =
+      formattedIngredients.includes(formattedIngredient);
+    return isIngredientAlreadyAdded;
+  }
+
+
   constructor(
     private authService: AuthService,
     private router: Router,
@@ -112,24 +132,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.excludedIngredient = '';
   }
 
-  get permanentIngredientExist(): boolean {
-    const formattedIngredients = this.permanentIngredients.map((ingredient) =>
-      ingredient.trim().toLowerCase(),
-    );
-    const formattedIngredient = this.permanentIngredient.trim().toLowerCase();
-    const isIngredientAlreadyAdded =
-      formattedIngredients.includes(formattedIngredient);
-    return isIngredientAlreadyAdded;
-  }
-  get excludedIngredientExist(): boolean {
-    const formattedIngredients = this.excludingIngredients.map((ingredient) =>
-      ingredient.trim().toLowerCase(),
-    );
-    const formattedIngredient = this.excludedIngredient.trim().toLowerCase();
-    const isIngredientAlreadyAdded =
-      formattedIngredients.includes(formattedIngredient);
-    return isIngredientAlreadyAdded;
-  }
+
 
   private getPlans(): void {
     this.planService.plans$

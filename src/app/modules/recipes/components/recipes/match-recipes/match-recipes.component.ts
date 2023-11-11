@@ -171,12 +171,8 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
       .subscribe((receivedUser: IUser) => {
         if (receivedUser && receivedUser.id > 0) {
           this.currentUser = receivedUser;
-          this.permanentIngredients = this.currentUser.permanent
-            ? this.currentUser.permanent
-            : [];
-          this.permanentExcludedIngredients = this.currentUser.exclusions
-            ? this.currentUser.exclusions
-            : [];
+          this.permanentIngredients = this.currentUser.permanent || [];
+          this.permanentExcludedIngredients = this.currentUser.exclusions || [];
         }
       });
   }

@@ -116,11 +116,11 @@
           Включаемые ингредиенты
         </h2>
 
-        <div cdkDropList #selected="cdkDropList" [cdkDropListData]="selectedIngredientsCopyForDragAndDrop"
+        <div   cdkDropList #selected="cdkDropList" [cdkDropListData]="selectedIngredientsCopyForDragAndDrop"
           [cdkDropListConnectedTo]="[excluded]" class="ingredients vertical" cdkDropListOrientation="vertical"
           (cdkDropListDropped)="drop($event)">
-          <div *ngFor="let item of selectedIngredients; let i = index">
-            <div class="ingredient selected" cdkDrag>{{ item }}</div>
+          <div  *ngFor="let item of selectedIngredients; let i = index">
+            <div (cdkDragStarted)="dragStart()" class="ingredient selected" cdkDrag>{{ item }}</div>
           </div>
           <span class="placeholder noone" *ngIf="selectedIngredients.length === 0">Вы пока не включили ни одного
             ингредиента</span>
@@ -140,11 +140,11 @@
           Исключаемые ингредиенты
         </h2>
 
-        <div cdkDropList #excluded="cdkDropList" [cdkDropListData]="excludedIngredientsCopyForDragAndDrop"
-          [cdkDropListConnectedTo]="[selected]" class="ingredients vertical" cdkDropListOrientation="vertical"
+        <div  cdkDropList #excluded="cdkDropList" [cdkDropListData]="excludedIngredientsCopyForDragAndDrop"
+          [cdkDropListConnectedTo]="[selected]" class="ingredients  vertical" cdkDropListOrientation="vertical"
           (cdkDropListDropped)="drop($event)">
           <div *ngFor="let item of excludedIngredients; let i = index">
-            <div class="ingredient selected" cdkDrag>{{ item }}</div>
+            <div (cdkDragStarted)="dragStart()" cdkDragLockAxis="y" class="ingredient selected" cdkDrag>{{ item }}</div>
           </div>
 
           <span class="placeholder noone" *ngIf="excludedIngredients.length === 0">Вы пока не исключили ни одного

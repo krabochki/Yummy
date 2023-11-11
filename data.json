@@ -285,7 +285,7 @@
           "howMuch": "",
           "isBought": false,
           "relatedRecipe": 0,
-          "type": 18
+          "type": 0
         },
         {
           "id": 8,
@@ -294,7 +294,7 @@
           "howMuch": "1 бутылка?)))",
           "isBought": true,
           "relatedRecipe": 0,
-          "type": 18
+          "type": 0
         },
         {
           "id": 7,
@@ -312,7 +312,7 @@
           "howMuch": null,
           "isBought": false,
           "relatedRecipe": 0,
-          "type": 25
+          "type": 5
         },
         {
           "id": 5,
@@ -321,7 +321,7 @@
           "howMuch": "500 г",
           "isBought": false,
           "relatedRecipe": 0,
-          "type": 24
+          "type": 5
         },
         {
           "id": 3,
@@ -348,7 +348,7 @@
           "howMuch": "2 шт",
           "isBought": false,
           "relatedRecipe": 0,
-          "type": 0
+          "type": 5
         },
         {
           "id": 10,
@@ -366,7 +366,7 @@
           "howMuch": "500 мл",
           "isBought": false,
           "relatedRecipe": 0,
-          "type": 0
+          "type": 5
         },
         {
           "id": 18,
@@ -495,7 +495,17 @@
           }
         }
       ],
-      "shoppingList": []
+      "shoppingList": [
+        {
+          "id": 1,
+          "name": "Динамит",
+          "note": "",
+          "howMuch": "1 банка",
+          "isBought": false,
+          "relatedRecipe": 0,
+          "type": 17
+        }
+      ]
     },
     {
       "id": 3,
@@ -1731,7 +1741,8 @@
       "favoritesId": [
         8,
         3,
-        5
+        5,
+        1
       ],
       "likesId": [
         9,
@@ -4866,7 +4877,7 @@
       "quote": "Когда вы допустили столько же ошибок, сколько и я, вы можете быть так же хороши, как и я.",
       "email": "alexey@example.com",
       "password": "Password300",
-      "fullName": "Але",
+      "fullName": "Алексей Зимин",
       "followersIds": [
         3,
         4,
@@ -4953,6 +4964,18 @@
           "timestamp": "2023-11-08T22:28:56.761Z",
           "read": true,
           "notificationDate": "Thu Nov 09 2023"
+        },
+        {
+          "id": 8,
+          "relatedLink": "/cooks/list/1",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-09T19:41:32.208Z",
+          "read": true,
+          "notificationDate": ""
         }
       ],
       "avatarUrl": {},
@@ -6028,7 +6051,7 @@
           "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «Я справлюсь сам»",
           "title": "Новый рецепт от кулинара",
           "timestamp": "2023-11-08T22:37:41.374Z",
-          "read": false,
+          "read": true,
           "notificationDate": ""
         },
         {
@@ -6040,7 +6063,7 @@
           "message": "Твой рецепт «Колдуны» понравился кулинару Але",
           "title": "Твой рецепт оценили",
           "timestamp": "2023-11-09T13:22:17.576Z",
-          "read": false,
+          "read": true,
           "notificationDate": ""
         }
       ]
@@ -6221,6 +6244,18 @@
           "message": "Ваш рецепт «Шоколадное мороженое» кто-то запланировал!",
           "title": "Ваш рецепт запланировали",
           "timestamp": "2023-11-08T03:31:24.352Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 5,
+          "relatedLink": "/recipes/list/5",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «exercitation aute eiusmod» кто-то добавил в избранное",
+          "title": "Твой рецепт добавили в избранное",
+          "timestamp": "2023-11-09T19:12:25.494Z",
           "read": false,
           "notificationDate": ""
         }

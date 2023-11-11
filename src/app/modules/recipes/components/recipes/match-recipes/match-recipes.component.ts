@@ -26,6 +26,9 @@ import {
 } from '@angular/cdk/drag-drop';
 import { Router } from '@angular/router';
 import { dragStart } from 'src/tools/common';
+import { UserService } from 'src/app/modules/user-pages/services/user.service';
+import { AuthService } from 'src/app/modules/authentication/services/auth.service';
+import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { getZoom } from 'src/tools/common';
 
 @Component({
@@ -55,6 +58,9 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
   protected selectedIngredients: string[] = [];
   protected excludedIngredients: string[] = [];
 
+  private permanentIngredients: string[] = [];
+  private permanentExcludedIngredients: string[] = [];
+
   protected selectedIngredientsCopyForDragAndDrop: any[] = []; //для cdk drag and drop обычный массив строк не подходит поэтому так
   protected excludedIngredientsCopyForDragAndDrop: any[] = [];
 
@@ -72,6 +78,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
     private sectionService: SectionService,
     private title: Title,
     private router: Router,
+    private authService: AuthService,
     private cd: ChangeDetectorRef,
   ) {
     this.renderer.listen('window', 'click', (e: Event) => {
@@ -86,6 +93,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.title.setTitle('Подбор рецептов');
+    this.currentUserInit();
     this.recipesInit();
     this.categoriesInit();
   }
@@ -156,6 +164,19 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
       });
   }
 
+  private currentUser: IUser = { ...nullUser };
+  private currentUserInit() {
+    this.authService.currentUser$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedUser: IUser) => {
+        if (receivedUser && receivedUser.id > 0) {
+          this.currentUser = receivedUser;
+          this.permanentIngredients = this.currentUser.permanent || [];
+          this.permanentExcludedIngredients = this.currentUser.exclusions || [];
+        }
+      });
+  }
+
   recipesInit() {
     //получаем рецепты и все ингредиенты
     this.recipeService.recipes$
@@ -163,9 +184,10 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
       .subscribe((receivedRecipes: IRecipe[]) => {
         if (receivedRecipes.length > 0) {
           this.recipes = this.recipeService.getPublicRecipes(receivedRecipes);
-          this.matchingRecipes = this.recipes;
+          this.matchingRecipes = this.filterRecipesByIngredients();
           this.uniqueIngredientsArray = this.getUniqueIngredients(this.recipes);
           this.autoIngredients = this.getIngredientNames();
+          this.getActualIngredients();
         }
       });
   }
@@ -201,11 +223,24 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
     let ingredientCounts: { [ingredient: string]: number } = {};
     recipes.forEach((recipe) => {
       recipe.ingredients.forEach((ingredient) => {
-        const ingredientName = ingredient.name.toLowerCase().trim();
-        if (ingredientCounts[ingredientName] !== undefined) {
-          ingredientCounts[ingredientName]++;
-        } else {
-          ingredientCounts[ingredientName] = 1;
+        const formattedIngredients = this.permanentIngredients.map(
+          (ingredient) => ingredient.trim().toLowerCase(),
+        );
+        const formattedExclusions = this.permanentExcludedIngredients.map(
+          (ingredient) => ingredient.trim().toLowerCase(),
+        );
+        if (
+          !formattedIngredients.includes(
+            ingredient.name.toLowerCase().trim(),
+          ) &&
+          !formattedExclusions.includes(ingredient.name.toLowerCase().trim())
+        ) {
+          const ingredientName = ingredient.name.toLowerCase().trim();
+          if (ingredientCounts[ingredientName] !== undefined) {
+            ingredientCounts[ingredientName]++;
+          } else {
+            ingredientCounts[ingredientName] = 1;
+          }
         }
       });
     });
@@ -241,7 +276,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
   }
 
   toogleCondition(toogleTo: boolean) {
-    this.haveToContainAllCategories = toogleTo;    
+    this.haveToContainAllCategories = toogleTo;
 
     this.matchingRecipes = this.filterRecipesByIngredients();
     this.getActualIngredients();
@@ -253,6 +288,9 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
       const hasSelectedIngredients = this.selectedIngredients.length > 0;
       const hasSelectedCategories = this.selectedCategories.length > 0;
       const hasExcludedIngredients = this.excludedIngredients.length > 0;
+
+      const hadPermanentExcludedIngredients =
+        this.permanentExcludedIngredients.length > 0;
 
       if (hasSelectedIngredients) {
         const ingredientsCheck = this.selectedIngredients.every(
@@ -290,16 +328,27 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
         }
       }
 
-      if (hasExcludedIngredients) {
-        const ingredientsCheck = this.excludedIngredients.every(
+      if (
+        hasExcludedIngredients ||
+        this.permanentExcludedIngredients.length > 0
+      ) {
+        const formattedIngredients = this.permanentExcludedIngredients.map(
+          (ingredient) => ingredient.trim().toLowerCase(),
+        );
+        const fullExclusions = [
+          ...formattedIngredients,
+          ...this.excludedIngredients,
+        ]; //соединяем исключениия пользователя и исключения которые применили сейчас
+
+        const ingredientsCheck = fullExclusions.every(
           (excludedIngredient) =>
-            recipe.ingredients.some(
+            !recipe.ingredients.some(
               (ingredient) =>
                 ingredient.name.toLowerCase().trim() === excludedIngredient,
             ),
         );
 
-        if (ingredientsCheck) {
+        if (!ingredientsCheck) {
           return false; // рецепт не подходит под ингредиенты
         }
       }
@@ -457,7 +506,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
   }
 
   protected dragStart() {
-    dragStart()
+    dragStart();
   }
 
   toggleSection(sectionIndex: number) {
@@ -490,7 +539,6 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
       this.autoIngredients = allIngredients;
     }
   }
-  
 
   ngOnDestroy(): void {
     this.destroyed$.next();

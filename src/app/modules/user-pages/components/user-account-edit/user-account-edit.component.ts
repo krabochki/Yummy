@@ -35,10 +35,8 @@ import {
   FormBuilder,
   FormGroup,
   ValidationErrors,
-  ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { Observable, of } from 'rxjs';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { NotificationService } from '../../services/notification.service';
 import { INotification } from '../../models/notifications';
@@ -46,7 +44,9 @@ import { INotification } from '../../models/notifications';
 @Component({
   selector: 'app-user-account-edit',
   templateUrl: './user-account-edit.component.html',
-  styleUrls: ['./user-account-edit.component.scss'],
+  styleUrls: [
+    './user-account-edit.component.scss',
+  ],
   animations: [trigger('modal', modal()), trigger('height', heightAnim())],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -270,20 +270,15 @@ export class UserAccountEditComponent
       socialNetworks: socialNetworks,
     };
 
-    this.userService.updateUsers(this.newUser).subscribe(
-      () => {
-        this.authService.loginUser(this.newUser).subscribe((user) => {
-          if (user) {
-            localStorage.setItem('currentUser', JSON.stringify(user));
-            this.authService.setCurrentUser(user);
-            this.successModal = true;
-          }
-        
-        });
-
-       
-      }
-    );
+    this.userService.updateUsers(this.newUser).subscribe(() => {
+      this.authService.loginUser(this.newUser).subscribe((user) => {
+        if (user) {
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          this.authService.setCurrentUser(user);
+          this.successModal = true;
+        }
+      });
+    });
   }
 
   handleSaveModal(answer: boolean) {
@@ -304,18 +299,16 @@ export class UserAccountEditComponent
 
     this.successModal = false;
 
-     if (
-       this.userService.getPermission('you-edit-your-account', this.newUser)
-     ) {
-       const notify: INotification = this.notifyService.buildNotification(
-         'Профиль изменен',
-         'Твой профиль успешно изменен',
-         'success',
-         'user',
-         '/cooks/list/' + this.newUser.id,
-       );
-       this.notifyService.sendNotification(notify, this.newUser).subscribe();
-     }
+    if (this.userService.getPermission('you-edit-your-account', this.newUser)) {
+      const notify: INotification = this.notifyService.buildNotification(
+        'Профиль изменен',
+        'Твой профиль успешно изменен',
+        'success',
+        'user',
+        '/cooks/list/' + this.newUser.id,
+      );
+      this.notifyService.sendNotification(notify, this.newUser).subscribe();
+    }
   }
   handleCloseModal(answer: boolean) {
     if (answer) {

@@ -354,6 +354,16 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
           }
         } else this.currentUser = receivedUser;
 
+        if (this.currentUser.notifications) {
+          const noChangesInNotifies =
+            this.currentUser.notifications.length === this.notifies.length &&
+            this.currentUser.notifications.every((element, index) => {
+              return element === this.notifies[index];
+            });
+
+          if (this.currentUser.id !== 0 && !noChangesInNotifies) {
+            this.updateNotifies();
+          }
         const noChangesInNotifies =
           this.currentUser.notifications.length === this.notifies.length &&
           this.currentUser.notifications.every(

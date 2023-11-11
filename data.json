@@ -495,17 +495,7 @@
           }
         }
       ],
-      "shoppingList": [
-        {
-          "id": 1,
-          "name": "Динамит",
-          "note": "",
-          "howMuch": "1 банка",
-          "isBought": false,
-          "relatedRecipe": 0,
-          "type": 17
-        }
-      ]
+      "shoppingList": []
     },
     {
       "id": 3,
@@ -4135,30 +4125,6 @@
       "status": "public"
     },
     {
-      "name": "На публикацию",
-      "reports": [],
-      "statistics": [],
-      "ingredients": [],
-      "instructions": [],
-      "mainImage": null,
-      "description": "",
-      "history": "",
-      "preparationTime": "",
-      "cookingTime": "",
-      "origin": "",
-      "nutritions": [],
-      "servings": 1,
-      "authorId": 5,
-      "categories": [],
-      "cooksId": [],
-      "likesId": [],
-      "favoritesId": [],
-      "id": 73,
-      "comments": [],
-      "publicationDate": "2023-11-06T15:54:45.911Z",
-      "status": "private"
-    },
-    {
       "name": "Призрак прошлого",
       "reports": [],
       "statistics": [],
@@ -4269,30 +4235,6 @@
       "comments": [],
       "publicationDate": "2023-11-06T21:07:53.002Z",
       "status": "public"
-    },
-    {
-      "name": "fff",
-      "reports": [],
-      "statistics": [],
-      "ingredients": [],
-      "instructions": [],
-      "mainImage": null,
-      "description": "",
-      "history": "",
-      "preparationTime": "",
-      "cookingTime": "",
-      "origin": "",
-      "nutritions": [],
-      "servings": 1,
-      "authorId": 5,
-      "categories": [],
-      "cooksId": [],
-      "likesId": [],
-      "favoritesId": [],
-      "id": 78,
-      "comments": [],
-      "publicationDate": "2023-11-07T02:18:42.391Z",
-      "status": "private"
     },
     {
       "name": "Кныш с картофелем",
@@ -4902,7 +4844,7 @@
       "personalWebsite": "https://www.chefalexeyzimin.com/",
       "location": "Москва, Россия",
       "registrationDate": "2023-01-15",
-      "profileViews": 7664,
+      "profileViews": 7669,
       "role": "moderator",
       "notifications": [
         {
@@ -5068,7 +5010,38 @@
           "context": "you-edit-your-account",
           "enabled": true
         }
-      ]
+      ],
+      "permanent": [
+        "масло",
+        "соль"
+      ],
+      "exclusions": [
+        "мука"
+      ],
+      "emojiStatus": {
+        "name": "Clown Face",
+        "unified": "1F921",
+        "keywords": [
+          "clown_face",
+          "face"
+        ],
+        "sheet": [
+          40,
+          13
+        ],
+        "shortName": "clown_face",
+        "shortNames": [
+          "clown_face"
+        ],
+        "id": "clown_face",
+        "native": "🤡",
+        "skinVariations": [],
+        "emoticons": [],
+        "hidden": [],
+        "text": "",
+        "set": "apple",
+        "colons": ":clown_face:"
+      }
     },
     {
       "id": 3,
@@ -5096,7 +5069,7 @@
       "personalWebsite": "https://www.travelandeat.com/",
       "location": "Нью-Йорк, США",
       "registrationDate": "2023-05-10",
-      "profileViews": 5814,
+      "profileViews": 5822,
       "role": "user",
       "notifications": [
         {
@@ -5344,7 +5317,7 @@
       "personalWebsite": "https://www.cookingadventures.com/",
       "location": "Лондон, Великобритания",
       "registrationDate": "2023-04-02",
-      "profileViews": 4972,
+      "profileViews": 4973,
       "role": "user",
       "notifications": [
         {
@@ -5874,7 +5847,7 @@
       "avatarUrl": {},
       "description": "",
       "quote": "В кулинарии может не хватать только аппетита.",
-      "fullName": "Полина 🎀",
+      "fullName": "Лина",
       "followersIds": [
         23,
         25
@@ -5896,7 +5869,7 @@
       "personalWebsite": "",
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
-      "profileViews": 1941,
+      "profileViews": 1942,
       "notifications": [
         {
           "id": 145,
@@ -6019,18 +5992,6 @@
           "notificationDate": "Wed Nov 08 2023"
         },
         {
-          "id": 211,
-          "relatedLink": "/plan/calendar",
-          "context": "plan-reminder",
-          "type": "warning",
-          "relatedId": 0,
-          "message": "Хотим вас предупредить, что у вас запланирован рецепт на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению этого вкусного блюда.<br>Запланированный рецепт:<br>ㅤБанановый хлеб (начало через 2 дня)",
-          "title": "Начало запланированного рецепта уже скоро!",
-          "timestamp": "2023-11-08T22:22:42.873Z",
-          "read": true,
-          "notificationDate": "Thu Nov 09 2023"
-        },
-        {
           "id": 212,
           "relatedLink": "/cooks/list/5",
           "context": "user",
@@ -6065,8 +6026,74 @@
           "timestamp": "2023-11-09T13:22:17.576Z",
           "read": true,
           "notificationDate": ""
+        },
+        {
+          "id": 215,
+          "relatedLink": "/plan/calendar",
+          "context": "plan-reminder",
+          "type": "warning",
+          "relatedId": 0,
+          "message": "Хотим вас предупредить, что у вас запланирован рецепт на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению этого вкусного блюда.<br>Запланированный рецепт:<br>ㅤБанановый хлеб (начало через 23 часа)",
+          "title": "Начало запланированного рецепта уже скоро!",
+          "timestamp": "2023-11-09T22:05:10.852Z",
+          "read": true,
+          "notificationDate": "Fri Nov 10 2023"
+        },
+        {
+          "id": 216,
+          "relatedLink": "/cooks/list/5",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-10T00:27:18.360Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 217,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Вы успешно удалили свой рецепт «fff».",
+          "title": "Твой рецепт удален",
+          "timestamp": "2023-11-10T01:28:48.372Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 218,
+          "relatedLink": "",
+          "context": "recipe",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Вы успешно удалили свой рецепт «На публикацию».",
+          "title": "Твой рецепт удален",
+          "timestamp": "2023-11-10T01:28:53.095Z",
+          "read": true,
+          "notificationDate": ""
         }
-      ]
+      ],
+      "emojiStatus": {
+        "name": "Chef Barbie",
+        "shortNames": [
+          "chef"
+        ],
+        "text": "",
+        "emoticons": [],
+        "keywords": [
+          "chef",
+          "barbie",
+          "girl"
+        ],
+        "imageUrl": "assets/images/emojis/chef-barbie.png",
+        "id": "chef",
+        "custom": true,
+        "set": "apple",
+        "colons": ":chef:"
+      }
     },
     {
       "id": 6,
@@ -6288,7 +6315,7 @@
       "personalWebsite": "https://www.techenthusiast.com/",
       "location": "Сан-Франциско, США",
       "registrationDate": "2023-09-03",
-      "profileViews": 2794,
+      "profileViews": 2795,
       "role": "user",
       "notifications": [
         {
@@ -6410,7 +6437,36 @@
       "personalWebsite": "",
       "location": "Беларусь (Гомель)",
       "registrationDate": "2023-10-30",
-      "profileViews": 13
+      "profileViews": 15,
+      "emojiStatus": {
+        "name": "Weary Face",
+        "unified": "1F629",
+        "keywords": [
+          "weary_face",
+          "face",
+          "tired",
+          "sleepy",
+          "sad",
+          "frustrated",
+          "upset"
+        ],
+        "sheet": [
+          33,
+          0
+        ],
+        "shortName": "weary",
+        "shortNames": [
+          "weary"
+        ],
+        "id": "weary",
+        "native": "😩",
+        "skinVariations": [],
+        "emoticons": [],
+        "hidden": [],
+        "text": "",
+        "set": "apple",
+        "colons": ":weary:"
+      }
     },
     {
       "id": 24,

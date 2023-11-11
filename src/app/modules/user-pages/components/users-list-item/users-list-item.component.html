@@ -5,13 +5,16 @@
    <div class="main-and-follow">
        <div style="display: flex; flex-direction: column; row-gap: 0.5em;">
             <a class="wrap" [routerLink]="'/cooks/list/'+user.id">
-                <div class="userpic"></div>
+                <div class="userpic">
+                                          <ngx-emoji class="emoji" *ngIf="emoji" [emoji]="emoji" [size]="22"></ngx-emoji>
+
+                </div>
                 <div>
                    <div class="star-h1">
                        <div class="star" *ngIf="user.role!=='user'"> <svg-icon class="star-svg" [applyClass]="true"  [src]="'../../../../../assets/images/svg/user-star.svg'"></svg-icon></div>
                         <h1 [title]="user.role==='admin'?'Это администратор Yummy':user.role==='moderator'?'Это модератор Yummy':''">{{user.fullName}}</h1>
                    </div>
-                    <h2>@{{user.username}}</h2>
+                    <h2>{{'@'+user.username}}</h2>
                 </div>
             </a>
             <p class="location"  *ngIf="user.location!==''">

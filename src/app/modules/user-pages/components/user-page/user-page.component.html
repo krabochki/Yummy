@@ -8,7 +8,7 @@
         <div class="col info">
           <div class="col name">
             <h1>Loading FullName</h1>
-            <p class="username">@loadusername</p>
+            <p class="username">loadusername</p>
           </div>
 
           <p class="quote">Loading big deep quote of loading user</p>
@@ -136,7 +136,7 @@
       <svg-icon
         [applyClass]="true"
         class="svg"
-        [src]="'../../../../../assets/images/svg/go-back.svg'"
+        [src]="'/assets/images/svg/go-back.svg'"
       >
       </svg-icon>
     </div>
@@ -145,18 +145,76 @@
         (click)="settingsShow = !settingsShow"
         [applyClass]="true"
         class="svg"
-        [src]="'../../../../../assets/images/svg/settings.svg'"
+        [src]="'assets/images/svg/settings.svg'"
       >
       </svg-icon>
     </div>
     <div class="row main">
-     
       <div class="img-cont">
-         <button class="hire-button" *ngIf="currentUser.role==='admin' && this.user.role==='user'" (click)="hireModalShow=true"> 
-        <svg-icon class="hire-svg" [applyClass]="true" [src]="'../../../../../assets/images/svg/case.svg'"></svg-icon>
-      </button>
-        <img  class="noselect"
-          [src]="'../../../../../assets/images/userpic.png'"
+        <div #emojiPicker>
+          <div
+            [ngClass]="{
+              'no-emoji': !selectedEmoji && isSameUser
+            }"
+            [style.cursor]="isSameUser ? 'pointer' : 'default'"
+            [title]="
+              isSameUser
+                ? selectedEmoji
+                  ? 'Нажмите на кнопку 2 раза, чтобы убрать статус'
+                  : 'Нажмите, чтобы выбрать эмодзи статус'
+                : ''
+            "
+            class="emoji-status"
+            (dblclick)="unsetEmoji()"
+            (click)="
+              isSameUser
+                ? (showEmojiPicker = !showEmojiPicker)
+                : null
+            "
+          >
+            <svg-icon
+              *ngIf="!selectedEmoji && isSameUser"
+              [src]="'assets/images/svg/smile.svg'"
+              [applyClass]="true"
+              class="add-emoji"
+            />
+            <div></div>
+            <ngx-emoji
+              class="emoji"
+              *ngIf="selectedEmoji"
+              [emoji]="selectedEmoji"
+              [size]="44"
+            ></ngx-emoji>
+          </div>
+          <emoji-mart
+            [darkMode]="false"
+            @modal
+            [color]="'var(--color-secondary)'"
+            *ngIf="showEmojiPicker"
+            [showPreview]="false"
+            (emojiSelect)="setEmoji($event)"
+            [custom]="customEmojis"
+            [exclude]="['flags', 'symbols']"
+            [i18n]="emojisRuLocale"
+            class="emoji-pick"
+            title="Выбери статус"
+          ></emoji-mart>
+        </div>
+        <button
+          class="hire-button"
+          *ngIf="currentUser.role === 'admin' && this.user.role === 'user'"
+          (click)="hireModalShow = true"
+        >
+          <svg-icon
+            class="hire-svg"
+            [applyClass]="true"
+            [src]="'assets/images/svg/case.svg'"
+          ></svg-icon>
+        </button>
+
+        <img
+          class="noselect"
+          [src]="'assets/images/userpic.png'"
           alt="User Photo"
         />
       </div>
@@ -168,7 +226,8 @@
 
         <p class="quote" *ngIf="user?.quote">{{ user.quote }}</p>
 
-        <app-button class="noselect"
+        <app-button
+          class="noselect"
           (click)="
             currentUser.id === 0
               ? (noAccessModalShow = true)
@@ -208,8 +267,8 @@
           ></span>
         </p>
       </div>
-      <div class="col" >
-        <button 
+      <div class="col">
+        <button
           class="showFollowers"
           (click)="obj = 'followers'; showFollows = true"
         >
@@ -255,19 +314,20 @@
   </div>
 
   <ng-template #recipes>
-    <ng-template #noRecipes
-      ><div class="noRecipes">
+    <ng-template #noRecipes>
+      <div class="noRecipes">
         <p>У этого кулинара пока нет своих рецептов :(</p>
 
         <svg-icon
-          [src]="'../../../../../assets/images/svg/sad-cook.svg'"
+          [src]="'assets/images/svg/sad-cook.svg'"
           [svgStyle]="{
             'height.em': '12',
             'width.em': '12',
             fill: 'var(--color-foreground)'
           }"
-        ></svg-icon></div
-    ></ng-template>
+        ></svg-icon>
+      </div>
+    </ng-template>
 
     <app-vertical-recipe-list
       *ngIf="userRecipes.length > 0; else noRecipes"
@@ -302,7 +362,7 @@
             <a [href]="social.link" class="center">
               <svg-icon
                 [src]="
-                  '../../../../../assets/images/svg/non-fill-' +
+                  'assets/images/svg/non-fill-' +
                   (social.name === 'ВКонтакте' ? 'vkontakte' : social.name) +
                   '.svg'
                 "
@@ -315,7 +375,8 @@
         </ul>
       </div>
       <div class="col additional">
-        <h3 class="noselect"
+        <h3
+          class="noselect"
           [ngStyle]="{
             'text-align': !user.socialNetworks ? 'center' : 'left'
           }"
@@ -325,8 +386,7 @@
         <ul>
           <li class="row center website" *ngIf="user?.personalWebsite">
             <svg-icon
-              [src]="'../../../../../assets/images/svg/planet.svg'"
-            
+              [src]="'assets/images/svg/planet.svg'"
               class="red-svg"
               [applyClass]="true"
             >
@@ -335,7 +395,7 @@
           </li>
           <li class="row center" *ngIf="user?.location">
             <svg-icon
-              [src]="'../../../../../assets/images/svg/geo.svg'"
+              [src]="'assets/images/svg/geo.svg'"
               [svgStyle]="{
                 'width.em': '1.2',
                 'height.em': '1',
@@ -395,14 +455,15 @@
                   ></span
                   >,
                 </p>
-                 <p>
+                <p>
                   приготовили
                   {{ cooks }}
                   <span
                     appPluralRu=""
                     [value]="cooks"
                     [arVariants]="[' раз', ' раза', ' раз']"
-                  ></span>,
+                  ></span
+                  >,
                 </p>
                 <p>
                   прокомментировали
@@ -411,10 +472,8 @@
                     appPluralRu=""
                     [value]="comments"
                     [arVariants]="['раз', 'раза', 'раз']"
-                  ></span
-                  >
+                  ></span>
                 </p>
-               
               </span>
             </p>
           </li>
@@ -425,33 +484,36 @@
     <div>
       <h3 class="noselect">Поделиться этим аккаунтом</h3>
       <div class="noselect" class="row social">
-       <button> <app-social-button   tabindex="-1" 
- [url]="linkForSocials"></app-social-button></button>
         <button>
-          <app-social-button  tabindex="-1"
-
+          <app-social-button
+            tabindex="-1"
+            [url]="linkForSocials"
+          ></app-social-button>
+        </button>
+        <button>
+          <app-social-button
+            tabindex="-1"
             [url]="linkForSocials"
             [social]="'pinterest'"
           ></app-social-button>
         </button>
-       <button>
-          <app-social-button  tabindex="-1"
-
+        <button>
+          <app-social-button
+            tabindex="-1"
             [url]="linkForSocials"
             [social]="'vk'"
           ></app-social-button>
-       </button>
+        </button>
         <button>
-        <app-social-button  tabindex="-1"
-
-      
+          <app-social-button
+            tabindex="-1"
             [url]="linkForSocials"
-            [social]="'twitter'"></app-social-button>
-  
-       </button>
+            [social]="'twitter'"
+          ></app-social-button>
+        </button>
         <button>
-          <app-social-button   tabindex="-1"
-
+          <app-social-button
+            tabindex="-1"
             [url]="linkForSocials"
             [social]="'facebook'"
           ></app-social-button>
@@ -492,6 +554,26 @@
   "
 ></app-modal>
 
-<app-modal (resultEmit)="handleHireModal($event)" @modal *ngIf="hireModalShow" [title]="'Подтвердите действие'" [style]="'sec'" [type]="'yesOrNo'" [buttonsText]="['Да','Отмена']" [description]="'Вы уверены, что хотите назначить модератора '+getName(this.user)+'?'"></app-modal>
+<app-modal
+  (resultEmit)="handleHireModal($event)"
+  @modal
+  *ngIf="hireModalShow"
+  [title]="'Подтвердите действие'"
+  [style]="'sec'"
+  [type]="'yesOrNo'"
+  [buttonsText]="['Да', 'Отмена']"
+  [description]="
+    'Вы уверены, что хотите назначить модератора ' + getName(this.user) + '?'
+  "
+></app-modal>
 
-<app-modal (resultEmit)="handleSuccessHireModal()" @modal *ngIf="hireSuccessModalShow" [title]="'Успешное назначение'" [style]="'sec'" [type]="'Ok'" [buttonsText]="['Хорошо']" [description]="'Вы успешно назначили модератора '+getName(this.user)+''"></app-modal>
+<app-modal
+  (resultEmit)="handleSuccessHireModal()"
+  @modal
+  *ngIf="hireSuccessModalShow"
+  [title]="'Успешное назначение'"
+  [style]="'sec'"
+  [type]="'Ok'"
+  [buttonsText]="['Хорошо']"
+  [description]="'Вы успешно назначили модератора ' + getName(this.user) + ''"
+></app-modal>

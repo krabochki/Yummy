@@ -14,14 +14,15 @@
       <section class="main-wrap">
         <nav class="nav noselect">
           <h1>Настройки</h1>
-          <hr>
+          <hr />
           <div class="switches">
-            <button 
-            class="switch"
-            [ngClass]="{'selected':step===i}" 
-            (click)="step=i"
-            *ngFor="let item of steps; let i = index">
-              {{item}}
+            <button
+              class="switch"
+              [ngClass]="{ selected: step === i }"
+              (click)="step = i"
+              *ngFor="let item of steps; let i = index"
+            >
+              {{ item }}
             </button>
           </div>
         </nav>
@@ -31,16 +32,26 @@
             <div class="blocks">
               <div>
                 <h3>
-                  <svg-icon [applyClass]="true" class="icon" [src]="'assets/images/svg/settings/mail.svg'"/>
-                  Электронная почта</h3>
+                  <svg-icon
+                    [applyClass]="true"
+                    class="icon"
+                    [src]="'assets/images/svg/settings/mail.svg'"
+                  />
+                  Электронная почта
+                </h3>
                 <p>{{ user.email }}</p>
               </div>
               <div>
                 <h3>
-                                    <svg-icon [applyClass]="true" class="icon" [src]="'assets/images/svg/settings/username.svg'"/>
+                  <svg-icon
+                    [applyClass]="true"
+                    class="icon"
+                    [src]="'assets/images/svg/settings/username.svg'"
+                  />
 
-                  Имя пользователя</h3>
-                <p>{{"@" + user.username }}</p>
+                  Имя пользователя
+                </h3>
+                <p>{{ "@" + user.username }}</p>
               </div>
               <button class="action disabled">Поменять пароль</button>
               <button class="action red" (click)="deleteModalShow = true">
@@ -53,15 +64,176 @@
             <div class="blocks third">
               <div *ngFor="let section of permissionNotificationSections">
                 <h3>
-                  <svg-icon [applyClass]="true" class="icon" [src]="'assets/images/svg/settings/'+section.icon+'.svg'"/>
-                  {{ section.title }}</h3>
+                  <svg-icon
+                    [applyClass]="true"
+                    class="icon"
+                    [src]="
+                      'assets/images/svg/settings/' + section.icon + '.svg'
+                    "
+                  />
+                  {{ section.title }}
+                </h3>
                 <div>
                   <div class="toogle" *ngFor="let item of section.items">
                     <p>{{ item.description }}</p>
                     <app-toogle-switch
                       [checked]="userPermissionEnabled(item.area)"
-                      (checkedEmit)="tooglePermission(item.area,!userPermissionEnabled(item.area))"></app-toogle-switch>
+                      (checkedEmit)="
+                        tooglePermission(
+                          item.area,
+                          !userPermissionEnabled(item.area)
+                        )
+                      "
+                    ></app-toogle-switch>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="step === 3">
+            <h2>Предпочтения</h2>
+            <div class="blocks">
+              <div>
+                <h3>
+                  <svg-icon
+                    [applyClass]="true"
+                    class="icon"
+                    [src]="'assets/images/svg/permanent.svg'"
+                  />
+                  Ваши постоянные продукты
+                </h3>
+                <p class="description">
+                  Внесите сюда те ингредиенты, которые постоянно присутствуют в
+                  вашем холодильнике. Это поможет не показывать лишние
+                  ингредиенты в «Подборе рецептов», считая, что они всегда у вас
+                  есть.
+                </p>
+              </div>
+
+              <div class="form">
+                <app-usual-input
+                  (ngModelChange)="
+                    !permanentIngredientTouched
+                      ? (permanentIngredientTouched = true)
+                      : null
+                  "
+                  [error]="
+                    permanentIngredientTouched && permanentIngredient.length < 2
+                      ? ' '
+                      : ''
+                  "
+                  [(ngModel)]="permanentIngredient"
+                  [max]="50"
+                  [placeholder]="'Название ингредиента'"
+                  type="text"
+                />
+                <app-button
+                  [color]="'prim'"
+                  [text]="'Добавить'"
+                  [style]="'filled'"
+                  [rounded]="true"
+                  [disabled]="
+                    !permanentIngredientExist && permanentIngredient.length > 2
+                  "
+                  (click)="addPermanentIngredient()"
+                ></app-button>
+                <p
+                  class="error"
+                  *ngIf="
+                    permanentIngredient.length < 2 && permanentIngredientTouched
+                  "
+                >
+                  Название ингредиента должно содержать минимум 2 символа
+                </p>
+              </div>
+              <div class="ingredients">
+                <div
+                  class="ingredient"
+                  *ngFor="let item of permanentIngredients"
+                >
+                  {{ item }}
+                  <button
+                    (click)="deleteIngredient('permanent', item)"
+                    class="delete-button"
+                  >
+                    <svg-icon
+                      [applyClass]="true"
+                      class="delete-svg"
+                      [src]="'assets/images/svg/close.svg'"
+                    />
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <h3>
+                  <svg-icon
+                    [applyClass]="true"
+                    class="icon"
+                    [src]="'assets/images/svg/gluten.svg'"
+                  />
+                  Исключения для поиска
+                </h3>
+                <p class="description">
+                  Укажите продукты, которые вы по тем или иным причинам не
+                  желаете использовать в процессе готових каких бы то ни было
+                  рецептов. Мы учтем ваши предпочтения, и в подборе рецептов вы
+                  сразу не будете видеть рецепты, включающие такие ингредиенты.
+                </p>
+              </div>
+
+              <div class="form">
+                <app-usual-input
+                  (ngModelChange)="
+                    !excludedIngredientTouched
+                      ? (excludedIngredientTouched = true)
+                      : null
+                  "
+                  [error]="
+                    excludedIngredientTouched && excludedIngredient.length < 2
+                      ? ' '
+                      : ''
+                  "
+                  [(ngModel)]="excludedIngredient"
+                  [max]="50"
+                  [placeholder]="'Название ингредиента'"
+                  type="text"
+                />
+                <app-button
+                  [color]="'prim'"
+                  [text]="'Исключить'"
+                  [style]="'filled'"
+                  [rounded]="true"
+                  [disabled]="
+                    !excludedIngredientExist && excludedIngredient.length > 2
+                  "
+                  (click)="addExcludedIngredient()"
+                ></app-button>
+                <p
+                  class="error"
+                  *ngIf="
+                    excludedIngredient.length < 2 && excludedIngredientTouched
+                  "
+                >
+                  Название ингредиента должно содержать минимум 2 символа
+                </p>
+              </div>
+              <div class="ingredients">
+                <div
+                  class="ingredient"
+                  *ngFor="let item of excludingIngredients"
+                >
+                  {{ item }}
+                  <button
+                    (click)="deleteIngredient('excluding', item)"
+                    class="delete-button"
+                  >
+                    <svg-icon
+                      [applyClass]="true"
+                      class="delete-svg"
+                      [src]="'assets/images/svg/close.svg'"
+                    />
+                  </button>
                 </div>
               </div>
             </div>
@@ -82,13 +254,21 @@
               </div>
               <div>
                 <p class="disabled"><a routerLink="/about">О сайте...</a></p>
-                <p class="disabled"><a routerLink="/user-policy">Пользовательское соглашение...</a></p>
+                <p class="disabled">
+                  <a routerLink="/user-policy"
+                    >Пользовательское соглашение...</a
+                  >
+                </p>
               </div>
               <div>
                 <p>Пригласите друзей</p>
                 <div class="socials">
                   <app-social-button [url]="location"></app-social-button>
-                  <app-social-button [url]="location" [social]="social" *ngFor="let social of socials"></app-social-button>
+                  <app-social-button
+                    [url]="location"
+                    [social]="social"
+                    *ngFor="let social of socials"
+                  ></app-social-button>
                 </div>
               </div>
               <button class="action red" (click)="exitModalShow = true">

@@ -40,14 +40,14 @@ export function initializePlans(planService: PlanService) {
   return () => planService.loadPlanData();
 }
 @NgModule({
-  declarations: [AppComponent, HeaderComponent, FooterComponent  ,
-],
+  declarations: [AppComponent, HeaderComponent, FooterComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
     RecipesModule,
+
     ControlsModule,
     UserPagesModule,
     NgbModalModule,

@@ -1,11 +1,19 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IUser, nullUser } from '../../models/users';
 import { ActivatedRoute, Data, Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
-import { fadeIn, modal } from 'src/tools/animations';
+import { fadeIn, heightAnim, modal } from 'src/tools/animations';
 import { trigger } from '@angular/animations';
 import { Title } from '@angular/platform-browser';
 import { registerLocaleData } from '@angular/common';
@@ -16,63 +24,39 @@ import { Subject, takeUntil } from 'rxjs';
 import { NotificationService } from '../../services/notification.service';
 import { INotification } from '../../models/notifications';
 import { getFormattedDate } from 'src/tools/common';
+import { customEmojis, emojisRuLocale } from './emoji-picker-data';
+import { EmojiData } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 
 @Component({
   selector: 'app-user-page',
   templateUrl: './user-page.component.html',
   styleUrls: ['./user-page.component.scss', './skeleton.scss'],
-  animations: [trigger('fadeIn', fadeIn()), trigger('modal', modal())],
+  animations: [
+    trigger('fadeIn', fadeIn()),
+    trigger('modal', modal()),
+    trigger('height', heightAnim()),
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserPageComponent implements OnInit, OnDestroy {
-  recipesEnabled: boolean = true;
-  moreInfoEnabled: boolean = false;
-  obj: 'following' | 'followers' = 'followers';
-  dataLoaded = false;
-  showFollows = false;
-
-  closeFollows() {
-    this.showFollows = false;
-  }
-
-  linkForSocials: string = '';
-  constructor(
-    private authService: AuthService,
-    private route: ActivatedRoute,
-    public userService: UserService,
-    private recipeService: RecipeService,
-    private titleService: Title,
-    public router: Router,
-    private cd: ChangeDetectorRef,
-    private notifyService: NotificationService,
-    public routerEventsService: RouteEventsService,
-  ) {
-    registerLocaleData(localeRu);
-    this.linkForSocials = window.location.href;
-  }
-
-  onSkipHandler() {
-    this.router.navigate([this.routerEventsService.previousRoutePath.value]);
-  }
+  emojisRuLocale = emojisRuLocale;
+  customEmojis = customEmojis;
+  selectedEmoji: EmojiData | null = null; //эмодзи статус текущего пользователя
+  showEmojiPicker: boolean = false; //показывается ли окно выбор смайликов
 
   hireModalShow = false;
   hireSuccessModalShow = false;
-
-  currentUser: IUser = { ...nullUser };
-  settingsShow = false;
-
-  user: IUser = { ...nullUser };
-
   editModalShow: boolean = false;
   noAccessModalShow: boolean = false;
 
-  userId: number = 0;
-  protected destroyed$: Subject<void> = new Subject<void>();
+  linkForSocials: string = '';
 
-  userRecipes: IRecipe[] = [];
-  userPublicRecipes: IRecipe[] = [];
-
-  allRecipes: IRecipe[] = [];
+  settingsShow = false;
+  dataLoaded = false;
+  showFollows = false;
+  recipesEnabled: boolean = true;
+  moreInfoEnabled: boolean = false;
+  obj: 'following' | 'followers' = 'followers';
 
   userFollowers: IUser[] = [];
   userFollowing: IUser[] = [];
@@ -83,12 +67,54 @@ export class UserPageComponent implements OnInit, OnDestroy {
   cooks: number = 0;
   comments: number = 0;
   users: IUser[] = [];
+  currentUser: IUser = { ...nullUser };
+  user: IUser = { ...nullUser };
+  allRecipes: IRecipe[] = [];
+  userRecipes: IRecipe[] = [];
+  userPublicRecipes: IRecipe[] = [];
+
+  protected destroyed$: Subject<void> = new Subject<void>();
+
+  @ViewChild('emojiPicker') emojiPicker?: ElementRef;
+
+  protected get validRegistrationDate(): string {
+    return getFormattedDate(this.user.registrationDate);
+  }
+
+  get isSameUser(): boolean{
+    return this.currentUser.id === this.user.id;
+  }
+
+  constructor(
+    private authService: AuthService,
+    private route: ActivatedRoute,
+    public userService: UserService,
+    private recipeService: RecipeService,
+    private titleService: Title,
+    public router: Router,
+    private cd: ChangeDetectorRef,
+    private notifyService: NotificationService,
+    public routerEventsService: RouteEventsService,
+    private renderer: Renderer2,
+  ) {
+    registerLocaleData(localeRu);
+    this.linkForSocials = window.location.href;
+
+    this.renderer.listen('window', 'click', (e: Event) => {
+      if (this.emojiPicker) {
+        if (!this.emojiPicker.nativeElement.contains(e.target)) {
+          this.showEmojiPicker = false;
+          this.cd.markForCheck();
+        }
+      }
+    });
+  }
+
   ngOnInit() {
     this.route.data.subscribe((data: Data) => {
       this.recipesEnabled = true;
       this.moreInfoEnabled = false;
       this.user = data['user'];
-      this.userId = this.user.id;
 
       this.authService.currentUser$
         .pipe(takeUntil(this.destroyed$))
@@ -106,12 +132,14 @@ export class UserPageComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroyed$))
         .subscribe((data) => {
           this.users = data;
-          const findedUser = data.find((user) => user.id === this.userId);
+          const findedUser = data.find((user) => user.id === this.user.id);
 
           if (findedUser) {
             this.user = findedUser;
           }
-
+          this.selectedEmoji = this.user.emojiStatus
+            ? this.user.emojiStatus
+            : null;
 
           this.titleService.setTitle(
             this.user.fullName ? this.user.fullName : '@' + this.user.username,
@@ -122,9 +150,15 @@ export class UserPageComponent implements OnInit, OnDestroy {
             this.myPage = true;
           }
 
-          this.userFollowers = this.userService.getFollowers(data, this.userId);
+          this.userFollowers = this.userService.getFollowers(
+            data,
+            this.user.id,
+          );
 
-          this.userFollowing = this.userService.getFollowing(data, this.userId);
+          this.userFollowing = this.userService.getFollowing(
+            data,
+            this.user.id,
+          );
 
           this.recipeService.recipes$
             .pipe(takeUntil(this.destroyed$))
@@ -133,7 +167,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
 
               this.userRecipes = this.recipeService.getRecipesByUser(
                 this.allRecipes,
-                this.userId,
+                this.user.id,
               );
               this.userPublicRecipes = this.recipeService.getPublicRecipes(
                 this.userRecipes,
@@ -182,6 +216,14 @@ export class UserPageComponent implements OnInit, OnDestroy {
         this.userService.updateUsers(this.user).subscribe();
       }
     });
+  }
+
+  onSkipHandler() {
+    this.router.navigate([this.routerEventsService.previousRoutePath.value]);
+  }
+
+  closeFollows() {
+    this.showFollows = false;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -235,10 +277,6 @@ export class UserPageComponent implements OnInit, OnDestroy {
     this.noAccessModalShow = false;
   }
 
-  protected get validRegistrationDate(): string {
-    return getFormattedDate(this.user.registrationDate);
-  }
-
   protected getName(user: IUser): string {
     return user.fullName ? user.fullName : '@' + user.username;
   }
@@ -263,6 +301,21 @@ export class UserPageComponent implements OnInit, OnDestroy {
   }
   protected handleSuccessHireModal() {
     this.hireSuccessModalShow = false;
+  }
+
+  protected setEmoji(event: any): void {
+    const emoji = event.emoji;
+    if (emoji.id !== this.selectedEmoji?.id) {
+      this.selectedEmoji = emoji;
+      this.currentUser.emojiStatus = emoji;
+      this.userService.updateUsers(this.currentUser).subscribe();
+    }
+    this.showEmojiPicker = false;
+  }
+  protected unsetEmoji(): void {
+    this.currentUser.emojiStatus = undefined;
+    this.userService.updateUsers(this.currentUser).subscribe();
+    this.selectedEmoji = null;
   }
 
   ngOnDestroy(): void {

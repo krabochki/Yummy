@@ -35,8 +35,19 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   permissionNotificationSections = sections;
 
+  protected permanentIngredient: string = '';
+  protected permanentIngredientTouched = false;
+  protected excludedIngredient: string = '';
+  protected excludedIngredientTouched = false;
+
   protected exitModalShow: boolean = false;
   protected deleteModalShow: boolean = false;
+  protected permanentIngredients: string[] = ['соль', 'сахар', 'вода', 'мука'];
+  protected excludingIngredients: string[] = [
+    'яйца',
+    'сливочное масло',
+    'свинина',
+  ];
 
   protected location: string = '';
 
@@ -51,6 +62,26 @@ export class SettingsComponent implements OnInit, OnDestroy {
   protected step: number = 0;
 
   private destroyed$: Subject<void> = new Subject<void>();
+
+    get permanentIngredientExist(): boolean {
+    const formattedIngredients = this.permanentIngredients.map((ingredient) =>
+      ingredient.trim().toLowerCase(),
+    );
+    const formattedIngredient = this.permanentIngredient.trim().toLowerCase();
+    const isIngredientAlreadyAdded =
+      formattedIngredients.includes(formattedIngredient);
+    return isIngredientAlreadyAdded;
+  }
+  get excludedIngredientExist(): boolean {
+    const formattedIngredients = this.excludingIngredients.map((ingredient) =>
+      ingredient.trim().toLowerCase(),
+    );
+    const formattedIngredient = this.excludedIngredient.trim().toLowerCase();
+    const isIngredientAlreadyAdded =
+      formattedIngredients.includes(formattedIngredient);
+    return isIngredientAlreadyAdded;
+  }
+
 
   constructor(
     private authService: AuthService,
@@ -67,24 +98,57 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.addModalStyle();
     this.getRecipes();
     this.getUsers();
-    this.getPlans()
+    this.getPlans();
   }
 
-  private getPlans(): void{
+  deleteIngredient(context: 'permanent' | 'excluding', ingredient: string) {
+    if (context === 'permanent') {
+      this.permanentIngredients = this.permanentIngredients.filter(
+        (i) => i !== ingredient,
+      );
+      this.user.permanent = this.permanentIngredients;
+    } else {
+      this.excludingIngredients = this.excludingIngredients.filter(
+        (i) => i !== ingredient,
+      );
+      this.user.exclusions = this.excludingIngredients;
+    }
+    this.userService.updateUsers(this.user).subscribe();
+  }
+
+  protected addPermanentIngredient(): void {
+    if (!this.user.permanent) this.user.permanent = [];
+    this.user.permanent.push(this.permanentIngredient);
+    this.userService.updateUsers(this.user).subscribe();
+    this.permanentIngredientTouched = false;
+    this.permanentIngredient = '';
+  }
+
+  protected addExcludedIngredient(): void {
+    if (!this.user.exclusions) this.user.exclusions = [];
+    this.user.exclusions.push(this.excludedIngredient);
+    this.userService.updateUsers(this.user).subscribe();
+    this.excludedIngredientTouched = false;
+    this.excludedIngredient = '';
+  }
+
+
+
+  private getPlans(): void {
     this.planService.plans$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedPlans: IPlan[]) => (this.plans = receivedPlans));
   }
 
-  private getRecipes():void {
+  private getRecipes(): void {
     this.recipeService.recipes$
       .pipe(takeUntil(this.destroyed$))
       .subscribe(
         (receivedRecipes: IRecipe[]) => (this.recipes = receivedRecipes),
-    );
+      );
   }
 
-  private getUsers(): void{
+  private getUsers(): void {
     this.userService.users$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedUsers: IUser[]) => {
@@ -95,6 +159,12 @@ export class SettingsComponent implements OnInit, OnDestroy {
           );
           this.user = updatedCurrentUser ? updatedCurrentUser : this.user;
           this.permissions = this.user.permissions ? this.user.permissions : [];
+          this.permanentIngredients = this.user.permanent
+            ? this.user.permanent
+            : [];
+          this.excludingIngredients = this.user.exclusions
+            ? this.user.exclusions
+            : [];
         }
       });
   }
@@ -109,19 +179,23 @@ export class SettingsComponent implements OnInit, OnDestroy {
     }
   } //переключ темной темы
 
-  protected userPermissionEnabled(context: PermissionContext): boolean { //разрешены ли конкретные уведомления 
+  protected userPermissionEnabled(context: PermissionContext): boolean {
+    //разрешены ли конкретные уведомления
     //если уведов нет или оно не установлено то считаю что можно
-    if(this.permissions) {
-      const findedPermisstion = this.permissions.find((p) => p.context === context);
+    if (this.permissions) {
+      const findedPermisstion = this.permissions.find(
+        (p) => p.context === context,
+      );
       if (findedPermisstion) return findedPermisstion.enabled;
     }
     return true;
   }
 
-  protected tooglePermission( //изменение значения разрешения на уведомления
+  protected tooglePermission(
+    //изменение значения разрешения на уведомления
     context: PermissionContext,
     enabled: boolean,
-  ): void { 
+  ): void {
     if (!this.user.permissions) this.user.permissions = [];
     const permissionExist = this.permissions.find((p) => p.context === context);
     if (permissionExist) permissionExist.enabled = enabled;
@@ -134,7 +208,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   protected handleExitModal(event: boolean): void {
-    this.exitModalShow = false; 
+    this.exitModalShow = false;
     if (event) {
       this.authService.logoutUser();
       this.router.navigateByUrl('/');
@@ -212,10 +286,9 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.closeEmitter.emit(true);
   }
 
-
   //cкрытие/добавление прокрутки к основному содержимому
 
-  private removeModalStyle(): void { 
+  private removeModalStyle(): void {
     this.renderer.removeClass(document.body, 'hide-overflow');
     (<HTMLElement>document.querySelector('.header')).style.width = '100%';
   }

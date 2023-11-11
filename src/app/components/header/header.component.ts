@@ -55,7 +55,6 @@ import { TimePastService } from 'ng-time-past-pipe';
 export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   @Output() headerHeight: EventEmitter<number> = new EventEmitter();
 
-  animate = false;
   popups: INotification[] = [];
   popupHistory: number[] = [];
 
@@ -68,6 +67,9 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   planSelectItems = planSelectItems;
   planRouterLinks = planRouterLinks;
 
+  maxNumberOfPopupsInSameTime = 3;
+  popupLifetime = 5;//в секундах
+
   creatingMode = false;
 
   currentUser: IUser = { ...nullUser };
@@ -77,6 +79,8 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   notifies: INotification[] = [];
 
   mobile: boolean = false;
+
+  private currentUserPlan: IPlan = nullPlan;
 
   noAccessModalShow: boolean = false;
 
@@ -136,7 +140,6 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     else return 0;
   }
 
-  private currentUserPlan: IPlan = nullPlan;
 
   ngOnInit(): void {
     if (screen.width <= 480) {
@@ -355,10 +358,9 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
 
         const noChangesInNotifies =
           this.currentUser.notifications.length === this.notifies.length &&
-          this.currentUser.notifications.every((element, index) => {
-            return element === this.notifies[index];
-          });
-
+          this.currentUser.notifications.every(
+            (element, index) => element === this.notifies[index],
+          );
         if (this.currentUser.id !== 0 && !noChangesInNotifies) {
           this.updateNotifies();
         }
@@ -411,12 +413,12 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
         if (
           //максимум 3 одновременно
           !notification.read &&
-          this.popups.length < 3 &&
+          this.popups.length < this.maxNumberOfPopupsInSameTime &&
           !this.popupHistory.includes(notification.id) &&
           !this.popups.find((p) => p.id === notification.id)
         ) {
           this.popupLifecycle(notification);
-        } else if (this.popups.length >= 3) {
+        } else if (this.popups.length >= this.maxNumberOfPopupsInSameTime) {
           this.popupHistory.push(notification.id);
         }
       });
@@ -441,7 +443,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     this.popups.unshift(popup);
     setTimeout(() => {
       this.removePopup(popup);
-    }, 5000);
+    }, this.popupLifetime*1000);
   }
 
   headerHeightChange(): void {

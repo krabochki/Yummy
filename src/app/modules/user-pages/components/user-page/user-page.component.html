@@ -154,11 +154,11 @@
         <div #emojiPicker>
           <div
             [ngClass]="{
-              'no-emoji': !selectedEmoji && user.id === currentUser.id
+              'no-emoji': !selectedEmoji && isSameUser
             }"
-            [style.cursor]="user.id === currentUser.id ? 'pointer' : 'default'"
+            [style.cursor]="isSameUser ? 'pointer' : 'default'"
             [title]="
-              user.id === currentUser.id
+              isSameUser
                 ? selectedEmoji
                   ? 'Нажмите на кнопку 2 раза, чтобы убрать статус'
                   : 'Нажмите, чтобы выбрать эмодзи статус'
@@ -167,13 +167,13 @@
             class="emoji-status"
             (dblclick)="unsetEmoji()"
             (click)="
-              user.id === currentUser.id
+              isSameUser
                 ? (showEmojiPicker = !showEmojiPicker)
                 : null
             "
           >
             <svg-icon
-              *ngIf="!selectedEmoji && user.id === currentUser.id"
+              *ngIf="!selectedEmoji && isSameUser"
               [src]="'assets/images/svg/smile.svg'"
               [applyClass]="true"
               class="add-emoji"

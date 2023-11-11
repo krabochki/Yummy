@@ -39,11 +39,10 @@ import { EmojiData } from '@ctrl/ngx-emoji-mart/ngx-emoji';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserPageComponent implements OnInit, OnDestroy {
-
-  protected emojisRuLocale = emojisRuLocale;
-  protected customEmojis = customEmojis;
-  protected selectedEmoji: EmojiData | null = null; //эмодзи статус текущего пользователя
-  protected showEmojiPicker: boolean = false; //показывается ли окно выбор смайликов
+  emojisRuLocale = emojisRuLocale;
+  customEmojis = customEmojis;
+  selectedEmoji: EmojiData | null = null; //эмодзи статус текущего пользователя
+  showEmojiPicker: boolean = false; //показывается ли окно выбор смайликов
 
   hireModalShow = false;
   hireSuccessModalShow = false;
@@ -80,6 +79,13 @@ export class UserPageComponent implements OnInit, OnDestroy {
 
   get showHireButton() {
     return this.userService.getPermission('new-moder-button',this.currentUser)
+
+  protected get validRegistrationDate(): string {
+    return getFormattedDate(this.user.registrationDate);
+  }
+
+  get isSameUser(): boolean{
+    return this.currentUser.id === this.user.id;
   }
 
   constructor(
@@ -272,10 +278,6 @@ export class UserPageComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl('/greetings');
     }
     this.noAccessModalShow = false;
-  }
-
-  protected get validRegistrationDate(): string {
-    return getFormattedDate(this.user.registrationDate);
   }
 
   protected getName(user: IUser): string {

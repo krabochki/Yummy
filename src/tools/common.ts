@@ -1,4 +1,3 @@
-import { CalendarEvent } from "angular-calendar";
 
 export function getCurrentDate():string{
      return new Date().toJSON()
@@ -24,6 +23,10 @@ export function dateComparator(dateA:Date, dateB:Date) {
 return (dateA > dateB) ? 1 :-1;
 }  
 
+export function baseComparator(a: any, b: any) {
+  if (a > b) return 1; else return -1;
+}
+
 
 export function dragStart() {
    const bodyElement: HTMLElement = document.body;
@@ -37,3 +40,15 @@ export function dragEnd() {
   bodyElement.classList.remove('inheritCursors');
   bodyElement.style.cursor = 'unset';
 }
+
+
+export function getZoom(count: number, diff:number, maxZoom?:number, baseZoom?: number): number {
+  if (!baseZoom) baseZoom = 1;
+    if (count > 1) {
+      if (maxZoom && count > maxZoom) count = maxZoom;
+      const zoomValue = baseZoom + (count - 1) * diff;
+      return zoomValue;
+    } else {
+      return baseZoom;
+    }
+  }

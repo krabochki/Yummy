@@ -31,7 +31,7 @@
   @include flex;
   flex-direction: column;
   row-gap: 1.5em;
-  font-size: 0.9em;
+  font-size: 1em;
   color: var(--color-foreground-unactive);
   height: 100%;
   width: 100%;
@@ -99,11 +99,15 @@ h1 {
 app-notify{
       width: 100%;
 border-bottom: 1px solid var(--color-background-deeper-unactive);
-border-top: 1px solid var(--color-background-deeper-unactive);
+
+&:first-of-type{
+  border-top:  1px solid var(--color-background-deeper-unactive);
+}
 }
 
 
 .list{
+
   display: grid;  z-index: 2;
   background-color: var(--color-background-deeper);
 
@@ -113,8 +117,17 @@ border-top: 1px solid var(--color-background-deeper-unactive);
   padding: 0 0;
 }
 
-.close-svg{
+.close{
   display: none;
+}
+
+@media(max-width:768px){
+  :host{
+    width: 23em;
+  }
+  .main{
+    zoom:1.2
+  }
 }
 @media(max-width:480px){
   :host{
@@ -124,7 +137,7 @@ border-top: 1px solid var(--color-background-deeper-unactive);
     font-size: 1.1em;
   }
   .no-notifies .mail-cook{
-    width: 65%;
+    width: 13em;
   }
   .close-svg{
     @include flex;
@@ -148,7 +161,7 @@ border-top: 1px solid var(--color-background-deeper-unactive);
     height: 2em;
     border-radius: 100%;
     cursor: pointer;
-    background-color: var(--color-primary);
+    background-color: var(--scroll-body);
     transition: opacity 0.2s ease-in-out;    zoom: 1.1;
     font-weight: 1000;
     right: 0;
@@ -158,3 +171,4 @@ border-top: 1px solid var(--color-background-deeper-unactive);
     border-radius: 0 0 0 100%;
   }
 }
+

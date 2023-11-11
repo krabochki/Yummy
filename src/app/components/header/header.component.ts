@@ -55,8 +55,8 @@ import { TimePastService } from 'ng-time-past-pipe';
 export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   @Output() headerHeight: EventEmitter<number> = new EventEmitter();
 
-  animate = false;
   popups: INotification[] = [];
+  popupHistory: number[] = [];
 
   activePage: 'cooks' | 'recipes' | 'match' | 'main' = 'main';
 
@@ -67,6 +67,9 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   planSelectItems = planSelectItems;
   planRouterLinks = planRouterLinks;
 
+  maxNumberOfPopupsInSameTime = 3;
+  popupLifetime = 5;//в секундах
+
   creatingMode = false;
 
   currentUser: IUser = { ...nullUser };
@@ -76,6 +79,8 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   notifies: INotification[] = [];
 
   mobile: boolean = false;
+
+  private currentUserPlan: IPlan = nullPlan;
 
   noAccessModalShow: boolean = false;
 
@@ -135,7 +140,6 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     else return 0;
   }
 
-  private currentUserPlan: IPlan = nullPlan;
 
   ngOnInit(): void {
     if (screen.width <= 480) {
@@ -333,33 +337,17 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     return element?.id;
   }
 
-  //удаление уведомления
-  removePopup(popup: INotification): void {
-    const index = this.popups.indexOf(popup);
-    if (index !== -1) {
-      this.popups.splice(index, 1);
-    }
-    const find = this.notifies.find((n) => n.id === popup.id);
-    if (find && !find.read) {
-      find.read = true;
-      this.currentUser.notifications = this.notifies;
-      this.userService.updateUsers(this.currentUser).subscribe();
-    }
-  }
-
-  //добавление и автоудаление всплыв уведомления
-  popupLifecycle(popup: INotification): void {
-    if (!this.popups.find((p) => p.id === popup.id)) this.popups.unshift(popup);
-
-    setTimeout(() => {
-      this.removePopup(popup);
-    }, 10000);
-  }
-
   currentUserInit() {
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedUser) => {
+        if (
+          receivedUser.id !== this.currentUser.id &&
+          this.currentUser.id > 0
+        ) {
+          this.popups = [];
+          this.popupHistory = [];
+        }
         if (receivedUser.id !== 0) {
           const findUser = this.users.find((u) => u.id === receivedUser.id);
           if (findUser) {
@@ -367,6 +355,16 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
             this.currentUser = findUser;
           }
         } else this.currentUser = receivedUser;
+
+        const noChangesInNotifies =
+          this.currentUser.notifications.length === this.notifies.length &&
+          this.currentUser.notifications.every(
+            (element, index) => element === this.notifies[index],
+          );
+        if (this.currentUser.id !== 0 && !noChangesInNotifies) {
+          this.updateNotifies();
+        }
+        this.cd.markForCheck();
       });
 
     if (this.currentUser.id > 0)
@@ -393,20 +391,10 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
       .subscribe((users) => {
         this.users = users;
         this.currentUserInit();
-        const noChangesInNotifies =
-          this.currentUser.notifications.length === this.notifies.length &&
-          this.currentUser.notifications.every((element, index) => {
-            return element === this.notifies[index];
-          });
-
-        if (this.currentUser.id !== 0 && !noChangesInNotifies) {
-          this.updateNotifies();
-        }
-        this.cd.markForCheck();
       });
   }
 
-  makeNotifiesUnreaded() {
+  makeAllNotifiesReaded() {
     let haveNotRead: boolean = false;
     this.notifies.forEach((notification) => {
       if (notification.read === false) {
@@ -421,13 +409,17 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   updateNotifies() {
     if (this.currentUser.notifications) {
       const userNotifies = [...this.currentUser.notifications];
-
-      userNotifies.forEach((notification) => {
+      userNotifies.reverse().forEach((notification) => {
         if (
+          //максимум 3 одновременно
           !notification.read &&
+          this.popups.length < this.maxNumberOfPopupsInSameTime &&
+          !this.popupHistory.includes(notification.id) &&
           !this.popups.find((p) => p.id === notification.id)
         ) {
           this.popupLifecycle(notification);
+        } else if (this.popups.length >= this.maxNumberOfPopupsInSameTime) {
+          this.popupHistory.push(notification.id);
         }
       });
 
@@ -435,6 +427,23 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
 
       this.cd.markForCheck();
     }
+  }
+
+  //удаление уведомления
+  removePopup(popup: INotification): void {
+    const index = this.popups.indexOf(popup);
+    if (index !== -1) {
+      this.popups.splice(index, 1);
+    }
+  }
+
+  //добавление и автоудаление всплыв уведомления
+  popupLifecycle(popup: INotification): void {
+    this.popupHistory.push(popup.id);
+    this.popups.unshift(popup);
+    setTimeout(() => {
+      this.removePopup(popup);
+    }, this.popupLifetime*1000);
   }
 
   headerHeightChange(): void {

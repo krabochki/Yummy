@@ -12,12 +12,17 @@ export function fadeIn() {
 export function notifies() {
   return [
     transition(':enter', [
-      style({ transform: 'translateX(17em)' }),
-      animate('400ms ease-in-out', style({ transform: 'translateX(0)' })),
+      style({ transform: 'translateX(100%)' }),
+      animate(
+        '400ms ease',
+        style({ transform: 'translateX(0)' }),
+      ),
     ]),
     transition(':leave', [
-      style({ transform: 'translateX(0)' }),
-      animate('400ms ease-in-out', style({ transform: 'translateX(17em)' })),
+      animate(
+        '400ms ease',
+        style({ transform: 'translateX(100%)' }),
+      ),
     ]),
   ];
 }

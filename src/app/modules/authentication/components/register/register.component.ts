@@ -115,8 +115,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
         id: maxId + 1,
       };
 
+      localStorage.setItem('currentUser', JSON.stringify(userData));
       this.usersService.postUser(userData).subscribe(() => {
-        localStorage.setItem('currentUser', JSON.stringify(userData));
         this.authService.setCurrentUser(userData);
         this.modalSuccessShow = true;
         const maxId = Math.max(...this.plans.map((u) => u.id));

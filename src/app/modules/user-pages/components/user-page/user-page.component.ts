@@ -112,6 +112,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
             this.user = findedUser;
           }
 
+
           this.titleService.setTitle(
             this.user.fullName ? this.user.fullName : '@' + this.user.username,
           );
@@ -154,6 +155,11 @@ export class UserPageComponent implements OnInit, OnDestroy {
                 this.userRecipes = this.recipeService.getPublicRecipes(
                   this.userRecipes,
                 );
+              }
+
+              if (this.userRecipes.length === 0) {
+                this.moreInfoEnabled = true;
+                this.recipesEnabled = false;
               }
               this.cooks = 0;
               this.likes = 0;

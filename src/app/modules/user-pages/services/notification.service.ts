@@ -9,9 +9,7 @@ import { EMPTY, take } from 'rxjs';
   providedIn: 'root',
 })
 export class NotificationService {
-  constructor(
-    private userService: UserService,
-  ) {
+  constructor(private userService: UserService) {
     this.userService.users$.subscribe((data) => (this.users = data));
   }
 
@@ -27,7 +25,7 @@ export class NotificationService {
       | 'without'
       | 'comment'
       | 'hire'
-      |'born'
+      | 'born'
       | 'user'
       | 'calendar-recipe'
       | 'demote'
@@ -66,6 +64,15 @@ export class NotificationService {
     return this.userService.updateUsers(user);
   }
 
+  makeNotifyReaded(notify:INotification,user:IUser) {
+    
+    const findedNotification = user.notifications.find(n => n.id === notify.id);
+    if (findedNotification) {
+      findedNotification.read = true;
+    }
+    return this.userService.updateUsers(user);
+  }
+
   addNotificationToUser(notify: INotification, user: IUser) {
     const actualUser = this.users.find((u) => u.id === user.id);
     if (actualUser) {
@@ -94,7 +101,8 @@ export class NotificationService {
       notification.id = maxId + 1;
       actualUser.notifications.push(notification);
     }
-    if (actualUser) return this.userService.updateUsers(actualUser).pipe(take(1));
+    if (actualUser)
+      return this.userService.updateUsers(actualUser).pipe(take(1));
     else return EMPTY;
   }
 }

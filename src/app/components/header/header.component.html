@@ -5,7 +5,7 @@
 
   <div class="popup" @popup  *ngFor="let item of popups">
 
-    <app-notify [popup]="true" (notifyDeleteClick)="removePopup(item)" [notify]="item" ></app-notify>
+    <app-notify [popup]="true" [user]="currentUser" (notifyDeleteClick)="removePopup(item)" [notify]="item" ></app-notify>
   </div>
 
 
@@ -127,5 +127,5 @@
 <app-recipe-create style="z-index:10; position: fixed;" *ngIf="creatingMode" (closeEmitter)="creatingMode=false"
   @modal></app-recipe-create>
 
-<app-notifications-list (closeEmitter)="notifiesOpen=false; makeNotifiesUnreaded()" @notifies [user]="currentUser" *ngIf="notifiesOpen"
+<app-notifications-list (closeEmitter)="notifiesOpen=false; makeAllNotifiesReaded()" @notifies [user]="currentUser" *ngIf="notifiesOpen"
   [notifies]="notifies"></app-notifications-list>

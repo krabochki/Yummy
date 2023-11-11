@@ -1,4 +1,3 @@
-import { CalendarEvent } from "angular-calendar";
 
 export function getCurrentDate():string{
      return new Date().toJSON()
@@ -23,3 +22,15 @@ export function getCurrentDate():string{
 export function dateComparator(dateA:Date, dateB:Date) {
 return (dateA > dateB) ? 1 :-1;
 }  
+
+
+export function getZoom(count: number, diff:number, maxZoom?:number, baseZoom?: number): number {
+  if (!baseZoom) baseZoom = 1;
+    if (count > 1) {
+      if (maxZoom && count > maxZoom) count = maxZoom;
+      const zoomValue = baseZoom + (count - 1) * diff;
+      return zoomValue;
+    } else {
+      return baseZoom;
+    }
+  }

@@ -25,6 +25,7 @@ import {
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
 import { Router } from '@angular/router';
+import { getZoom } from 'src/tools/common';
 
 @Component({
   selector: 'app-match-recipes',
@@ -91,7 +92,6 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
   goToMatchingRecipesPage() {
     this.router.navigate(
       ['/recipes/matching'],
-
       { state: { recipes: this.matchingRecipes } },
     );
   }
@@ -219,13 +219,21 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
     this.selectedIngredients.forEach((selectedIngredient) => {
       const ingredientName = selectedIngredient.trim().toLowerCase();
       if (ingredientCounts.hasOwnProperty(ingredientName)) {
-        delete ingredientCounts[ingredientName];
+        ingredientCounts = Object.fromEntries(
+          Object.entries(ingredientCounts).filter(
+            ([key]) => key !== ingredientName,
+          ),
+        );
       }
     });
     this.excludedIngredients.forEach((excludedIngredient) => {
       const ingredientName = excludedIngredient.trim().toLowerCase();
       if (ingredientCounts.hasOwnProperty(ingredientName)) {
-        delete ingredientCounts[ingredientName];
+         ingredientCounts = Object.fromEntries(
+           Object.entries(ingredientCounts).filter(
+             ([key]) => key !== ingredientName,
+           ),
+         );
       }
     });
     return ingredientCounts;
@@ -375,14 +383,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
   }
 
   getZoom(count: number): number {
-    const baseZoom = 0.9;
-    if (count > 1) {
-      if (count > 6) count = 6;
-      const zoomValue = baseZoom + (count - 1) * 0.1;
-      return zoomValue;
-    } else {
-      return baseZoom;
-    }
+    return getZoom(count, 0.1, 6, 0.9);
   }
 
   updateIngredientsBasedOnCategory(
@@ -456,17 +457,14 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
     this.sectionStates[sectionIndex] = !this.sectionStates[sectionIndex];
   }
 
-  protected blurIngredientSearch(): void {
-    this.showIngredientsAutocomplete = false;
-  }
-  protected focusIngredientSearch(): void {
+  focusIngredientSearch(): void {
     if (this.searchQuery === '')
       this.autoIngredients = this.getIngredientNames();
     this.showIngredientsAutocomplete = true;
   }
 
   protected autoIngredients: string[] = [];
-  protected search(): void {
+  search(): void {
     const allIngredients = this.getIngredientNames();
     if (this.searchQuery && this.searchQuery !== '') {
       this.autoIngredients = [];

@@ -21,7 +21,7 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
-import { dragStart } from 'src/tools/common';
+import { baseComparator, dragStart } from 'src/tools/common';
 
 @Component({
   selector: 'app-shopping-list',
@@ -76,7 +76,7 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
   ) {
     this.title.setTitle('Список покупок');
     this.productTypes.sort((t1, t2) => {
-      return t1.name > t2.name ? 1 : -1;
+      return baseComparator(t1.name,t2.name)
     });
 
     this.form = this.initNewShoppingListItemForm();
@@ -109,7 +109,8 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
         const findedProduct = this.currentUserPlan.shoppingList.find(
           (i) => i.id === droppedProduct.id,
         );
-        findedProduct ? (findedProduct.type = currentType.type.id) : null;
+        if (findedProduct)
+          findedProduct.type = currentType.type.id;
         this.planService.updatePlan(this.currentUserPlan).subscribe();
       }
     }
@@ -171,7 +172,6 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
           );
           if (findedTypeGroup) findedTypeGroup.items.push(item);
         });
-        console.log(itemsByCategory);
         itemsByCategory = itemsByCategory.filter((i) => i.items.length !== 0);
         this.data = itemsByCategory;
 
@@ -228,10 +228,10 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
 
   private sortByBought(shoppingList: ShoppingListItem[]): ShoppingListItem[] {
     const filter = shoppingList.sort((a, b) => {
-      return a.id > b.id ? 1 : -1;
+      return baseComparator(a.id,b.id)
     });
     return filter.sort((a, b) => {
-      return a.isBought && !b.isBought ? 1 : -1;
+      return baseComparator(a.isBought, b.isBought);
     });
   }
 

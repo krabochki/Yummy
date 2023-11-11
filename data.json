@@ -8,7 +8,7 @@
           "id": 12,
           "recipe": 76,
           "start": "2023-11-10T21:00:00.000Z",
-          "title": "Банановый хлеб",
+          "title": "Банановый хлеб 🍞🍌",
           "color": {
             "primary": "#FBEE0F",
             "secondary": "#FBEE0F"
@@ -25,7 +25,7 @@
           "id": 11,
           "recipe": 0,
           "start": "2023-11-15T21:00:00.000Z",
-          "title": "Салат с сухариками",
+          "title": "Салат с сухариками 🥗",
           "color": {
             "primary": "#00ffd5",
             "secondary": "#00ffd5"
@@ -42,7 +42,7 @@
           "id": 8,
           "recipe": 0,
           "start": "2023-11-15T21:00:00.000Z",
-          "title": "Омлет",
+          "title": "Омлет 🍳",
           "color": {
             "primary": "#FBEE0F",
             "secondary": "#FBEE0F"
@@ -57,9 +57,9 @@
         },
         {
           "id": 15,
-          "recipe": 0,
+          "recipe": 83,
           "start": "2023-11-18T09:20:00.000Z",
-          "title": "Бабка",
+          "title": "Бабка 🥔",
           "color": {
             "primary": "#ff725a",
             "secondary": "#ff725a"
@@ -78,8 +78,8 @@
           "start": "2023-11-24T21:00:00.000Z",
           "title": "Колдуны",
           "color": {
-            "primary": "#F205C7",
-            "secondary": "#F205C7"
+            "primary": "#00bfff",
+            "secondary": "#00bfff"
           },
           "allDay": false,
           "draggable": true,
@@ -4578,7 +4578,7 @@
       "personalWebsite": "https://www.chefalexeyzimin.com/",
       "location": "Москва, Россия",
       "registrationDate": "2023-01-15",
-      "profileViews": 7680,
+      "profileViews": 7681,
       "role": "moderator",
       "notifications": [
         {
@@ -5934,6 +5934,54 @@
           "timestamp": "2023-11-11T20:36:50.557Z",
           "read": true,
           "notificationDate": ""
+        },
+        {
+          "id": 225,
+          "relatedLink": "/plan/calendar",
+          "context": "calendar-recipe",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Вы успешно запланировали рецепт «Бабка» в «Календаре рецептов»",
+          "title": "Вы успешно запланировали рецепт",
+          "timestamp": "2023-11-11T22:48:55.331Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 226,
+          "relatedLink": "/plan/calendar",
+          "context": "calendar-recipe",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Вы успешно изменили запланированный рецепт «Салат с сухариками 🥗» в «Календаре рецептов»",
+          "title": "Вы успешно изменили запланированный рецепт",
+          "timestamp": "2023-11-11T22:54:12.059Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 227,
+          "relatedLink": "/plan/calendar",
+          "context": "calendar-recipe",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Вы успешно изменили запланированный рецепт «Омлет 🍳» в «Календаре рецептов»",
+          "title": "Вы успешно изменили запланированный рецепт",
+          "timestamp": "2023-11-11T22:54:29.700Z",
+          "read": true,
+          "notificationDate": ""
+        },
+        {
+          "id": 228,
+          "relatedLink": "/plan/calendar",
+          "context": "calendar-recipe",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Вы успешно изменили запланированный рецепт «Бабка 🥔» в «Календаре рецептов»",
+          "title": "Вы успешно изменили запланированный рецепт",
+          "timestamp": "2023-11-11T22:54:54.486Z",
+          "read": true,
+          "notificationDate": ""
         }
       ],
       "permanent": [
@@ -6138,7 +6186,7 @@
       "personalWebsite": "https://www.interiordesignsbyvictoria.com/",
       "location": "Милан, Италия",
       "registrationDate": "2023-08-12",
-      "profileViews": 3223,
+      "profileViews": 3227,
       "role": "user",
       "notifications": [
         {

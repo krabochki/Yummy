@@ -19,11 +19,15 @@ import { RecipeService } from '../../recipes/services/recipe.service';
 import { UserService } from '../../user-pages/services/user.service';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
-import { Subject, find, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { endOfDay, startOfDay } from 'date-fns';
 import { NotificationService } from '../../user-pages/services/notification.service';
-import { getFormattedDate } from 'src/tools/common';
 import { getModalDescription, getModalTitle } from './const';
+import { getUser } from '../../authentication/components/control-dashboard/quick-actions';
+import {
+  INotification,
+  nullNotification,
+} from '../../user-pages/models/notifications';
 @Component({
   selector: 'app-add-calendar-event',
   templateUrl: './add-calendar-event.component.html',
@@ -80,6 +84,16 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
     this.getRecipes();
     this.getUsers();
     this.editingRecipeInit();
+  }
+
+  showAuthor(recipe: IRecipe): boolean {
+    const author = getUser(recipe.authorId, this.allUsers);
+    if (
+      this.currentUser.id === author.id ||
+      (author.role !== 'admin' && this.currentUser.role !== 'user')
+    )
+      return true;
+    return this.userService.getPermission('hide-author', author);
   }
 
   private editingRecipeInit() {
@@ -226,8 +240,6 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
       .updatePlan(this.plan)
       .subscribe(() => (this.modalSuccessSaveShow = true));
 
-   
-
     const findRecipe = this.allRecipes.find((r) => r.id === newEvent.recipe);
 
     if (findRecipe?.authorId !== this.currentUser.id) {
@@ -294,14 +306,16 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
       const filterRecipes: IRecipe[] = this.allRecipes.filter(
         (recipe: IRecipe) =>
           recipe.name.toLowerCase().replace(/\s/g, '').includes(search) ||
-          this.getUser(recipe.authorId)
-            .fullName.toLowerCase()
-            .replace(/\s/g, '')
-            .includes(search) ||
-          this.getUser(recipe.authorId)
-            .username.toLowerCase()
-            .replace(/\s/g, '')
-            .includes(search),
+          (this.showAuthor(recipe)
+            ? this.getUser(recipe.authorId)
+                .fullName.toLowerCase()
+                .replace(/\s/g, '')
+                .includes(search) ||
+              this.getUser(recipe.authorId)
+                .username.toLowerCase()
+                .replace(/\s/g, '')
+                .includes(search)
+            : null),
       );
 
       filterRecipes.forEach((element) => {
@@ -331,14 +345,26 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
   }
   handleSuccessSaveModal() {
     this.modalSuccessSaveShow = false;
-    this.closeEmitter.emit(true); if (this.userService.getPermission('you-plan-recipe', this.currentUser)) {
-      const notify = this.notifyService.buildNotification(
-        'Вы успешно запланировали рецепт',
-        `Вы успешно запланировали рецепт «${this.title}» в «Календаре рецептов»`,
-        'success',
-        'calendar-recipe',
-        '/plan/calendar',
-      );
+    this.closeEmitter.emit(true);
+    if (this.userService.getPermission('you-plan-recipe', this.currentUser)) {
+      let notify: INotification = nullNotification;
+      if (!this.editMode) {
+        notify = this.notifyService.buildNotification(
+          'Вы успешно запланировали рецепт',
+          `Вы успешно запланировали рецепт «${this.title}» в «Календаре рецептов»`,
+          'success',
+          'calendar-recipe',
+          '/plan/calendar',
+        );
+      } else {
+        notify = this.notifyService.buildNotification(
+          'Вы успешно изменили запланированный рецепт',
+          `Вы успешно изменили запланированный рецепт «${this.title}» в «Календаре рецептов»`,
+          'success',
+          'calendar-recipe',
+          '/plan/calendar',
+        );
+      }
       this.notifyService.sendNotification(notify, this.currentUser).subscribe();
     }
   }
@@ -351,8 +377,10 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
     return getModalTitle(this.editMode, type);
   }
 
-  protected close(){
-   return this.noChanges ? this.closeEmitter.emit(true) : (this.modalExitShow = true);  
+  protected close() {
+    return this.noChanges
+      ? this.closeEmitter.emit(true)
+      : (this.modalExitShow = true);
   }
 
   public ngOnDestroy(): void {

@@ -45,12 +45,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   protected exitModalShow: boolean = false;
   protected deleteModalShow: boolean = false;
-  protected permanentIngredients: string[] = ['соль', 'сахар', 'вода', 'мука'];
-  protected excludingIngredients: string[] = [
-    'яйца',
-    'сливочное масло',
-    'свинина',
-  ];
+  protected permanentIngredients: string[] = [];
+  protected excludingIngredients: string[] = [];
 
   protected location: string = '';
 

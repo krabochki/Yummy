@@ -30,6 +30,7 @@ import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { getZoom } from 'src/tools/common';
+import { getUser } from 'src/app/modules/authentication/components/control-dashboard/quick-actions';
 
 @Component({
   selector: 'app-match-recipes',
@@ -97,6 +98,8 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
     this.recipesInit();
     this.categoriesInit();
   }
+
+
 
   goToMatchingRecipesPage() {
     this.router.navigate(
@@ -176,6 +179,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
         }
       });
   }
+  
 
   recipesInit() {
     //получаем рецепты и все ингредиенты

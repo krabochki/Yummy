@@ -65,7 +65,7 @@
                     [value]="searchQuery"
                     (ngModelChange)="recipeSearching()"
                     type="text"
-                    placeholder="Введите название и выбери рецепт из результатов поиска"
+                    placeholder="Введите название и выберите рецепт из результатов поиска"
                   />
                 </div>
 
@@ -93,9 +93,9 @@
                     >
                       <p>{{ item.name }}</p>
                       <span>{{
-                        item.authorId!==-1? getUser(item.authorId).fullName !== ""
+                        getUser(item.authorId).id>0 && showAuthor(item)? getUser(item.authorId).fullName !== ""
                           ? getUser(item.authorId).fullName
-                          : "@" + getUser(item.authorId).username:'Автор удален'
+                          : "@" + getUser(item.authorId).username:!showAuthor(item)?'Автор скрыт':'Автор удален'
                       }}</span>
                     </li>
                   </ul>
@@ -228,7 +228,7 @@
   @modal
   (resultEmit)="handleSaveModal($event)"
   *ngIf="modalSaveShow"
-  [style]="'prim'"
+  [style]="'sec'"
   [type]="'yesOrNo'"
   [buttonsText]="['Да', 'Отмена']"
   [title]="getModalTitle('save')"

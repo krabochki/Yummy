@@ -355,43 +355,39 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
         } else this.currentUser = receivedUser;
 
         if (this.currentUser.notifications) {
+
           const noChangesInNotifies =
             this.currentUser.notifications.length === this.notifies.length &&
-            this.currentUser.notifications.every((element, index) => {
-              return element === this.notifies[index];
-            });
-
+            this.currentUser.notifications.every(
+              (element, index) => element === this.notifies[index],
+            );
           if (this.currentUser.id !== 0 && !noChangesInNotifies) {
             this.updateNotifies();
           }
-        const noChangesInNotifies =
-          this.currentUser.notifications.length === this.notifies.length &&
-          this.currentUser.notifications.every(
-            (element, index) => element === this.notifies[index],
-          );
-        if (this.currentUser.id !== 0 && !noChangesInNotifies) {
-          this.updateNotifies();
+          this.cd.markForCheck();
+        
         }
-        this.cd.markForCheck();
-      });
+  
 
-    if (this.currentUser.id > 0)
-      this.planService.plans$
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe((receivedPlans: IPlan[]) => {
-          this.currentUserPlan = this.planService.getPlanByUser(
-            this.currentUser.id,
-            receivedPlans,
-          );
+        if (this.currentUser.id > 0)
+          this.planService.plans$
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe((receivedPlans: IPlan[]) => {
+              this.currentUserPlan = this.planService.getPlanByUser(
+                this.currentUser.id,
+                receivedPlans,
+              );
 
-          if (!this.remindedAlready)
-            if (this.currentUserPlan.id > 0) {
-              this.planRemindersInit(this.currentUserPlan);
-              this.remindedAlready = true;
-              this.cd.markForCheck();
-            }
-        });
-  }
+              if (!this.remindedAlready)
+                if (this.currentUserPlan.id > 0) {
+                  this.planRemindersInit(this.currentUserPlan);
+                  this.remindedAlready = true;
+                  this.cd.markForCheck();
+                }
+            })
+      
+  
+      })}
 
   usersInit() {
     this.userService.users$
@@ -431,13 +427,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
           !this.popups.find((p) => p.id === notification.id)
         ) {
           this.popupLifecycle(notification);
-<<<<<<< HEAD
         } 
-=======
-        } else if (this.popups.length >= this.maxNumberOfPopupsInSameTime) {
-          this.popupHistory.push(notification.id);
-        }
->>>>>>> 6f0701aa829b0b331286a016db4d8c12791041a5
       });
 
       this.notifies = [...this.currentUser.notifications].reverse();
@@ -456,7 +446,6 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
 
   //добавление и автоудаление всплыв уведомления
   popupLifecycle(popup: INotification): void {
-    console.log('new popup')
     this.popupHistory.push(popup.id);
     this.popups.unshift(popup);
     console.log(this.popupHistory)

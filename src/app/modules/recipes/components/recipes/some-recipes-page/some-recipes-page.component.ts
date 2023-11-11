@@ -147,6 +147,15 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     }
   }
 
+  showAuthor(recipe:IRecipe): boolean{
+    const author = this.getUser(recipe.authorId)
+    if (this.currentUser.id === author.id) return true;
+    if (author.role !== 'admin' && this.currentUser.role !== 'user')
+      return true;
+    return this.userService.getPermission('hide-author', author);
+    
+  }
+
   private categoryInit(categoryFromData: ICategory, recipes: IRecipe[]): void {
     this.category = categoryFromData;
 
@@ -182,22 +191,30 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     this.allRecipes = publicRecipes;
     this.recipesToShow = publicRecipes;
 
-    this.popularRecipes = this.recipeService.getPopularRecipes([...publicRecipes]);
+    this.popularRecipes = this.recipeService.getPopularRecipes([
+      ...publicRecipes,
+    ]);
 
     this.plannedRecipes = this.recipeService.getPlannedRecipes(
       [...publicAndAllMyRecipes],
       this.currentUserPlan,
     );
-    this.discussedRecipes =
-      this.recipeService.getMostDiscussedRecipes([...publicRecipes]);
+    this.discussedRecipes = this.recipeService.getMostDiscussedRecipes([
+      ...publicRecipes,
+    ]);
     this.commentedRecipes = this.recipeService.getCommentedRecipesByUser(
       [...publicRecipes],
       this.currentUser.id,
     );
-    this.mostCooked = this.recipeService.getMostCookedRecipes([...publicRecipes]);
-    this.mostFavorite =
-      this.recipeService.getMostFavoriteRecipes([...publicRecipes]);
-    this.recentRecipes = this.recipeService.getRecentRecipes([...this.allRecipes]);
+    this.mostCooked = this.recipeService.getMostCookedRecipes([
+      ...publicRecipes,
+    ]);
+    this.mostFavorite = this.recipeService.getMostFavoriteRecipes([
+      ...publicRecipes,
+    ]);
+    this.recentRecipes = this.recipeService.getRecentRecipes([
+      ...this.allRecipes,
+    ]);
     this.cookedRecipes = this.recipeService.getCookedRecipesByUser(
       [...this.allRecipes],
       this.currentUser.id,
@@ -217,16 +234,17 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     );
 
     this.followingRecipes = this.getFollowingRecipes(publicRecipes);
-    this.followingRecipes =this.followingRecipes.filter(
-      (r) => {
-        if(this.currentUser.role==='user' || this.getUser(r.authorId).role==='admin')
-        return  this.userService.getPermission(
+    this.followingRecipes = this.followingRecipes.filter((r) => {
+      if (
+        this.currentUser.role === 'user' ||
+        this.getUser(r.authorId).role === 'admin'
+      )
+        return this.userService.getPermission(
           'hide-author',
           this.getUser(r.authorId),
-          )
-        else return true
-      }
-    );
+        );
+      else return true;
+    });
   }
 
   private setRecipesByType(): void {
@@ -260,7 +278,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
         break;
       case RecipeType.Favorite:
         this.allRecipes = this.favoriteRecipes;
-         break;
+        break;
       case RecipeType.Commented:
         this.allRecipes = this.commentedRecipes;
         break;
@@ -371,7 +389,9 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
       followingRecipes = [...followingRecipes, ...foundRecipes];
     });
 
-    followingRecipes = followingRecipes.sort((a,b)=>baseComparator(b.publicationDate,a.publicationDate))
+    followingRecipes = followingRecipes.sort((a, b) =>
+      baseComparator(b.publicationDate, a.publicationDate),
+    );
 
     return followingRecipes;
   }
@@ -404,14 +424,16 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
       const filterRecipes: IRecipe[] = this.allRecipes.filter(
         (recipe: IRecipe) =>
           recipe.name.toLowerCase().replace(/\s/g, '').includes(search) ||
-          this.getUser(recipe.authorId)
+          (
+            this.showAuthor(recipe) ?
+            this.getUser(recipe.authorId)
             .fullName.toLowerCase()
             .replace(/\s/g, '')
             .includes(search) ||
           this.getUser(recipe.authorId)
             .username.toLowerCase()
             .replace(/\s/g, '')
-            .includes(search),
+            .includes(search) : null),
       );
 
       filterRecipes.forEach((element) => {

@@ -24,6 +24,10 @@ export function dateComparator(dateA:Date, dateB:Date) {
 return (dateA > dateB) ? 1 :-1;
 }  
 
+export function baseComparator(a: any, b: any) {
+  if (a > b) return 1; else return -1;
+}
+
 
 export function dragStart() {
    const bodyElement: HTMLElement = document.body;

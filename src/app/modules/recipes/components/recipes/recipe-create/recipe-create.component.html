@@ -383,7 +383,7 @@
             <p>Если вы хотите, чтобы рецепт увидели другие пользователи и могли с ним взаимодействовать,
               <em>опубликуй</em> его. После нажатия на кнопку рецепт {{editMode?'':' появится в твоих личных рецептах и'}} будет
               опубликован {{currentUser.role==='user'?'после одобрения модератора':''}}</p>
-            <app-button [disabled]="editMode? form.valid : areObjectsEqual() && form.valid"  [title]="!form.valid?'Рецепт должен содержать как минимум имя. Если в рецепте есть нутриенты, ингредиенты или инструкции, они должны также содержать как минимум навание (содержание для инструкции)':''" (click)="form.valid ? (approveModalShow = true) : null" [text]="'Опубликовать'" [color]="'sec'"
+            <app-button [disabled]="editMode? form.valid : areObjectsEqual() && form.valid"  [title]="!form.valid?'Рецепт должен содержать как минимум имя. Если в рецепте есть нутриенты, ингредиенты или инструкции, они должны также содержать как минимум навание (содержание для инструкции)':''" (click)="(editMode? form.valid:form.valid&&areObjectsEqual())? (approveModalShow = true) : null  " [text]="'Опубликовать'" [color]="'sec'"
               [style]="'outlined'"  [rounded]="true"></app-button>
             <p *ngIf="!editMode">Если вы не хотите, чтобы рецепт увидели другие пользователи (прямо сейчас), просто <em>сохрани</em>
               его. После нажатия на кнопку рецепт появится в твоих личных рецептах. Вы <em>всегда</em> сможешь
@@ -392,7 +392,7 @@
             <p *ngIf="editMode">После нажатия на кнопку рецепт обновится в твоих личных рецептах, но не станет виден другим пользователям. Вы <em>всегда</em> сможешь
               опубликовать его позже.</p>
 
-            <app-button class="main" (click)="form.valid ? submitForm() : null" [text]="editMode?'Изменить':'Сохранить'"
+            <app-button class="main" (click)="areObjectsEqual() && form.valid ? submitForm() : null" [text]="editMode?'Изменить':'Сохранить'"
 [title]="!form.valid?'Рецепт должен содержать как минимум имя. Если в рецепте есть нутриенты, ингредиенты или инструкции, они должны также содержать как минимум навание (содержание для инструкции)':''"              [color]="'sec'" [disabled]="areObjectsEqual() && form.valid" [style]="'filled'" [rounded]="true"></app-button>
             <p>Если вы передумал {{editMode?' менять ':' добавлять '}} рецепт, <em>отмени</em> его {{editMode?' изменение':' добавление'}}. Все данные придется
               вводить повторно, если вы захотите {{editMode?' изменить ':' добавить '}}  этот рецепт снова </p>
@@ -419,8 +419,8 @@
   [description]="'Вы уверены, что не хотите '+(editMode?' изменить ':' сохранить ') + 'рецепт?'"></app-modal>
 <app-modal @modal *ngIf="successModalShow" [style]="'sec'" [title]="'Рецепт успешно сохранен'" [type]="'Ok'"
   (resultEmit)="handleSuccessModal()" [buttonsText]="['Хорошо']" [description]="
-  'Ваш рецепт успешно'+(editMode?' изменен':' сохранен в вашей личной коллекции') +
-    (isAwaitingApprove ?(currentUser.role==='user' ? ' и ожидает одобрения модератора' : ' и опубликован' ): '')
+  ('Ваш рецепт успешно'+(editMode?' изменен':' сохранен в вашей личной коллекции') +
+    (isAwaitingApprove ?(currentUser.role==='user' ? ' и ожидает одобрения модератора' : ' и опубликован' ): ''))
   "></app-modal>
 
 <app-modal @modal *ngIf="createModalShow" [style]="'prim'" [title]="'Подтвердите создание рецепта'" [type]="'yesOrNo'"

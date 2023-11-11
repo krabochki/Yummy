@@ -504,9 +504,11 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
       this.adminService
         .approveRecipe(this.actionRecipe)
         .subscribe(() =>
-          this.actionRecipe
-            ? this.sendNotifiesAfterPublishingRecipe(this.actionRecipe)
-            : null,
+          {if (
+            this.actionRecipe &&
+            this.userService.getPermission('hide-author', this.getUser(this.actionRecipe.authorId))
+          )
+            this.sendNotifiesAfterPublishingRecipe(this.actionRecipe);}
         );
   }
   private dismissRecipe(): void {

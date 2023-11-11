@@ -19,6 +19,7 @@ import {
 import { Subject, takeUntil } from 'rxjs';
 import { PlanService } from 'src/app/modules/planning/services/plan-service';
 import { IPlan, nullPlan } from 'src/app/modules/planning/models/plan';
+import { baseComparator } from 'src/tools/common';
 
 @Component({
   templateUrl: './some-recipes-page.component.html',
@@ -181,43 +182,51 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     this.allRecipes = publicRecipes;
     this.recipesToShow = publicRecipes;
 
-    this.allRecipes = publicRecipes;
-    this.recipesToShow = publicRecipes;
+    this.popularRecipes = this.recipeService.getPopularRecipes([...publicRecipes]);
 
-    this.popularRecipes = this.recipeService.getPopularRecipes(this.allRecipes);
     this.plannedRecipes = this.recipeService.getPlannedRecipes(
-      publicAndAllMyRecipes,
+      [...publicAndAllMyRecipes],
       this.currentUserPlan,
     );
     this.discussedRecipes =
-      this.recipeService.getMostDiscussedRecipes(publicRecipes);
+      this.recipeService.getMostDiscussedRecipes([...publicRecipes]);
     this.commentedRecipes = this.recipeService.getCommentedRecipesByUser(
-      publicRecipes,
+      [...publicRecipes],
       this.currentUser.id,
     );
-    this.mostCooked = this.recipeService.getMostCookedRecipes(publicRecipes);
+    this.mostCooked = this.recipeService.getMostCookedRecipes([...publicRecipes]);
     this.mostFavorite =
-      this.recipeService.getMostFavoriteRecipes(publicRecipes);
-    this.recentRecipes = this.recipeService.getRecentRecipes(this.allRecipes);
+      this.recipeService.getMostFavoriteRecipes([...publicRecipes]);
+    this.recentRecipes = this.recipeService.getRecentRecipes([...this.allRecipes]);
     this.cookedRecipes = this.recipeService.getCookedRecipesByUser(
-      this.allRecipes,
+      [...this.allRecipes],
       this.currentUser.id,
     );
     this.likedRecipes = this.recipeService.getLikedRecipesByUser(
-      this.allRecipes,
+      [...this.allRecipes],
       this.currentUser.id,
     );
     this.favoriteRecipes = this.recipeService.getFavoriteRecipesByUser(
-      this.allRecipes,
+      [...this.allRecipes],
       this.currentUser.id,
     );
 
     this.myRecipes = this.recipeService.getRecipesByUser(
-      allRecipes,
+      [...allRecipes],
       this.currentUser.id,
     );
 
     this.followingRecipes = this.getFollowingRecipes(publicRecipes);
+    this.followingRecipes =this.followingRecipes.filter(
+      (r) => {
+        if(this.currentUser.role==='user' || this.getUser(r.authorId).role==='admin')
+        return  this.userService.getPermission(
+          'hide-author',
+          this.getUser(r.authorId),
+          )
+        else return true
+      }
+    );
   }
 
   private setRecipesByType(): void {
@@ -251,8 +260,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
         break;
       case RecipeType.Favorite:
         this.allRecipes = this.favoriteRecipes;
-        this.currentUser.id;
-        break;
+         break;
       case RecipeType.Commented:
         this.allRecipes = this.commentedRecipes;
         break;
@@ -362,6 +370,8 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
       foundRecipes = this.recipeService.getRecentRecipes(foundRecipes);
       followingRecipes = [...followingRecipes, ...foundRecipes];
     });
+
+    followingRecipes = followingRecipes.sort((a,b)=>baseComparator(b.publicationDate,a.publicationDate))
 
     return followingRecipes;
   }

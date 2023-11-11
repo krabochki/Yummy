@@ -237,7 +237,6 @@ export class RecipeService {
     for (const calendarEvent of plan.calendarEvents) {
       plannedRecipeIds.push(calendarEvent.recipe);
     }
-    console.log(plannedRecipeIds);
 
     const plannedRecipes: IRecipe[] = [];
 

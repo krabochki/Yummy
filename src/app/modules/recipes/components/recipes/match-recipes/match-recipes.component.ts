@@ -187,7 +187,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedRecipes: IRecipe[]) => {
         if (receivedRecipes.length > 0) {
-          this.recipes = this.recipeService.getPublicRecipes(receivedRecipes);
+          this.recipes = this.recipeService.getPublicAndAllMyRecipes(receivedRecipes,this.currentUser.id);
           this.matchingRecipes = this.filterRecipesByIngredients();
           this.uniqueIngredientsArray = this.getUniqueIngredients(this.recipes);
           this.autoIngredients = this.getIngredientNames();

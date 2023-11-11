@@ -19,7 +19,7 @@ import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
 import { PlanService } from 'src/app/modules/planning/services/plan-service';
 import { IPlan } from 'src/app/modules/planning/models/plan';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
-import { condifencialitySettings, managersPreferences, sections, social, steps } from './conts';
+import { condifencialitySettings, managersPreferences, sections, social, steps, stepsIcons } from './conts';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -36,6 +36,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   permissionNotificationSections = sections;
   managersPreferences = managersPreferences;
   condifencialitySettings = condifencialitySettings;
+  stepsIcons = stepsIcons;
 
   protected permanentIngredient: string = '';
   protected permanentIngredientTouched = false;

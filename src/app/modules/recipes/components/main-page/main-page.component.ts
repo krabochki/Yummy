@@ -12,6 +12,7 @@ import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
 import { CategoryService } from '../../services/category.service';
 import { Router } from '@angular/router';
+import { baseComparator } from 'src/tools/common';
 
 @Component({
   selector: 'app-main-page',
@@ -27,6 +28,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
   popularRecipes: IRecipe[] = [];
   recentRecipes: IRecipe[] = [];
   noAccessModalShow = false;
+  categories: ICategory[] = [];
   favoriteRecipes: IRecipe[] = [];
   cookedRecipes: IRecipe[] = [];
   currentUser: IUser = { ...nullUser };
@@ -48,6 +50,11 @@ export class MainPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.categoryService.categories$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((categories: ICategory[]) => {
+        this.categories = categories;
+    })
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((currentUser: IUser) => {
@@ -97,9 +104,10 @@ export class MainPageComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroyed$))
           .subscribe((data: ISection[]) => {
             this.allSections = data;
+            this.allSections = this.allSections.sort((a,b)=>baseComparator(this.sectionService.getNumberRecipesOfSection(b,this.allRecipes,this.categories),this.sectionService.getNumberRecipesOfSection(a,this.allRecipes,this.categories)))
             this.allSections = this.sectionService.getNotEmptySections(
               this.allSections,
-            );
+            ).slice(0,8);
             this.cd.markForCheck();
           
           });

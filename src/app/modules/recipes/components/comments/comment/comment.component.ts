@@ -37,7 +37,24 @@ export class CommentComponent implements OnInit, OnDestroy {
   protected deleteCommentModalShow: boolean = false;
   protected reportCommentModalShow: boolean = false;
   protected successReportCommentModalShow: boolean = false;
-  protected noAccessModalShow:boolean = false;
+  protected noAccessModalShow: boolean = false;
+  
+  get showCommentAuthor() {
+
+       if (this.currentUser.id === this.author.id) return true;
+       if (this.author.role !== 'admin' && this.currentUser.role !== 'user')
+         return true;
+       return !this.userService.getPermission('comment-author', this.author);
+  }
+  get showRecipeAuthor() {
+    
+       if (this.currentUser.id === this.author.id) return true;
+       if (this.author.role !== 'admin' && this.currentUser.role !== 'user')
+         return true;
+       return !this.userService.getPermission('hide-author', this.author);
+  }
+
+
 
   constructor(
     private userService: UserService,
@@ -166,17 +183,18 @@ export class CommentComponent implements OnInit, OnDestroy {
 
         if (this.userService.getPermission('your-reports-publish', this.currentUser)) {
          
-         const notify = this.notifyService.buildNotification(
-           'Ты пожаловался на комментарий',
-           `Ты отправил жалобу на комментарий кулинара ${
-             this.author.fullName
-               ? this.author.fullName
-               : '@' + this.author.username
-           } «${this.comment.text}» под рецептом «${this.recipe.name}»`,
-           'success',
-           'comment',
-           '/recipes/list/' + this.recipe.id,
-         );
+          const notify = this.notifyService.buildNotification(
+            'Ты пожаловался на комментарий',
+            `Ты отправил жалобу на комментарий ${
+              this.showCommentAuthor?('кулинара ' +
+              (this.author.fullName
+                ? this.author.fullName
+                : '@' + this.author.username)):''
+            } «${this.comment.text}» под рецептом «${this.recipe.name}»`,
+            'success',
+            'comment',
+            '/recipes/list/' + this.recipe.id,
+          );
           this.notifyService.sendNotification(notify, this.currentUser).subscribe();
         }
       });

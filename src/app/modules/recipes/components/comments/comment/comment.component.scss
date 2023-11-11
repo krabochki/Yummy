@@ -83,13 +83,14 @@ h1 {
 }
 
 .header {
-  &:hover, &:focus{
-    margin-left:0.25em
-  }
+
    
   transition:  0.2s ease-in-out;
   display: flex;
   cursor: pointer;
+  &.nolink{
+    cursor: default;
+  }
   flex-direction: column;
   h1,
   .date {

@@ -97,6 +97,12 @@ export class RecipePageComponent implements OnInit, OnDestroy {
 
   protected alsoFromThisCook: IRecipe[] = [];
 
+  get hideAuthor(): boolean {
+   if (this.currentUser.id === this.author.id) return false;
+   if (this.author.role !== 'admin' && this.currentUser.role !== 'user') return false;
+    return !this.userService.getPermission('hide-author', this.author);
+  }
+
   constructor(
     private notifyService: NotificationService,
     private sectionService: SectionService,
@@ -162,6 +168,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
                       this.recipeService.getPublicRecipes(recipes);
                     this.downRecipes = this.getSimilarRecipes(publicRecipes, 4);
                   }
+                  if(!this.hideAuthor)
                   this.alsoFromThisCook = this.recipeService
                     .getRecipesByUser(
                       this.recipeService.getPublicRecipes(recipes),

@@ -31,7 +31,7 @@ import { RecipeService } from '../../../services/recipe.service';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { ICategory, ISection, nullSection } from '../../../models/categories';
 import { CategoryService } from '../../../services/category.service';
-import { Subject } from 'rxjs';
+import { Observable, Subject, forkJoin } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { SectionService } from '../../../services/section.service';
 import { SectionGroup } from 'src/app/modules/controls/autocomplete/autocomplete.component';
@@ -40,6 +40,7 @@ import { getCurrentDate } from 'src/tools/common';
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
+import { notifyForFollowersOfApprovedRecipeAuthor } from 'src/app/modules/authentication/components/control-dashboard/notifications';
 
 @Component({
   selector: 'app-recipe-create',
@@ -68,6 +69,8 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
 
   recipeId = 0;
 
+  users: IUser[] = [];
+
   successModalShow = false;
   approveModalShow = false;
   exitModalShow = false;
@@ -85,6 +88,8 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
   selectedCategories: ICategory[] = [];
   group: SectionGroup[] = [];
   fullGroup: SectionGroup[] = [];
+
+  createdRecipe: IRecipe = nullRecipe;
 
   protected destroyed$: Subject<void> = new Subject<void>();
 
@@ -141,6 +146,10 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
           this.currentUser = currentUser;
         }
       });
+
+    this.userService.users$.pipe(takeUntil(this.destroyed$)).subscribe(
+      (data) => this.users = data
+    )
 
     this.categoryService.categories$
       .pipe(takeUntil(this.destroyed$))
@@ -517,8 +526,13 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
         id: this.recipeId,
         comments: [],
         publicationDate: getCurrentDate(),
-        status: this.isAwaitingApprove ? this.currentUser.role==='user'?'awaits':'public' : 'private',
+        status: this.isAwaitingApprove
+          ? this.currentUser.role === 'user'
+            ? 'awaits'
+            : 'public'
+          : 'private',
       };
+      this.createdRecipe = recipeData;
 
       this.recipeService.postRecipe(recipeData).subscribe(() => {
         this.editedRecipe = recipeData;
@@ -528,6 +542,43 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
         this.cd.markForCheck();
       });
     }
+  }
+
+  sendNotificationsAfterPublishingRecipe() {
+    const subscribes: Observable<IUser>[] = [];
+
+    if (
+      this.userService.getPermission('manager-review-your-recipe', this.currentUser)
+    ) {
+      const notify: INotification = this.notifyService.buildNotification(
+        'Рецепт успешно опубликован',
+        `Рецепт «${this.createdRecipe.name}» успешно опубликован и теперь доступен всем кулинарам для просмотра`,
+        'success',
+        'recipe',
+        '/recipes/list/' + this.createdRecipe.id,
+      );
+      subscribes.push(
+        this.notifyService.sendNotification(notify, this.currentUser),
+      );
+    }
+
+    const authorFollowers = this.userService.getFollowers(
+      this.users,
+      this.currentUser.id,
+    );
+    const notifyForFollower = notifyForFollowersOfApprovedRecipeAuthor(
+      this.currentUser,
+      this.createdRecipe,
+      this.notifyService,
+    );
+    authorFollowers.forEach((follower) => {
+      if (this.userService.getPermission('new-recipe-from-following', follower))
+        subscribes.push(
+          this.notifyService.sendNotification(notifyForFollower, follower),
+        );
+    });
+
+    forkJoin(subscribes).subscribe();
   }
 
   editRecipe(): void {
@@ -551,7 +602,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       servings: this.form.value.portions,
       categories: categoriesIds,
       publicationDate: '',
-      status: this.isAwaitingApprove ? 'awaits' : 'private',
+      status: this.isAwaitingApprove ? this.currentUser.role==='user'? 'awaits' : 'public' : 'private',
     };
 
     this.updatedRecipeEmitter.emit(recipeData);
@@ -604,21 +655,30 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     this.successModalShow = false;
     this.closeEmitter.emit(true);
 
-    if ( 
+    if (
       this.userService.getPermission('you-create-new-recipe', this.currentUser)
     ) {
       const notify: INotification = this.notifyService.buildNotification(
         this.isAwaitingApprove
-          ? (this.currentUser.role==='user'? 'Рецепт создан и отправлен на проверку':'Рецепт создан и опубликован')
+          ? this.currentUser.role === 'user'
+            ? 'Рецепт создан и отправлен на проверку'
+            : 'Рецепт создан и опубликован'
           : 'Рецепт создан',
         `Рецепт «${this.editedRecipe.name}» успешно сохранен в ваших рецептах${
-          this.isAwaitingApprove ? (this.currentUser.role==='user'?' и отправлен на проверку':' и опубликован') : ''
+          this.isAwaitingApprove
+            ? this.currentUser.role === 'user'
+              ? ' и отправлен на проверку'
+              : ' и опубликован'
+            : ''
         }`,
         'success',
         'recipe',
         '/recipes/list/' + this.editedRecipe.id,
       );
       this.notifyService.sendNotification(notify, this.currentUser).subscribe();
+    }
+    if (this.isAwaitingApprove && this.currentUser.role !== 'user' && this.userService.getPermission('hide-author',this.currentUser)) {
+      this.sendNotificationsAfterPublishingRecipe();
     }
   }
   handleApproveModal(answer: boolean): void {

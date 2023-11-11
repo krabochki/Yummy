@@ -26,19 +26,50 @@ app-modal {
     left: 0;
     border-radius: 100%;
 
+   
+
     &.no-emoji {
-      background-color: var(--color-primary);
+      background-color: var(--scroll-thumb);
       border-radius: 100%;
+
+      &::after {
+          width: 0;
+          height: 0;
+          border-radius: 100%;
+          position: absolute;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          right: 0;
+          margin: auto;
+          transition: 0.2s;
+          content: "";
+          background-color: var(--color-primary);
+        }
+      
+        &:hover,
+        &:focus,
+        &.emoji-picker-open,
+        &:active {
+          &::after {
+            width: 100%;
+            height: 100%;
+          }
+        }
     }
 
     .add-emoji {
       @include flex;
       zoom: 1;
+            z-index: 1;
       padding: 0.2em;
       width: 44px;
 
       height: 44px;
       fill: var(--color-foreground);
+
+
+     
     }
   }
 
@@ -76,7 +107,7 @@ app-modal {
     }
 
     @include flex;
-    background-color: var(--color-admin);
+    background-color: var(--scroll-thumb);
     border-radius: 100%;
     position: absolute;
     top: 0.25em;

@@ -3,14 +3,21 @@ import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { UserService } from './user.service';
-import { IUser } from '../models/users';
+import { IUser, nullUser } from '../models/users';
+import { AuthService } from '../../authentication/services/auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserResolver implements Resolve<IUser> {
+  currentUser: IUser = nullUser;
   constructor(
     private userService: UserService,
     private router: Router,
-  ) {}
+    private authService: AuthService,
+  ) {
+    this.authService.currentUser$.subscribe(
+      (data) => (this.currentUser = data),
+    );
+  }
 
   resolve(route: ActivatedRouteSnapshot): Observable<IUser> {
     const userId = Number(route.params['id']);
@@ -25,13 +32,39 @@ export class UserResolver implements Resolve<IUser> {
           if (user.id === userId) return true;
           else return false;
         });
-        if (foundUser) { return foundUser; }
-        else {
-          throw new Error('Пользователь не найден')
+
+        //не показываем страницу если пользователь это запретил(но показываем если это сам пользователь на нее перешел или модератор/админ)
+        if (foundUser) {
+          if (
+            !this.userService.getPermission('show-my-page', foundUser) &&
+            this.currentUser.id !== foundUser.id
+          ) {
+            if (this.currentUser.role === 'user') {
+              throw new Error('anonimous');
+            }
+            //запрещаем доступ к стр админа если он запретил для вообще всех
+            else if (
+              foundUser.role === 'admin'
+            ) {
+              throw new Error('anonimous');
+            }
+            else {
+                  return foundUser;
+            }
+          }
+          else {
+           return foundUser;
+          }
+        } else {
+          throw new Error('Пользователь не найден');
         }
       }),
-      catchError(() => {
-        this.router.navigate(['cooks']);
+      catchError((e: Error) => {
+        if (e.message === 'anonimous') {
+          this.router.navigate(['/access-denied']);
+        } else {
+          this.router.navigate(['cooks']);
+        }
         return EMPTY;
       }),
     );

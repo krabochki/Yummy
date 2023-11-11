@@ -423,9 +423,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
           !this.popups.find((p) => p.id === notification.id)
         ) {
           this.popupLifecycle(notification);
-        } else if (this.popups.length >= 3) {
-          this.popupHistory.push(notification.id);
-        }
+        } 
       });
 
       this.notifies = [...this.currentUser.notifications].reverse();
@@ -444,8 +442,10 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
 
   //добавление и автоудаление всплыв уведомления
   popupLifecycle(popup: INotification): void {
+    console.log('new popup')
     this.popupHistory.push(popup.id);
     this.popups.unshift(popup);
+    console.log(this.popupHistory)
     setTimeout(() => {
       this.removePopup(popup);
     }, 5000);

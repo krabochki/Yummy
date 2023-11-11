@@ -59,7 +59,7 @@ export const managersPreferences: NotificationSettingsSections[] = [
     icon: 'common',
     items: [
       {
-        description: 'Показывать значок админ-панели',
+        description: 'Показывать значок панели управления сайтом',
         area: 'show-adminpanel',
       },
       {
@@ -238,5 +238,6 @@ export const sections: NotificationSettingsSections[] = [
 
 export type social = 'facebook'|'twitter'|'vk'|'pinterest'
                  
-                
+
+export const stepsIcons: string[] = ['home','person','notifies','preferences','control','mask'] 
 export const steps:string[] = ['Основное', 'Персональная информация','Уведомления','Предпочтения','Управление','Анонимность']

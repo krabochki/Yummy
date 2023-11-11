@@ -17,16 +17,36 @@
           <hr />
           <div class="switches">
             <ng-container *ngFor="let item of steps; let i = index">
-              <button *ngIf="user.role!=='user'?true:(i===4?false:true)"
-              class="switch"
-              [ngClass]="{ selected: step === i }"
-              (click)="step = i"
-            >
-              {{ item }}
-            </button>
-            
+              <button
+                *ngIf="user.role !== 'user' ? true : i === 4 ? false : true"
+                class="switch"
+                [ngClass]="{ selected: step === i }"
+                (click)="step = i"
+              >
+                {{ item }}
+              </button>
             </ng-container>
-           
+          </div>
+          <div class="mobile-switches">
+            <ng-container *ngFor="let item of steps; let i = index">
+              <button
+                *ngIf="user.role !== 'user' ? true : i === 4 ? false : true"
+                class="header-button"
+                [ngClass]="{ selected: step === i }"
+                (click)="step = i"
+              >
+                <svg-icon
+                  class="svg-trash"
+                  [applyClass]="true"
+                  [src]="
+                    'assets/images/svg/settings/' +
+                    stepsIcons[i] +
+                    (step === i ? '-fill' : '') +
+                    '.svg'
+                  "
+                />
+              </button>
+            </ng-container>
           </div>
         </nav>
         <div class="content">
@@ -94,49 +114,27 @@
             </div>
           </div>
 
-          <div *ngIf="step===5">
+          <div *ngIf="step === 5">
             <h2>Анонимность</h2>
 
             <div class="blocks third">
-              <ng-container *ngFor="let section of condifencialitySettings">
-               <div *ngIf="section.role?(section.role.includes(user.role)):true">
-                  <h3>
-                    <svg-icon
-                      [applyClass]="true"
-                      class="icon"
-                      [src]="
-                        'assets/images/svg/settings/' + section.icon + '.svg'
-                      "
-                    />
-                    {{ section.title }}
-                  </h3>
-                  <div>
-                   
-                    <div class="toogle" *ngFor="let item of section.items">
-                      <p>{{ item.description }}</p>
-                      <app-toogle-switch
-                        [checked]="userPermissionEnabled(item.area)"
-                        (checkedEmit)="
-                          tooglePermission(
-                            item.area,
-                            !userPermissionEnabled(item.area)
-                          )
-                        "
-                      ></app-toogle-switch>
-                    </div>
-                  </div>
-               </div>
+              <ng-container *ngIf="user.role !== 'admin'">
+                <p *ngIf="user.role === 'user'; else forModerators">
+                  Внимание: все примененные ограничения не распространятся на
+                  модераторов и администраторов Yummy
+                </p>
+                <ng-template #forModerators>
+                  <p>
+                    Внимание: все примененные ограничения не распространятся на
+                    администратора Yummy
+                  </p>
+                </ng-template>
               </ng-container>
-        </div>
-          </div>
-          <div  *ngIf="step ===4 ">
-          <h2>Управление</h2>
-        <div class="blocks">
-          <div>
 
-            <div class="blocks third">
-              <ng-container *ngFor="let section of managersPreferences">
-               <div *ngIf="section.role?(section.role.includes(user.role)):true">
+              <ng-container *ngFor="let section of condifencialitySettings">
+                <div
+                  *ngIf="section.role ? section.role.includes(user.role) : true"
+                >
                   <h3>
                     <svg-icon
                       [applyClass]="true"
@@ -148,7 +146,6 @@
                     {{ section.title }}
                   </h3>
                   <div>
-                   
                     <div class="toogle" *ngFor="let item of section.items">
                       <p>{{ item.description }}</p>
                       <app-toogle-switch
@@ -162,12 +159,45 @@
                       ></app-toogle-switch>
                     </div>
                   </div>
-               </div>
+                </div>
               </ng-container>
             </div>
           </div>
-        </div>
-        </div>
+          <div *ngIf="step === 4">
+            <h2>Управление</h2>
+            <div class="blocks third">
+              <ng-container *ngFor="let section of managersPreferences">
+                <div
+                  *ngIf="section.role ? section.role.includes(user.role) : true"
+                >
+                  <h3>
+                    <svg-icon
+                      [applyClass]="true"
+                      class="icon"
+                      [src]="
+                        'assets/images/svg/settings/' + section.icon + '.svg'
+                      "
+                    />
+                    {{ section.title }}
+                  </h3>
+                  <div>
+                    <div class="toogle" *ngFor="let item of section.items">
+                      <p>{{ item.description }}</p>
+                      <app-toogle-switch
+                        [checked]="userPermissionEnabled(item.area)"
+                        (checkedEmit)="
+                          tooglePermission(
+                            item.area,
+                            !userPermissionEnabled(item.area)
+                          )
+                        "
+                      ></app-toogle-switch>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
           <div *ngIf="step === 3">
             <h2>Предпочтения</h2>
             <div class="blocks">

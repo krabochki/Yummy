@@ -136,12 +136,12 @@
       [title]="author.fullName === '' ? '@' + author.username : author.fullName"
       class="author"
     >
-      <a [routerLink]="author.id === 0 ? null : '/cooks/list/' + author.id">{{
-        author.id > 0
+      <a [routerLink]="(author.id === 0 || hideAuthor) ? null : '/cooks/list/' + author.id">{{
+        (author.id > 0 && !hideAuthor)
           ? author.fullName === ""
             ? "@" + author.username
             : author.fullName
-          : "Кулинар удален"
+          : hideAuthor?'Автор скрыт':"Автор удален"
       }}</a>
     </div>
 
@@ -239,7 +239,7 @@
   [buttonsText]="['Хорошо']"
   [description]="
     'Твой рецепт успешно изменен' +
-    (isAwaitingApprove ? ' и ожидает одобрения модератора' : '')
+    (isAwaitingApprove ?currentUser.role==='user'? ' и ожидает одобрения модератора':' и опубликован' : '')
   "
 ></app-modal>
 

@@ -19,6 +19,7 @@ import { modal } from 'src/tools/animations';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { Router } from '@angular/router';
+import { RecipeService } from '../../../services/recipe.service';
 
 @Component({
   selector: 'app-comment',
@@ -40,21 +41,11 @@ export class CommentComponent implements OnInit, OnDestroy {
   protected noAccessModalShow: boolean = false;
   
   get showCommentAuthor() {
-
-       if (this.currentUser.id === this.author.id) return true;
-       if (this.author.role !== 'admin' && this.currentUser.role !== 'user')
-         return true;
-       return !this.userService.getPermission('comment-author', this.author);
+    return this.commentService.showAuthor(this.author,this.currentUser)
   }
   get showRecipeAuthor() {
-    
-       if (this.currentUser.id === this.author.id) return true;
-       if (this.author.role !== 'admin' && this.currentUser.role !== 'user')
-         return true;
-       return !this.userService.getPermission('hide-author', this.author);
+    return !this.recipeService.hideAuthor(this.currentUser,this.author)
   }
-
-
 
   constructor(
     private userService: UserService,
@@ -64,6 +55,7 @@ export class CommentComponent implements OnInit, OnDestroy {
     private notifyService: NotificationService,
     private clipboard: Clipboard,
     private commentService: CommentService,
+    private recipeService: RecipeService,
   ) {}
 
   public ngOnInit(): void {

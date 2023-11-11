@@ -7,12 +7,13 @@ import {
 import { IRecipe } from '../models/recipes';
 import { RecipeService } from './recipe.service';
 import { IUser } from '../../user-pages/models/users';
+import { UserService } from '../../user-pages/services/user.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CommentService {
-  constructor(private recipeService: RecipeService) {}
+  constructor(private recipeService: RecipeService, private userService:UserService) {}
 
   makeComment(user: IUser, content: string): IComment {
     const comment: IComment = {
@@ -50,6 +51,13 @@ export class CommentService {
     if (!recipe.reports) recipe.reports = [];
     recipe.reports.push(report);
     return this.recipeService.updateRecipe(recipe);
+  }
+
+  showAuthor(author:IUser,currentUser:IUser): boolean{
+     if (currentUser.id === author.id) return true;
+     if (author.role !== 'admin' && currentUser.role !== 'user')
+       return true;
+     return this.userService.getPermission('comment-author', author);
   }
 
   likeComment(user: IUser, comment: IComment, recipe: IRecipe) {

@@ -98,9 +98,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   protected alsoFromThisCook: IRecipe[] = [];
 
   get hideAuthor(): boolean {
-   if (this.currentUser.id === this.author.id) return false;
-   if (this.author.role !== 'admin' && this.currentUser.role !== 'user') return false;
-    return !this.userService.getPermission('hide-author', this.author);
+    return this.recipeService.hideAuthor(this.currentUser, this.author);
   }
 
   constructor(

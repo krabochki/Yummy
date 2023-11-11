@@ -69,10 +69,10 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
 
   private plans: IPlan[] = [];
 
+
+
   get hideAuthor(): boolean {
-   if (this.currentUser.id === this.author.id) return false;
-   if (this.author.role !== 'admin' && this.currentUser.role !== 'user') return false;
-   return !this.userService.getPermission('hide-author', this.author);
+    return this.recipeService.hideAuthor(this.currentUser, this.author);
   }
 
   constructor(
@@ -287,13 +287,10 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
       this.recipe.publicationDate = getCurrentDate();
       this.userService.getFollowers(this.users, this.currentUser.id);
 
-      this.recipeService
-        .updateRecipe(this.recipe)
-        .subscribe(() => {
-          if (this.userService.getPermission('hide-author', this.currentUser))
-            this.sendNotificationsAfterPublishingRecipe()
-        })
-  
+      this.recipeService.updateRecipe(this.recipe).subscribe(() => {
+        if (this.userService.getPermission('hide-author', this.currentUser))
+          this.sendNotificationsAfterPublishingRecipe();
+      });
     }
   }
 
@@ -341,7 +338,10 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
   handleEditedRecipe(event: IRecipe) {
     this.editMode = false;
     this.editedRecipe = event;
-    if (this.editedRecipe.status === 'awaits' || this.editedRecipe.status ==='public') {
+    if (
+      this.editedRecipe.status === 'awaits' ||
+      this.editedRecipe.status === 'public'
+    ) {
       this.isAwaitingApprove = true;
     }
     this.successEditModalShow = true;
@@ -407,11 +407,17 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
       ) {
         const notify: INotification = this.notifyService.buildNotification(
           this.isAwaitingApprove
-            ? ('Рецепт изменен '+(this.currentUser.role==='user'?'и отправлен на проверку':'и опубликован'))
+            ? 'Рецепт изменен ' +
+                (this.currentUser.role === 'user'
+                  ? 'и отправлен на проверку'
+                  : 'и опубликован')
             : 'Рецепт изменен',
           `Рецепт «${this.editedRecipe.name}» изменен ${
-            this.isAwaitingApprove ? (this.currentUser.role==='user'?'и успешно отправлен на проверку':
-            'и опубликован' ) : ''
+            this.isAwaitingApprove
+              ? this.currentUser.role === 'user'
+                ? 'и успешно отправлен на проверку'
+                : 'и опубликован'
+              : ''
           }`,
           'success',
           'recipe',
@@ -420,7 +426,7 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
         this.notifyService
           .sendNotification(notify, this.currentUser)
           .subscribe();
-      } 
+      }
 
       if (
         this.isAwaitingApprove &&

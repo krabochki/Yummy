@@ -88,12 +88,7 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
 
   showAuthor(recipe: IRecipe): boolean {
     const author = getUser(recipe.authorId, this.allUsers);
-    if (
-      this.currentUser.id === author.id ||
-      (author.role !== 'admin' && this.currentUser.role !== 'user')
-    )
-      return true;
-    return this.userService.getPermission('hide-author', author);
+    return !this.recipeService.hideAuthor(this.currentUser, author);
   }
 
   private editingRecipeInit() {

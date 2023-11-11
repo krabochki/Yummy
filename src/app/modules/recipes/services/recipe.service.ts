@@ -6,6 +6,7 @@ import { recipesUrl } from 'src/tools/source';
 import { getCurrentDate } from 'src/tools/common';
 import { IPlan } from '../../planning/models/plan';
 import { IUser } from '../../user-pages/models/users';
+import { UserService } from '../../user-pages/services/user.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,7 @@ export class RecipeService {
 
   url: string = recipesUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private userService:UserService) {}
 
   loadRecipeData() {
     this.getRecipes().subscribe((data) => {
@@ -287,6 +288,13 @@ export class RecipeService {
       recipe.favoritesId.push(userId);
     }
     return recipe;
+  }
+
+  hideAuthor(currentUser:IUser,author:IUser): boolean {
+    if (currentUser.id === author.id) return false;
+    if (author.role !== 'admin' && currentUser.role !== 'user')
+      return false;
+    return !this.userService.getPermission('hide-author', author);
   }
   removeRecipeFromFavorites(userId: number, recipe: IRecipe): IRecipe {
     if (recipe.favoritesId.includes(userId)) {

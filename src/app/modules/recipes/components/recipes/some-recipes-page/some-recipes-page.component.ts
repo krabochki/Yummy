@@ -147,15 +147,11 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  showAuthor(recipe:IRecipe): boolean{
-    const author = this.getUser(recipe.authorId)
-    if (this.currentUser.id === author.id) return true;
-    if (author.role !== 'admin' && this.currentUser.role !== 'user')
-      return true;
-    return this.userService.getPermission('hide-author', author);
-    
+  showAuthor(recipe: IRecipe): boolean {
+    const author = this.getUser(recipe.authorId);
+    return !this.recipeService.hideAuthor(this.currentUser, author);
   }
-
+  
   private categoryInit(categoryFromData: ICategory, recipes: IRecipe[]): void {
     this.category = categoryFromData;
 
@@ -424,16 +420,16 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
       const filterRecipes: IRecipe[] = this.allRecipes.filter(
         (recipe: IRecipe) =>
           recipe.name.toLowerCase().replace(/\s/g, '').includes(search) ||
-          (
-            this.showAuthor(recipe) ?
-            this.getUser(recipe.authorId)
-            .fullName.toLowerCase()
-            .replace(/\s/g, '')
-            .includes(search) ||
-          this.getUser(recipe.authorId)
-            .username.toLowerCase()
-            .replace(/\s/g, '')
-            .includes(search) : null),
+          (this.showAuthor(recipe)
+            ? this.getUser(recipe.authorId)
+                .fullName.toLowerCase()
+                .replace(/\s/g, '')
+                .includes(search) ||
+              this.getUser(recipe.authorId)
+                .username.toLowerCase()
+                .replace(/\s/g, '')
+                .includes(search)
+            : null),
       );
 
       filterRecipes.forEach((element) => {

@@ -12,13 +12,11 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
-import { steps, Step } from './consts';
+import { steps, Step, getInputPlaceholderOfControlGroup, getNameOfControlGroup } from './consts';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Router } from '@angular/router';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
-import { IRecipe } from '../../../models/recipes';
-import { RecipeService } from '../../../services/recipe.service';
 import { Observable, Subject, forkJoin } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { customLinkPatternValidator } from 'src/tools/validators';
@@ -55,32 +53,53 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
   @ViewChild('scrollContainer', { static: false }) scrollContainer?: ElementRef;
   @Output() closeEmitter = new EventEmitter<boolean>();
 
+  form: FormGroup;
+
+  currentUser: IUser = nullUser;
+  groups: IIngredientsGroup[] = [];
+  productTypes = productTypes;
+
+  createdIngredient: IIngredient = nullIngredient;
+
   currentStep: number = 0;
   showInfo = false;
   steps: Step[] = steps;
-
-  form: FormGroup;
+  stepControlGroups = [
+    ['advantages', 'disadvantages', 'recommendations', 'contraindicates'],
+    ['cookingMethods', 'compatibleDishes', 'precautions'],
+    ['tips', 'storageMethods'],
+  ];
 
   selectedIngredientsGroups: IIngredientsGroup[] = [];
 
-  protected productTypes = productTypes;
-  protected selectedType: ProductType = productTypes[0];
-  protected searchQuery: string = '';
-  protected autocompleteShow: boolean = false;
-  protected autocompleteTypes: ProductType[] = [];
-  protected focused: boolean = false;
+  autocompleteTypes: ProductType[] = [];
+  selectedType: ProductType = productTypes[0];
+  searchQuery: string = '';
+  autocompleteShow: boolean = false;
+  focused: boolean = false;
 
+  createModalShow: boolean = false;
+  successModalShow: boolean = false;
   exitModalShow: boolean = false;
 
-  images: string[][] = [['']];
-  defaultImage: string = '../../../../../assets/images/add-ingredient.png';
+  defaultImage: string = 'assets/images/add-ingredient.png';
   mainImage: string = '';
 
   protected destroyed$: Subject<void> = new Subject<void>();
 
   beginningData: any;
 
-  groups: IIngredientsGroup[] = [];
+  get validForm() {
+    return (
+      this.form.valid &&
+      this.areObjectsEqual() &&
+      this.selectedIngredientsGroups.length > 0
+    );
+  }
+
+  get isManager() {
+    return this.currentUser.role !== 'user';
+  }
 
   constructor(
     private renderer: Renderer2,
@@ -90,7 +109,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private notificationService: NotificationService,
     public router: Router,
-    private cd:ChangeDetectorRef
+    private cd: ChangeDetectorRef,
   ) {
     this.mainImage = this.defaultImage;
     this.form = this.fb.group({
@@ -118,54 +137,30 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
       advantages: this.fb.array([]),
       variations: this.fb.array([]),
       disadvantages: this.fb.array([]),
-      image: [null], // Это поле для загрузки картинки
+      image: [null],
     });
   }
 
   ngOnInit(): void {
     this.addModalStyle();
-
-    this.authService.currentUser$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((receivedUser: IUser) => (this.currentUser = receivedUser));
-
-    this.ingredientService.ingredientsGroups$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe(
-        (receivedIngredientsGroups: IIngredientsGroup[]) =>
-          (this.groups = receivedIngredientsGroups.filter((g) => g.id !== 0)),
-      );
-
+    this.currentUserInit();
+    this.ingredientsGroupsInit();
     this.beginningData = this.form.getRawValue();
   }
 
-  get validForm() {
-    return (
-      this.form.valid &&
-      this.areObjectsEqual() &&
-      this.selectedIngredientsGroups.length > 0
-    );
-  }
-
-  closeIngredientCreating(): void{
-    if (!this.areObjectsEqual() && this.selectedIngredientsGroups.length === 0) {
-      this.closeEmitter.emit()
-    }
-    else {
+  closeIngredientCreating(): void {
+    if (
+      !this.areObjectsEqual() &&
+      this.selectedIngredientsGroups.length === 0
+    ) {
+      this.closeEmitter.emit();
+    } else {
       this.exitModalShow = true;
     }
   }
 
   f(field: string): FormArray {
     return this.form.get(field) as FormArray;
-  }
-
-  protected blur(): void {
-    if (this.searchQuery !== '' && this.searchQuery !== this.selectedType.name)
-      this.searchQuery = '';
-
-    this.autocompleteShow = false;
-    this.focused = false;
   }
 
   addGroup(event: IIngredientsGroup) {
@@ -183,63 +178,6 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
         if (group.id !== event.id) return true;
         else return false;
       },
-    );
-  }
-
-  protected focus(): void {
-    this.autocompleteShow = true;
-    this.recipeSearching();
-  }
-  protected chooseRecipe(type: ProductType): void {
-    this.searchQuery = type.name;
-    this.selectedType = type;
-  }
-  protected recipeSearching(): void {
-    this.autocompleteShow = true;
-    this.focused = true;
-    if (this.searchQuery) {
-      this.autocompleteTypes = [];
-      if (this.selectedType.name !== this.searchQuery) {
-        const without = this.productTypes.find(
-          (p) => p.name === 'Без категории',
-        );
-        if (without) this.selectedType = without;
-      }
-      const search = this.searchQuery.toLowerCase().replace(/\s/g, '');
-
-      const filterTypes: ProductType[] = this.productTypes.filter(
-        (type: ProductType) =>
-          type.name.toLowerCase().replace(/\s/g, '').includes(search),
-      );
-
-      filterTypes.forEach((element) => {
-        this.autocompleteTypes.push(element);
-      });
-    } else this.autocompleteTypes = [...this.productTypes];
-  }
-
-  goToPreviousStep() {
-    if (this.currentStep > 0) {
-      this.currentStep--;
-
-      this.scrollTop();
-    }
-  }
-  goToNextStep() {
-    if (this.currentStep < this.steps.length - 1) {
-      this.currentStep++;
-      this.scrollTop();
-    }
-  }
-  scrollTop(): void {
-    if (this.scrollContainer) this.scrollContainer.nativeElement.scrollTop = 0;
-  }
-
-  drop(context: string, event: CdkDragDrop<string[]>) {
-    moveItemInArray(
-      this.f(context).controls,
-      event.previousIndex,
-      event.currentIndex,
     );
   }
 
@@ -296,9 +234,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
       }),
     );
   }
-  removeBaseTextControl(index: number, controlGroup: string) {
-    this.f(controlGroup).removeAt(index);
-  }
+
   addBaseTextControl(controlGroup: string) {
     let maxLength = 500;
     if (controlGroup === 'variations') maxLength = 50;
@@ -316,96 +252,75 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
     );
   }
 
+  removeBaseTextControl(index: number, controlGroup: string) {
+    this.f(controlGroup).removeAt(index);
+  }
+
   submitForm(): void {
     this.createModalShow = true;
   }
 
-  createModalShow: boolean = false;
-
-  handleCreateModal(answer: boolean) {
-    if (answer) {
-      this.createIngredient();
-    } else {
-      this.addModalStyle();
-    }
-    this.createModalShow = false;
-  }
-
-  get isManager() {
-    return this.currentUser.role !== 'user';
-  }
-  currentUser: IUser = nullUser;
-
   createIngredient(): void {
     let maxId = 0;
-    this.ingredientService.ingredients$
-      .subscribe((receivedIngredients: IIngredient[]) => {
+    this.ingredientService.ingredients$.subscribe(
+      (receivedIngredients: IIngredient[]) => {
         const ingredients: IIngredient[] = receivedIngredients;
         maxId = Math.max(...ingredients.map((u) => u.id));
+      },
+    );
 
-     
+    const externalLinks: ExternalLink[] = [];
+    this.f('sources').controls.forEach((control) => {
+      const externalLink: ExternalLink = {
+        link: control.get('link')?.value,
+        name: control.get('name')?.value,
+      };
+      externalLinks.push(externalLink);
+    });
+
+    if (this.form.valid && this.selectedIngredientsGroups.length > 0) {
+      const newIngredientData: IIngredient = {
+        id: maxId + 1,
+        name: this.form.value.ingredientName,
+        history: this.form.value.history,
+        description: this.form.value.description,
+        variations: this.form.value.variations,
+        status: this.isManager ? 'public' : 'awaits',
+        image: this.form.value.image,
+        advantages: this.form.value.advantages,
+        disadvantages: this.form.value.disadvantages,
+        recommendedTo: this.form.value.recommendations,
+        contraindicatedTo: this.form.value.contraindicates,
+        origin: this.form.value.origin,
+        precautions: this.form.value.precautions,
+        compatibleDishes: this.form.value.compatibleDishes,
+        cookingMethods: this.form.value.cookingMethods,
+        tips: this.form.value.tips,
+        nutritions: this.form.value.nutritions,
+        storageMethods: this.form.value.storageMethods,
+        externalLinks: externalLinks,
+        shoppingListGroup: this.selectedType.id,
+      };
+
+      this.createdIngredient = newIngredientData;
+
+      this.ingredientService.postIngredient(newIngredientData).subscribe(() => {
+        const subscribes: Observable<IIngredientsGroup>[] = [];
+        this.selectedIngredientsGroups.forEach((group) => {
+          group.ingredients.push(newIngredientData.id);
+          subscribes.push(this.ingredientService.updateIngredientGroup(group));
+        });
+        forkJoin(subscribes).subscribe(() => {
+          this.successModalShow = true;
+          this.cd.markForCheck();
+        });
       });
-    
-       const externalLinks: ExternalLink[] = [];
-       this.f('sources').controls.forEach((control) => {
-         const externalLink: ExternalLink = {
-           link: control.get('link')?.value,
-           name: control.get('name')?.value,
-         };
-         externalLinks.push(externalLink);
-       });
-
-       if (this.form.valid && this.selectedIngredientsGroups.length > 0) {
-         const newIngredientData: IIngredient = {
-           id: maxId + 1,
-           name: this.form.value.ingredientName,
-           history: this.form.value.history,
-           description: this.form.value.description,
-           variations: this.form.value.variations,
-           status: this.isManager ? 'public' : 'awaits',
-           image: this.form.value.image,
-           advantages: this.form.value.advantages,
-           disadvantages: this.form.value.disadvantages,
-           recommendedTo: this.form.value.recommendations,
-           contraindicatedTo: this.form.value.contraindicates,
-           origin: this.form.value.origin,
-           precautions: this.form.value.precautions,
-           compatibleDishes: this.form.value.compatibleDishes,
-           cookingMethods: this.form.value.cookingMethods,
-           tips: this.form.value.tips,
-           nutritions: this.form.value.nutritions,
-           storageMethods: this.form.value.storageMethods,
-           externalLinks: externalLinks,
-           shoppingListGroup: this.selectedType.id,
-         };
-
-         this.createdIngredient = newIngredientData;
-
-         this.ingredientService
-           .postIngredient(newIngredientData)
-           .subscribe(() => {
-             const subscribes: Observable<IIngredientsGroup>[] = [];
-             this.selectedIngredientsGroups.forEach((group) => {
-               group.ingredients.push(newIngredientData.id);
-               subscribes.push(
-                 this.ingredientService.updateIngredientGroup(group),
-               );
-             });
-             forkJoin(subscribes).subscribe(
-               () => {
-                 this.successModalShow = true;
-                 this.cd.markForCheck(); 
-               },
-             );
-           });
-       }
+    }
   }
-  createdIngredient: IIngredient = nullIngredient;
-  successModalShow = false;
-  handleSuccessModal() {
-    this.successModalShow = false;
-    this.closeEmitter.emit();
+
+  sendNotifyAfterCreatingIngredient(): void {
     let notification: INotification = nullNotification;
+
     if (this.isManager) {
       const createdIngredientLink =
         '/ingredients/list/' + this.createdIngredient.id;
@@ -448,101 +363,23 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  // if (this.form.valid) {
-  //   const recipeData: IRecipe = {
-  //     name: this.form.value.ingredientName,
-  //     reports: [],
-  //     statistics: [],
-  //     ingredients: this.form.value.ingredients,
-  //     instructions: this.form.value.instructions,
-  //     mainImage: this.form.value.image,
-  //     description: this.form.value.description,
-  //     history: this.form.value.history,
-  //     preparationTime: this.form.value.preparationTime,
-  //     cookingTime: this.form.value.cookingTime,
-  //     origin: this.form.value.origin,
-  //     nutritions: this.form.value.nutritions,
-  //     servings: this.form.value.portions,
-  //     authorId: this.currentUser.id,
-  //     categories: categoriesIds,
-  //     cooksId: [],
-  //     likesId: [],
-  //     favoritesId: [],
-  //     id: this.recipeId,
-  //     comments: [],
-  //     publicationDate: getCurrentDate(),
-  //     status: this.isAwaitingApprove
-  //       ? this.currentUser.role === 'user'
-  //         ? 'awaits'
-  //         : 'public'
-  //       : 'private',
-  //   };
-  //   this.createdRecipe = recipeData;
-
-  //   this.recipeService.postRecipe(recipeData).subscribe(() => {
-  //     this.successModalShow = true;
-
-  //     this.cd.markForCheck();
-  //   });
-  // }
-
   getNameOfControlGroup(controlGroup: string): string {
-    switch (controlGroup) {
-      case 'advantages':
-        return 'Преимущества';
-      case 'disadvantages':
-        return 'Недостатки';
-      case 'recommendations':
-        return 'Рекоммендации';
-      case 'contraindicates':
-        return 'Противопоказания';
-      case 'cookingMethods':
-        return 'Способы приготовления';
-      case 'compatibleDishes':
-        return 'Сочетания';
-      case 'precautions':
-        return 'Меры предосторожности';
-      case 'tips':
-        return 'Советы';
-      case 'storageMethods':
-        return 'Способы хранения';
-      case 'variations':
-        return 'Варианты написания';
-    }
-    return '';
+    return getNameOfControlGroup(controlGroup);
   }
-
-  stepControlGroups = [
-    ['advantages', 'disadvantages', 'recommendations', 'contraindicates'],
-    ['cookingMethods', 'compatibleDishes', 'precautions'],
-    ['tips', 'storageMethods'],
-  ];
 
   getInputPlaceholderOfControlGroup(controlGroup: string): string {
-    switch (controlGroup) {
-      case 'advantages':
-        return 'Содержание преимущества';
-      case 'disadvantages':
-        return 'Содержание недостатка';
-      case 'recommendations':
-        return 'Содержание рекоммендации';
-      case 'contraindicates':
-        return 'Содержание противопоказания';
-      case 'cookingMethods':
-        return 'Описание способа приготовления';
-      case 'compatibleDishes':
-        return 'Описание сочетания';
-      case 'precautions':
-        return 'Описание меры предосторожности';
-      case 'tips':
-        return 'Содержание совета';
-      case 'storageMethods':
-        return 'Описание способа хранения';
-      case 'variations':
-        return 'Название варианта написания';
-    }
-    return '';
+    return getInputPlaceholderOfControlGroup(controlGroup);
   }
+
+  addModalStyle() {
+    setTimeout(() => {
+      this.renderer.addClass(document.body, 'hide-overflow');
+      (<HTMLElement>document.querySelector('.header')).style.width =
+        'calc(100% - 16px)';
+    }, 0);
+  }
+
+  //модальные окна
 
   handleExitModal(answer: boolean): void {
     this.exitModalShow = false;
@@ -553,13 +390,86 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
       this.addModalStyle();
     }
   }
+  handleCreateModal(answer: boolean) {
+    if (answer) {
+      this.createIngredient();
+    } else {
+      this.addModalStyle();
+    }
+    this.createModalShow = false;
+  }
+  handleSuccessModal() {
+    this.successModalShow = false;
+    this.closeEmitter.emit();
+    this.sendNotifyAfterCreatingIngredient();
+  }
 
-  addModalStyle() {
-    setTimeout(() => {
-      this.renderer.addClass(document.body, 'hide-overflow');
-      (<HTMLElement>document.querySelector('.header')).style.width =
-        'calc(100% - 16px)';
-    }, 0);
+  //поиск типа ингредиента
+  protected blur(): void {
+    if (this.searchQuery !== '' && this.searchQuery !== this.selectedType.name)
+      this.searchQuery = '';
+
+    this.autocompleteShow = false;
+    this.focused = false;
+  }
+  protected focus(): void {
+    this.autocompleteShow = true;
+    this.search();
+  }
+  protected chooseRecipe(type: ProductType): void {
+    this.searchQuery = type.name;
+    this.selectedType = type;
+  }
+  protected search(): void {
+    this.autocompleteShow = true;
+    this.focused = true;
+    if (this.searchQuery) {
+      this.autocompleteTypes = [];
+      if (this.selectedType.name !== this.searchQuery) {
+        const without = this.productTypes.find(
+          (p) => p.name === 'Без категории',
+        );
+        if (without) this.selectedType = without;
+      }
+      const search = this.searchQuery.toLowerCase().replace(/\s/g, '');
+
+      const filterTypes: ProductType[] = this.productTypes.filter(
+        (type: ProductType) =>
+          type.name.toLowerCase().replace(/\s/g, '').includes(search),
+      );
+
+      filterTypes.forEach((element) => {
+        this.autocompleteTypes.push(element);
+      });
+    } else this.autocompleteTypes = [...this.productTypes];
+  }
+
+  //шаги
+
+  goToPreviousStep() {
+    if (this.currentStep > 0) {
+      this.currentStep--;
+
+      this.scrollTop();
+    }
+  }
+  goToNextStep() {
+    if (this.currentStep < this.steps.length - 1) {
+      this.currentStep++;
+      this.scrollTop();
+    }
+  }
+  scrollTop(): void {
+    if (this.scrollContainer) this.scrollContainer.nativeElement.scrollTop = 0;
+  }
+
+  //drag drop
+  drop(context: string, event: CdkDragDrop<string[]>) {
+    moveItemInArray(
+      this.f(context).controls,
+      event.previousIndex,
+      event.currentIndex,
+    );
   }
 
   areObjectsEqual(): boolean {
@@ -579,5 +489,20 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
     (<HTMLElement>document.querySelector('.header')).style.width = '100%';
     this.destroyed$.next();
     this.destroyed$.complete();
+  }
+
+  currentUserInit(): void {
+    this.authService.currentUser$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedUser: IUser) => (this.currentUser = receivedUser));
+  }
+
+  ingredientsGroupsInit(): void {
+    this.ingredientService.ingredientsGroups$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(
+        (receivedIngredientsGroups: IIngredientsGroup[]) =>
+          (this.groups = receivedIngredientsGroups.filter((g) => g.id !== 0)),
+      );
   }
 }

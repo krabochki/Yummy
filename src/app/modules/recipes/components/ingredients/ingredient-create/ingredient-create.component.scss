@@ -762,6 +762,9 @@ app-modal {
 }
 
 @media (max-width: 768px) {
+  br{
+    display: none;
+  }
   .instruction {
     .instruction-text {
       column-gap: 0.25em;

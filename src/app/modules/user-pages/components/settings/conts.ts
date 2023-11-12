@@ -42,7 +42,7 @@ export const condifencialitySettings: NotificationSettingsSections[] = [
   },
   {
     title: 'Ваша должность',
-    role: ['admin', 'user'],
+    role: ['admin', 'moderator'],
     icon: 'anonimous',
     items: [
       {
@@ -70,6 +70,14 @@ export const managersPreferences: NotificationSettingsSections[] = [
         description: 'Показывать кнопку удаления секции',
         area: 'show-section-deleting',
       },
+      {
+        description: 'Показывать кнопку удаления ингредиента',
+        area: 'show-ingredient-deleting',
+      },
+      {
+        description: 'Показывать кнопку удаления группы ингредиентов',
+        area: 'show-ingredient-group-deleting',
+      },
     ],
   },
   {
@@ -94,7 +102,6 @@ export const managersPreferences: NotificationSettingsSections[] = [
       },
     ],
   },
- 
 ];
 
 export const sections: NotificationSettingsSections[] = [
@@ -135,7 +142,7 @@ export const sections: NotificationSettingsSections[] = [
         area: 'you-publish-recipe',
       },
       {
-        description: 'Модератор рассмотрел ваш рецепт',
+        description: 'Ваш рецепт рассмотрен',
         area: 'manager-review-your-recipe',
       },
       {
@@ -188,6 +195,20 @@ export const sections: NotificationSettingsSections[] = [
     ],
   },
   {
+    icon: 'grocery',
+    title: 'Ингредиенты',
+    items: [
+      {
+        description: 'Вы отправили ингредиент на проверку',
+        area: 'you-create-ingredient',
+      },
+      {
+        description: 'Ваш ингредиент рассмотрен',
+        area: 'your-ingredient-published',
+      },
+    ],
+  },
+  {
     icon: 'categories',
     title: 'Категории',
     items: [
@@ -196,7 +217,7 @@ export const sections: NotificationSettingsSections[] = [
         area: 'you-create-category',
       },
       {
-        description: 'Вашу категорию рассмотрел модератор',
+        description: 'Ваша категорию рассмотрена',
         area: 'manager-reviewed-your-category',
       },
     ],

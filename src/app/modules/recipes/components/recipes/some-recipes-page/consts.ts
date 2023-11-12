@@ -14,6 +14,7 @@ export enum RecipeType {
   Planning = 'planning',
   MostCooked = 'most-cooked',
   MostFavorite = 'most-favorite',
+  ByIngredient = 'ingredient-recipes'
 }
 
 export const recipeTitles = {
@@ -31,7 +32,8 @@ export const recipeTitles = {
   [RecipeType.Planning]: 'Запланированные рецепты',
   [RecipeType.MostFavorite]: 'Наиболее сохраняемые рецепты',
   [RecipeType.MostCooked]: 'Готовят чаще всего',  
-  [RecipeType.Match]:'Подобранные рецепты'
+  [RecipeType.Match]: 'Подобранные рецепты',
+  [RecipeType.ByIngredient]:''
 };
 
  export const recipeNoRecipesRouterLinkText = {
@@ -49,7 +51,8 @@ export const recipeTitles = {
    [RecipeType.Planning]: '/plan/calendar',
    [RecipeType.MostCooked]: '',
    [RecipeType.MostFavorite]: '',
-   [RecipeType.Match]:''
+   [RecipeType.Match]: '',
+   [RecipeType.ByIngredient]: '/ingredients'
  };
 
 export const recipeNoRecipesButtonText = {
@@ -67,7 +70,9 @@ export const recipeNoRecipesButtonText = {
   [RecipeType.Planning]: 'Календарь рецептов',
   [RecipeType.MostCooked]: '',
   [RecipeType.MostFavorite]: '',
-  [RecipeType.Match]:''
+  [RecipeType.Match]: '',
+  [RecipeType.ByIngredient]: 'Все ингредиенты'
+  
 };
 
 export const recipeNoRecipesText = {
@@ -93,5 +98,6 @@ export const recipeNoRecipesText = {
     'Вы пока не запланировали ни один рецепт. Попробуйте запланировать парочку рецептов и зайдите сюда снова',
   [RecipeType.MostCooked]: '',
   [RecipeType.MostFavorite]: '',
-  [RecipeType.Match]:''
+  [RecipeType.Match]: '',
+  [RecipeType.ByIngredient]:''
 };

@@ -42,6 +42,8 @@ export type PermissionContext =
   | 'you-create-new-recipe'
   | 'you-delete-your-comment'
   | 'you-publish-recipe'
+  | 'you-create-ingredient'
+  |'your-ingredient-published'
   | 'you-edit-your-account'
   | 'manager-review-your-recipe'
   | 'you-delete-your-recipe'

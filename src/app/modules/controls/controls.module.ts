@@ -18,6 +18,7 @@ import { CountInputComponent } from './count-input/count-input.component';
 import { UsualInputComponent } from './usual-input/usual-input.component';
 import { AutocompleteComponent } from './autocomplete/autocomplete.component';
 import {  AnonimPageComponent } from './anonim/anonim.component';
+import { TextFieldModule } from '@angular/cdk/text-field';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,7 @@ import {  AnonimPageComponent } from './anonim/anonim.component';
   imports: [
     CommonModule,
     RouterModule,
-    FormsModule,
+    FormsModule,TextFieldModule,
     ShareButtonsModule,
     ShareIconsModule,
     SvgIconComponent

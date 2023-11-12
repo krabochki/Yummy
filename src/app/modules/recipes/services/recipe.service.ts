@@ -7,6 +7,7 @@ import { getCurrentDate } from 'src/tools/common';
 import { IPlan } from '../../planning/models/plan';
 import { IUser } from '../../user-pages/models/users';
 import { UserService } from '../../user-pages/services/user.service';
+import { IIngredient } from '../models/ingredients';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +18,10 @@ export class RecipeService {
 
   url: string = recipesUrl;
 
-  constructor(private http: HttpClient, private userService:UserService) {}
+  constructor(
+    private http: HttpClient,
+    private userService: UserService,
+  ) {}
 
   loadRecipeData() {
     this.getRecipes().subscribe((data) => {
@@ -276,6 +280,35 @@ export class RecipeService {
     });
   }
 
+
+  getRecipesByIngredient(recipes: IRecipe[], ingredient: IIngredient): IRecipe[] {
+    const recipesWithIngredient:IRecipe[]= [];
+    const ingredientName = ingredient.name.toLowerCase().trim();
+    recipes.forEach((recipe) => {
+      recipe.ingredients.forEach((rIngredient) => {
+        const formattedRecipeIngredientName = rIngredient.name
+          .toLowerCase()
+          .trim();
+        const variationsMatch =
+          ingredient.variations.length > 0 &&
+          ingredient.variations.some((variation) => {
+            const formattedVariation = variation.toLowerCase().trim();
+            return (
+              formattedRecipeIngredientName.includes(formattedVariation) ||
+              formattedVariation.includes(formattedRecipeIngredientName)
+            );
+          });
+
+        if (
+          formattedRecipeIngredientName.includes(ingredientName) ||
+          variationsMatch
+        ) {
+          recipesWithIngredient.push(recipe);
+        }
+      });
+    });
+    return recipesWithIngredient;
+  }
   getRecipesByCategory(recipes: IRecipe[], categoryId: number) {
     return recipes.filter((recipe) => recipe.categories.includes(categoryId));
   }
@@ -290,10 +323,9 @@ export class RecipeService {
     return recipe;
   }
 
-  hideAuthor(currentUser:IUser,author:IUser): boolean {
+  hideAuthor(currentUser: IUser, author: IUser): boolean {
     if (currentUser.id === author.id) return false;
-    if (author.role !== 'admin' && currentUser.role !== 'user')
-      return false;
+    if (author.role !== 'admin' && currentUser.role !== 'user') return false;
     return !this.userService.getPermission('hide-author', author);
   }
   removeRecipeFromFavorites(userId: number, recipe: IRecipe): IRecipe {

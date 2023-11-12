@@ -11,11 +11,36 @@ import { RecipeResolver } from './services/recipe.resolver';
 import { RecipeAccessGuard } from './guards/recipe-access.guard';
 import { CategoryResolver } from './services/category.resolver';
 import { SectionResolver } from './services/section.resolver';
+import { IngredientsPageComponent } from './components/ingredients/ingredients-page/ingredients-page.component';
+import { IngredientPageComponent } from './components/ingredients/ingredient-page/ingredient-page.component';
+import { IngredientGroupResolver } from './services/ingredient-group.resolver';
+import { IngredientResolver } from './services/ingredient.resolver';
 const routes: Routes = [
   {
     path: '',
     component: RecipesComponent,
     children: [
+      {
+        path: 'ingredients',
+        component: IngredientsPageComponent,
+        data: { filter: 'all-groups' },
+      },
+      {
+        path: 'ingredients/list/:id',
+        component: IngredientPageComponent,
+        resolve: { IngredientResolver },
+      },
+      {
+        path: 'ingredients/groups/:id',
+        component: IngredientsPageComponent,
+        data: { filter: 'ingredient-group' },
+        resolve: { IngredientGroupResolver },
+      },
+      {
+        path: 'ingredients/popular',
+        component: IngredientsPageComponent,
+        data: { filter: 'popular' },
+      },
       {
         path: 'recipes/list/:id',
         component: RecipePageComponent,
@@ -129,6 +154,13 @@ const routes: Routes = [
         data: { filter: 'category-recipes' },
         resolve: { CategoryResolver },
 
+        component: SomeRecipesPageComponent,
+      },
+
+      {
+        path: 'ingredients/list/:id/recipes',
+        data: { filter: 'ingredient-recipes' },
+        resolve: { IngredientResolver },
         component: SomeRecipesPageComponent,
       },
       {

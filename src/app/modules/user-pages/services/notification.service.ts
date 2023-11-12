@@ -28,6 +28,7 @@ export class NotificationService {
       | 'born'
       | 'user'
       | 'calendar-recipe'
+      |'ingredient'
       | 'demote'
       | 'plan-reminder'
       | 'plan-reminder-start',

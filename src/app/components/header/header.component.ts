@@ -349,8 +349,10 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
         if (receivedUser.id !== 0) {
           const findUser = this.users.find((u) => u.id === receivedUser.id);
           if (findUser) {
-            this.cookRouterLinks[0] = '/cooks/list/' + this.currentUser.id;
             this.currentUser = findUser;
+             this.cookRouterLinks[0] =
+                          '/cooks/list/' + this.currentUser.id;
+
           }
         } else this.currentUser = receivedUser;
 

@@ -1,0 +1,45 @@
+<div class="wrap">
+  <h1>{{ ingredient.name }}</h1>
+  <div class="container">
+    <div class="image"></div>
+    <div class="info">
+      <section class="tags">
+        <a class="tag" *ngFor="let group of ingredientGroups" [routerLink]="'/ingredients/groups/' + group.id">{{
+          group.name }}</a>
+      </section>
+      <section *ngIf="relatedCategories.length > 0">
+        <h2>Используют в категориях</h2>
+        <div class="tags">
+          <a class="tag" *ngFor="let category of showedCategories" [routerLink]="'/categories/list/' + category.id">{{
+            category.name }}</a>
+          <button (click)="showAllCategories()" *ngIf="showedCategories.length < relatedCategories.length">
+            ...
+          </button>
+        </div>
+      </section>
+
+      <p *ngIf="ingredient.description">{{ ingredient.description }}</p>
+      <p *ngIf="ingredient.history">{{ ingredient.history }}</p>
+      <section>
+        <p *ngIf="recipes.length > 0; else noRelatedRecipes">
+          На сайте есть {{ recipes.length }}
+          <span appPluralRu="" [value]="recipes.length" [arVariants]="['рецепт', 'рецепта', 'рецептов']"></span>
+          с таким ингредиентом
+        </p>
+        <ng-template #noRelatedRecipes>
+          <p>На сайте пока нет рецептов с таким ингредиентом</p>
+        </ng-template>
+        <app-button [routerLink]="'/ingredients/list/'+ingredient.id+'/recipes'" *ngIf="recipes.length > 0" [color]="'sec'" [style]="'filled'" [text]="'Просмотреть'"
+          [rounded]="true" />
+      </section>
+
+      <section *ngIf="relatedIngredients.length > 0">
+        <h2>Похожие ингредиенты</h2>
+        <div class="tags">
+          <a class="tag" *ngFor="let ingredient of relatedIngredients"
+            [routerLink]="'/ingredients/list/' + ingredient.id">{{ ingredient.name }}</a>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

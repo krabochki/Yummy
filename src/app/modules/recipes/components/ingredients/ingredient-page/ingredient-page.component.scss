@@ -1,0 +1,61 @@
+.wrap{
+    padding: 2em calc(14.4vw + 0 * (100vw - 768px) / 760);
+}
+h1{
+    font-size: var(--font-xxl);
+    font-family: var(--font-family-accent);
+    margin-bottom: 1em;text-align: center;
+}
+.image{
+    width: 15em;
+    height: 15em;
+    border-radius: 100%;
+    background-position: center;
+    background-size: cover;
+    background-color: var(--scroll-thumb);
+    background-image: url(../../../../../../assets/images/ingredient.png);
+}
+.container{
+    display: grid;
+    column-gap: 2em;
+    align-items: center;
+    justify-content: center;
+    grid-template-columns: max-content 1fr;
+}
+
+.tag{
+    cursor: pointer;
+        width: fit-content;
+        height: fit-content;
+        padding: 0.25em 0.5em;
+        border-radius: 0.5em;
+        background-color: var(--color-background-deeper-unactive);
+
+}
+.tags{
+    display: flex;
+        flex-direction: row;
+        row-gap: 0.5em;
+        column-gap: 0.5em;
+        align-items: center;
+        flex-wrap: wrap;
+}
+p{
+    margin-top: 1em;
+}
+
+.info{
+    display: flex;
+    flex-direction: column;
+    row-gap: 1em;
+}
+section{
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.5em;
+}
+
+h2{
+    font-weight: 600;
+    font-size: 1.1em;
+}

@@ -104,6 +104,7 @@
                       <div *ngIf="autocompleteTypes.length === 0">
                         <div class="no-found-recipes">
                           <p>Ничего не найдено</p>
+                          <svg-icon [applyClass]="true" class="tomato" [src]="baseSvgPath+'shocked-tomato.svg'" />
                         </div>
                       </div>
                       <li *ngFor="let item of autocompleteTypes" (mousedown)="chooseRecipe(item)">

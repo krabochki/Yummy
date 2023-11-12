@@ -20,6 +20,7 @@ import { RecipesModule } from './modules/recipes/recipes.module';
 import { UserPagesModule } from './modules/user-pages/user-pages.module';
 import { PlanService } from './modules/planning/services/plan-service';
 import { AuthService } from './modules/authentication/services/auth.service';
+import { IngredientService } from './modules/recipes/services/ingredient.service';
 
 export function initializeSections(sectionSerivce: SectionService) {
   return () => sectionSerivce.loadSectionData();
@@ -39,6 +40,15 @@ export function initializeCurrentUser(authService: AuthService) {
 export function initializePlans(planService: PlanService) {
   return () => planService.loadPlanData();
 }
+
+export function initializeIngredients(ingredientService: IngredientService) {
+  return () => ingredientService.loadIngredientsData();
+}
+
+export function initializeIngredientsGroupsData(ingredientService: IngredientService) {
+  return () => ingredientService.loadIngredientsGroupsData();
+}
+
 @NgModule({
   declarations: [AppComponent, HeaderComponent, FooterComponent],
   imports: [
@@ -95,6 +105,21 @@ export function initializePlans(planService: PlanService) {
       deps: [PlanService],
       multi: true,
     },
+    IngredientService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeIngredients,
+      deps: [IngredientService],
+      multi: true,
+    },
+    IngredientService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeIngredientsGroupsData,
+      deps: [IngredientService],
+      multi: true,
+    },
+
     AdminGuard,
     ModeratorGuard,
     RouteEventsService,

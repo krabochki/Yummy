@@ -221,7 +221,7 @@ export class CategoryCreatingComponent
             }`,
             'success',
             'category',
-            '',
+            this.currentUser.role==='user'?'':'/categories/list/'+this.newCategory.id,
           );
           this.notifyService
             .sendNotification(notify, this.currentUser)

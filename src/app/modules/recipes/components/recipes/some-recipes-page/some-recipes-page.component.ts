@@ -20,6 +20,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { PlanService } from 'src/app/modules/planning/services/plan-service';
 import { IPlan, nullPlan } from 'src/app/modules/planning/models/plan';
 import { baseComparator } from 'src/tools/common';
+import { IIngredient, nullIngredient } from '../../../models/ingredients';
 
 @Component({
   templateUrl: './some-recipes-page.component.html',
@@ -53,6 +54,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
   protected creatingMode: boolean = false;
   protected filter: string = '';
 
+  ingredient: IIngredient = nullIngredient;
   protected recipesToShow: IRecipe[] = [];
   protected allRecipes: IRecipe[] = [];
 
@@ -91,7 +93,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
         this.router.navigateByUrl('/recipes');
       this.setRecipeType(this.filter);
 
-      this.currentUserInit(data['CategoryResolver']);
+      this.currentUserInit(data['CategoryResolver'],data['IngredientResolver']);
 
       this.dataLoad = true;
     });
@@ -144,6 +146,8 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
       case 'most-favorite':
         this.recipeType = RecipeType.MostFavorite;
         break;
+      case 'ingredient-recipes':
+        this.recipeType =RecipeType.ByIngredient
     }
   }
 
@@ -285,6 +289,9 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
         this.allRecipes = this.cookedRecipes;
         break;
       case RecipeType.All:
+        this.allRecipes = this.allRecipes.filter(
+          (r) => r.authorId !== this.currentUser.id,
+        );
         this.allRecipes = [...this.allRecipes, ...this.myRecipes];
         break;
     }
@@ -303,13 +310,21 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     this.followingRecipes = this.followingRecipes.slice(0, 8);
   }
 
-  private recipeSourceInit(categoryFromData: ICategory): void {
+  private recipeSourceInit(categoryFromData: ICategory, ingredientFromData:IIngredient): void {
     this.recipeService.recipes$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedRecipes: IRecipe[]) => {
         if (this.recipeType === RecipeType.Category) {
           this.categoryInit(categoryFromData, receivedRecipes);
-        } else {
+          return
+        }
+        if (this.recipeType === RecipeType.ByIngredient) {
+      
+          this.ingredient = ingredientFromData;
+          this.allRecipes = this.recipeService.getRecipesByIngredient(this.recipeService.getPublicAndAllMyRecipes(receivedRecipes,this.currentUser.id), ingredientFromData);
+          this.recipesToShow = this.allRecipes.slice(0, 8)
+        }
+        else {
           this.currentUserPlanInit();
           this.getRecipesOfAllTypes(receivedRecipes);
           this.setRecipesByType();
@@ -332,12 +347,12 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
       });
   }
 
-  private currentUserInit(categoryFromData: ICategory): void {
+  private currentUserInit(categoryFromData: ICategory, ingredientFromData:IIngredient): void {
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((user: IUser) => {
         this.currentUser = user;
-        this.recipeSourceInit(categoryFromData);
+        this.recipeSourceInit(categoryFromData,ingredientFromData);
       });
   }
 
@@ -345,9 +360,17 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     if (recipeType === RecipeType.Category) {
       return this.category.name;
     }
+    if (recipeType === RecipeType.ByIngredient) {
+      return this.ingredient.name;
+    }
     return recipeTitles[recipeType] || '';
   }
   protected getNoRecipesTextByRecipetype(recipeType: RecipeType): string {
+    if (recipeType === RecipeType.ByIngredient) {
+      return (
+       `Ни один кулинар пока что не создал рецепт с ингредиентом «${this.ingredient.name}». Можете создать рецепт сами или перейти ко всем ингредиентам`
+      );
+    }
     return recipeNoRecipesText[recipeType] || '';
   }
   protected getNoRecipesButtonTextByRecipetype(recipeType: RecipeType): string {

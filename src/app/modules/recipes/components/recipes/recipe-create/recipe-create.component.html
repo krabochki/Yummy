@@ -394,7 +394,7 @@
 
             <app-button class="main" (click)="areObjectsEqual() && form.valid ? submitForm() : null" [text]="editMode?'Изменить':'Сохранить'"
 [title]="!form.valid?'Рецепт должен содержать как минимум имя. Если в рецепте есть нутриенты, ингредиенты или инструкции, они должны также содержать как минимум навание (содержание для инструкции)':''"              [color]="'sec'" [disabled]="areObjectsEqual() && form.valid" [style]="'filled'" [rounded]="true"></app-button>
-            <p>Если вы передумал {{editMode?' менять ':' добавлять '}} рецепт, <em>отмени</em> его {{editMode?' изменение':' добавление'}}. Все данные придется
+            <p>Если вы передумали {{editMode?' менять ':' добавлять '}} рецепт, <em>отмените</em> его {{editMode?' изменение':' добавление'}}. Все данные придется
               вводить повторно, если вы захотите {{editMode?' изменить ':' добавить '}}  этот рецепт снова </p>
 
             <app-button  (click)="exitModalShow = true" [text]="'Отменить'" [color]="'prim'" [style]="'outlined'"

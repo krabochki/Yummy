@@ -1,0 +1,121 @@
+
+drag-scroll {
+    width: 100%;
+    gap: 1em;
+    column-gap: 1em;
+    display: flex;
+
+    app-ingredient-list-item {
+        height: 100%;
+        margin: 0 0.5em;
+        min-width: calc(19% - 0.6em);
+        margin-bottom: 0.5em;
+    }
+}
+
+.svg-arrow {
+    height: 3em;
+    margin-right: 0.7em;
+    width: 2em;
+    pointer-events: all;
+
+    stroke-width: 2em;
+    display: block;
+    stroke: var(--scroll-thumb);
+}
+
+.right {
+    margin-right: 0.2em;
+}
+
+.has-scroll {
+    cursor: grab;
+
+    &::after {
+        height: calc(100% - 1.3em);
+        width: 15%;
+        background: linear-gradient(to right,
+                transparent 0%,
+                var(--color-background));
+
+        z-index: 1;
+        right: -0.2em;
+        top: 0;
+        content: "";
+        position: absolute;
+        pointer-events: none;
+    }
+}
+
+.wrap {
+    position: relative;
+
+    .scroll-left {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        height: fit-content;
+        margin: auto;
+        right: -3em;
+
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .scroll-right {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        left: -3em;
+        pointer-events: none;
+
+        transform: scale(-1, -1);
+
+        z-index: 1;
+    }
+}
+
+@media (max-width: 1400px) {
+    drag-scroll {
+        app-ingredient-list-item {
+            min-width: calc(24% - 0.7em);
+        }
+    }
+}
+
+@media (max-width: 960px) {
+    drag-scroll {
+        app-ingredient-list-item {
+            min-width: calc(32.5% - 0.7em);
+        }
+    }
+}
+
+@media (max-width: 700px) {
+    drag-scroll {
+        app-ingredient-list-item {
+            min-width: calc(49% - 0.7em);
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .has-scroll {
+        &::after {
+            display: none;
+        }
+    }
+
+    .scroll-left,
+    .scroll-right {
+        display: none;
+    }
+
+    drag-scroll {
+        app-ingredient-list-item {
+            min-width: 8em
+        }
+    }
+
+}

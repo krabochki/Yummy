@@ -530,6 +530,15 @@ a {
   text-align: center;
   padding: 2em;
   height: 100%;
+  row-gap: 1em;
+  p{
+    color: var(--color-foreground-unactive);
+  }
+
+  .tomato {
+      fill: var(--color-foreground-unactive);
+      height: 8em;
+    }
 }
 
 .autocomplete-list ul {
@@ -604,6 +613,8 @@ a {
   width: 100%;
   background-color: var(--color-background-deeper);
 
+  
+
   &::-webkit-scrollbar {
     width: 12px;
   }
@@ -619,6 +630,7 @@ a {
     border: 3px solid var(--scroll-body);
   }
 }
+
 
 .list {
   margin: 1em;

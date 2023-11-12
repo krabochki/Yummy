@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ICategory, ISection } from '../models/categories';
+import { ICategory, ISection, nullCategory } from '../models/categories';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 import { categoriesUrl } from 'src/tools/source';
@@ -32,6 +32,20 @@ export class CategoryService {
   }
 
 
+  getRelatedCategories(recipes: IRecipe[],categories:ICategory[]): ICategory[] {
+     const uniqueCategories: { [id: string]: boolean } = {};
+     recipes.forEach((recipe) => {
+       recipe.categories.forEach((categoryId) => {
+         uniqueCategories[categoryId] = true;
+       });
+     });
+
+     const uniqueCategoriesArray: ICategory[] = categories.filter(
+       (category) => uniqueCategories[category.id],
+     );
+
+     return uniqueCategoriesArray;
+  }
 
   deleteCategory(id: number) {
     return this.http.delete<ICategory>(`${this.urlCategories}/${id}`).pipe(

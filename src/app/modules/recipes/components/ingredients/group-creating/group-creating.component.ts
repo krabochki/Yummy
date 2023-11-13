@@ -94,8 +94,8 @@ export class GroupCreatingComponent
     this.ingredientService.ingredients$
       .pipe(takeUntil(this.destroyed$))
       .subscribe(
-        (receivedIngredientS: IIngredient[]) =>
-          (this.allIngredients = receivedIngredientS),
+        (receivedIngredients: IIngredient[]) =>
+          (this.allIngredients = receivedIngredients.filter(i=>i.status === 'public')),
       );
   }
 

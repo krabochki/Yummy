@@ -51,7 +51,6 @@
   height: var(--font-2xl);
   position: relative;
   border-radius: 100%;
-  overflow: hidden;
   cursor: pointer;
   position: relative;
   &::after{
@@ -93,7 +92,6 @@ z-index: 2;  fill: var(--color-background);
   width: var(--font-2xl);
   height: var(--font-2xl);
   position: relative;
-  transition: 0.3s ease-in-out;
 &::after{
     width: 0px;
     height: 0px;

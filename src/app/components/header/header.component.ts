@@ -32,6 +32,9 @@ import { PlanService } from 'src/app/modules/planning/services/plan-service';
 import { CalendarService } from 'src/app/modules/planning/services/calendar.service';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { TimePastService } from 'ng-time-past-pipe';
+import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
+import { IngredientService } from 'src/app/modules/recipes/services/ingredient.service';
+import { CategoryService } from 'src/app/modules/recipes/services/category.service';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -60,6 +63,8 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
 
   maxNumberOfPopupsInSameTime = 3;
   popupLifetime = 5; //в секундах
+
+  adminActionsCount = 0;
 
   creatingMode = false;
 
@@ -108,6 +113,9 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     private notifyService: NotificationService,
     private router: Router,
     private timePastService: TimePastService,
+    private recipeService: RecipeService,
+    private categoryService: CategoryService,
+    private ingredientService: IngredientService,
     private calendarService: CalendarService,
     private planService: PlanService,
   ) {
@@ -142,6 +150,40 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
       this.mobile = false;
     }
     this.usersInit();
+    this.recipesInit();
+  }
+
+  recipesInit() {
+    this.recipeService.recipes$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((recipes) => {
+        const awaitingRecipes = recipes.filter(
+          (r) => r.status === 'awaits',
+        ).length;
+        let reports = 0;
+        recipes.forEach((recipe) => {
+          if (recipe.reports) reports += recipe.reports.length;
+        });
+        this.ingredientService.ingredients$
+          .pipe(takeUntil(this.destroyed$))
+          .subscribe((ingredients) => {
+            const awaitingIngredients = ingredients.filter(
+              (i) => i.status === 'awaits',
+            ).length;
+            this.categoryService.categories$
+              .pipe(takeUntil(this.destroyed$))
+              .subscribe((categories) => {
+                const awaitingCategories = categories.filter(
+                  (c) => c.status === 'awaits',
+                ).length;
+                this.adminActionsCount =
+                  reports +
+                  awaitingRecipes +
+                  awaitingCategories +
+                  awaitingIngredients;
+              });
+          });
+      });
   }
 
   ngDoCheck(): void {

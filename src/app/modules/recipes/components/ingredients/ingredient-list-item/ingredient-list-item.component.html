@@ -7,7 +7,7 @@
     <div class="ingredient" *ngIf="ingredient.id > 0; else nullCategory"></div>
   </div>
   <a
-    [routerLink]="'/ingredients/list/' + ingredient.id"
+    [routerLink]="link"
   >
     <div style="position: relative; overflow: visible">
       <h1 class="name">

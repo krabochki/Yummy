@@ -1,134 +1,143 @@
 <app-banner [notMain]="false" [background]="'main-banner-background'" [link]="'match'"
     [label]="'Готовьте с радостью\nЕшьте с удовольствием'" [buttonText]="'Подобрать рецепт'"></app-banner>
 
-
 <div class="block">
-<a routerLink="/recipes/best">
-        <div  class="head">
+    <a routerLink="/recipes/best">
+        <div class="head">
             <h2>Популярные рецепты</h2>
-    
+
             <svg-icon class="arrow-svg" [applyClass]="true"
                 [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
         </div>
-</a>
+    </a>
     <div class="recipes horizontal">
         <app-horizontal-recipe-list [recipes]="popularRecipes"></app-horizontal-recipe-list>
     </div>
 </div>
 
 <div class="block">
-   <a routerLink="/sections">
-       <div  class="head">
+    <a routerLink="/sections">
+        <div class="head">
             <h2>Разделы</h2>
-    
+
             <svg-icon class="arrow-svg" [applyClass]="true"
                 [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
         </div>
-   </a>
-   <div class="recipes"> <app-horizontal-category-list [context]="'section'" [showRecipesNumber]="true"  [categories]="allSections"></app-horizontal-category-list></div>
-
+    </a>
+    <div class="recipes">
+        <app-horizontal-category-list [context]="'section'" [showRecipesNumber]="true"
+            [categories]="allSections"></app-horizontal-category-list>
+    </div>
 </div>
 
-
-<app-banner *ngIf="currentUser.id === 0" [link]="'greetings'"
-    [info]="'Получи преимущества и расширенные функции зарегистрированных кулинаров'"
-    [label]="'Откроем мир вкуса вместе'" [buttonText]="'Создать аккаунт'"
+<app-banner *ngIf="currentUser.id === 0" [link]="'greetings'" [info]="
+    'Получи преимущества и расширенные функции зарегистрированных кулинаров'
+  " [label]="'Откроем мир вкуса вместе'" [buttonText]="'Создать аккаунт'"
     [background]="'reg-banner-background'"></app-banner>
 
-<app-banner *ngIf="currentUser.id !== 0"
-    [info]="'Добавляй подробные, проверенные временем рецепты и делись опытом с другими кулинарами'"
-    [label]="'Добавляй рецепты и делитесь ими'" [buttonText]="'Создать рецепт'"
-    [background]="'share-recipes-banner-background'"  (clickButton)="creatingMode=true"></app-banner>
+<app-banner *ngIf="currentUser.id !== 0" [info]="
+    'Добавляй подробные, проверенные временем рецепты и делись опытом с другими кулинарами'
+  " [label]="'Добавляй рецепты и делитесь ими'" [buttonText]="'Создать рецепт'"
+    [background]="'share-recipes-banner-background'" (clickButton)="creatingMode = true"></app-banner>
 
-    <div class="block">
+<div class="block">
     <a routerLink="/recipes/most-cooked">
-        <div  class="head">
+        <div class="head">
             <h2>Готовят чаще всего</h2>
-    
+
             <svg-icon class="arrow-svg" [applyClass]="true"
                 [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
         </div>
     </a>
-    <div class="recipes horizontal"><app-horizontal-recipe-list  [recipes]="cookedRecipes"></app-horizontal-recipe-list></div>
-
+    <div class="recipes horizontal">
+        <app-horizontal-recipe-list [recipes]="cookedRecipes"></app-horizontal-recipe-list>
+    </div>
 </div>
 
-<app-banner  (clickButton)="currentUser.id===0?noAccessModalShow=true:null"
-    [info]="'Добавляй в разные списки по категориям продукты, которые планируешь купить в магазине'"
-    [label]="'Список покупок всегда под рукой'" [buttonText]="'Список покупок'"
-    [background]="'shopping-banner-background'"   [link]="currentUser.id>0?'/plan/shopping-list':''"></app-banner>
+<app-banner (clickButton)="currentUser.id === 0 ? (noAccessModalShow = true) : null" [info]="
+    'Добавляй в разные списки по категориям продукты, которые планируешь купить в магазине'
+  " [label]="'Список покупок всегда под рукой'" [buttonText]="'Список покупок'"
+    [background]="'shopping-banner-background'" [link]="currentUser.id > 0 ? '/plan/shopping-list' : ''"></app-banner>
 
-
-    <div class="block">
+<div class="block">
     <a routerLink="/recipes/most-favorite">
-        <div  class="head">
+        <div class="head">
             <h2>Сохраняют чаще всего</h2>
-    
+
             <svg-icon class="arrow-svg" [applyClass]="true"
                 [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
         </div>
     </a>
-  
-    <div class="recipes horizontal"><app-horizontal-recipe-list  [recipes]="favoriteRecipes"></app-horizontal-recipe-list></div>
-  </div>
-    <app-banner (clickButton)="currentUser.id===0?noAccessModalShow=true:null"
-    [info]="'Планирование рецептов никогда не было таким удобным и интересным! Создавай отдельные планы на каждый рецепт и получай напоминания'"
-    [label]="'Планируй рецепты в удобном формате'" [buttonText]="'Календарь рецептов'"
-    [background]="'planning-banner-background'"  [link]="currentUser.id>0?'/plan/calendar':''"></app-banner>
+
+    <div class="recipes horizontal">
+        <app-horizontal-recipe-list [recipes]="favoriteRecipes"></app-horizontal-recipe-list>
+    </div>
+</div>
+
+<div class="block">
+    <a routerLink="/ingredients">
+        <div class="head">
+            <h2>Ингредиенты</h2>
+
+            <svg-icon class="arrow-svg" [applyClass]="true"
+                [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
+        </div>
+    </a>
+
+    <div class="recipes">
+        <app-ingredients-horizontal-list [context]="'group'" [ingredients]="groups" />
+    </div>
+</div>
+
+<app-banner (clickButton)="currentUser.id === 0 ? (noAccessModalShow = true) : null" [info]="
+    'Планирование рецептов никогда не было таким удобным и интересным! Создавай отдельные планы на каждый рецепт и получай напоминания'
+  " [label]="'Планируй рецепты в удобном формате'" [buttonText]="'Календарь рецептов'"
+    [background]="'planning-banner-background'" [link]="currentUser.id > 0 ? '/plan/calendar' : ''"></app-banner>
 <div class="block">
     <a routerLink="/recipes/recent">
-        <div  class="head">
+        <div class="head">
             <h2>Свежие рецепты</h2>
-    
+
             <svg-icon class="arrow-svg" [applyClass]="true"
                 [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
         </div>
     </a>
-    <div class="recipes horizontal"><app-horizontal-recipe-list  [recipes]="recentRecipes"></app-horizontal-recipe-list></div>
-
+    <div class="recipes horizontal">
+        <app-horizontal-recipe-list [recipes]="recentRecipes"></app-horizontal-recipe-list>
+    </div>
 </div>
-<app-banner *ngIf="currentUser.id !== 0" [link]="'cooks'"
-    [info]="'Посмотри профили кулинаров и подчерпни идеи для ведения собственного профиля и рецептов!'"
-    [label]="'Находи вдохновение совсем рядом'" [buttonText]="'Все кулинары'"
+<app-banner *ngIf="currentUser.id !== 0" [link]="'cooks'" [info]="
+    'Посмотри профили кулинаров и подчерпни идеи для ведения собственного профиля и рецептов!'
+  " [label]="'Находи вдохновение совсем рядом'" [buttonText]="'Все кулинары'"
     [background]="'inspiration-banner-background'"></app-banner>
 
-<div class="block" *ngIf="currentUser.id!==0 && userRecipes.length>0">
-
-    <a routerLink="/recipes/yours" >
+<div class="block" *ngIf="currentUser.id !== 0 && userRecipes.length > 0">
+    <a routerLink="/recipes/yours">
         <div class="head">
             <h2>Твои рецепты</h2>
-    
+
             <svg-icon class="arrow-svg" [applyClass]="true"
                 [src]="'../../../../../assets/images/svg/go-back.svg'"></svg-icon>
         </div>
     </a>
 
-
-    <div *ngIf="userRecipes.length >=4; else vertical">
-
-        <div class="recipes horizontal"><app-horizontal-recipe-list
-                [recipes]="userRecipes"></app-horizontal-recipe-list></div>
-
+    <div *ngIf="userRecipes.length >= 4; else vertical">
+        <div class="recipes horizontal">
+            <app-horizontal-recipe-list [recipes]="userRecipes"></app-horizontal-recipe-list>
+        </div>
     </div>
 
-
     <ng-template #vertical>
-
-        <div class="recipes"><app-vertical-recipe-list [cols]="4" [blocks]="userRecipes"></app-vertical-recipe-list>
+        <div class="recipes">
+            <app-vertical-recipe-list [cols]="4" [blocks]="userRecipes"></app-vertical-recipe-list>
         </div>
     </ng-template>
-
 </div>
 
-  <app-recipe-create style="z-index:10; position: fixed;" *ngIf="creatingMode"  (closeEmitter)="closeEdit()" @modal ></app-recipe-create>
+<app-recipe-create style="z-index: 10; position: fixed" *ngIf="creatingMode" (closeEmitter)="closeEdit()"
+    @modal></app-recipe-create>
 
-  <app-modal
-  @modal
-  *ngIf="noAccessModalShow"
-  [style]="'prim'"
-  [title]="'Доступ к разделу ограничен'"
-  [type]="'yesOrNo'"
-  (resultEmit)="handleNoAccessModal($event)"
-  [buttonsText]="['Давайте','Не сейчас']"
-  [description]="'Этот раздел могут просматривать только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'"
-></app-modal>
+<app-modal @modal *ngIf="noAccessModalShow" [style]="'prim'" [title]="'Доступ к разделу ограничен'" [type]="'yesOrNo'"
+    (resultEmit)="handleNoAccessModal($event)" [buttonsText]="['Давайте', 'Не сейчас']" [description]="
+    'Этот раздел могут просматривать только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'
+  "></app-modal>

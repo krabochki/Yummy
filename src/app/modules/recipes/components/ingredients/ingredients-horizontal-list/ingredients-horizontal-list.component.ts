@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Input, OnChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { IIngredient, nullIngredient } from '../../../models/ingredients';
 import { DragScrollComponent } from 'ngx-drag-scroll';
 import { dragStart, dragEnd } from 'src/tools/common';
@@ -8,10 +8,9 @@ import { dragStart, dragEnd } from 'src/tools/common';
   templateUrl: './ingredients-horizontal-list.component.html',
   styleUrls: ['./ingredients-horizontal-list.component.scss'],
 })
-export class IngredientsHorizontalListComponent implements OnChanges {
-  @Input() ingredients: IIngredient[] = [];
-
-  @Input() showRecipesNumber: boolean = false;
+export class IngredientsHorizontalListComponent implements OnChanges, OnInit {
+  @Input() ingredients: any[] = [];
+  @Input() context: 'ingredient' | 'group' = 'ingredient';
 
   @ViewChild('list') list: ElementRef | null = null;
   disableDrag = false;
@@ -22,6 +21,10 @@ export class IngredientsHorizontalListComponent implements OnChanges {
   }
 
   @ViewChild('nav', { read: DragScrollComponent }) ds?: DragScrollComponent;
+
+  ngOnInit() {
+    this.onResize();
+  }
 
   ngOnChanges() {
     this.onResize();

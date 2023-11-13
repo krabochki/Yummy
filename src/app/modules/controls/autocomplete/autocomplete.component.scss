@@ -19,7 +19,7 @@ h2 {
 }
 
 .section.noone {
-  height: 30vh;
+  height: 25vh;
   text-align: center;
   padding: 2em;
 
@@ -35,16 +35,15 @@ h2 {
 }
 
 .autocomplete {
-  background-color: var(--color-background-deeper);
+  background-color: var(--color-background-deeper-unactive);
   position: absolute;
   top: calc(var(--base) + var(--space-xs) + var(--space-m));
-
   z-index: 3;
   width: 100%;
   max-height: max-content;
   z-index: 100;
 
-  height: 30vh;
+  max-height: 25vh;
   border-radius: var(--space-s) var(--space-s);
 
   overflow-y: auto !important;
@@ -55,14 +54,16 @@ h2 {
     justify-content: center;
     background-color: var(--color-secondary);
     color: var(--color-background);
-    width: 1.2em;
+    width: 1.5em;
+    max-width:1.5em;
+    text-overflow: ellipsis;
+    overflow: hidden;
     transition:
       background-color 0.3s ease-in-out,
       color 0.3s ease-in-out;
 
-    height: 1.2em;
-    font-size: 1rem;
-    line-height: 1;
+    height: 1.5em;
+        font-size: 0.9em;    line-height: 1;
     padding: 0;
     font-size: 0.8em;
     font-weight: 600;
@@ -74,6 +75,10 @@ h2 {
   }
 
   li.sections {
+    padding-left: 1em;
+  }
+
+  ol.one-layer li{
     padding-left: 1em;
   }
 
@@ -90,7 +95,7 @@ h2 {
       padding-left 0.3s ease-in-out;
 
     &:nth-of-type(2n + 1) {
-      background-color: var(--color-background-deeper-unactive);
+      background-color: var(--color-background-deeper);
     }
 
     &:hover {

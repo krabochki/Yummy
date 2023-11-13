@@ -87,6 +87,15 @@ export class IngredientService {
     return this.http.get<IIngredient[]>(this.urlIngredients);
   }
 
+  getAllNamesOfIngredient(ingredient:IIngredient): string[]{
+    let names = [];
+    names.push(ingredient.name.toLowerCase().trim())
+    const variations = ingredient.variations.map((variation) =>
+      variation.trim().toLowerCase(),
+    );
+    names = [...names, ...variations];
+    return names;
+  }
   getRelatedIngredients(ingredient: IIngredient, ingredients: IIngredient[]) {
     const targetName = ingredient.name.trim().toLowerCase();
     const targetVariations = ingredient.variations.map((variation) =>

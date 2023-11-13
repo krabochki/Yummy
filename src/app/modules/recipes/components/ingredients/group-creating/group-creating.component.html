@@ -1,0 +1,159 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="outer" (click)="clickBackgroundNotContent($event)">
+  <div class="inner">
+    <div class="close-button" (click)="closeEditModal()">
+      <svg-icon
+        [src]="'assets/images/svg/close.svg'"
+        [applyClass]="true"
+        class="close-svg"
+      ></svg-icon>
+    </div>
+<div class="cont">
+      <div class="header">
+        <h1>Создание группы ингредиентов</h1>
+      </div>
+      <div class="unique-content">
+        <form [formGroup]="form" #scrollContainer>
+          <div class="step-container">
+            <div class="main-info-control-with-image">
+              <div class="form-control">
+                <div class="image">
+                  <input
+                    type="file"
+                    (change)="onUserpicChange($event)"
+                    accept="image/*"
+                  />
+  
+                  <div
+                    class="delete"
+                    *ngIf="myImage !== defaultImage"
+                    (click)="
+                      myImage = defaultImage;
+                      this.form.get('image')?.setValue(null)
+                    "
+                  >
+                    <svg-icon
+                      [applyClass]="true"
+                      class="svgTrash"
+                      [src]="'assets/images/svg/trash.svg'"
+                    ></svg-icon>
+                  </div>
+                  <div
+                    class="userpic"
+                    [ngClass]="{
+                      'have-image': this.form.get('image')?.value !== null
+                    }"
+                    [ngStyle]="{ 'background-image': 'url(' + myImage + ')' }"
+                    alt="User Photo"
+                  ></div>
+                </div>
+              </div>
+              <div class="main-info-controls">
+                <div class="form-control">
+                  <h3>Название группы</h3>
+                  <app-usual-input
+                    [inputRequired]="true"
+                    [max]="30"
+                    id="name"
+                    formControlName="name"
+                    [placeholder]="'Придумай название группе'"
+                    required
+                    [value]="form.get('name')?.value"
+                    [error]="
+                      form.get('name')?.invalid &&
+                      (form.get('name')?.dirty || form.get('name')?.touched)
+                        ? 'Название группы должно содержать от 4 до 30 символов'
+                        : ''
+                    "
+                  ></app-usual-input>
+                </div>
+                 <div class="form-control">
+              <h3>Начальные ингредиенты</h3>
+  
+              <app-autocomplete  (ingredientEmitter)="addIngredient($event)"
+                [placeholder]="'Выберите ингредиенты в списке ниже'" [ingredients]="allIngredients" />
+              <div class="tags">
+                <div class="tag" *ngFor="let selected of selectedIngredients">
+                  {{ selected.name }}
+                  <span (click)="removeIngredient(selected)" class="remove-tag"><svg-icon [applyClass]="true"
+                      class="remove-tag-svg" [src]="'assets/images/svg/close.svg'"></svg-icon></span>
+                </div>
+              </div>
+              <div *ngIf="selectedIngredients.length === 0" class="no-categories">
+                Вы пока не выбрали ни один ингредиент
+              </div>
+            </div>
+               
+              </div>
+            </div>
+  
+             <div class="buttons">
+                  
+                  <app-button
+                    [title]="
+                      !(areObjectsEqual() && form.valid)
+                        ? 'Все поля должны быть корректно заполнены'
+                        : ''
+                    "
+                    [disabled]="
+                      areObjectsEqual() && form.valid
+                    "
+                    (click)="form.valid ? (saveModal = true) : null"
+                    [text]="'Опубликовать'"
+                    [color]="'sec'"
+                    [style]="'filled'"
+                    [rounded]="true"
+                  ></app-button>
+  
+                  
+                  <app-button
+                    (click)="closeEditModal()"
+                    [text]="'Отменить'"
+                    [color]="'prim'"
+                    [style]="'outlined'"
+                    type="button"
+                    [rounded]="true"
+                  ></app-button>
+                </div>
+  
+          </div>
+        </form>
+      </div>
+</div>
+  </div>
+</div>
+
+<app-modal
+  *ngIf="closeModal"
+  @modal
+  [style]="'prim'"
+  [title]="'Закрытие окна'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleCloseModal($event)"
+  [buttonsText]="['Да', 'Нет']"
+  [description]="'Вы уверены, что не хотите опубликовать группу?'"
+>
+</app-modal>
+
+<app-modal
+  @modal
+  *ngIf="saveModal"
+  [style]="'prim'"
+  [title]="'Публикация группы'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleSaveModal($event)"
+  [buttonsText]="['Да', 'Нет']"
+  [description]="'Вы уверены, что хотите опубликовать группу?'"
+></app-modal>
+
+<app-modal
+  @modal
+  *ngIf="successModal"
+  [style]="'sec'"
+  [title]="'Группа успешно сохранена'"
+  [type]="'Ok'"
+  (resultEmit)="handleSuccessModal()"
+  [buttonsText]="['Хорошо']"
+  [description]="'Группа «'+ newGroup.name+'» успешно создана и опубликована'"
+></app-modal>

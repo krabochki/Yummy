@@ -5240,36 +5240,29 @@
         "картофель"
       ],
       "emojiStatus": {
-        "name": "Dolphin",
-        "unified": "1F42C",
+        "name": "Polar Bear",
+        "unified": "1F43B-200D-2744-FE0F",
         "keywords": [
-          "dolphin",
+          "polar bear",
           "animal",
-          "nature",
-          "fish",
-          "sea",
-          "ocean",
-          "flipper",
-          "fins",
-          "beach"
+          "arctic"
         ],
         "sheet": [
           11,
-          31
+          46
         ],
+        "shortName": "polar_bear",
         "shortNames": [
-          "dolphin",
-          "flipper"
+          "polar_bear"
         ],
-        "shortName": "dolphin",
-        "id": "dolphin",
-        "native": "🐬",
+        "id": "polar_bear",
+        "native": "🐻‍❄️",
         "skinVariations": [],
         "emoticons": [],
         "hidden": [],
         "text": "",
         "set": "apple",
-        "colons": ":dolphin:"
+        "colons": ":polar_bear:"
       }
     },
     {

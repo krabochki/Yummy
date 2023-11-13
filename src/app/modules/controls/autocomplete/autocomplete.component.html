@@ -4,7 +4,7 @@
 
   <div class="autocomplete" @height *ngIf="autocompleteShow">
     <div class="section noone"
-      *ngIf="sectionMode?mySections.length===0: ingredientsGroups.length? filterIngredientsGroups.length===0: group.length === 0">
+      *ngIf="noAnySearchMatches">
       <p>
         {{sectionMode?'По вашему запросу нет никаких секций. Попробуйте изменить параметры поиска': ingredientsGroups.length?'По вашему запросу нет никаким групп ингредиентов. Попробуйте изменить параметры поиска':'По вашему запросу нет никаких категорий. Попробуйте изменить параметры поиска.'}}
       </p>

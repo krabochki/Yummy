@@ -34,6 +34,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
   currentUser: IUser = { ...nullUser };
   popularRecipesLoaded = false;
   userRecipes: IRecipe[] = [];
+  MAX_DISPLAY_SIZE = 8;
   protected destroyed$: Subject<void> = new Subject<void>();
 
   constructor(
@@ -41,7 +42,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
     private sectionService: SectionService,
     private categoryService: CategoryService,
     private router: Router,
-    private cd:ChangeDetectorRef,
+    private cd: ChangeDetectorRef,
 
     private titleService: Title,
     private authService: AuthService,
@@ -54,7 +55,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe((categories: ICategory[]) => {
         this.categories = categories;
-    })
+      });
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((currentUser: IUser) => {
@@ -64,7 +65,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
           if (this.currentUser.id !== 0) {
             this.userRecipes = this.recipeService
               .getRecipesByUser(this.allRecipes, this.currentUser.id)
-              .slice(0, 8);
+              .slice(0, this.MAX_DISPLAY_SIZE);
           }
         }
       });
@@ -81,35 +82,47 @@ export class MainPageComponent implements OnInit, OnDestroy {
           if (this.currentUser.id !== 0) {
             this.userRecipes = this.recipeService
               .getRecipesByUser(this.allRecipes, this.currentUser.id)
-              .slice(0, 8);
+              .slice(0, this.MAX_DISPLAY_SIZE);
           }
           if (!this.popularRecipesLoaded && this.allRecipes.length > 0) {
             this.popularRecipes = this.recipeService
               .getPopularRecipes(publicRecipes)
-              .slice(0, 8);
+              .slice(0, this.MAX_DISPLAY_SIZE);
             this.popularRecipesLoaded = true;
           }
           this.favoriteRecipes = this.recipeService
             .getMostFavoriteRecipes(publicRecipes)
-            .slice(0, 8);
+            .slice(0, this.MAX_DISPLAY_SIZE);
           this.cookedRecipes = this.recipeService
             .getMostCookedRecipes(publicRecipes)
-            .slice(0, 8);
+            .slice(0, this.MAX_DISPLAY_SIZE);
           this.recentRecipes = this.recipeService
             .getRecentRecipes(publicRecipes)
-            .slice(0, 8);
+            .slice(0, this.MAX_DISPLAY_SIZE);
         }
 
         this.sectionService.sections$
           .pipe(takeUntil(this.destroyed$))
           .subscribe((data: ISection[]) => {
             this.allSections = data;
-            this.allSections = this.allSections.sort((a,b)=>baseComparator(this.sectionService.getNumberRecipesOfSection(b,this.allRecipes,this.categories),this.sectionService.getNumberRecipesOfSection(a,this.allRecipes,this.categories)))
-            this.allSections = this.sectionService.getNotEmptySections(
-              this.allSections,
-            ).slice(0,8);
+            this.allSections = this.allSections.sort((a, b) =>
+              baseComparator(
+                this.sectionService.getNumberRecipesOfSection(
+                  b,
+                  this.allRecipes,
+                  this.categories,
+                ),
+                this.sectionService.getNumberRecipesOfSection(
+                  a,
+                  this.allRecipes,
+                  this.categories,
+                ),
+              ),
+            );
+            this.allSections = this.sectionService
+              .getNotEmptySections(this.allSections)
+              .slice(0, this.MAX_DISPLAY_SIZE);
             this.cd.markForCheck();
-          
           });
       });
   }

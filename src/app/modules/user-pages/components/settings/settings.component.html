@@ -18,7 +18,7 @@
           <div class="switches">
             <ng-container *ngFor="let item of steps; let i = index">
               <button
-                *ngIf="user.role !== 'user' ? true : i === 4 ? false : true"
+                *ngIf="showBlock(i)"
                 class="switch"
                 [ngClass]="{ selected: step === i }"
                 (click)="step = i"
@@ -30,7 +30,7 @@
           <div class="mobile-switches">
             <ng-container *ngFor="let item of steps; let i = index">
               <button
-                *ngIf="user.role !== 'user' ? true : i === 4 ? false : true"
+                *ngIf="showBlock(i)"
                 class="header-button"
                 [ngClass]="{ selected: step === i }"
                 (click)="step = i"
@@ -163,7 +163,7 @@
               </ng-container>
             </div>
           </div>
-          <div *ngIf="step === 4">
+          <div *ngIf="step === MANAGERS_SETTINGS_BLOCK_NUM">
             <h2>Управление</h2>
             <div class="blocks third">
               <ng-container *ngFor="let section of managersPreferences">

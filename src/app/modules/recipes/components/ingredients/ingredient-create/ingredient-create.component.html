@@ -2,11 +2,7 @@
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <div class="outer" (click)="clickBackgroundNotContent($event)">
   <div class="inner">
-    <div class="close-button" (click)="
-        this.areObjectsEqual()
-          ? (this.exitModalShow = true)
-          : this.closeEmitter.emit(true)
-      ">
+    <div class="close-button" (click)="closeIngredientCreating()">
       <svg-icon [src]="'assets/images/svg/close.svg'" [applyClass]="true" class="close-svg"></svg-icon>
     </div>
     <div class="header">
@@ -55,9 +51,7 @@
             <h3>Название ингредиента</h3>
             <app-usual-input [value]="this.form.get('ingredientName')?.value" [inputRequired]="true" [max]="50"
               type="text" formControlName="ingredientName" required [error]="
-                form.get('ingredientName')?.invalid &&
-                (form.get('ingredientName')?.dirty ||
-                  form.get('ingredientName')?.touched)
+              isControlValid(form,'ingredientName')
                   ? 'Название ингредиента должно содержать от 3 символов'
                   : ''
               " [placeholder]="'Введите название будущего ингредиента'"></app-usual-input>
@@ -178,9 +172,7 @@
                       <div class="num">{{ i + 1 }}</div>
 
                       <app-usual-input [value]="variation.get('content')?.value" [inputRequired]="true" [error]="
-                          variation.get('content')?.invalid &&
-                          (variation.get('content')?.dirty ||
-                            variation.get('content')?.touched)
+                       isControlValid(variation,'content')
                             ? 'error'
                             : ''
                         " [max]="50" [showError]="false" type="text" formControlName="content" [placeholder]="
@@ -196,9 +188,7 @@
                   </div>
                   <div>
                     <div class="error" *ngIf="
-                        variation.get('content')?.invalid &&
-                        (variation.get('content')?.dirty ||
-                          variation.get('content')?.touched)
+                        isControlValid(variation,'content')
                       ">
                       {{
                       getInputPlaceholderOfControlGroup("variations")
@@ -252,9 +242,7 @@
 
                         <app-usual-input [rows]="2" [inputType]="'textarea'" [value]="advantage.get('content')?.value"
                           [inputRequired]="true" [error]="
-                            advantage.get('content')?.invalid &&
-                            (advantage.get('content')?.dirty ||
-                              advantage.get('content')?.touched)
+                            isControlValid(advantage,'content')
                               ? 'error'
                               : ''
                           " [max]="500" [showError]="false" type="text" formControlName="content" [placeholder]="
@@ -270,9 +258,7 @@
                     </div>
                     <div>
                       <div class="error" *ngIf="
-                          advantage.get('content')?.invalid &&
-                          (advantage.get('content')?.dirty ||
-                            advantage.get('content')?.touched)
+                          isControlValid(advantage,'content')
                         ">
                         {{
                         getInputPlaceholderOfControlGroup(controlGroup)
@@ -311,9 +297,7 @@
                     <div class="num">{{ i + 1 }}</div>
 
                     <app-usual-input [value]="nutrition.get('name')?.value" [inputRequired]="true" [error]="
-                        nutrition.get('name')?.invalid &&
-                        (nutrition.get('name')?.dirty ||
-                          nutrition.get('name')?.touched)
+                        isControlValid(nutrition,'name')
                           ? 'Название нутриента должно содержать не менее 2 и не более 20 символов'
                           : ''
                       " [max]="20" [showError]="false" type="text" id="nutritionName{{ i }}" formControlName="name"
@@ -321,9 +305,7 @@
 
                     <app-usual-input [max]="6" [value]="nutrition.get('quantity')?.value" id="nutritionAmount{{ i }}"
                       formControlName="quantity" [placeholder]="'Кол-во'" [showError]="false" [error]="
-                        nutrition.get('quantity')?.invalid &&
-                        (nutrition.get('quantity')?.dirty ||
-                          nutrition.get('quantity')?.touched)
+                        isControlValid(nutrition,'quantity')
                           ? 'Количество нутриента должно содержать не более 6 символов'
                           : ''
                       "></app-usual-input>
@@ -339,12 +321,10 @@
                   </div>
                   <div>
                     <div class="error" *ngIf="
-                        nutrition.get('name')?.invalid &&
-                        (nutrition.get('name')?.dirty ||
-                          nutrition.get('name')?.touched)
+                        isControlValid(nutrition,'name')
                       ">
                       Название нутриента обязательно и должно содержать не менее
-                      2 и не более 100 символов
+                      2 символов
                     </div>
                   </div>
                 </div>
@@ -380,9 +360,7 @@
                     <div class="num">{{ i + 1 }}</div>
 
                     <app-usual-input [value]="source.get('name')?.value" [inputRequired]="true" [error]="
-                        source.get('name')?.invalid &&
-                        (source.get('name')?.dirty ||
-                          source.get('name')?.touched)
+                        isControlValid(source,'name')
                           ? ' '
                           : ''
                       " [max]="50" [showError]="false" type="text" id="nutritionName{{ i }}" formControlName="name"
@@ -391,9 +369,7 @@
                     <app-usual-input required [max]="1000" [value]="source.get('link')?.value"
                       id="nutritionAmount{{ i }}" formControlName="link" [placeholder]="'Ссылка'" [showError]="false"
                       [error]="
-                        source.get('link')?.invalid &&
-                        (source.get('link')?.dirty ||
-                          source.get('link')?.touched)
+                        isControlValid(source,'link')
                           ? ' '
                           : ''
                       "></app-usual-input>

@@ -6,10 +6,7 @@ import {
   Output,
 } from '@angular/core';
 import { Subject } from 'rxjs';
-import {
-  ICategory,
-  ISection,
-} from '../../recipes/models/categories';
+import { ICategory, ISection } from '../../recipes/models/categories';
 import { Router } from '@angular/router';
 import { trigger } from '@angular/animations';
 import { heightAnim } from 'src/tools/animations';
@@ -52,12 +49,20 @@ export class AutocompleteComponent implements OnChanges {
 
   getFullGroup = false;
 
+  get noAnySearchMatches() {
+    return this.sectionMode
+      ? this.mySections.length === 0
+      : this.ingredientsGroups.length
+      ? this.filterIngredientsGroups.length === 0
+      : this.group.length === 0;
+  }
+
   constructor(private router: Router) {}
 
   ngOnChanges() {
     this.mySections = this.allSections;
     this.fullGroup = this.group;
-    this.filterIngredientsGroups = this.ingredientsGroups
+    this.filterIngredientsGroups = this.ingredientsGroups;
   }
 
   focus() {
@@ -85,83 +90,90 @@ export class AutocompleteComponent implements OnChanges {
     this.sectionEmitter.emit(listSection);
   }
   addIngredientGroup(listIngredientGroup: IIngredientsGroup) {
-    this.groupEmitter.emit(listIngredientGroup)
+    this.groupEmitter.emit(listIngredientGroup);
   }
   copyOfFullGroup() {
     setTimeout(() => {
       this.group = JSON.parse(JSON.stringify(this.fullGroup));
     }, 300);
   }
+  searchSections() {
+    if (this.value !== '') {
+      this.mySections = [];
+      const search = this.value.toLowerCase().replace(/\s/g, '');
+      const filterSections: ISection[] = [];
+      const allSections: ISection[] = JSON.parse(
+        JSON.stringify(this.allSections),
+      );
+
+      allSections.forEach((item: ISection) => {
+        if (item.name.toLowerCase().replace(/\s/g, '').includes(search))
+          filterSections.push(item);
+      });
+
+      filterSections.forEach((element) => {
+        this.mySections.push(element);
+      });
+    } else {
+      this.mySections = JSON.parse(JSON.stringify(this.allSections));
+    }
+  }
+
+  searchIngredientsGroups() {
+    if (this.value !== '') {
+      this.filterIngredientsGroups = [];
+      const search = this.value.toLowerCase().replace(/\s/g, '');
+      const filterIngredients: IIngredientsGroup[] = [];
+      const allIngredients = this.ingredientsGroups;
+
+      allIngredients.forEach((item: IIngredientsGroup) => {
+        if (item.name.toLowerCase().replace(/\s/g, '').includes(search))
+          filterIngredients.push(item);
+      });
+
+      filterIngredients.forEach((element) => {
+        this.filterIngredientsGroups.push(element);
+      });
+    } else {
+      this.filterIngredientsGroups = this.ingredientsGroups;
+    }
+  }
+
+  searchCategories() {
+    if (this.value !== '') {
+      this.group = [];
+      const search = this.value.toLowerCase().replace(/\s/g, '');
+      const filterGroups: SectionGroup[] = [];
+      const allGroup: SectionGroup[] = JSON.parse(
+        JSON.stringify(this.fullGroup),
+      );
+
+      allGroup.forEach((itsGroup: SectionGroup) => {
+        itsGroup.categories = itsGroup.categories.filter((element) => {
+          if (element.name.toLowerCase().replace(/\s/g, '').includes(search))
+            return true;
+          else return false;
+        });
+        if (itsGroup.categories.length > 0) filterGroups.push(itsGroup);
+      });
+
+      filterGroups.forEach((element) => {
+        this.group.push(element);
+      });
+    } else {
+      this.group = JSON.parse(JSON.stringify(this.fullGroup));
+    }
+  }
 
   search() {
     if (!this.ingredientsGroups.length) {
       if (!this.sectionMode) {
-        if (this.value !== '') {
-          this.group = [];
-          const search = this.value.toLowerCase().replace(/\s/g, '');
-          const filterGroups: SectionGroup[] = [];
-          const allGroup: SectionGroup[] = JSON.parse(
-            JSON.stringify(this.fullGroup),
-          );
-
-          allGroup.forEach((itsGroup: SectionGroup) => {
-            itsGroup.categories = itsGroup.categories.filter((element) => {
-              if (
-                element.name.toLowerCase().replace(/\s/g, '').includes(search)
-              )
-                return true;
-              else return false;
-            });
-            if (itsGroup.categories.length > 0) filterGroups.push(itsGroup);
-          });
-
-          filterGroups.forEach((element) => {
-            this.group.push(element);
-          });
-        } else {
-          this.group = JSON.parse(JSON.stringify(this.fullGroup));
-        }
+        this.searchCategories();
       } else {
-        if (this.value !== '') {
-          this.mySections = [];
-          const search = this.value.toLowerCase().replace(/\s/g, '');
-          const filterSections: ISection[] = [];
-          const allSections: ISection[] = JSON.parse(
-            JSON.stringify(this.allSections),
-          );
-
-          allSections.forEach((item: ISection) => {
-            if (item.name.toLowerCase().replace(/\s/g, '').includes(search))
-              filterSections.push(item);
-          });
-
-          filterSections.forEach((element) => {
-            this.mySections.push(element);
-          });
-        } else {
-          this.mySections = JSON.parse(JSON.stringify(this.allSections));
-        }
+        this.searchSections();
       }
     } else {
-
-       if (this.value !== '') {
-         this.filterIngredientsGroups = [];
-         const search = this.value.toLowerCase().replace(/\s/g, '');
-         const filterIngredients: IIngredientsGroup[] = [];
-         const allIngredients = this.ingredientsGroups;
-
-         allIngredients.forEach((item: IIngredientsGroup) => {
-           if (item.name.toLowerCase().replace(/\s/g, '').includes(search))
-             filterIngredients.push(item);
-         });
-
-         filterIngredients.forEach((element) => {
-           this.filterIngredientsGroups.push(element);
-         });
-       } else {
-         this.filterIngredientsGroups = this.ingredientsGroups;
-       }
+      this.searchIngredientsGroups();
     }
   }
-
 }

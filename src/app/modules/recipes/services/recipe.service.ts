@@ -324,9 +324,11 @@ export class RecipeService {
   }
 
   hideAuthor(currentUser: IUser, author: IUser): boolean {
-    if (currentUser.id === author.id) return false;
-    if (author.role !== 'admin' && currentUser.role !== 'user') return false;
-    return !this.userService.getPermission('hide-author', author);
+    return (
+      currentUser.id === author.id ||
+      (author.role !== 'admin' && currentUser.role !== 'user') ||
+      this.userService.getPermission('hide-author', author)
+    );
   }
   removeRecipeFromFavorites(userId: number, recipe: IRecipe): IRecipe {
     if (recipe.favoritesId.includes(userId)) {

@@ -36,34 +36,24 @@ export class UserResolver implements Resolve<IUser> {
         //не показываем страницу если пользователь это запретил(но показываем если это сам пользователь на нее перешел или модератор/админ)
         if (foundUser) {
           if (
-            !this.userService.getPermission('show-my-page', foundUser) &&
-            this.currentUser.id !== foundUser.id
+            ((!this.userService.getPermission('show-my-page', foundUser) &&
+            this.currentUser.id !== foundUser.id )
+            && (this.currentUser.role === 'user' || foundUser.role === 'admin'))
           ) {
-            if (this.currentUser.role === 'user') {
               throw new Error('anonimous');
-            }
-            //запрещаем доступ к стр админа если он запретил для вообще всех
-            else if (
-              foundUser.role === 'admin'
-            ) {
-              throw new Error('anonimous');
-            }
-            else {
-                  return foundUser;
-            }
           }
           else {
            return foundUser;
           }
         } else {
-          throw new Error('Пользователь не найден');
+          throw new Error('nouser');
         }
       }),
       catchError((e: Error) => {
         if (e.message === 'anonimous') {
           this.router.navigate(['/access-denied']);
         } else {
-          this.router.navigate(['cooks']);
+          this.router.navigate(['/cooks']);
         }
         return EMPTY;
       }),

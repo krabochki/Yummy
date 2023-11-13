@@ -69,8 +69,6 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
 
   private plans: IPlan[] = [];
 
-
-
   get hideAuthor(): boolean {
     return this.recipeService.hideAuthor(this.currentUser, this.author);
   }

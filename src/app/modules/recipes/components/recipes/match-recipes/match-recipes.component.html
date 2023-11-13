@@ -66,13 +66,10 @@
 
               <svg-icon [applyClass]="true" class="svg-no-ingredients" [src]="'assets/images/svg/no-ingredients.svg'" />
             </div>
-            <a *ngFor="let ingredient of autoIngredients"  [routerLink]="findIngredientByName(ingredient).id
+            <a *ngFor="let ingredient of autoIngredients" [routerLink]="findIngredientByName(ingredient).id
                           ? ('/ingredients/list/'+findIngredientByName(ingredient).id)
                           :null">
-              <li (click)="
-                  selectIngredient(ingredient); showIngredientsAutocomplete = false;
-                  $event.stopPropagation(); $event.preventDefault()
-                " class="a-ingredient" >
+              <li (click)="autocompleteClick(ingredient, $event)" class="a-ingredient">
                 <p>{{ ingredient }}</p>
                 <span class="recipes-count">{{ uniqueIngredientsArray[ingredient] }}
                   <span appPluralRu="" [arVariants]="['рецепт', 'рецепта', 'рецептов']"
@@ -93,11 +90,11 @@
           Самые популярные ингредиенты
         </h2>
         <div class="ingredients" *ngIf="getIngredientNames().length > 0; else noIngredients">
-          <ng-container *ngFor="let ingredient of getIngredientNames().slice(0,40)">
+          <ng-container *ngFor="let ingredient of getIngredientNames().slice(0,MAX_NUM_OF_SHOWED_INGREDIENTS)">
             <a [routerLink]="findIngredientByName(ingredient).id
                           ? ('/ingredients/list/'+findIngredientByName(ingredient).id)
-                          :null" >
-              <button (click)="selectIngredient(ingredient);$event.stopPropagation(); $event.preventDefault()"
+                          :null">
+              <button (click)="ingredientClick(ingredient,$event)"
                 [ngClass]="{'ingredient-link':findIngredientByName(ingredient).id>0}"
                 [ngStyle]="{ zoom: getZoom(uniqueIngredientsArray[ingredient]) }" class="ingredient">
 
@@ -135,8 +132,9 @@
           (cdkDropListDropped)="drop($event)">
           <a [routerLink]="findIngredientByName(item).id
                           ? ('/ingredients/list/'+findIngredientByName(item).id)
-                          :null"  *ngFor="let item of selectedIngredients; let i = index">
-            <div (click)="$event.stopPropagation(); $event.preventDefault() "   (cdkDragStarted)="dragStart(); " class="ingredient selected" cdkDrag>{{ item }}</div>
+                          :null" *ngFor="let item of selectedIngredients; let i = index">
+            <div (click)="$event.stopPropagation(); $event.preventDefault() " (cdkDragStarted)="dragStart(); "
+              class="ingredient selected" cdkDrag>{{ item }}</div>
           </a>
           <span class="placeholder noone" *ngIf="selectedIngredients.length === 0">Вы пока не включили ни одного
             ингредиента</span>
@@ -162,7 +160,8 @@
           <a [routerLink]="findIngredientByName(item).id
                           ? ('/ingredients/list/'+findIngredientByName(item).id)
                           :null" *ngFor="let item of excludedIngredients; let i = index">
-            <div (click)="$event.stopPropagation(); $event.preventDefault() " (cdkDragStarted)="dragStart()" cdkDragLockAxis="y" class="ingredient selected" cdkDrag>{{ item }}</div>
+            <div (click)="$event.stopPropagation(); $event.preventDefault() " (cdkDragStarted)="dragStart()"
+              cdkDragLockAxis="y" class="ingredient selected" cdkDrag>{{ item }}</div>
           </a>
 
           <span class="placeholder noone" *ngIf="excludedIngredients.length === 0">Вы пока не исключили ни одного

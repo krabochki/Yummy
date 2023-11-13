@@ -43,6 +43,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
   protected excludedIngredient: string = '';
   protected excludedIngredientTouched = false;
 
+  MANAGERS_SETTINGS_BLOCK_NUM = 4;
+
   protected exitModalShow: boolean = false;
   protected deleteModalShow: boolean = false;
   protected permanentIngredients: string[] = [];
@@ -113,6 +115,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
       this.user.exclusions = this.excludingIngredients;
     }
     this.userService.updateUsers(this.user).subscribe();
+  }
+
+
+  showBlock(i: number) {
+    if (this.user.role === 'user' && i === this.MANAGERS_SETTINGS_BLOCK_NUM)
+      return false;
+    return true;
   }
 
   protected addPermanentIngredient(): void {

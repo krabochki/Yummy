@@ -11,7 +11,7 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormArray, AbstractControl } from '@angular/forms';
 import { steps, Step, getInputPlaceholderOfControlGroup, getNameOfControlGroup } from './consts';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Router } from '@angular/router';
@@ -148,6 +148,13 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
     this.beginningData = this.form.getRawValue();
   }
 
+  isControlValid(control:AbstractControl, field:string) {
+    return (
+      control.get(field)?.invalid &&
+      (control.get(field)?.dirty || control.get(field)?.touched)
+    );
+  }
+
   closeIngredientCreating(): void {
     if (
       !this.areObjectsEqual() &&
@@ -174,10 +181,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
   }
   removeGroup(event: IIngredientsGroup) {
     this.selectedIngredientsGroups = this.selectedIngredientsGroups.filter(
-      (group) => {
-        if (group.id !== event.id) return true;
-        else return false;
-      },
+      (group) => group.id !== event.id
     );
   }
 

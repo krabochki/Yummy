@@ -53,11 +53,8 @@ export class CommentService {
     return this.recipeService.updateRecipe(recipe);
   }
 
-  showAuthor(author:IUser,currentUser:IUser): boolean{
-     if (currentUser.id === author.id) return true;
-     if (author.role !== 'admin' && currentUser.role !== 'user')
-       return true;
-     return this.userService.getPermission('comment-author', author);
+  showAuthor(author: IUser, currentUser: IUser): boolean{
+    return (currentUser.id === author.id) || (author.role !== 'admin' && currentUser.role !== 'user') || this.userService.getPermission('comment-author', author)
   }
 
   likeComment(user: IUser, comment: IComment, recipe: IRecipe) {

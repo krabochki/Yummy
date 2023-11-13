@@ -235,16 +235,16 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
 
     this.followingRecipes = this.getFollowingRecipes(publicRecipes);
     this.followingRecipes = this.followingRecipes.filter((r) => {
-      if (
-        this.currentUser.role === 'user' ||
-        this.getUser(r.authorId).role === 'admin'
-      )
-        return this.userService.getPermission(
-          'hide-author',
-          this.getUser(r.authorId),
-        );
-      else return true;
+      this.currentUser.role === 'user' ||
+      this.getUser(r.authorId).role === 'admin'
+        ? this.userService.getPermission(
+            'hide-author',
+            this.getUser(r.authorId),
+          )
+        : true;
     });
+
+    
   }
 
   private setRecipesByType(): void {

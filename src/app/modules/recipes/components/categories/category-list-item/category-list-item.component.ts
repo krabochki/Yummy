@@ -9,7 +9,7 @@ import {
 import { RecipeService } from '../../../services/recipe.service';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { Observable, Subject, forkJoin, takeUntil } from 'rxjs';
-import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
+import { IUser, PermissionContext, nullUser } from 'src/app/modules/user-pages/models/users';
 import { CategoryService } from '../../../services/category.service';
 import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
@@ -119,10 +119,14 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
         this.recipeService
           .getRecipesByCategory(this.recipes, this.category)
           .forEach((recipe) => {
+            const updatedRecipe = {
+              ...{ ...recipe },
+              categories:recipe.categories.filter(c=>c!==this.category.id)
+            }
             recipe.categories = recipe.categories.filter(
               (c) => c !== this.category.id,
             );
-            subscribes.push(this.recipeService.updateRecipe(recipe));
+            subscribes.push(this.recipeService.updateRecipe(updatedRecipe));
           });
 
         forkJoin(subscribes).subscribe();
@@ -131,17 +135,12 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
   }
 
   get showDeletingButton() {
-    if (this.context === 'category')
-      return this.userService.getPermission(
-        'show-category-deleting',
-        this.currentUser,
-      );
-    else
-      return this.userService.getPermission(
-        'show-section-deleting',
-        this.currentUser,
-      );
-  }
+    const permissionName: PermissionContext =
+    this.context === 'category'
+      ? 'show-category-deleting'
+      : 'show-section-deleting';
+  return this.userService.getPermission(permissionName, this.currentUser);
+   }
 
   ngOnDestroy(): void {
     this.destroyed$.next();

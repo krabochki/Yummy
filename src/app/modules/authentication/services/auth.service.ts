@@ -1,12 +1,6 @@
 import { Injectable } from '@angular/core';
 import { IUser, nullUser } from '../../user-pages/models/users';
-import {
-  BehaviorSubject,
-  EMPTY,
-  Observable,
-  filter,
-  map,
-} from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, filter, map } from 'rxjs';
 import { UserService } from '../../user-pages/services/user.service';
 import { IRecipe } from '../../recipes/models/recipes';
 import { usersUrl } from 'src/tools/source';
@@ -20,10 +14,6 @@ export class AuthService {
   private currentUserSubject: BehaviorSubject<IUser> =
     new BehaviorSubject<IUser>({ ...nullUser });
   currentUser$ = this.currentUserSubject.asObservable();
-
-
-
- 
 
   usersUrl = usersUrl;
 
@@ -43,12 +33,6 @@ export class AuthService {
           );
           if (foundUser) {
             this.setCurrentUser(foundUser);
-            
-            console.log(
-              'Автоматический вход в аккаунт пользователя ' +
-                currentUser.username +
-                ' выполнен успешно!',
-            );
           }
         }
       }
@@ -81,15 +65,15 @@ export class AuthService {
 
   loginUser(user: IUser) {
     return this.userService.users$.pipe(
-      map((users) => {
-        return users.length > 0
+      map((users) => 
+         users.length > 0
           ? users?.find(
               (u) =>
                 (u.email === user.email && u.password === user.password) ||
                 (u.username === user.username && u.password === user.password),
             ) || null
-          : null;
-      }),
+          : null
+      ),
     );
   }
 

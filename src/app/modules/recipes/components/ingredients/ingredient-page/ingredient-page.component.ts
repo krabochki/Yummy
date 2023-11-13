@@ -28,6 +28,12 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
   relatedIngredients: IIngredient[] = [];
   protected destroyed$: Subject<void> = new Subject<void>();
 
+  get ingredientGroups() {
+    return this.ingredientService
+      .getGroupOfIngredient(this.groups, this.ingredient)
+      .filter((g) => g.id !== 0);
+  }
+
   constructor(
     private categoryService: CategoryService,
     private route: ActivatedRoute,
@@ -80,12 +86,6 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
 
   showAllCategories() {
     this.showedCategories = this.relatedCategories;
-  }
-
-  get ingredientGroups() {
-    return this.ingredientService
-      .getGroupOfIngredient(this.groups, this.ingredient)
-      .filter((g) => g.id !== 0);
   }
 
   ngOnDestroy(): void {

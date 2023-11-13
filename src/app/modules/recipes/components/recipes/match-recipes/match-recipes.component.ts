@@ -14,11 +14,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { IRecipe } from '../../../models/recipes';
 import { CategoryService } from '../../../services/category.service';
 import { SectionService } from '../../../services/section.service';
-import {
-  ICategory,
-  ISection,
-  nullSection,
-} from '../../../models/categories';
+import { ICategory, ISection, nullSection } from '../../../models/categories';
 import { SectionGroup } from 'src/app/modules/controls/autocomplete/autocomplete.component';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
@@ -51,6 +47,8 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
   protected group: SectionGroup[] = []; //секции и соответствующие им группы
 
   protected showIngredientsAutocomplete: boolean = false;
+
+  MAX_NUM_OF_SHOWED_INGREDIENTS = 40;
 
   //текущий список уникальных ингредиентов, которые есть в подходящих рецептах
   protected uniqueIngredientsArray: { [ingredient: string]: number } = {};
@@ -116,7 +114,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
   }
 
   findIngredientByName(name: string): IIngredient {
-   return this.ingredientService.findIngredientByName(name,this.ingredients)
+    return this.ingredientService.findIngredientByName(name, this.ingredients);
   }
 
   goToMatchingRecipesPage() {
@@ -155,8 +153,6 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
       .subscribe((receivedSections: ISection[]) => {
         if (receivedSections.length > 0) {
           this.sections = receivedSections;
-          console.log(this.sections);
-          console.log(this.categories);
 
           //создаем обьект sectionGroup соответствующий секции
           this.sections.forEach((section) => {
@@ -466,6 +462,18 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
 
   getZoom(count: number): number {
     return getZoom(count, 0.15, 7, 0.9);
+  }
+
+
+  autocompleteClick(ingredient: string, $event: any) {
+    this.showIngredientsAutocomplete = false;
+    this.ingredientClick(ingredient, $event);
+  }
+
+  ingredientClick(ingredient:string,$event:any) {
+    this.selectIngredient(ingredient);
+    $event.stopPropagation();
+    $event.preventDefault();
   }
 
   updateIngredientsBasedOnCategory(

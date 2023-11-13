@@ -209,7 +209,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
       .subscribe((receivedSections: ISection[]) => {
         {
           this.sections = receivedSections;
-          this.sectionsToShow=this.sections.slice(0,10)
+          this.sectionsToShow = this.sections.slice(0, 10);
         }
       });
   }
@@ -228,13 +228,8 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     );
   }
 
-  protected loadMoreSections(): void{
-    console.log(this.sections)
-    this.sectionsToShow = this.loadMore(
-      this.sections,
-      this.sectionsToShow,
-      4
-    )
+  protected loadMoreSections(): void {
+    this.sectionsToShow = this.loadMore(this.sections, this.sectionsToShow, 4);
   }
 
   protected loadMoreCommentReports(): void {
@@ -327,7 +322,10 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     if (this.actionReport) {
       const recipe: IRecipe = this.getRecipe(this.actionReport.recipe);
       const reporter: IUser = this.getUser(this.actionReport.reporter);
-      const comment: IComment = this.getComment(this.actionReport.comment, recipe);
+      const comment: IComment = this.getComment(
+        this.actionReport.comment,
+        recipe,
+      );
       const author: IUser = this.getUser(comment.authorId);
 
       const subscribes: Observable<IUser>[] = [];
@@ -366,7 +364,10 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     if (this.actionReport) {
       const recipe: IRecipe = this.getRecipe(this.actionReport.recipe);
       const reporter: IUser = this.getUser(this.actionReport.reporter);
-      const comment: IComment = this.getComment(this.actionReport.comment, recipe);
+      const comment: IComment = this.getComment(
+        this.actionReport.comment,
+        recipe,
+      );
 
       const author: IUser = this.getUser(comment.authorId);
 
@@ -470,7 +471,9 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
 
   private demoteUser() {
     this.targetDemotedUser.role = 'user';
-    if (this.userService.getPermission('you-was-fired', this.targetDemotedUser)) {
+    if (
+      this.userService.getPermission('you-was-fired', this.targetDemotedUser)
+    ) {
       this.targetDemotedUser = this.notifyService.addNotificationToUser(
         notifyForDemotedUser(this.currentUser, this.notifyService),
         this.targetDemotedUser,
@@ -501,15 +504,14 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   }
   private approveRecipe(): void {
     if (this.actionRecipe)
-      this.adminService
-        .approveRecipe(this.actionRecipe)
-        .subscribe(() =>
-          {if (
-            this.actionRecipe &&
-            this.userService.getPermission('hide-author', this.getUser(this.actionRecipe.authorId))
-          )
-            this.sendNotifiesAfterPublishingRecipe(this.actionRecipe);}
-        );
+      this.adminService.approveRecipe(this.actionRecipe).subscribe(() => {
+        this.actionRecipe &&
+          this.userService.getPermission(
+            'hide-author',
+            this.getUser(this.actionRecipe.authorId),
+          ) &&
+          this.sendNotifiesAfterPublishingRecipe(this.actionRecipe);
+      });
   }
   private dismissRecipe(): void {
     if (this.actionRecipe) {

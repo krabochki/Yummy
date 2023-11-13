@@ -251,7 +251,7 @@
             class="basket-icon"
             [applyClass]="true"
             [class]="basketMode ? 'basket-icon basket-mode' : 'basket-icon'"
-            [src]="'../../../../../assets/images/svg/basket.svg'"
+            [src]="'assets/images/svg/basket.svg'"
           ></svg-icon>
           {{ !basketMode ? "Составить" : "Убрать" }} список покупок
         </button>
@@ -267,12 +267,15 @@
                 *ngIf="iHaveIndgredient[i]"
                 class="checkbox-icon"
                 [applyClass]="true"
-                [src]="'../../../../../assets/images/svg/checkbox.svg'"
+                [src]="'assets/images/svg/checkbox.svg'"
               ></svg-icon>
             </div>
-            <p [ngClass]="{ 'i-have': iHaveIndgredient[i] }" class="name">
+            <a
+
+            [routerLink]="findIngredientByName(ingredient.name).id?'/ingredients/list/'+findIngredientByName(ingredient.name).id:null"
+            [ngClass]="{ 'i-have': iHaveIndgredient[i],'link':findIngredientByName(ingredient.name).id }" class="name">
               {{ ingredient.name }}
-            </p>
+            </a>
             <div
               [ngClass]="{ 'i-have': iHaveIndgredient[i] }"
               class="row count"

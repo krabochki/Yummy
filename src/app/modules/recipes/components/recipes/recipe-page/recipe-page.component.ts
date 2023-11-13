@@ -36,6 +36,8 @@ import {
   nullProduct,
 } from 'src/app/modules/planning/models/shopping-list';
 import { CalendarEvent } from 'angular-calendar';
+import { IngredientService } from '../../../services/ingredient.service';
+import { IIngredient } from '../../../models/ingredients';
 
 @Component({
   selector: 'app-recipe-page',
@@ -57,6 +59,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
 
   author: IUser = { ...nullUser };
   currentUser: IUser = { ...nullUser };
+
 
   iHaveIndgredient: boolean[] = [];
   basket: boolean[] = [];
@@ -82,6 +85,8 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   protected linkForSocials = '';
 
   statisticPercent = 0;
+
+  ingredients:IIngredient[] = []
 
   voteModalShow: boolean = false;
   successVoteModalShow: boolean = false;
@@ -113,6 +118,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     private commentService: CommentService,
     public router: Router,
     public routerEventsService: RouteEventsService,
+    private ingredientService:IngredientService,
     private categoryService: CategoryService,
     private cd: ChangeDetectorRef,
   ) {
@@ -157,6 +163,12 @@ export class RecipePageComponent implements OnInit, OnDestroy {
               this.recipeService.recipes$
                 .pipe(takeUntil(this.destroyed$))
                 .subscribe((recipes: IRecipe[]) => {
+
+                  this.ingredientService.ingredients$.pipe(takeUntil(this.destroyed$))
+                    .subscribe((receivedIngredients) => {
+                  this.ingredients=receivedIngredients
+                })
+
                   this.statisticPercent = Number(
                     this.getStatictics().toFixed(0),
                   );
@@ -245,6 +257,10 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     }
     this.cookThisRecipe();
     this.voteModalShow = false;
+  }
+
+  findIngredientByName(name:string) {
+    return this.ingredientService.findIngredientByName(name,this.ingredients)
   }
   handleSuccessVoteModal() {
     this.recipeService
@@ -391,10 +407,13 @@ export class RecipePageComponent implements OnInit, OnDestroy {
       (ingr) => ingr.name === ingredient.name,
     );
     if (find) {
+       const relatedIngredient:IIngredient = this.findIngredientByName(ingredient.name);
+      
       const product: ShoppingListItem = {
         ...nullProduct,
         id: maxId + 1,
         name: find.name,
+        type:relatedIngredient.shoppingListGroup?relatedIngredient.shoppingListGroup:0,
         howMuch: (find.quantity ? find.quantity + ' ' : '') + find.unit,
         relatedRecipe: this.recipe.id,
       };

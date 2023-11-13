@@ -38,7 +38,7 @@
               <div class="no-any-products" *ngIf="d.items.length === 0">
                 Вы перенесли все продукты в другой список
               </div>
-              <li class="product-info" [class.purchased]="item.isBought" (cdkDragStarted)="dragStart()"
+              <li  class="product-info" [class.purchased]="item.isBought" (cdkDragStarted)="dragStart()"
                 [cdkDragData]="item" *ngFor="let item of d.items; trackBy: trackByItems" cdkDragBoundary=".boundary"
                 cdkDrag>
                 <div class="main-product-info">

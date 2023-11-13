@@ -10,6 +10,10 @@
 .main-cont {
   padding: 2em calc(14.4vw + 0 * (100vw - 768px) / 760);
 }
+.ingredient-link .name{
+  text-decoration: underline;
+
+}
 
 .search-block {
   width: fit-content;
@@ -414,6 +418,7 @@ h1 {
   display: flex;
   column-gap: 0.2em;
   zoom: 0.9;
+  cursor: pointer;
 
   width: fit-content;
   margin-bottom: 0.5em;

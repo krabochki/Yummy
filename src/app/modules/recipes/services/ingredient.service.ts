@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 import { ingredientsGroupsUrl, ingredientsUrl } from 'src/tools/source';
 import { IRecipe } from '../models/recipes';
-import { IIngredient, IIngredientsGroup, nullIngredientsGroup } from '../models/ingredients';
+import { IIngredient, IIngredientsGroup, nullIngredient, nullIngredientsGroup } from '../models/ingredients';
 import { RecipeService } from './recipe.service';
 import { baseComparator } from 'src/tools/common';
 
@@ -21,7 +21,10 @@ export class IngredientService {
   ingredientGroupsSubject = new BehaviorSubject<IIngredientsGroup[]>([]);
   ingredientsGroups$ = this.ingredientGroupsSubject.asObservable();
 
-  constructor(private http: HttpClient, private recipeService:RecipeService) {}
+  constructor(
+    private http: HttpClient,
+    private recipeService: RecipeService,
+  ) {}
 
   loadIngredientsGroupsData() {
     this.getIngredientGroups().subscribe((data) => {
@@ -83,7 +86,7 @@ export class IngredientService {
   getIngredients() {
     return this.http.get<IIngredient[]>(this.urlIngredients);
   }
-  
+
   getRelatedIngredients(ingredient: IIngredient, ingredients: IIngredient[]) {
     const targetName = ingredient.name.trim().toLowerCase();
     const targetVariations = ingredient.variations.map((variation) =>
@@ -96,7 +99,7 @@ export class IngredientService {
         return true;
       }
       if (targetName.includes(currentName)) {
-        return true
+        return true;
       }
 
       const currentVariations = ing.variations.map((variation) =>
@@ -106,7 +109,9 @@ export class IngredientService {
         currentVariations.includes(targetVar),
       );
     });
-    relatedIngredients = relatedIngredients.filter(i => i.id !== ingredient.id);
+    relatedIngredients = relatedIngredients.filter(
+      (i) => i.id !== ingredient.id,
+    );
 
     return relatedIngredients;
   }
@@ -154,20 +159,43 @@ export class IngredientService {
   }
 
   postIngredient(ingredient: IIngredient) {
-    return this.http
-      .post<IIngredient>(this.urlIngredients, ingredient)
-      .pipe(
-        tap((newIngredient: IIngredient) => {
-          const currentIngredients = this.ingredientSubject.value;
-          const updatedIngedients= [...currentIngredients, newIngredient];
-          this.ingredientSubject.next(updatedIngedients);
-        }),
-      );
+    return this.http.post<IIngredient>(this.urlIngredients, ingredient).pipe(
+      tap((newIngredient: IIngredient) => {
+        const currentIngredients = this.ingredientSubject.value;
+        const updatedIngedients = [...currentIngredients, newIngredient];
+        this.ingredientSubject.next(updatedIngedients);
+      }),
+    );
   }
 
-  
+  findIngredientByName(name: string,ingredients:IIngredient[]): IIngredient {
+    const findedIngredients: IIngredient[] = [];
+    const ingredientName = name.toLowerCase().trim();
+    ingredients.forEach((ingredient) => {
+      const variationsMatch =
+        ingredient.variations.length > 0 &&
+        ingredient.variations.some((variation) => {
+          const formattedVariation = variation.toLowerCase().trim();
+          return (
+            ingredientName.includes(formattedVariation) ||
+            formattedVariation.includes(ingredientName)
+          );
+        });
 
-  sortIngredients(ingredients:IIngredient[],recipes:IRecipe[]) {
+      if (
+        ingredientName.includes(ingredient.name.toLowerCase().trim()) ||
+        variationsMatch
+      ) {
+        findedIngredients.push(ingredient);
+      }
+    });
+    const findIngredient =
+      findedIngredients.sort((a, b) => baseComparator(b.name, a.name))[0] ||
+      nullIngredient;
+    return findIngredient;
+  }
+
+  sortIngredients(ingredients: IIngredient[], recipes: IRecipe[]) {
     return ingredients.sort((a, b) => {
       if (
         this.recipeService.getRecipesByIngredient(recipes, b) >
@@ -190,8 +218,11 @@ export class IngredientService {
     ingredient: IIngredient,
   ): IIngredientsGroup[] {
     return (
-      groups.filter((group) => group.ingredients.length > 0 && group.ingredients.includes(ingredient.id)) ||
-      []
+      groups.filter(
+        (group) =>
+          group.ingredients.length > 0 &&
+          group.ingredients.includes(ingredient.id),
+      ) || []
     );
   }
 

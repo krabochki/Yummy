@@ -14,7 +14,11 @@ import { Subject, takeUntil } from 'rxjs';
 import { IRecipe } from '../../../models/recipes';
 import { CategoryService } from '../../../services/category.service';
 import { SectionService } from '../../../services/section.service';
-import { ICategory, ISection, nullSection } from '../../../models/categories';
+import {
+  ICategory,
+  ISection,
+  nullSection,
+} from '../../../models/categories';
 import { SectionGroup } from 'src/app/modules/controls/autocomplete/autocomplete.component';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
@@ -25,12 +29,12 @@ import {
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
 import { Router } from '@angular/router';
-import { dragStart } from 'src/tools/common';
-import { UserService } from 'src/app/modules/user-pages/services/user.service';
+import { baseComparator, dragEnd, dragStart } from 'src/tools/common';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { getZoom } from 'src/tools/common';
-import { getUser } from 'src/app/modules/authentication/components/control-dashboard/quick-actions';
+import { IngredientService } from '../../../services/ingredient.service';
+import { IIngredient, nullIngredient } from '../../../models/ingredients';
 
 @Component({
   selector: 'app-match-recipes',
@@ -67,6 +71,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
 
   protected matchingRecipes: IRecipe[] = []; //рецепты подходящие под запросы
 
+  ingredients: IIngredient[] = [];
   protected searchQuery: string = '';
   protected destroyed$: Subject<void> = new Subject<void>();
 
@@ -76,6 +81,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
     private renderer: Renderer2,
     private recipeService: RecipeService,
     private categoryService: CategoryService,
+    private ingredientService: IngredientService,
     private sectionService: SectionService,
     private title: Title,
     private router: Router,
@@ -96,16 +102,27 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
     this.title.setTitle('Подбор рецептов');
     this.currentUserInit();
     this.recipesInit();
-    this.categoriesInit();
+    this.ingredientsInit();
+    this.cd.markForCheck();
   }
 
+  ingredientsInit() {
+    this.ingredientService.ingredients$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(
+        (receivedIngredients: IIngredient[]) =>
+          (this.ingredients = receivedIngredients),
+      );
+  }
 
+  findIngredientByName(name: string): IIngredient {
+   return this.ingredientService.findIngredientByName(name,this.ingredients)
+  }
 
   goToMatchingRecipesPage() {
-    this.router.navigate(
-      ['/recipes/matching'],
-      { state: { recipes: this.matchingRecipes } },
-    );
+    this.router.navigate(['/recipes/matching'], {
+      state: { recipes: this.matchingRecipes },
+    });
   }
 
   getCategory(id: number) {
@@ -113,7 +130,8 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
   }
 
   getCategoryRecipesNumber(id: number) {
-    return this.recipeService.getRecipesByCategory(this.recipes, id).length;
+    return this.recipeService.getRecipesByCategory(this.matchingRecipes, id)
+      .length;
   }
 
   categoriesInit() {
@@ -137,6 +155,8 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
       .subscribe((receivedSections: ISection[]) => {
         if (receivedSections.length > 0) {
           this.sections = receivedSections;
+          console.log(this.sections);
+          console.log(this.categories);
 
           //создаем обьект sectionGroup соответствующий секции
           this.sections.forEach((section) => {
@@ -164,6 +184,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
         this.categoryStates = this.group.map((sectionGroup) => {
           return sectionGroup.categories.map(() => false);
         }); //создаем массив со всеми значениями false соответствующий секция-категории
+        this.cd.markForCheck();
       });
   }
 
@@ -179,7 +200,6 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
         }
       });
   }
-  
 
   recipesInit() {
     //получаем рецепты и все ингредиенты
@@ -187,12 +207,16 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedRecipes: IRecipe[]) => {
         if (receivedRecipes.length > 0) {
-          this.recipes = this.recipeService.getPublicAndAllMyRecipes(receivedRecipes,this.currentUser.id);
+          this.recipes = this.recipeService.getPublicAndAllMyRecipes(
+            receivedRecipes,
+            this.currentUser.id,
+          );
           this.matchingRecipes = this.filterRecipesByIngredients();
           this.uniqueIngredientsArray = this.getUniqueIngredients(this.recipes);
           this.autoIngredients = this.getIngredientNames();
           this.getActualIngredients();
         }
+        this.categoriesInit();
       });
   }
 
@@ -208,7 +232,11 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
         }
       }
       this.uniqueIngredientsArray = updatedIngredientsObject;
+      this.getActualIngredients();
       this.matchingRecipes = this.filterRecipesByIngredients();
+      this.uniqueIngredientsArray = this.getUniqueIngredients(
+        this.matchingRecipes,
+      );
     }
   }
 
@@ -269,11 +297,11 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
     this.excludedIngredients.forEach((excludedIngredient) => {
       const ingredientName = excludedIngredient.trim().toLowerCase();
       if (ingredientCounts.hasOwnProperty(ingredientName)) {
-         ingredientCounts = Object.fromEntries(
-           Object.entries(ingredientCounts).filter(
-             ([key]) => key !== ingredientName,
-           ),
-         );
+        ingredientCounts = Object.fromEntries(
+          Object.entries(ingredientCounts).filter(
+            ([key]) => key !== ingredientName,
+          ),
+        );
       }
     });
     return ingredientCounts;
@@ -395,6 +423,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
     this.getActualIngredients();
 
     this.matchingRecipes = this.filterRecipesByIngredients();
+    dragEnd();
   }
 
   clearAllCategories() {
@@ -436,15 +465,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
   }
 
   getZoom(count: number): number {
-    const baseZoom = 0.9;
-    if (count > 1) {
-      if (count > 7) count = 7;
-      const zoomValue = baseZoom + (count - 1) * 0.15;
-      return zoomValue;
-    } else {
-      return baseZoom;
-    }
-    return getZoom(count, 0.1, 6, 0.9);
+    return getZoom(count, 0.15, 7, 0.9);
   }
 
   updateIngredientsBasedOnCategory(

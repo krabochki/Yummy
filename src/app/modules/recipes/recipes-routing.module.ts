@@ -169,6 +169,10 @@ const routes: Routes = [
         component: CategoriesPageComponent,
       },
       {
+        path: 'categories',
+        redirectTo:'sections'
+      },
+      {
         path: 'match',
         component: MatchRecipesComponent,
       },

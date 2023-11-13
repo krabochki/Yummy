@@ -66,7 +66,7 @@
             <h3>Описание ингредиента</h3>
             <app-usual-input [inputType]="'textarea'" [max]="5000" [value]="this.form.get('description')?.value"
               type="text" id="description" formControlName="description"
-              [placeholder]="'Опишите ваш рецепт, его вкус и особенности'" />
+              [placeholder]="'Опишите ингредиент'" />
           </div>
           <div class="form-control">
             <h3>История ингредиента</h3>
@@ -79,11 +79,7 @@
             <h3>Место происхождения</h3>
             <app-usual-input [value]="this.form.get('origin')?.value" [max]="20" type="text" id="origin"
               formControlName="origin" [placeholder]="
-                'Укажите место происхождения блюда, например, страну или регион'
-              " [error]="
-                form.get('origin')?.invalid && form.get('origin')?.touched
-                  ? 'Значение места происхождения не должно превышать 20 символов'
-                  : ''
+                'Укажите место происхождения ингредиента, например, страну или регион'
               "></app-usual-input>
           </div>
           <div class="form-control">

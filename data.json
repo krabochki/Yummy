@@ -36,6 +36,7 @@
       "id": 5,
       "variations": [],
       "name": "Банан",
+      "shoppingListGroup": 3,
       "status": "public",
       "description": "Банан – плод тропического растения, известный своим сладким вкусом и высоким содержанием калия. Бананы часто употребляются в свежем виде, но также используются в кулинарии.",
       "image": null,
@@ -198,8 +199,7 @@
     {
       "id": 5,
       "name": "Экзотика",
-      "ingredients": [
-      ]
+      "ingredients": []
     }
   ],
   "plans": [
@@ -409,23 +409,6 @@
       "id": 2,
       "calendarEvents": [
         {
-          "id": 1,
-          "recipe": 0,
-          "start": "2023-11-05T21:00:00.000Z",
-          "title": "Греческий салат",
-          "color": {
-            "primary": "#00c957",
-            "secondary": "#00c957"
-          },
-          "allDay": true,
-          "draggable": true,
-          "end": "2023-11-06T20:59:59.999Z",
-          "resizable": {
-            "beforeStart": true,
-            "afterEnd": true
-          }
-        },
-        {
           "id": 6,
           "recipe": 0,
           "start": "2023-11-05T21:00:00.000Z",
@@ -443,10 +426,27 @@
           }
         },
         {
-          "id": 9,
+          "id": 1,
+          "recipe": 0,
+          "start": "2023-11-05T21:00:00.000Z",
+          "title": "Греческий салат",
+          "color": {
+            "primary": "#00c957",
+            "secondary": "#00c957"
+          },
+          "allDay": true,
+          "draggable": true,
+          "end": "2023-11-06T20:59:59.999Z",
+          "resizable": {
+            "beforeStart": true,
+            "afterEnd": true
+          }
+        },
+        {
+          "id": 8,
           "recipe": 0,
           "start": "2023-11-06T21:00:00.000Z",
-          "title": "Привет",
+          "title": "Уооу",
           "color": {
             "primary": "#FFC5D0",
             "secondary": "#FFC5D0"
@@ -477,10 +477,10 @@
           }
         },
         {
-          "id": 8,
+          "id": 9,
           "recipe": 0,
           "start": "2023-11-06T21:00:00.000Z",
-          "title": "Уооу",
+          "title": "Привет",
           "color": {
             "primary": "#FFC5D0",
             "secondary": "#FFC5D0"
@@ -528,7 +528,44 @@
           }
         }
       ],
-      "shoppingList": []
+      "shoppingList": [
+        {
+          "id": 2,
+          "name": "gffggfgf",
+          "note": null,
+          "howMuch": null,
+          "isBought": false,
+          "relatedRecipe": 0,
+          "type": 24
+        },
+        {
+          "id": 1,
+          "name": "fgfffg",
+          "note": "",
+          "howMuch": "",
+          "isBought": false,
+          "relatedRecipe": 0,
+          "type": 0
+        },
+        {
+          "id": 3,
+          "name": "Бананы",
+          "note": "",
+          "howMuch": "",
+          "isBought": false,
+          "relatedRecipe": 76,
+          "type": 3
+        },
+        {
+          "id": 4,
+          "name": "Хлеб",
+          "note": "",
+          "howMuch": "",
+          "isBought": false,
+          "relatedRecipe": 76,
+          "type": 0
+        }
+      ]
     },
     {
       "id": 3,
@@ -5001,7 +5038,8 @@
         "соль"
       ],
       "exclusions": [
-        "мука"
+        "мука",
+        "картофель"
       ],
       "emojiStatus": {
         "name": "Dolphin",

@@ -1,14 +1,108 @@
-import { PermissionContext } from "../../models/users"
+import { PermissionContext, role } from "../../models/users"
 
 export interface NotificationSettingsSections {
   title: string;
   icon: string;
+  role?: role[];
+
   items: NotificationSettingsSectionItems[];
 }
 export interface NotificationSettingsSectionItems {
     description: string,
-    area:PermissionContext
+  area: PermissionContext,
 }
+
+export const condifencialitySettings: NotificationSettingsSections[] = [
+  {
+    title: 'Анонимность',
+    icon: 'anonim',
+    items: [
+      {
+        description: 'Показывать вашу страницу на странице всех пользователей',
+        area: 'show-me-on-userspage',
+      },
+      {
+        description:
+          'Показывать вашу страницу в результатах поиска на странице всех пользователей',
+        area: 'search-me-on-userspage',
+      },
+      {
+        description: 'Разрешить просматривать вашу страницу',
+        area: 'show-my-page',
+      },
+      {
+        description: 'Показать авторство ваших комментариев',
+        area: 'comment-author',
+      },
+      {
+        description: 'Показать авторство ваших рецептов',
+        area: 'hide-author',
+      },
+    ],
+  },
+  {
+    title: 'Ваша должность',
+    role: ['admin', 'moderator'],
+    icon: 'anonimous',
+    items: [
+      {
+        description: 'Другие кулинары могут видеть вашу должность',
+        area: 'show-status',
+      },
+    ],
+  },
+];
+
+export const managersPreferences: NotificationSettingsSections[] = [
+  {
+    title: 'Общие настройки управляющих',
+    icon: 'common',
+    items: [
+      {
+        description: 'Показывать значок панели управления сайтом',
+        area: 'show-adminpanel',
+      },
+      {
+        description: 'Показывать кнопку удаления категории',
+        area: 'show-category-deleting',
+      },
+      {
+        description: 'Показывать кнопку удаления секции',
+        area: 'show-section-deleting',
+      },
+      {
+        description: 'Показывать кнопку удаления ингредиента',
+        area: 'show-ingredient-deleting',
+      },
+      {
+        description: 'Показывать кнопку удаления группы ингредиентов',
+        area: 'show-ingredient-group-deleting',
+      },
+    ],
+  },
+  {
+    title: 'Модераторы',
+    role: ['moderator'],
+    icon: 'star',
+    items: [
+      {
+        description: 'Уведомлять вас о потере вашего статуса модератора',
+        area: 'you-was-fired',
+      },
+    ],
+  },
+  {
+    title: 'Администратор',
+    role: ['admin'],
+    icon: 'star',
+    items: [
+      {
+        description: 'Показывать кнопку назначения модератора',
+        area: 'new-moder-button',
+      },
+    ],
+  },
+];
 
 export const sections: NotificationSettingsSections[] = [
   {
@@ -48,7 +142,7 @@ export const sections: NotificationSettingsSections[] = [
         area: 'you-publish-recipe',
       },
       {
-        description: 'Модератор рассмотрел ваш рецепт',
+        description: 'Ваш рецепт рассмотрен',
         area: 'manager-review-your-recipe',
       },
       {
@@ -101,6 +195,20 @@ export const sections: NotificationSettingsSections[] = [
     ],
   },
   {
+    icon: 'grocery',
+    title: 'Ингредиенты',
+    items: [
+      {
+        description: 'Вы отправили ингредиент на проверку',
+        area: 'you-create-ingredient',
+      },
+      {
+        description: 'Ваш ингредиент рассмотрен',
+        area: 'your-ingredient-published',
+      },
+    ],
+  },
+  {
     icon: 'categories',
     title: 'Категории',
     items: [
@@ -109,7 +217,7 @@ export const sections: NotificationSettingsSections[] = [
         area: 'you-create-category',
       },
       {
-        description: 'Вашу категорию рассмотрел модератор',
+        description: 'Ваша категорию рассмотрена',
         area: 'manager-reviewed-your-category',
       },
     ],
@@ -151,5 +259,6 @@ export const sections: NotificationSettingsSections[] = [
 
 export type social = 'facebook'|'twitter'|'vk'|'pinterest'
                  
-                
-export const steps:string[] = ['Основное', 'Персональная информация','Уведомления','Предпочтения']
+
+export const stepsIcons: string[] = ['home','person','notifies','preferences','control','mask'] 
+export const steps:string[] = ['Основное', 'Персональная информация','Уведомления','Предпочтения','Управление','Анонимность']

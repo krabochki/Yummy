@@ -1,10 +1,11 @@
 @import "../../../tools/UI/UI.scss";
 
-div.container.not-found{
-  .tagline{
-    width: 62%;
+div.container.not-found {
+  .tagline {
+    width: 100%;
   }
 }
+
 .container.one-column {
   hr,
   .tagline {
@@ -22,9 +23,9 @@ div.container.not-found{
   }
   .not-found {
     display: flex;
-    justify-content:center;
+    justify-content: center;
     height: 11em;
-    width: 100%
+    width: 100%;
   }
 
   form {
@@ -36,7 +37,6 @@ div.container.not-found{
   }
   .label,
   .tagline {
-    text-align: center;
     text-align: center;
   }
   .form {
@@ -76,10 +76,10 @@ div.container.not-found{
     text-align: center;
   }
 
-  .error{
+  .error {
     font-size: 0.8em;
-    color:var(--color-primary);
-    line-height: 1
+    color: var(--color-primary);
+    line-height: 1;
   }
   .content {
     @include flexy(column);
@@ -104,6 +104,8 @@ div.container.not-found{
     .label {
       font-size: var(--font-xxl);
       font-family: var(--font-family-accent);
+      line-height: 1;
+      margin-top: 0.5em;
 
       .title {
         color: var(--color-primary);
@@ -113,8 +115,13 @@ div.container.not-found{
   }
 }
 
+.margin.container {
+  margin: 2em calc(14.4vw + 0 * (100vw - 768px) / 760);
+  padding: 0 calc(14.4vw + 0 * (100vw - 768px) / 760);
+}
+
 @media (max-width: 900px) {
-  .image,.fridge {
+  .image {
     display: none;
   }
 
@@ -153,8 +160,8 @@ div.container.not-found{
     justify-content: center;
     flex-direction: column;
     row-gap: var(--space-xl);
-    margin-right: 8em;
-    margin-left: 8em;
+    margin-right: 3em;
+    margin-left: 3em;
 
     &.img-container {
       column-gap: 0;
@@ -181,53 +188,56 @@ div.container.not-found{
 }
 
 @media (max-width: 768px) {
- 
-  .container{
+  .container {
     margin-right: 3em;
     margin-left: 3em;
   }
-  .container.one-column{
-    
-  form {
-    width: 18em;
-  }
+  .container.one-column {
+    form {
+      width: 18em;
+    }
   }
   .container.one-column .tagline {
     width: 90%;
   }
 
-  
+  .container.one-column.not-found.margin {
+    padding: 0 3em;
+  }
 }
 
 @media (max-width: 480px) {
+  .container.one-column.not-found.margin {
+    margin: 2em 6%;
+    padding: 0;
+  }
 
-  
   .container.one-column .svg-pic {
     height: 9em;
   }
 
- .container.one-column   .not-found {
-      height: 9em;
-
+  .container.one-column .not-found {
+    height: 9em;
   }
 
-.container.one-column{
+  .container.one-column {
     form {
-    width: 100%;
+      width: 100%;
+    }
   }
-}
   .container {
     padding: 0;
     margin-right: 12%;
-    margin-left:12%;
+    margin-left: 12%;
 
     &.not-found {
-      margin: 2em 6%;
+      margin: 2em 0;
     }
 
     .content {
-      .tagline,hr {
-            width: 100%;
+      .tagline,
+      hr {
+        width: 100%;
 
         text-align: center;
       }

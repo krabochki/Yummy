@@ -23,17 +23,10 @@ import {
 import { NavigationEnd, Router } from '@angular/router';
 import { Subject, filter, takeUntil } from 'rxjs';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
-import {
-  INotification,
-} from 'src/app/modules/user-pages/models/notifications';
+import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
-import {
-  count,
-  modal,
-  notifies,
-  popup,
-} from 'src/tools/animations';
+import { count, modal, notifies, popup } from 'src/tools/animations';
 import { IPlan, nullPlan } from 'src/app/modules/planning/models/plan';
 import { PlanService } from 'src/app/modules/planning/services/plan-service';
 import { CalendarService } from 'src/app/modules/planning/services/calendar.service';
@@ -66,7 +59,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   planRouterLinks = planRouterLinks;
 
   maxNumberOfPopupsInSameTime = 3;
-  popupLifetime = 5;//в секундах
+  popupLifetime = 5; //в секундах
 
   creatingMode = false;
 
@@ -85,6 +78,27 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   baseSvgPath: string = '../../../assets/images/svg/';
 
   protected destroyed$: Subject<void> = new Subject<void>();
+
+  get recipeRoutes() {
+    return recipeRoutes(this.currentUser.id);
+  }
+  get userRoutes() {
+    return userRoutes(this.currentUser.id);
+  }
+  get planRoutes() {
+    return planRoutes(this.currentUser.id);
+  }
+
+  get notificationCount() {
+    if (this.currentUser.notifications)
+      return this.currentUser.notifications.filter((n) => n.read === false)
+        .length;
+    else return 0;
+  }
+
+  get showAdminpanel() {
+    return this.userService.getPermission('show-adminpanel', this.currentUser);
+  }
 
   private remindedAlready = false;
   constructor(
@@ -120,24 +134,6 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
         }
       });
   }
-
-  get recipeRoutes() {
-    return recipeRoutes(this.currentUser.id);
-  }
-  get userRoutes() {
-    return userRoutes(this.currentUser.id);
-  }
-  get planRoutes() {
-    return planRoutes(this.currentUser.id);
-  }
-
-  get notificationCount() {
-    if (this.currentUser.notifications)
-      return this.currentUser.notifications.filter((n) => n.read === false)
-        .length;
-    else return 0;
-  }
-
 
   ngOnInit(): void {
     if (screen.width <= 480) {
@@ -349,48 +345,40 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
         if (receivedUser.id !== 0) {
           const findUser = this.users.find((u) => u.id === receivedUser.id);
           if (findUser) {
-            this.cookRouterLinks[0] = '/cooks/list/' + this.currentUser.id;
             this.currentUser = findUser;
+            this.cookRouterLinks[0] = '/cooks/list/' + this.currentUser.id;
           }
         } else this.currentUser = receivedUser;
 
         if (this.currentUser.notifications) {
           const noChangesInNotifies =
             this.currentUser.notifications.length === this.notifies.length &&
-            this.currentUser.notifications.every((element, index) => {
-              return element === this.notifies[index];
-            });
-
+            this.currentUser.notifications.every(
+              (element, index) => element === this.notifies[index],
+            );
           if (this.currentUser.id !== 0 && !noChangesInNotifies) {
             this.updateNotifies();
           }
-        const noChangesInNotifies =
-          this.currentUser.notifications.length === this.notifies.length &&
-          this.currentUser.notifications.every(
-            (element, index) => element === this.notifies[index],
-          );
-        if (this.currentUser.id !== 0 && !noChangesInNotifies) {
-          this.updateNotifies();
+          this.cd.markForCheck();
         }
-        this.cd.markForCheck();
+
+        if (this.currentUser.id > 0)
+          this.planService.plans$
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe((receivedPlans: IPlan[]) => {
+              this.currentUserPlan = this.planService.getPlanByUser(
+                this.currentUser.id,
+                receivedPlans,
+              );
+
+              if (!this.remindedAlready)
+                if (this.currentUserPlan.id > 0) {
+                  this.planRemindersInit(this.currentUserPlan);
+                  this.remindedAlready = true;
+                  this.cd.markForCheck();
+                }
+            });
       });
-
-    if (this.currentUser.id > 0)
-      this.planService.plans$
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe((receivedPlans: IPlan[]) => {
-          this.currentUserPlan = this.planService.getPlanByUser(
-            this.currentUser.id,
-            receivedPlans,
-          );
-
-          if (!this.remindedAlready)
-            if (this.currentUserPlan.id > 0) {
-              this.planRemindersInit(this.currentUserPlan);
-              this.remindedAlready = true;
-              this.cd.markForCheck();
-            }
-        });
   }
 
   usersInit() {
@@ -426,8 +414,6 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
           !this.popups.find((p) => p.id === notification.id)
         ) {
           this.popupLifecycle(notification);
-        } else if (this.popups.length >= this.maxNumberOfPopupsInSameTime) {
-          this.popupHistory.push(notification.id);
         }
       });
 
@@ -451,7 +437,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     this.popups.unshift(popup);
     setTimeout(() => {
       this.removePopup(popup);
-    }, this.popupLifetime*1000);
+    }, this.popupLifetime * 1000);
   }
 
   headerHeightChange(): void {

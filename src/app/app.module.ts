@@ -19,11 +19,9 @@ import { UserService } from './modules/user-pages/services/user.service';
 import { RecipesModule } from './modules/recipes/recipes.module';
 import { UserPagesModule } from './modules/user-pages/user-pages.module';
 import { PlanService } from './modules/planning/services/plan-service';
-import { CalendarModule, DateAdapter } from 'angular-calendar';
-import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
-import { NgbModalModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { AuthService } from './modules/authentication/services/auth.service';
+import { IngredientService } from './modules/recipes/services/ingredient.service';
 
-import { FlatpickrModule } from 'angularx-flatpickr';
 export function initializeSections(sectionSerivce: SectionService) {
   return () => sectionSerivce.loadSectionData();
 }
@@ -36,9 +34,21 @@ export function initializeRecipes(RecipeService: RecipeService) {
 export function initializeUsers(UserService: UserService) {
   return () => UserService.loadUsersData();
 }
+export function initializeCurrentUser(authService: AuthService) {
+  return () => authService.loadCurrentUserData();
+}
 export function initializePlans(planService: PlanService) {
   return () => planService.loadPlanData();
 }
+
+export function initializeIngredients(ingredientService: IngredientService) {
+  return () => ingredientService.loadIngredientsData();
+}
+
+export function initializeIngredientsGroupsData(ingredientService: IngredientService) {
+  return () => ingredientService.loadIngredientsGroupsData();
+}
+
 @NgModule({
   declarations: [AppComponent, HeaderComponent, FooterComponent],
   imports: [
@@ -47,14 +57,25 @@ export function initializePlans(planService: PlanService) {
     BrowserAnimationsModule,
     HttpClientModule,
     RecipesModule,
-
     ControlsModule,
     UserPagesModule,
-    NgbModalModule,
-
     AngularSvgIconModule.forRoot(),
   ],
   providers: [
+    UserService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeUsers,
+      deps: [UserService],
+      multi: true,
+    },
+    AuthService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeCurrentUser,
+      deps: [AuthService],
+      multi: true,
+    },
     SectionService,
     {
       provide: APP_INITIALIZER,
@@ -69,13 +90,7 @@ export function initializePlans(planService: PlanService) {
       deps: [CategoryService],
       multi: true,
     },
-    UserService,
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeUsers,
-      deps: [UserService],
-      multi: true,
-    },
+
     RecipeService,
     {
       provide: APP_INITIALIZER,
@@ -90,6 +105,21 @@ export function initializePlans(planService: PlanService) {
       deps: [PlanService],
       multi: true,
     },
+    IngredientService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeIngredients,
+      deps: [IngredientService],
+      multi: true,
+    },
+    IngredientService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeIngredientsGroupsData,
+      deps: [IngredientService],
+      multi: true,
+    },
+
     AdminGuard,
     ModeratorGuard,
     RouteEventsService,

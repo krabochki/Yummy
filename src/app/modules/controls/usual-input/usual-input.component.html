@@ -30,13 +30,18 @@
       autocomplete="off"
       [maxlength]="max ? max : null"
       [(ngModel)]="value"
+      cdkTextareaAutosize  
       (keyup)="change()"
-      (focus)="focus()"
+      (focus)="focus()" 
       (blur)="blur()"
       [placeholder]="placeholder"
-      rows="4"
-    ></textarea>
+      [rows]="rows"
+      [ngStyle]="{'min-height': 'calc('+rows +'* (1em + 1.3em))'}"
+    >
+  </textarea>
   </ng-template>
+
+   <span class="resizer" *ngIf="inputType === 'textarea'"> <svg-icon class="resizer-icon" [src]="'assets/images/svg/resize.svg'" /></span>
 
    <span class="eye" *ngIf="inputType==='password'" (click)="eye()">
       <svg-icon

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, ElementRef, HostListener, Input, OnChanges, ViewChild } from '@angular/core';
 import { DragScrollComponent } from 'ngx-drag-scroll';
 import { ICategory, ISection, nullCategory, nullSection } from 'src/app/modules/recipes/models/categories';
+import { dragEnd, dragStart } from 'src/tools/common';
 
 @Component({
   selector: 'app-horizontal-category-list',
@@ -32,6 +33,14 @@ export class HorizontalCategoryListComponent implements OnChanges {
 
   ngOnChanges() {
     this.onResize();
+  }
+
+  dragStart(): void{
+    dragStart();
+  }
+
+  dragEnd(): void{
+    dragEnd();
   }
 
   scrollLeft() {

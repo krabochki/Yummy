@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ICategory, ISection } from 'src/app/modules/recipes/models/categories';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
@@ -12,6 +12,7 @@ import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
 import { CategoryService } from '../../services/category.service';
 import { Router } from '@angular/router';
+import { baseComparator } from 'src/tools/common';
 
 @Component({
   selector: 'app-main-page',
@@ -27,18 +28,21 @@ export class MainPageComponent implements OnInit, OnDestroy {
   popularRecipes: IRecipe[] = [];
   recentRecipes: IRecipe[] = [];
   noAccessModalShow = false;
+  categories: ICategory[] = [];
   favoriteRecipes: IRecipe[] = [];
   cookedRecipes: IRecipe[] = [];
   currentUser: IUser = { ...nullUser };
   popularRecipesLoaded = false;
   userRecipes: IRecipe[] = [];
+  MAX_DISPLAY_SIZE = 8;
   protected destroyed$: Subject<void> = new Subject<void>();
 
   constructor(
     private recipeService: RecipeService,
     private sectionService: SectionService,
     private categoryService: CategoryService,
-    private router:Router,
+    private router: Router,
+    private cd: ChangeDetectorRef,
 
     private titleService: Title,
     private authService: AuthService,
@@ -47,6 +51,11 @@ export class MainPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.categoryService.categories$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((categories: ICategory[]) => {
+        this.categories = categories;
+      });
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((currentUser: IUser) => {
@@ -56,7 +65,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
           if (this.currentUser.id !== 0) {
             this.userRecipes = this.recipeService
               .getRecipesByUser(this.allRecipes, this.currentUser.id)
-              .slice(0, 8);
+              .slice(0, this.MAX_DISPLAY_SIZE);
           }
         }
       });
@@ -73,32 +82,47 @@ export class MainPageComponent implements OnInit, OnDestroy {
           if (this.currentUser.id !== 0) {
             this.userRecipes = this.recipeService
               .getRecipesByUser(this.allRecipes, this.currentUser.id)
-              .slice(0, 8);
+              .slice(0, this.MAX_DISPLAY_SIZE);
           }
           if (!this.popularRecipesLoaded && this.allRecipes.length > 0) {
             this.popularRecipes = this.recipeService
               .getPopularRecipes(publicRecipes)
-              .slice(0, 8);
+              .slice(0, this.MAX_DISPLAY_SIZE);
             this.popularRecipesLoaded = true;
           }
           this.favoriteRecipes = this.recipeService
             .getMostFavoriteRecipes(publicRecipes)
-            .slice(0, 8);
+            .slice(0, this.MAX_DISPLAY_SIZE);
           this.cookedRecipes = this.recipeService
             .getMostCookedRecipes(publicRecipes)
-            .slice(0, 8);
+            .slice(0, this.MAX_DISPLAY_SIZE);
           this.recentRecipes = this.recipeService
             .getRecentRecipes(publicRecipes)
-            .slice(0, 8);
+            .slice(0, this.MAX_DISPLAY_SIZE);
         }
 
         this.sectionService.sections$
           .pipe(takeUntil(this.destroyed$))
           .subscribe((data: ISection[]) => {
             this.allSections = data;
-            this.allSections = this.sectionService.getNotEmptySections(
-              this.allSections,
+            this.allSections = this.allSections.sort((a, b) =>
+              baseComparator(
+                this.sectionService.getNumberRecipesOfSection(
+                  b,
+                  this.allRecipes,
+                  this.categories,
+                ),
+                this.sectionService.getNumberRecipesOfSection(
+                  a,
+                  this.allRecipes,
+                  this.categories,
+                ),
+              ),
             );
+            this.allSections = this.sectionService
+              .getNotEmptySections(this.allSections)
+              .slice(0, this.MAX_DISPLAY_SIZE);
+            this.cd.markForCheck();
           });
       });
   }

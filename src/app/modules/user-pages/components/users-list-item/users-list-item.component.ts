@@ -24,13 +24,13 @@ export class UsersListItemComponent implements OnInit, OnDestroy {
   @Input() adminpanel = false;
   userRecipesLength: number = 0;
   isFollower: boolean = false;
-  currentUser: IUser = {...nullUser};
+  currentUser: IUser = { ...nullUser };
 
   constructor(
     private userService: UserService,
     private recipeService: RecipeService,
     private authService: AuthService,
-    private notifyService:NotificationService
+    private notifyService: NotificationService,
   ) {}
 
   public ngOnInit(): void {
@@ -71,31 +71,34 @@ export class UsersListItemComponent implements OnInit, OnDestroy {
     this.demoteClick.emit(this.user);
   }
 
+  showStatus(user: IUser) {
+    return this.userService.getPermission('show-status', user);
+  }
+
   protected follow(): void {
     this.user = this.userService.addFollower(this.user, this.currentUser.id);
-    this.userService.updateUsers(this.user).subscribe()
+    this.userService.updateUsers(this.user).subscribe();
 
-     if (this.userService.getPermission('new-follower', this.user)) {
-       const notify: INotification = this.notifyService.buildNotification(
-         'Новый подписчик',
-         `Кулинар ${
-           this.currentUser.fullName
-             ? this.currentUser.fullName
-             : '@' + this.currentUser.username
-         } подписался на тебя`,
-         'info',
-         'user',
-         '/cooks/list/' + this.currentUser.id,
-       );
-       this.notifyService.sendNotification(notify, this.user).subscribe();
-     }
+    if (this.userService.getPermission('new-follower', this.user)) {
+      const notify: INotification = this.notifyService.buildNotification(
+        'Новый подписчик',
+        `Кулинар ${
+          this.currentUser.fullName
+            ? this.currentUser.fullName
+            : '@' + this.currentUser.username
+        } подписался на тебя`,
+        'info',
+        'user',
+        '/cooks/list/' + this.currentUser.id,
+      );
+      this.notifyService.sendNotification(notify, this.user).subscribe();
+    }
   }
 
   protected unfollow(): void {
     this.user = this.userService.removeFollower(this.user, this.currentUser.id);
     this.userService.updateUsers(this.user).subscribe();
   }
-  
 
   public ngOnDestroy(): void {
     this.destroyed$.next();

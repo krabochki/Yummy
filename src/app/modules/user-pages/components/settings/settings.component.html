@@ -16,14 +16,37 @@
           <h1>Настройки</h1>
           <hr />
           <div class="switches">
-            <button
-              class="switch"
-              [ngClass]="{ selected: step === i }"
-              (click)="step = i"
-              *ngFor="let item of steps; let i = index"
-            >
-              {{ item }}
-            </button>
+            <ng-container *ngFor="let item of steps; let i = index">
+              <button
+                *ngIf="showBlock(i)"
+                class="switch"
+                [ngClass]="{ selected: step === i }"
+                (click)="step = i"
+              >
+                {{ item }}
+              </button>
+            </ng-container>
+          </div>
+          <div class="mobile-switches">
+            <ng-container *ngFor="let item of steps; let i = index">
+              <button
+                *ngIf="showBlock(i)"
+                class="header-button"
+                [ngClass]="{ selected: step === i }"
+                (click)="step = i"
+              >
+                <svg-icon
+                  class="svg-trash"
+                  [applyClass]="true"
+                  [src]="
+                    'assets/images/svg/settings/' +
+                    stepsIcons[i] +
+                    (step === i ? '-fill' : '') +
+                    '.svg'
+                  "
+                />
+              </button>
+            </ng-container>
           </div>
         </nav>
         <div class="content">
@@ -88,6 +111,91 @@
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <div *ngIf="step === 5">
+            <h2>Анонимность</h2>
+
+            <div class="blocks third">
+              <ng-container *ngIf="user.role !== 'admin'">
+                <p *ngIf="user.role === 'user'; else forModerators">
+                  Внимание: все примененные ограничения не распространятся на
+                  модераторов и администраторов Yummy
+                </p>
+                <ng-template #forModerators>
+                  <p>
+                    Внимание: все примененные ограничения не распространятся на
+                    администратора Yummy
+                  </p>
+                </ng-template>
+              </ng-container>
+
+              <ng-container *ngFor="let section of condifencialitySettings">
+                <div
+                  *ngIf="section.role ? section.role.includes(user.role) : true"
+                >
+                  <h3>
+                    <svg-icon
+                      [applyClass]="true"
+                      class="icon"
+                      [src]="
+                        'assets/images/svg/settings/' + section.icon + '.svg'
+                      "
+                    />
+                    {{ section.title }}
+                  </h3>
+                  <div>
+                    <div class="toogle" *ngFor="let item of section.items">
+                      <p>{{ item.description }}</p>
+                      <app-toogle-switch
+                        [checked]="userPermissionEnabled(item.area)"
+                        (checkedEmit)="
+                          tooglePermission(
+                            item.area,
+                            !userPermissionEnabled(item.area)
+                          )
+                        "
+                      ></app-toogle-switch>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+          <div *ngIf="step === MANAGERS_SETTINGS_BLOCK_NUM">
+            <h2>Управление</h2>
+            <div class="blocks third">
+              <ng-container *ngFor="let section of managersPreferences">
+                <div
+                  *ngIf="section.role ? section.role.includes(user.role) : true"
+                >
+                  <h3>
+                    <svg-icon
+                      [applyClass]="true"
+                      class="icon"
+                      [src]="
+                        'assets/images/svg/settings/' + section.icon + '.svg'
+                      "
+                    />
+                    {{ section.title }}
+                  </h3>
+                  <div>
+                    <div class="toogle" *ngFor="let item of section.items">
+                      <p>{{ item.description }}</p>
+                      <app-toogle-switch
+                        [checked]="userPermissionEnabled(item.area)"
+                        (checkedEmit)="
+                          tooglePermission(
+                            item.area,
+                            !userPermissionEnabled(item.area)
+                          )
+                        "
+                      ></app-toogle-switch>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
             </div>
           </div>
           <div *ngIf="step === 3">
@@ -176,7 +284,7 @@
                 </h3>
                 <p class="description">
                   Укажите продукты, которые вы по тем или иным причинам не
-                  желаете использовать в процессе готових каких бы то ни было
+                  желаете использовать в процессе готовки каких бы то ни было
                   рецептов. Мы учтем ваши предпочтения, и в подборе рецептов вы
                   сразу не будете видеть рецепты, включающие такие ингредиенты.
                 </p>

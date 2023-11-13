@@ -56,7 +56,8 @@ import {
 export class ControlDashboardComponent implements OnInit, OnDestroy {
   protected currentUser: IUser = { ...nullUser };
 
-  private sections: ISection[] = [];
+  protected sections: ISection[] = [];
+  protected sectionsToShow: ISection[] = [];
   private users: IUser[] = [];
   private recipes: IRecipe[] = [];
   protected reports: ICommentReportForAdmin[] = [];
@@ -69,6 +70,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   protected showCommentReports: boolean = false;
   protected showAwaitingRecipes: boolean = false;
   protected showCategoriesForCheck: boolean = false;
+  protected showSections: boolean = false;
 
   protected adminAction: 'approve' | 'dismiss' = 'dismiss';
 
@@ -207,6 +209,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
       .subscribe((receivedSections: ISection[]) => {
         {
           this.sections = receivedSections;
+          this.sectionsToShow = this.sections.slice(0, 10);
         }
       });
   }
@@ -215,7 +218,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   private loadMore(all: any[], current: any[], amount: number): any[] {
     const currentLength = current.length;
     const next = all.slice(currentLength, currentLength + amount);
-    return (current = [this.currentUser, ...next]);
+    return (current = [...current, ...next]);
   }
   protected loadMoreCategories(): void {
     this.categoriesForCheckToShow = this.loadMore(
@@ -224,6 +227,11 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
       3,
     );
   }
+
+  protected loadMoreSections(): void {
+    this.sectionsToShow = this.loadMore(this.sections, this.sectionsToShow, 4);
+  }
+
   protected loadMoreCommentReports(): void {
     this.reports = this.loadMore(this.allReports, this.reports, 3);
   }
@@ -314,7 +322,10 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     if (this.actionReport) {
       const recipe: IRecipe = this.getRecipe(this.actionReport.recipe);
       const reporter: IUser = this.getUser(this.actionReport.reporter);
-      const comment: IComment = this.getComment(this.actionReport.comment, recipe);
+      const comment: IComment = this.getComment(
+        this.actionReport.comment,
+        recipe,
+      );
       const author: IUser = this.getUser(comment.authorId);
 
       const subscribes: Observable<IUser>[] = [];
@@ -353,7 +364,10 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     if (this.actionReport) {
       const recipe: IRecipe = this.getRecipe(this.actionReport.recipe);
       const reporter: IUser = this.getUser(this.actionReport.reporter);
-      const comment: IComment = this.getComment(this.actionReport.comment, recipe);
+      const comment: IComment = this.getComment(
+        this.actionReport.comment,
+        recipe,
+      );
 
       const author: IUser = this.getUser(comment.authorId);
 
@@ -457,10 +471,14 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
 
   private demoteUser() {
     this.targetDemotedUser.role = 'user';
-    this.targetDemotedUser = this.notifyService.addNotificationToUser(
-      notifyForDemotedUser(this.currentUser, this.notifyService),
-      this.targetDemotedUser,
-    );
+    if (
+      this.userService.getPermission('you-was-fired', this.targetDemotedUser)
+    ) {
+      this.targetDemotedUser = this.notifyService.addNotificationToUser(
+        notifyForDemotedUser(this.currentUser, this.notifyService),
+        this.targetDemotedUser,
+      );
+    }
     this.userService
       .updateUsers(this.targetDemotedUser)
       .subscribe(() => (this.targetDemotedUser = nullUser));
@@ -486,13 +504,14 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   }
   private approveRecipe(): void {
     if (this.actionRecipe)
-      this.adminService
-        .approveRecipe(this.actionRecipe)
-        .subscribe(() =>
-          this.actionRecipe
-            ? this.sendNotifiesAfterPublishingRecipe(this.actionRecipe)
-            : null,
-        );
+      this.adminService.approveRecipe(this.actionRecipe).subscribe(() => {
+        this.actionRecipe &&
+          this.userService.getPermission(
+            'hide-author',
+            this.getUser(this.actionRecipe.authorId),
+          ) &&
+          this.sendNotifiesAfterPublishingRecipe(this.actionRecipe);
+      });
   }
   private dismissRecipe(): void {
     if (this.actionRecipe) {

@@ -6,6 +6,8 @@ import { recipesUrl } from 'src/tools/source';
 import { getCurrentDate } from 'src/tools/common';
 import { IPlan } from '../../planning/models/plan';
 import { IUser } from '../../user-pages/models/users';
+import { UserService } from '../../user-pages/services/user.service';
+import { IIngredient } from '../models/ingredients';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +18,10 @@ export class RecipeService {
 
   url: string = recipesUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private userService: UserService,
+  ) {}
 
   loadRecipeData() {
     this.getRecipes().subscribe((data) => {
@@ -237,7 +242,6 @@ export class RecipeService {
     for (const calendarEvent of plan.calendarEvents) {
       plannedRecipeIds.push(calendarEvent.recipe);
     }
-    console.log(plannedRecipeIds);
 
     const plannedRecipes: IRecipe[] = [];
 
@@ -276,6 +280,35 @@ export class RecipeService {
     });
   }
 
+
+  getRecipesByIngredient(recipes: IRecipe[], ingredient: IIngredient): IRecipe[] {
+    const recipesWithIngredient:IRecipe[]= [];
+    const ingredientName = ingredient.name.toLowerCase().trim();
+    recipes.forEach((recipe) => {
+      recipe.ingredients.forEach((rIngredient) => {
+        const formattedRecipeIngredientName = rIngredient.name
+          .toLowerCase()
+          .trim();
+        const variationsMatch =
+          ingredient.variations.length > 0 &&
+          ingredient.variations.some((variation) => {
+            const formattedVariation = variation.toLowerCase().trim();
+            return (
+              formattedRecipeIngredientName.includes(formattedVariation) ||
+              formattedVariation.includes(formattedRecipeIngredientName)
+            );
+          });
+
+        if (
+          formattedRecipeIngredientName.includes(ingredientName) ||
+          variationsMatch
+        ) {
+          recipesWithIngredient.push(recipe);
+        }
+      });
+    });
+    return recipesWithIngredient;
+  }
   getRecipesByCategory(recipes: IRecipe[], categoryId: number) {
     return recipes.filter((recipe) => recipe.categories.includes(categoryId));
   }
@@ -288,6 +321,14 @@ export class RecipeService {
       recipe.favoritesId.push(userId);
     }
     return recipe;
+  }
+
+  hideAuthor(currentUser: IUser, author: IUser): boolean {
+    return (
+      currentUser.id === author.id ||
+      (author.role !== 'admin' && currentUser.role !== 'user') ||
+      this.userService.getPermission('hide-author', author)
+    );
   }
   removeRecipeFromFavorites(userId: number, recipe: IRecipe): IRecipe {
     if (recipe.favoritesId.includes(userId)) {

@@ -1,5 +1,59 @@
 @import "../../../../../../tools/UI/UI.scss";
 
+@mixin flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete {
+  @include flex;
+  background-color: var(--color-primary);
+  width: 2em;
+  height: 2em;
+  border-radius: 100%;
+  position: absolute;
+  top: 0;
+  opacity: 0.65;
+  right: 0;
+  zoom: 0.85;
+  transition: 0.2s;
+
+  &:after{
+    top:0;bottom:0;right:0;left:0;content: "";
+    width: 0;height: 0;position: absolute;margin: auto;
+    background-color: var(--color-primary-focus);
+    border-radius: 100%;
+    transition: 0.2s
+  }
+
+
+  .trash-svg {
+    @include flex;
+    fill: white;
+    height: 1.15em;
+    z-index: 1;
+  }
+  &:hover{
+    opacity: 1;
+
+    &:after{
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+.category-wrap {
+  position: relative;
+}
+
+app-modal{
+  position: fixed;
+  z-index: 10;
+  cursor: default;
+}
+
 .category {
   background-color: var(--color-background-deeper);
 
@@ -7,8 +61,7 @@
   background-image: url("../../../../../../assets/images/category.png");
   background-size: cover;
 
-  align-items: center;
-  justify-content: center;
+  @include flex;
   font-size: 1.1em;
   margin: 0 auto;
 
@@ -21,7 +74,6 @@
   min-width: 8em;
   min-height: 8em;
   flex-direction: column;
-  display: flex;
   overflow: hidden;
 }
 
@@ -32,43 +84,39 @@
 }
 
 
-* {
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-  -khtml-user-select: none; /* Konqueror HTML */
-  -moz-user-select: none; /* Old versions of Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome, Edge, Opera and Firefox */
-}
 
-  h1 {
-    sup{
-      font-size: 0.6em;
-    }
-      cursor: pointer;
-      position: relative;
-    font-size:1.2em;
-
-    line-height: 1;
-    
-     display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3; /* Количество строк, которые вы хотите отобразить */
-    overflow-wrap: break-word; /* Разрешить перенос длинных слов */
-      hyphens: auto; /* Разрешить перенос слов */
-
-  white-space: normal; /* Изменить на "normal" */
-   overflow-y: hidden;
-   overflow-x: hidden;
-   text-overflow: ellipsis;
-
-    font-weight: 400;
-    margin-top: 0.5em;
-    text-align: center;
-    padding-bottom: 0.2em;
-  
+h1 {
+  sup {
+    font-size: 0.6em;
   }
+
+  cursor: pointer;
+  position: relative;
+  font-size:1.2em;
+
+  line-height: 1;
+
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  /* Количество строк, которые вы хотите отобразить */
+  overflow-wrap: break-word;
+  /* Разрешить перенос длинных слов */
+  hyphens: auto;
+  /* Разрешить перенос слов */
+
+  white-space: normal;
+  /* Изменить на "normal" */
+  overflow-y: hidden;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+
+  font-weight: 400;
+  margin-top: 0.5em;
+  text-align: center;
+  padding-bottom: 0.2em;
+
+}
 
 
 @media (max-width: 900px) {

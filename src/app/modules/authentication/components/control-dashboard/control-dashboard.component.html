@@ -185,6 +185,21 @@
   </div>
   </div>
 
+  <div  class="content-wrap" >
+     <h2 (click)="showSections= !showSections">
+        Все секции
+        </h2>
+  <div @height *ngIf="showSections " class="users"> 
+    <app-vertical-category-list [showRecipesNumber]="true" [context]="'section'" [categories]="sectionsToShow"></app-vertical-category-list>
+ 
+    <app-button class="more-reports-button" [text]="'Загрузить еще...'" (click)="loadMoreSections()"
+          *ngIf="sections.length > sectionsToShow.length" [rounded]="true" [style]="'outlined'"
+          [color]="'prim'"></app-button>
+  </div>
+
+   
+  </div>
+
     <div>
       <app-button [text]="'Создать секцию'" (click)="sectionCreatingMode=true" [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
     </div>

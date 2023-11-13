@@ -1,0 +1,29 @@
+<div
+  class="ingredient-cont noselect"
+  [title]="ingredient.name + ' [' + recipesNumber + ']'"
+  *ngIf="ingredient.id > 0; else nullCategory"
+>
+  <div class="ingredient-wrap">
+    <div class="ingredient" *ngIf="ingredient.id > 0; else nullCategory"></div>
+  </div>
+  <a
+    [routerLink]="'/ingredients/list/' + ingredient.id"
+  >
+    <div style="position: relative; overflow: visible">
+      <h1 class="name">
+        <sup>{{ recipesNumber }} </sup>{{ ingredient.name }}
+      </h1>
+    </div>
+  </a>
+</div>
+
+<ng-template #nullCategory>
+  <div class="ingredient null">
+    <p>Скоро...</p>
+    <svg-icon
+      [applyClass]="true"
+      class="svg"
+      [src]="'assets/images/svg/no-category.svg'"
+    ></svg-icon>
+  </div>
+</ng-template>

@@ -7,12 +7,12 @@
   }">
     <div class="userpic"></div>
     <div class="content">
-        <a class="header" [routerLink]="'/cooks/list/' + author.id">
+        <a class="header" [ngClass]="{'nolink':!showCommentAuthor}" [routerLink]="showCommentAuthor?'/cooks/list/' + author.id:null">
             <h1>
-                {{ author.fullName !== "" ? author.fullName : "@" + author.username }}
+                {{ showCommentAuthor? author.fullName !== "" ? author.fullName : "@" + author.username :'Автор скрыт' }}
 
-                <span *ngIf="comment.authorId === recipe.authorId" class="noselect">·</span>
-                <span *ngIf="comment.authorId === recipe.authorId">Автор рецепта</span>
+                <span *ngIf="showRecipeAuthor && showCommentAuthor && comment.authorId === recipe.authorId" class="noselect">·</span>
+                <span *ngIf="showRecipeAuthor && showCommentAuthor && comment.authorId === recipe.authorId">Автор рецепта</span>
             </h1>
             <p class="date">{{ date | timePast }}</p>
         </a>

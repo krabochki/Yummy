@@ -19,6 +19,7 @@
 }
 
 
+
 * {
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */
@@ -48,6 +49,7 @@
   overflow-y: hidden;
   background-size: cover;
   height: 15em;
+  min-height: 15em;
   border-radius: 1.5em;
   align-items: stretch;
   justify-content: space-between;

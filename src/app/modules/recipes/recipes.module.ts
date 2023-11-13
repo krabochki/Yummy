@@ -31,6 +31,12 @@ import { CUSTOM_TIME_DIFF_GENERATOR, TimePastPipe } from 'ng-time-past-pipe';
 import { timeDiffGenerator } from '../controls/time';
 import { SectionCreatingComponent } from './components/categories/section-creating/section-creating.component';
 import { PlanningModule } from '../planning/planning.module';
+import { IngredientPageComponent } from './components/ingredients/ingredient-page/ingredient-page.component';
+import { IngredientsPageComponent } from './components/ingredients/ingredients-page/ingredients-page.component';
+import { IngredientsVerticalListComponent } from './components/ingredients/ingredients-vertical-list/ingredients-vertical-list.component';
+import { IngredientsHorizontalListComponent } from './components/ingredients/ingredients-horizontal-list/ingredients-horizontal-list.component';
+import { IngredientListItemComponent } from './components/ingredients/ingredient-list-item/ingredient-list-item.component';
+import { IngredientCreateComponent } from './components/ingredients/ingredient-create/ingredient-create.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +58,12 @@ import { PlanningModule } from '../planning/planning.module';
     VerticalCategoryListComponent,
     HorizontalCategoryListComponent,
     SectionCreatingComponent,
+    IngredientPageComponent,
+    IngredientsPageComponent,
+    IngredientsVerticalListComponent,
+    IngredientsHorizontalListComponent,
+    IngredientListItemComponent,
+    IngredientCreateComponent
   ],
   imports: [
     CommonModule,

@@ -19,6 +19,8 @@ import {
 import { Subject, takeUntil } from 'rxjs';
 import { PlanService } from 'src/app/modules/planning/services/plan-service';
 import { IPlan, nullPlan } from 'src/app/modules/planning/models/plan';
+import { baseComparator } from 'src/tools/common';
+import { IIngredient, nullIngredient } from '../../../models/ingredients';
 
 @Component({
   templateUrl: './some-recipes-page.component.html',
@@ -52,6 +54,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
   protected creatingMode: boolean = false;
   protected filter: string = '';
 
+  ingredient: IIngredient = nullIngredient;
   protected recipesToShow: IRecipe[] = [];
   protected allRecipes: IRecipe[] = [];
 
@@ -90,7 +93,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
         this.router.navigateByUrl('/recipes');
       this.setRecipeType(this.filter);
 
-      this.currentUserInit(data['CategoryResolver']);
+      this.currentUserInit(data['CategoryResolver'],data['IngredientResolver']);
 
       this.dataLoad = true;
     });
@@ -143,9 +146,16 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
       case 'most-favorite':
         this.recipeType = RecipeType.MostFavorite;
         break;
+      case 'ingredient-recipes':
+        this.recipeType =RecipeType.ByIngredient
     }
   }
 
+  showAuthor(recipe: IRecipe): boolean {
+    const author = this.getUser(recipe.authorId);
+    return !this.recipeService.hideAuthor(this.currentUser, author);
+  }
+  
   private categoryInit(categoryFromData: ICategory, recipes: IRecipe[]): void {
     this.category = categoryFromData;
 
@@ -181,43 +191,60 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     this.allRecipes = publicRecipes;
     this.recipesToShow = publicRecipes;
 
-    this.allRecipes = publicRecipes;
-    this.recipesToShow = publicRecipes;
+    this.popularRecipes = this.recipeService.getPopularRecipes([
+      ...publicRecipes,
+    ]);
 
-    this.popularRecipes = this.recipeService.getPopularRecipes(this.allRecipes);
     this.plannedRecipes = this.recipeService.getPlannedRecipes(
-      publicAndAllMyRecipes,
+      [...publicAndAllMyRecipes],
       this.currentUserPlan,
     );
-    this.discussedRecipes =
-      this.recipeService.getMostDiscussedRecipes(publicRecipes);
+    this.discussedRecipes = this.recipeService.getMostDiscussedRecipes([
+      ...publicRecipes,
+    ]);
     this.commentedRecipes = this.recipeService.getCommentedRecipesByUser(
-      publicRecipes,
+      [...publicRecipes],
       this.currentUser.id,
     );
-    this.mostCooked = this.recipeService.getMostCookedRecipes(publicRecipes);
-    this.mostFavorite =
-      this.recipeService.getMostFavoriteRecipes(publicRecipes);
-    this.recentRecipes = this.recipeService.getRecentRecipes(this.allRecipes);
+    this.mostCooked = this.recipeService.getMostCookedRecipes([
+      ...publicRecipes,
+    ]);
+    this.mostFavorite = this.recipeService.getMostFavoriteRecipes([
+      ...publicRecipes,
+    ]);
+    this.recentRecipes = this.recipeService.getRecentRecipes([
+      ...this.allRecipes,
+    ]);
     this.cookedRecipes = this.recipeService.getCookedRecipesByUser(
-      this.allRecipes,
+      [...this.allRecipes],
       this.currentUser.id,
     );
     this.likedRecipes = this.recipeService.getLikedRecipesByUser(
-      this.allRecipes,
+      [...this.allRecipes],
       this.currentUser.id,
     );
     this.favoriteRecipes = this.recipeService.getFavoriteRecipesByUser(
-      this.allRecipes,
+      [...this.allRecipes],
       this.currentUser.id,
     );
 
     this.myRecipes = this.recipeService.getRecipesByUser(
-      allRecipes,
+      [...allRecipes],
       this.currentUser.id,
     );
 
     this.followingRecipes = this.getFollowingRecipes(publicRecipes);
+    this.followingRecipes = this.followingRecipes.filter((r) => {
+      this.currentUser.role === 'user' ||
+      this.getUser(r.authorId).role === 'admin'
+        ? this.userService.getPermission(
+            'hide-author',
+            this.getUser(r.authorId),
+          )
+        : true;
+    });
+
+    
   }
 
   private setRecipesByType(): void {
@@ -251,7 +278,6 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
         break;
       case RecipeType.Favorite:
         this.allRecipes = this.favoriteRecipes;
-        this.currentUser.id;
         break;
       case RecipeType.Commented:
         this.allRecipes = this.commentedRecipes;
@@ -263,6 +289,9 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
         this.allRecipes = this.cookedRecipes;
         break;
       case RecipeType.All:
+        this.allRecipes = this.allRecipes.filter(
+          (r) => r.authorId !== this.currentUser.id,
+        );
         this.allRecipes = [...this.allRecipes, ...this.myRecipes];
         break;
     }
@@ -281,13 +310,21 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     this.followingRecipes = this.followingRecipes.slice(0, 8);
   }
 
-  private recipeSourceInit(categoryFromData: ICategory): void {
+  private recipeSourceInit(categoryFromData: ICategory, ingredientFromData:IIngredient): void {
     this.recipeService.recipes$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedRecipes: IRecipe[]) => {
         if (this.recipeType === RecipeType.Category) {
           this.categoryInit(categoryFromData, receivedRecipes);
-        } else {
+          return
+        }
+        if (this.recipeType === RecipeType.ByIngredient) {
+      
+          this.ingredient = ingredientFromData;
+          this.allRecipes = this.recipeService.getRecipesByIngredient(this.recipeService.getPublicAndAllMyRecipes(receivedRecipes,this.currentUser.id), ingredientFromData);
+          this.recipesToShow = this.allRecipes.slice(0, 8)
+        }
+        else {
           this.currentUserPlanInit();
           this.getRecipesOfAllTypes(receivedRecipes);
           this.setRecipesByType();
@@ -310,12 +347,12 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
       });
   }
 
-  private currentUserInit(categoryFromData: ICategory): void {
+  private currentUserInit(categoryFromData: ICategory, ingredientFromData:IIngredient): void {
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((user: IUser) => {
         this.currentUser = user;
-        this.recipeSourceInit(categoryFromData);
+        this.recipeSourceInit(categoryFromData,ingredientFromData);
       });
   }
 
@@ -323,9 +360,17 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     if (recipeType === RecipeType.Category) {
       return this.category.name;
     }
+    if (recipeType === RecipeType.ByIngredient) {
+      return this.ingredient.name;
+    }
     return recipeTitles[recipeType] || '';
   }
   protected getNoRecipesTextByRecipetype(recipeType: RecipeType): string {
+    if (recipeType === RecipeType.ByIngredient) {
+      return (
+       `Ни один кулинар пока что не создал рецепт с ингредиентом «${this.ingredient.name}». Можете создать рецепт сами или перейти ко всем ингредиентам`
+      );
+    }
     return recipeNoRecipesText[recipeType] || '';
   }
   protected getNoRecipesButtonTextByRecipetype(recipeType: RecipeType): string {
@@ -363,6 +408,10 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
       followingRecipes = [...followingRecipes, ...foundRecipes];
     });
 
+    followingRecipes = followingRecipes.sort((a, b) =>
+      baseComparator(b.publicationDate, a.publicationDate),
+    );
+
     return followingRecipes;
   }
 
@@ -394,14 +443,16 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
       const filterRecipes: IRecipe[] = this.allRecipes.filter(
         (recipe: IRecipe) =>
           recipe.name.toLowerCase().replace(/\s/g, '').includes(search) ||
-          this.getUser(recipe.authorId)
-            .fullName.toLowerCase()
-            .replace(/\s/g, '')
-            .includes(search) ||
-          this.getUser(recipe.authorId)
-            .username.toLowerCase()
-            .replace(/\s/g, '')
-            .includes(search),
+          (this.showAuthor(recipe)
+            ? this.getUser(recipe.authorId)
+                .fullName.toLowerCase()
+                .replace(/\s/g, '')
+                .includes(search) ||
+              this.getUser(recipe.authorId)
+                .username.toLowerCase()
+                .replace(/\s/g, '')
+                .includes(search)
+            : null),
       );
 
       filterRecipes.forEach((element) => {

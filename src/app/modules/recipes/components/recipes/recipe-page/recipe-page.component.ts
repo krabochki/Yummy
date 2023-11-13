@@ -36,6 +36,8 @@ import {
   nullProduct,
 } from 'src/app/modules/planning/models/shopping-list';
 import { CalendarEvent } from 'angular-calendar';
+import { IngredientService } from '../../../services/ingredient.service';
+import { IIngredient } from '../../../models/ingredients';
 
 @Component({
   selector: 'app-recipe-page',
@@ -83,6 +85,8 @@ export class RecipePageComponent implements OnInit, OnDestroy {
 
   statisticPercent = 0;
 
+  ingredients: IIngredient[] = [];
+
   voteModalShow: boolean = false;
   successVoteModalShow: boolean = false;
   commentsToShow: IComment[] = [];
@@ -97,6 +101,10 @@ export class RecipePageComponent implements OnInit, OnDestroy {
 
   protected alsoFromThisCook: IRecipe[] = [];
 
+  get hideAuthor(): boolean {
+    return this.recipeService.hideAuthor(this.currentUser, this.author);
+  }
+
   constructor(
     private notifyService: NotificationService,
     private sectionService: SectionService,
@@ -109,6 +117,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     private commentService: CommentService,
     public router: Router,
     public routerEventsService: RouteEventsService,
+    private ingredientService: IngredientService,
     private categoryService: CategoryService,
     private cd: ChangeDetectorRef,
   ) {
@@ -153,6 +162,12 @@ export class RecipePageComponent implements OnInit, OnDestroy {
               this.recipeService.recipes$
                 .pipe(takeUntil(this.destroyed$))
                 .subscribe((recipes: IRecipe[]) => {
+                  this.ingredientService.ingredients$
+                    .pipe(takeUntil(this.destroyed$))
+                    .subscribe((receivedIngredients) => {
+                      this.ingredients = receivedIngredients;
+                    });
+
                   this.statisticPercent = Number(
                     this.getStatictics().toFixed(0),
                   );
@@ -162,13 +177,15 @@ export class RecipePageComponent implements OnInit, OnDestroy {
                       this.recipeService.getPublicRecipes(recipes);
                     this.downRecipes = this.getSimilarRecipes(publicRecipes, 4);
                   }
-                  this.alsoFromThisCook = this.recipeService
-                    .getRecipesByUser(
-                      this.recipeService.getPublicRecipes(recipes),
-                      this.author.id,
-                    )
-                    .filter((r) => r.id !== this.recipe.id)
-                    .slice(0, 4);
+                  if (!this.hideAuthor) {
+                    this.alsoFromThisCook = this.recipeService
+                      .getRecipesByUser(
+                        this.recipeService.getPublicRecipes(recipes),
+                        this.author.id,
+                      )
+                      .filter((r) => r.id !== this.recipe.id)
+                      .slice(0, 4);
+                  }
                   this.recentRecipes = this.recipeService.getRecentRecipes(
                     this.recipeService.getPublicRecipes(recipes),
                   );
@@ -240,6 +257,10 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     }
     this.cookThisRecipe();
     this.voteModalShow = false;
+  }
+
+  findIngredientByName(name: string) {
+    return this.ingredientService.findIngredientByName(name, this.ingredients);
   }
   handleSuccessVoteModal() {
     this.recipeService
@@ -386,10 +407,15 @@ export class RecipePageComponent implements OnInit, OnDestroy {
       (ingr) => ingr.name === ingredient.name,
     );
     if (find) {
+      const relatedIngredient: IIngredient = this.findIngredientByName(
+        ingredient.name,
+      );
+
       const product: ShoppingListItem = {
         ...nullProduct,
         id: maxId + 1,
         name: find.name,
+        type: relatedIngredient.shoppingListGroup || 0 ,
         howMuch: (find.quantity ? find.quantity + ' ' : '') + find.unit,
         relatedRecipe: this.recipe.id,
       };

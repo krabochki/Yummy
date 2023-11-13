@@ -34,6 +34,7 @@ export class UsualInputComponent implements OnInit, OnChanges {
   @Input() max: number | undefined = undefined;
   @Input() showError = true;
   @Input() value = '';
+  @Input() rows = 3;
   @Input() inputDisabled: boolean = false;
   @Input() inputType: 'input' | 'textarea' | 'password' = 'input';
   @Input() inputRequired: boolean = false;
@@ -67,6 +68,7 @@ export class UsualInputComponent implements OnInit, OnChanges {
 
   //Появление фокуса
   focus() {
+    if(this.inputType === 'password')
     setTimeout(() => {
       this.input?.nativeElement.setSelectionRange(
         this.value.length,

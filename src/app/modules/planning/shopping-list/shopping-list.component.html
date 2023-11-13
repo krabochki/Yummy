@@ -38,7 +38,7 @@
               <div class="no-any-products" *ngIf="d.items.length === 0">
                 Вы перенесли все продукты в другой список
               </div>
-              <li class="product-info" [class.purchased]="item.isBought" (cdkDragStarted)="dragStart()"
+              <li  class="product-info" [class.purchased]="item.isBought" (cdkDragStarted)="dragStart()"
                 [cdkDragData]="item" *ngFor="let item of d.items; trackBy: trackByItems" cdkDragBoundary=".boundary"
                 cdkDrag>
                 <div class="main-product-info">
@@ -104,6 +104,7 @@
                       <div *ngIf="autocompleteTypes.length === 0">
                         <div class="no-found-recipes">
                           <p>Ничего не найдено</p>
+                          <svg-icon [applyClass]="true" class="tomato" [src]="baseSvgPath+'shocked-tomato.svg'" />
                         </div>
                       </div>
                       <li *ngFor="let item of autocompleteTypes" (mousedown)="chooseRecipe(item)">

@@ -1,4 +1,3 @@
-
 .container {
   width: 100%;
   position: relative;
@@ -7,8 +6,6 @@
     margin-top: 0.5em;
   }
 }
-
-
 
 h2 {
   font-weight: 700;
@@ -22,7 +19,7 @@ h2 {
 }
 
 .section.noone {
-  height: 20vh;
+  height: 30vh;
   text-align: center;
   padding: 2em;
 
@@ -30,12 +27,11 @@ h2 {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+
   p {
     font-size: 0.9em;
     line-height: 1.14;
   }
-
- 
 }
 
 .autocomplete {
@@ -45,11 +41,11 @@ h2 {
 
   z-index: 3;
   width: 100%;
+  max-height: max-content;
   z-index: 100;
 
-  height: 20vh;
-  border-radius:  var(--space-s) var(--space-s);
-
+  height: 30vh;
+  border-radius: var(--space-s) var(--space-s);
 
   overflow-y: auto !important;
 
@@ -73,13 +69,14 @@ h2 {
     border-radius: 100%;
   }
 
-  li.sections:hover{
+  li.sections:hover {
     padding-left: 1.5em;
   }
-  li.sections{
-    padding-left: 1em;
 
+  li.sections {
+    padding-left: 1em;
   }
+
   li {
     max-width: 100%;
     display: flex;
@@ -90,43 +87,43 @@ h2 {
     padding-left: 2em;
     transition:
       background-color 0.3s ease-in-out,
-      font-weight 0.3s ease-in-out,
       padding-left 0.3s ease-in-out;
+
     &:nth-of-type(2n + 1) {
       background-color: var(--color-background-deeper-unactive);
     }
+
     &:hover {
       background-color: var(--color-secondary);
-      font-weight: 600;
+      font-weight: 500;
       padding-left: 2.5em;
 
       .num {
         background-color: var(--color-background);
         color: var(--color-secondary);
       }
+
       .content {
         color: var(--color-background);
       }
-    }
-
-    &:first-of-type {
     }
     .content {
       transition: color 0.2s ease-in-out;
       padding-left: 0.3em;
       text-overflow: ellipsis;
       overflow: hidden !important;
-      
     }
   }
 
   &::-webkit-scrollbar {
     width: 12px;
   }
+
   &::-webkit-scrollbar-track {
     border-radius: 20px;
     background: var(--scroll-body);
   }
+
   &::-webkit-scrollbar-thumb {
     background-color: var(--scroll-thumb);
     border-radius: 20px;
@@ -134,14 +131,14 @@ h2 {
   }
 }
 
-
-
 input:focus {
   background-color: var(--color-background-deeper);
 }
-input {  width: 100%;
 
-  &:disabled{
+input {
+  width: 100%;
+
+  &:disabled {
     opacity: 0.5;
   }
 
@@ -153,6 +150,7 @@ input {  width: 100%;
   font-weight: 400;
   padding: 0.65em 0.8em;
   transition: 0.2s ease-in-out;
+
   &:focus {
     border-color: var(--color-secondary);
   }

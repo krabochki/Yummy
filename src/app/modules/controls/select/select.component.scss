@@ -11,7 +11,7 @@
   margin: 0 auto;
   font-size: var(--font-s);
   z-index: 10;
-  overflow: hidden;
+  overflow: hidden !important;
   overflow-y: none;
   display: flex;
   line-height: 1;

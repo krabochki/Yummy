@@ -183,9 +183,6 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
     return nullSection;
   }
 
-  turnOffSearch() {
-    this.searchQuery = '';
-  }
 
   blurSearch() {
     this.autocompleteShow = false;
@@ -198,6 +195,9 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
   }
   turnOnSearch() {
     this.autocompleteShow = true;
+    let categoriesToSearch = this.categories
+    if(this.filter==='section')
+     categoriesToSearch = this.getCategoriesOfSection(this.section)
     if (this.searchQuery.length > 0) {
       this.autocomplete = [];
       const notEmptySections = this.sectionService.getNotEmptySections(
@@ -207,7 +207,7 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
         (section: ISection) =>
           section.name.toLowerCase().includes(this.searchQuery.toLowerCase()),
       );
-      const filterCategories: ICategory[] = this.categories.filter(
+      const filterCategories: ICategory[] = categoriesToSearch.filter(
         (category: ICategory) =>
           category.name.toLowerCase().includes(this.searchQuery.toLowerCase()),
       );

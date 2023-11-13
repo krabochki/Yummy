@@ -153,8 +153,10 @@
       <div class="img-cont">
         <div #emojiPicker>
           <div
+            
             [ngClass]="{
-              'no-emoji': !selectedEmoji && isSameUser
+              'no-emoji': !selectedEmoji && isSameUser,
+              'emoji-picker-open':showEmojiPicker
             }"
             [style.cursor]="isSameUser ? 'pointer' : 'default'"
             [title]="
@@ -202,7 +204,7 @@
         </div>
         <button
           class="hire-button"
-          *ngIf="currentUser.role === 'admin' && this.user.role === 'user'"
+          *ngIf="currentUser.role === 'admin' && this.user.role === 'user' && showHireButton"
           (click)="hireModalShow = true"
         >
           <svg-icon

@@ -37,6 +37,9 @@ export class UsersPageComponent implements OnInit, OnDestroy {
   protected filter: string = '';
   protected userType: UsersType = UsersType.All;
   protected showUsers: IUser[] = [];
+  protected searchQuery: string = '';
+  protected autocompleteShow: boolean = false;
+  protected autocompleteUsersList: IUser[] = [];
 
   constructor(
     private userService: UserService,
@@ -66,6 +69,7 @@ export class UsersPageComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe((data) => {
         this.users = data;
+
         this.popularUsers = this.getPopularUsers(this.users);
         this.nearbyUsers = this.getNearbyUsers(this.users);
         this.moreProductiveUsers = this.getMoreProductiveUsers(this.users);
@@ -75,6 +79,8 @@ export class UsersPageComponent implements OnInit, OnDestroy {
         this.administratorsAndModerators = this.getAdministratorssAndModerators(
           this.users,
         );
+        this.administratorsAndModerators =
+          this.administratorsAndModerators.filter((m) => this.showStatus(m));
         this.currentUserFollowersUsers = this.getCurrentUserFollowersUsers(
           this.users,
         );
@@ -84,6 +90,22 @@ export class UsersPageComponent implements OnInit, OnDestroy {
         switch (this.userType) {
           case UsersType.All:
             this.allUsers = this.users;
+            this.popularUsers = this.getPublicUsers(this.popularUsers);
+            this.nearbyUsers = this.getPublicUsers(this.nearbyUsers);
+            this.moreProductiveUsers = this.getPublicUsers(
+              this.moreProductiveUsers,
+            );
+            this.currentUserFollowersUsers = this.getPublicUsers(
+              this.currentUserFollowersUsers,
+            );
+            this.currentUserFollowingUsers = this.getPublicUsers(
+              this.currentUserFollowingUsers,
+            );
+            this.newUsers = this.getPublicUsers(this.newUsers);
+            this.administratorsAndModerators = this.getPublicUsers(
+              this.administratorsAndModerators,
+            );
+            this.moreViewedUsers = this.getPublicUsers(this.moreViewedUsers);
             break;
           case UsersType.Nearby:
             this.allUsers = this.nearbyUsers;
@@ -109,9 +131,19 @@ export class UsersPageComponent implements OnInit, OnDestroy {
           case UsersType.New:
             this.allUsers = this.newUsers;
         }
-        this.showUsers = this.allUsers.slice(0, 6);
+        this.showUsers = this.getPublicUsers(this.allUsers).slice(0, 6);
+
         this.title.setTitle(this.getTitleByUserType(this.userType));
       });
+  }
+  showStatus(user: IUser) {
+    return this.userService.getPermission('show-status', user);
+  }
+
+  getPublicUsers(users: IUser[]) {
+    return users.filter((u) =>
+      this.userService.getPermission('show-me-on-userspage', u),
+    );
   }
 
   getTitleByUserType(userType: UsersType): string {
@@ -121,8 +153,8 @@ export class UsersPageComponent implements OnInit, OnDestroy {
     return noUsersText[userType] || '';
   }
 
-  private getNewUsers(users: IUser[]): IUser[]{
-    users = users.sort((u1, u2) => { return (u1.registrationDate < u2.registrationDate)? 1 : -1})
+  private getNewUsers(users: IUser[]): IUser[] {
+    users = users.sort((u1, u2) =>  u1.registrationDate < u2.registrationDate ? 1 : -1);
     return users;
   }
 
@@ -160,7 +192,10 @@ export class UsersPageComponent implements OnInit, OnDestroy {
 
   protected loadMoreUsers() {
     const currentLength = this.showUsers.length;
-    const nextUsers = this.allUsers.slice(currentLength, currentLength + 3);
+    const nextUsers = this.getPublicUsers(this.allUsers).slice(
+      currentLength,
+      currentLength + 3,
+    );
     this.showUsers = [...this.showUsers, ...nextUsers];
   }
 
@@ -218,10 +253,6 @@ export class UsersPageComponent implements OnInit, OnDestroy {
     return moreProductive;
   }
 
-  protected searchQuery: string = '';
-  protected autocompleteShow: boolean = false;
-  protected autocompleteUsersList: IUser[] = [];
-
   searchOff() {
     this.searchQuery = '';
   }
@@ -247,6 +278,9 @@ export class UsersPageComponent implements OnInit, OnDestroy {
 
       const search = this.searchQuery.toLowerCase().replace(/\s/g, '');
 
+      this.allUsers = this.allUsers.filter((u) =>
+        this.userService.getPermission('search-me-on-userspage', u),
+      );
       const filterUsers: IUser[] = this.allUsers.filter(
         (user: IUser) =>
           user.fullName.toLowerCase().replace(/\s/g, '').includes(search) ||

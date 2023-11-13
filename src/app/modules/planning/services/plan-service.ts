@@ -6,6 +6,7 @@ import { plansUrl } from 'src/tools/source';
 import { IUser } from '../../user-pages/models/users';
 import { IRecipe } from '../../recipes/models/recipes';
 import { NotificationService } from '../../user-pages/services/notification.service';
+import { UserService } from '../../user-pages/services/user.service';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +16,8 @@ export class PlanService {
 
   planSubject = new BehaviorSubject<IPlan[]>([]);
   plans$ = this.planSubject.asObservable();
+
+
 
   loadPlanData() {
     this.getPlans().subscribe((data) => {
@@ -85,11 +88,15 @@ export class PlanService {
           //обновляем план и уведомляем что рецепт был удален и ссылка на него больше не работает
           this.updatePlan(plan).subscribe();
 
+          let showAuthor = true;
+          if(author)
+          showAuthor = this.userService.getPermission('hide-author',author)
+
           const notify = this.notifyService.buildNotification(
             'Связанный рецепт удален',
             user.id !== author?.id
-              ? `Обратите внимание: рецепт «${deletingRecipe.name}» автора ${
-                  author?.fullName ? author.fullName : '@' + author?.username
+              ? `Обратите внимание: рецепт «${deletingRecipe.name}»  ${
+                 showAuthor? ('автора '+ (author?.fullName ? author.fullName : '@' + author?.username)) :''
                 } был удален. Все ссылки на этот рецепт удалены из календаря рецептов и списка покупок. Сами запланированные рецепты и продукты в списке покупок не удалены`
               : `Обратите внимание: ваш рецепт «${deletingRecipe.name}» был удален. Все ссылки на этот рецепт удалены из ваших календаря рецептов и списка покупок. Сами запланированные рецепты и продукты в списке покупок не удалены`,
             'warning',
@@ -119,6 +126,7 @@ export class PlanService {
 
 
   constructor(
+    private userService: UserService,
     private http: HttpClient,
     private notifyService: NotificationService,
   ) {}

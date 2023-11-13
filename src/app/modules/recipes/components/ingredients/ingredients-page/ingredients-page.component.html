@@ -1,0 +1,147 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="wrap">
+  <h1 *ngIf="!(context==='ingredient-group' && ingredientsOfGroup(group).length===0)">{{ title }}</h1>
+
+  <app-button 
+    *ngIf="context ==='all-groups'"
+    class="add-category"
+    [icon]="'ingredients/create-ingredient'"
+    [color]="'prim'"
+    (click)="ingredientCreatingMode = true;"
+    [text]="'Создать ингредиент'"
+    [rounded]="true"
+  ></app-button>
+
+  <div *ngIf="context==='ingredient-group' && ingredientsOfGroup(group).length===0" class="container one-column not-found">
+      <div class="image">
+        <svg-icon
+          [applyClass]="true"
+          class="fridge"
+          [src]="'assets/images/svg/fridge.svg'"
+        ></svg-icon>
+      </div>
+      <div class="content">
+        <h1 class="label">Ингредиентов пока <span class="title">нет</span></h1>
+        <p class="tagline">В группе ингредиентов «{{this.title}}» пока нет ингредиентов. Можете попробовать создать ингредиент сами!</p>
+
+        <hr />
+        <div class="buttons">
+          <app-button
+            [rounded]="true"
+            [color]="'prim'"
+            [text]="'Создать ингредиент'"
+          ></app-button>
+        </div>
+      </div>
+    </div>
+  <div>
+
+
+  
+  <div *ngIf="context==='all-groups' || (ingredientsOfGroup(group).length>0)" class="search-block">
+    <div class="search">
+      <input
+        (focus)="focusSearch()"
+        (blur)="blurSearch()"
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="turnOnSearch()"
+        type="text"
+        placeholder="Введите запрос"
+      />
+      <div class="magnifier">
+        <svg-icon
+          [applyClass]="true"
+          class="search-svg"
+          [src]="'assets/images/svg/search.svg'"
+        ></svg-icon>
+      </div>
+    </div>
+
+    <div class="autocomplete-list">
+      <ul @auto-complete *ngIf="autocompleteShow">
+        <div *ngIf="autocomplete.length === 0">
+          <div class="no-found-recipes">
+            <div class="image">
+              <svg-icon
+                [applyClass]="true"
+                class="sad-cook"
+                [src]="'assets/images/svg/ingredients/shocked-ingredients.svg'"
+              ></svg-icon>
+            </div>
+            <p>
+              По вашему запросу нет никаких ингредиентов. Попробуйте
+              изменить параметры поиска!
+            </p>
+          </div>
+        </div>
+        <li
+          *ngFor="let item of autocomplete"
+          [routerLink]="
+            '/ingredients/list' + item.id 
+          "
+        >
+          <p
+            (mousedown)="navigateTo(
+              getGroupOfIngredient(item).length === 0
+                ? '/ingredients/groups/' + item.id
+                : '/ingredients/list/' + item.id
+            )"
+          >
+            {{ item.name }}
+          </p>
+          <span
+            (mousedown)="navigateTo('/ingredients/groups/' + getGroupOfIngredient(item)[0].id)"
+            *ngIf="
+              context !== 'ingredient-group' && getGroupOfIngredient(item)[0].id !== 0
+            "
+            >{{ getGroupOfIngredient(item)[0].name }}</span
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+  
+
+  <div>
+    <ng-container *ngIf="context === 'all-groups'; else concreteGroup">
+      <div *ngFor="let ingredientGroup of ingredientGroups" class="sections">
+        <div *ngIf="ingredientGroup.ingredients.length > 0" class="sections">
+          <a [routerLink]="ingredientGroup.id===0?'/ingredients/popular' :'/ingredients/groups/' + ingredientGroup.id" class="head">
+            <h2>{{ ingredientGroup.name }}</h2>
+
+            <svg-icon
+              class="arrow-svg"
+              [applyClass]="true"
+              [src]="'assets/images/svg/go-back.svg'"
+            ></svg-icon>
+          </a>
+
+          <app-ingredients-horizontal-list
+            [ingredients]="ingredientsOfGroup(ingredientGroup).slice(0, 8)"
+          ></app-ingredients-horizontal-list>
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #concreteGroup>
+      <div class="sections">
+        <app-ingredients-vertical-list
+          [ingredients]="ingredientsToShow"
+        />
+      </div>
+
+         <app-button
+          [text]="'Загрузить еще...'"
+          (click)="loadMoreIngredients()"
+          *ngIf="
+          ingredientsOfGroup(group).length > ingredientsToShow.length
+          "
+          [rounded]="true"
+          [style]="'outlined'"
+          [color]="'prim'"
+        ></app-button>
+    </ng-template>
+  </div>
+</div>
+
+<app-ingredient-create (closeEmitter)="ingredientCreatingMode = false" @modal *ngIf="ingredientCreatingMode" />

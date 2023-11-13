@@ -19,7 +19,7 @@ import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
 import { PlanService } from 'src/app/modules/planning/services/plan-service';
 import { IPlan } from 'src/app/modules/planning/models/plan';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
-import { sections, social, steps } from './conts';
+import { condifencialitySettings, managersPreferences, sections, social, steps, stepsIcons } from './conts';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -34,20 +34,21 @@ export class SettingsComponent implements OnInit, OnDestroy {
   @Input() user: IUser = { ...nullUser };
 
   permissionNotificationSections = sections;
+  managersPreferences = managersPreferences;
+  condifencialitySettings = condifencialitySettings;
+  stepsIcons = stepsIcons;
 
   protected permanentIngredient: string = '';
   protected permanentIngredientTouched = false;
   protected excludedIngredient: string = '';
   protected excludedIngredientTouched = false;
 
+  MANAGERS_SETTINGS_BLOCK_NUM = 4;
+
   protected exitModalShow: boolean = false;
   protected deleteModalShow: boolean = false;
-  protected permanentIngredients: string[] = ['соль', 'сахар', 'вода', 'мука'];
-  protected excludingIngredients: string[] = [
-    'яйца',
-    'сливочное масло',
-    'свинина',
-  ];
+  protected permanentIngredients: string[] = [];
+  protected excludingIngredients: string[] = [];
 
   protected location: string = '';
 
@@ -114,6 +115,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
       this.user.exclusions = this.excludingIngredients;
     }
     this.userService.updateUsers(this.user).subscribe();
+  }
+
+
+  showBlock(i: number) {
+    if (this.user.role === 'user' && i === this.MANAGERS_SETTINGS_BLOCK_NUM)
+      return false;
+    return true;
   }
 
   protected addPermanentIngredient(): void {

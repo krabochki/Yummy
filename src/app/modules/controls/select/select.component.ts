@@ -3,6 +3,7 @@ import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/
 import { modal, heightAnim } from 'src/tools/animations';
 import { Router } from '@angular/router';
 import { ChangeDetectionStrategy } from '@angular/core';
+import { baseComparator } from 'src/tools/common';
 @Component({
   selector: 'app-select',
   templateUrl: './select.component.html',
@@ -30,8 +31,10 @@ export class SelectComponent implements AfterViewInit {
   bodyHeight: number | undefined = 0;
   ngAfterViewInit() {
     this.shiftedItems = [...this.items];
-
     this.shiftedItems.shift();
+    this.shiftedItems = this.shiftedItems.sort(
+      (a,b)=>baseComparator(a,b)
+    )
   }
 
   linkClick(disable: boolean) {

@@ -131,7 +131,7 @@ div.type:first-child h4 {
   }
 }
 .main-product-info {
-  background-color: var(--color-background-deeper-unactive);
+  background-color : color-mix(in srgb, var(--color-background-deeper-unactive) 95%, var(--color-foreground) 5%) ;
   border-radius: 0.4em;
   padding: 0.5em;
   cursor: grab;
@@ -160,9 +160,9 @@ li {
   }
   &.purchased {
     .main-product-info {
-      background-color: var(--scroll-body);
+      background-color: var(--color-background-deeper-unactive);
       scale: 0.9;
-    }
+     }
 
     .note{
       scale:0.9 
@@ -530,6 +530,15 @@ a {
   text-align: center;
   padding: 2em;
   height: 100%;
+  row-gap: 1em;
+  p{
+    color: var(--color-foreground-unactive);
+  }
+
+  .tomato {
+      fill: var(--color-foreground-unactive);
+      height: 8em;
+    }
 }
 
 .autocomplete-list ul {
@@ -604,6 +613,8 @@ a {
   width: 100%;
   background-color: var(--color-background-deeper);
 
+  
+
   &::-webkit-scrollbar {
     width: 12px;
   }
@@ -619,6 +630,7 @@ a {
     border: 3px solid var(--scroll-body);
   }
 }
+
 
 .list {
   margin: 1em;

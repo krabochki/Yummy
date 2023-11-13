@@ -8,8 +8,6 @@
 }
 h1{
   max-width: 100%;
-  text-overflow:ellipsis;
-  overflow: hidden;
 }
 .fridge {
   height: 11em;
@@ -75,11 +73,11 @@ h1{
 
   scroll-snap-type: y mandatory;
 
-  max-height: 50vh;
+  max-height: 42vh;
     box-shadow:inset 2px 2px 10px rgba($color: #000000, $alpha: 0.02);
 
   margin-top: 0.5em;
-  overflow-y: scroll;
+  overflow-y: scroll !important;
   position: absolute;
   border-radius: 1.5em 5px 5px 1.5em;
   display: flex;
@@ -123,7 +121,7 @@ h1{
 
   .sad-cook {
     fill: var(--color-foreground);
-    height: 8em;
+    height: 6.5em;
   }
 
 
@@ -150,9 +148,6 @@ div.container.not-found {
     .tagline {
       width: unset;
       font-size: 1.2em;
-    }
-
-    p {
     }
   }
 
@@ -267,8 +262,8 @@ h2 {
 
 @media (max-width: 480px) {
   div.container.not-found{
-    margin: 2em 6%;
-    margin-right:12%;
+    margin: 2em 0;
+    margin-right:6%;
     app-button{
       padding: 0;
     }

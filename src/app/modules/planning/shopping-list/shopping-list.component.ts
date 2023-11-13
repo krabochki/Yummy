@@ -17,7 +17,6 @@ import { heightAnim, modal } from 'src/tools/animations';
 import { Title } from '@angular/platform-browser';
 import {
   CdkDragDrop,
-  CdkDragStart,
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';

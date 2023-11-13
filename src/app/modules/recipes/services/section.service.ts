@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ICategory, ISection, nullSection } from '../models/categories';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, tap } from 'rxjs';
+import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 import { sectionsUrl } from 'src/tools/source';
 import { IRecipe } from '../models/recipes';
 
@@ -69,7 +69,16 @@ export class SectionService {
   }
 
   deleteSection(id: number) {
-    return this.http.delete<ISection>(`${this.urlSections}/${id}`);
+       return this.http.delete<ICategory>(`${this.urlSections}/${id}`).pipe(
+         tap(() =>
+           this.sectionsSubject.next(
+             this.sectionsSubject.value.filter((section) => section.id !== id),
+           ),
+         ),
+         catchError((error) => {
+           return throwError(error);
+         }),
+       );
   }
 
   postSection(section: ISection) {

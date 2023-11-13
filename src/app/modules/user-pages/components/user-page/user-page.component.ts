@@ -77,6 +77,10 @@ export class UserPageComponent implements OnInit, OnDestroy {
 
   @ViewChild('emojiPicker') emojiPicker?: ElementRef;
 
+  get showHireButton() {
+    return this.userService.getPermission('new-moder-button', this.currentUser)
+  }
+
   protected get validRegistrationDate(): string {
     return getFormattedDate(this.user.registrationDate);
   }

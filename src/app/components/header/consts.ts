@@ -1,6 +1,7 @@
 export const cooksSelectItems: string[] = [
   'Кулинары',
   'Ваш профиль',
+  'Ваши подписки',
   'Все кулинары',
   'Обновления',
 ];
@@ -8,38 +9,41 @@ export const cooksSelectItems: string[] = [
 export const recipeRouterLinks: string[] = [
   '/recipes/yours',
   '/recipes',
-  '/sections',
   '/recipes/favorite',
+  '/ingredients',
   '/match',
+  '/sections',
 ];
 
 export const recipeSelectItems: string[] = [
   'Рецепты',
   'Ваши рецепты',
   'Все рецепты',
-  'Разделы',
   'Закладки',
+  'Ингредиенты',
   'Подбор рецептов',
+  'Разделы',
 ];
 
 export const planSelectItems: string[] = [
   'Планнер',
+  'Календарь рецептов',
   'Подборки',
   'Советы',
-  'Календарь рецептов',
   'Список покупок',
 ];
 
 export const cookRouterLinks: string[] = [
   '/cooks/list/',
+  '/cooks/following/',
   '/cooks',
   '/cooks/updates',
 ];
 
 export const planRouterLinks: string[] = [
+  '/plan/calendar',
   '/plan/collections',
   '/plan/tips',
-  '/plan/calendar',
   '/plan/shopping-list',
 ];
 
@@ -51,10 +55,14 @@ export function userRoutes(id: number) {
     },
     {
       routeLink: cookRouterLinks[1],
-      disabled: false,
+      disabled: !id,
     },
     {
       routeLink: cookRouterLinks[2],
+      disabled: false,
+    },
+    {
+      routeLink: cookRouterLinks[3],
       disabled: !id,
     },
   ];
@@ -62,14 +70,15 @@ export function userRoutes(id: number) {
 
 export function planRoutes(id: number) {
   return [
-    { routeLink: planRouterLinks[0], disabled: false },
+    { routeLink: planRouterLinks[0],      disabled: !id,
+ },
     {
       routeLink: planRouterLinks[1],
       disabled: false,
     },
     {
       routeLink: planRouterLinks[2],
-      disabled: !id,
+      disabled: false,
     },
     {
       routeLink: planRouterLinks[3],
@@ -90,14 +99,19 @@ export function recipeRoutes(id: number) {
     },
     {
       routeLink: recipeRouterLinks[2],
-      disabled: false,
-    },
-    {
-      routeLink: recipeRouterLinks[3],
       disabled: !id,
     },
     {
+      routeLink: recipeRouterLinks[3],
+      disabled: false,
+    },
+
+    {
       routeLink: recipeRouterLinks[4],
+      disabled: false,
+    },
+    {
+      routeLink: recipeRouterLinks[5],
       disabled: false,
     },
   ];

@@ -19,6 +19,7 @@ import { modal } from 'src/tools/animations';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { Router } from '@angular/router';
+import { RecipeService } from '../../../services/recipe.service';
 
 @Component({
   selector: 'app-comment',
@@ -37,7 +38,14 @@ export class CommentComponent implements OnInit, OnDestroy {
   protected deleteCommentModalShow: boolean = false;
   protected reportCommentModalShow: boolean = false;
   protected successReportCommentModalShow: boolean = false;
-  protected noAccessModalShow:boolean = false;
+  protected noAccessModalShow: boolean = false;
+  
+  get showCommentAuthor() {
+    return this.commentService.showAuthor(this.author,this.currentUser)
+  }
+  get showRecipeAuthor() {
+    return !this.recipeService.hideAuthor(this.currentUser,this.author)
+  }
 
   constructor(
     private userService: UserService,
@@ -47,6 +55,7 @@ export class CommentComponent implements OnInit, OnDestroy {
     private notifyService: NotificationService,
     private clipboard: Clipboard,
     private commentService: CommentService,
+    private recipeService: RecipeService,
   ) {}
 
   public ngOnInit(): void {
@@ -166,17 +175,18 @@ export class CommentComponent implements OnInit, OnDestroy {
 
         if (this.userService.getPermission('your-reports-publish', this.currentUser)) {
          
-         const notify = this.notifyService.buildNotification(
-           'Ты пожаловался на комментарий',
-           `Ты отправил жалобу на комментарий кулинара ${
-             this.author.fullName
-               ? this.author.fullName
-               : '@' + this.author.username
-           } «${this.comment.text}» под рецептом «${this.recipe.name}»`,
-           'success',
-           'comment',
-           '/recipes/list/' + this.recipe.id,
-         );
+          const notify = this.notifyService.buildNotification(
+            'Ты пожаловался на комментарий',
+            `Ты отправил жалобу на комментарий ${
+              this.showCommentAuthor?('кулинара ' +
+              (this.author.fullName
+                ? this.author.fullName
+                : '@' + this.author.username)):''
+            } «${this.comment.text}» под рецептом «${this.recipe.name}»`,
+            'success',
+            'comment',
+            '/recipes/list/' + this.recipe.id,
+          );
           this.notifyService.sendNotification(notify, this.currentUser).subscribe();
         }
       });

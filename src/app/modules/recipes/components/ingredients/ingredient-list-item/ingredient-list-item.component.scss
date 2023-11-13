@@ -1,0 +1,117 @@
+
+@mixin flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ingredient-wrap {
+    position: relative;
+}
+
+
+.ingredient {
+    background-color: var(--color-background-deeper);
+
+    scroll-snap-align: start;
+    background-image: url("../../../../../../assets/images/ingredient.png");
+    background-size: cover;
+
+    @include flex;
+    font-size: 1.1em;
+    margin: 0 auto;
+
+    border-radius: 100%;
+    font-weight: 500;
+    text-align: center;
+    line-height: 1;
+    height: 12vw;
+    width: 12vw;
+    min-width: 8em;
+    min-height: 8em;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.ingredient.null p {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+}
+
+
+
+h1 {
+    sup {
+        font-size: 0.6em;
+    }
+
+    cursor: pointer;
+    position: relative;
+    font-size:1.2em;
+
+    line-height: 1;
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    /* Количество строк, которые вы хотите отобразить */
+    overflow-wrap: break-word;
+    /* Разрешить перенос длинных слов */
+    hyphens: auto;
+    /* Разрешить перенос слов */
+
+    white-space: normal;
+    /* Изменить на "normal" */
+    overflow-y: hidden;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+
+    font-weight: 400;
+    margin-top: 0.5em;
+    text-align: center;
+    padding-bottom: 0.2em;
+
+}
+
+
+@media (max-width: 900px) {
+    .ingredient {
+        height: 17vmax;
+        width: 17vmax;
+    }
+
+    p {
+        width: 16vmax;
+    }
+}
+
+@media (max-width: 480px) {
+    .ingredient {
+        height: 7em;
+        min-height: unset;
+        min-width: unset;
+        width: 7em;
+    }
+}
+
+.ingredient.null {
+    padding: 2em;
+    background-image: none;
+
+    p {
+        overflow: visible;
+        opacity: 0.5;
+        font-size: 0.9em;
+        color: var(--color-foreground-unactive);
+        margin-bottom: 0.75em;
+        font-weight: 600;
+        cursor: default;
+    }
+}
+
+.svg {
+    height: 100%;
+    opacity: 0.65;
+    fill: var(--color-foreground-unactive);
+}

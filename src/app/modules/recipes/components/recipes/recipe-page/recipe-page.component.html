@@ -54,15 +54,15 @@
     <div class="column main-info">
       <div class="full-user-info column">
         <div class="row" class="short-info row">
-          <a [ngClass]="{'no-link':author.id<1}" class="row user-info" [routerLink]="author.id>0?'/cooks/list/' + author.id:null">
-            <img *ngIf="author.id>0"
+          <a [ngClass]="{'no-link':author.id<1 || hideAuthor}" class="row user-info" [routerLink]="author.id>0 && !hideAuthor?'/cooks/list/' + author.id:null">
+            <img *ngIf="author.id>0 && !hideAuthor"
               class="userpic noselect"
               src="../../../../../../assets/images/userpic.png"
               alt="Фото пользователя"
             />
             <p>
               {{
-               author.id<1?'Автор удален':author.fullName === "" ? "@" + author.username : author.fullName
+               author.id<1 || hideAuthor ?hideAuthor?'Автор скрыт':'Автор удален':author.fullName === "" ? "@" + author.username : author.fullName
               }}
             </p>
           </a>
@@ -251,7 +251,7 @@
             class="basket-icon"
             [applyClass]="true"
             [class]="basketMode ? 'basket-icon basket-mode' : 'basket-icon'"
-            [src]="'../../../../../assets/images/svg/basket.svg'"
+            [src]="'assets/images/svg/basket.svg'"
           ></svg-icon>
           {{ !basketMode ? "Составить" : "Убрать" }} список покупок
         </button>
@@ -267,12 +267,15 @@
                 *ngIf="iHaveIndgredient[i]"
                 class="checkbox-icon"
                 [applyClass]="true"
-                [src]="'../../../../../assets/images/svg/checkbox.svg'"
+                [src]="'assets/images/svg/checkbox.svg'"
               ></svg-icon>
             </div>
-            <p [ngClass]="{ 'i-have': iHaveIndgredient[i] }" class="name">
+            <a
+
+            [routerLink]="findIngredientByName(ingredient.name).id?'/ingredients/list/'+findIngredientByName(ingredient.name).id:null"
+            [ngClass]="{ 'i-have': iHaveIndgredient[i],'link':findIngredientByName(ingredient.name).id }" class="name">
               {{ ingredient.name }}
-            </p>
+            </a>
             <div
               [ngClass]="{ 'i-have': iHaveIndgredient[i] }"
               class="row count"

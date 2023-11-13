@@ -25,7 +25,7 @@ import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
 import { CategoryService } from 'src/app/modules/recipes/services/category.service';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
-import { INotification } from 'src/app/modules/user-pages/models/notifications';
+import { INotification, nullNotification } from 'src/app/modules/user-pages/models/notifications';
 import { AdminService } from '../../services/admin.service';
 import {
   getAuthorOfReportedComment,
@@ -40,12 +40,16 @@ import {
   notifyForAuthorOfBlockedComment,
   notifyForAuthorOfDismissedCategory,
   notifyForAuthorOfDismissedRecipe,
+  notifyForAuthorOfIngredient,
   notifyForAuthorOfLeavedComment,
   notifyForDemotedUser,
   notifyForFollowersOfApprovedRecipeAuthor,
   notifyForReporterOfBlockedComment,
   notifyForReporterOfLeavedComment,
 } from './notifications';
+import { IngredientService } from 'src/app/modules/recipes/services/ingredient.service';
+import { IIngredient, IIngredientsGroup } from 'src/app/modules/recipes/models/ingredients';
+import { baseComparator } from 'src/tools/common';
 @Component({
   selector: 'app-control-dashboard',
   templateUrl: './control-dashboard.component.html',
@@ -62,6 +66,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   private recipes: IRecipe[] = [];
   protected reports: ICommentReportForAdmin[] = [];
   protected managers: IUser[] = [];
+  groups: IIngredientsGroup[] = [];
 
   protected targetDemotedUser: IUser = nullUser;
   protected showManagers: boolean = false;
@@ -85,6 +90,12 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   protected awaitingRecipes: IRecipe[] = [];
   protected awaitingRecipesToShow: IRecipe[] = [];
 
+  actionIngredient: null | IIngredient = null;
+  allAwaitingIngredients: IIngredient[] = [];
+  showedAwaitingIngredients: IIngredient[] = [];
+
+  showAwaitingIngredients: boolean = false;
+
   protected sectionCreatingMode: boolean = false;
 
   protected reportCommentDismissModalShow: boolean = false;
@@ -101,6 +112,12 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   protected demoteModalShow = false;
   protected demoteSuccessModalShow = false;
 
+  ingredientAction: 'approve' | 'dismiss' | null = null;
+  ingredientModalShow: boolean = false;
+  successIngredientModalShow: boolean = false;
+
+  START_INGREDIENTS_DISPLAY_SIZE = 3;
+
   protected destroyed$: Subject<void> = new Subject<void>();
 
   constructor(
@@ -113,6 +130,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     private sectionService: SectionService,
     private categoryService: CategoryService,
     private notifyService: NotificationService,
+    private ingredientService: IngredientService,
   ) {}
 
   public ngOnInit(): void {
@@ -125,6 +143,25 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     this.recipesInit();
     this.currentUserInit();
     this.sectionsInit();
+    this.ingredientsInit();
+  }
+
+  private ingredientsInit(): void {
+    this.ingredientService.ingredients$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedIngredients: IIngredient[]) => {
+        this.allAwaitingIngredients = receivedIngredients.filter(
+          (i) => i.status === 'awaits',
+        );
+        this.showedAwaitingIngredients = this.allAwaitingIngredients.slice(
+          0,
+          this.START_INGREDIENTS_DISPLAY_SIZE,
+        );
+      });
+    this.ingredientService.ingredientsGroups$.pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedGroups:IIngredientsGroup[]) => {
+        this.groups = receivedGroups;
+      })
   }
 
   private recipesInit(): void {
@@ -208,7 +245,9 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedSections: ISection[]) => {
         {
-          this.sections = receivedSections;
+          this.sections = receivedSections.sort(
+            (a,b)=>baseComparator(a.name,b.name)
+          );
           this.sectionsToShow = this.sections.slice(0, 10);
         }
       });
@@ -227,7 +266,13 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
       3,
     );
   }
-
+  loadMoreAwaitingIngredients(): void {
+    this.showedAwaitingIngredients = this.loadMore(
+      this.allAwaitingIngredients,
+      this.showedAwaitingIngredients,
+      3,
+    );
+  }
   protected loadMoreSections(): void {
     this.sectionsToShow = this.loadMore(this.sections, this.sectionsToShow, 4);
   }
@@ -563,6 +608,109 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     }
     this.actionReport = report;
   }
+
+  awaitingIngredientActionClick(
+    action: 'approve' | 'dismiss',
+    ingredient: IIngredient,
+  ) {
+    this.actionIngredient = ingredient;
+    if (action === 'approve') {
+      this.ingredientAction = 'approve';
+    } else {
+      this.ingredientAction = 'dismiss';
+    }
+    this.ingredientModalShow = true;
+  }
+
+  getIngredientModalDescription():string {
+    if (this.actionIngredient && this.actionIngredient.author) {
+      const verb =
+        this.ingredientAction === 'approve' ? 'одобрить' : 'отклонить';
+
+      return `Вы уверены, что хотите ${verb} ингредиент 
+              «${this.actionIngredient.name}» автора 
+              ${this.getName(this.getUser(this.actionIngredient.author))}?`;
+    }
+    return '';
+  }
+
+  getSuccessIngredientModalDescription(): string{
+    if (this.actionIngredient && this.actionIngredient.author) {
+      const verb =
+        this.ingredientAction === 'approve' ? 'одобрили' : 'отклонили';
+
+      return `Вы успешно ${verb} ингредиент 
+              «${this.actionIngredient.name}» автора 
+              ${this.getName(this.getUser(this.actionIngredient.author))}!`;
+    }
+    return '';
+  }
+
+  handleIngredientModal(answer: boolean) {
+    if (answer) {
+      if (this.ingredientAction === 'approve') {
+        this.approveIngredient()
+          .subscribe(() =>
+          {
+            this.successIngredientModalShow = true;
+            this.cd.markForCheck()
+          }
+          );
+      }
+      else {
+        const subscribes = this.dismissIngredient();
+        if (subscribes.length > 0) {
+          forkJoin(subscribes).subscribe(
+            () => {
+              this.successIngredientModalShow = true;
+              this.cd.markForCheck();
+            }
+          )
+        }
+      }
+      
+      
+    }
+    this.ingredientModalShow = false;
+  }
+
+
+  private sendNotifyToIngredientAuthor() {
+    if (this.actionIngredient && this.actionIngredient.author && this.ingredientAction) {
+      const notify: INotification = notifyForAuthorOfIngredient(this.actionIngredient,this.ingredientAction,this.notifyService);
+      this.sendNotifyWithPermission(notify, this.getUser(this.actionIngredient.author), 'your-ingredient-published').subscribe(
+        ()=> this.actionIngredient = null
+      )
+    }
+  }
+
+  private approveIngredient(): Observable<IIngredient> {
+    if (this.actionIngredient) {
+      return this.adminService.approveIngredient(this.actionIngredient);
+    }
+    return EMPTY;
+  }
+
+  private dismissIngredient(): Observable<any>[] {
+    if (this.actionIngredient) {
+      let subscribes: Observable<any>[] = [];
+      subscribes.push(this.adminService.dismissIngredient(this.actionIngredient))
+      const ingredientGroupsSubscribes =
+        this.adminService.updateIngredientGroupsAfterDismissingIngredient(
+          this.actionIngredient,this.groups
+        );
+      subscribes = [...subscribes, ...ingredientGroupsSubscribes]
+      return subscribes;
+    }
+    return [];
+    
+  }
+
+  handleSuccessIngredientModal() {
+    this.successIngredientModalShow = false;
+    this.sendNotifyToIngredientAuthor();
+  }
+
   protected awaitingRecipeActionClick(
     action: 'approve' | 'dismiss',
     recipe: IRecipe,

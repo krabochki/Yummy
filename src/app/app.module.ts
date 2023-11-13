@@ -21,6 +21,7 @@ import { UserPagesModule } from './modules/user-pages/user-pages.module';
 import { PlanService } from './modules/planning/services/plan-service';
 import { AuthService } from './modules/authentication/services/auth.service';
 import { IngredientService } from './modules/recipes/services/ingredient.service';
+import { AuthenticationModule } from './modules/authentication/authentication.module';
 
 export function initializeSections(sectionSerivce: SectionService) {
   return () => sectionSerivce.loadSectionData();

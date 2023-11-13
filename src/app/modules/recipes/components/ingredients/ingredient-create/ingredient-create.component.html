@@ -56,6 +56,26 @@
                   : ''
               " [placeholder]="'Введите название будущего ингредиента'"></app-usual-input>
           </div>
+
+          <div class="form-control">
+            <h3>Группы ингредиентов</h3>
+
+            <app-autocomplete [disabled]="selectedIngredientsGroups.length === 5" (groupEmitter)="addGroup($event)"
+              [placeholder]="'Выберите группы ингредиентов в списке ниже*'" [ingredientsGroups]="groups" />
+            <div class="tags">
+              <div class="tag" *ngFor="let selected of selectedIngredientsGroups">
+                {{ selected.name }}
+                <span (click)="removeGroup(selected)" class="remove-tag"><svg-icon [applyClass]="true"
+                    class="remove-tag-svg" [src]="'assets/images/svg/close.svg'"></svg-icon></span>
+              </div>
+            </div>
+            <div *ngIf="selectedIngredientsGroups.length === 5" class="max-categories">
+              Выбрано максимальное количество групп
+            </div>
+            <div *ngIf="selectedIngredientsGroups.length === 0" class="no-categories">
+              Вы пока не выбрали ни одну группу
+            </div>
+          </div>
           <div class="form-control">
             <h3>Описание ингредиента</h3>
             <app-usual-input [inputType]="'textarea'" [max]="5000" [value]="this.form.get('description')?.value"
@@ -76,25 +96,7 @@
                 'Укажите место происхождения ингредиента, например, страну или регион'
               "></app-usual-input>
           </div>
-          <div class="form-control">
-            <h3>Группы ингредиентов</h3>
-
-            <app-autocomplete [disabled]="selectedIngredientsGroups.length === 5" (groupEmitter)="addGroup($event)"
-              [placeholder]="'Выберите группы ингредиентов в списке ниже'" [ingredientsGroups]="groups" />
-            <div class="tags">
-              <div class="tag" *ngFor="let selected of selectedIngredientsGroups">
-                {{ selected.name }}
-                <span (click)="removeGroup(selected)" class="remove-tag"><svg-icon [applyClass]="true"
-                    class="remove-tag-svg" [src]="'assets/images/svg/close.svg'"></svg-icon></span>
-              </div>
-            </div>
-            <div *ngIf="selectedIngredientsGroups.length === 5" class="max-categories">
-              Выбрано максимальное количество групп
-            </div>
-            <div *ngIf="selectedIngredientsGroups.length === 0" class="no-categories">
-              Вы пока не выбрали ни одну группу
-            </div>
-          </div>
+          
 
           <div class="form-control">
             <h3>Тип ингредиента</h3>
@@ -454,5 +456,5 @@
 
 <app-modal @modal *ngIf="createModalShow" [style]="'sec'" [title]="'Подтвердите создание ингредиента'"
   [type]="'yesOrNo'" (resultEmit)="handleCreateModal($event)" [buttonsText]="['Да', 'Нет']" [description]="
-    'Вы уверены, что создать ингредиент и отправить его на проверку?'
+    'Вы уверены, что создать ингредиент ' + (isManager?'и опубликовать его':' и отправить его на проверку')+'?'
   "></app-modal>

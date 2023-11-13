@@ -23,7 +23,7 @@ export class IngredientResolver {
     return this.ingredientService.ingredients$.pipe(
       map((ingredients: IIngredient[]) => {
         const foundIngredient = ingredients.find((ingredient) => {
-          if (ingredient.id === ingredientId && ingredient.status === 'public')
+          if (ingredient.id === ingredientId)
             return true;
           else return false;
         });

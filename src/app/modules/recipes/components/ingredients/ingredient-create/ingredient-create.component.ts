@@ -40,6 +40,7 @@ import {
 } from 'src/app/modules/user-pages/models/notifications';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
+import { getCurrentDate } from 'src/tools/common';
 
 @Component({
   selector: 'app-ingredient-create',
@@ -288,6 +289,8 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
         name: this.form.value.ingredientName,
         history: this.form.value.history,
         description: this.form.value.description,
+        author: this.currentUser.id,
+        sendDate:getCurrentDate(),
         variations: this.form.value.variations,
         status: this.isManager ? 'public' : 'awaits',
         image: this.form.value.image,

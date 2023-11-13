@@ -17,6 +17,8 @@ export interface IIngredient {
   compatibleDishes?: string[]; // с чем сочетается 
   cookingMethods?: string[]; //как готовить 
   tips?: string[]; 
+  author?: number,
+  sendDate?: string,
   nutritions?:Nutrition[],
   storageMethods?: string[],//способы хранения  
   externalLinks?: ExternalLink[]; //доп ресурсы

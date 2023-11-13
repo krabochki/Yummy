@@ -165,7 +165,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
                   this.ingredientService.ingredients$
                     .pipe(takeUntil(this.destroyed$))
                     .subscribe((receivedIngredients) => {
-                      this.ingredients = receivedIngredients;
+                      this.ingredients = receivedIngredients.filter(i=>i.status === 'public');
                     });
 
                   this.statisticPercent = Number(

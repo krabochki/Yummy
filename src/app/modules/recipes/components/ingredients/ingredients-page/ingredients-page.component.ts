@@ -32,6 +32,10 @@ export class IngredientsPageComponent implements OnInit, OnDestroy {
   autocompleteShow: boolean = false;
   autocomplete: any[] = [];
 
+  MAX_DISPLAY_INGREDIENTS_IN_GROUP = 8;
+  START_DISPLAY_INGREDIENTS_ON_GROUP_PAGE = 10;
+  INGREDIENTS_TO_LOAD = 5;
+
   ingredientCreatingMode: boolean = false;
 
   protected title: string = '';
@@ -53,7 +57,7 @@ export class IngredientsPageComponent implements OnInit, OnDestroy {
       this.ingredientService.ingredients$
         .pipe(takeUntil(this.destroyed$))
         .subscribe((data) => {
-          this.ingredients = data;
+          this.ingredients = data.filter(i=>i.status==='public');
         });
 
       this.recipeService.recipes$
@@ -85,7 +89,7 @@ export class IngredientsPageComponent implements OnInit, OnDestroy {
         }
         this.ingredientsToShow = this.ingredientsOfGroup(this.group).slice(
           0,
-          10,
+          this.START_DISPLAY_INGREDIENTS_ON_GROUP_PAGE,
         );
 
         this.title = this.group.name;
@@ -109,7 +113,7 @@ export class IngredientsPageComponent implements OnInit, OnDestroy {
     const currentLength = this.ingredientsToShow.length;
     const nextIngredients = allIngredients.slice(
       currentLength,
-      currentLength + 5,
+      currentLength + this.INGREDIENTS_TO_LOAD,
     );
     this.ingredientsToShow = [...this.ingredientsToShow, ...nextIngredients];
   }

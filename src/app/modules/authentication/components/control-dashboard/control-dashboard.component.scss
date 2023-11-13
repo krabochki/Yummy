@@ -163,10 +163,11 @@ h2 {
 
 
 .circles{
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
   column-gap: 2em;
   justify-content: center;
+  align-items: center;
+  grid-template-columns: repeat(4,min-content);
   .circle{
     display: flex;
     flex-direction: column;
@@ -215,10 +216,38 @@ h2 {
 }
 }
 
+@media(max-width:900px){.circles{
+  row-gap: 1em;
+    grid-template-columns: repeat(2, min-content);
+}
+}
+
 @media(max-width:480px){
+
+  .block-wrap{
+    padding-left:6%;
+  }
+  .circles,h1,.block-wrap.pad{
+    padding:  0 6%;
+  }
+
+  .block-wrap:not(.pad){
+   h2,app-button{
+    padding-right: 6%;
+   }
+  }
+
+
+  .main {
+      padding: 2.5em 0;
+    }
     .reports{
     row-gap: 1em;
     column-gap: 1em;
     grid-template-columns: 1fr;
+
+    .report-buttons{
+      flex-direction: row;
+    }
 }
 }

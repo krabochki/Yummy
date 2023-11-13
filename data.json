@@ -273,30 +273,6 @@
       "storageMethods": [],
       "externalLinks": [],
       "shoppingListGroup": 0
-    },
-    {
-      "id": 24,
-      "name": "Батон",
-      "history": "",
-      "description": "",
-      "author": 3,
-      "sendDate": "2023-11-13T14:15:57.510Z",
-      "variations": [],
-      "status": "awaits",
-      "image": null,
-      "advantages": [],
-      "disadvantages": [],
-      "recommendedTo": [],
-      "contraindicatedTo": [],
-      "origin": "",
-      "precautions": [],
-      "compatibleDishes": [],
-      "cookingMethods": [],
-      "tips": [],
-      "nutritions": [],
-      "storageMethods": [],
-      "externalLinks": [],
-      "shoppingListGroup": 0
     }
   ],
   "ingredientsGroups": [
@@ -333,8 +309,7 @@
       "ingredients": [
         7,
         8,
-        9,
-        24
+        9
       ]
     },
     {
@@ -557,127 +532,7 @@
     {
       "user": 1,
       "id": 2,
-      "calendarEvents": [
-        {
-          "id": 6,
-          "recipe": 0,
-          "start": "2023-11-05T21:00:00.000Z",
-          "title": "Глазунья 2.0",
-          "color": {
-            "primary": "#FFC5D0",
-            "secondary": "#FFC5D0"
-          },
-          "allDay": true,
-          "draggable": true,
-          "end": "2023-11-06T20:59:59.999Z",
-          "resizable": {
-            "beforeStart": true,
-            "afterEnd": true
-          }
-        },
-        {
-          "id": 1,
-          "recipe": 0,
-          "start": "2023-11-05T21:00:00.000Z",
-          "title": "Греческий салат",
-          "color": {
-            "primary": "#00c957",
-            "secondary": "#00c957"
-          },
-          "allDay": true,
-          "draggable": true,
-          "end": "2023-11-06T20:59:59.999Z",
-          "resizable": {
-            "beforeStart": true,
-            "afterEnd": true
-          }
-        },
-        {
-          "id": 8,
-          "recipe": 0,
-          "start": "2023-11-06T21:00:00.000Z",
-          "title": "Уооу",
-          "color": {
-            "primary": "#FFC5D0",
-            "secondary": "#FFC5D0"
-          },
-          "allDay": true,
-          "draggable": true,
-          "end": "2023-11-07T20:59:59.999Z",
-          "resizable": {
-            "beforeStart": true,
-            "afterEnd": true
-          }
-        },
-        {
-          "id": 7,
-          "recipe": 0,
-          "start": "2023-11-06T21:00:00.000Z",
-          "title": "Яйца",
-          "color": {
-            "primary": "#FBEE0F",
-            "secondary": "#FBEE0F"
-          },
-          "allDay": true,
-          "draggable": true,
-          "end": "2023-11-07T20:59:59.999Z",
-          "resizable": {
-            "beforeStart": true,
-            "afterEnd": true
-          }
-        },
-        {
-          "id": 9,
-          "recipe": 0,
-          "start": "2023-11-06T21:00:00.000Z",
-          "title": "Привет",
-          "color": {
-            "primary": "#FFC5D0",
-            "secondary": "#FFC5D0"
-          },
-          "allDay": true,
-          "draggable": true,
-          "end": "2023-11-07T20:59:59.999Z",
-          "resizable": {
-            "beforeStart": true,
-            "afterEnd": true
-          }
-        },
-        {
-          "id": 10,
-          "recipe": 0,
-          "start": "2023-11-09T21:00:00.000Z",
-          "title": "уведа не долнжо быть",
-          "color": {
-            "primary": "#FFC5D0",
-            "secondary": "#FFC5D0"
-          },
-          "allDay": true,
-          "draggable": true,
-          "end": "2023-11-10T20:59:59.999Z",
-          "resizable": {
-            "beforeStart": true,
-            "afterEnd": true
-          }
-        },
-        {
-          "id": 11,
-          "recipe": 0,
-          "start": "2023-11-10T21:00:00.000Z",
-          "title": "Test",
-          "color": {
-            "primary": "#FFC5D0",
-            "secondary": "#FFC5D0"
-          },
-          "allDay": true,
-          "draggable": true,
-          "end": "2023-11-11T20:59:59.999Z",
-          "resizable": {
-            "beforeStart": true,
-            "afterEnd": true
-          }
-        }
-      ],
+      "calendarEvents": [],
       "shoppingList": [
         {
           "id": 2,
@@ -5074,54 +4929,6 @@
           "timestamp": "2023-11-11T19:52:38.171Z",
           "read": true,
           "notificationDate": "Sat Nov 11 2023"
-        },
-        {
-          "id": 13,
-          "relatedLink": "/ingredients/list/19",
-          "context": "ingredient",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Созданный вами ингредиент createIngredient успешно опубликован",
-          "title": "Ингредиент опубликован",
-          "timestamp": "2023-11-12T23:09:24.050Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 14,
-          "relatedLink": "/ingredients/list/20",
-          "context": "ingredient",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Созданный вами ингредиент «Мухомор» успешно опубликован",
-          "title": "Ингредиент опубликован",
-          "timestamp": "2023-11-12T23:11:32.627Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 15,
-          "relatedLink": "/ingredients/list/18",
-          "context": "ingredient",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Созданный вами ингредиент «Мультифрукт» успешно опубликован",
-          "title": "Ингредиент опубликован",
-          "timestamp": "2023-11-13T12:33:57.966Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 16,
-          "relatedLink": "/ingredients/list/19",
-          "context": "ingredient",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Созданный вами ингредиент «Грейпфрут» успешно опубликован",
-          "title": "Ингредиент опубликован",
-          "timestamp": "2023-11-13T12:36:12.270Z",
-          "read": true,
-          "notificationDate": ""
         }
       ],
       "avatarUrl": {},

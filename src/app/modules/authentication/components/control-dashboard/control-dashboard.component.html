@@ -1,7 +1,9 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<div *ngIf="currentUser.role!=='user'" class="main"
-  [ngClass]="{'admin':this.currentUser.role==='admin', 'moderator':this.currentUser.role==='moderator'}">
+<div *ngIf="currentUser.role !== 'user'" class="main" [ngClass]="{
+    admin: this.currentUser.role === 'admin',
+    moderator: this.currentUser.role === 'moderator'
+  }">
   <h1>
     {{
     currentUser.role === "admin"
@@ -10,32 +12,45 @@
     }}
   </h1>
   <div class="circles">
-    <div class="circle"><span>{{awaitingRecipes.length}} </span>
-      <p><span appPluralRu="" [value]="awaitingRecipes.length" [arVariants]="['рецепт','рецепта','рецептов']"></span> на
-        проверку</p>
+    <div class="circle">
+      <span>{{ awaitingRecipes.length }} </span>
+      <p>
+        <span appPluralRu="" [value]="awaitingRecipes.length" [arVariants]="['рецепт', 'рецепта', 'рецептов']"></span>
+        на проверку
+      </p>
     </div>
-    <div class="circle"><span>{{reports.length}}</span>
-      <p><span appPluralRu="" [value]="reports.length" [arVariants]="['жалоба','жалобы','жалоб']"></span> на
-        комментарии</p>
+    <div class="circle">
+      <span>{{ reports.length }}</span>
+      <p>
+        <span appPluralRu="" [value]="reports.length" [arVariants]="['жалоба', 'жалобы', 'жалоб']"></span>
+        на комментарии
+      </p>
     </div>
-    <div class="circle"><span>{{categoriesForCheck.length}}</span>
-      <p><span appPluralRu="" [value]="categoriesForCheck.length"
-          [arVariants]="['категория','категории','категорий']"></span> на проверку</p>
+    <div class="circle">
+      <span>{{ categoriesForCheck.length }}</span>
+      <p>
+        <span appPluralRu="" [value]="categoriesForCheck.length"
+          [arVariants]="['категория', 'категории', 'категорий']"></span>
+        на проверку
+      </p>
     </div>
-    <div class="circle"><span>{{allAwaitingIngredients.length}}</span>
-      <p><span appPluralRu="" [value]="allAwaitingIngredients.length"
-          [arVariants]="['ингредиент','ингредиента','ингредиентов']"></span> на проверку</p>
+    <div class="circle">
+      <span>{{ allAwaitingIngredients.length }}</span>
+      <p>
+        <span appPluralRu="" [value]="allAwaitingIngredients.length"
+          [arVariants]="['ингредиент', 'ингредиента', 'ингредиентов']"></span>
+        на проверку
+      </p>
     </div>
-
   </div>
 
   <div class="content-wrap">
-<div class="block-wrap">
+    <div class="block-wrap pad">
       <div class="reports-block" *ngIf="awaitingRecipes.length > 0">
         <h2 (click)="showAwaitingRecipes = !showAwaitingRecipes">
           Рецепты на проверку
         </h2>
-  
+
         <div *ngIf="showAwaitingRecipes" @height>
           <div class="reports">
             <div class="report" *ngFor="let recipe of awaitingRecipesToShow">
@@ -44,27 +59,23 @@
                   {{ recipe.name }}
                 </a>
                 <p class="report-date">
-                  Рецепт отправлен {{ recipe.publicationDate | timePast | lowercase }}
+                  Рецепт отправлен
+                  {{ recipe.publicationDate | timePast | lowercase }}
                 </p>
               </div>
               <div class="report-users">
                 <p class="reporter">
                   Автор:
                   <a class="report-user" [routerLink]="'/cooks/list/' + recipe.authorId">{{
-                    getName(getUser(recipe.authorId))
-                    }}</a>
+                    getName(getUser(recipe.authorId)) }}</a>
                 </p>
-  
-  
               </div>
-              <div class="recipe-image">
-  
-              </div>
+              <div class="recipe-image"></div>
               <div class="report-buttons">
-                <app-button [text]="'Принять'" (click)="awaitingRecipeActionClick('approve',recipe)"
+                <app-button [text]="'Принять'" (click)="awaitingRecipeActionClick('approve', recipe)"
                   [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
-                <app-button [text]="'Отклонить'" (click)="awaitingRecipeActionClick('dismiss',recipe)"
-                  (click)="dismissRecipeModalShow=true" [color]="currentUser.role" [style]="'filled-min'"
+                <app-button [text]="'Отклонить'" (click)="awaitingRecipeActionClick('dismiss', recipe)"
+                  (click)="dismissRecipeModalShow = true" [color]="currentUser.role" [style]="'filled-min'"
                   [rounded]="true"></app-button>
               </div>
             </div>
@@ -74,49 +85,52 @@
             [color]="'prim'"></app-button>
         </div>
       </div>
-  
-      <div class="reports-block" *ngIf="allAwaitingIngredients.length>0">
-        <h2 (click)="showAwaitingIngredients = !showAwaitingIngredients">Ингредиенты на проверку</h2>
+
+      <div class="reports-block" *ngIf="allAwaitingIngredients.length > 0">
+        <h2 (click)="showAwaitingIngredients = !showAwaitingIngredients">
+          Ингредиенты на проверку
+        </h2>
         <div *ngIf="showAwaitingIngredients" @height>
           <div class="reports">
             <div class="report" *ngFor="let ingredient of showedAwaitingIngredients">
               <div class="report-header">
                 <a class="report-recipe" [routerLink]="'/ingredients/list/' + ingredient.id">
-                  {{ingredient.name}}
+                  {{ ingredient.name }}
                 </a>
                 <p class="report-date" *ngIf="ingredient.sendDate">
-                  Ингредиент отправлен {{ ingredient.sendDate | timePast | lowercase }}
+                  Ингредиент отправлен
+                  {{ ingredient.sendDate | timePast | lowercase }}
                 </p>
               </div>
               <div class="report-users" *ngIf="ingredient.author">
                 <p class="reporter">
                   Автор:
-                  <a class="report-user" [routerLink]="'/cooks/list/' + getUser(ingredient.author).id">{{
-                    getName(getUser(ingredient.author))
-                    }}</a>
+                  <a class="report-user" [routerLink]="
+                      '/cooks/list/' + getUser(ingredient.author).id
+                    ">{{ getName(getUser(ingredient.author)) }}</a>
                 </p>
-  
               </div>
-  
+
               <div class="report-buttons">
-                <app-button (click)="awaitingIngredientActionClick('approve',ingredient)" [text]="'Принять'"
+                <app-button (click)="awaitingIngredientActionClick('approve', ingredient)" [text]="'Принять'"
                   [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
-                <app-button (click)="awaitingIngredientActionClick('dismiss',ingredient)" [text]="'Отклонить'"
+                <app-button (click)="awaitingIngredientActionClick('dismiss', ingredient)" [text]="'Отклонить'"
                   [color]="currentUser.role" [style]="'filled-min'" [rounded]="true"></app-button>
               </div>
             </div>
           </div>
           <app-button class="more-reports-button" [text]="'Загрузить еще...'" (click)="loadMoreAwaitingIngredients()"
-            *ngIf="allAwaitingIngredients.length > showedAwaitingIngredients.length" [rounded]="true" [style]="'outlined'"
-            [color]="'prim'"></app-button>
+            *ngIf="
+              allAwaitingIngredients.length > showedAwaitingIngredients.length
+            " [rounded]="true" [style]="'outlined'" [color]="'prim'"></app-button>
         </div>
       </div>
-  
+
       <div class="reports-block" *ngIf="reports.length > 0">
         <h2 (click)="showCommentReports = !showCommentReports">
           Жалобы на комментарии
         </h2>
-  
+
         <div *ngIf="showCommentReports" @height>
           <div class="reports">
             <div class="report" *ngFor="let report of reports">
@@ -157,12 +171,10 @@
                 </span>
               </p>
               <div class="report-buttons">
-                <app-button [text]="'Оставить'" (click)="
-                   reportActionClick('dismiss',report)
-                  " [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
-                <app-button [text]="'Удалить'" (click)="
-                     reportActionClick('approve',report)
-                  " [color]="currentUser.role" [style]="'filled-min'" [rounded]="true"></app-button>
+                <app-button [text]="'Оставить'" (click)="reportActionClick('dismiss', report)"
+                  [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
+                <app-button [text]="'Удалить'" (click)="reportActionClick('approve', report)" [color]="currentUser.role"
+                  [style]="'filled-min'" [rounded]="true"></app-button>
               </div>
             </div>
           </div>
@@ -171,12 +183,12 @@
             [color]="'prim'"></app-button>
         </div>
       </div>
-  
-      <div class="reports-block" *ngIf="categoriesForCheck.length>0">
-  
-        <h2 (click)="showCategoriesForCheck=!showCategoriesForCheck">Категории на одобрение</h2>
-  
-  
+
+      <div class="reports-block" *ngIf="categoriesForCheck.length > 0">
+        <h2 (click)="showCategoriesForCheck = !showCategoriesForCheck">
+          Категории на одобрение
+        </h2>
+
         <div *ngIf="showCategoriesForCheck" @height>
           <div class="reports">
             <div class="report" *ngFor="let category of categoriesForCheckToShow">
@@ -185,33 +197,39 @@
                   {{ category.name }}
                 </a>
                 <p class="report-date">
-                  Категория отправлена {{ category.sendDate | timePast | lowercase }}
+                  Категория отправлена
+                  {{ category.sendDate | timePast | lowercase }}
                 </p>
               </div>
               <div class="report-users">
                 <p class="reporter">
                   Создатель:
-                  <a class="report-user" [routerLink]="'/cooks/list/' + getUser(category.authorId).id">{{
+                  <a class="report-user" [routerLink]="
+                      '/cooks/list/' + getUser(category.authorId).id
+                    ">{{
                     getUser(category.authorId).fullName !== ""
                     ? getUser(category.authorId).fullName
                     : getUser(category.authorId).username
                     }}</a>
                 </p>
                 <p>
-                  Секция: <a [routerLink]="'/sections/list/' + getSection(category.id).id"
-                    class="report-user">{{getSection(category.id).name}} </a>
+                  Секция:
+                  <a [routerLink]="
+                      '/sections/list/' + getSection(category.id).id
+                    " class="report-user">{{ getSection(category.id).name }}
+                  </a>
                 </p>
-  
               </div>
-              <div class="category-image">
-  
-              </div>
+              <div class="category-image"></div>
               <div class="report-buttons">
-                <app-button [text]="'Принять'" (click)="actionCategory = category; approveCategoryActionModalShow = true;"
-                  [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
-                <app-button [text]="'Отклонить'"
-                  (click)="actionCategory = category; dismissCategoryActionModalShow = true;" [color]="currentUser.role"
-                  [style]="'filled-min'" [rounded]="true"></app-button>
+                <app-button [text]="'Принять'" (click)="
+                    actionCategory = category;
+                    approveCategoryActionModalShow = true
+                  " [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
+                <app-button [text]="'Отклонить'" (click)="
+                    actionCategory = category;
+                    dismissCategoryActionModalShow = true
+                  " [color]="currentUser.role" [style]="'filled-min'" [rounded]="true"></app-button>
               </div>
             </div>
           </div>
@@ -220,30 +238,21 @@
             [color]="'prim'"></app-button>
         </div>
       </div>
-  
-</div>
-
-
-    <div  class="block-wrap">
-
-
-          <div class="reports-block" *ngIf="currentUser.role==='admin'">
-      <h2 (click)="showManagers= !showManagers">
-        Модераторы
-      </h2>
-      <div @height *ngIf="showManagers " class="users">
-        <app-users-list [adminpanel]="true" (demoteClick)="demoteActionClick($event)"
-          [users]="managers"></app-users-list>
-      </div>
     </div>
+
+    <div class="block-wrap">
+      <div class="reports-block" *ngIf="currentUser.role === 'admin'">
+        <h2 (click)="showManagers = !showManagers">Модераторы</h2>
+        <div @height *ngIf="showManagers" class="users">
+          <app-users-list [adminpanel]="true" (demoteClick)="demoteActionClick($event)"
+            [users]="managers"></app-users-list>
+        </div>
+      </div>
       <div class="reports-block">
-        <h2 (click)="showSections= !showSections">
-          Все секции
-        </h2>
+        <h2 (click)="showSections = !showSections">Все секции</h2>
 
-        <div @height *ngIf="showSections " class="users">
-
-          <app-button class="button" [text]="'Создать секцию'" (click)="sectionCreatingMode=true"
+        <div @height *ngIf="showSections" class="users">
+          <app-button class="button" [text]="'Создать секцию'" (click)="sectionCreatingMode = true"
             [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
           <app-vertical-category-list [showRecipesNumber]="true" [context]="'section'"
             [categories]="sectionsToShow"></app-vertical-category-list>
@@ -255,13 +264,10 @@
       </div>
 
       <div class="reports-block">
-        <h2 (click)="showGroups= !showGroups">
-          Все группы ингредиентов
-        </h2>
+        <h2 (click)="showGroups = !showGroups">Все группы ингредиентов</h2>
 
         <div @height *ngIf="showGroups" class="users">
-
-          <app-button class="button" [text]="'Создать группу'" (click)="groupCreatingMode=true"
+          <app-button class="button" [text]="'Создать группу'" (click)="groupCreatingMode = true"
             [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
           <app-ingredients-vertical-list [context]="'group'"
             [ingredients]="showedGroups"></app-ingredients-vertical-list>
@@ -271,17 +277,8 @@
             [color]="'prim'"></app-button>
         </div>
       </div>
-
-
-
     </div>
-
   </div>
-
-
-
-
-
 </div>
 
 <app-modal @modal *ngIf="reportCommentDismissModalShow" [style]="'sec'" [title]="'Оставить комментарий'"
@@ -300,7 +297,6 @@
   (resultEmit)="handleSuccessReportCommentApproveModal()" [buttonsText]="['Хорошо']"
   [description]="'Жалоба на комментарий принята и комментарий удален'"></app-modal>
 
-
 <app-modal @modal *ngIf="approveCategoryActionModalShow" [style]="'sec'" [title]="'Одобрение категории'"
   [type]="'yesOrNo'" (resultEmit)="handleApproveCategoryModal($event)" [buttonsText]="['Да', 'Отмена']"
   [description]="'Ты действительно хочешь одобрить эту категорию?'"></app-modal>
@@ -317,7 +313,6 @@
   (resultEmit)="handleSuccessDismissCategoryModal()" [buttonsText]="['Хорошо']"
   [description]="'Категория успешно отклонена'"></app-modal>
 
-
 <app-modal @modal *ngIf="dismissRecipeModalShow" [style]="'prim'" [title]="'Отклонение рецепта'" [type]="'yesOrNo'"
   (resultEmit)="handleDismissRecipeModal($event)" [buttonsText]="['Да', 'Нет']"
   [description]="'Вы уверены, что хотите отклонить рецепт?'"></app-modal>
@@ -330,27 +325,33 @@
     'Рецепт успешно ' + (adminAction === 'approve' ? 'одобрен' : 'отклонен')
   " [type]="'Ok'" (resultEmit)="handleSuccessRecipeActionModal()" [buttonsText]="['Хорошо']" [description]="
     'Вы успешно ' +
-    (adminAction === 'approve' ? 'одобрили' : 'отклонили') +' этот рецепт'
+    (adminAction === 'approve' ? 'одобрили' : 'отклонили') +
+    ' этот рецепт'
   "></app-modal>
 
-<app-section-creating @modal (closeEmitter)="sectionCreatingMode=false" *ngIf="sectionCreatingMode"
-  style="z-index:10; position:fixed"></app-section-creating>
+<app-section-creating @modal (closeEmitter)="sectionCreatingMode = false" *ngIf="sectionCreatingMode"
+  style="z-index: 10; position: fixed"></app-section-creating>
 
 <app-modal (resultEmit)="handleDemoteModal($event)" @modal *ngIf="demoteModalShow" [title]="'Подтвердите действие'"
-  [style]="'prim'" [type]="'yesOrNo'" [buttonsText]="['Да','Отмена']"
-  [description]="'Вы уверены, что хотите разжаловать модератора '+getName(targetDemotedUser)+'?'"></app-modal>
+  [style]="'prim'" [type]="'yesOrNo'" [buttonsText]="['Да', 'Отмена']" [description]="
+    'Вы уверены, что хотите разжаловать модератора ' +
+    getName(targetDemotedUser) +
+    '?'
+  "></app-modal>
 
 <app-modal (resultEmit)="handleSuccessDemoteModal()" @modal *ngIf="demoteSuccessModalShow"
-  [title]="'Успешное разжалование'" [style]="'sec'" [type]="'Ok'" [buttonsText]="['Хорошо']"
-  [description]="'Вы успешно разжаловали модератора '+getName(targetDemotedUser)+'. Теперь он является простым пользователем'"></app-modal>
+  [title]="'Успешное разжалование'" [style]="'sec'" [type]="'Ok'" [buttonsText]="['Хорошо']" [description]="
+    'Вы успешно разжаловали модератора ' +
+    getName(targetDemotedUser) +
+    '. Теперь он является простым пользователем'
+  "></app-modal>
 
 <app-modal (resultEmit)="handleIngredientModal($event)" @modal *ngIf="ingredientModalShow"
-  [title]="'Подтвердите действие'" [style]="'prim'" [type]="'yesOrNo'" [buttonsText]="['Да','Отмена']"
+  [title]="'Подтвердите действие'" [style]="'prim'" [type]="'yesOrNo'" [buttonsText]="['Да', 'Отмена']"
   [description]="getIngredientModalDescription()" />
 
 <app-modal (resultEmit)="handleSuccessIngredientModal()" @modal *ngIf="successIngredientModalShow"
   [title]="'Успешное действие'" [style]="'sec'" [type]="'Ok'" [buttonsText]="['Хорошо']"
   [description]="getSuccessIngredientModalDescription()" />
 
-
-<app-group-creating @modal (closeEmitter)="groupCreatingMode=false" *ngIf="groupCreatingMode" />
+<app-group-creating @modal (closeEmitter)="groupCreatingMode = false" *ngIf="groupCreatingMode" />

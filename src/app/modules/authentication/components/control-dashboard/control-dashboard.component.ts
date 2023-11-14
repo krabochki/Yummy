@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Title } from '@angular/platform-browser';
@@ -25,7 +26,7 @@ import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
 import { CategoryService } from 'src/app/modules/recipes/services/category.service';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
-import { INotification, nullNotification } from 'src/app/modules/user-pages/models/notifications';
+import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { AdminService } from '../../services/admin.service';
 import {
   getAuthorOfReportedComment,
@@ -166,7 +167,11 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedGroups: IIngredientsGroup[]) => {
         this.groups = receivedGroups;
-        this.showedGroups = this.groups.slice(0,this.START_INGREDIENTS_GROUPS_DISPLAY_SIZE)
+        this.showedGroups = this.groups.slice(
+          0,
+          this.START_INGREDIENTS_GROUPS_DISPLAY_SIZE,
+        );
+        this.cd.markForCheck();
       });
   }
 
@@ -255,6 +260,8 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
             baseComparator(a.name, b.name),
           );
           this.sectionsToShow = this.sections.slice(0, 10);
+          this.cd.markForCheck();
+
         }
       });
   }
@@ -273,12 +280,8 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     );
   }
 
-  loadMoreGroups(): void{
-      this.showedGroups = this.loadMore(
-        this.groups,
-        this.showedGroups,
-        3,
-      );
+  loadMoreGroups(): void {
+    this.showedGroups = this.loadMore(this.groups, this.showedGroups, 3);
   }
 
   loadMoreAwaitingIngredients(): void {

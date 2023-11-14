@@ -179,6 +179,7 @@ export class IngredientsPageComponent implements OnInit, OnDestroy {
       filterGroups.forEach((f) => {
         this.autocomplete.push(f);
       });
+      
     } else this.autocompleteShow = false;
   }
 

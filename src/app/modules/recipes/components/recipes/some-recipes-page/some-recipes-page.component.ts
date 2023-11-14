@@ -235,7 +235,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
 
     this.followingRecipes = this.getFollowingRecipes(publicRecipes);
     this.followingRecipes = this.followingRecipes.filter((r) => {
-      this.currentUser.role === 'user' ||
+      return this.currentUser.role === 'user' ||
       this.getUser(r.authorId).role === 'admin'
         ? this.userService.getPermission(
             'hide-author',
@@ -443,7 +443,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
       const filterRecipes: IRecipe[] = this.allRecipes.filter(
         (recipe: IRecipe) =>
           recipe.name.toLowerCase().replace(/\s/g, '').includes(search) ||
-          (this.showAuthor(recipe)
+          (!this.showAuthor(recipe)
             ? this.getUser(recipe.authorId)
                 .fullName.toLowerCase()
                 .replace(/\s/g, '')

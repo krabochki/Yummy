@@ -54,3 +54,12 @@ export function getZoom(count: number, diff:number, maxZoom?:number, baseZoom?: 
       return baseZoom;
     }
   }
+
+  export function setReadingTimeInMinutes(text:string): number {
+ 
+    const wordsPerMinute = 200;
+    const recipeText = text;
+    const words = recipeText.split(/\s+/);
+    const wordCount = words.length;
+    return Math.ceil(wordCount / wordsPerMinute);
+  }

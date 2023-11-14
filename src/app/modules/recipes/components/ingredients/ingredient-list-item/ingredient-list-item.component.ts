@@ -89,9 +89,9 @@ export class IngredientListItemComponent implements OnInit, OnDestroy {
   }
 
   get link() {
-    if (this.ingredient.ingredients) {
-      return '/ingredients/groups/' + this.ingredient.id;
-    } else return '/ingredients/list/' + this.ingredient.id;
+    return this.ingredient.ingredients
+      ? '/ingredients/groups/' + this.ingredient.id
+      : '/ingredients/list/' + this.ingredient.id;
   }
 
   protected handleDeleteModal(answer: boolean) {

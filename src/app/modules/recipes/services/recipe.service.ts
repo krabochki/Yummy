@@ -282,7 +282,7 @@ export class RecipeService {
 
 
   getRecipesByIngredient(recipes: IRecipe[], ingredient: IIngredient): IRecipe[] {
-    const recipesWithIngredient:IRecipe[]= [];
+    const recipesWithIngredient: IRecipe[] = [];
     const ingredientName = ingredient.name.toLowerCase().trim();
     recipes.forEach((recipe) => {
       recipe.ingredients.forEach((rIngredient) => {
@@ -307,7 +307,11 @@ export class RecipeService {
         }
       });
     });
-    return recipesWithIngredient;
+    const uniqueRecipesWithIngredient = recipesWithIngredient.filter(
+      (recipe, index, self) =>
+        index === self.findIndex((r) => r.id === recipe.id),
+    );
+    return uniqueRecipesWithIngredient;
   }
   getRecipesByCategory(recipes: IRecipe[], categoryId: number) {
     return recipes.filter((recipe) => recipe.categories.includes(categoryId));

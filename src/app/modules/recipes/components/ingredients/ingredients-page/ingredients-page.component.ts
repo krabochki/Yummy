@@ -54,16 +54,23 @@ export class IngredientsPageComponent implements OnInit, OnDestroy {
     this.route.data.subscribe((data) => {
       this.context = data['filter'];
 
-      this.ingredientService.ingredients$
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe((data) => {
-          this.ingredients = data.filter(i=>i.status==='public');
-        });
-
       this.recipeService.recipes$
         .pipe(takeUntil(this.destroyed$))
         .subscribe((data) => {
           this.recipes = data;
+
+          
+      this.ingredientService.ingredients$
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe((data) => {
+          this.ingredients = data.filter((i) => i.status === 'public');
+          
+              this.ingredients = this.ingredientService.sortIngredients(
+                this.ingredients,
+                this.recipes,
+              );
+        });
+
 
           this.ingredientService.ingredientsGroups$
             .pipe(takeUntil(this.destroyed$))

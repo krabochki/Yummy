@@ -228,7 +228,6 @@ button {
     width: 0;
     height: 0;
     content: "";
-    background-color: red;
     position: absolute;
     transition: width 0.3s ease-in-out, height 0.3s ease-in-out;
     z-index: -1;

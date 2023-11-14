@@ -47,10 +47,8 @@
                     <svg-icon [ngStyle]="{ fill: d.type.color }" *ngIf="item.isBought" [applyClass]="true"
                       class="checkbox-svg" [src]="baseSvgPath + 'checkbox.svg'"></svg-icon>
                   </button>
-                  <a tabindex="-1" [ngClass]="{ link: item.relatedRecipe }" [routerLink]="
-                      item.relatedRecipe
-                        ? '/recipes/list/' + item.relatedRecipe
-                        : null
+                  <a tabindex="-1" [ngClass]="{ link: realLink(item) }" [routerLink]="
+                      getLink(item)
                     " class="product-name">
                     {{ item.name }}
                   </a>

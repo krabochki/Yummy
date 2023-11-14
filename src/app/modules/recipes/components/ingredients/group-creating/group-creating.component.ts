@@ -175,9 +175,12 @@ export class GroupCreatingComponent
   }
 
   closeEditModal() {
-    this.areObjectsEqual()
-      ? (this.closeModal = true)
-      : this.closeEmitter.emit(true);
+    if (this.areObjectsEqual()) {
+      this.closeModal = true;
+    }
+    else {
+       this.closeEmitter.emit(true);
+    }
   }
 
   clickBackgroundNotContent(elem: Event) {

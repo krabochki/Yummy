@@ -4,7 +4,12 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 import { ingredientsGroupsUrl, ingredientsUrl } from 'src/tools/source';
 import { IRecipe } from '../models/recipes';
-import { IIngredient, IIngredientsGroup, nullIngredient, nullIngredientsGroup } from '../models/ingredients';
+import {
+  IIngredient,
+  IIngredientsGroup,
+  nullIngredient,
+  nullIngredientsGroup,
+} from '../models/ingredients';
 import { RecipeService } from './recipe.service';
 import { baseComparator } from 'src/tools/common';
 
@@ -59,10 +64,7 @@ export class IngredientService {
 
   updateIngredient(ingredient: IIngredient) {
     return this.http
-      .put<IIngredient>(
-        `${this.urlIngredients}/${ingredient.id}`,
-        ingredient,
-      )
+      .put<IIngredient>(`${this.urlIngredients}/${ingredient.id}`, ingredient)
       .pipe(
         tap((updatedIngedient: IIngredient) => {
           const currentIngredients = this.ingredientSubject.value;
@@ -87,19 +89,16 @@ export class IngredientService {
     return this.http.get<IIngredient[]>(this.urlIngredients);
   }
 
-  getAllNamesOfIngredient(ingredient:IIngredient): string[]{
-    let names = [];
-    names.push(ingredient.name.toLowerCase().trim())
+  getAllNamesOfIngredient(ingredient: IIngredient): string[] {
+    const ingridientName = ingredient.name.toLowerCase().trim();
     const variations = ingredient.variations.map((variation) =>
       variation.trim().toLowerCase(),
     );
-    names = [...names, ...variations];
-    return names;
+    return [ingridientName, ...variations];
   }
   getRelatedIngredients(ingredient: IIngredient, ingredients: IIngredient[]) {
-    
     const targetName = ingredient.name.trim().toLowerCase();
-    
+
     const targetVariations = ingredient.variations.map((variation) =>
       variation.trim().toLowerCase(),
     );
@@ -117,7 +116,7 @@ export class IngredientService {
         variation.trim().toLowerCase(),
       );
       return targetVariations.some((targetVar) =>
-        currentVariations.includes(targetVar),
+        currentVariations.includes(targetVar)
       );
     });
     relatedIngredients = relatedIngredients.filter(
@@ -157,7 +156,11 @@ export class IngredientService {
     );
   }
 
-  getRecipesNumberOfGroup(group:IIngredientsGroup,ingredients:IIngredient[],recipes:IRecipe[]) {
+  getRecipesNumberOfGroup(
+    group: IIngredientsGroup,
+    ingredients: IIngredient[],
+    recipes: IRecipe[],
+  ) {
     let recipesIdsInGroup: number[] = [];
     if (group.ingredients) {
       group.ingredients.forEach((ingredient) => {
@@ -203,7 +206,28 @@ export class IngredientService {
     );
   }
 
-  findIngredientByName(name: string,ingredients:IIngredient[]): IIngredient {
+  findAllIngrdientsFitByName(name: string, ingredients: IIngredient[]) {
+    const findedIngredients: IIngredient[] = [];
+    const searchName = name.toLowerCase().trim();
+    ingredients.forEach((ingredient) => {
+      const formatIngredient = ingredient.name.toLowerCase().trim();
+      const variationsMatch =
+        ingredient.variations.length > 0 &&
+        ingredient.variations.some((variation) => {
+          const formattedVariation = variation.toLowerCase().trim();
+          return searchName.includes(formattedVariation);
+        });
+      
+       
+
+      if (searchName.includes(formatIngredient) || variationsMatch) {
+        findedIngredients.push(ingredient);
+      }
+    });
+    return findedIngredients;
+  }
+
+  findIngredientByName(name: string, ingredients: IIngredient[]): IIngredient {
     const findedIngredients: IIngredient[] = [];
     const ingredientName = name.toLowerCase().trim();
     ingredients.forEach((ingredient) => {
@@ -211,10 +235,7 @@ export class IngredientService {
         ingredient.variations.length > 0 &&
         ingredient.variations.some((variation) => {
           const formattedVariation = variation.toLowerCase().trim();
-          return (
-            ingredientName.includes(formattedVariation) ||
-            formattedVariation.includes(ingredientName)
-          );
+          return ingredientName.includes(formattedVariation);
         });
 
       if (

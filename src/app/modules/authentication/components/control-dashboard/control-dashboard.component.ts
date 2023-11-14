@@ -49,7 +49,10 @@ import {
   notifyForReporterOfLeavedComment,
 } from './notifications';
 import { IngredientService } from 'src/app/modules/recipes/services/ingredient.service';
-import { IIngredient, IIngredientsGroup } from 'src/app/modules/recipes/models/ingredients';
+import {
+  IIngredient,
+  IIngredientsGroup,
+} from 'src/app/modules/recipes/models/ingredients';
 import { baseComparator } from 'src/tools/common';
 @Component({
   selector: 'app-control-dashboard',
@@ -116,11 +119,18 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   protected demoteModalShow = false;
   protected demoteSuccessModalShow = false;
 
+  recipeArVariants = ['рецепт', 'рецепта', 'рецептов'];
+  reportsArVariants = ['жалоба', 'жалобы', 'жалоб'];
+  categoriesArVariants = ['категория', 'категории', 'категорий'];
+  ingredientsArVariants = ['ингредиент', 'ингредиента', 'ингредиентов'];
+
   ingredientAction: 'approve' | 'dismiss' | null = null;
   ingredientModalShow: boolean = false;
   successIngredientModalShow: boolean = false;
 
   START_INGREDIENTS_DISPLAY_SIZE = 3;
+  START_SECTIONS_DISPLAY_SIZE = 10;
+  SECTIONS_TO_LOAD_SIZE = 3;
   START_INGREDIENTS_GROUPS_DISPLAY_SIZE = 10;
 
   protected destroyed$: Subject<void> = new Subject<void>();
@@ -156,7 +166,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedIngredients: IIngredient[]) => {
         this.allAwaitingIngredients = receivedIngredients.filter(
-          (i) => i.status === 'awaits',
+          (ingredient) => ingredient.status === 'awaits',
         );
         this.showedAwaitingIngredients = this.allAwaitingIngredients.slice(
           0,
@@ -259,9 +269,11 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
           this.sections = receivedSections.sort((a, b) =>
             baseComparator(a.name, b.name),
           );
-          this.sectionsToShow = this.sections.slice(0, 10);
+          this.sectionsToShow = this.sections.slice(
+            0,
+            this.START_SECTIONS_DISPLAY_SIZE,
+          );
           this.cd.markForCheck();
-
         }
       });
   }
@@ -276,19 +288,23 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     this.categoriesForCheckToShow = this.loadMore(
       this.categoriesForCheck,
       this.categoriesForCheckToShow,
-      3,
+      this.SECTIONS_TO_LOAD_SIZE,
     );
   }
 
   loadMoreGroups(): void {
-    this.showedGroups = this.loadMore(this.groups, this.showedGroups, 3);
+    this.showedGroups = this.loadMore(
+      this.groups,
+      this.showedGroups,
+      this.SECTIONS_TO_LOAD_SIZE,
+    );
   }
 
   loadMoreAwaitingIngredients(): void {
     this.showedAwaitingIngredients = this.loadMore(
       this.allAwaitingIngredients,
       this.showedAwaitingIngredients,
-      3,
+      this.SECTIONS_TO_LOAD_SIZE,
     );
   }
   protected loadMoreSections(): void {
@@ -640,6 +656,13 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     this.ingredientModalShow = true;
   }
 
+  categoryActionClick(context:'approve'|'dismiss',category:ICategory) {
+    this.actionCategory = category;
+    if (context === 'approve')
+      this.approveCategoryActionModalShow = true
+    else this.dismissCategoryActionModalShow = true;
+   
+  }
   getIngredientModalDescription(): string {
     if (this.actionIngredient && this.actionIngredient.author) {
       const verb =
@@ -704,10 +727,9 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   }
 
   private approveIngredient(): Observable<IIngredient> {
-    if (this.actionIngredient) {
-      return this.adminService.approveIngredient(this.actionIngredient);
-    }
-    return EMPTY;
+    return this.actionIngredient
+      ? this.adminService.approveIngredient(this.actionIngredient)
+      : EMPTY;
   }
 
   private dismissIngredient(): Observable<any>[] {

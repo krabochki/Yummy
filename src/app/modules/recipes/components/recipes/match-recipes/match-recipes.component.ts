@@ -98,9 +98,10 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.title.setTitle('Подбор рецептов');
+    this.ingredientsInit();
+
     this.currentUserInit();
     this.recipesInit();
-    this.ingredientsInit();
     this.cd.markForCheck();
   }
 
@@ -109,7 +110,9 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe(
         (receivedIngredients: IIngredient[]) =>
-          (this.ingredients = receivedIngredients.filter(i=>i.status === 'public')),
+          (this.ingredients = receivedIngredients.filter(
+            (i) => i.status === 'public',
+          )),
       );
   }
 
@@ -128,8 +131,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
   }
 
   getCategoryRecipesNumber(id: number) {
-    return this.recipeService.getRecipesByCategory(this.matchingRecipes, id)
-      .length;
+    return this.recipeService.getRecipesByCategory(this.recipes, id).length;
   }
 
   categoriesInit() {
@@ -193,6 +195,32 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
           this.currentUser = receivedUser;
           this.permanentIngredients = this.currentUser.permanent || [];
           this.permanentExcludedIngredients = this.currentUser.exclusions || [];
+
+          this.permanentExcludedIngredients.forEach((exclusion) => {
+            const matchIngredient = this.findIngredientByName(
+              exclusion.toLowerCase().trim(),
+            );
+            if (matchIngredient.id > 0) {
+              const matchIngredientName = matchIngredient.name.toLowerCase();
+
+              const index = this.permanentExcludedIngredients.findIndex((i) => {
+                i === exclusion;
+              });
+              this.permanentExcludedIngredients[index] = matchIngredientName;
+            }
+          });
+          this.permanentIngredients.forEach((permanent) => {
+            const matchIngredient = this.findIngredientByName(
+              permanent.toLowerCase().trim(),
+            );
+            if (matchIngredient.id > 0) {
+              const matchIngredientName = matchIngredient.name.toLowerCase();
+              const index = this.permanentIngredients.findIndex(
+                (i) => i === permanent,
+              );
+              this.permanentIngredients[index] = matchIngredientName;
+            }
+          });
         }
       });
   }
@@ -220,6 +248,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
     // проверяем, есть ли ингредиент уже в selectedIngredients
     if (!this.selectedIngredients.includes(ingredient)) {
       this.selectedIngredients.push(ingredient);
+
       this.selectedIngredientsCopyForDragAndDrop.push(ingredient);
       const updatedIngredientsObject: { [ingredient: string]: number } = {};
       for (const key in this.uniqueIngredientsArray) {
@@ -227,7 +256,9 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
           updatedIngredientsObject[key] = this.uniqueIngredientsArray[key];
         }
       }
+
       this.uniqueIngredientsArray = updatedIngredientsObject;
+
       this.getActualIngredients();
       this.matchingRecipes = this.filterRecipesByIngredients();
       this.uniqueIngredientsArray = this.getUniqueIngredients(
@@ -250,6 +281,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
     //получаем ингредиенты рецептов которые подходят под выбранные категории
     let ingredientCounts: { [ingredient: string]: number } = {};
     recipes.forEach((recipe) => {
+      const checkedIngredients: string[] = [];
       recipe.ingredients.forEach((ingredient) => {
         const formattedIngredients = this.permanentIngredients.map(
           (ingredient) => ingredient.trim().toLowerCase(),
@@ -263,12 +295,39 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
           ) &&
           !formattedExclusions.includes(ingredient.name.toLowerCase().trim())
         ) {
-          const ingredientName = ingredient.name.toLowerCase().trim();
-          if (ingredientCounts[ingredientName] !== undefined) {
-            ingredientCounts[ingredientName]++;
+          let ingredientName = ingredient.name.toLowerCase().trim();
+
+          //основным считается ингредиент который более специфичен, например Репчатый лук будет именно ингредиентом Репчатый лук, а не Лук,
+          //но так как ингредиент лук также включает в себя рецепты с репчатым луком (и вообще любыми луками), нужно добавить это количество рецептов и к нему (если не сделать это то число рецептов будет числом рецептов не включая более специфичные варианты) (то есть если лук например Красный но егго нет в ингредиентах он будет луком ,если есть конкретно красный-то красный )
+          const allIngredientsFindedByName = this.findAllIngredientsByName(
+            ingredientName,
+          ).map((ingredient) => ingredient.name.trim().toLowerCase());
+
+          if (this.findIngredientByName(ingredientName).id > 0) {
+            ingredientName = this.findIngredientByName(ingredientName)
+              .name.toLowerCase()
+              .trim();
           } else {
-            ingredientCounts[ingredientName] = 1;
+            //если подходящего ингредиента не существует то добавляем хотя бы само имя ингредиента
+            allIngredientsFindedByName.push(
+              ingredient.name.toLowerCase().trim(),
+            );
           }
+
+          const ingredientAlreadyCheckedInThisRecipe =
+            allIngredientsFindedByName.some((ingredient) =>
+              checkedIngredients.includes(ingredient),
+            );
+
+          if (!ingredientAlreadyCheckedInThisRecipe)
+            allIngredientsFindedByName.forEach((oneOfIngredients) => {
+              if (ingredientCounts[oneOfIngredients] !== undefined) {
+                ingredientCounts[oneOfIngredients]++;
+              } else {
+                ingredientCounts[oneOfIngredients] = 1;
+              }
+              checkedIngredients.push(oneOfIngredients.toLowerCase().trim());
+            });
         }
       });
     });
@@ -277,21 +336,48 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
     return this.sortIngredients(ingredientCounts);
   }
 
+  findAllIngredientsByName(name: string) {
+    return this.ingredientService.findAllIngrdientsFitByName(
+      name,
+      this.ingredients,
+    );
+  }
+
   onlyNoSelectedIngredients(ingredientCounts: {
     [ingredient: string]: number;
   }) {
     this.selectedIngredients.forEach((selectedIngredient) => {
-      const ingredientName = selectedIngredient.trim().toLowerCase();
-      if (ingredientCounts.hasOwnProperty(ingredientName)) {
-        ingredientCounts = Object.fromEntries(
-          Object.entries(ingredientCounts).filter(
-            ([key]) => key !== ingredientName,
-          ),
-        );
+      let ingredientName = selectedIngredient.trim().toLowerCase();
+      const allIngredientsFindedByName = this.findAllIngredientsByName(
+        ingredientName,
+      ).map((ingredient) => ingredient.name.trim().toLowerCase());
+
+      if (this.findIngredientByName(ingredientName).id > 0) {
+        ingredientName = this.findIngredientByName(ingredientName)
+          .name.toLowerCase()
+          .trim();
+      } else {
+        //если подходящего ингредиента не существует то добавляем хотя бы само имя ингредиента
+        allIngredientsFindedByName.push(ingredientName.trim());
       }
+
+      allIngredientsFindedByName.forEach((oneOfIngredients) => {
+        if (ingredientCounts.hasOwnProperty(oneOfIngredients)) {
+          ingredientCounts = Object.fromEntries(
+            Object.entries(ingredientCounts).filter(
+              ([key]) => key !== oneOfIngredients,
+            ),
+          );
+        }
+      });
     });
     this.excludedIngredients.forEach((excludedIngredient) => {
-      const ingredientName = excludedIngredient.trim().toLowerCase();
+      let ingredientName = excludedIngredient.trim().toLowerCase();
+      if (this.findIngredientByName(ingredientName).id > 0) {
+        ingredientName = this.findIngredientByName(ingredientName)
+          .name.toLowerCase()
+          .trim();
+      }
       if (ingredientCounts.hasOwnProperty(ingredientName)) {
         ingredientCounts = Object.fromEntries(
           Object.entries(ingredientCounts).filter(
@@ -319,11 +405,41 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
 
       if (hasSelectedIngredients) {
         const ingredientsCheck = this.selectedIngredients.every(
-          (selectedIngredient) =>
-            recipe.ingredients.some(
-              (ingredient) =>
-                ingredient.name.toLowerCase().trim() === selectedIngredient,
-            ),
+          (selectedIngredient) => {
+            let ingredientMatch = false;
+            let nameMatch = false;
+
+            if (this.findIngredientByName(selectedIngredient).id > 0) {
+              const variations =
+                this.findIngredientByName(selectedIngredient).variations;
+              const name = this.findIngredientByName(selectedIngredient)
+                .name.toLowerCase()
+                .trim();
+              nameMatch = recipe.ingredients.some((ingredient) => {
+                return ingredient.name.toLowerCase().trim().includes(name);
+              });
+              variations.forEach((variation) => {
+                const vFormat = variation.toLowerCase().trim();
+                if (
+                  recipe.ingredients.some((ingredient) => {
+                    const iFormat = ingredient.name.toLowerCase().trim();
+                    return iFormat.includes(vFormat);
+                  })
+                ) {
+                  ingredientMatch = true;
+                }
+              });
+            }
+
+            return (
+              recipe.ingredients.some(
+                (ingredient) =>
+                  ingredient.name.toLowerCase().trim() === selectedIngredient,
+              ) ||
+              ingredientMatch ||
+              nameMatch
+            );
+          },
         );
 
         if (!ingredientsCheck) {
@@ -365,13 +481,43 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
           ...this.excludedIngredients,
         ]; //соединяем исключениия пользователя и исключения которые применили сейчас
 
-        const ingredientsCheck = fullExclusions.every(
-          (excludedIngredient) =>
-            !recipe.ingredients.some(
+        const ingredientsCheck = fullExclusions.every((excludedIngredient) => {
+          let ingredientMatch = false;
+
+          let nameMatch = false;
+
+          if (this.findIngredientByName(excludedIngredient).id > 0) {
+            const variations =
+              this.findIngredientByName(excludedIngredient).variations;
+            const name = this.findIngredientByName(excludedIngredient)
+              .name.toLowerCase()
+              .trim();
+
+            nameMatch = recipe.ingredients.some((ingredient) => {
+              return ingredient.name.toLowerCase().trim().includes(name);
+            });
+            variations.forEach((variation) => {
+              const vFormat = variation.toLowerCase().trim();
+              if (
+                recipe.ingredients.some((ingredient) => {
+                  const iFormat = ingredient.name.toLowerCase().trim();
+                  return vFormat.includes(iFormat) || iFormat.includes(vFormat);
+                })
+              ) {
+                ingredientMatch = true;
+              }
+            });
+          }
+
+          return !(
+            recipe.ingredients.some(
               (ingredient) =>
                 ingredient.name.toLowerCase().trim() === excludedIngredient,
-            ),
-        );
+            ) ||
+            ingredientMatch ||
+            nameMatch
+          );
+        });
 
         if (!ingredientsCheck) {
           return false; // рецепт не подходит под ингредиенты
@@ -433,11 +579,14 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
   }
 
   getIngredientNames(): string[] {
-    return Object.keys(this.uniqueIngredientsArray);
+    const ingredients: string[] = Object.keys(
+      this.sortIngredients(this.uniqueIngredientsArray),
+    );
+    return ingredients;
   }
 
   // Метод для изменения состояния категории (раскрыть/закрыть)
-  toggleCategory(sectionIndex: number, categoryIndex: number) {
+  toggleCategory(sectionIndex: number, categoryIndex: number, $event: any) {
     this.categoryStates[sectionIndex][categoryIndex] =
       !this.categoryStates[sectionIndex][categoryIndex];
 
@@ -445,7 +594,6 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
 
     if (this.categoryStates[sectionIndex][categoryIndex]) {
       this.selectedCategories.push(selectedCategory);
-
       // Обновляем список ингредиентов на основе выбранной категории
     } else {
       const index = this.selectedCategories.indexOf(selectedCategory);
@@ -458,22 +606,23 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
       selectedCategory,
       this.categoryStates[sectionIndex][categoryIndex],
     );
+    $event.preventDefault();
+    $event.stopPropagation();
   }
 
   getZoom(count: number): number {
     return getZoom(count, 0.15, 7, 0.9);
   }
 
-
   autocompleteClick(ingredient: string, $event: any) {
     this.showIngredientsAutocomplete = false;
     this.ingredientClick(ingredient, $event);
   }
 
-  ingredientClick(ingredient:string,$event:any) {
+  ingredientClick(ingredient: string, $event: any) {
     this.selectIngredient(ingredient);
-    $event.stopPropagation();
     $event.preventDefault();
+    $event.stopPropagation();
   }
 
   updateIngredientsBasedOnCategory(
@@ -491,12 +640,32 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
     //сначала берем все ингредиенты подходящие по рецепту вообще
     recipesInSelectedCategory.forEach((recipe) => {
       recipe.ingredients.forEach((ingredient) => {
-        const ingredientName = ingredient.name.toLowerCase().trim();
-        if (ingredientCounts[ingredientName] !== undefined) {
-          ingredientCounts[ingredientName]++;
-        } else {
-          ingredientCounts[ingredientName] = 1;
+        let ingredientName = ingredient.name.toLowerCase().trim();
+        if (this.findIngredientByName(ingredientName).id > 0) {
+          ingredientName = this.findIngredientByName(ingredientName)
+            .name.toLowerCase()
+            .trim();
         }
+        const allIngredientsFindedByName = this.findAllIngredientsByName(
+          ingredientName,
+        ).map((ingredient) => ingredient.name.trim().toLowerCase());
+
+        if (this.findIngredientByName(ingredientName).id > 0) {
+          ingredientName = this.findIngredientByName(ingredientName)
+            .name.toLowerCase()
+            .trim();
+        } else {
+          //если подходящего ингредиента не существует то добавляем хотя бы само имя ингредиента
+          allIngredientsFindedByName.push(ingredient.name.toLowerCase().trim());
+        }
+
+        allIngredientsFindedByName.forEach((oneOfIngredients) => {
+          if (ingredientCounts[oneOfIngredients] !== undefined) {
+            ingredientCounts[oneOfIngredients]++;
+          } else {
+            ingredientCounts[oneOfIngredients] = 1;
+          }
+        });
       });
     });
 
@@ -505,7 +674,16 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
       const filteredIngredients = this.selectedIngredients
         .map((ingredient) => ingredient.trim().toLowerCase())
         // eslint-disable-next-line no-prototype-builtins
-        .filter((ingredient) => ingredientCounts.hasOwnProperty(ingredient));
+        .filter((ingredient) => {
+          let ingredientName = ingredient;
+          if (this.findIngredientByName(ingredient).id > 0) {
+            ingredientName = this.findIngredientByName(ingredientName)
+              .name.toLowerCase()
+              .trim();
+          }
+
+          return ingredientCounts.hasOwnProperty(ingredientName);
+        });
 
       this.selectedIngredients = filteredIngredients;
     }
@@ -521,9 +699,13 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
         this.uniqueIngredientsArray = this.sortIngredients(ingredientCounts);
       }
     }
+    this.getActualIngredients();
 
     this.matchingRecipes = this.filterRecipesByIngredients();
-    this.getActualIngredients();
+
+    this.uniqueIngredientsArray = this.getUniqueIngredients(
+      this.matchingRecipes,
+    );
   }
 
   getActualIngredients() {
@@ -547,8 +729,10 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
     dragStart();
   }
 
-  toggleSection(sectionIndex: number) {
+  toggleSection(sectionIndex: number, $event: any) {
     this.sectionStates[sectionIndex] = !this.sectionStates[sectionIndex];
+    $event.preventDefault();
+    $event.stopPropagation();
   }
 
   focusIngredientSearch(): void {

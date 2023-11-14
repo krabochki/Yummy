@@ -21,6 +21,8 @@ import {
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
 import { baseComparator, dragStart } from 'src/tools/common';
+import { IngredientService } from '../../recipes/services/ingredient.service';
+import { IIngredient } from '../../recipes/models/ingredients';
 
 @Component({
   selector: 'app-shopping-list',
@@ -47,6 +49,7 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
   protected focused: boolean = false;
   protected selectedType: ProductType = productTypes[0];
 
+  ingredients: IIngredient[] = [];
   protected newProductCreatingMode: boolean = false;
   protected note: string = '';
 
@@ -72,10 +75,11 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private fb: FormBuilder,
     private title: Title,
+    private ingredientService: IngredientService,
   ) {
     this.title.setTitle('Список покупок');
     this.productTypes.sort((t1, t2) => {
-      return baseComparator(t1.name,t2.name)
+      return baseComparator(t1.name, t2.name);
     });
 
     this.form = this.initNewShoppingListItemForm();
@@ -108,8 +112,7 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
         const findedProduct = this.currentUserPlan.shoppingList.find(
           (i) => i.id === droppedProduct.id,
         );
-        if (findedProduct)
-          findedProduct.type = currentType.type.id;
+        if (findedProduct) findedProduct.type = currentType.type.id;
         this.planService.updatePlan(this.currentUserPlan).subscribe();
       }
     }
@@ -133,6 +136,7 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     this.initCurrentUser();
     this.initCurrentUserPlan();
+    this.initIngredients();
   }
 
   private initCurrentUser(): void {
@@ -143,8 +147,29 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
       });
   }
 
+  initIngredients() {
+    this.ingredientService.ingredients$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((ingredients) => (this.ingredients = ingredients));
+  }
+
   findType(name: string) {
     return this.productTypes.find((t) => t.name === name);
+  }
+
+  findIngredientByName(name: string) {
+    return this.ingredientService.findIngredientByName(name, this.ingredients);
+  }
+
+  realLink(item: ShoppingListItem) {
+    return item.relatedRecipe || this.findIngredientByName(item.name).id !== 0;
+  }
+  getLink(item: ShoppingListItem) {
+    //связанный рецепт приоритетнее чем найденный ингредиент
+    if (item.relatedRecipe) return '/recipes/list/' + item.relatedRecipe;
+    if (this.findIngredientByName(item.name).id !== 0)
+      return '/ingredients/list/' + this.findIngredientByName(item.name).id;
+    return null;
   }
 
   private initCurrentUserPlan(): void {
@@ -227,7 +252,7 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
 
   private sortByBought(shoppingList: ShoppingListItem[]): ShoppingListItem[] {
     const filter = shoppingList.sort((a, b) => {
-      return baseComparator(a.id,b.id)
+      return baseComparator(a.id, b.id);
     });
     return filter.sort((a, b) => {
       return baseComparator(a.isBought, b.isBought);

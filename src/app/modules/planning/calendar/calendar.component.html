@@ -17,7 +17,7 @@
         >
           Ранее
         </button>
-        <button class="btn primary" mwlCalendarToday [(viewDate)]="viewDate">
+        <button class="btn primary"  mwlCalendarToday [(viewDate)]="viewDate">
           Сегодня
         </button>
         <button
@@ -64,6 +64,7 @@
   </div>
 
   <div [ngSwitch]="view">
+   
     <mwl-calendar-month-view
       *ngSwitchCase="CalendarView.Month"
       [viewDate]="viewDate"

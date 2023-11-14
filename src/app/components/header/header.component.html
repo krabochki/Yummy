@@ -70,7 +70,7 @@
         </a>
 
         <a (click)="
-            !currentUser.id ? (noAccessModalShow = true) : (notifiesOpen = true)
+            openNotifies()
           ">
           <div *ngIf="currentUser.id > 0 && notificationCount > 0" class="count">
             {{ notificationCount }}

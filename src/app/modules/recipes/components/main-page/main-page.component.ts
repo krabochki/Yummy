@@ -117,6 +117,10 @@ export class MainPageComponent implements OnInit, OnDestroy {
       });
   }
 
+  clickBannerButton() {
+    return this.currentUser.id === 0 ? this.noAccessModalShow = true : null;
+  }
+
   recipesInit() {
     this.recipeService.recipes$
       .pipe(takeUntil(this.destroyed$))

@@ -125,17 +125,16 @@ export class CalendarComponent implements OnInit, OnDestroy {
     return eventsWithModifyNormalData;
   }
 
-  protected dayClicked({
-    date,
-    events,
-  }: {
-    date: Date;
-    events: CalendarEvent[];
-  }): void {
+  dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
-      this.activeDayIsOpen =
+      if (
         (isSameDay(this.viewDate, date) && this.activeDayIsOpen === true) ||
-        events.length === 0;
+        events.length === 0
+      ) {
+        this.activeDayIsOpen = false;
+      } else {
+        this.activeDayIsOpen = true;
+      }
       this.viewDate = date;
     }
   }
@@ -198,9 +197,9 @@ export class CalendarComponent implements OnInit, OnDestroy {
       this.currentUser.notifications = this.currentUser.notifications.filter(
         (n) => n.id !== reminderNotify.id,
       );
-    this.currentUserPlan.calendarEvents = this.events;
-    this.userService.updateUser(this.currentUser);
-    this.planService.updatePlan(this.currentUserPlan).subscribe();
+  //  this.currentUserPlan.calendarEvents = this.events;
+ //   this.userService.updateUser(this.currentUser);
+  //  this.planService.updatePlan(this.currentUserPlan).subscribe();
   }
 
   setView(view: CalendarView) {

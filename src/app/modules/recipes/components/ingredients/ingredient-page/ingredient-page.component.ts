@@ -70,10 +70,10 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
 
   get showReviewSection() {
     return (
-      this.ingredient.advantages ||
-      this.ingredient.disadvantages ||
-      this.ingredient.recommendedTo ||
-      this.ingredient.contraindicatedTo
+      this.ingredient.advantages?.length ||
+      this.ingredient.disadvantages?.length ||
+      this.ingredient.recommendedTo?.length ||
+      this.ingredient.contraindicatedTo?.length
     );
   }
 
@@ -82,10 +82,10 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
       this.showMainSection ||
       this.showCookingSection ||
       this.showReviewSection ||
-      this.ingredient.tips ||
-      this.ingredient.nutritions ||
-      this.ingredient.externalLinks
-    )
+      this.ingredient.tips?.length ||
+      this.ingredient.nutritions?.length ||
+      this.ingredient.externalLinks?.length
+    );
   }
   get showMainSection() {
     return (
@@ -97,10 +97,10 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
 
   get showCookingSection() {
     return (
-      this.ingredient.precautions ||
-      this.ingredient.cookingMethods ||
-      this.ingredient.storageMethods ||
-      this.ingredient.compatibleDishes
+      this.ingredient.precautions?.length ||
+      this.ingredient.cookingMethods?.length ||
+      this.ingredient.storageMethods?.length ||
+      this.ingredient.compatibleDishes?.length
     );
   }
   

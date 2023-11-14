@@ -8,6 +8,10 @@ table {
  
 }
 
+.active{
+  font-weight: 800 !important;
+}
+
 .no-recipes{
   color: var(--color-foreground-unactive);
   text-align: center;
@@ -148,7 +152,6 @@ h1 {
     padding: 0.6em 2em;
     &.primary {
       zoom: 1;
-      font-weight: 700;
       background-color: var(--color-primary);
     }
   }

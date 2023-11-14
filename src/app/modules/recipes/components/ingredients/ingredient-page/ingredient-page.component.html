@@ -308,7 +308,7 @@
       <section
         id="nutritions"
         class="section-group"
-        *ngIf="ingredient.nutritions"
+        *ngIf="ingredient.nutritions && ingredient.nutritions.length>0"
       >
         <h2>Пищевая ценность</h2>
 
@@ -323,18 +323,18 @@
         </p>
       </section>
 
-      <section id="tips" class="section-group" *ngIf="ingredient.tips">
+      <section id="tips" class="section-group" *ngIf="ingredient.tips && ingredient.tips.length>0">
         <h2>Советы</h2>
         <ol [ngStyle]="noListStyle(ingredient.tips)">
           <li *ngFor="let tip of ingredient.tips">{{ tip }}</li>
         </ol>
       </section>
 
-      <hr *ngIf="ingredient.externalLinks" />
+      <hr *ngIf="ingredient.externalLinks &&ingredient.externalLinks.length>0 " />
       <section
         id="links"
         class="section-group"
-        *ngIf="ingredient.externalLinks"
+        *ngIf="ingredient.externalLinks &&ingredient.externalLinks.length>0"
       >
         <h2>Дополнительные ссылки</h2>
         <ol

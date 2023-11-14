@@ -67,6 +67,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   protected reports: ICommentReportForAdmin[] = [];
   protected managers: IUser[] = [];
   groups: IIngredientsGroup[] = [];
+  showedGroups: IIngredientsGroup[] = [];
 
   protected targetDemotedUser: IUser = nullUser;
   protected showManagers: boolean = false;
@@ -76,6 +77,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   protected showAwaitingRecipes: boolean = false;
   protected showCategoriesForCheck: boolean = false;
   protected showSections: boolean = false;
+  showGroups: boolean = false;
 
   protected adminAction: 'approve' | 'dismiss' = 'dismiss';
 
@@ -97,6 +99,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   showAwaitingIngredients: boolean = false;
 
   protected sectionCreatingMode: boolean = false;
+  groupCreatingMode = false;
 
   protected reportCommentDismissModalShow: boolean = false;
   protected successReportCommentDismissModalShow: boolean = false;
@@ -117,6 +120,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   successIngredientModalShow: boolean = false;
 
   START_INGREDIENTS_DISPLAY_SIZE = 3;
+  START_INGREDIENTS_GROUPS_DISPLAY_SIZE = 10;
 
   protected destroyed$: Subject<void> = new Subject<void>();
 
@@ -158,10 +162,12 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
           this.START_INGREDIENTS_DISPLAY_SIZE,
         );
       });
-    this.ingredientService.ingredientsGroups$.pipe(takeUntil(this.destroyed$))
-      .subscribe((receivedGroups:IIngredientsGroup[]) => {
+    this.ingredientService.ingredientsGroups$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedGroups: IIngredientsGroup[]) => {
         this.groups = receivedGroups;
-      })
+        this.showedGroups = this.groups.slice(0,this.START_INGREDIENTS_GROUPS_DISPLAY_SIZE)
+      });
   }
 
   private recipesInit(): void {
@@ -245,8 +251,8 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedSections: ISection[]) => {
         {
-          this.sections = receivedSections.sort(
-            (a,b)=>baseComparator(a.name,b.name)
+          this.sections = receivedSections.sort((a, b) =>
+            baseComparator(a.name, b.name),
           );
           this.sectionsToShow = this.sections.slice(0, 10);
         }
@@ -266,6 +272,15 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
       3,
     );
   }
+
+  loadMoreGroups(): void{
+      this.showedGroups = this.loadMore(
+        this.groups,
+        this.showedGroups,
+        3,
+      );
+  }
+
   loadMoreAwaitingIngredients(): void {
     this.showedAwaitingIngredients = this.loadMore(
       this.allAwaitingIngredients,
@@ -622,7 +637,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     this.ingredientModalShow = true;
   }
 
-  getIngredientModalDescription():string {
+  getIngredientModalDescription(): string {
     if (this.actionIngredient && this.actionIngredient.author) {
       const verb =
         this.ingredientAction === 'approve' ? 'одобрить' : 'отклонить';
@@ -634,7 +649,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     return '';
   }
 
-  getSuccessIngredientModalDescription(): string{
+  getSuccessIngredientModalDescription(): string {
     if (this.actionIngredient && this.actionIngredient.author) {
       const verb =
         this.ingredientAction === 'approve' ? 'одобрили' : 'отклонили';
@@ -649,38 +664,39 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   handleIngredientModal(answer: boolean) {
     if (answer) {
       if (this.ingredientAction === 'approve') {
-        this.approveIngredient()
-          .subscribe(() =>
-          {
-            this.successIngredientModalShow = true;
-            this.cd.markForCheck()
-          }
-          );
-      }
-      else {
+        this.approveIngredient().subscribe(() => {
+          this.successIngredientModalShow = true;
+          this.cd.markForCheck();
+        });
+      } else {
         const subscribes = this.dismissIngredient();
         if (subscribes.length > 0) {
-          forkJoin(subscribes).subscribe(
-            () => {
-              this.successIngredientModalShow = true;
-              this.cd.markForCheck();
-            }
-          )
+          forkJoin(subscribes).subscribe(() => {
+            this.successIngredientModalShow = true;
+            this.cd.markForCheck();
+          });
         }
       }
-      
-      
     }
     this.ingredientModalShow = false;
   }
 
-
   private sendNotifyToIngredientAuthor() {
-    if (this.actionIngredient && this.actionIngredient.author && this.ingredientAction) {
-      const notify: INotification = notifyForAuthorOfIngredient(this.actionIngredient,this.ingredientAction,this.notifyService);
-      this.sendNotifyWithPermission(notify, this.getUser(this.actionIngredient.author), 'your-ingredient-published').subscribe(
-        ()=> this.actionIngredient = null
-      )
+    if (
+      this.actionIngredient &&
+      this.actionIngredient.author &&
+      this.ingredientAction
+    ) {
+      const notify: INotification = notifyForAuthorOfIngredient(
+        this.actionIngredient,
+        this.ingredientAction,
+        this.notifyService,
+      );
+      this.sendNotifyWithPermission(
+        notify,
+        this.getUser(this.actionIngredient.author),
+        'your-ingredient-published',
+      ).subscribe(() => (this.actionIngredient = null));
     }
   }
 
@@ -694,16 +710,18 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   private dismissIngredient(): Observable<any>[] {
     if (this.actionIngredient) {
       let subscribes: Observable<any>[] = [];
-      subscribes.push(this.adminService.dismissIngredient(this.actionIngredient))
+      subscribes.push(
+        this.adminService.dismissIngredient(this.actionIngredient),
+      );
       const ingredientGroupsSubscribes =
         this.adminService.updateIngredientGroupsAfterDismissingIngredient(
-          this.actionIngredient,this.groups
+          this.actionIngredient,
+          this.groups,
         );
-      subscribes = [...subscribes, ...ingredientGroupsSubscribes]
+      subscribes = [...subscribes, ...ingredientGroupsSubscribes];
       return subscribes;
     }
     return [];
-    
   }
 
   handleSuccessIngredientModal() {

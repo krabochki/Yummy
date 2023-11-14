@@ -100,6 +100,8 @@ import { IngredientCreateComponent } from './components/ingredients/ingredient-c
     HorizontalRecipeListComponent,
     VerticalCategoryListComponent,
     HorizontalCategoryListComponent,
+    IngredientsVerticalListComponent,
+    IngredientsHorizontalListComponent,
     VerticalRecipeListComponent,
     SectionCreatingComponent,
     RecipeCreateComponent,

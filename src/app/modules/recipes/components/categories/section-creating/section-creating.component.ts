@@ -38,7 +38,7 @@ export class SectionCreatingComponent
   newSection: ISection = { ...nullSection };
 
   myImage: string = '';
-  defaultImage: string = '../../../../../assets/images/add-category.png';
+  defaultImage: string = '../../../../../assets/images/add-section.png';
   form: FormGroup;
   allSections: ISection[] = [];
   beginningData: any;

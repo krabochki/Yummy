@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ICategory, ISection } from 'src/app/modules/recipes/models/categories';
-import { IRecipe } from 'src/app/modules/recipes/models/recipes';
+import { IRecipe, Ingredient } from 'src/app/modules/recipes/models/recipes';
 import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
 import { Title } from '@angular/platform-browser';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
@@ -13,6 +13,8 @@ import { modal } from 'src/tools/animations';
 import { CategoryService } from '../../services/category.service';
 import { Router } from '@angular/router';
 import { baseComparator } from 'src/tools/common';
+import { IIngredient, IIngredientsGroup } from '../../models/ingredients';
+import { IngredientService } from '../../services/ingredient.service';
 
 @Component({
   selector: 'app-main-page',
@@ -30,9 +32,11 @@ export class MainPageComponent implements OnInit, OnDestroy {
   noAccessModalShow = false;
   categories: ICategory[] = [];
   favoriteRecipes: IRecipe[] = [];
+  groups: IIngredientsGroup[] = [];
   cookedRecipes: IRecipe[] = [];
   currentUser: IUser = { ...nullUser };
   popularRecipesLoaded = false;
+
   userRecipes: IRecipe[] = [];
   MAX_DISPLAY_SIZE = 8;
   protected destroyed$: Subject<void> = new Subject<void>();
@@ -43,7 +47,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
     private categoryService: CategoryService,
     private router: Router,
     private cd: ChangeDetectorRef,
-
+    private ingredientService: IngredientService,
     private titleService: Title,
     private authService: AuthService,
   ) {
@@ -51,25 +55,69 @@ export class MainPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.currentUserInit();
+  }
+
+  categoriesInit() {
     this.categoryService.categories$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((categories: ICategory[]) => {
         this.categories = categories;
+        this.sectionInit();
       });
+  }
+
+  currentUserInit() {
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((currentUser: IUser) => {
         {
           this.currentUser = currentUser;
-
           if (this.currentUser.id !== 0) {
             this.userRecipes = this.recipeService
               .getRecipesByUser(this.allRecipes, this.currentUser.id)
               .slice(0, this.MAX_DISPLAY_SIZE);
           }
+          this.recipesInit();
         }
       });
+  }
 
+  ingredientsInit() {
+    this.ingredientService.ingredients$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedIngredients: IIngredient[]) => {
+        this.ingredientService.ingredientsGroups$
+          .pipe(takeUntil(this.destroyed$))
+          .subscribe((receivedGroups: IIngredientsGroup[]) => {
+            this.groups = receivedGroups.filter(
+              (g) => g.ingredients.length > 0,
+            );
+            this.groups = this.groups.sort((a, b) =>
+              baseComparator(
+                this.ingredientService.getRecipesNumberOfGroup(
+                  b,
+                  receivedIngredients,
+                  this.recipeService.getPublicAndAllMyRecipes(
+                    this.allRecipes,
+                    this.currentUser.id,
+                  ),
+                ),
+                this.ingredientService.getRecipesNumberOfGroup(
+                  a,
+                  receivedIngredients,
+                  this.recipeService.getPublicAndAllMyRecipes(
+                    this.allRecipes,
+                    this.currentUser.id,
+                  ),
+                ),
+              ),
+            ).slice(0,this.MAX_DISPLAY_SIZE);
+          });
+      });
+  }
+
+  recipesInit() {
     this.recipeService.recipes$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((recipes: IRecipe[]) => {
@@ -101,31 +149,38 @@ export class MainPageComponent implements OnInit, OnDestroy {
             .slice(0, this.MAX_DISPLAY_SIZE);
         }
 
-        this.sectionService.sections$
-          .pipe(takeUntil(this.destroyed$))
-          .subscribe((data: ISection[]) => {
-            this.allSections = data;
-            this.allSections = this.allSections.sort((a, b) =>
-              baseComparator(
-                this.sectionService.getNumberRecipesOfSection(
-                  b,
-                  this.allRecipes,
-                  this.categories,
-                ),
-                this.sectionService.getNumberRecipesOfSection(
-                  a,
-                  this.allRecipes,
-                  this.categories,
-                ),
-              ),
-            );
-            this.allSections = this.sectionService
-              .getNotEmptySections(this.allSections)
-              .slice(0, this.MAX_DISPLAY_SIZE);
-            this.cd.markForCheck();
-          });
+        this.ingredientsInit();
+
+        this.categoriesInit();
       });
   }
+
+  sectionInit() {
+    this.sectionService.sections$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((data: ISection[]) => {
+        this.allSections = data;
+        this.allSections = this.allSections.sort((a, b) =>
+          baseComparator(
+            this.sectionService.getNumberRecipesOfSection(
+              b,
+              this.allRecipes,
+              this.categories,
+            ),
+            this.sectionService.getNumberRecipesOfSection(
+              a,
+              this.allRecipes,
+              this.categories,
+            ),
+          ),
+        );
+        this.allSections = this.sectionService
+          .getNotEmptySections(this.allSections)
+          .slice(0, this.MAX_DISPLAY_SIZE);
+        this.cd.markForCheck();
+      });
+  }
+
   closeEdit() {
     this.creatingMode = false;
   }

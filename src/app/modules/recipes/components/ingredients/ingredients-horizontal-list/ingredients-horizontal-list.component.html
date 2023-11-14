@@ -3,7 +3,7 @@
 <div class="wrap" [ngClass]="{'has-scroll':showScrollButtons}">
 
   <drag-scroll (dragStart)="dragStart()" (dragEnd)="dragEnd()" class="drag" #nav  [drag-disabled]="disableDrag" [snap-disabled]="disableDrag"  > 
-     <app-ingredient-list-item drag-scroll-item  [ingredient]="ingredient"   *ngFor="let ingredient of ingredients, let i=index"/>
+     <app-ingredient-list-item [context]="context"  drag-scroll-item  [ingredient]="ingredient"   *ngFor="let ingredient of ingredients, let i=index"/>
   </drag-scroll>
   <button class="scroll-left" *ngIf="showScrollButtons">
     <svg-icon class="svg-arrow" (click)="scrollRight()" [applyClass]="true"

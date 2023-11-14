@@ -146,6 +146,30 @@ export class IngredientService {
     );
   }
 
+  getRecipesNumberOfGroup(group:IIngredientsGroup,ingredients:IIngredient[],recipes:IRecipe[]) {
+    let recipesIdsInGroup: number[] = [];
+    if (group.ingredients) {
+      group.ingredients.forEach((ingredient) => {
+        const findedIngredient =
+          ingredients.find((i) => i.id === ingredient) || nullIngredient;
+        if (findedIngredient.id > 0) {
+          const findedRecipesByIngredient =
+            this.recipeService.getRecipesByIngredient(
+              recipes,
+              findedIngredient,
+            );
+          const findedRecipesByIngredientIds: number[] =
+            findedRecipesByIngredient.map((recipe) => recipe.id);
+          recipesIdsInGroup = [
+            ...recipesIdsInGroup,
+            ...findedRecipesByIngredientIds,
+          ];
+        }
+      });
+    }
+    return Array.from(new Set(recipesIdsInGroup)).length;
+  }
+
   postGroup(group: IIngredientsGroup) {
     return this.http
       .post<IIngredientsGroup>(this.urlIngredientsGroups, group)

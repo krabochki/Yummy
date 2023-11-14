@@ -248,6 +248,24 @@
    
   </div>
 
+  <div  class="content-wrap" >
+     <h2 (click)="showGroups= !showGroups">
+        Все группы ингредиентов
+        </h2>
+        
+  <div @height *ngIf="showGroups" class="users"> 
+
+      <app-button class="button" [text]="'Создать группу'" (click)="groupCreatingMode=true" [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
+    <app-ingredients-vertical-list [context]="'group'" [ingredients]="showedGroups"></app-ingredients-vertical-list>
+ 
+    <app-button class="more-reports-button" [text]="'Загрузить еще...'" (click)="loadMoreGroups()"
+          *ngIf="groups.length > showedGroups.length" [rounded]="true" [style]="'outlined'"
+          [color]="'prim'"></app-button>
+  </div>
+
+   
+  </div>
+
  </div>
 
 

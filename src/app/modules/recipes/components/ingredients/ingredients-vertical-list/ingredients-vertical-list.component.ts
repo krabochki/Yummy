@@ -1,5 +1,5 @@
 import { Component, HostListener, Input, OnChanges } from '@angular/core';
-import { IIngredient, nullIngredient } from '../../../models/ingredients';
+import { nullIngredient } from '../../../models/ingredients';
 
 @Component({
   selector: 'app-ingredients-vertical-list',
@@ -7,7 +7,9 @@ import { IIngredient, nullIngredient } from '../../../models/ingredients';
   styleUrls: ['./ingredients-vertical-list.component.scss'],
 })
 export class IngredientsVerticalListComponent implements OnChanges {
-  @Input() ingredients: IIngredient[] = [];
+  @Input() ingredients: any[] = [];
+  @Input() context: 'ingredient' | 'group' = 'ingredient';
+
   ngOnChanges() {
     this.onResize();
   }

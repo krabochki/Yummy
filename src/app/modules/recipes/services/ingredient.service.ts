@@ -60,7 +60,7 @@ export class IngredientService {
   updateIngredient(ingredient: IIngredient) {
     return this.http
       .put<IIngredient>(
-        `${this.urlIngredientsGroups}/${ingredient.id}`,
+        `${this.urlIngredients}/${ingredient.id}`,
         ingredient,
       )
       .pipe(

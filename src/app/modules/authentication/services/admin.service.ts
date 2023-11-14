@@ -14,6 +14,8 @@ import { Observable } from 'rxjs';
 import { ICategory, ISection } from '../../recipes/models/categories';
 import { CategoryService } from '../../recipes/services/category.service';
 import { SectionService } from '../../recipes/services/section.service';
+import { IIngredient, IIngredientsGroup } from '../../recipes/models/ingredients';
+import { IngredientService } from '../../recipes/services/ingredient.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,6 +25,7 @@ export class AdminService {
     private recipeService: RecipeService,
     private categoryService: CategoryService,
     private sectionService: SectionService,
+    private ingredientService: IngredientService,
   ) {}
 
   public blockComment(
@@ -48,6 +51,33 @@ export class AdminService {
   public approveRecipe(recipe: IRecipe) {
     const approvedRecipe = this.recipeService.approveRecipe(recipe);
     return this.recipeService.updateRecipe(approvedRecipe);
+  }
+
+  approveIngredient(ingredient: IIngredient) {
+    const approvedIngredient: IIngredient = {
+      ...{ ...ingredient },
+      status: 'public',
+    };
+    return this.ingredientService.updateIngredient(approvedIngredient);
+  }
+
+  dismissIngredient(ingredient: IIngredient) {
+    return this.ingredientService.deleteIngredient(ingredient.id);
+  }
+
+  updateIngredientGroupsAfterDismissingIngredient(ingredient: IIngredient, groups:IIngredientsGroup[]):Observable<IIngredientsGroup>[] {
+    const ingredientGroups = groups.filter(g => g.ingredients.includes(ingredient.id));
+    const subscribes:Observable<IIngredientsGroup>[] = [];
+    if (ingredientGroups.length > 0) {
+      ingredientGroups.forEach(ingredientGroup => {
+        const updatedGroup = {
+          ...{ ...ingredientGroup },
+          ingredients: { ...ingredientGroup }.ingredients.filter(i => i !== ingredient.id)
+        }
+        subscribes.push(this.ingredientService.updateIngredientGroup(updatedGroup))
+      });
+    }
+    return subscribes;
   }
 
   public dismissRecipe(recipe: IRecipe): Observable<IRecipe> {

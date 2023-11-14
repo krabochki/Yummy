@@ -109,7 +109,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe(
         (receivedIngredients: IIngredient[]) =>
-          (this.ingredients = receivedIngredients),
+          (this.ingredients = receivedIngredients.filter(i=>i.status === 'public')),
       );
   }
 

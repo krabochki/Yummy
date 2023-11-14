@@ -4,6 +4,7 @@ import { BehaviorSubject, EMPTY, Observable, filter, map } from 'rxjs';
 import { UserService } from '../../user-pages/services/user.service';
 import { IRecipe } from '../../recipes/models/recipes';
 import { usersUrl } from 'src/tools/source';
+import { IIngredient } from '../../recipes/models/ingredients';
 
 @Injectable({
   providedIn: 'root',
@@ -65,14 +66,14 @@ export class AuthService {
 
   loginUser(user: IUser) {
     return this.userService.users$.pipe(
-      map((users) => 
-         users.length > 0
+      map((users) =>
+        users.length > 0
           ? users?.find(
               (u) =>
                 (u.email === user.email && u.password === user.password) ||
                 (u.username === user.username && u.password === user.password),
             ) || null
-          : null
+          : null,
       ),
     );
   }
@@ -83,6 +84,13 @@ export class AuthService {
       (user.role === 'moderator' && recipe.status === 'awaits') ||
       (user.role === 'admin' && recipe.status === 'awaits') ||
       recipe.status === 'public'
+    );
+  }
+  checkIngredientValidity(ingredient: IIngredient, user: IUser): boolean {
+    return (
+      (user.role === 'moderator' && ingredient.status === 'awaits') ||
+      (user.role === 'admin' && ingredient.status === 'awaits') ||
+      ingredient.status === 'public'
     );
   }
 }

@@ -47,12 +47,14 @@ h1 {
     justify-content: center;
   }
 }
+.button{
+  margin-bottom: 2em;
+}
 
 app-button{
   display: flex;
   width: fit-content;
   margin: 0 auto;
-  margin-top: 1.5em;
 }
 app-modal{
   position: fixed;

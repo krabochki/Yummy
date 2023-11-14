@@ -1,5 +1,6 @@
 import { ICategory } from 'src/app/modules/recipes/models/categories';
 import { IComment } from 'src/app/modules/recipes/models/comments';
+import { IIngredient } from 'src/app/modules/recipes/models/ingredients';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { IUser } from 'src/app/modules/user-pages/models/users';
@@ -118,6 +119,18 @@ export function notifyForAuthorOfDismissedRecipe(
     'error',
     'recipe',
     '',
+  );
+}
+
+export function notifyForAuthorOfIngredient(ingredient: IIngredient, action: 'approve'|'dismiss',notifyService:NotificationService):INotification {
+  const verb = action === 'approve' ? 'одобрен' : 'отклонен';
+  const link = action === 'approve' ? '/ingredients/list/' + ingredient.id : '';
+  return notifyService.buildNotification(
+    `Ингредиент ${verb}`,
+    `Созданный вами и отправленный на проверку ингредиент «${ingredient.name}» ${verb}`,
+    action === 'approve' ? 'success' : 'error',
+    'ingredient',
+    link
   );
 }
 

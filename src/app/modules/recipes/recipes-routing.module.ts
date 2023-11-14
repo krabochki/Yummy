@@ -15,6 +15,7 @@ import { IngredientsPageComponent } from './components/ingredients/ingredients-p
 import { IngredientPageComponent } from './components/ingredients/ingredient-page/ingredient-page.component';
 import { IngredientGroupResolver } from './services/ingredient-group.resolver';
 import { IngredientResolver } from './services/ingredient.resolver';
+import { IngredientAccessGuard } from './guards/ingredient-access.guard';
 const routes: Routes = [
   {
     path: '',
@@ -28,6 +29,7 @@ const routes: Routes = [
       {
         path: 'ingredients/list/:id',
         component: IngredientPageComponent,
+        canActivate: [IngredientAccessGuard],
         resolve: { IngredientResolver },
       },
       {
@@ -160,6 +162,7 @@ const routes: Routes = [
       {
         path: 'ingredients/list/:id/recipes',
         data: { filter: 'ingredient-recipes' },
+        canActivate: [IngredientAccessGuard],
         resolve: { IngredientResolver },
         component: SomeRecipesPageComponent,
       },
@@ -170,7 +173,7 @@ const routes: Routes = [
       },
       {
         path: 'categories',
-        redirectTo:'sections'
+        redirectTo: 'sections',
       },
       {
         path: 'match',

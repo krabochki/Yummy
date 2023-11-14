@@ -37,6 +37,7 @@ import { IngredientsVerticalListComponent } from './components/ingredients/ingre
 import { IngredientsHorizontalListComponent } from './components/ingredients/ingredients-horizontal-list/ingredients-horizontal-list.component';
 import { IngredientListItemComponent } from './components/ingredients/ingredient-list-item/ingredient-list-item.component';
 import { IngredientCreateComponent } from './components/ingredients/ingredient-create/ingredient-create.component';
+import { GroupCreatingComponent } from './components/ingredients/group-creating/group-creating.component';
 
 @NgModule({
   declarations: [
@@ -63,6 +64,7 @@ import { IngredientCreateComponent } from './components/ingredients/ingredient-c
     IngredientsVerticalListComponent,
     IngredientsHorizontalListComponent,
     IngredientListItemComponent,
+    GroupCreatingComponent,
     IngredientCreateComponent
   ],
   imports: [
@@ -100,6 +102,7 @@ import { IngredientCreateComponent } from './components/ingredients/ingredient-c
     HorizontalRecipeListComponent,
     VerticalCategoryListComponent,
     HorizontalCategoryListComponent,
+    GroupCreatingComponent,
     IngredientsVerticalListComponent,
     IngredientsHorizontalListComponent,
     VerticalRecipeListComponent,

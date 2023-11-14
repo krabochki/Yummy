@@ -3,8 +3,13 @@
 .content-wrap{
   display: flex;
   flex-direction: column;
-  row-gap: 1em;
+  row-gap: 2em;
   margin-top: 1.5em;
+}
+.block-wrap{
+    display: flex;
+      flex-direction: column;
+      row-gap: 1em;
 }
 .main {
   padding: 2.5em calc(14.4vw + 0 * (100vw - 768px) / 760);
@@ -56,11 +61,11 @@ app-button{
   width: fit-content;
   margin: 0 auto;
 }
-app-modal{
+app-modal,app-group-creating{
   position: fixed;
   z-index: 3;
 }
-h2,.circles *{
+h2{
    -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */
   -khtml-user-select: none; /* Konqueror HTML */

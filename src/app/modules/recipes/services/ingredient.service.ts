@@ -97,7 +97,9 @@ export class IngredientService {
     return names;
   }
   getRelatedIngredients(ingredient: IIngredient, ingredients: IIngredient[]) {
+    
     const targetName = ingredient.name.trim().toLowerCase();
+    
     const targetVariations = ingredient.variations.map((variation) =>
       variation.trim().toLowerCase(),
     );

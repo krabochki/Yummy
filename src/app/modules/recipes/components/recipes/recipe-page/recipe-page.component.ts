@@ -22,7 +22,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { CommentService } from '../../../services/comment.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IComment } from '../../../models/comments';
-import { getFormattedDate } from 'src/tools/common';
+import { getFormattedDate, setReadingTimeInMinutes } from 'src/tools/common';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { PlanService } from 'src/app/modules/planning/services/plan-service';
@@ -105,6 +105,14 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     return this.recipeService.hideAuthor(this.currentUser, this.author);
   }
 
+  get authorInfo(): string{
+    if (this.author.id <= 0) return 'Автор удален'
+    if (!this.hideAuthor) return 'Автор скрыт'
+    return  !this.author.fullName
+      ? '@' + this.author.username
+      : this.author.fullName;
+  }
+
   constructor(
     private notifyService: NotificationService,
     private sectionService: SectionService,
@@ -177,7 +185,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
                       this.recipeService.getPublicRecipes(recipes);
                     this.downRecipes = this.getSimilarRecipes(publicRecipes, 4);
                   }
-                  if (!this.hideAuthor) {
+                  if (this.hideAuthor) {
                     this.alsoFromThisCook = this.recipeService
                       .getRecipesByUser(
                         this.recipeService.getPublicRecipes(recipes),
@@ -555,11 +563,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
       ...this.recipe.nutritions.map((ingredient) => ingredient.name),
       ...this.recipe.instructions.map((instruction) => instruction.name),
     ].join(' ');
-    const wordsPerMinute = 200;
-    const recipeText = combinedText;
-    const words = recipeText.split(/\s+/);
-    const wordCount = words.length;
-    this.readingTimeInMinutes = Math.ceil(wordCount / wordsPerMinute);
+    this.readingTimeInMinutes = setReadingTimeInMinutes(combinedText);
   }
 
   makeThisRecipeFavorite() {

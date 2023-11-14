@@ -18,6 +18,12 @@ body.inheritCursors * {
   cursor: inherit !important;
 }
 
+.margin-block br{
+     display: block;
+      margin: 0.4em 0;content: " ";
+    
+}
+
 
 *::selection{
   background-color:var(--color-secondary);

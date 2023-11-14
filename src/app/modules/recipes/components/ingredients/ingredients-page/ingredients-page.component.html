@@ -30,6 +30,7 @@
           <app-button
             [rounded]="true"
             [color]="'prim'"
+            (click)="ingredientCreatingMode=true"
             [text]="'Создать ингредиент'"
           ></app-button>
         </div>
@@ -75,29 +76,31 @@
             </p>
           </div>
         </div>
-        <li
-          *ngFor="let item of autocomplete"
-          [routerLink]="
-            '/ingredients/list' + item.id 
-          "
-        >
-          <p
-            (mousedown)="navigateTo(
-              getGroupOfIngredient(item).length === 0
-                ? '/ingredients/groups/' + item.id
-                : '/ingredients/list/' + item.id
-            )"
-          >
-            {{ item.name }}
-          </p>
-          <span
-            (mousedown)="navigateTo('/ingredients/groups/' + getGroupOfIngredient(item)[0].id)"
-            *ngIf="
-              context !== 'ingredient-group' && getGroupOfIngredient(item)[0].id !== 0
+     <ng-container *ngIf="autocomplete.length >= 1">
+          <li
+            *ngFor="let item of autocomplete"
+            [routerLink]="
+              '/ingredients/list' + item.id 
             "
-            >{{ getGroupOfIngredient(item)[0].name }}</span
           >
-        </li>
+            <p
+              (mousedown)="navigateTo(
+                getGroupOfIngredient(item).length === 0
+                  ? '/ingredients/groups/' + item.id
+                  : '/ingredients/list/' + item.id
+              )"
+            >
+              {{ item.name }}
+            </p>
+            <span
+              (mousedown)="navigateTo('/ingredients/groups/' + getGroupOfIngredient(item)[0].id)"
+              *ngIf="
+                context !== 'ingredient-group' && getGroupOfIngredient(item)[0].id !== 0
+              "
+              >{{ getGroupOfIngredient(item)[0].name }}</span
+            >
+          </li>
+     </ng-container>
       </ul>
     </div>
   </div>

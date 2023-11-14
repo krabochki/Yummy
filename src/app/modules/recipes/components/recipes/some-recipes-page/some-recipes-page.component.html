@@ -63,9 +63,9 @@
             </div>
             <li *ngFor="let item of autocomplete">
               <p (mousedown)="navigateTo('/recipes/list/' + item.id)">{{ item.name }}</p>
-              <span (mousedown)="(getUser(item.authorId).id>0 && showAuthor(item))?navigateTo('/cooks/list/'+ getUser(item.authorId).id):null"
+              <span (mousedown)="(getUser(item.authorId).id>0 && !showAuthor(item))?navigateTo('/cooks/list/'+ getUser(item.authorId).id):null"
                 *ngIf="filter !== 'my-recipes'"
-                >{{ (getUser(item.authorId).id>0 && showAuthor(item))?(getUser(item.authorId).fullName!==''?getUser(item.authorId).fullName:'@'+getUser(item.authorId).username): !showAuthor(item)?'Автор скрыт':'Автор удален' }}</span
+                >{{ (getUser(item.authorId).id>0 && !showAuthor(item))?(getUser(item.authorId).fullName!==''?getUser(item.authorId).fullName:'@'+getUser(item.authorId).username): showAuthor(item)?'Автор скрыт':'Автор удален' }}</span
               >
             </li>
           </ul>

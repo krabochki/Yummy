@@ -35,9 +35,10 @@ import {
   ShoppingListItem,
   nullProduct,
 } from 'src/app/modules/planning/models/shopping-list';
-import { CalendarEvent } from 'angular-calendar';
 import { IngredientService } from '../../../services/ingredient.service';
 import { IIngredient } from '../../../models/ingredients';
+import { RecipeCalendarEvent } from 'src/app/modules/planning/models/calendar';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-recipe-page',
@@ -92,8 +93,12 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   commentsToShow: IComment[] = [];
 
   myPlan: IPlan = nullPlan;
-  protected targetCalendarEvent: CalendarEvent = nullCalendarEvent;
+  protected targetCalendarEvent: RecipeCalendarEvent = nullCalendarEvent;
   vote: boolean = false;
+
+  get noPageToGoBack() {
+    return window.history.length <=1;
+  }
 
   get date() {
     return getFormattedDate(this.recipe.publicationDate);
@@ -105,10 +110,10 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     return this.recipeService.hideAuthor(this.currentUser, this.author);
   }
 
-  get authorInfo(): string{
-    if (this.author.id <= 0) return 'Автор удален'
-    if (!this.hideAuthor) return 'Автор скрыт'
-    return  !this.author.fullName
+  get authorInfo(): string {
+    if (this.author.id <= 0) return 'Автор удален';
+    if (!this.hideAuthor) return 'Автор скрыт';
+    return !this.author.fullName
       ? '@' + this.author.username
       : this.author.fullName;
   }
@@ -128,6 +133,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     private ingredientService: IngredientService,
     private categoryService: CategoryService,
     private cd: ChangeDetectorRef,
+    private location: Location,
   ) {
     this.commentForm = this.fb.group({
       commentText: [
@@ -173,7 +179,9 @@ export class RecipePageComponent implements OnInit, OnDestroy {
                   this.ingredientService.ingredients$
                     .pipe(takeUntil(this.destroyed$))
                     .subscribe((receivedIngredients) => {
-                      this.ingredients = receivedIngredients.filter(i=>i.status === 'public');
+                      this.ingredients = receivedIngredients.filter(
+                        (i) => i.status === 'public',
+                      );
                     });
 
                   this.statisticPercent = Number(
@@ -185,7 +193,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
                       this.recipeService.getPublicRecipes(recipes);
                     this.downRecipes = this.getSimilarRecipes(publicRecipes, 4);
                   }
-                  if (this.hideAuthor) {
+                  if (this.hideAuthor && this.author.id > 0) {
                     this.alsoFromThisCook = this.recipeService
                       .getRecipesByUser(
                         this.recipeService.getPublicRecipes(recipes),
@@ -423,7 +431,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
         ...nullProduct,
         id: maxId + 1,
         name: find.name,
-        type: relatedIngredient.shoppingListGroup || 0 ,
+        type: relatedIngredient.shoppingListGroup || 0,
         howMuch: (find.quantity ? find.quantity + ' ' : '') + find.unit,
         relatedRecipe: this.recipe.id,
       };
@@ -758,8 +766,8 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSkipHandler() {
-    this.router.navigate([this.routerEventsService.previousRoutePath.value]);
+  goBack() {
+    this.location.back();
   }
   loadMoreComments() {
     const currentLength = this.commentsToShow.length;

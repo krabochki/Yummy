@@ -27,8 +27,8 @@
        <div (click)="!adminpanel?!isFollower?follow():unfollow():demote()" [title]="!isFollower?'Подписаться':'Отписаться'" [class]="!isFollower?'follow':'unfollow'"  *ngIf="currentUser.id!==user.id" >
         
         <ng-container *ngIf="!adminpanel">
-            <svg-icon *ngIf="!isFollower" class="follow-svg"  [src]="'assets/images/svg/follow2.svg'"></svg-icon>
-            <svg-icon *ngIf="isFollower" class="follow-svg"  [src]="'assets/images/svg/unfollow2.svg'"></svg-icon>
+            <svg-icon *ngIf="!isFollower" class="follow-svg"  [src]="'assets/images/svg/follow.svg'"></svg-icon>
+            <svg-icon *ngIf="isFollower" class="follow-svg"  [src]="'assets/images/svg/unfollow.svg'"></svg-icon>
         </ng-container>
         <svg-icon *ngIf="adminpanel"  class="follow-svg"  [src]="'assets/images/svg/demote.svg'"></svg-icon>
     
@@ -41,8 +41,8 @@
             [arVariants]="['подписка', 'подписки', 'подписок']"></span>
         </p>
         <p title="Подписчики">
-            {{user.followersIds.length}} <span appPluralRu=""
-            [value]="user.followersIds.length"
+            {{followersLength}} <span appPluralRu=""
+            [value]="followersLength"
             [arVariants]="['подписчик', 'подписчика', 'подписчиков']"></span>
         </p>
         <p title="Рецепты">

@@ -1,11 +1,14 @@
 import {
   Component,
+  ElementRef,
   EventEmitter,
+  HostListener,
   Input,
   OnDestroy,
   OnInit,
   Output,
   Renderer2,
+  ViewChild,
 } from '@angular/core';
 import { palette } from './palette';
 import { PlanService } from '../services/plan-service';
@@ -28,6 +31,7 @@ import {
   INotification,
   nullNotification,
 } from '../../user-pages/models/notifications';
+import { RecipeCalendarEvent } from '../models/calendar';
 @Component({
   selector: 'app-add-calendar-event',
   templateUrl: './add-calendar-event.component.html',
@@ -39,7 +43,7 @@ import {
 })
 export class AddCalendarEventComponent implements OnInit, OnDestroy {
   @Input() plan: IPlan = nullPlan;
-  @Input() event: CalendarEvent = nullCalendarEvent;
+  @Input() event: RecipeCalendarEvent = nullCalendarEvent;
   @Input() currentUser: IUser = { ...nullUser };
   @Output() closeEmitter = new EventEmitter<boolean>();
 
@@ -69,6 +73,10 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
   protected modalSuccessSaveShow: boolean = false;
   protected modalSaveShow: boolean = false;
 
+  get valid() {
+    return this.title.length > 2 && this.start && (this.end ? this.start <= this.end : true) ? true : false;
+  }
+
   constructor(
     private planService: PlanService,
     private calendarService: CalendarService,
@@ -86,14 +94,13 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
     this.editingRecipeInit();
   }
 
-  showAuthor(recipe: IRecipe): boolean {
-    const author = getUser(recipe.authorId, this.allUsers);
-    return !this.recipeService.hideAuthor(this.currentUser, author);
+  disableRecipeChoosing(): boolean {
+    return Number(this.event.id) > -1 ? false : true;
   }
 
   private editingRecipeInit() {
-    if (this.event.id !== 0) {
-      if (this.event.id > 0) {
+    if (this.event.id) {
+      if (Number(this.event.id) > 0) {
         this.editMode = true;
         this.start = this.event.start;
         if (this.event.end) this.end = this.event.end;
@@ -125,6 +132,7 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
           receivedRecipes,
           this.currentUser.id,
         );
+        this.autocompleteRecipes = this.allRecipes;
       });
   }
 
@@ -227,7 +235,7 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
     if (this.selectedRecipe.id !== 0) newEvent.recipe = this.selectedRecipe.id;
     let maxId = 0;
     if (this.plan.calendarEvents.length > 0)
-      maxId = Math.max(...this.plan.calendarEvents.map((e) => e.id));
+      maxId = Math.max(...this.plan.calendarEvents.map((e) => Number(e.id)));
     newEvent.id = maxId + 1;
 
     this.plan.calendarEvents = [...this.plan.calendarEvents, newEvent];
@@ -273,7 +281,7 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
     return { ...nullUser };
   }
   protected focus(): void {
-    if (this.searchQuery !== '') {
+    if (this.searchQuery) {
       this.autocompleteShow = true;
     }
   }
@@ -300,23 +308,16 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
 
       const filterRecipes: IRecipe[] = this.allRecipes.filter(
         (recipe: IRecipe) =>
-          recipe.name.toLowerCase().replace(/\s/g, '').includes(search) ||
-          (this.showAuthor(recipe)
-            ? this.getUser(recipe.authorId)
-                .fullName.toLowerCase()
-                .replace(/\s/g, '')
-                .includes(search) ||
-              this.getUser(recipe.authorId)
-                .username.toLowerCase()
-                .replace(/\s/g, '')
-                .includes(search)
-            : null),
+          recipe.name.toLowerCase().replace(/\s/g, '').includes(search),
       );
 
       filterRecipes.forEach((element) => {
         this.autocompleteRecipes.push(element);
       });
-    } else this.autocompleteShow = false;
+    } else {
+      this.autocompleteShow = false;
+      this.autocompleteRecipes = [];
+    }
   }
 
   handleSaveModal(answer: boolean) {

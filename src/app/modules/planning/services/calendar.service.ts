@@ -1,19 +1,19 @@
 import { Injectable } from '@angular/core';
 import { CalendarEvent } from 'angular-calendar';
 import { EventColor } from 'calendar-utils';
+import { RecipeCalendarEvent } from '../models/calendar';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CalendarService {
-
   createCalendarEvent(
     recipe: number,
     start: Date,
     title: string,
     color: string,
     end?: Date,
-  ): CalendarEvent {
+  ): RecipeCalendarEvent {
     const eventColor: EventColor = { primary: color, secondary: color };
     return {
       id: 0,
@@ -31,7 +31,7 @@ export class CalendarService {
     };
   }
 
-  eventIsNow(event: CalendarEvent): boolean {
+  eventIsNow(event: RecipeCalendarEvent): boolean {
     const now = new Date();
     const start = new Date(event.start);
 
@@ -49,7 +49,7 @@ export class CalendarService {
     return false;
   }
 
-  eventInPast(event: CalendarEvent): boolean {
+  eventInPast(event: RecipeCalendarEvent): boolean {
     const now = new Date();
     if (!event.end) {
       if (now > event.start) {
@@ -61,15 +61,21 @@ export class CalendarService {
     return false;
   }
 
-  getEventByRelatedRecipe(events: CalendarEvent[], recipeId: number): CalendarEvent[] {
+  getEventByRelatedRecipe(
+    events: RecipeCalendarEvent[],
+    recipeId: number,
+  ): RecipeCalendarEvent[] {
     return events.filter((event) => event.recipe === recipeId);
   }
 
-  filterEventsByRecipe(events: CalendarEvent[], recipeId: number): CalendarEvent[] {
-    return events.filter((event) => event.recipe !== recipeId)
+  filterEventsByRecipe(
+    events: RecipeCalendarEvent[],
+    recipeId: number,
+  ): RecipeCalendarEvent[] {
+    return events.filter((event) => event.recipe !== recipeId);
   }
 
-  eventInFuture(event: CalendarEvent): boolean {
+  eventInFuture(event: RecipeCalendarEvent): boolean {
     const now = new Date();
     const start = new Date(event.start);
     if (!event.end) {
@@ -79,7 +85,7 @@ export class CalendarService {
     } else if (event.end) {
       const end = new Date(event.end);
 
-      if  (now < start && now < end) return true;
+      if (now < start && now < end) return true;
     }
     return false;
   }

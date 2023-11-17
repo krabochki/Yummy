@@ -8,7 +8,7 @@ import {
 import { endOfDay, isSameDay, isSameMonth } from 'date-fns';
 import localeRu from '@angular/common/locales/ru';
 
-import { Subject, take, takeUntil } from 'rxjs';
+import { Observable, Subject, forkJoin, take, takeUntil } from 'rxjs';
 import {
   CalendarEvent,
   CalendarEventTimesChangedEvent,
@@ -25,6 +25,8 @@ import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
 import { CalendarService } from '../services/calendar.service';
 import { UserService } from '../../user-pages/services/user.service';
+import { RecipeCalendarEvent } from '../models/calendar';
+import { baseComparator } from 'src/tools/common';
 
 @Component({
   selector: 'app-calendar',
@@ -44,16 +46,32 @@ export class CalendarComponent implements OnInit, OnDestroy {
   protected refresh: Subject<void> = new Subject<void>();
   protected activeDayIsOpen: boolean = true;
 
-  protected targetEvent: CalendarEvent = nullCalendarEvent; //какой event посылаем менять
+  protected targetEvent: RecipeCalendarEvent = nullCalendarEvent; //какой event посылаем менять
   protected locale: string = 'ru';
+
+  deleteModalShow = false;
+
+  targetDeletableEvent = nullCalendarEvent;
 
   protected createMode = false; //открыто ли создание/изменение календарного события
 
-  protected events: CalendarEvent[] = []; //список календарных событий юзера
+  recipeEvents: RecipeCalendarEvent[] = [];
+  events: CalendarEvent[] = [];
   protected currentUser: IUser = { ...nullUser };
   protected currentUserPlan: IPlan = nullPlan; //план текущего юзера
 
   private destroyed$: Subject<void> = new Subject<void>();
+
+  // Конвертация в массив объектов типа CalendarEvent
+  recipeEventsToCalendarEvents():void {
+    const originalEvents: CalendarEvent[] = this.recipeEvents.map(
+      (recipeEvent) => {
+        const originalEvent = { ...recipeEvent };
+        return originalEvent;
+      },
+    );
+    this.events = originalEvents;
+  }
 
   constructor(
     private title: Title,
@@ -88,6 +106,18 @@ export class CalendarComponent implements OnInit, OnDestroy {
       });
   }
 
+  deleteEventClick(recipeEvent: RecipeCalendarEvent) {
+    this.targetDeletableEvent = recipeEvent;
+    this.deleteModalShow = true;
+  }
+
+  handleDeleteModal(answer: boolean) {
+    if(answer){
+      this.deleteEvent(this.targetDeletableEvent);
+    }
+    this.deleteModalShow = false; 
+  }
+
   private getPlans(): void {
     this.planService.plans$
       .pipe(takeUntil(this.destroyed$))
@@ -96,25 +126,31 @@ export class CalendarComponent implements OnInit, OnDestroy {
           this.currentUser.id,
           receivedPlans,
         );
-        let buferEvents = this.getEventsWithNormalData(
+        this.recipeEvents = this.sortEvents(
           this.currentUserPlan.calendarEvents,
         );
-        buferEvents = buferEvents.sort((e1, e2) => {
-          {
-            return new Date(e1.start) > new Date(e2.start) ? 1
-              : new Date(e1.start) === new Date(e2.start) ?
-                e1.id > e2.id ? 1 : -1
-              : -1;
-          }
-        });
-
-        this.events = [...buferEvents];
+        this.recipeEventsToCalendarEvents()
         this.refresh.next();
         this.cd.markForCheck();
       });
   }
 
-  private getEventsWithNormalData(events: CalendarEvent[]): CalendarEvent[] {
+  sortEvents(events: RecipeCalendarEvent[]) {
+    const buferEvents = this.getEventsWithNormalData(events);
+    return buferEvents.sort((e1, e2) => {
+      return new Date(e1.start) > new Date(e2.start)
+        ? 1
+        : new Date(e1.start) === new Date(e2.start)
+        ? Number(e1.id) < Number(e2.id)
+          ? 1
+          : -1
+        : -1;
+    });
+  }
+
+  private getEventsWithNormalData(
+    events: RecipeCalendarEvent[],
+  ): RecipeCalendarEvent[] {
     const eventsWithModifyNormalData = events;
     //дата извлекается из обьекта после запроса не в корректном формате даты
     //календарь не может ее преобразовать, поэтому преобразовываю тут
@@ -139,17 +175,27 @@ export class CalendarComponent implements OnInit, OnDestroy {
     }
   }
 
+  findRecipeEvent(id: any) {
+    id = Number(id);
+    return this.recipeEvents.find((e) => e.id === id) || nullCalendarEvent;
+  }
+
   protected eventTimesChanged({
     //перетаскивание события и изменение его даты
     event,
     newStart,
     newEnd,
   }: CalendarEventTimesChangedEvent): void {
-    const before = { ...event };
-    this.events = this.events.map((e: CalendarEvent) => {
-      return e === event
+    const recipeEvent = this.findRecipeEvent(Number(event.id));
+    const modifiedEvent: RecipeCalendarEvent = {
+      ...event,
+      recipe: recipeEvent.recipe,
+    };
+    const before = { ...modifiedEvent };
+    this.recipeEvents = this.recipeEvents.map((e: RecipeCalendarEvent) => {
+      return e.id === modifiedEvent.id
         ? {
-            ...event,
+            ...modifiedEvent,
             start: newStart,
             end: newEnd,
           }
@@ -158,37 +204,38 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
     const endChanged = before.end?.toString() !== newEnd?.toString();
     const startChanged = before.start.toString() !== newStart.toString();
-
     if (endChanged || startChanged) {
-      this.currentUserPlan.calendarEvents = this.events;
+      this.currentUserPlan.calendarEvents = this.recipeEvents;
+      this.recipeEventsToCalendarEvents()
       this.planService.updatePlan(this.currentUserPlan).subscribe();
-      this.handleEvent('Dropped or resized', event);
     }
   }
 
-  eventIsNow(event: CalendarEvent): boolean {
+  eventIsNow(event: RecipeCalendarEvent): boolean {
     return this.calendarService.eventIsNow(event);
   }
 
-  eventInFuture(event: CalendarEvent): boolean {
+  eventInFuture(event: RecipeCalendarEvent): boolean {
     return this.calendarService.eventInFuture(event);
   }
 
-  eventInPast(event: CalendarEvent): boolean {
+  eventInPast(event: RecipeCalendarEvent): boolean {
     return this.calendarService.eventInPast(event);
   }
   handleEvent(action: string, event: CalendarEvent): void {
     if (action === 'Clicked') {
-      if (event.recipe !== 0)
-        this.router.navigateByUrl('/recipes/list/' + event.recipe);
+      alert('click handle')
+      if (this.findRecipeEvent(event.id).recipe)
+        this.router.navigateByUrl(
+          '/recipes/list/' + this.findRecipeEvent(event.id).recipe,
+        );
       return;
     }
-    if (action === 'Dropped or resized') return;
   }
 
-  deleteEvent(eventToDelete: CalendarEvent) {
-    this.events = this.events.filter(
-      (event: CalendarEvent) => event !== eventToDelete,
+  deleteEvent(eventToDelete: RecipeCalendarEvent) {
+    this.recipeEvents = this.recipeEvents.filter(
+      (event: RecipeCalendarEvent) => event !== eventToDelete,
     );
     const reminderNotify = this.currentUser.notifications.find(
       (n) => n.relatedId === eventToDelete.id,
@@ -197,9 +244,11 @@ export class CalendarComponent implements OnInit, OnDestroy {
       this.currentUser.notifications = this.currentUser.notifications.filter(
         (n) => n.id !== reminderNotify.id,
       );
-  //  this.currentUserPlan.calendarEvents = this.events;
- //   this.userService.updateUser(this.currentUser);
-  //  this.planService.updatePlan(this.currentUserPlan).subscribe();
+    this.currentUserPlan.calendarEvents = this.recipeEvents;
+    const subscribes:Observable<any>[] = [];
+    subscribes.push(this.userService.updateUser(this.currentUser))
+    subscribes.push(this.planService.updatePlan(this.currentUserPlan));
+    forkJoin(subscribes).subscribe();
   }
 
   setView(view: CalendarView) {

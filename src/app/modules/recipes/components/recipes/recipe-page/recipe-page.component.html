@@ -4,7 +4,7 @@
 
 
  <div *ngIf="recipe.status==='public'" class="statistic">
-    <svg-icon [applyClass]="true" class="stat-svg" [src]="'../../../../../assets/images/svg/statistic.svg'"></svg-icon>
+    <svg-icon [applyClass]="true" class="stat-svg" [src]="'assets/images/svg/statistic.svg'"></svg-icon>
     <p>{{!recipe.statistics||recipe.statistics.length===0?'Этот рецепт пока никто не приготовил':statisticPercent+'% кулинаров приготовили бы это снова'}}</p>
  </div>
 
@@ -14,12 +14,10 @@
       class="exit-button"
       [ngClass]="{
         'no-path':
-          this.router.url === this.routerEventsService.previousRoutePath.value
+          noPageToGoBack
       }"
       (click)="
-        !(this.router.url === this.routerEventsService.previousRoutePath.value)
-          ? onSkipHandler()
-          : null
+         noPageToGoBack? null: goBack()
       "
     >
       <svg-icon

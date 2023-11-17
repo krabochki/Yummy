@@ -1,6 +1,5 @@
 export const cooksSelectItems: string[] = [
   'Кулинары',
-  'Ваш профиль',
   'Ваши подписки',
   'Все кулинары',
   'Обновления',
@@ -29,12 +28,10 @@ export const planSelectItems: string[] = [
   'Планнер',
   'Календарь рецептов',
   'Подборки',
-  'Советы',
   'Список покупок',
 ];
 
 export const cookRouterLinks: string[] = [
-  '/cooks/list/',
   '/cooks/following/',
   '/cooks',
   '/cooks/updates',
@@ -43,7 +40,6 @@ export const cookRouterLinks: string[] = [
 export const planRouterLinks: string[] = [
   '/plan/calendar',
   '/plan/collections',
-  '/plan/tips',
   '/plan/shopping-list',
 ];
 

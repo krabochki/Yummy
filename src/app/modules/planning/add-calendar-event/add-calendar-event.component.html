@@ -38,6 +38,7 @@
               <app-usual-input
                 [(ngModel)]="title"
                 [max]="50"
+                #input
                 [value]="title"
                 [placeholder]="'Введите название предстоящего шедевра'"
                 type="text"
@@ -53,23 +54,24 @@
               <div class="search-block">
                 <div class="search">
                   <app-usual-input
-                    [inputDisabled]="event.id > -1 ? false : true"
+                    [inputDisabled]="disableRecipeChoosing()"
                     (focus)="focus()"
                     [error]="
                       searchQuery && focused && selectedRecipe.id === 0
                         ? ' '
                         : ''
                     "
-                    (blurEmitter)="blur()"
                     [(ngModel)]="searchQuery"
                     [value]="searchQuery"
                     (ngModelChange)="recipeSearching()"
                     type="text"
+                    (focusEmitter)="focus()"
+                    (blurEmitter)="blur()"
                     placeholder="Введите название и выберите рецепт из результатов поиска"
                   />
                 </div>
 
-                <div class="autocomplete-list">
+                <div class="autocomplete-list" #autocomplete>
                   <ul @auto-complete *ngIf="autocompleteShow">
                     <div *ngIf="autocompleteRecipes.length === 0">
                       <div class="no-found-recipes">
@@ -91,12 +93,7 @@
                       *ngFor="let item of autocompleteRecipes"
                       (mousedown)="chooseRecipe(item)"
                     >
-                      <p>{{ item.name }}</p>
-                      <span>{{
-                        getUser(item.authorId).id>0 && showAuthor(item)? getUser(item.authorId).fullName !== ""
-                          ? getUser(item.authorId).fullName
-                          : "@" + getUser(item.authorId).username:!showAuthor(item)?'Автор скрыт':'Автор удален'
-                      }}</span>
+                      {{ item.name }}
                     </li>
                   </ul>
                 </div>
@@ -194,16 +191,12 @@
       <app-button
         [style]="'filled'"
         [color]="'sec'"
-        [disabled]="
-          title.length > 2 && start && (end ? start <= end : true)
-            ? true
-            : false
-        "
+        [disabled]="valid"
         [rounded]="true"
         [text]="editMode ? 'Обновить рецепт в плане' : 'Добавить рецепт в план'"
         (click)="
-          title.length > 2 && start && (end ? start <= end : true)
-            ? (modalSaveShow = true)
+          valid
+            ? modalSaveShow = true
             : null
         "
       >

@@ -4,10 +4,11 @@
         <div class="block"  *ngFor="let collection of collections">
             <h2>{{collection.name}}</h2>
             <p class="main-description">{{collection.description}}</p>
+
             <div class="categories">
-                <a class="category-background" [ngStyle]="{'background-image':'url('+ item.image +')'}" [routerLink]="item.link" *ngFor="let item of collection.parts">
+                <a class="category-background" [ngStyle]="{'background-image':'url('+ item.image +')'}" [routerLink]="item.link" *ngFor="let item of collection.sections">
                     <div class="category">
-                        <h3>{{item.name}}</h3>
+                        <h4>{{item.name}}</h4>
                         <hr>
                         <p>{{item.description}}</p>
                     </div>

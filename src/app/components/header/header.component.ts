@@ -236,7 +236,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
               alreadySentReminder = true; //если уже есть уведомление с типом напоминалка и прислано оно сегодня
           });
           if (!alreadySentReminder) {
-            const reminder = {
+            const reminder:INotification = {
               ...this.notifyService.buildNotification(
                 'Время начала запланированного рецепта настало!',
                 'Время начала запланированного вами рецепта «' +
@@ -246,7 +246,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
                 'plan-reminder-start',
                 '/plan/calendar',
               ),
-              relatedId: event.id,
+              relatedId: Number(event.id),
               notificationDate: shortTodayDate,
             };
             this.notifyService
@@ -400,7 +400,6 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
           const findUser = this.users.find((u) => u.id === receivedUser.id);
           if (findUser) {
             this.currentUser = findUser;
-            this.cookRouterLinks[0] = '/cooks/list/' + this.currentUser.id;
           }
         } else this.currentUser = receivedUser;
 

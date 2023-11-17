@@ -125,12 +125,12 @@
       class="svg-button exit"
       [ngClass]="{
         'no-path':
-          this.router.url === this.routerEventsService.previousRoutePath.value
+          noPageToGoBack
       }"
       (click)="
-        this.router.url === this.routerEventsService.previousRoutePath.value
+        noPageToGoBack
           ? null
-          : onSkipHandler()
+          : goBack()
       "
     >
       <svg-icon

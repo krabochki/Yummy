@@ -16,7 +16,7 @@ import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
 import { fadeIn, heightAnim, modal } from 'src/tools/animations';
 import { trigger } from '@angular/animations';
 import { Title } from '@angular/platform-browser';
-import { registerLocaleData } from '@angular/common';
+import { Location, registerLocaleData } from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
 import { RouteEventsService } from 'src/app/modules/controls/route-events.service';
 import { ChangeDetectionStrategy } from '@angular/core';
@@ -77,15 +77,19 @@ export class UserPageComponent implements OnInit, OnDestroy {
 
   @ViewChild('emojiPicker') emojiPicker?: ElementRef;
 
+  get noPageToGoBack() {
+    return window.history.length <= 1;
+  }
+
   get showHireButton() {
-    return this.userService.getPermission('new-moder-button', this.currentUser)
+    return this.userService.getPermission('new-moder-button', this.currentUser);
   }
 
   protected get validRegistrationDate(): string {
     return getFormattedDate(this.user.registrationDate);
   }
 
-  get isSameUser(): boolean{
+  get isSameUser(): boolean {
     return this.currentUser.id === this.user.id;
   }
 
@@ -98,7 +102,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
     public router: Router,
     private cd: ChangeDetectorRef,
     private notifyService: NotificationService,
-    public routerEventsService: RouteEventsService,
+    private location: Location,
     private renderer: Renderer2,
   ) {
     registerLocaleData(localeRu);
@@ -222,8 +226,8 @@ export class UserPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSkipHandler() {
-    this.router.navigate([this.routerEventsService.previousRoutePath.value]);
+  goBack() {
+    this.location.back();
   }
 
   closeFollows() {

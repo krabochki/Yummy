@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { MainPageComponent } from './modules/recipes/components/main-page/main-page.component';
 import { PageNotFoundComponent } from './modules/controls/page-not-found/page-not-found.component';
-import { AuthGuard } from './modules/authentication/guards/auth.guard';
 import { AnonimPageComponent } from './modules/controls/anonim/anonim.component';
 const routes: Routes = [
   { path: '', component: MainPageComponent },

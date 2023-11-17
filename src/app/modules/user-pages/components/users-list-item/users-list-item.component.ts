@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { IUser, nullUser } from '../../models/users';
 import { UserService } from '../../services/user.service';
 import { Subject, takeUntil } from 'rxjs';
@@ -13,14 +13,17 @@ import { EmojiData } from '@ctrl/ngx-emoji-mart/ngx-emoji';
   selector: 'app-users-list-item',
   templateUrl: './users-list-item.component.html',
   styleUrls: ['./users-list-item.component.scss'],
+  changeDetection:ChangeDetectionStrategy.OnPush
 })
 export class UsersListItemComponent implements OnInit, OnDestroy {
-  @Input() public user: IUser = { ...nullUser };
+  @Input() public userId: number = 0;
+  user: IUser = { ...nullUser };
   @Output() demoteClick = new EventEmitter<IUser>();
   emoji: EmojiData | null = null;
 
   private destroyed$: Subject<void> = new Subject<void>();
   followingLength: number = 0;
+  followersLength: number = 0;
   @Input() adminpanel = false;
   userRecipesLength: number = 0;
   isFollower: boolean = false;
@@ -31,30 +34,12 @@ export class UsersListItemComponent implements OnInit, OnDestroy {
     private recipeService: RecipeService,
     private authService: AuthService,
     private notifyService: NotificationService,
+    private cd:ChangeDetectorRef
   ) {}
 
   public ngOnInit(): void {
-    this.authService.currentUser$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((data: IUser) => {
-        this.currentUser = data;
-        const currentUserInFollowers = this.user.followersIds.find(
-          (followerId: number) => followerId === data.id,
-        );
-        currentUserInFollowers
-          ? (this.isFollower = true)
-          : (this.isFollower = false);
-      });
-    this.userService.users$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((data: IUser[]) => {
-        const users: IUser[] = data;
-        this.followingLength = this.userService.getFollowing(
-          users,
-          this.user.id,
-        ).length;
-        this.emoji = this.user.emojiStatus ? this.user.emojiStatus : null;
-      });
+
+    
 
     this.recipeService.recipes$
       .pipe(takeUntil(this.destroyed$))
@@ -65,6 +50,41 @@ export class UsersListItemComponent implements OnInit, OnDestroy {
           this.user.id,
         ).length;
       });
+    
+        this.authService.currentUser$
+          .pipe(takeUntil(this.destroyed$))
+          .subscribe((data: IUser) => {
+            this.currentUser = data;
+            this.userService.users$
+              .pipe(takeUntil(this.destroyed$))
+              .subscribe((data: IUser[]) => {
+                const users: IUser[] = data;
+                this.user = users.find((u) => u.id === this.userId) || nullUser;
+                this.followingLength = this.userService.getFollowing(
+                  users,
+                  this.user.id,
+                ).length;
+                this.followersLength = this.userService
+                  .getFollowers(users, this.user.id)
+                  .filter((f) => f.id !== 0).length;
+                this.emoji = this.user.emojiStatus
+                  ? this.user.emojiStatus
+                  : null;
+                
+                    const currentUserInFollowers = this.user.followersIds.find(
+                      (followerId: number) => followerId === this.currentUser.id,
+                    );
+                    currentUserInFollowers
+                      ? (this.isFollower = true)
+                  : (this.isFollower = false);
+                this.cd.markForCheck()
+              });
+            
+            
+            
+        
+            
+          });
   }
 
   protected demote() {

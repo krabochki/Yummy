@@ -224,7 +224,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
   handleEvent(action: string, event: CalendarEvent): void {
     if (action === 'Clicked') {
-      alert('click handle')
       if (this.findRecipeEvent(event.id).recipe)
         this.router.navigateByUrl(
           '/recipes/list/' + this.findRecipeEvent(event.id).recipe,

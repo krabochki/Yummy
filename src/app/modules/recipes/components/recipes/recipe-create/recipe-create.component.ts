@@ -41,6 +41,10 @@ import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { notifyForFollowersOfApprovedRecipeAuthor } from 'src/app/modules/authentication/components/control-dashboard/notifications';
+import { customPatternValidator } from 'src/tools/validators';
+import { numbers } from 'src/tools/regex';
+import { IngredientService } from '../../../services/ingredient.service';
+import { IIngredient } from '../../../models/ingredients';
 
 @Component({
   selector: 'app-recipe-create',
@@ -62,6 +66,8 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
   steps: Step[] = steps;
 
   currentUser: IUser = { ...nullUser };
+
+  categoryInputValue: string = '';
 
   form: FormGroup;
 
@@ -91,6 +97,8 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
 
   createdRecipe: IRecipe = nullRecipe;
 
+  ingredients:IIngredient[] = []
+
   protected destroyed$: Subject<void> = new Subject<void>();
 
   beginningData: any;
@@ -107,6 +115,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private recipeService: RecipeService,
     private fb: FormBuilder,
+    private ingredientService:IngredientService,
     public router: Router,
     private title: Title,
   ) {
@@ -135,10 +144,104 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     });
   }
 
+
+  blur() {
+    this.categoryInputValue = ' ';
+  }
+
+  close() {
+    this.areObjectsEqual()
+      ? (this.exitModalShow = true)
+      : this.closeEmitter.emit(true);
+  }
+  clickOnCircleStep(i: number) {
+    if (this.validNextSteps() === 0 || this.validNextSteps() > i) {
+      this.currentStep = i;
+      this.scrollTop();
+    }
+  }
+
+  notValid() {
+    return this.validNextSteps();
+  }
+
+  noValidStepDescription(step: number): string {
+    switch (step) {
+      case 0:
+        return 'Название рецепта обязательно и должно содержать от 3 до 100 символов';
+      case 1:
+        break;
+      case 2:
+        return 'У рецепта должно быть не более 5 категорий';
+      case 3:
+        return 'Название для каждого ингредиента рецепта обязательно и должно содержать не менее 2 и не более 50 символов';
+      case 4:
+        return 'Название для каждого нутриента рецепта обязательно и должно содержать не менее 2 и не более 20 символов';
+      case 5:
+        return 'Содержание для каждой инструкции рецепта обязательно и должно содержать не менее 2 и не более 1000 символов';
+    }
+    return '';
+  }
+
+  validNextSteps(): number {
+    for (let s = 0; s <= 6; s++) {
+      switch (s) {
+        case 0:
+          if (
+            !(
+              this.form.get('recipeName')!.valid &&
+              this.form.get('history')!.valid &&
+              this.form.get('description')!.valid
+            )
+          ) {
+            return 1;
+          }
+          break;
+        case 1:
+          if (
+            !(
+              this.form.get('preparationTime')!.valid &&
+              this.form.get('cookingTime')!.valid &&
+              this.form.get('origin')!.valid &&
+              this.form.get('portions')!.valid
+            )
+          ) {
+            return 2;
+          }
+          break;
+        case 2:
+          if (!(this.selectedCategories.length <= 5)) {
+            return 3;
+          }
+          break;
+        case 3:
+          if (!this.form.get('ingredients')!.valid) {
+            return 4;
+          }
+          break;
+        case 4:
+          if (!this.form.get('nutritions')!.valid) {
+            return 5;
+          }
+          break;
+        case 5:
+          if (!this.form.get('instructions')!.valid) {
+            return 6;
+          }
+          break;
+      }
+    }
+    return 0;
+  }
+
   ngOnInit(): void {
     this.renderer.addClass(document.body, 'hide-overflow');
     (<HTMLElement>document.querySelector('.header')).style.width =
       'calc(100% - 16px)';
+    
+    this.ingredientService.ingredients$.pipe(takeUntil(this.destroyed$)).subscribe(
+      (receivedIngredients:IIngredient[])=>this.ingredients = receivedIngredients
+    )
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((currentUser: IUser) => {
@@ -147,9 +250,9 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.userService.users$.pipe(takeUntil(this.destroyed$)).subscribe(
-      (data) => this.users = data
-    )
+    this.userService.users$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((data) => (this.users = data));
 
     this.categoryService.categories$
       .pipe(takeUntil(this.destroyed$))
@@ -419,7 +522,10 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
             Validators.maxLength(50),
           ],
         ],
-        quantity: ['', Validators.maxLength(6)],
+        quantity: [
+          '',
+          [Validators.maxLength(6), customPatternValidator(numbers)],
+        ],
         unit: ['', Validators.maxLength(10)],
       }),
     );
@@ -440,7 +546,10 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
             Validators.maxLength(20),
           ],
         ],
-        quantity: ['', [Validators.maxLength(6)]],
+        quantity: [
+          '',
+          [Validators.maxLength(6), customPatternValidator(numbers)],
+        ],
         unit: ['', Validators.maxLength(10)],
       }),
     );
@@ -532,6 +641,14 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
             : 'public'
           : 'private',
       };
+      recipeData.ingredients.forEach((ingredient) => {
+        const findedIngredient = recipeData.ingredients.find(
+          (i) => i === ingredient,
+        );
+        if (findedIngredient) {
+          findedIngredient.quantity = ingredient.quantity.replace(',', '.');
+        }
+      });
       this.createdRecipe = recipeData;
 
       this.recipeService.postRecipe(recipeData).subscribe(() => {
@@ -544,11 +661,21 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     }
   }
 
+  controlInvalid(control: string, group:any) {
+     return (
+       group.get(control)?.invalid &&
+       (group.get(control)?.dirty || group.get(control)?.touched)
+     );
+  }
+
   sendNotificationsAfterPublishingRecipe() {
     const subscribes: Observable<IUser>[] = [];
 
     if (
-      this.userService.getPermission('manager-review-your-recipe', this.currentUser)
+      this.userService.getPermission(
+        'manager-review-your-recipe',
+        this.currentUser,
+      )
     ) {
       const notify: INotification = this.notifyService.buildNotification(
         'Рецепт успешно опубликован',
@@ -602,9 +729,21 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       servings: this.form.value.portions,
       categories: categoriesIds,
       publicationDate: '',
-      status: this.isAwaitingApprove ? this.currentUser.role==='user'? 'awaits' : 'public' : 'private',
+      status: this.isAwaitingApprove
+        ? this.currentUser.role === 'user'
+          ? 'awaits'
+          : 'public'
+        : 'private',
     };
 
+    recipeData.ingredients.forEach((ingredient) => {
+      const findedIngredient = recipeData.ingredients.find(
+        (i) => i === ingredient,
+      );
+      if (findedIngredient) {
+        findedIngredient.quantity = ingredient.quantity.replace(',', '.');
+      }
+    });
     this.updatedRecipeEmitter.emit(recipeData);
   }
 
@@ -677,7 +816,11 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       );
       this.notifyService.sendNotification(notify, this.currentUser).subscribe();
     }
-    if (this.isAwaitingApprove && this.currentUser.role !== 'user' && this.userService.getPermission('hide-author',this.currentUser)) {
+    if (
+      this.isAwaitingApprove &&
+      this.currentUser.role !== 'user' &&
+      this.userService.getPermission('hide-author', this.currentUser)
+    ) {
       this.sendNotificationsAfterPublishingRecipe();
     }
   }

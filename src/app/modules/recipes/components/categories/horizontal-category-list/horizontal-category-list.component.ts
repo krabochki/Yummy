@@ -36,11 +36,13 @@ export class HorizontalCategoryListComponent implements OnChanges {
   }
 
   dragStart(): void{
-    dragStart();
+    if(this.showScrollButtons)
+      dragStart()
   }
 
   dragEnd(): void{
-    dragEnd();
+    if (this.showScrollButtons)
+      dragEnd();
   }
 
   scrollLeft() {

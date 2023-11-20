@@ -23,8 +23,9 @@
                 
             </p>
        </div>
-       <button  *ngIf="currentUser.id!==user.id" (click)="!isFollower?follow():unfollow()"  class="follow-button" [ngClass]="{'follow-btn':!isFollower && !adminpanel , 'unfollow-btn':adminpanel || isFollower}">{{!isFollower?'Подписаться':'Отписаться'}}</button>
-       <div (click)="!adminpanel?!isFollower?follow():unfollow():demote()" [title]="!isFollower?'Подписаться':'Отписаться'" [class]="!isFollower?'follow':'unfollow'"  *ngIf="currentUser.id!==user.id" >
+       <button [class.disabled]="currentUser.id<=0"  *ngIf="currentUser.id!==user.id" (click)="!adminpanel?clickFollowButton():demote()"  class="follow-button" [ngClass]="{'follow-btn':!isFollower && !adminpanel , 'unfollow-btn':adminpanel || isFollower}">{{!adminpanel? !isFollower?'Подписаться':'Отписаться':'Разжаловать'}}</button>
+
+       <button [class.disabled]="currentUser.id<=0" (click)="!adminpanel?clickFollowButton():demote()" [title]="currentUser.id>0?isFollower?'Отписаться':'Подписаться':''" [class]="isFollower || adminpanel?'unfollow':'follow'"  *ngIf="currentUser.id!==user.id" >
         
         <ng-container *ngIf="!adminpanel">
             <svg-icon *ngIf="!isFollower" class="follow-svg"  [src]="'assets/images/svg/follow.svg'"></svg-icon>
@@ -32,7 +33,7 @@
         </ng-container>
         <svg-icon *ngIf="adminpanel"  class="follow-svg"  [src]="'assets/images/svg/demote.svg'"></svg-icon>
     
-    </div>
+    </button>
    </div>
     <div class="follows">
         <p title="Подписки">
@@ -52,3 +53,8 @@
         </p>
     </div>
 </div>
+
+<app-modal @modal *ngIf="noAccessModalShow" [style]="'prim'" [title]="'Доступ к разделу ограничен'" [type]="'yesOrNo'"
+    (resultEmit)="handleNoAccessModal($event)" [buttonsText]="['Давайте', 'Не сейчас']" [description]="
+    'Доступ к этой функции имеют только зарегистрированные пользователи. Хотите зарегистрироваться или войти в существующий аккаунт?'
+  " />

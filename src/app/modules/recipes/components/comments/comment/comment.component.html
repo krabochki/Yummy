@@ -11,8 +11,10 @@
             <h1>
                 {{ showCommentAuthor? author.fullName !== "" ? author.fullName : "@" + author.username :'Автор скрыт' }}
 
-                <span *ngIf="showRecipeAuthor && showCommentAuthor && comment.authorId === recipe.authorId" class="noselect">·</span>
-                <span *ngIf="showRecipeAuthor && showCommentAuthor && comment.authorId === recipe.authorId">Автор рецепта</span>
+               <ng-template *ngIf="showRecipeAuthor && showCommentAuthor && comment.authorId === recipe.authorId">
+                    <span class="noselect">·</span>
+                    <span>Автор рецепта</span>
+               </ng-template>
             </h1>
             <p class="date">{{ date | timePast }}</p>
         </a>
@@ -22,17 +24,17 @@
                 <button class="like" (click)="currentUser.id>0?likeComment():noAccessModalShow=true"
                     [ngClass]="{ liked: comment.likesId.includes(currentUser.id) }">
                     <svg-icon class="like-svg" *ngIf="!comment.likesId.includes(currentUser.id)" [applyClass]="true"
-                        [src]="'../../../../../assets/images/svg/like-comment.svg'"></svg-icon>
+                        [src]="'assets/images/svg/like-comment.svg'"></svg-icon>
                     <svg-icon class="like-svg" *ngIf="comment.likesId.includes(currentUser.id)" [applyClass]="true"
-                        [src]="'../../../../../assets/images/svg/like-comment-fill.svg'"></svg-icon>
+                        [src]="'assets/images/svg/like-comment-fill.svg'"></svg-icon>
                     <span>{{ comment.likesId.length }}</span>
                 </button>
                 <button (click)="currentUser.id>0?dislikeComment():noAccessModalShow=true" class="like like-dislike"
                     [ngClass]="{ disliked: comment.dislikesId.includes(currentUser.id) }">
                     <svg-icon class="like-svg" *ngIf="!comment.dislikesId.includes(currentUser.id)" [applyClass]="true"
-                        [src]="'../../../../../assets/images/svg/dislike.svg'"></svg-icon>
+                        [src]="'assets/images/svg/dislike.svg'"></svg-icon>
                     <svg-icon *ngIf="comment.dislikesId.includes(currentUser.id)" class="like-svg" [applyClass]="true"
-                        [src]="'../../../../../assets/images/svg/broken-heart-fill.svg'"></svg-icon>
+                        [src]="'assets/images/svg/broken-heart-fill.svg'"></svg-icon>
                     <span>{{
                         comment.dislikesId.length === 0
                         ? 0
@@ -43,18 +45,18 @@
             <div class="actions">
                 <button class="action" (click)="copy()">
                     <svg-icon class="like-svg" [applyClass]="true"
-                        [src]="'../../../../../assets/images/svg/copy.svg'"></svg-icon>
+                        [src]="'assets/images/svg/copy.svg'"></svg-icon>
                     <span>{{ !copyState ? "Копировать" : "Скопировано" }}</span>
                 </button>
                 <button  [ngClass]="{'haveReport':haveReport}" [title]="haveReport?'Вы уже подавали жалобу на этот комментарий':''" (click)="currentUser.id>0?(haveReport?null:reportCommentModalShow = true):noAccessModalShow=true" class="action red" *ngIf=" currentUser.id !== comment.authorId; else remove">
                     <svg-icon class="like-svg" [applyClass]="true"
-                        [src]="'../../../../../assets/images/svg/report.svg'"></svg-icon>
+                        [src]="'assets/images/svg/report.svg'"></svg-icon>
                     <span>Жалоба</span>
                 </button>
                 <ng-template #remove>
                     <button class="action red" (click)="deleteCommentModalShow=true">
                         <svg-icon class="like-svg" [applyClass]="true"
-                            [src]="'../../../../../assets/images/svg/trash.svg'"></svg-icon>
+                            [src]="'assets/images/svg/trash.svg'"></svg-icon>
                         <span>Удалить</span>
                     </button>
                 </ng-template>

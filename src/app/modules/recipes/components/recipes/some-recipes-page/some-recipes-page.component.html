@@ -9,8 +9,9 @@
       <app-button
         class="add-recipe"
         [icon]="'add-recipe'"
+        [disabled]="currentUser.id>0"
         *ngIf="filter === 'my-recipes' || filter === 'all'"
-        (click)="creatingMode = true"
+        (click)="createRecipeButtonClick()"
         [color]="'prim'"
         [text]="'Создать рецепт'"
         [rounded]="true"
@@ -61,12 +62,8 @@
                 ></app-button>
               </div>
             </div>
-            <li *ngFor="let item of autocomplete">
-              <p (mousedown)="navigateTo('/recipes/list/' + item.id)">{{ item.name }}</p>
-              <span (mousedown)="(getUser(item.authorId).id>0 && !showAuthor(item))?navigateTo('/cooks/list/'+ getUser(item.authorId).id):null"
-                *ngIf="filter !== 'my-recipes'"
-                >{{ (getUser(item.authorId).id>0 && !showAuthor(item))?(getUser(item.authorId).fullName!==''?getUser(item.authorId).fullName:'@'+getUser(item.authorId).username): showAuthor(item)?'Автор скрыт':'Автор удален' }}</span
-              >
+            <li *ngFor="let item of autocomplete" (mousedown)="navigateTo('/recipes/list/' + item.id)">{{ item.name }}
+              
             </li>
           </ul>
         </div>
@@ -238,9 +235,9 @@
             ></app-horizontal-recipe-list>
           </div>
         </div>
-        <div class="block">
+        <div class="block"   *ngIf="currentUser.id > 0 && cookedRecipes.length > 0">
           <a
-            *ngIf="currentUser.id > 0 && cookedRecipes.length > 0"
+          
             routerLink="/recipes/cooked"
             class="head"
           >
@@ -416,3 +413,8 @@
   @modal
   *ngIf="creatingMode"
 ></app-recipe-create>
+
+<app-modal @modal *ngIf="noAccessModalShow" [style]="'prim'" [title]="'Доступ к разделу ограничен'" [type]="'yesOrNo'"
+  (resultEmit)="handleNoAccessModal($event)" [buttonsText]="['Давайте', 'Не сейчас']" [description]="
+    'Доступ к этой функции имеют только зарегистрированные пользователи. Хотите зарегистрироваться или войти в существующий аккаунт?'
+  " />

@@ -15,6 +15,9 @@ import { Title } from '@angular/platform-browser';
 import { RecipeService } from '../../../services/recipe.service';
 import { Subject, takeUntil } from 'rxjs';
 import { IRecipe } from '../../../models/recipes';
+import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
+import { AuthService } from 'src/app/modules/authentication/services/auth.service';
+import { baseComparator } from 'src/tools/common';
 
 @Component({
   selector: 'app-categories-page',
@@ -37,6 +40,8 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
   creatingMode = false;
   filter: string = '';
 
+  currentUser: IUser = { ...nullUser };
+
   section: ISection = nullSection;
   searchQuery: string = '';
   autocompleteShow: boolean = false;
@@ -49,6 +54,7 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
   popularCategories: ICategory[] = [];
 
   protected destroyed$: Subject<void> = new Subject<void>();
+  noAccessModalShow = false;
 
   constructor(
     private categoryService: CategoryService,
@@ -58,7 +64,29 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
     private titleService: Title,
     private recipeService: RecipeService,
+    private authService: AuthService,
   ) {}
+
+  getCurrentUserData() {
+    this.authService.currentUser$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedUser: IUser) => (this.currentUser = receivedUser));
+  }
+
+  handleNoAccessModal(event: boolean) {
+    if (event) {
+      this.router.navigateByUrl('/greetings');
+    }
+    this.noAccessModalShow = false;
+  }
+
+  createCategoryButtonClick() {
+    if (this.currentUser.id > 0) {
+      this.creatingMode = true;
+    } else {
+      this.noAccessModalShow = true;
+    }
+  }
 
   getCategoriesData() {
     this.categoryService.categories$
@@ -101,6 +129,7 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.getCurrentUserData();
     this.route.data.subscribe((data) => {
       this.getCategoriesData();
       this.filter = data['filter'];
@@ -183,7 +212,6 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
     return nullSection;
   }
 
-
   blurSearch() {
     this.autocompleteShow = false;
   }
@@ -195,9 +223,9 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
   }
   turnOnSearch() {
     this.autocompleteShow = true;
-    let categoriesToSearch = this.categories
-    if(this.filter==='section')
-     categoriesToSearch = this.getCategoriesOfSection(this.section)
+    let categoriesToSearch = this.categories;
+    if (this.filter === 'section')
+      categoriesToSearch = this.getCategoriesOfSection(this.section);
     if (this.searchQuery.length > 0) {
       this.autocomplete = [];
       const notEmptySections = this.sectionService.getNotEmptySections(
@@ -217,6 +245,9 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
       filterSections.forEach((filterSection) => {
         this.autocomplete.push(filterSection);
       });
+      this.autocomplete = this.autocomplete.sort((a, b) =>
+        baseComparator(a.name, b.name),
+      );
     } else this.autocompleteShow = false;
   }
   ngOnDestroy(): void {

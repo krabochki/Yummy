@@ -10,7 +10,7 @@
 
     #input
     [value]="value"
-    (keyup)="change()"
+    (keyup)="filter();change()"
     [(ngModel)]="value"
     [disabled]="disabled || inputDisabled"
     autocomplete="off"

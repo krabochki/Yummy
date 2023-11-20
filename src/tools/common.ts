@@ -62,4 +62,4 @@ export function getZoom(count: number, diff:number, maxZoom?:number, baseZoom?: 
     const words = recipeText.split(/\s+/);
     const wordCount = words.length;
     return Math.ceil(wordCount / wordsPerMinute);
-  }
+}

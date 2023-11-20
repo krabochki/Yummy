@@ -1,25 +1,33 @@
-<div 
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<a
+  (click)="$event.preventDefault()"
+  [routerLink]="link"
   class="ingredient-cont noselect"
-  [title]="ingredient.name + ' [' + recipesNumber + ']'"
+  [title]="title"
   *ngIf="ingredient.id > 0; else nullCategory"
 >
   <div class="ingredient-wrap">
     <div class="ingredient" *ngIf="ingredient.id > 0; else nullCategory"></div>
-    <button class="delete" (click)="deleteModalShow=true" *ngIf="currentUser.role!=='user' && showDeletingButton">
-      <svg-icon class="trash-svg" [applyClass]="true" [src]="'assets/images/svg/trash.svg'" />
+    <button
+      class="delete"
+      (click)="clickDeleteButton($event)"
+      *ngIf="currentUser.role !== 'user' && showDeletingButton"
+    >
+      <svg-icon
+        class="trash-svg"
+        [applyClass]="true"
+        [src]="'assets/images/svg/trash.svg'"
+      />
     </button>
   </div>
-  
-  <a
-    [routerLink]="link"
-  >
-    <div style="position: relative; overflow: visible">
-      <h1 class="name">
-        <sup>{{ recipesNumber }} </sup>{{ ingredient.name }}
-      </h1>
-    </div>
-  </a>
-</div>
+
+  <div style="position: relative; overflow: visible">
+    <h1 class="name">
+      <sup>({{ recipesNumber }})</sup>{{ ingredient.name }}
+    </h1>
+  </div>
+</a>
 
 <ng-template #nullCategory>
   <div class="ingredient null">
@@ -32,10 +40,37 @@
   </div>
 </ng-template>
 
-
-<app-modal @modal (resultEmit)="handleDeleteModal($event)" [type]="'yesOrNo'" [buttonsText]="['Да','Отмена']"
-  [style]="'prim'" [description]="'Вы уверены, что хотите удалить ' + (context==='ingredient'?'этот ингредиент?':'эту группу ингредиентов?')"
-  [title]="'Удаление '+(context==='ingredient'?'ингредиента':'группы ингредиентов')" *ngIf="deleteModalShow"></app-modal>
-<app-modal @modal (resultEmit)="handleSuccessDeleteModal()" [type]="'Ok'" [buttonsText]="['Хорошо']" [style]="'sec'"
-  [description]="(context==='ingredient'?'Ингредиент':'Группа ингредиентов')+' успешно удален'+(context==='ingredient'?'':'а')"
-  [title]="(context==='ingredient'?'Ингредиент':'Группа ингредиентов')+' удален'+(context==='ingredient'?'':'а')" *ngIf="successDeleteModalShow"></app-modal>
+<app-modal
+  @modal
+  (resultEmit)="handleDeleteModal($event)"
+  [type]="'yesOrNo'"
+  [buttonsText]="['Да', 'Отмена']"
+  [style]="'prim'"
+  [description]="
+    'Вы уверены, что хотите удалить ' +
+    (context === 'ingredient' ? 'этот ингредиент?' : 'эту группу ингредиентов?')
+  "
+  [title]="
+    'Удаление ' +
+    (context === 'ingredient' ? 'ингредиента' : 'группы ингредиентов')
+  "
+  *ngIf="deleteModalShow"
+></app-modal>
+<app-modal
+  @modal
+  (resultEmit)="handleSuccessDeleteModal()"
+  [type]="'Ok'"
+  [buttonsText]="['Хорошо']"
+  [style]="'sec'"
+  [description]="
+    (context === 'ingredient' ? 'Ингредиент' : 'Группа ингредиентов') +
+    ' успешно удален' +
+    (context === 'ingredient' ? '' : 'а')
+  "
+  [title]="
+    (context === 'ingredient' ? 'Ингредиент' : 'Группа ингредиентов') +
+    ' удален' +
+    (context === 'ingredient' ? '' : 'а')
+  "
+  *ngIf="successDeleteModalShow"
+></app-modal>

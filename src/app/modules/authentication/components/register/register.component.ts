@@ -19,7 +19,7 @@ import {
   emailExistsValidator,
 } from 'src/tools/validators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import { usernameExistsValidator } from 'src/tools/validators';
 import { getCurrentDate } from 'src/tools/common';
 import { PlanService } from 'src/app/modules/planning/services/plan-service';
@@ -114,10 +114,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
         registrationDate: getCurrentDate(),
         id: maxId + 1,
       };
-
-      localStorage.setItem('currentUser', JSON.stringify(userData));
+ 
       this.usersService.postUser(userData).subscribe(() => {
-        this.authService.setCurrentUser(userData);
+        this.createUser = { ...userData };
         this.modalSuccessShow = true;
         const maxId = Math.max(...this.plans.map((u) => u.id));
         const newUserPlan = {
@@ -125,17 +124,13 @@ export class RegisterComponent implements OnInit, OnDestroy {
           id: maxId + 1,
           user: userData.id,
         };
-        this.planService.addPlan(newUserPlan).subscribe();
-
-        const notify = this.notifyService.buildNotification(
-          'Добро пожаловать',
-          `Добро пожаловать в Yummy, @${userData.username} 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!`,
-          'success',
-          'born',
-          '',
-        );
-        this.notifyService.sendNotification(notify,userData).subscribe()
-        this.cd.markForCheck();
+        this.planService.addPlan(newUserPlan).subscribe(() => {
+          this.authService.loginUser(userData).subscribe(() => {
+            this.authService.setCurrentUser(userData);
+            localStorage.setItem('currentUser', JSON.stringify(userData));
+            this.cd.markForCheck();
+          });
+        });
       });
     }
   }
@@ -148,6 +143,15 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
   handleSuccessModalResult(): void {
     this.router.navigate(['/']);
+
+    const notify = this.notifyService.buildNotification(
+      'Добро пожаловать',
+      `Добро пожаловать в Yummy, @${this.createUser.username} 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!`,
+      'success',
+      'born',
+      '',
+    );
+    this.notifyService.sendNotification(notify, this.createUser).subscribe();
     this.modalSuccessShow = false;
   }
   get passwordNotValidError(): string {

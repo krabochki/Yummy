@@ -12,6 +12,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
 import { Title } from '@angular/platform-browser';
+import { baseComparator } from 'src/tools/common';
+import { AuthService } from 'src/app/modules/authentication/services/auth.service';
+import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 
 @Component({
   selector: 'app-ingredients-page',
@@ -20,7 +23,10 @@ import { Title } from '@angular/platform-browser';
     '../../../../authentication/common-styles.scss',
     './ingredients-page.component.scss',
   ],
-  animations: [trigger('auto-complete', heightAnim()), trigger('modal',modal())],
+  animations: [
+    trigger('auto-complete', heightAnim()),
+    trigger('modal', modal()),
+  ],
 })
 export class IngredientsPageComponent implements OnInit, OnDestroy {
   protected ingredientGroups: IIngredientsGroup[] = [];
@@ -32,6 +38,9 @@ export class IngredientsPageComponent implements OnInit, OnDestroy {
   autocompleteShow: boolean = false;
   autocomplete: any[] = [];
 
+  currentUser: IUser = { ...nullUser };
+  noAccessModalShow = false;
+
   MAX_DISPLAY_INGREDIENTS_IN_GROUP = 8;
   START_DISPLAY_INGREDIENTS_ON_GROUP_PAGE = 10;
   INGREDIENTS_TO_LOAD = 5;
@@ -41,16 +50,31 @@ export class IngredientsPageComponent implements OnInit, OnDestroy {
   protected title: string = '';
 
   protected context: string = '';
-  protected group: IIngredientsGroup = {...nullIngredientsGroup};
+  protected group: IIngredientsGroup = { ...nullIngredientsGroup };
   constructor(
     private recipeService: RecipeService,
     private ingredientService: IngredientService,
     private route: ActivatedRoute,
     private router: Router,
+    private authService: AuthService,
     private titleService: Title,
   ) {}
 
+  getCurrentUserData() {
+    this.authService.currentUser$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedUser: IUser) => (this.currentUser = receivedUser));
+  }
+
+  handleNoAccessModal(event: boolean) {
+    if (event) {
+      this.router.navigateByUrl('/greetings');
+    }
+    this.noAccessModalShow = false;
+  }
+
   ngOnInit() {
+    this.getCurrentUserData()
     this.route.data.subscribe((data) => {
       this.context = data['filter'];
 
@@ -59,18 +83,16 @@ export class IngredientsPageComponent implements OnInit, OnDestroy {
         .subscribe((data) => {
           this.recipes = data;
 
-          
-      this.ingredientService.ingredients$
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe((data) => {
-          this.ingredients = data.filter((i) => i.status === 'public');
-          
+          this.ingredientService.ingredients$
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe((data) => {
+              this.ingredients = data.filter((i) => i.status === 'public');
+
               this.ingredients = this.ingredientService.sortIngredients(
                 this.ingredients,
                 this.recipes,
               );
-        });
-
+            });
 
           this.ingredientService.ingredientsGroups$
             .pipe(takeUntil(this.destroyed$))
@@ -105,6 +127,14 @@ export class IngredientsPageComponent implements OnInit, OnDestroy {
       }
       this.titleService.setTitle(this.title);
     });
+  }
+
+  createIngredientButtonClick() {
+    if (this.currentUser.id > 0) {
+      this.ingredientCreatingMode = true;
+    } else {
+      this.noAccessModalShow = true;
+    }
   }
 
   getIngredientsIds() {
@@ -186,7 +216,9 @@ export class IngredientsPageComponent implements OnInit, OnDestroy {
       filterGroups.forEach((f) => {
         this.autocomplete.push(f);
       });
-      
+      this.autocomplete = this.autocomplete.sort((a, b) =>
+        baseComparator(a.name, b.name),
+      );
     } else this.autocompleteShow = false;
   }
 

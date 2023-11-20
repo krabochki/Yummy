@@ -151,9 +151,8 @@
     </div>
     <div class="row main">
       <div class="img-cont">
-        <div #emojiPicker>
-          <div
-            
+        <div  [ngClass]="{'emoji-button':!selectedEmoji && isSameUser}" #emojiPicker>
+          <button
             [ngClass]="{
               'no-emoji': !selectedEmoji && isSameUser,
               'emoji-picker-open':showEmojiPicker
@@ -162,17 +161,13 @@
             [title]="
               isSameUser
                 ? selectedEmoji
-                  ? 'Нажмите на кнопку 2 раза, чтобы убрать статус'
+                  ? 'Нажмите на левую кнопку мыши, чтобы убрать эмодзи статус'
                   : 'Нажмите, чтобы выбрать эмодзи статус'
                 : ''
             "
             class="emoji-status"
-            (dblclick)="unsetEmoji()"
-            (click)="
-              isSameUser
-                ? (showEmojiPicker = !showEmojiPicker)
-                : null
-            "
+             (contextmenu)="selectedEmoji?unsetEmoji($event):null"
+            (click)="openEmojiPicker()"
           >
             <svg-icon
               *ngIf="!selectedEmoji && isSameUser"
@@ -187,7 +182,7 @@
               [emoji]="selectedEmoji"
               [size]="44"
             ></ngx-emoji>
-          </div>
+          </button>
           <emoji-mart
             [darkMode]="false"
             @modal
@@ -394,6 +389,14 @@
             >
             </svg-icon>
             <a [href]="user.personalWebsite">Личный сайт</a>
+          </li>
+          <li *ngIf="user.role!=='user'" class="row center">
+            <svg-icon [src]="'assets/images/svg/star-user.svg'" [svgStyle]="{
+                          'width.em': '1.2',
+                          'height.em': '1',
+                          fill: 'var(--color-foreground)'
+                        }"></svg-icon>
+            <p>{{user.role ==='admin'?'Администратор':'Модератор'}} Yummy</p>
           </li>
           <li class="row center" *ngIf="user?.location">
             <svg-icon

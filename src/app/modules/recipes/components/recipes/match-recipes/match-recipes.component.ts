@@ -736,8 +736,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
   }
 
   focusIngredientSearch(): void {
-    if (this.searchQuery === '')
-      this.autoIngredients = this.getIngredientNames();
+    if (this.searchQuery !== '')
     this.showIngredientsAutocomplete = true;
   }
 
@@ -745,6 +744,8 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
   search(): void {
     const allIngredients = this.getIngredientNames();
     if (this.searchQuery && this.searchQuery !== '') {
+            this.showIngredientsAutocomplete = true;
+
       this.autoIngredients = [];
 
       const search = this.searchQuery.toLowerCase().replace(/\s/g, '');
@@ -757,7 +758,9 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
       filteredIngredients.forEach((ingredient) => {
         this.autoIngredients.push(ingredient);
       });
+      this.autoIngredients = this.autoIngredients.sort((a,b)=>baseComparator(a,b))
     } else {
+      this.showIngredientsAutocomplete = false;
       this.autoIngredients = allIngredients;
     }
   }

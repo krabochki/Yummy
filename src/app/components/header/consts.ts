@@ -51,14 +51,10 @@ export function userRoutes(id: number) {
     },
     {
       routeLink: cookRouterLinks[1],
-      disabled: !id,
-    },
-    {
-      routeLink: cookRouterLinks[2],
       disabled: false,
     },
     {
-      routeLink: cookRouterLinks[3],
+      routeLink: cookRouterLinks[2],
       disabled: !id,
     },
   ];
@@ -66,18 +62,14 @@ export function userRoutes(id: number) {
 
 export function planRoutes(id: number) {
   return [
-    { routeLink: planRouterLinks[0],      disabled: !id,
- },
+    { routeLink: planRouterLinks[0], disabled: !id },
+
     {
       routeLink: planRouterLinks[1],
       disabled: false,
     },
     {
       routeLink: planRouterLinks[2],
-      disabled: false,
-    },
-    {
-      routeLink: planRouterLinks[3],
       disabled: !id,
     },
   ];

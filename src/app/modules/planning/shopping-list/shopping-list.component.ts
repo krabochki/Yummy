@@ -223,20 +223,22 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
   }
 
   protected addShoppingListItem(): void {
-    let maxId = 0;
-    if (this.shoppingList.length > 0)
-      maxId = Math.max(...this.shoppingList.map((g) => g.id));
-    const newProduct: ShoppingListItem = {
-      ...nullProduct,
-      name: this.form.value.name,
-      howMuch: this.form.value.howMuch,
-      id: maxId + 1,
-      type: this.selectedType.id,
-      note: this.form.value.note,
-    };
-    this.currentUserPlan.shoppingList.unshift(newProduct);
-    this.planService.updatePlan(this.currentUserPlan).subscribe();
-    this.resetFormProduct();
+    if (this.form.valid) {
+      let maxId = 0;
+      if (this.shoppingList.length > 0)
+        maxId = Math.max(...this.shoppingList.map((g) => g.id));
+      const newProduct: ShoppingListItem = {
+        ...nullProduct,
+        name: this.form.value.name,
+        howMuch: this.form.value.howMuch,
+        id: maxId + 1,
+        type: this.selectedType.id,
+        note: this.form.value.note,
+      };
+      this.currentUserPlan.shoppingList.unshift(newProduct);
+      this.planService.updatePlan(this.currentUserPlan).subscribe();
+      this.resetFormProduct();
+    }
   }
 
   protected resetFormProduct() {
@@ -252,7 +254,7 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
 
   private sortByBought(shoppingList: ShoppingListItem[]): ShoppingListItem[] {
     const filter = shoppingList.sort((a, b) => {
-      return baseComparator(a.id, b.id);
+      return baseComparator(b.name, a.name);
     });
     return filter.sort((a, b) => {
       return baseComparator(a.isBought, b.isBought);

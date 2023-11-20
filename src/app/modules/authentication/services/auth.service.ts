@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { IUser, nullUser } from '../../user-pages/models/users';
-import { BehaviorSubject, EMPTY, Observable, filter, map } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, filter, map, take } from 'rxjs';
 import { UserService } from '../../user-pages/services/user.service';
 import { IRecipe } from '../../recipes/models/recipes';
 import { usersUrl } from 'src/tools/source';
@@ -40,9 +40,10 @@ export class AuthService {
     });
   }
 
-  setCurrentUser(user: IUser) {
+  setCurrentUser(user: IUser): void {
     this.currentUserSubject.next({ ...user });
   }
+
 
   getCurrentUser(): Observable<IUser> {
     return this.currentUserSubject.asObservable();

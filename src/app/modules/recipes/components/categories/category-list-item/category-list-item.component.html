@@ -1,6 +1,10 @@
-<div
+<a [routerLink]="
+        context === 'category'
+          ? '/categories/list/' + category.id
+          : '/sections/list/' + category.id
+      "
   class="category-cont noselect"
-  [title]="category.name + ' [' + recipesNumber + ']'"
+  [title]="title"
   *ngIf="category.id > 0; else nullCategory"
 >
  <div class="category-wrap">
@@ -9,23 +13,17 @@
      
     </div>
      <button class="delete" 
-     (click)="deleteModalShow=true" *ngIf="currentUser.role!=='user' && showDeletingButton">
+     (click)="clickDeleteButton($event)" *ngIf="currentUser.role!=='user' && showDeletingButton">
         <svg-icon class="trash-svg" [applyClass]="true" [src]="'assets/images/svg/trash.svg'"/>
       </button>
  </div>
-  <a  [routerLink]="
-        context === 'category'
-          ? '/categories/list/' + category.id
-          : '/sections/list/' + category.id
-      ">
     <div
      
       style="position: relative; overflow: visible"
     >
-      <h1 class="name"><sup>{{recipesNumber}} </sup>{{category.name}}</h1>
+      <h1 class="name"><sup>({{recipesNumber}})</sup>{{category.name}}</h1>
     </div>
-  </a>
-</div>
+</a>
 
 <ng-template #nullCategory>
   <div class="category null">

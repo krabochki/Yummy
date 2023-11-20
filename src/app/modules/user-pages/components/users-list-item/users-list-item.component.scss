@@ -7,13 +7,16 @@ p {
   column-gap: 0.3em;
   align-items: center;
 }
+
 .geo {
   fill: var(--color-foreground);
   height: 1em;
 }
+
 .star {
   width: 0.75em;
   height: 0.75em;
+
   .star-svg {
     display: flex;
     align-items: end;
@@ -23,13 +26,15 @@ p {
 
 * {
   -webkit-touch-callout: none;
-  -webkit-user-select: none; /* Disable selection/copy in UIWebView */
+  -webkit-user-select: none;
+  /* Disable selection/copy in UIWebView */
 }
 
 .admin {
   .star-svg {
     fill: var(--color-admin);
   }
+
   .userpic {
     border: 3px solid var(--color-admin);
   }
@@ -38,17 +43,21 @@ p {
     color: var(--color-admin);
   }
 }
+
 .moder {
   .star-svg {
     fill: var(--color-moderator);
   }
+
   .userpic {
     border: 3px solid var(--color-moderator);
   }
+
   h1 {
     color: var(--color-moderator);
   }
 }
+
 .main-wrap {
   display: flex;
   background-color: var(--color-background-deeper-unactive);
@@ -59,6 +68,7 @@ p {
   row-gap: 0.5em;
   border-radius: 0.5em;
   transition: 0.2s ease-in-out;
+
   &:hover {
     scale: 1.05;
     background-color: var(--color-background-deeper);
@@ -78,6 +88,7 @@ p {
     overflow: hidden;
   }
 }
+
 .follow,
 .unfollow {
   display: flex;
@@ -105,6 +116,7 @@ p {
   border-radius: 100%;
   width: 2em;
   height: 2em;
+
   .follow-svg {
     z-index: 1;
     fill: var(--color-background);
@@ -115,11 +127,25 @@ p {
     align-items: center;
   }
 }
+
 .unfollow {
   background-color: var(--color-primary);
+
   &::after {
     background-color: var(--color-primary-focus);
   }
+}
+
+button.disabled,.follow-btn.follow-button.disabled {
+  background-color: color-mix(in srgb, var(--scroll-thumb) 90%, var(--color-foreground) 10%)  ;
+  cursor: default;
+   &:after{
+    display: none;
+   }
+}
+app-modal{
+  position: fixed;
+  z-index: 10;
 }
 .wrap {
   display: flex;
@@ -137,6 +163,7 @@ p {
     line-height: 1;
     line-height: 1.2;
   }
+
   h2 {
     line-height: 1;
     max-width: 9em;
@@ -149,6 +176,7 @@ p {
     font-size: 0.8em;
   }
 
+
   .userpic {
     width: 2em;
     border-radius: 100%;
@@ -156,6 +184,7 @@ p {
     background-size: cover;
     background-image: url("../../../../../assets/images/userpic.png");
     position: relative;
+
     .emoji {
       position: absolute;
       display: flex;
@@ -166,6 +195,7 @@ p {
     }
   }
 }
+
 .follows {
   display: flex;
   justify-content: space-between;
@@ -174,6 +204,7 @@ p {
   span {
     font-weight: 500;
   }
+
   p {
     white-space: nowrap;
     max-width: 30%;
@@ -195,8 +226,8 @@ p {
 }
 
 @media (max-width: 1080px) {
- .wrap .userpic .emoji {
-right: -0.6em;
+  .wrap .userpic .emoji {
+    right: -0.6em;
     bottom: -0.5em;
     zoom: 0.9;
   }
@@ -204,14 +235,15 @@ right: -0.6em;
 
 @media (max-width: 620px) {
 
-.wrap .userpic .emoji {
-        right: -0.7em;
-        bottom: -0.6em;
-        zoom: 0.9;
-    }
+  .wrap .userpic .emoji {
+    right: -0.7em;
+    bottom: -0.6em;
+    zoom: 0.9;
+  }
 
   .follows {
     flex-direction: column;
+
     p {
       max-width: unset;
       text-align: center;
@@ -219,9 +251,11 @@ right: -0.6em;
       font-size: 0.9em;
     }
   }
+
   .wrap {
     justify-content: center;
   }
+
   .follow-button {
     display: inline;
     margin: 0.3em 0;
@@ -233,50 +267,60 @@ right: -0.6em;
     font-size: 1em;
     line-height: 1.2;
   }
+
   .follow-btn.follow-button {
     background-color: var(--color-secondary);
   }
+
   .unfollow-btn.follow-button {
     background-color: var(--color-primary);
   }
+
   .follow,
   .unfollow {
     display: none;
   }
+
   .main-and-follow {
     display: flex;
     flex-direction: column;
     row-gap: 0.5em;
   }
 }
+
 @media (max-width: 480px) {
 
-.wrap .userpic .emoji {
-        right: -0.6em;
-        bottom: -0.5em;
-        zoom: 1.1;
-    }
+  .wrap .userpic .emoji {
+    right: -0.6em;
+    bottom: -0.5em;
+    zoom: 1.1;
+  }
 
   .main-wrap {
     padding: 1em 0.5em;
   }
+
   .wrap {
     flex-direction: column;
     row-gap: 0.5em;
+
     h2 {
       max-width: 90%;
       margin: 0 auto;
       width: min-content;
     }
+
     .userpic {
       width: 3em;
 
       height: 3em;
     }
   }
+
   .star-h1 {
     justify-content: center;
   }
+
   h1,
   h2 {
     width: min-content;
@@ -288,6 +332,6 @@ right: -0.6em;
     display: none;
     justify-content: center;
   }
-  .follows {
-  }
+
+  .follows {}
 }

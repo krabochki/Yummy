@@ -14,7 +14,7 @@
     ></svg-icon>
   </div>
 </ng-template>
-<div *ngIf="dataLoaded && recipe.id > 0; else sceleton" class="recipe">
+<div [routerLink]="'/recipes/list/'+recipe.id" *ngIf="dataLoaded && recipe.id > 0; else sceleton" class="recipe">
   <div class="top" *ngIf="!shortView">
     <div
       [title]="
@@ -24,7 +24,7 @@
       "
       [ngClass]="{ disabled: recipe.status === 'awaits' }"
       *ngIf="recipe.authorId === currentUser.id || recipe.status === 'public'"
-      (click)="
+      (click)=" innerClick($event);
         recipe.status !== 'awaits'
           ? author.id !== currentUser.id && currentUser.id!==0
             ? makeThisRecipeFavorite()
@@ -73,7 +73,7 @@
     >
       <div
         class="top-button"
-        (click)="editMode = true"
+        (click)="innerClick($event);editMode = true"
         *ngIf="recipe.status === 'private'"
       >
         <svg-icon
@@ -86,7 +86,7 @@
       <div
         class="top-button"
         *ngIf="recipe.status === 'public'"
-        (click)="makeThisRecipeFavorite()"
+        (click)="innerClick($event);makeThisRecipeFavorite()"
       >
         <svg-icon
           *ngIf="!isRecipeFavorite; else favorite"
@@ -106,7 +106,7 @@
       <div
         class="top-button"
         *ngIf="recipe.status === 'private'"
-        (click)="publishModalShow = true"
+        (click)="innerClick($event);publishModalShow = true"
       >
         <svg-icon
           [src]="'assets/images/svg/publish.svg'"
@@ -114,7 +114,7 @@
           class="remove-svg"
         ></svg-icon>
       </div>
-      <div class="top-button" (click)="deleteRecipeModalShow = true">
+      <div class="top-button" (click)="innerClick($event);deleteRecipeModalShow = true">
         <svg-icon
           [applyClass]="true"
           class="remove-svg"
@@ -146,7 +146,7 @@
     </div>
 
     <div class="rate-panel" *ngIf="!shortView && recipe.status === 'public'">
-      <div class="rate-item likes" (click)="likeThisRecipe()">
+      <div class="rate-item likes" (click)="innerClick($event);likeThisRecipe()">
         <svg-icon
           *ngIf="!isRecipeLiked"
           [src]="'assets/images/svg/like.svg'"
@@ -165,7 +165,7 @@
       </div>
       <div
         class="rate-item cooks"
-        (click)="
+        (click)="innerClick($event);
           !isRecipeCooked && currentUser.id > 0
             ? (voteModalShow = true)
             : cookThisRecipe()

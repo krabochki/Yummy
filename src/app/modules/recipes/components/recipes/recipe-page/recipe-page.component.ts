@@ -226,6 +226,13 @@ export class RecipePageComponent implements OnInit, OnDestroy {
                     this.commentsToShow = this.recipe.comments.slice(0, 4);
                   }
 
+                  this.recipe.ingredients.forEach((ingredient) => {
+                    const findedIngredient = this.recipe.ingredients.find((i) => i === ingredient);
+                    if (findedIngredient) {
+                      findedIngredient.quantity = ingredient.quantity.replace(',','.');
+                    }
+                  })
+
                   this.setCategories();
                   this.setReadingTimeInMinutes();
                   this.setStatistics();

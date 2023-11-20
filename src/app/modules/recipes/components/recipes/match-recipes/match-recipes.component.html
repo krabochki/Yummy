@@ -71,13 +71,7 @@
             <a *ngFor="let ingredient of autoIngredients" [routerLink]="findIngredientByName(ingredient).id
                           ? ('/ingredients/list/'+findIngredientByName(ingredient).id)
                           :null">
-              <li (click)="autocompleteClick(ingredient, $event)" class="a-ingredient">
-                <p>{{ ingredient }}</p>
-                <span class="recipes-count">{{ uniqueIngredientsArray[ingredient] }}
-                  <span appPluralRu="" [arVariants]="['рецепт', 'рецепта', 'рецептов']"
-                    [value]="uniqueIngredientsArray[ingredient]"></span>
-                </span>
-              </li>
+              <li (click)="autocompleteClick(ingredient, $event)" class="a-ingredient">{{ingredient.trim()}}</li>
             </a>
           </ul>
         </div>

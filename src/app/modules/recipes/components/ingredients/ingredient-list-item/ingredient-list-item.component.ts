@@ -13,6 +13,7 @@ import { IngredientService } from '../../../services/ingredient.service';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
+import { PluralizationService } from 'src/app/modules/controls/directives/plural.service';
 
 @Component({
   selector: 'app-ingredient-list-item',
@@ -45,6 +46,7 @@ export class IngredientListItemComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private authService: AuthService,
     private ingredientService: IngredientService,
+    private pluralService:PluralizationService
   ) {}
   ngOnInit() {
     this.ingredientService.ingredients$
@@ -88,6 +90,24 @@ export class IngredientListItemComponent implements OnInit, OnDestroy {
       });
   }
 
+  get title(): string{
+    return this.ingredient.ingredients
+      ? `${this.ingredient.name} (в ингредиентах этой группы ${
+          this.recipesNumber
+        } ${this.pluralService.getPluralForm(this.recipesNumber, [
+          'рецепт',
+          'рецепта',
+          'рецептов',
+        ])} без повторений)`
+      : `${this.ingredient.name} (${
+          this.recipesNumber
+        } ${this.pluralService.getPluralForm(this.recipesNumber, [
+          'рецепт',
+          'рецепта',
+          'рецептов',
+        ])} с этим ингредиентом)`;
+  }
+
   get link() {
     return this.ingredient.ingredients
       ? '/ingredients/groups/' + this.ingredient.id
@@ -129,6 +149,12 @@ export class IngredientListItemComponent implements OnInit, OnDestroy {
 
   }
 
+    clickDeleteButton($event: any) {
+    $event.preventDefault();
+    $event.stopPropagation();
+    this.deleteModalShow = true;
+    }
+  
   ngOnDestroy(): void {
     this.destroyed$.next();
     this.destroyed$.complete();

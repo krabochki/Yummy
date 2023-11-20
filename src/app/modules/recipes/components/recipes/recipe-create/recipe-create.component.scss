@@ -1,5 +1,6 @@
 
 
+
 .close-button{
  
   zoom:0.9;
@@ -75,7 +76,7 @@ app-modal{
 hr {
   height: 0.5px;
   width: 100%;
-  margin-top: 1.3em;
+  margin-top: 0.75em;
   opacity: 0.5;
   background-color: var(--color-foreground-unactive);
 }
@@ -92,7 +93,6 @@ h1 {
 h2 {
   font-weight: 600;
   font-size: 1.2em;
-  margin-bottom: 0.3em;
 }
 
 .unique-content {
@@ -173,16 +173,20 @@ app-autocomplete,
   width: 100%;
 }
 .buttons {
+  row-gap: 1.5em;
+  display: flex;
+  flex-direction: column;
   zoom: 0.9;
+  .button{
+    align-items: center;
+    justify-content: center;
+  }
   app-button {
     display: flex;
     justify-content: center;
-    margin-bottom: 1.5em;
   }
   p {
-    margin-bottom: 1em;
-    text-align: center;
-    line-height: 1;
+    line-height: 1.2;
   }
 }
 
@@ -288,6 +292,9 @@ fill: var(--color-background);
         &.completed {
           background-color: var(--color-secondary);
         }
+                 &.not-valid {
+                  background-color: var(--color-primary);
+                 }
       }
 
       .nav-step-block-inner {
@@ -314,6 +321,10 @@ fill: var(--color-background);
           &.completed {
             color: var(--color-foreground);
           }
+ &.not-valid {
+   color: var(--color-primary);
+ }
+          
         }
         .nav-step-circle {
           display: flex;
@@ -336,6 +347,9 @@ fill: var(--color-background);
           &.active {
             border-color: var(--color-secondary);
             color: var(--color-secondary);
+          }
+          &.not-valid{
+            border-color: var(--color-primary);color: var(--color-primary);
           }
         }
       }
@@ -493,7 +507,7 @@ svg-icon {
 
       height: 7em;    background-color: var(--color-background-deeper-unactive);
 
-      background-size: cover;
+      background-size: 103%;
       background-position: center;
       border-radius: var(--space-m);
 
@@ -523,8 +537,12 @@ svg-icon {
 
 .error {
   line-height: 1;
-  margin-top: 0.2em;
+  margin-top: 1.2em;
   color: var(--color-primary);
+  p{
+    line-height: 1;
+    color: var(--color-primary);
+  }
   font-size: 0.7rem;
 }
 
@@ -821,6 +839,9 @@ app-modal{
   }
 }
 
+.description-container{
+  margin-bottom:1em;
+}
 .more-button{
         text-decoration: underline;
         display: flex;
@@ -843,9 +864,23 @@ app-modal{
 }
 
 
+.button {
+  display: grid;
+  column-gap: 3em;
+  align-items: center;
+  justify-content: center;
+  grid-template-columns: 1fr max-content;
+}
+
 @media(max-width:480px){
 
-  
+  .button {
+      display: grid;
+      row-gap: 1em;
+      align-items: center;
+      justify-content: center;
+      grid-template-columns: 1fr;
+    }
 .close-button{
  
   zoom:1.1;
@@ -954,3 +989,4 @@ display: none;}
    
   }
 }
+

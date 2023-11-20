@@ -140,11 +140,32 @@ input:focus {
   background-color: var(--color-background-deeper);
 }
 
+.howmuch {
+  text-align: right;
+  position: absolute;
+  font-size: 0.7em;
+  right: 0;
+  color: var(--color-foreground-unactive);
+}
+
 input {
   width: 100%;
 
   &:disabled {
     opacity: 0.5;
+  }
+
+        &.uncorrect:focus {
+          border-color: var(--color-primary);
+        }
+    
+        &.uncorrect {
+          caret-color: var(--color-primary);
+          border-color: var(--color-primary);
+        }
+  
+  &::placeholder{
+    font-weight: 300;
   }
 
   background-color: var(--color-background-deeper-unactive);

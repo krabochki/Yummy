@@ -173,7 +173,6 @@ h2 {
   .i-have,
   .i-have p {
     text-decoration: line-through;
-    text-decoration-thickness: 1px;
     color: var(--color-foreground-unactive-lighter);
   }
   .checkbox {
@@ -530,6 +529,10 @@ app-social-button,.social{
     min-width: 2em;
     margin-right: 1em;
     height: 2em;
+
+    &.commentpic{
+      cursor: default;
+    }
   }
 
   .policy {

@@ -397,6 +397,12 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
     }
     this.deleteRecipeModalShow = false;
   }
+
+  innerClick($event: any) {
+    $event.stopPropagation();
+    $event.preventDefault();
+  }
+
   handleSuccessEditModal() {
     //?????????????? если наоборот сначала обновить то это модальное окно пропускается
     this.recipeService.updateRecipe(this.editedRecipe).subscribe(() => {

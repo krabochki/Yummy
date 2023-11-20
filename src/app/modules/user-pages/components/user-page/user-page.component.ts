@@ -25,7 +25,7 @@ import { NotificationService } from '../../services/notification.service';
 import { INotification } from '../../models/notifications';
 import { getFormattedDate } from 'src/tools/common';
 import { customEmojis, emojisRuLocale } from './emoji-picker-data';
-import { EmojiData } from '@ctrl/ngx-emoji-mart/ngx-emoji';
+import { Emoji, EmojiData } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 
 @Component({
   selector: 'app-user-page',
@@ -241,28 +241,35 @@ export class UserPageComponent implements OnInit, OnDestroy {
 
   //подписка текущего пользователя на людей в списке
   follow() {
-    this.user = this.userService.addFollower(this.user, this.currentUser.id);
-    this.userService.updateUsers(this.user).subscribe(() => {
-      if (this.userService.getPermission('new-follower', this.user)) {
-        const notify: INotification = this.notifyService.buildNotification(
-          'Новый подписчик',
-          `Кулинар ${
-            this.currentUser.fullName
-              ? this.currentUser.fullName
-              : '@' + this.currentUser.username
-          } подписался на тебя`,
-          'info',
-          'user',
-          '/cooks/list/' + this.currentUser.id,
-        );
-        this.notifyService.sendNotification(notify, this.user).subscribe();
-      }
-    });
+    if (this.currentUser.id > 0) {
+      this.user = this.userService.addFollower(this.user, this.currentUser.id);
+      this.userService.updateUsers(this.user).subscribe(() => {
+        if (this.userService.getPermission('new-follower', this.user)) {
+          const notify: INotification = this.notifyService.buildNotification(
+            'Новый подписчик',
+            `Кулинар ${
+              this.currentUser.fullName
+                ? this.currentUser.fullName
+                : '@' + this.currentUser.username
+            } подписался на тебя`,
+            'info',
+            'user',
+            '/cooks/list/' + this.currentUser.id,
+          );
+          this.notifyService.sendNotification(notify, this.user).subscribe();
+        }
+      });
+    }
   }
 
   unfollow() {
-    this.user = this.userService.removeFollower(this.user, this.currentUser.id);
-    this.userService.updateUsers(this.user).subscribe();
+    if (this.currentUser.id > 0) {
+      this.user = this.userService.removeFollower(
+        this.user,
+        this.currentUser.id,
+      );
+      this.userService.updateUsers(this.user).subscribe();
+    }
   }
 
   edit() {
@@ -311,6 +318,8 @@ export class UserPageComponent implements OnInit, OnDestroy {
     this.hireSuccessModalShow = false;
   }
 
+  isButtonDisabled = false;
+
   protected setEmoji(event: any): void {
     const emoji = event.emoji;
     if (emoji.id !== this.selectedEmoji?.id) {
@@ -320,10 +329,20 @@ export class UserPageComponent implements OnInit, OnDestroy {
     }
     this.showEmojiPicker = false;
   }
-  protected unsetEmoji(): void {
-    this.currentUser.emojiStatus = undefined;
-    this.userService.updateUsers(this.currentUser).subscribe();
-    this.selectedEmoji = null;
+
+  protected unsetEmoji($event: any): void {
+    $event.stopPropagation();
+    $event.preventDefault();
+    if (this.selectedEmoji) {
+      this.currentUser.emojiStatus = undefined;
+      this.userService.updateUsers(this.currentUser).subscribe();
+      this.selectedEmoji = null;
+      this.showEmojiPicker = false;
+    }
+  }
+
+  openEmojiPicker() {
+    if (this.isSameUser) this.showEmojiPicker = !this.showEmojiPicker;
   }
 
   ngOnDestroy(): void {

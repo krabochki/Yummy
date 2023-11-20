@@ -4,12 +4,13 @@
   <h1 *ngIf="getPublicCategories(section).length>0 || filter==='popular' || filter==='sections'">{{ title }}</h1>
 
   <app-button
+    [disabled]="currentUser.id>0"
     class="add-category"
     [icon]="'add-category'"
     *ngIf="filter === 'sections'"
     [color]="'prim'"
     [text]="'Создать категорию'"
-            (click)="creatingMode = true"
+            (click)="createCategoryButtonClick()"
 
     [rounded]="true"
   ></app-button>
@@ -59,26 +60,16 @@
         </div>
         <li
           *ngFor="let item of autocomplete"
-          [routerLink]="
-            filter !== 'sections' ? '/categories/list/' + item.id : null
-          "
-        >
-          <p
-            (mousedown)="navigateTo(
+           (mousedown)="navigateTo(
               getSectionOfCategory(item).id === 0
                 ? '/sections/list/' + item.id
                 : '/categories/list/' + item.id
             )"
-          >
+        >
+        
             {{ item.name }}
-          </p>
-          <span
-            (mousedown)="navigateTo('/sections/list/' + getSectionOfCategory(item).id)"
-            *ngIf="
-              filter !== 'my-recipes' && getSectionOfCategory(item).id !== 0
-            "
-            >{{ getSectionOfCategory(item).name }}</span
-          >
+        
+       
         </li>
       </ul>
     </div>
@@ -176,3 +167,9 @@
   @modal
   *ngIf="creatingMode"
 ></app-category-creating>
+
+
+<app-modal @modal *ngIf="noAccessModalShow" [style]="'prim'" [title]="'Доступ к разделу ограничен'" [type]="'yesOrNo'"
+  (resultEmit)="handleNoAccessModal($event)" [buttonsText]="['Давайте', 'Не сейчас']" [description]="
+    'Доступ к этой функции имеют только зарегистрированные пользователи. Хотите зарегистрироваться или войти в существующий аккаунт?'
+  "></app-modal>

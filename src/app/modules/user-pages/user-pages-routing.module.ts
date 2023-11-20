@@ -79,6 +79,7 @@ const routes: Routes = [
 
       {
         path: 'cooks/updates',
+        canActivate: [AuthGuard],
         data: { filter: 'updates' },
         component: SomeRecipesPageComponent,
       },

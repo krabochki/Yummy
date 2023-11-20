@@ -4,6 +4,7 @@ import {
   Input,
   OnChanges,
   Output,
+  forwardRef,
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ICategory, ISection } from '../../recipes/models/categories';
@@ -15,6 +16,7 @@ import {
   IIngredientsGroup,
 } from '../../recipes/models/ingredients';
 import { IngredientService } from '../../recipes/services/ingredient.service';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
 
 export interface SectionGroup {
   section: ISection;
@@ -26,21 +28,32 @@ export interface SectionGroup {
   templateUrl: './autocomplete.component.html',
   styleUrls: ['./autocomplete.component.scss'],
   animations: [trigger('height', heightAnim())],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => AutocompleteComponent),
+      multi: true,
+    },
+  ],
 })
 export class AutocompleteComponent implements OnChanges {
   @Output() categoryEmitter = new EventEmitter<ICategory>();
   @Output() sectionEmitter = new EventEmitter<ISection>();
   @Output() ingredientEmitter = new EventEmitter<IIngredient>();
   @Output() groupEmitter = new EventEmitter<IIngredientsGroup>();
-
+  @Input() startOnTyping = false;
+  @Input() error: string = '';
   @Input() placeholder: string = '';
   @Input() disabled: boolean = false;
   @Input() group: SectionGroup[] = [];
   @Input() ingredients: IIngredient[] = [];
+  @Input() max?: number | undefined = undefined;
+  @Input() leaveValueAfterBlur = false;
   filterIngredients: IIngredient[] = [];
   @Input() ingredientsGroups: IIngredientsGroup[] = [];
   filterIngredientsGroups: IIngredientsGroup[] = [];
   @Input() sectionMode = false;
+  @Input() clearValueOnBlur = false;
 
   isSleep: boolean = false; //подсвечивается ли плейсхолдер
   isFocused = false; //есть ли фокус в инпуте (нужно ли подсвечивать плейсхолдер)
@@ -82,7 +95,9 @@ export class AutocompleteComponent implements OnChanges {
   }
 
   focus() {
-    this.autocompleteShow = true;
+    if (!this.startOnTyping || (this.startOnTyping && this.value)) {
+      this.autocompleteShow = true;
+    }
     this.isFocused = true;
     this.isSleep = false;
   }
@@ -90,7 +105,15 @@ export class AutocompleteComponent implements OnChanges {
   blur() {
     this.autocompleteShow = false;
     this.isFocused = false;
-    if (this.value != '') {
+    if (this.clearValueOnBlur) {
+      this.value = '';
+      this.mySections = JSON.parse(JSON.stringify(this.allSections));
+      this.filterIngredientsGroups = this.ingredientsGroups;
+
+      this.filterIngredients = this.ingredients;
+      this.group = JSON.parse(JSON.stringify(this.fullGroup));
+    }
+    if (this.value !== '') {
       this.isFocused = true;
       this.isSleep = true;
     }
@@ -118,9 +141,19 @@ export class AutocompleteComponent implements OnChanges {
   }
   addIngredient(listIngredient: IIngredient) {
     this.ingredientEmitter.emit(listIngredient);
-    setTimeout(() => {
-      this.filterIngredients = this.ingredients;
-    }, 300);
+
+    if (this.leaveValueAfterBlur) {
+      this.value = listIngredient.name;
+      setTimeout(() => {
+        this.filterIngredientsBySearchquery();
+      }, 300);
+    } else {
+      this.value = '';
+      setTimeout(() => {
+        this.filterIngredients = this.ingredients;
+      }, 300);
+    }
+    this.change();
   }
   copyOfFullGroup() {
     setTimeout(() => {
@@ -169,26 +202,37 @@ export class AutocompleteComponent implements OnChanges {
     }
   }
 
+  filterIngredientsBySearchquery() {
+    this.filterIngredients = [];
+    const searchQuery = this.value.toLowerCase().replace(/\s/g, '');
+    const filterIngredients: IIngredient[] = [];
+    const allIngredients = this.ingredients;
+
+    allIngredients.forEach((ingredient: IIngredient) => {
+      const ingredientNames: string[] =
+        this.ingredientService.getAllNamesOfIngredient(ingredient);
+      if (ingredientNames.some((name) => name.includes(searchQuery))) {
+        filterIngredients.push(ingredient);
+      }
+    });
+
+    this.filterIngredients = filterIngredients;
+  }
+
   searchIngredients() {
     if (this.value !== '') {
-      this.filterIngredients = [];
-      const searchQuery = this.value.toLowerCase().replace(/\s/g, '');
-      const filterIngredients: IIngredient[] = [];
-      const allIngredients = this.ingredients;
-
-      allIngredients.forEach((ingredient: IIngredient) => {
-        const ingredientNames: string[] =
-          this.ingredientService.getAllNamesOfIngredient(ingredient);
-        if (ingredientNames.some((name) => name.includes(searchQuery))) {
-          filterIngredients.push(ingredient);
-        }
-      });
-
-      filterIngredients.forEach((ingredient) => {
-        this.filterIngredients.push(ingredient);
-      });
+      if((this.filterIngredients.length>0 && this.startOnTyping) || !this.startOnTyping)
+      this.autocompleteShow = true;
+      this.filterIngredientsBySearchquery();
+      if (this.startOnTyping && this.filterIngredients.length === 0) {
+        this.autocompleteShow = false;
+      }
     } else {
-      this.filterIngredients = this.ingredients;
+      if (this.startOnTyping) {
+        this.autocompleteShow = false;
+      } else {
+        this.filterIngredients = this.ingredients;
+      }
     }
   }
 
@@ -262,5 +306,27 @@ export class AutocompleteComponent implements OnChanges {
         this.searchCategories();
         break;
     }
+  }
+
+  change() {
+    this.onChange(this.value);
+  }
+  onChange: any = () => {
+    //
+  };
+  onTouched: any = () => {
+    //
+  };
+  writeValue(value: string): void {
+    this.value = value;
+  }
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
+  setDisabledState?(isDisabled: boolean): void {
+    this.disabled = isDisabled;
   }
 }

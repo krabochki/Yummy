@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Input,
   OnDestroy,
@@ -17,6 +18,8 @@ import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { SectionService } from '../../../services/section.service';
 import { IRecipe } from '../../../models/recipes';
 import { ICategory, ISection } from '../../../models/categories';
+import { PluralizationService } from 'src/app/modules/controls/directives/plural.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-category-list-item',
@@ -40,12 +43,34 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
   private sections: ISection[] = [];
   private recipes: IRecipe[] = [];
   recipesNumber = 0;
+
+  get title(): string {
+    return this.category.categories
+      ? `${this.category.name} (в категориях этого раздела ${
+          this.recipesNumber
+        } ${this.pluralService.getPluralForm(this.recipesNumber, [
+          'рецепт',
+          'рецепта',
+          'рецептов',
+        ])} без повторений)`
+      : `${this.category.name} (${
+          this.recipesNumber
+        } ${this.pluralService.getPluralForm(this.recipesNumber, [
+          'рецепт',
+          'рецепта',
+          'рецептов',
+        ])} в этой категории)`;
+  }
+
   constructor(
     private userService: UserService,
     private recipeService: RecipeService,
     private sectionService: SectionService,
     private authService: AuthService,
+    private pluralService: PluralizationService,
+    private router:Router,
     private categoryService: CategoryService,
+    private cd:ChangeDetectorRef
   ) {}
   ngOnInit() {
     this.sectionService.sections$
@@ -71,7 +96,6 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
                 const sectionRecipesIds: number[] = [];
                 //перебираем категории в секции
                 if (this.category.categories)
-                
                   this.category.categories.forEach((element: number) => {
                     const categoryRecipes =
                       this.recipeService.getRecipesByCategory(
@@ -89,6 +113,7 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
                     });
                   });
                 this.recipesNumber = sectionRecipesIds.length;
+                this.cd.markForCheck()
               }
             });
         });
@@ -96,6 +121,12 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
 
   protected deleteModalShow: boolean = false;
   protected successDeleteModalShow: boolean = false;
+
+  clickDeleteButton($event: any) {
+    $event.preventDefault();
+    $event.stopPropagation();
+    this.deleteModalShow = true;
+  }
 
   protected handleDeleteModal(answer: boolean) {
     if (answer) this.successDeleteModalShow = true;
@@ -112,17 +143,24 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
   protected deleteCategory(): void {
     if (this.context === 'category')
       this.categoryService.deleteCategory(this.category.id).subscribe(() => {
-        const subscribes: Observable<IRecipe|ISection>[] = [];
-        const section: ISection = this.sectionService.getSectionOfCategory(this.sections, this.category);
-        section.categories = section.categories.filter(c=>c!==this.category.id)
-        subscribes.push(this.sectionService.updateSections(section))
+        const subscribes: Observable<IRecipe | ISection>[] = [];
+        const section: ISection = this.sectionService.getSectionOfCategory(
+          this.sections,
+          this.category,
+        );
+        section.categories = section.categories.filter(
+          (c) => c !== this.category.id,
+        );
+        subscribes.push(this.sectionService.updateSections(section));
         this.recipeService
           .getRecipesByCategory(this.recipes, this.category)
           .forEach((recipe) => {
             const updatedRecipe = {
               ...{ ...recipe },
-              categories:recipe.categories.filter(c=>c!==this.category.id)
-            }
+              categories: recipe.categories.filter(
+                (c) => c !== this.category.id,
+              ),
+            };
             recipe.categories = recipe.categories.filter(
               (c) => c !== this.category.id,
             );
@@ -136,11 +174,11 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
 
   get showDeletingButton() {
     const permissionName: PermissionContext =
-    this.context === 'category'
-      ? 'show-category-deleting'
-      : 'show-section-deleting';
-  return this.userService.getPermission(permissionName, this.currentUser);
-   }
+      this.context === 'category'
+        ? 'show-category-deleting'
+        : 'show-section-deleting';
+    return this.userService.getPermission(permissionName, this.currentUser);
+  }
 
   ngOnDestroy(): void {
     this.destroyed$.next();

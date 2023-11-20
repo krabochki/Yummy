@@ -108,29 +108,32 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
 
   //подписка текущего пользователя на людей в списке
   follow(user: IUser) {
-    this.userService.addFollower(user, this.currentUser?.id);
-    this.updateUser(user);
+   if(this.currentUser.id > 0){
+      this.userService.addFollower(user, this.currentUser?.id);
+      this.updateUser(user);
 
-    if (this.userService.getPermission('new-follower', this.user)) {
-      const notify: INotification = this.notifyService.buildNotification(
-        'Новый подписчик',
-        `Кулинар ${
-          this.currentUser.fullName
+      if (this.userService.getPermission('new-follower', this.user)) {
+        const notify: INotification = this.notifyService.buildNotification(
+          'Новый подписчик',
+          `Кулинар ${this.currentUser.fullName
             ? this.currentUser.fullName
             : '@' + this.currentUser.username
-        } подписался на тебя`,
-        'info',
-        'user',
-        '/cooks/list/' + this.currentUser.id,
-      );
-      this.notifyService.sendNotification(notify, user).subscribe();
+          } подписался на тебя`,
+          'info',
+          'user',
+          '/cooks/list/' + this.currentUser.id,
+        );
+        this.notifyService.sendNotification(notify, user).subscribe();
+      }
     }
   }
 
   //отписка текущего пользователя от людей в списке
   unfollow(user: IUser) {
-    this.userService.removeFollower(user, this.currentUser?.id);
-    this.updateUser(user);
+    if (this.currentUser.id > 0) {
+      this.userService.removeFollower(user, this.currentUser?.id);
+      this.updateUser(user);
+    }
   }
 
   searchOnOff() {

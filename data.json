@@ -725,15 +725,6 @@
           "type": 0
         },
         {
-          "id": 8,
-          "name": "Вино",
-          "note": "Только не Санта Стефана",
-          "howMuch": "1 бутылка?)))",
-          "isBought": true,
-          "relatedRecipe": 0,
-          "type": 0
-        },
-        {
           "id": 7,
           "name": "Свинина",
           "note": "",
@@ -747,7 +738,7 @@
           "name": "Корм для мопсов",
           "note": null,
           "howMuch": null,
-          "isBought": false,
+          "isBought": true,
           "relatedRecipe": 0,
           "type": 5
         },
@@ -788,24 +779,6 @@
           "type": 0
         },
         {
-          "id": 18,
-          "name": "Краситель (любой цвет)",
-          "note": "",
-          "howMuch": "5 г",
-          "isBought": true,
-          "relatedRecipe": 0,
-          "type": 0
-        },
-        {
-          "id": 20,
-          "name": "Бананы",
-          "note": "",
-          "howMuch": "",
-          "isBought": false,
-          "relatedRecipe": 76,
-          "type": 0
-        },
-        {
           "id": 23,
           "name": "Апельсины 🍊",
           "note": "",
@@ -840,6 +813,15 @@
           "isBought": false,
           "relatedRecipe": 86,
           "type": 16
+        },
+        {
+          "id": 27,
+          "name": "Бананы",
+          "note": "",
+          "howMuch": "",
+          "isBought": false,
+          "relatedRecipe": 76,
+          "type": 3
         }
       ]
     },
@@ -1373,6 +1355,228 @@
     {
       "id": 27,
       "user": 37,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 28,
+      "user": 38,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 29,
+      "user": 39,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 30,
+      "user": 39,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 31,
+      "user": 40,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 32,
+      "user": 41,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 33,
+      "user": 42,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 34,
+      "user": 40,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 35,
+      "user": 41,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 36,
+      "user": 42,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 37,
+      "user": 43,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 38,
+      "user": 40,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 39,
+      "user": 41,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 40,
+      "user": 42,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 41,
+      "user": 43,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 42,
+      "user": 44,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 43,
+      "user": 45,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 44,
+      "user": 46,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 45,
+      "user": 47,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 46,
+      "user": 48,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 47,
+      "user": 49,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 48,
+      "user": 50,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 49,
+      "user": 51,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 50,
+      "user": 52,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 51,
+      "user": 53,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 52,
+      "user": 54,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 53,
+      "user": 55,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 54,
+      "user": 56,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 55,
+      "user": 57,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 56,
+      "user": 58,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 57,
+      "user": 59,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 58,
+      "user": 60,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 59,
+      "user": 61,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 60,
+      "user": 62,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 61,
+      "user": 63,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 62,
+      "user": 64,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 63,
+      "user": 65,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 64,
+      "user": 66,
       "shoppingList": [],
       "calendarEvents": []
     }
@@ -2029,7 +2233,8 @@
       "favoritesId": [
         1,
         6,
-        13
+        13,
+        5
       ],
       "likesId": [
         6,
@@ -2125,7 +2330,8 @@
         8,
         2,
         7,
-        1
+        1,
+        5
       ],
       "status": "public",
       "origin": "Ukraine",
@@ -2653,7 +2859,6 @@
         9,
         3,
         13,
-        5,
         27,
         1
       ],
@@ -2664,8 +2869,8 @@
         1,
         6,
         13,
-        5,
-        27
+        27,
+        5
       ],
       "status": "public",
       "origin": "Sweden",
@@ -3167,7 +3372,8 @@
           "date": "2023-11-11T20:28:27.937Z",
           "likesId": [],
           "dislikesId": [
-            1
+            1,
+            5
           ]
         }
       ],
@@ -4247,7 +4453,6 @@
         1
       ],
       "favoritesId": [
-        5,
         37
       ],
       "id": 69,
@@ -5125,7 +5330,16 @@
         5
       ],
       "id": 83,
-      "comments": [],
+      "comments": [
+        {
+          "id": 1,
+          "text": "ffffdffdfd",
+          "authorId": 5,
+          "date": "2023-11-18T01:19:31.838Z",
+          "likesId": [],
+          "dislikesId": []
+        }
+      ],
       "publicationDate": "2023-11-10T23:40:04.912Z",
       "status": "public"
     },
@@ -5192,7 +5406,9 @@
       "categories": [],
       "cooksId": [],
       "likesId": [],
-      "favoritesId": [],
+      "favoritesId": [
+        5
+      ],
       "id": 85,
       "comments": [],
       "publicationDate": "2023-11-14T14:48:07.746Z",
@@ -5201,7 +5417,12 @@
     {
       "name": "Яблочный пирог",
       "reports": [],
-      "statistics": [],
+      "statistics": [
+        {
+          "user": 5,
+          "answer": false
+        }
+      ],
       "ingredients": [
         {
           "name": "Яблоки",
@@ -5245,13 +5466,116 @@
       "servings": 1,
       "authorId": 5,
       "categories": [],
-      "cooksId": [],
+      "cooksId": [
+        5
+      ],
       "likesId": [],
       "favoritesId": [],
       "id": 86,
       "comments": [],
       "publicationDate": "2023-11-14T19:03:14.387Z",
       "status": "public"
+    },
+    {
+      "name": "Черничное варенье",
+      "reports": [],
+      "statistics": [],
+      "ingredients": [
+        {
+          "name": "Черника",
+          "quantity": "500",
+          "unit": "г"
+        },
+        {
+          "name": "Сахар",
+          "quantity": "2,5",
+          "unit": "кг"
+        },
+        {
+          "name": "Вода",
+          "quantity": "1,5",
+          "unit": "л"
+        }
+      ],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "",
+      "cookingTime": "",
+      "origin": "",
+      "nutritions": [],
+      "servings": 1,
+      "authorId": 5,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 87,
+      "comments": [],
+      "publicationDate": "2023-11-18T16:08:44.230Z",
+      "status": "private"
+    },
+    {
+      "name": "Яблочный пирог",
+      "reports": [],
+      "statistics": [],
+      "ingredients": [
+        {
+          "name": "Яблоко",
+          "quantity": "3",
+          "unit": "шт"
+        },
+        {
+          "name": "Мука",
+          "quantity": "1",
+          "unit": "стакан"
+        },
+        {
+          "name": "Сахарная пудра",
+          "quantity": "50",
+          "unit": "гр"
+        },
+        {
+          "name": "Сахар",
+          "quantity": "1",
+          "unit": "стакан"
+        }
+      ],
+      "instructions": [],
+      "mainImage": null,
+      "description": "",
+      "history": "",
+      "preparationTime": "20 минут",
+      "cookingTime": "30 минут",
+      "origin": "Англия",
+      "nutritions": [
+        {
+          "name": "Белки",
+          "quantity": "10",
+          "unit": "г"
+        },
+        {
+          "name": "Жиры",
+          "quantity": "5",
+          "unit": "г"
+        },
+        {
+          "name": "Углеводы",
+          "quantity": "30",
+          "unit": "г"
+        }
+      ],
+      "servings": 6,
+      "authorId": 5,
+      "categories": [],
+      "cooksId": [],
+      "likesId": [],
+      "favoritesId": [],
+      "id": 88,
+      "comments": [],
+      "publicationDate": "2023-11-18T18:19:39.176Z",
+      "status": "private"
     }
   ],
   "users": [
@@ -5287,7 +5611,7 @@
       "personalWebsite": "https://www.chefalexeyzimin.com/",
       "location": "Москва, Россия",
       "registrationDate": "2023-01-15",
-      "profileViews": 7687,
+      "profileViews": 7696,
       "role": "moderator",
       "notifications": [
         {
@@ -5299,18 +5623,6 @@
           "message": "Хотим вас предупредить, что у вас запланирован рецепт на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению этого вкусного блюда.<br>Запланированный рецепт:<br>ㅤДраники (начало послезавтра)",
           "title": "Начало запланированного рецепта уже скоро!",
           "timestamp": "2023-11-14T03:19:53.049Z",
-          "read": true,
-          "notificationDate": "Tue Nov 14 2023"
-        },
-        {
-          "id": 16,
-          "relatedLink": "/plan/calendar",
-          "context": "plan-reminder-start",
-          "type": "warning",
-          "relatedId": 2,
-          "message": "Время начала запланированного вами рецепта «Кныш...» уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
-          "title": "Время начала запланированного рецепта настало!",
-          "timestamp": "2023-11-14T03:29:54.349Z",
           "read": true,
           "notificationDate": "Tue Nov 14 2023"
         }
@@ -5501,7 +5813,7 @@
       "personalWebsite": "https://www.travelandeat.com/",
       "location": "Нью-Йорк, США",
       "registrationDate": "2023-05-10",
-      "profileViews": 5870,
+      "profileViews": 5871,
       "role": "user",
       "notifications": [
         {
@@ -5700,7 +6012,7 @@
       "personalWebsite": "https://www.cookingadventures.com/",
       "location": "Лондон, Великобритания",
       "registrationDate": "2023-04-02",
-      "profileViews": 4985,
+      "profileViews": 4987,
       "role": "user",
       "notifications": [
         {
@@ -6266,6 +6578,18 @@
           "timestamp": "2023-11-17T20:46:44.199Z",
           "read": false,
           "notificationDate": ""
+        },
+        {
+          "id": 48,
+          "relatedLink": "/cooks/list/5",
+          "context": "recipe",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Твой рецепт «aliqua labore velit» понравился кулинару Лина",
+          "title": "Твой рецепт оценили",
+          "timestamp": "2023-11-18T17:35:14.758Z",
+          "read": false,
+          "notificationDate": ""
         }
       ]
     },
@@ -6303,44 +6627,7 @@
       "location": "Беларусь, Гродно",
       "registrationDate": "2023-10-10",
       "profileViews": 1945,
-      "notifications": [
-        {
-          "id": 2,
-          "relatedLink": "/plan/calendar",
-          "context": "calendar-recipe",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Вы успешно изменили запланированный рецепт «Банановый хлеб 🍞🍌» в «Календаре рецептов»",
-          "title": "Вы успешно изменили запланированный рецепт",
-          "timestamp": "2023-11-17T19:41:24.806Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 3,
-          "relatedLink": "/plan/calendar",
-          "context": "plan-reminder",
-          "type": "warning",
-          "relatedId": 0,
-          "message": "Хотим вас предупредить, что у вас запланирован рецепт на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению этого вкусного блюда.<br>Запланированный рецепт:<br>ㅤБабка 🥔 (начало через 20 минут)",
-          "title": "Начало запланированного рецепта уже скоро!",
-          "timestamp": "2023-11-17T21:00:20.477Z",
-          "read": true,
-          "notificationDate": "Sat Nov 18 2023"
-        },
-        {
-          "id": 4,
-          "relatedLink": "/plan/calendar",
-          "context": "plan-reminder-start",
-          "type": "warning",
-          "relatedId": 15,
-          "message": "Время начала запланированного вами рецепта «Бабка 🥔» уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!",
-          "title": "Время начала запланированного рецепта настало!",
-          "timestamp": "2023-11-17T21:20:10.421Z",
-          "read": true,
-          "notificationDate": "Sat Nov 18 2023"
-        }
-      ],
+      "notifications": [],
       "permanent": [],
       "permissions": [
         {
@@ -6353,11 +6640,11 @@
         },
         {
           "context": "show-category-deleting",
-          "enabled": false
+          "enabled": true
         },
         {
           "context": "show-section-deleting",
-          "enabled": false
+          "enabled": true
         },
         {
           "context": "new-moder-button",
@@ -6388,37 +6675,37 @@
           "enabled": false
         }
       ],
+      "exclusions": [],
       "emojiStatus": {
-        "name": "Pile of Poo",
-        "unified": "1F4A9",
+        "name": "Rocket",
+        "unified": "1F680",
         "keywords": [
-          "pile_of_poo",
-          "hankey",
-          "shitface",
-          "fail",
-          "turd",
-          "shit"
+          "rocket",
+          "launch",
+          "ship",
+          "staffmode",
+          "NASA",
+          "outer space",
+          "outer_space",
+          "fly"
         ],
         "sheet": [
-          27,
-          56
+          35,
+          32
         ],
+        "shortName": "rocket",
         "shortNames": [
-          "hankey",
-          "poop",
-          "shit"
+          "rocket"
         ],
-        "shortName": "hankey",
-        "id": "hankey",
-        "native": "💩",
+        "id": "rocket",
+        "native": "🚀",
         "skinVariations": [],
         "emoticons": [],
         "hidden": [],
         "text": "",
         "set": "apple",
-        "colons": ":hankey:"
-      },
-      "exclusions": []
+        "colons": ":rocket:"
+      }
     },
     {
       "id": 6,
@@ -6450,7 +6737,7 @@
       "personalWebsite": "https://www.healthandnutrition.com/",
       "location": "Сидней, Австралия",
       "registrationDate": "2023-06-18",
-      "profileViews": 4360,
+      "profileViews": 4371,
       "role": "user",
       "notifications": [
         {
@@ -6607,7 +6894,7 @@
       "personalWebsite": "https://www.interiordesignsbyvictoria.com/",
       "location": "Милан, Италия",
       "registrationDate": "2023-08-12",
-      "profileViews": 3232,
+      "profileViews": 3273,
       "role": "user",
       "notifications": [
         {
@@ -6929,7 +7216,7 @@
       "personalWebsite": "",
       "location": "Беларусь (Гомель)",
       "registrationDate": "2023-10-30",
-      "profileViews": 18,
+      "profileViews": 21,
       "emojiStatus": {
         "name": "Weary Face",
         "unified": "1F629",
@@ -7898,6 +8185,18 @@
           "timestamp": "2023-11-17T21:03:21.723Z",
           "read": false,
           "notificationDate": ""
+        },
+        {
+          "id": 47,
+          "relatedLink": "/cooks/list/5",
+          "context": "user",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Лина подписался на тебя",
+          "title": "Новый подписчик",
+          "timestamp": "2023-11-18T01:57:27.294Z",
+          "read": false,
+          "notificationDate": ""
         }
       ]
     },
@@ -8406,7 +8705,7 @@
       "personalWebsite": "",
       "location": "",
       "registrationDate": "2023-11-10T23:27:19.628Z",
-      "profileViews": 147,
+      "profileViews": 216,
       "notifications": [
         {
           "id": 1,
@@ -8527,6 +8826,30 @@
           "timestamp": "2023-11-17T21:03:29.208Z",
           "read": false,
           "notificationDate": ""
+        },
+        {
+          "id": 11,
+          "relatedLink": "/recipes/list/5",
+          "context": "comment",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Ваш рецепт «Картофельная бабка» прокомментировал \n          кулинар Лина",
+          "title": "Ваш рецепт прокомментировали",
+          "timestamp": "2023-11-18T01:19:31.896Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 12,
+          "relatedLink": "/cooks/list/5",
+          "context": "user",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Лина подписался на тебя",
+          "title": "Новый подписчик",
+          "timestamp": "2023-11-18T01:57:28.515Z",
+          "read": false,
+          "notificationDate": ""
         }
       ],
       "permanent": [
@@ -8563,6 +8886,959 @@
         "set": "apple",
         "colons": ":revolving_hearts:"
       }
+    },
+    {
+      "id": 38,
+      "email": "polina_kuzmenok@gmail.com",
+      "password": "Polina2005",
+      "username": "polina_kuzmenok",
+      "role": "user",
+      "avatarUrl": {},
+      "description": "Всем привет! Меня зовут Полина, я учусь в Гродненском государственном политехническом колледже и являюсь создателем этого сайта. Увлекаюсь кулинарией.",
+      "quote": "Десерт должен быть захватывающим, потому что он прибывает, когда гурман больше не голоден.",
+      "fullName": "Полина",
+      "followersIds": [],
+      "socialNetworks": [
+        {
+          "name": "pinterest",
+          "link": "https://pinterest.com/polina_kuzmenok"
+        },
+        {
+          "name": "twitter",
+          "link": "https://twitter.com/polina_kuzmenok"
+        },
+        {
+          "name": "ВКонтакте",
+          "link": "https://vk.com/polina_kuzmenok"
+        }
+      ],
+      "personalWebsite": "",
+      "location": "Гродно, Беларусь",
+      "registrationDate": "2023-11-19T23:57:32.214Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "/cooks/list/38",
+          "context": "user",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой профиль успешно изменен",
+          "title": "Профиль изменен",
+          "timestamp": "2023-11-20T00:13:37.746Z",
+          "read": true,
+          "notificationDate": ""
+        }
+      ],
+      "emojiStatus": {
+        "name": "Hat Chef",
+        "shortNames": [
+          "hat-chef"
+        ],
+        "keywords": [
+          "chef",
+          "hat"
+        ],
+        "imageUrl": "assets/images/emojis/chef-hat.png",
+        "id": "hat-chef",
+        "custom": true,
+        "set": "apple",
+        "colons": ":hat-chef:"
+      }
+    },
+    {
+      "id": 39,
+      "email": "polina_kuzmenok@mail.ru",
+      "password": "Polinka2005",
+      "username": "polina.kuzmenok",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T00:23:49.428Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @polina.kuzmenok 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T00:23:49.465Z",
+          "read": true,
+          "notificationDate": ""
+        }
+      ],
+      "emojiStatus": {
+        "name": "Fox Face",
+        "unified": "1F98A",
+        "keywords": [
+          "fox",
+          "animal",
+          "nature",
+          "face"
+        ],
+        "sheet": [
+          44,
+          28
+        ],
+        "shortName": "fox_face",
+        "shortNames": [
+          "fox_face"
+        ],
+        "id": "fox_face",
+        "native": "🦊",
+        "skinVariations": [],
+        "emoticons": [],
+        "hidden": [],
+        "text": "",
+        "set": "apple",
+        "colons": ":fox_face:"
+      }
+    },
+    {
+      "id": 40,
+      "email": "dsdds@mail.ru",
+      "password": "fdfdffd5g67H",
+      "username": "aaaaaaaaaaaaaaaaa",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T00:40:42.546Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @aaaaaaaaaaaaaaaaa 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T00:40:43.194Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 41,
+      "email": "dsddfs@mail.ru",
+      "password": "fdfdffdfd#$434H",
+      "username": "dfdfddf",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T00:41:19.118Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @dfdfddf 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T00:41:19.691Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 42,
+      "email": "fddffdf2@mail.ru",
+      "password": "ffdfddf56G",
+      "username": "dsfddfssdf",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T00:43:35.698Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @dsfddfssdf 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T00:43:36.082Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 43,
+      "email": "fdssfsf@mail.ru",
+      "password": "fddfd3F4",
+      "username": "fdffssfd",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T00:44:49.132Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @fdffssfd 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T00:44:49.679Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 44,
+      "email": "DFdf34@mail.ru",
+      "password": "dffddffd56H",
+      "username": "dsddssd",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T00:45:05.296Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @dsddssd 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T00:45:05.956Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 45,
+      "email": "ffdfdfd@mail.ru",
+      "password": "fdffdf(8oI",
+      "username": "fdffdfd",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T00:46:15.128Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @fdffdfd 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T00:46:15.560Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 46,
+      "email": "fdffd@mail.ru",
+      "password": "ffdfdfddfF6",
+      "username": "ffdddf",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T00:55:57.318Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @ffdddf 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T00:55:58.107Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 47,
+      "email": "fdfdf@mail.ru",
+      "password": "dffddf4fH",
+      "username": "ggfggf",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T00:57:58.071Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @ggfggf 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T00:58:00.860Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 48,
+      "email": "fddfd@mail.ru",
+      "password": "ffddffd5G",
+      "username": "cefd",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T00:58:44.192Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @cefd 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T00:58:44.741Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 49,
+      "email": "fdddfdf@mail.ru",
+      "password": "ffddfddfF5",
+      "username": "hjjjhhjhhj",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T01:00:04.083Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @hjjjhhjhhj 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T01:00:05.918Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 50,
+      "email": "fdffddfd@mail.ru",
+      "password": "dffdfdf56F",
+      "username": "rttrtrt",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T01:01:53.071Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @rttrtrt 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T01:01:53.663Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 51,
+      "email": "fdffd@mailf.ru",
+      "password": "dffdfdF4",
+      "username": "dffdfd",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T01:02:11.642Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @dffdfd 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T01:02:12.031Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 52,
+      "email": "aaaaa@mail.ru",
+      "password": "aaaaa5GD",
+      "username": "aaaaa",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T01:03:02.714Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @aaaaa 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T01:03:03.490Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 53,
+      "email": "asssas@mail.ru",
+      "password": "fdfdf65F",
+      "username": "sdsdsd",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T01:05:04.165Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @sdsdsd 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T01:05:04.569Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 54,
+      "email": "Ddfdff@mail.ru",
+      "password": "fddff@mak8F",
+      "username": "fdffdfdf",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T01:06:16.705Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @fdffdfdf 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T01:06:17.205Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 55,
+      "email": "dffd@mail.ru",
+      "password": "fdfdfd45H",
+      "username": "fgfgfggf",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T01:10:25.901Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @fgfgfggf 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T01:10:27.012Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 56,
+      "email": "fdddf@mail.ru",
+      "password": "fdfdffd%gDE0",
+      "username": "krabock",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T01:20:59.471Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @krabock 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T01:21:01.869Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 57,
+      "email": "dfddf@mail.ru",
+      "password": "fddddDmailrt5",
+      "username": "gfgf",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T01:24:29.253Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @gfgf 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T01:24:31.085Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 58,
+      "email": "fdfddf@mail.ru",
+      "password": "dffdddf45G",
+      "username": "dffddffd",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T01:26:39.831Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @dffddffd 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T01:26:41.059Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 59,
+      "email": "fdd@mail.ru",
+      "password": "fdfdfddf455$G",
+      "username": "dfdfdff",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T01:33:36.839Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @dfdfdff 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T01:33:38.373Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 60,
+      "email": "dffdfd@mail.ru",
+      "password": "dffdd334G",
+      "username": "cffdfd",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T01:37:51.154Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @cffdfd 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T01:37:52.256Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 61,
+      "email": "lololo@mail.ru",
+      "password": "lololoMail200",
+      "username": "Lololo",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T10:12:00.364Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @Lololo 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T10:12:01.206Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 62,
+      "email": "regist@mail.ru",
+      "password": "ddssd34H",
+      "username": "registr",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T10:13:21.180Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @registr 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T10:13:22.391Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 63,
+      "email": "krabovie_palochki@mail.ru",
+      "password": "mailRu62",
+      "username": "kra60v13_pa104k1",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T10:18:11.057Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @kra60v13_pa104k1 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T10:18:12.197Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 64,
+      "email": "fddfdfd3D@mail.ru",
+      "password": "dssdssd5F",
+      "username": "newUser",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T10:21:11.064Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @newUser 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T10:21:12.616Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 65,
+      "email": "fsfddssd@mail.ru",
+      "password": "dffdfd45G",
+      "username": "krabo",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T10:26:22.481Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @krabo 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T10:26:24.392Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 66,
+      "email": "sss@mail.ru",
+      "password": "dfdffdfd3G",
+      "username": "krabi",
+      "role": "user",
+      "avatarUrl": null,
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-20T10:28:18.235Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @krabi 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-20T10:28:19.482Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
     }
   ]
 }

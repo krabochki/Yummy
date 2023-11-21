@@ -15,52 +15,53 @@ app-modal {
 
 .img-cont {
   position: relative;
-& .emoji-button:hover~img {
+  & .emoji-button:hover ~ .userpic {
     box-shadow: 0 0 0px 3px var(--color-primary-focus);
   }
-  & .hire-button:hover ~ img {
+  & .hire-button:hover ~ .userpic {
     box-shadow: 0 0 0px 3px var(--color-admin-focus);
   }
 
   .emoji-status {
     position: absolute;
+    z-index: 2;
     bottom: 0;
     left: 0;
     border-radius: 100%;
 
     max-width: 44px;
     max-height: 44px;
-   
-min-width: 44px;
-  min-height: 44px;
+
+    min-width: 44px;
+    min-height: 44px;
     &.no-emoji {
       background-color: var(--scroll-body);
       border-radius: 100%;
 
       &::after {
-          width: 0;
-          height: 0;
-          border-radius: 100%;
-          position: absolute;
-          top: 0;
-          left: 0;
-          bottom: 0;
-          right: 0;
-          margin: auto;
-          transition: 0.2s;
-          content: "";
-          background-color: var(--color-primary-focus);
+        width: 0;
+        height: 0;
+        border-radius: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        margin: auto;
+        transition: 0.2s;
+        content: "";
+        background-color: var(--color-primary-focus);
+      }
+
+      &:hover,
+      &:focus,
+      &.emoji-picker-open,
+      &:active {
+        &::after {
+          width: 100%;
+          height: 100%;
         }
-      
-        &:hover,
-        &:focus,
-        &.emoji-picker-open,
-        &:active {
-          &::after {
-            width: 100%;
-            height: 100%;
-          }
-        }
+      }
     }
 
     .add-emoji {
@@ -68,10 +69,9 @@ min-width: 44px;
       zoom: 1;
       width: 100%;
       height: 100%;
-            z-index: 1;
+      z-index: 1;
       padding: 4.5px;
       fill: var(--color-foreground);
-
     }
   }
 
@@ -85,6 +85,7 @@ min-width: 44px;
   }
 
   .hire-button {
+    z-index: 1;
     &::after {
       width: 0;
       height: 0;
@@ -100,7 +101,7 @@ min-width: 44px;
       background-color: var(--color-admin-focus);
     }
 
-    &:hover{
+    &:hover {
       &::after {
         width: 100%;
         height: 100%;
@@ -108,10 +109,14 @@ min-width: 44px;
     }
 
     @include flex;
-            background-color: var(--scroll-body);    border-radius: 100%;
+    background-color: var(--scroll-body);
+    border-radius: 100%;
     position: absolute;
     top: 0.25em;
-        max-width: 44px;    max-width: 44px;    min-width: 44px;        min-height: 44px;
+    max-width: 44px;
+    max-width: 44px;
+    min-width: 44px;
+    min-height: 44px;
     right: 0.25em;
 
     .hire-svg {
@@ -120,9 +125,9 @@ min-width: 44px;
       max-width: 44px;
       @include flex;
       padding: 5px;
-width: 100%;
-  height: 100%;
-  right: 0.25em;
+      width: 100%;
+      height: 100%;
+      right: 0.25em;
       max-height: 44px;
     }
   }
@@ -229,14 +234,83 @@ ul {
 li {
   display: inline;
 }
-
-img {
-  width: 10em;
-  border-radius: 100%;
-  height: fit-content;
-  transition: 0.2s ease-in-out;
+@keyframes moveGradient {
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
+.userpic {
+  
+    --border-width: 3px;
+  min-width: 10em;
+  height: 10em;
+  border-radius: 100%;
+  transition: 0.2s ease-in-out;
+  background-color: #fff;
+  margin: 0 auto;
+  min-width: 10em;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  position: relative;
+
+
+
+  &.loading{
+
+      &::after {
+          position: absolute;
+          content: "";
+          top: calc(-1 * var(--border-width));
+          left: calc(-1 * var(--border-width));
+          z-index: -1;
+          width: calc(100% + var(--border-width) * 2);
+          height: calc(100% + var(--border-width) * 2);
+          background: linear-gradient(60deg,
+              hsl(0, 85%, 66%),
+              hsl(23, 85%, 66%),
+              hsl(59, 100%, 55%),
+              hsl(359, 85%, 66%),
+              hsl(44, 85%, 66%),
+              hsl(0, 100%, 57%),
+              hsl(26, 92%, 53%),
+              hsl(20, 85%, 66%));
+          background-size: 300% 300%;
+          background-position: 0 50%;
+          border-radius: 100%;
+          animation: moveGradient 3s infinite;
+        }
+
+  animation: loading 1.7s infinite linear;
+  background: #dedfe1;
+  background-image: -webkit-linear-gradient(
+    to right,
+    #dedfe1 0%,
+    #f2f3f5 20%,
+    #dedfe1 40%,
+    #dedfe1 100%
+  ) !important;
+  background-image: linear-gradient(
+    to right,
+    #dedfe1 0%,
+    #f2f3f5 20%,
+    #dedfe1 40%,
+    #dedfe1 100%
+  ) !important;
+  background-repeat: no-repeat;
+  }
+}
+
+@keyframes loading {
+  0% {
+    background-position: -100px;
+  }
+
+  100% {
+    background-position: 200px;
+  }
+}
 .center {
   display: flex;
   align-items: flex-start;
@@ -285,19 +359,15 @@ app-recipes-list {
   flex-direction: column;
   row-gap: 0.5em;
 
-  
   svg {
     transition: 0.2s ease-in-out;
   }
-
 
   a {
     transition: 0.2s ease-in-out;
 
     &:hover,
     &:focus {
-      
-
       span {
         color: var(--color-primary-focus);
       }
@@ -332,7 +402,6 @@ app-recipes-list {
 
   &:hover,
   &:focus {
-
     a {
       color: var(--color-primary-focus);
     }
@@ -444,18 +513,20 @@ svg {
   }
 }
 
-@media(max-width:1200px){
+@media (max-width: 1200px) {
   .img-cont .hire-button {
-     zoom:0.9;
+    zoom: 0.9;
   
-      top: 0;
-      right: 0;
-    }
 
-    .emoji-button{
-      bottom:0;left:0;
-      zoom:0.9
-    }
+    top: 0;
+    right: 0;
+  }
+
+  .emoji-button {
+    bottom: 0;
+    left: 0;
+    zoom: 0.9;
+  }
 }
 
 @media (max-width: 900px) {
@@ -501,16 +572,19 @@ svg {
     .emoji-status,
     .emoji-pick {
       margin: auto;
-     
+
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .emoji-status {      left: -10em;right: 0;
+    .emoji-status {
+      left: -10em;
+      right: 0;
     }
-    .hire-button{
-      right:-10em;left:0;
+    .hire-button {
+      right: -10em;
+      left: 0;
       margin: auto;
     }
   }

@@ -476,7 +476,9 @@ app-social-button,.social{
     .userpic {
       border-radius: 100%;
       height: 1.5em;
+          background-color: white;
       width: 1.5em;
+      
     }
     .head-icon {
       display: flex;
@@ -509,6 +511,11 @@ app-social-button,.social{
   font-weight: 400;
   font-style: italic;
 }
+.userpic{
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
 
 .i-comment {
   row-gap: 1em;
@@ -525,7 +532,7 @@ app-social-button,.social{
 
   .userpic {
     border-radius: 100%;
-    cursor: pointer;
+    cursor: pointer;background-color: white;
     min-width: 2em;
     margin-right: 1em;
     height: 2em;

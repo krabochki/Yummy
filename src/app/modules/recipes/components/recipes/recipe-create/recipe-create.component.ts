@@ -645,8 +645,8 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
         const findedIngredient = recipeData.ingredients.find(
           (i) => i === ingredient,
         );
-        if (findedIngredient) {
-          findedIngredient.quantity = ingredient.quantity.replace(',', '.');
+        if (findedIngredient && findedIngredient.quantity) {
+          findedIngredient.quantity = ingredient.quantity.toString().replace(',', '.');
         }
       });
       this.createdRecipe = recipeData;
@@ -740,8 +740,8 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       const findedIngredient = recipeData.ingredients.find(
         (i) => i === ingredient,
       );
-      if (findedIngredient) {
-        findedIngredient.quantity = ingredient.quantity.replace(',', '.');
+      if (findedIngredient && findedIngredient.quantity) {
+        findedIngredient.quantity = ingredient.quantity.toString().replace(',', '.');
       }
     });
     this.updatedRecipeEmitter.emit(recipeData);

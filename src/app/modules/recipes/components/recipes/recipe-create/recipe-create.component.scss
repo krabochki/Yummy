@@ -292,9 +292,7 @@ fill: var(--color-background);
         &.completed {
           background-color: var(--color-secondary);
         }
-                 &.not-valid {
-                  background-color: var(--color-primary);
-                 }
+             
       }
 
       .nav-step-block-inner {

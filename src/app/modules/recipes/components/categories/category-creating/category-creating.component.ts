@@ -45,7 +45,6 @@ export class CategoryCreatingComponent
   successModal: boolean = false;
   newCategory: ICategory = { ...nullCategory };
   categories: ICategory[] = [];
-  selectedSection: ISection | null = null;
 
   myImage: string = '';
   defaultImage: string = '../../../../../assets/images/add-category.png';
@@ -75,6 +74,10 @@ export class CategoryCreatingComponent
           Validators.maxLength(30),
         ],
       ],
+      section: [null,
+      [
+        Validators.required
+      ]],
       image: [null],
     });
     this.myImage = this.defaultImage;
@@ -95,6 +98,44 @@ export class CategoryCreatingComponent
       this.scrollTop();
     }
   }
+
+  notValid() {
+    return this.validNextSteps();
+  }
+  clickOnCircleStep(i: number) {
+    if (this.validNextSteps() === 0 || this.validNextSteps() > i) {
+      this.currentStep = i;
+      this.scrollTop();
+    }
+  }
+  noValidStepDescription(step: number): string {
+    switch (step) {
+      case 0:
+        return 'Название рецепта обязательно и должно содержать от 3 до 100 символов';
+      case 1:
+        break;
+    }
+    return '';
+  }
+
+  validNextSteps(): number {
+    for (let s = 0; s <= 1; s++) {
+      switch (s) {
+        case 0:
+          if (!this.form.get('name')!.valid) {
+            return 1;
+          }
+          break;
+        case 1:
+          if (!this.form.get('section')!.valid) {
+            return 2;
+          }
+          break;
+      }
+    }
+    return 0;
+  }
+
   scrollTop(): void {
     if (this.scrollContainer) this.scrollContainer.nativeElement.scrollTop = 0;
   }
@@ -144,19 +185,16 @@ export class CategoryCreatingComponent
   }
 
   areObjectsEqual(): boolean {
-    return (
-      JSON.stringify(this.beginningData) !==
-      JSON.stringify(this.form.getRawValue())
-    );
+    return this.form.get('name')!.value || this.form.get('section')!.value ;
   }
 
-  removeCategory(event: ISection) {
-    this.selectedSection = null;
+  removeCategory() {
+    this.form.get('section')!.setValue(null);
   }
 
   //Работа с категориями
   addCategory(event: ISection) {
-    this.selectedSection = event;
+    this.form.get('section')!.setValue(event);
   }
 
   group: SectionGroup[] = [];
@@ -173,15 +211,16 @@ export class CategoryCreatingComponent
       sendDate: getCurrentDate(),
       authorId: this.currentUser.id,
       id: maxId + 1,
-      status: this.currentUser.role==='user'?'awaits':'public',
+      status: this.currentUser.role === 'user' ? 'awaits' : 'public',
     };
 
     this.categoryService.postCategory(this.newCategory).subscribe(() => {
       this.successModal = true;
-      if (this.selectedSection) {
-        this.selectedSection.categories.push(this.newCategory.id);
-        this.sectionService.updateSections(this.selectedSection).subscribe();
-
+      if (this.form.get('section')!.value) {
+        this.form.get('section')!.value.categories.push(this.newCategory.id);
+        this.sectionService
+          .updateSections(this.form.get('section')!.value)
+          .subscribe();
       }
     });
   }
@@ -203,31 +242,29 @@ export class CategoryCreatingComponent
     this.closeEmitter.emit(true);
     this.successModal = false;
 
-    
-        if (
-          this.userService.getPermission(
-            'you-create-category',
-            this.currentUser,
-          ) && this.selectedSection
-        ) {
-          const notify: INotification = this.notifyService.buildNotification(
-            this.currentUser.role === 'user'?'Категория отправлена на проверку':'Категория опубликована',
-            `Созданная вами категория «${this.newCategory.name}» для секции «${
-              this.selectedSection.name
-            }» ${
-              this.currentUser.role === 'user'
-                ? 'отправлена на проверку'
-                : 'успешно опубликована'
-            }`,
-            'success',
-            'category',
-            this.currentUser.role==='user'?'':'/categories/list/'+this.newCategory.id,
-          );
-          this.notifyService
-            .sendNotification(notify, this.currentUser)
-            .subscribe();
-        }
-
+    if (
+      this.userService.getPermission('you-create-category', this.currentUser) &&
+      this.form.get('section')!.value
+    ) {
+      const notify: INotification = this.notifyService.buildNotification(
+        this.currentUser.role === 'user'
+          ? 'Категория отправлена на проверку'
+          : 'Категория опубликована',
+        `Созданная вами категория «${this.newCategory.name}» для секции «${
+          this.form.get('section')!.value.name
+        }» ${
+          this.currentUser.role === 'user'
+            ? 'отправлена на проверку'
+            : 'успешно опубликована'
+        }`,
+        'success',
+        'category',
+        this.currentUser.role === 'user'
+          ? ''
+          : '/categories/list/' + this.newCategory.id,
+      );
+      this.notifyService.sendNotification(notify, this.currentUser).subscribe();
+    }
   }
   handleCloseModal(answer: boolean) {
     if (answer) {

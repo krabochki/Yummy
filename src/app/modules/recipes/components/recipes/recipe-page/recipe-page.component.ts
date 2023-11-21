@@ -39,6 +39,7 @@ import { IngredientService } from '../../../services/ingredient.service';
 import { IIngredient } from '../../../models/ingredients';
 import { RecipeCalendarEvent } from 'src/app/modules/planning/models/calendar';
 import { Location } from '@angular/common';
+import { supabase } from 'src/app/modules/controls/image/supabase-data';
 
 @Component({
   selector: 'app-recipe-page',
@@ -53,6 +54,11 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   protected addingToPlanMode: boolean = false;
 
   recipe: IRecipe = nullRecipe;
+
+  authorAvatar = '';
+  noAvatar = 'assets/images/userpic.png';
+  currentUserAvatar = '';
+  supabase = supabase;
 
   categories: ICategory[] = [];
   downRecipes: IRecipe[] = [];
@@ -97,7 +103,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   vote: boolean = false;
 
   get noPageToGoBack() {
-    return window.history.length <=1;
+    return window.history.length <= 1;
   }
 
   get date() {
@@ -227,11 +233,18 @@ export class RecipePageComponent implements OnInit, OnDestroy {
                   }
 
                   this.recipe.ingredients.forEach((ingredient) => {
-                    const findedIngredient = this.recipe.ingredients.find((i) => i === ingredient);
-                    if (findedIngredient) {
-                      findedIngredient.quantity = ingredient.quantity.replace(',','.');
+                    const findedIngredient = this.recipe.ingredients.find(
+                      (i) => i === ingredient,
+                    );
+                    if (findedIngredient && findedIngredient.quantity!=='') {
+                      findedIngredient.quantity = ingredient.quantity.toString().replace(
+                        ',',
+                        '.',
+                      );
                     }
-                  })
+                  });
+
+                  this.downloadAvatars();
 
                   this.setCategories();
                   this.setReadingTimeInMinutes();
@@ -254,6 +267,21 @@ export class RecipePageComponent implements OnInit, OnDestroy {
             });
         });
     });
+  }
+
+  private getSupabaseLink(path: string) {
+    return (this.currentUserAvatar = this.supabase.storage
+      .from('userpics')
+      .getPublicUrl(path).data.publicUrl);
+  }
+
+   downloadAvatars() {
+    console.log(this.currentUser.avatarUrl)
+    if (this.currentUser.avatarUrl)
+      this.currentUserAvatar = this.getSupabaseLink(this.currentUser.avatarUrl);
+    if (this.author.avatarUrl)
+      this.authorAvatar = this.getSupabaseLink(this.author.avatarUrl);
+    this.cd.markForCheck();
   }
 
   protected addToPlan(): void {

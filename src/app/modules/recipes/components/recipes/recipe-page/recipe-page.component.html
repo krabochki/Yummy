@@ -53,11 +53,9 @@
       <div class="full-user-info column">
         <div class="row" class="short-info row">
           <a [ngClass]="{'no-link':author.id<1 || !hideAuthor}" class="row user-info" [routerLink]="author.id>0 && hideAuthor?'/cooks/list/' + author.id:null">
-            <img *ngIf="author.id>0 && hideAuthor"
+            <div *ngIf="author.id>0 && hideAuthor"
               class="userpic noselect"
-              src="../../../../../../assets/images/userpic.png"
-              alt="Фото пользователя"
-            />
+              [style.background-image]="'url('+(authorAvatar?authorAvatar:noAvatar)+')'"></div>
             <p>
               {{
               authorInfo
@@ -423,12 +421,10 @@
               </p>
             </div>
             <div class="row input-area" style="overflow: visible;">
-                <img 
-                 
-                  src="../../../../../../assets/images/userpic.png"
+                <div 
+                  [style.background-image]="'url('+(currentUserAvatar?currentUserAvatar:noAvatar)+')'"
                   class="userpic noselect commentpic"
-                  alt="userpic"
-                />
+                ></div>
               <form     class="noselect"              style="width: 100%; overflow: visible;"
  [formGroup]="commentForm">
                 <app-usual-input style="overflow: visible;"

@@ -82,10 +82,9 @@
 
                 <div
                   class="delete"
-                  *ngIf="myImage !== defaultImage"
+                  *ngIf="showedUserpicImage !== noUserpicImage"
                   (click)="
-                    myImage = defaultImage;
-                    this.form.get('userpic')?.setValue(null)
+                    unsetImage()
                   "
                 >
                   <svg-icon
@@ -97,11 +96,10 @@
                 <div
                   class="userpic"
                   [ngClass]="{
-                    'have-image': this.form.get('userpic')?.value !== null
+                    'have-image': this.form.get('userpic')?.value
                   }"
-                  [ngStyle]="{ 'background-image': 'url(' + myImage + ')' }"
-                  alt="User Photo"
-                ></div>
+                  [style.background-image]="'url(' + showedUserpicImage +')'"
+                  alt="User Photo"></div>
               </div>
             </div>
             <div class="main-info-controls">

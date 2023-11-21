@@ -40,13 +40,17 @@ import {
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { NotificationService } from '../../services/notification.service';
 import { INotification } from '../../models/notifications';
+import { createClient } from '@supabase/supabase-js';
+import {
+  supabaseUrl,
+  supabaseKey,
+  supabase,
+} from 'src/app/modules/controls/image/supabase-data';
 
 @Component({
   selector: 'app-user-account-edit',
   templateUrl: './user-account-edit.component.html',
-  styleUrls: [
-    './user-account-edit.component.scss',
-  ],
+  styleUrls: ['./user-account-edit.component.scss'],
   animations: [trigger('modal', modal()), trigger('height', heightAnim())],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -55,21 +59,28 @@ export class UserAccountEditComponent
 {
   @Input() editableUser: IUser = { ...nullUser };
   @Output() closeEmitter = new EventEmitter<boolean>();
+  @ViewChild('scrollContainer', { static: false }) scrollContainer?: ElementRef;
+
+  private supabase = supabase
+  private supabaseFilepath: string = '';
 
   saveModal: boolean = false;
   closeModal: boolean = false;
   successModal: boolean = false;
-  newUser: IUser = { ...nullUser };
-  users: IUser[] = [];
 
-  myImage: string = '';
-  defaultImage: string = '../../../../../assets/images/add-userpic.png';
+  private newUser: IUser = { ...nullUser };
+  private users: IUser[] = [];
+
+  currentStep: number = 0;
+
+  showInfo: boolean = false;
+  steps: Step[] = steps;
+
+  showedUserpicImage: string = '';
+  noUserpicImage: string = 'assets/images/add-userpic.png';
+
   form: FormGroup;
   beginningData: any;
-
-  ngAfterContentChecked(): void {
-    this.cdr.detectChanges();
-  }
 
   constructor(
     private renderer: Renderer2,
@@ -123,14 +134,6 @@ export class UserAccountEditComponent
     });
   }
 
-  @ViewChild('scrollContainer', { static: false }) scrollContainer?: ElementRef;
-
-  currentStep: number = 0;
-
-  showInfo = false;
-
-  steps: Step[] = steps;
-
   goToPreviousStep() {
     if (this.currentStep > 0) {
       this.currentStep--;
@@ -138,9 +141,15 @@ export class UserAccountEditComponent
       this.scrollTop();
     }
   }
+
+  ngAfterContentChecked(): void {
+    this.cdr.detectChanges();
+  }
+
   scrollTop(): void {
     if (this.scrollContainer) this.scrollContainer.nativeElement.scrollTop = 0;
   }
+
   goToNextStep() {
     if (this.currentStep < this.steps.length - 1) {
       this.currentStep++;
@@ -159,6 +168,7 @@ export class UserAccountEditComponent
     this.form.get('fullname')?.setValue(this.newUser.fullName);
     this.form.get('description')?.setValue(this.newUser.description);
     this.form.get('location')?.setValue(this.newUser.location);
+    this.form.get('userpic')?.setValue(this.newUser.avatarUrl);
     this.form.get('website')?.setValue(this.newUser.personalWebsite);
     for (const network of this.newUser.socialNetworks) {
       switch (network.name) {
@@ -177,25 +187,20 @@ export class UserAccountEditComponent
       }
     }
 
-    if (this.newUser.avatarUrl !== null) {
-      try {
-        const mainImageData: FormData = this.newUser.avatarUrl;
-        const mainpicFile = mainImageData.get('file') as File;
-        if (mainpicFile) {
-          this.form.get('image')?.setValue(mainImageData);
-          const objectURL = URL.createObjectURL(mainpicFile);
-          this.myImage = objectURL;
-        }
-      } catch (error) {}
-    }
-
-    this.beginningData = this.form.getRawValue();
-
     this.userService.users$.subscribe((data: IUser[]) => {
       this.users = data;
     });
+    
+    if (this.editableUser.avatarUrl) {
+      this.downloadUserpicFromSupabase(this.editableUser.avatarUrl);
+      this.supabaseFilepath = this.editableUser.avatarUrl;
+    }
+    else {
+          this.showedUserpicImage = this.noUserpicImage;
+    }
+
+    this.beginningData = this.form.getRawValue();
     this.cdr.markForCheck();
-    this.myImage = this.defaultImage;
   }
 
   onUserpicChange(event: Event) {
@@ -205,8 +210,15 @@ export class UserAccountEditComponent
     if (userpicFile) {
       this.form.get('userpic')?.setValue(userpicFile);
       const objectURL = URL.createObjectURL(userpicFile);
-      this.myImage = objectURL;
+      this.showedUserpicImage = objectURL;
+      this.supabaseFilepath = this.setUserpicFilenameForSupabase();
     }
+  }
+
+  unsetImage() {
+    this.form.get('userpic')?.setValue(null);
+    this.showedUserpicImage = this.noUserpicImage;
+    this.supabaseFilepath = '';
   }
 
   usernameExistsValidator() {
@@ -259,10 +271,9 @@ export class UserAccountEditComponent
 
     this.newUser = {
       ...this.editableUser,
-
       username: this.form.value.username,
       fullName: this.form.value.fullname,
-      avatarUrl: userpicData,
+      avatarUrl: this.form.value.userpic ? this.supabaseFilepath : undefined,
       quote: this.form.value.quote,
       personalWebsite: this.form.value.website,
       description: this.form.value.description,
@@ -271,6 +282,15 @@ export class UserAccountEditComponent
     };
 
     this.userService.updateUsers(this.newUser).subscribe(() => {
+      if (this.form.value.userpic) {
+        this.uploadExistingAvatarFromSupabase();
+      }
+      if (
+        this.editableUser.avatarUrl &&
+        this.newUser.avatarUrl !== this.editableUser.avatarUrl
+      ) {
+        this.deleteOldUserpic(this.editableUser.avatarUrl);
+      }
       this.authService.loginUser(this.newUser).subscribe((user) => {
         if (user) {
           localStorage.setItem('currentUser', JSON.stringify(user));
@@ -335,8 +355,38 @@ export class UserAccountEditComponent
       ? (this.closeModal = true)
       : this.closeEmitter.emit(true);
   }
+
   ngOnDestroy(): void {
     this.renderer.removeClass(document.body, 'hide-overflow');
     (<HTMLElement>document.querySelector('.header')).style.width = '100%';
+  }
+
+  //работа с данными supabase
+
+  private setUserpicFilenameForSupabase(): string {
+    const file = this.form.get('userpic')?.value;
+    const fileExt = file.name.split('.').pop();
+    return `${Math.random()}.${fileExt}`;
+  }
+
+  downloadUserpicFromSupabase(path: string) {
+     this.showedUserpicImage = this.supabase.storage
+       .from('userpics')
+      .getPublicUrl(path).data.publicUrl;
+  }
+
+  async uploadExistingAvatarFromSupabase() {
+    try {
+      const file = this.form.get('userpic')?.value;
+      const filePath = this.supabaseFilepath;
+      await this.supabase.storage.from('userpics').upload(filePath, file);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+    }
+  }
+  async deleteOldUserpic(path: string) {
+    await this.supabase.storage.from('userpics').remove([path]);
   }
 }

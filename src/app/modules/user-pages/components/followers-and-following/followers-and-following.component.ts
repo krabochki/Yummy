@@ -23,6 +23,7 @@ import { widthAnim } from 'src/tools/animations';
 import { Subject, takeUntil } from 'rxjs';
 import { NotificationService } from '../../services/notification.service';
 import { INotification } from '../../models/notifications';
+import { supabase } from 'src/app/modules/controls/image/supabase-data';
 
 @Component({
   selector: 'app-followers-and-following',
@@ -69,7 +70,7 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
     private router: Router,
     public userService: UserService,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.renderer.addClass(document.body, 'hide-overflow');
@@ -96,6 +97,18 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
       });
   }
 
+  supabase = supabase;
+  noUserpic = 'assets/images/userpic.png';
+
+  getUserpic(user: IUser) {
+    if (user.avatarUrl) {
+      console.log(user.avatarUrl)
+      return this.supabase.storage.from('userpics').getPublicUrl(user.avatarUrl)
+        .data.publicUrl;
+
+    } else return this.noUserpic;
+  }
+
   switchObject(object: 'following' | 'followers') {
     if (this.searchMode) this.searchOnOff();
     if (object === 'following') {
@@ -108,16 +121,17 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
 
   //подписка текущего пользователя на людей в списке
   follow(user: IUser) {
-   if(this.currentUser.id > 0){
+    if (this.currentUser.id > 0) {
       this.userService.addFollower(user, this.currentUser?.id);
       this.updateUser(user);
 
       if (this.userService.getPermission('new-follower', this.user)) {
         const notify: INotification = this.notifyService.buildNotification(
           'Новый подписчик',
-          `Кулинар ${this.currentUser.fullName
-            ? this.currentUser.fullName
-            : '@' + this.currentUser.username
+          `Кулинар ${
+            this.currentUser.fullName
+              ? this.currentUser.fullName
+              : '@' + this.currentUser.username
           } подписался на тебя`,
           'info',
           'user',
@@ -185,6 +199,7 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
       }
     }
   }
+
   clickBackgroundNotContent(elem: Event) {
     if (elem.target !== elem.currentTarget) return;
     this.closeEmitter.emit(true);

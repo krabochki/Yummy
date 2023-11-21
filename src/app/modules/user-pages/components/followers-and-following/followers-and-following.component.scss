@@ -190,9 +190,12 @@ hr {
       zoom: 0.8;
     }
     .column {
-      img {
-        max-height: 2.5em;
-        margin: 0 auto;
+      .userpic {
+        background-color: white;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 2.5em;min-width: 2.5em;        margin: 0 auto;
         border-radius: 100%;
       }
     }

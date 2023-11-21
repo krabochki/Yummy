@@ -14,36 +14,25 @@
       <div class="navigation">
         <div class="nav-step-circles-block">
           <div class="nav-step-block" *ngFor="let step of steps; let i = index">
-            <div
-              class="nav-step-block-inner"
-              (click)="currentStep = i; scrollTop()"
-            >
-              <div
-                class="nav-step-circle"
-                [ngClass]="{
-                  active: i === currentStep,
-                  completed: i < currentStep
-                }"
-              >
+            <div class="nav-step-block-inner" (click)="clickOnCircleStep(i)">
+              <div class="nav-step-circle" [ngClass]="{
+                          active: i === currentStep,
+                          completed: i < currentStep,
+                          'not-valid': notValid() === i + 1
+                        }">
                 {{ i + 1 }}
               </div>
-              <p
-                class="nav-step-short-title"
-                [ngClass]="{
-                  active: i === currentStep,
-                  completed: i < currentStep
-                }"
-              >
+              <p class="nav-step-short-title" [ngClass]="{
+                          active: i === currentStep,
+                          completed: i < currentStep,
+                          'not-valid': notValid() === i + 1
+                        }">
                 {{ steps[i].shortTitle }}
               </p>
             </div>
-            <div
-              [ngClass]="{
-                completed: i < currentStep
-              }"
-              *ngIf="i !== steps.length - 1"
-              class="nav-step-line"
-            ></div>
+            <div [ngClass]="{
+                        completed: i < currentStep
+                                      }" *ngIf="i !== steps.length - 1" class="nav-step-line"></div>
           </div>
         </div>
       </div>
@@ -51,22 +40,21 @@
     <div class="unique-content">
       <div>
         <h2>{{ steps[currentStep].title }}</h2>
-        <button class="more-button" (click)="showInfo = !showInfo">
-          <svg-icon
-            [src]="'../../../../../assets/images/svg/help.svg'"
-            [applyClass]="true"
-            class="help-svg"
-          ></svg-icon>
-          Подробнее
-        </button>
-        <p class="description" *ngIf="showInfo" @height>
-          {{ steps[currentStep].description }}
-        </p>
+      
       </div>
 
       <hr />
 
       <form [formGroup]="form" #scrollContainer>
+        <div class="description-container">
+          <button class="more-button" (click)="showInfo = !showInfo">
+            <svg-icon [src]="'assets/images/svg/help.svg'" [applyClass]="true" class="help-svg"></svg-icon>
+            Подробнее
+          </button>
+          <p class="description" *ngIf="showInfo" @height>
+            {{ steps[currentStep].description }}
+          </p>
+        </div>
         <div class="step-container" *ngIf="currentStep === 0">
           <div class="main-info-control-with-image">
             <div class="form-control">
@@ -113,82 +101,97 @@
                   required
                   [value]="form.get('name')?.value"
                   [error]="
-                       form.get('name')?.invalid &&
-                        (form.get('name')?.dirty ||
-                          form.get('name')?.touched)
-                        ? 'Название категории должно содержать от 4 до 30 символов'
-                        : ''
+                    form.get('name')?.invalid &&
+                    (form.get('name')?.dirty || form.get('name')?.touched)
+                      ? 'Название категории должно содержать от 4 до 30 символов'
+                      : ''
                   "
                 ></app-usual-input>
-              
               </div>
-
             </div>
           </div>
         </div>
         <div class="step-container" *ngIf="currentStep === 1">
-         <div class="form-control">
+          <div class="form-control">
             <h3>Категории</h3>
 
-            <div><app-autocomplete [disabled]="selectedSection!==null" [sectionMode]="true" (sectionEmitter)="addCategory($event)"
+            <div>
+              <app-autocomplete
+                [disabled]="this.form.get('section')?.value !== null"
+                [sectionMode]="true"
+                (sectionEmitter)="addCategory($event)"
                 [group]="group"
                 [allSections]="allSections"
-                [placeholder]="'Выбери соответствующую секцию для твоей категории'"></app-autocomplete>
+                [placeholder]="
+                  'Выбери соответствующую секцию для твоей категории'
+                "
+              ></app-autocomplete>
             </div>
-
-
-
           </div>
           <div class="form-control">
             <h3>Секция твоей категории</h3>
-            <div *ngIf="selectedSection" class="max-categories">Ты можешь выбрать только 1 секцию для своей категории</div>
+            <div *ngIf="this.form.get('section')?.value" class="max-categories">
+              Вы можете выбрать только 1 секцию для своей категории
+            </div>
           </div>
 
-          <div *ngIf="!selectedSection" class="no-categories">Ты пока не выбрал
-            секцию</div>
-          <div class="tags" *ngIf="selectedSection">
-            <div class="tag" >
-              {{ selectedSection.name }}
-              <span (click)="removeCategory(selectedSection)" class="remove-tag"><svg-icon [applyClass]="true" class="remove-tag-svg" [src]="'../../../../../assets/images/svg/close.svg'"></svg-icon></span>
-
-
+          <div *ngIf="!this.form.get('section')?.value" class="no-categories">
+            Вы пока не выбрали секцию
+          </div>
+          <div class="tags" *ngIf="this.form.get('section')?.value">
+            <div class="tag">
+              {{ this.form.get('section')?.value.name }}
+              <span (click)="removeCategory()" class="remove-tag"
+                ><svg-icon
+                  [applyClass]="true"
+                  class="remove-tag-svg"
+                  [src]="'../../../../../assets/images/svg/close.svg'"
+                ></svg-icon
+              ></span>
             </div>
+          </div>
         </div>
-        </div>
-        
+
         <div *ngIf="currentStep === 2">
           <div class="buttons">
-            <p>
-              Если вы хотите, чтобы категорию увидели все кулинары, {{currentUser.role==='user'?'отправьте ее на одобрение':'опубликуйте ее'}}
-            </p>
-            <app-button
-              [title]="
-                !(areObjectsEqual() && form.valid && selectedSection)
-                  ? 'Все поля должны быть корректны'
-                  : ''
-              "
-              [disabled]="areObjectsEqual() && form.valid && selectedSection!==null"
-              (click)="form.valid ? (saveModal = true) : null"
-              [text]="'Опубликовать'"
-              [color]="'sec'"
-              [style]="'filled'"
-              [rounded]="true"
-            ></app-button>
+            <div class="button">
+              <p>
+                Если вы хотите, чтобы категорию увидели все кулинары,
+                {{
+                  currentUser.role === "user"
+                    ? "отправьте её на одобрение"
+                    : "опубликуйте её"
+                }}.
+              </p>
+              <app-button
+                [disabled]="
+                  areObjectsEqual() && form.valid
+                "
+                (click)="form.valid ? (saveModal = true) : null"
+                [text]="'Опубликовать'"
+                [color]="'sec'"
+                [style]="'filled'"
+                [rounded]="true"
+              ></app-button>
+            </div>
 
-            <p>
-              Если вы передумали создавать категорию, просто <em>отмените</em> ее
-              создание.<br> Все данные придется вводить повторно, если вы захотите
-              создать ее снова
-            </p>
-
-            <app-button
-              (click)="closeEditModal()"
-              [text]="'Отменить'"
-              [color]="'prim'"
-              [style]="'outlined'"
-              type="button"
-              [rounded]="true"
-            ></app-button>
+            <div class="button">
+              <p>
+                Если вы передумали создавать категорию, просто
+                отмените её создание.
+                Все данные придется вводить повторно, если вы захотите создать её
+                снова.
+              </p>
+  
+              <app-button
+                (click)="closeEditModal()"
+                [text]="'Отменить'"
+                [color]="'prim'"
+                [style]="'outlined'"
+                type="button"
+                [rounded]="true"
+              ></app-button>
+            </div>
           </div>
         </div>
       </form>
@@ -212,7 +215,6 @@
         [icon]="'arrow-next'"
         [color]="'sec'"
         [rounded]="true"
-        
         [style]="'filled'"
         [text]="'Вперед'"
         (click)="goToNextStep()"
@@ -230,9 +232,7 @@
   [type]="'yesOrNo'"
   (resultEmit)="handleCloseModal($event)"
   [buttonsText]="['Да', 'Нет']"
-  [description]="
-    'Вы уверены, что не хотите сохранить категорию?'
-  "
+  [description]="'Вы уверены, что не хотите сохранить категорию?'"
 >
 </app-modal>
 
@@ -245,7 +245,11 @@
   (resultEmit)="handleSaveModal($event)"
   [buttonsText]="['Да', 'Нет']"
   [description]="
-    'Вы уверены, что хотите создать категорию' + (currentUser.role==='user'?' и отправить её на рассмотрение модератору':'') + '?'
+    'Вы уверены, что хотите создать категорию' +
+    (currentUser.role === 'user'
+      ? ' и отправить её на рассмотрение модератору'
+      : '') +
+    '?'
   "
 ></app-modal>
 
@@ -257,5 +261,10 @@
   [type]="'Ok'"
   (resultEmit)="handleSuccessModal($event)"
   [buttonsText]="['Хорошо']"
-  [description]="'Категория успешно создана'+(currentUser.role==='user'?' и отправлена модератору на рассмотрение':'')"
+  [description]="
+    'Категория успешно создана' +
+    (currentUser.role === 'user'
+      ? ' и отправлена модератору на рассмотрение'
+      : '')
+  "
 ></app-modal>

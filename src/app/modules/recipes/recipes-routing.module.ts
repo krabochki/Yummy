@@ -16,6 +16,7 @@ import { IngredientPageComponent } from './components/ingredients/ingredient-pag
 import { IngredientGroupResolver } from './services/ingredient-group.resolver';
 import { IngredientResolver } from './services/ingredient.resolver';
 import { IngredientAccessGuard } from './guards/ingredient-access.guard';
+import { ImageUploadComponent } from './image-upload/image-upload.component';
 const routes: Routes = [
   {
     path: '',
@@ -158,7 +159,10 @@ const routes: Routes = [
 
         component: SomeRecipesPageComponent,
       },
-
+      {
+        path: 'upload-image',   
+        component: ImageUploadComponent
+      },
       {
         path: 'ingredients/list/:id/recipes',
         data: { filter: 'ingredient-recipes' },

@@ -27,6 +27,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@ng-bootstrap/ng-bootstrap": "^15.1.2",
     "@popperjs/core": "^2.11.6",
+    "@supabase/supabase-js": "^2.38.4",
     "angular-calendar": "^0.31.0",
     "angular-svg-icon": "^16.1.0",
     "angularx-flatpickr": "^7.3.0",

@@ -5,7 +5,7 @@
       comment.dislikesId.length > comment.likesId.length &&
       comment.dislikesId.length > 5
   }">
-    <div class="userpic"></div>
+    <div class="userpic" [style.background-image]="'url('+(avatar?avatar:noAvatar)+')'"></div>
     <div class="content">
         <a class="header" [ngClass]="{'nolink':!showCommentAuthor}" [routerLink]="showCommentAuthor?'/cooks/list/' + author.id:null">
             <h1>

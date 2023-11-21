@@ -115,7 +115,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         (this.form.get('login')?.dirty || this.form.get('login')?.touched)
         ? 'Введи корректный логин или электронную почту'
         : ''
-      : '';
+      : ' ';
   }
 
   handleSuccessModalResult(): void {

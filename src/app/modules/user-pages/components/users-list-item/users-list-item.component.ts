@@ -20,20 +20,23 @@ import { EmojiData } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { Router } from '@angular/router';
 import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
+import { supabase } from 'src/app/modules/controls/image/supabase-data';
 
 @Component({
   selector: 'app-users-list-item',
   templateUrl: './users-list-item.component.html',
   styleUrls: ['./users-list-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations:[trigger('modal',modal())]
+  animations: [trigger('modal', modal())],
 })
 export class UsersListItemComponent implements OnInit, OnDestroy {
   @Input() public userId: number = 0;
   user: IUser = { ...nullUser };
   @Output() demoteClick = new EventEmitter<IUser>();
   emoji: EmojiData | null = null;
-
+  noAvatar = 'assets/images/userpic.png';
+  avatar: string = '';
+  supabase = supabase
   noAccessModalShow = false;
 
   private destroyed$: Subject<void> = new Subject<void>();
@@ -50,7 +53,7 @@ export class UsersListItemComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private notifyService: NotificationService,
     private cd: ChangeDetectorRef,
-    private router:Router
+    private router: Router,
   ) {}
 
   public ngOnInit(): void {
@@ -88,6 +91,9 @@ export class UsersListItemComponent implements OnInit, OnDestroy {
             currentUserInFollowers
               ? (this.isFollower = true)
               : (this.isFollower = false);
+            if (this.user.avatarUrl) {
+              this.downloadUserpicFromSupabase(this.user.avatarUrl)
+            }
             this.cd.markForCheck();
           });
       });
@@ -102,6 +108,18 @@ export class UsersListItemComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl('/greetings');
     }
     this.noAccessModalShow = false;
+  }
+
+  async downloadUserpicFromSupabase(path: string) {
+    try {
+      this.avatar = this.supabase.storage.from('userpics').getPublicUrl(path).data.publicUrl;
+        this.cd.markForCheck();
+      
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('Error downloading image: ', error.message);
+      }
+    }
   }
 
   clickFollowButton() {

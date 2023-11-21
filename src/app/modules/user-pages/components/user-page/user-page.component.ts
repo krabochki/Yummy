@@ -15,7 +15,11 @@ import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
 import { fadeIn, heightAnim, modal } from 'src/tools/animations';
 import { trigger } from '@angular/animations';
-import { Title } from '@angular/platform-browser';
+import {
+  DomSanitizer,
+  SafeResourceUrl,
+  Title,
+} from '@angular/platform-browser';
 import { Location, registerLocaleData } from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
 import { RouteEventsService } from 'src/app/modules/controls/route-events.service';
@@ -26,6 +30,13 @@ import { INotification } from '../../models/notifications';
 import { getFormattedDate } from 'src/tools/common';
 import { customEmojis, emojisRuLocale } from './emoji-picker-data';
 import { Emoji, EmojiData } from '@ctrl/ngx-emoji-mart/ngx-emoji';
+import { createClient } from '@supabase/supabase-js';
+import {
+  supabaseUrl,
+  supabaseKey,
+  supabase,
+} from 'src/app/modules/controls/image/supabase-data';
+import { ImageService } from 'src/app/modules/controls/image/image.service';
 
 @Component({
   selector: 'app-user-page',
@@ -39,6 +50,9 @@ import { Emoji, EmojiData } from '@ctrl/ngx-emoji-mart/ngx-emoji';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserPageComponent implements OnInit, OnDestroy {
+  supabase = supabase;
+  avatar: string = '';
+
   emojisRuLocale = emojisRuLocale;
   customEmojis = customEmojis;
   selectedEmoji: EmojiData | null = null; //эмодзи статус текущего пользователя
@@ -53,6 +67,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
 
   settingsShow = false;
   dataLoaded = false;
+  userpicLoaded = true;
   showFollows = false;
   recipesEnabled: boolean = true;
   moreInfoEnabled: boolean = false;
@@ -128,13 +143,13 @@ export class UserPageComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroyed$))
         .subscribe((data) => {
           this.currentUser = data;
-        });
 
-      if (this.currentUser.id === this.user.id) {
-        this.myPage = true;
-      } else {
-        this.myPage = false;
-      }
+          if (this.currentUser.id === this.user.id) {
+            this.myPage = true;
+          } else {
+            this.myPage = false;
+          }
+        });
 
       this.userService.users$
         .pipe(takeUntil(this.destroyed$))
@@ -172,6 +187,12 @@ export class UserPageComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.destroyed$))
             .subscribe((data) => {
               this.allRecipes = this.recipeService.getPopularRecipes(data);
+
+              if (this.user.avatarUrl) {
+                this.downloadUserpicFromSupabase(this.user.avatarUrl);
+              } else {
+                this.avatar = '';
+              }
 
               this.userRecipes = this.recipeService.getRecipesByUser(
                 this.allRecipes,
@@ -216,6 +237,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
               });
 
               this.cd.markForCheck();
+
               this.dataLoaded = true;
             });
         });
@@ -232,6 +254,16 @@ export class UserPageComponent implements OnInit, OnDestroy {
 
   closeFollows() {
     this.showFollows = false;
+  }
+
+ downloadUserpicFromSupabase(path: string) {
+    this.userpicLoaded = false;
+    this.avatar = this.supabase.storage
+      .from('userpics')
+      .getPublicUrl(path).data.publicUrl;
+    this.cd.markForCheck();
+
+    this.userpicLoaded = true;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

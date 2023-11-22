@@ -2,7 +2,7 @@
   <div class="content">
     <h1 class="label">Вход в аккаунт</h1>
     <p class="tagline">
-      Пожалуйста, введи свое имя пользователя/электронную почту и пароль, для
+      Пожалуйста, введите вашу электронную почту и пароль, для
       того чтобы войти в аккаунт.
     </p>
 
@@ -14,13 +14,11 @@
           [max]="64"
           id="login"
           formControlName="login"
-          [placeholder]="'Логин или электронная почта'"
+          [placeholder]="'Электронная почта'"
           required
           [error]="loginNotValidError"
         ></app-usual-input>
-        <div class="error" *ngIf="form.get('login')?.hasError('loginExists')">
-                      Пользователя с такой электронной почтой или именем пользователя не существует
-                    </div>
+     
      </div>
        <app-usual-input
        [inputRequired]="true"
@@ -76,5 +74,11 @@
   [type]="'Ok'"
   (resultEmit)="handleFailModalResult()"
   [buttonsText]="['Хорошо']"
-  [description]="'Вы ввели неправильный пароль'"
+  [description]="failInfo||'Произошла неизвестная ошибка при попытке входа в аккаунт'"
 ></app-modal>
+
+<app-modal [ngStyle]="{'z-index':100}" @modal *ngIf="noEmailValidation" [style]="'prim'"
+  [title]="'Неудачная попытка входа'" [type]="'Ok'" (resultEmit)="noEmailValidation=false;" [buttonsText]="['Хорошо']"
+  [description]="'Вы не подтвердили электронную почту'" ></app-modal>
+
+<app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal [description]="'Проверяем данные, которые вы ввели... Подождите немного...'" />

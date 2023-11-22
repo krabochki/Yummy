@@ -8,7 +8,7 @@
   *ngIf="category.id > 0; else nullCategory"
 >
  <div class="category-wrap">
-    <div class="category" *ngIf="category.id > 0; else nullCategory">
+    <div class="category" *ngIf="category.id > 0; else nullCategory" [style.background-image]="'url('+(picture?picture:placeholder)+')'">
     
      
     </div>
@@ -37,4 +37,6 @@
 </ng-template>
 
 <app-modal @modal (resultEmit)="handleDeleteModal($event)" [type]="'yesOrNo'" [buttonsText]="['Да','Отмена']" [style]="'prim'" [description]="'Вы уверены, что хотите удалить эту ' + (context==='category'?'категорию?':'секцию?')" [title]="'Удаление '+(context==='category'?'категории':'секции')" *ngIf="deleteModalShow"></app-modal>
-<app-modal @modal (resultEmit)="handleSuccessDeleteModal()" [type]="'Ok'" [buttonsText]="['Хорошо']" [style]="'sec'" [description]="(context==='category'?'Категория':'Секция')+' успешно удалена'" [title]="(context==='category'?'Категория':'Секция')+' удалена'" *ngIf="successDeleteModalShow"></app-modal>
+
+<app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
+  [description]="'Удаляем данные о категории... Подождите немного...'" />

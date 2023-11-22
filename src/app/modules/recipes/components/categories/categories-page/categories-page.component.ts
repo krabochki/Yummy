@@ -35,7 +35,6 @@ import { baseComparator } from 'src/tools/common';
 export class CategoriesPageComponent implements OnInit, OnDestroy {
   sections: ISection[] = [];
   categories: ICategory[] = [];
-  isLoading = true;
 
   creatingMode = false;
   filter: string = '';
@@ -88,14 +87,16 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  getCategoriesData() {
+  getCategoriesData(section:ISection) {
     this.categoryService.categories$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((data: ICategory[]) => {
         this.categories = data;
         this.categories = this.categories.filter(
           (category) => category.status === 'public',
-        );
+        ); this.cd.markForCheck();
+        this.divideCategories(section)
+
 
         this.recipeService.recipes$
           .pipe(takeUntil(this.destroyed$))
@@ -105,9 +106,9 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
             this.popularCategories = this.categoryService.getPopularCategories(
               this.categories,
               recipes,
-            );
+            );        this.cd.markForCheck();
+
           });
-        this.cd.markForCheck();
       });
   }
 
@@ -131,41 +132,44 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.getCurrentUserData();
     this.route.data.subscribe((data) => {
-      this.getCategoriesData();
       this.filter = data['filter'];
-      this.categories = this.categoryService.sortCategoriesByName(
-        this.categories,
-      );
-      if (this.filter === 'sections') {
-        // если это все секции
-        this.getSectionsData();
-      } else if (this.filter === 'popular') {
-        //если это секция популярных категорий
-        this.title = 'Популярные категории';
-        const popularCategoriesIds = this.popularCategories.map(
-          (element) => element.id,
-        );
-        const popularSection: ISection = {
-          ...nullSection,
-          categories: popularCategoriesIds,
-        };
-        this.sections.push(popularSection);
-      } else {
-        //если это конкретная секция
-        this.section = { ...data['SectionResolver'] };
-        this.title = this.section.name;
-        this.section.name = '';
-        this.sections.push(this.section);
-      }
-
-      this.categoriesToShow = this.getCategoriesOfSection(this.section).slice(
-        0,
-        10,
-      );
-
-      this.titleService.setTitle(this.title);
-      this.isLoading = false;
+      this.getCategoriesData( data['SectionResolver'] );
+      
     });
+  }
+
+  divideCategories(section:ISection) {
+    this.categories = this.categoryService.sortCategoriesByName(
+      this.categories,
+    );
+    if (this.filter === 'sections') {
+      // если это все секции
+      this.getSectionsData();
+    } else if (this.filter === 'popular') {
+      //если это секция популярных категорий
+      this.title = 'Популярные категории';
+      const popularCategoriesIds = this.popularCategories.map(
+        (element) => element.id,
+      );
+      const popularSection: ISection = {
+        ...nullSection,
+        categories: popularCategoriesIds,
+      };
+      this.sections.push(popularSection);
+    } else {
+      //если это конкретная секция
+      this.section = section
+      this.title = this.section.name;
+      this.section.name = '';
+      this.sections.push(this.section);
+    }
+
+    this.categoriesToShow = this.getCategoriesOfSection(this.section).slice(
+      0,
+      10,
+    );
+
+    this.titleService.setTitle(this.title);
   }
 
   getPublicCategories(section: ISection): ICategory[] {

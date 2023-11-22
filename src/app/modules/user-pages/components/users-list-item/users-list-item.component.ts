@@ -36,7 +36,7 @@ export class UsersListItemComponent implements OnInit, OnDestroy {
   emoji: EmojiData | null = null;
   noAvatar = 'assets/images/userpic.png';
   avatar: string = '';
-  supabase = supabase
+  supabase = supabase;
   noAccessModalShow = false;
 
   private destroyed$: Subject<void> = new Subject<void>();
@@ -92,7 +92,7 @@ export class UsersListItemComponent implements OnInit, OnDestroy {
               ? (this.isFollower = true)
               : (this.isFollower = false);
             if (this.user.avatarUrl) {
-              this.downloadUserpicFromSupabase(this.user.avatarUrl)
+              this.downloadUserpicFromSupabase(this.user.avatarUrl);
             }
             this.cd.markForCheck();
           });
@@ -110,16 +110,10 @@ export class UsersListItemComponent implements OnInit, OnDestroy {
     this.noAccessModalShow = false;
   }
 
-  async downloadUserpicFromSupabase(path: string) {
-    try {
-      this.avatar = this.supabase.storage.from('userpics').getPublicUrl(path).data.publicUrl;
-        this.cd.markForCheck();
-      
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error('Error downloading image: ', error.message);
-      }
-    }
+  downloadUserpicFromSupabase(path: string) {
+    this.avatar = this.supabase.storage
+      .from('userpics')
+      .getPublicUrl(path).data.publicUrl;
   }
 
   clickFollowButton() {
@@ -134,12 +128,15 @@ export class UsersListItemComponent implements OnInit, OnDestroy {
     return this.userService.getPermission('show-status', user);
   }
 
-  protected follow(): void {
+  async updateUser(user:IUser) {
+   await this.userService.updateUserInSupabase(user); 
+  }
+
+  async follow() {
     if (this.currentUser.id > 0) {
       this.user = this.userService.addFollower(this.user, this.currentUser.id);
-      this.userService.updateUsers(this.user).subscribe();
-
-      if (this.userService.getPermission('new-follower', this.user)) {
+       this.updateUser(this.user);
+       if (this.userService.getPermission('new-follower', this.user)) {
         const notify: INotification = this.notifyService.buildNotification(
           'Новый подписчик',
           `Кулинар ${
@@ -151,18 +148,18 @@ export class UsersListItemComponent implements OnInit, OnDestroy {
           'user',
           '/cooks/list/' + this.currentUser.id,
         );
-        this.notifyService.sendNotification(notify, this.user).subscribe();
+        this.notifyService.sendNotification(notify, this.user)
       }
     }
   }
 
-  protected unfollow(): void {
+  async unfollow() {
     if (this.currentUser.id > 0) {
       this.user = this.userService.removeFollower(
         this.user,
         this.currentUser.id,
       );
-      this.userService.updateUsers(this.user).subscribe();
+       this.updateUser(this.user);
     }
   }
 

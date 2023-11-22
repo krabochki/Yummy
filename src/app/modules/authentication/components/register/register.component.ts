@@ -25,6 +25,9 @@ import { getCurrentDate } from 'src/tools/common';
 import { PlanService } from 'src/app/modules/planning/services/plan-service';
 import { IPlan, nullPlan } from 'src/app/modules/planning/models/plan';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
+import { supabase } from 'src/app/modules/controls/image/supabase-data';
+import { uuid } from 'uuidv4';
+
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
@@ -37,10 +40,13 @@ export class RegisterComponent implements OnInit, OnDestroy {
   modalSuccessShow: boolean = false;
   users: IUser[] = [];
   form: FormGroup;
+  loading = false;
+  failText = '';
   protected destroyed$: Subject<void> = new Subject<void>();
   private plans: IPlan[] = [];
 
   createUser: IUser = { ...nullUser };
+  maxId = 0;
 
   usernameValidator = usernameExistsValidator;
 
@@ -56,6 +62,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
   ) {
     this.titleService.setTitle('Регистрация');
     this.form = this.fb.group({});
+    this.usersService.getMaxUserId().then((maxId) => {
+      this.maxId = maxId;
+    });
   }
 
   ngOnInit(): void {
@@ -103,6 +112,52 @@ export class RegisterComponent implements OnInit, OnDestroy {
     });
   }
 
+  private supabase = supabase;
+
+  async supabaseRegisration(user: IUser) {
+    this.loading = true;
+    console.log(this.users);
+    const isEmailTaken = this.users.some(
+      (searchingUser) => searchingUser.username === user.username,
+    );
+    const isUsernameTaken = this.users.some(
+      (searchingUser) => searchingUser.username === user.username,
+    );
+    if (isUsernameTaken || isEmailTaken) {
+      this.loading = false;
+      this.error = true;
+      this.failText = isUsernameTaken
+        ? 'Имя пользователя, которое вы ввели, уже занято. Пожалуйста, измените данные и попробуйте ещё раз.'
+        : 'Почта, которую вы ввели, уже занята. Пожалуйста, измените данные и попробуйте ещё раз.';
+      this.cd.markForCheck();
+      return;
+    }
+
+    const { data, error } = await supabase.auth.signUp({
+      email: user.email,
+      password: user.password,
+    });
+    if (error) {
+      this.error = true;
+    } else if (data.user?.identities?.length === 0) {
+      this.error = true;
+    } else {
+      this.modalSuccessShow = true;
+      const newUserId = data.user?.id; // Получение id нового пользователя
+
+      this.addUserToUsers(this.maxId + 1, user.username, user.email);
+
+      if (error) {
+        console.log(error);
+      }
+    }
+    this.loading = false;
+
+    this.cd.markForCheck();
+  }
+
+  error = false;
+
   registration(): void {
     if (this.form.valid) {
       const maxId = Math.max(...this.users.map((u) => u.id));
@@ -114,25 +169,31 @@ export class RegisterComponent implements OnInit, OnDestroy {
         registrationDate: getCurrentDate(),
         id: maxId + 1,
       };
- 
-      this.usersService.postUser(userData).subscribe(() => {
-        this.createUser = { ...userData };
-        this.modalSuccessShow = true;
-        const maxId = Math.max(...this.plans.map((u) => u.id));
-        const newUserPlan = {
-          ...nullPlan,
-          id: maxId + 1,
-          user: userData.id,
-        };
-        this.planService.addPlan(newUserPlan).subscribe(() => {
-          this.authService.loginUser(userData).subscribe(() => {
-            this.authService.setCurrentUser(userData);
-            localStorage.setItem('currentUser', JSON.stringify(userData));
-            this.cd.markForCheck();
-          });
-        });
-      });
+
+      this.supabaseRegisration(userData);
+
+      // this.usersService.postUser(userData).subscribe(() => {
+      //   this.createUser = { ...userData };
+      //   const maxId = Math.max(...this.plans.map((u) => u.id));
+      //   const newUserPlan = {
+      //     ...nullPlan,
+      //     id: maxId + 1,
+      //     user: userData.id,
+      //   };
+      //   this.planService.addPlan(newUserPlan).subscribe(() => {
+      //     this.supabaseRegisration(userData);
+
+      //   });
+      // });
     }
+  }
+
+  async addUserToUsers(id: number, username: string, email: string) {
+    const { error } = await this.usersService.addUserToSupabase(
+      id,
+      username,
+      email,
+    );
   }
 
   handleAreYouSureModalResult(result: boolean): void {
@@ -151,7 +212,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
       'born',
       '',
     );
-    this.notifyService.sendNotification(notify, this.createUser).subscribe();
+    this.notifyService.sendNotification(notify, this.createUser)
     this.modalSuccessShow = false;
   }
   get passwordNotValidError(): string {
@@ -166,7 +227,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         (this.form.get('email')?.dirty || this.form.get('email')?.touched)
         ? 'Введи корректный адрес электронной почты'
         : ''
-      : '';
+      : ' ';
   }
   get usernameNotValidError(): string {
     return !this.form.get('username')?.hasError('usernameExists')
@@ -174,7 +235,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         (this.form.get('username')?.dirty || this.form.get('username')?.touched)
         ? 'Имя пользователя должно содержать от 4 до 20 символов, среди которых могут быть буквы (минимум одна), цифры, а также нижние почеркивания и точки (не подряд)'
         : ''
-      : '';
+      : ' ';
   }
 
   ngOnDestroy(): void {

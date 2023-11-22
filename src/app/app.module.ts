@@ -27,7 +27,7 @@ export function initializeSections(sectionSerivce: SectionService) {
   return () => sectionSerivce.loadSectionData();
 }
 export function initializeCategories(CategoryService: CategoryService) {
-  return () => CategoryService.loadCategoryData();
+  return () => CategoryService.loadCategoriesFromSupabase();
 }
 export function initializeRecipes(RecipeService: RecipeService) {
   return () => RecipeService.loadRecipeData();
@@ -58,6 +58,7 @@ export function initializeIngredientsGroupsData(ingredientService: IngredientSer
     BrowserAnimationsModule,
     HttpClientModule,
     RecipesModule,
+    
     ControlsModule,
     UserPagesModule,
     AngularSvgIconModule.forRoot(),
@@ -120,7 +121,6 @@ export function initializeIngredientsGroupsData(ingredientService: IngredientSer
       deps: [IngredientService],
       multi: true,
     },
-
     AdminGuard,
     ModeratorGuard,
     RouteEventsService,

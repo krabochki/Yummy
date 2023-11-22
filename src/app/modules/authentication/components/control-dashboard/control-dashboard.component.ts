@@ -54,6 +54,7 @@ import {
   IIngredientsGroup,
 } from 'src/app/modules/recipes/models/ingredients';
 import { baseComparator } from 'src/tools/common';
+import { supabase } from 'src/app/modules/controls/image/supabase-data';
 @Component({
   selector: 'app-control-dashboard',
   templateUrl: './control-dashboard.component.html',
@@ -104,6 +105,8 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
 
   protected sectionCreatingMode: boolean = false;
   groupCreatingMode = false;
+
+  categoryPlaceholder= 'assets/images/category.png'
 
   protected reportCommentDismissModalShow: boolean = false;
   protected successReportCommentDismissModalShow: boolean = false;
@@ -407,20 +410,16 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
       );
       const author: IUser = this.getUser(comment.authorId);
 
-      const subscribes: Observable<IUser>[] = [];
-
       const notifyForReporter = notifyForReporterOfLeavedComment(
         author,
         recipe,
         comment,
         this.notifyService,
       );
-      subscribes.push(
-        this.sendNotifyWithPermission(
-          notifyForReporter,
-          reporter,
-          'your-reports-publish',
-        ),
+      this.sendNotifyWithPermission(
+        notifyForReporter,
+        reporter,
+        'your-reports-publish',
       );
 
       const notifyForAuthor = notifyForAuthorOfLeavedComment(
@@ -428,15 +427,11 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
         recipe,
         this.notifyService,
       );
-      subscribes.push(
-        this.sendNotifyWithPermission(
-          notifyForAuthor,
-          author,
-          'your-reports-reviewed-moderator',
-        ),
+      this.sendNotifyWithPermission(
+        notifyForAuthor,
+        author,
+        'your-reports-reviewed-moderator',
       );
-
-      forkJoin(subscribes).subscribe(() => (this.actionReport = null));
     }
   }
   private sendNotifiesAfterApprovingReport(): void {
@@ -462,22 +457,16 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
         this.notifyService,
       );
 
-      const subscribes: Observable<IUser>[] = [];
-      subscribes.push(
-        this.sendNotifyWithPermission(
-          notifyForReporter,
-          reporter,
-          'your-reports-publish',
-        ),
-      );
-      subscribes.push(
+      this.sendNotifyWithPermission(
+        notifyForReporter,
+        reporter,
+        'your-reports-publish',
+      ),
         this.sendNotifyWithPermission(
           notifyForAuthor,
           author,
           'your-reports-reviewed-moderator',
-        ),
-      );
-      forkJoin(subscribes).subscribe(() => (this.actionReport = null));
+        )
     }
   }
   private sendNotifyAfterApproveCategory(): void {
@@ -491,7 +480,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
         notify,
         author,
         'manager-reviewed-your-category',
-      ).subscribe(() => (this.actionCategory = null));
+      );
     }
   }
   private sendNotifyAfterDismissCategory(): void {
@@ -505,24 +494,21 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
         notifyForAuthor,
         author,
         'manager-reviewed-your-category',
-      ).subscribe(() => (this.actionCategory = null));
+      );
     }
   }
   private sendNotifiesAfterPublishingRecipe(approvedRecipe: IRecipe): void {
     if (this.actionRecipe) {
-      const subscribes: Observable<IUser>[] = [];
       const author: IUser = this.getUser(this.actionRecipe.authorId);
       {
         const notifyForAuthor: INotification = notifyForAuthorOfApprovedRecipe(
           this.actionRecipe,
           this.notifyService,
         );
-        subscribes.push(
-          this.sendNotifyWithPermission(
-            notifyForAuthor,
-            author,
-            'manager-review-your-recipe',
-          ),
+        this.sendNotifyWithPermission(
+          notifyForAuthor,
+          author,
+          'manager-review-your-recipe',
         );
 
         const authorFollowers = this.userService.getFollowers(
@@ -535,17 +521,18 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
             approvedRecipe,
             this.notifyService,
           );
-          subscribes.push(
-            this.sendNotifyWithPermission(
-              notifyForFollower,
-              follower,
-              'new-recipe-from-following',
-            ),
+          this.sendNotifyWithPermission(
+            notifyForFollower,
+            follower,
+            'new-recipe-from-following',
           );
         });
       }
-      forkJoin(subscribes).subscribe(() => (this.actionRecipe = null));
     }
+  }
+
+  async updateUser(user: IUser) {
+    await this.userService.updateUserInSupabase(user);
   }
 
   private demoteUser() {
@@ -558,75 +545,71 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
         this.targetDemotedUser,
       );
     }
-    this.userService
-      .updateUsers(this.targetDemotedUser)
-      .subscribe(() => (this.targetDemotedUser = nullUser));
+    this.updateUser(this.targetDemotedUser);
   }
+
+   downloadCategoryPicFromSupabase(path: string) {
+    return supabase.storage
+      .from('categories')
+      .getPublicUrl(path).data.publicUrl;
+  }
+
+
   private approveCategory() {
     if (this.actionCategory) {
       this.adminService
         .approveCategory(this.actionCategory)
-        .subscribe(() => (this.successApproveCategoryModalShow = true));
+      this.successApproveCategoryModalShow = true;
     }
   }
   private dismissCategory() {
     if (this.actionCategory) {
-      this.adminService.dismissCategory(this.actionCategory).subscribe(() => {
+      this.adminService.dismissCategory(this.actionCategory)
         if (this.actionCategory) {
           const section = { ...this.getSection(this.actionCategory.id) };
           this.adminService
             .updateSectionAfterDismissCategory(section, this.actionCategory)
             .subscribe(() => (this.successDismissCategoryModalShow = true));
         }
-      });
     }
   }
   private approveRecipe(): void {
-    if (this.actionRecipe)
-      this.adminService.approveRecipe(this.actionRecipe).subscribe(() => {
-        this.actionRecipe &&
-          this.userService.getPermission(
-            'hide-author',
-            this.getUser(this.actionRecipe.authorId),
-          ) &&
-          this.sendNotifiesAfterPublishingRecipe(this.actionRecipe);
-      });
+    if (this.actionRecipe) this.adminService.approveRecipe(this.actionRecipe);
+    this.actionRecipe &&
+      this.userService.getPermission(
+        'hide-author',
+        this.getUser(this.actionRecipe.authorId),
+      ) &&
+      this.sendNotifiesAfterPublishingRecipe(this.actionRecipe);
   }
   private dismissRecipe(): void {
     if (this.actionRecipe) {
-      this.adminService.dismissRecipe(this.actionRecipe).subscribe(() => {
-        if (this.actionRecipe) {
-          const author: IUser = this.getUser(this.actionRecipe.authorId);
-          const notify = notifyForAuthorOfDismissedRecipe(
-            this.actionRecipe,
-            this.notifyService,
-          );
-          this.sendNotifyWithPermission(
-            notify,
-            author,
-            'manager-review-your-recipe',
-          ).subscribe(() => (this.actionRecipe = null));
-        }
-      });
+      this.adminService.dismissRecipe(this.actionRecipe);
+      if (this.actionRecipe) {
+        const author: IUser = this.getUser(this.actionRecipe.authorId);
+        const notify = notifyForAuthorOfDismissedRecipe(
+          this.actionRecipe,
+          this.notifyService,
+        );
+        this.sendNotifyWithPermission(
+          notify,
+          author,
+          'manager-review-your-recipe',
+        );
+      }
     }
   }
   private blockComment(): void {
     if (this.actionReport) {
-      this.adminService
-        .blockComment(this.actionReport, this.recipes)
-        .subscribe(() => {
-          this.successReportCommentApproveModalShow = true;
-        });
+      this.adminService.blockComment(this.actionReport, this.recipes);
+      this.successReportCommentApproveModalShow = true;
     }
   }
   private leaveComment(): void {
     if (this.actionReport) {
       const recipe = this.getRecipe(this.actionReport.recipe);
-      this.adminService
-        .leaveComment(recipe, this.actionReport)
-        .subscribe(() => {
-          this.successReportCommentDismissModalShow = true;
-        });
+      this.adminService.leaveComment(recipe, this.actionReport);
+      this.successReportCommentDismissModalShow = true;
     }
   }
 
@@ -656,12 +639,10 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     this.ingredientModalShow = true;
   }
 
-  categoryActionClick(context:'approve'|'dismiss',category:ICategory) {
+  categoryActionClick(context: 'approve' | 'dismiss', category: ICategory) {
     this.actionCategory = category;
-    if (context === 'approve')
-      this.approveCategoryActionModalShow = true
+    if (context === 'approve') this.approveCategoryActionModalShow = true;
     else this.dismissCategoryActionModalShow = true;
-   
   }
   getIngredientModalDescription(): string {
     if (this.actionIngredient && this.actionIngredient.author) {
@@ -722,7 +703,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
         notify,
         this.getUser(this.actionIngredient.author),
         'your-ingredient-published',
-      ).subscribe(() => (this.actionIngredient = null));
+      );
     }
   }
 

@@ -21,26 +21,24 @@ export class NotifyComponent {
   @Output() notifyDeleteClick = new EventEmitter();
   @Input() popup: boolean = false;
 
-  constructor(private notificationService: NotificationService) {}
+  constructor(private notificationService: NotificationService) { }
   protected deleteNotify() {
-    
+
     if (this.popup) {
-      this.notificationService.makeNotifyReaded(this.notify, this.user).subscribe(
-       ()=> this.notifyDeleteClick.emit() 
-      )
-    } 
-     else {
-       this.notificationService
-         .removeNotification(this.notify, this.user)
-         .subscribe();
+      this.notificationService.makeNotifyReaded(this.notify, this.user);
+      this.notifyDeleteClick.emit();
     }
-    
+    else {
+      this.notificationService
+        .removeNotification(this.notify, this.user)
+    }
+
   }
 
   getClass() {
     const styles: string[] = [];
     if (!this.notify.read) styles.push('not-readed');
-    if(this.popup) styles.push('popup')
+    if (this.popup) styles.push('popup')
     switch (this.notify.context) {
       case 'plan-reminder':
         styles.push('plan');

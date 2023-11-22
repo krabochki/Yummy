@@ -10,7 +10,11 @@ import {
 import { RecipeService } from '../../../services/recipe.service';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { Observable, Subject, forkJoin, takeUntil } from 'rxjs';
-import { IUser, PermissionContext, nullUser } from 'src/app/modules/user-pages/models/users';
+import {
+  IUser,
+  PermissionContext,
+  nullUser,
+} from 'src/app/modules/user-pages/models/users';
 import { CategoryService } from '../../../services/category.service';
 import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
@@ -20,6 +24,7 @@ import { IRecipe } from '../../../models/recipes';
 import { ICategory, ISection } from '../../../models/categories';
 import { PluralizationService } from 'src/app/modules/controls/directives/plural.service';
 import { Router } from '@angular/router';
+import { supabase } from 'src/app/modules/controls/image/supabase-data';
 
 @Component({
   selector: 'app-category-list-item',
@@ -31,18 +36,21 @@ import { Router } from '@angular/router';
 export class CategoryListItemComponent implements OnInit, OnDestroy {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @Input() category: any = null;
-
   @Input() showRecipesNumber: boolean = false;
   @Input() context: 'section' | 'category' = 'category';
 
   protected currentUser: IUser = { ...nullUser };
+  supabase = supabase;
 
   protected destroyed$: Subject<void> = new Subject<void>();
 
   private categories: ICategory[] = [];
   private sections: ISection[] = [];
   private recipes: IRecipe[] = [];
+  loading = false;
   recipesNumber = 0;
+  picture = '';
+  placeholder = 'assets/images/category.png';
 
   get title(): string {
     return this.category.categories
@@ -68,10 +76,18 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
     private sectionService: SectionService,
     private authService: AuthService,
     private pluralService: PluralizationService,
-    private router:Router,
+    private router: Router,
     private categoryService: CategoryService,
-    private cd:ChangeDetectorRef
+    private cd: ChangeDetectorRef,
   ) {}
+
+  downloadUserpicFromSupabase(path: string) {
+    this.picture = this.supabase.storage
+      .from('categories')
+      .getPublicUrl(path).data.publicUrl;
+    this.cd.markForCheck();
+  }
+
   ngOnInit() {
     this.sectionService.sections$
       .pipe(takeUntil(this.destroyed$))
@@ -87,6 +103,9 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.destroyed$))
             .subscribe((user) => {
               this.currentUser = user;
+              if (this.category.photo) {
+                this.downloadUserpicFromSupabase(this.category.photo);
+              }
               if (this.context === 'category')
                 this.recipesNumber = this.recipeService.getRecipesByCategory(
                   this.recipeService.getPublicAndAllMyRecipes(data, user.id),
@@ -113,8 +132,8 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
                     });
                   });
                 this.recipesNumber = sectionRecipesIds.length;
-                this.cd.markForCheck()
               }
+              this.cd.markForCheck();
             });
         });
   }
@@ -129,47 +148,52 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
   }
 
   protected handleDeleteModal(answer: boolean) {
-    if (answer) this.successDeleteModalShow = true;
+    if (answer) this.deleteCategory();
     this.deleteModalShow = false;
   }
 
-  protected handleSuccessDeleteModal() {
-    this.successDeleteModalShow = false;
-    setTimeout(() => {
-      this.deleteCategory();
-    }, 300);
+  async deleteCategoryFromSupabase(category: ICategory) {
+    this.loading = true;
+    this.cd.markForCheck();
+    await this.categoryService.deleteCategoryFromSupabase(category.id);
+    this.loading = false;
+    this.updateRecipesAfterDeletingCategory();
+    this.cd.markForCheck();
+  }
+
+  updateRecipesAfterDeletingCategory() {
+    const subscribes: Observable<IRecipe | ISection>[] = [];
+    const section: ISection = this.sectionService.getSectionOfCategory(
+      this.sections,
+      this.category,
+    );
+    section.categories = section.categories.filter(
+      (c) => c !== this.category.id,
+    );
+    subscribes.push(this.sectionService.updateSections(section));
+    this.recipeService
+      .getRecipesByCategory(this.recipes, this.category)
+      .forEach((recipe) => {
+        const updatedRecipe = {
+          ...{ ...recipe },
+          categories: recipe.categories.filter((c) => c !== this.category.id),
+        };
+        this.updateRecipe(updatedRecipe);
+        forkJoin(subscribes).subscribe();
+      });
   }
 
   protected deleteCategory(): void {
-    if (this.context === 'category')
-      this.categoryService.deleteCategory(this.category.id).subscribe(() => {
-        const subscribes: Observable<IRecipe | ISection>[] = [];
-        const section: ISection = this.sectionService.getSectionOfCategory(
-          this.sections,
-          this.category,
-        );
-        section.categories = section.categories.filter(
-          (c) => c !== this.category.id,
-        );
-        subscribes.push(this.sectionService.updateSections(section));
-        this.recipeService
-          .getRecipesByCategory(this.recipes, this.category)
-          .forEach((recipe) => {
-            const updatedRecipe = {
-              ...{ ...recipe },
-              categories: recipe.categories.filter(
-                (c) => c !== this.category.id,
-              ),
-            };
-            recipe.categories = recipe.categories.filter(
-              (c) => c !== this.category.id,
-            );
-            subscribes.push(this.recipeService.updateRecipe(updatedRecipe));
-          });
+    if (this.context === 'category') {
+      this.deleteCategoryFromSupabase(this.category);
+    } else this.sectionService.deleteSection(this.category.id).subscribe();
+    if (this.category.photo) {
+      this.deleteOldPic(this.category.photo);
+    }
+  }
 
-        forkJoin(subscribes).subscribe();
-      });
-    else this.sectionService.deleteSection(this.category.id).subscribe();
+  async updateRecipe(recipe: IRecipe) {
+    await this.recipeService.updateRecipeFunction(recipe);
   }
 
   get showDeletingButton() {
@@ -178,6 +202,10 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
         ? 'show-category-deleting'
         : 'show-section-deleting';
     return this.userService.getPermission(permissionName, this.currentUser);
+  }
+
+  async deleteOldPic(path: string) {
+    await this.supabase.storage.from('categories').remove([path]);
   }
 
   ngOnDestroy(): void {

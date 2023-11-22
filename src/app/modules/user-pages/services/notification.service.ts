@@ -46,6 +46,10 @@ export class NotificationService {
     return notification;
   }
 
+  async updateUser(user: IUser) {
+    await this.userService.updateUserInSupabase(user);
+  }
+
   removeNotification(notification: INotification, user: IUser) {
     const actualUser = this.users.find((u) => u.id === user.id);
 
@@ -53,7 +57,7 @@ export class NotificationService {
       actualUser.notifications = actualUser?.notifications.filter(
         (n) => n.id !== notification.id,
       );
-      return this.userService.updateUsers(actualUser);
+      return this.updateUser(actualUser);
     } else return EMPTY;
   }
 
@@ -62,7 +66,7 @@ export class NotificationService {
       (n) =>
         n.context === 'plan-reminder-start' || n.context === 'plan-reminder',
     );
-    return this.userService.updateUsers(user);
+    return this.updateUser(user);
   }
 
   makeNotifyReaded(notify:INotification,user:IUser) {
@@ -71,7 +75,7 @@ export class NotificationService {
     if (findedNotification) {
       findedNotification.read = true;
     }
-    return this.userService.updateUsers(user);
+    return this.updateUser(user);
   }
 
   addNotificationToUser(notify: INotification, user: IUser) {
@@ -103,7 +107,7 @@ export class NotificationService {
       actualUser.notifications.push(notification);
     }
     if (actualUser)
-      return this.userService.updateUsers(actualUser).pipe(take(1));
+      return this.updateUser(actualUser)
     else return EMPTY;
   }
 }

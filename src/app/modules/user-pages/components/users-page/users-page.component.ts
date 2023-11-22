@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { Subject, takeUntil } from 'rxjs';
 import { IUser, nullUser } from '../../models/users';
@@ -43,6 +43,7 @@ export class UsersPageComponent implements OnInit, OnDestroy {
   protected searchQuery: string = '';
   protected autocompleteShow: boolean = false;
   protected autocompleteUsersList: IUser[] = [];
+  init = false;
 
   constructor(
     private userService: UserService,
@@ -51,6 +52,7 @@ export class UsersPageComponent implements OnInit, OnDestroy {
     private router: Router,
     private authService: AuthService,
     private route: ActivatedRoute,
+    private cd: ChangeDetectorRef,
   ) {}
 
   public ngOnInit(): void {
@@ -67,25 +69,28 @@ export class UsersPageComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroyed$))
           .subscribe((data) => {
             this.users = data;
-          });
-        
+            if (!this.init && this.users.length > 0) {
+              this.initializeUsers();
+              this.init = true;
+            }
             this.currentUserFollowingUsers = this.getCurrentUserFollowingUsers(
               this.users,
-        );
-        
-        switch (this.userType) {
-          case UsersType.Following:
-            this.allUsers = this.currentUserFollowingUsers;
-            break;
-        }
+            );
+
+            switch (this.userType) {
+              case UsersType.Following:
+                this.allUsers = this.currentUserFollowingUsers;
+                break;
+            }
+            this.cd.markForCheck();
+          });
       });
     this.recipeService.recipes$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((data) => {
         this.recipes = data;
       });
-      //списки юзеров создаются только 1 раз а при подписке и тд обновляется уже сам элемент списка  а список не сортируется заново
-    this.initializeUsers();
+    //списки юзеров создаются только 1 раз а при подписке и тд обновляется уже сам элемент списка  а список не сортируется заново
   }
 
   initializeUsers() {

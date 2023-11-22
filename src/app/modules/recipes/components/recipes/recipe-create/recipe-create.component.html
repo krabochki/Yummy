@@ -848,3 +848,5 @@
   [buttonsText]="['Да', 'Нет']"
   [description]="'Вы уверены, что хотите изменить рецепт?'"
 ></app-modal>
+<app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
+  [description]="'Загружаем данные о новом рецепте... Совсем скоро он будет готов...'"/>

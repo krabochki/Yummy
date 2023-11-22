@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, HostListener, Input, OnChanges, ViewChild } from '@angular/core';
 import { DragScrollComponent } from 'ngx-drag-scroll';
-import { IRecipe } from 'src/app/modules/recipes/models/recipes';
+import { IRecipe, nullRecipe } from 'src/app/modules/recipes/models/recipes';
 import { dragEnd, dragStart } from 'src/tools/common';
 
 @Component({
@@ -12,6 +12,8 @@ import { dragEnd, dragStart } from 'src/tools/common';
 export class HorizontalRecipeListComponent implements OnChanges {
   @Input() recipes: IRecipe[] = [];
   @Input() showAuthor: boolean = true;
+
+  loading = true;
 
   disableDrag = false;
   @ViewChild('nav', { read: DragScrollComponent }) ds?: DragScrollComponent;

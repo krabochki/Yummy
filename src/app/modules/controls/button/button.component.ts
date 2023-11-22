@@ -12,7 +12,7 @@ export class ButtonComponent implements OnChanges {
   @Input() iconSize: 'min' | 'max' = 'max';
   @Input() iconPosition: 'after' | 'before' = 'after';
   @Input() style: 'filled' | 'filled-min' | 'outlined' | 'banner' | undefined;
-  @Input() color: 'prim' | 'sec' |'admin'|'moderator'| undefined;
+  @Input() color: 'prim' | 'sec' |'admin'|'moderator'| undefined | 'await';
   @Input() rounded: boolean | undefined;
   @Input() text: string = 'Button';
   @Input() disabled: boolean = true;
@@ -51,6 +51,9 @@ export class ButtonComponent implements OnChanges {
     switch (this.color) {
       case 'prim':
         styleClasses.push('prim');
+        break;
+      case 'await':
+        styleClasses.push('await');
         break;
       case 'admin':
         styleClasses.push('admin');

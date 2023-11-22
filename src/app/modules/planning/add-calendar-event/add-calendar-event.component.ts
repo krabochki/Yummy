@@ -260,7 +260,7 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
             'calendar-recipe',
             '/recipes/list/' + findRecipe?.id,
           );
-          this.notifyService.sendNotification(notify, author).subscribe();
+          this.notifyService.sendNotification(notify, author)
         }
       }
     }
@@ -361,7 +361,7 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
           '/plan/calendar',
         );
       }
-      this.notifyService.sendNotification(notify, this.currentUser).subscribe();
+      this.notifyService.sendNotification(notify, this.currentUser)
     }
   }
 

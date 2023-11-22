@@ -220,7 +220,7 @@
                   </a>
                 </p>
               </div>
-              <div class="category-image"></div>
+              <div class="category-image" [style.background-image]="'url('+(this.category.photo?downloadCategoryPicFromSupabase(this.category.photo):categoryPlaceholder)+')'"></div>
               <div class="report-buttons">
                 <app-button [text]="'Принять'" (click)="categoryActionClick('approve',category)" [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
                 <app-button [text]="'Отклонить'" (click)="categoryActionClick('dismiss',category)" [color]="currentUser.role" [style]="'filled-min'" [rounded]="true"></app-button>

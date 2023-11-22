@@ -63,7 +63,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   private destroyed$: Subject<void> = new Subject<void>();
 
   // Конвертация в массив объектов типа CalendarEvent
-  recipeEventsToCalendarEvents():void {
+  recipeEventsToCalendarEvents(): void {
     const originalEvents: CalendarEvent[] = this.recipeEvents.map(
       (recipeEvent) => {
         const originalEvent = { ...recipeEvent };
@@ -112,10 +112,10 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
   handleDeleteModal(answer: boolean) {
-    if(answer){
+    if (answer) {
       this.deleteEvent(this.targetDeletableEvent);
     }
-    this.deleteModalShow = false; 
+    this.deleteModalShow = false;
   }
 
   private getPlans(): void {
@@ -129,7 +129,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
         this.recipeEvents = this.sortEvents(
           this.currentUserPlan.calendarEvents,
         );
-        this.recipeEventsToCalendarEvents()
+        this.recipeEventsToCalendarEvents();
         this.refresh.next();
         this.cd.markForCheck();
       });
@@ -206,7 +206,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     const startChanged = before.start.toString() !== newStart.toString();
     if (endChanged || startChanged) {
       this.currentUserPlan.calendarEvents = this.recipeEvents;
-      this.recipeEventsToCalendarEvents()
+      this.recipeEventsToCalendarEvents();
       this.planService.updatePlan(this.currentUserPlan).subscribe();
     }
   }
@@ -244,10 +244,14 @@ export class CalendarComponent implements OnInit, OnDestroy {
         (n) => n.id !== reminderNotify.id,
       );
     this.currentUserPlan.calendarEvents = this.recipeEvents;
-    const subscribes:Observable<any>[] = [];
-    subscribes.push(this.userService.updateUser(this.currentUser))
+    const subscribes: Observable<any>[] = [];
     subscribes.push(this.planService.updatePlan(this.currentUserPlan));
     forkJoin(subscribes).subscribe();
+    this.updateUser();
+  }
+
+  async updateUser() {
+    await this.userService.updateUserInSupabase(this.currentUser);
   }
 
   setView(view: CalendarView) {

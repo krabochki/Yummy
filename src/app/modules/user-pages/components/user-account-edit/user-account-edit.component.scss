@@ -89,7 +89,7 @@
 hr {
   height: 0.5px;
   width: 100%;
-  margin-top: 1.3em;
+  margin-top: 0.5em;
   opacity: 0.5;
   background-color: var(--color-foreground-unactive);
 }
@@ -202,7 +202,9 @@ app-count-input {
     width: 100%;
   }
 }
-
+.description-container {
+  margin-bottom: 1em;
+}
 .userpic {
   height: 10em;
   background-color: #FFF;
@@ -349,6 +351,11 @@ h3 {
           &.completed {
             color: var(--color-foreground);
           }
+
+          &.not-valid {
+            color: var(--color-primary);
+          }
+
         }
 
         .nav-step-circle {
@@ -372,6 +379,11 @@ h3 {
           &.active {
             border-color: var(--color-secondary);
             color: var(--color-secondary);
+          }
+
+          &.not-valid {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
           }
         }
       }

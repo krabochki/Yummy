@@ -104,7 +104,7 @@ export class PlanService {
             '',
           );
 
-          this.notifyService.sendNotification(notify, user).subscribe();
+          this.notifyService.sendNotification(notify, user)
         }
       }
     });

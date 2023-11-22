@@ -55,10 +55,9 @@ app-modal{
 }
 
 .category {
-  background-color: var(--color-background-deeper);
+  background-color: white;
 
   scroll-snap-align: start;
-  background-image: url("../../../../../../assets/images/category.png");
   background-size: cover;
 
   @include flex;
@@ -84,6 +83,9 @@ app-modal{
 }
 
 
+.category.null{
+    background-color: var(--color-background-deeper);
+}
 
 h1 {
   sup {

@@ -5,7 +5,6 @@ import { AuthenticationComponent } from './authentication.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { PasswordRecoveryComponent } from './components/password-recovery/password-recovery.component';
-import { EmailConfirmationComponent } from './components/email-confirmation/email-confirmation.component';
 import { GreetingsComponent } from './components/greetings/greetings.component';
 import { ControlDashboardComponent } from './components/control-dashboard/control-dashboard.component';
 import { ControlsModule } from '../controls/controls.module';
@@ -18,6 +17,7 @@ import { RecipesModule } from '../recipes/recipes.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TimePastPipe } from 'ng-time-past-pipe';
 import { UserPagesModule } from '../user-pages/user-pages.module';
+import { uuid } from 'uuidv4';
 @NgModule({
   declarations: [
 
@@ -25,7 +25,6 @@ import { UserPagesModule } from '../user-pages/user-pages.module';
     LoginComponent,
     RegisterComponent,
     PasswordRecoveryComponent,
-    EmailConfirmationComponent,
     GreetingsComponent,
     ControlDashboardComponent,
     

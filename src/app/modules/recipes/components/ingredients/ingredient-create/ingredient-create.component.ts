@@ -347,7 +347,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
 
         this.notificationService
           .sendNotification(notification, this.currentUser)
-          .subscribe(() => this.router.navigateByUrl(createdIngredientLink));
+        this.router.navigateByUrl(createdIngredientLink)
       }
     } else {
       if (
@@ -365,7 +365,6 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
         );
         this.notificationService
           .sendNotification(notification, this.currentUser)
-          .subscribe();
       }
     }
   }

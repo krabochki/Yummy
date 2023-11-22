@@ -802,7 +802,7 @@
           "note": "",
           "howMuch": "10 шт",
           "isBought": false,
-          "relatedRecipe": 86,
+          "relatedRecipe": 0,
           "type": 0
         },
         {
@@ -811,7 +811,7 @@
           "note": "",
           "howMuch": "2 ч. л.",
           "isBought": false,
-          "relatedRecipe": 86,
+          "relatedRecipe": 0,
           "type": 16
         },
         {
@@ -1151,7 +1151,25 @@
       "id": 10,
       "user": 10,
       "shoppingList": [],
-      "calendarEvents": []
+      "calendarEvents": [
+        {
+          "id": 1,
+          "recipe": 80,
+          "start": "2023-11-21T21:00:00.000Z",
+          "title": "апаапап",
+          "color": {
+            "primary": "#FBEE0F",
+            "secondary": "#FBEE0F"
+          },
+          "allDay": true,
+          "draggable": true,
+          "end": "2023-11-22T20:59:59.999Z",
+          "resizable": {
+            "beforeStart": true,
+            "afterEnd": true
+          }
+        }
+      ]
     },
     {
       "id": 11,
@@ -1367,7 +1385,17 @@
     {
       "id": 29,
       "user": 39,
-      "shoppingList": [],
+      "shoppingList": [
+        {
+          "id": 1,
+          "name": "Клубника",
+          "note": "",
+          "howMuch": "400 грамм",
+          "isBought": false,
+          "relatedRecipe": 24,
+          "type": 0
+        }
+      ],
       "calendarEvents": []
     },
     {
@@ -1579,6 +1607,66 @@
       "user": 66,
       "shoppingList": [],
       "calendarEvents": []
+    },
+    {
+      "id": 65,
+      "user": 39,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 66,
+      "user": 39,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 67,
+      "user": 40,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 68,
+      "user": 41,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 69,
+      "user": 42,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 70,
+      "user": 43,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 71,
+      "user": 44,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 72,
+      "user": 45,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 73,
+      "user": 46,
+      "shoppingList": [],
+      "calendarEvents": []
+    },
+    {
+      "id": 74,
+      "user": 47,
+      "shoppingList": [],
+      "calendarEvents": []
     }
   ],
   "categories": [
@@ -1698,7 +1786,6 @@
     },
     {
       "name": "Первые блюда",
-      "photo": {},
       "sendDate": "2023-10-31T20:00:55.665Z",
       "authorId": 5,
       "id": 23,
@@ -1706,7 +1793,6 @@
     },
     {
       "name": "Вторые блюда",
-      "photo": {},
       "sendDate": "2023-10-31T20:01:09.216Z",
       "authorId": 5,
       "id": 24,
@@ -1714,7 +1800,6 @@
     },
     {
       "name": "Белорусская кухня",
-      "photo": {},
       "sendDate": "2023-10-31T20:03:30.039Z",
       "authorId": 5,
       "id": 25,
@@ -1722,7 +1807,6 @@
     },
     {
       "name": "Американская кухня",
-      "photo": {},
       "sendDate": "2023-10-31T20:03:45.657Z",
       "authorId": 5,
       "id": 26,
@@ -1730,7 +1814,6 @@
     },
     {
       "name": "Друзья",
-      "photo": {},
       "sendDate": "2023-10-31T23:08:48.358Z",
       "authorId": 5,
       "id": 28,
@@ -1738,7 +1821,6 @@
     },
     {
       "name": "Украинская кухня",
-      "photo": {},
       "sendDate": "2023-11-01T00:31:44.976Z",
       "authorId": 5,
       "id": 29,
@@ -1746,7 +1828,6 @@
     },
     {
       "name": "Кухня",
-      "photo": {},
       "sendDate": "2023-11-01T00:32:14.553Z",
       "authorId": 5,
       "id": 30,
@@ -1754,7 +1835,6 @@
     },
     {
       "name": "Питание для бодибилдеров",
-      "photo": {},
       "sendDate": "2023-11-01T20:04:17.677Z",
       "authorId": 5,
       "id": 35,
@@ -1762,7 +1842,6 @@
     },
     {
       "name": "Казахская кухня",
-      "photo": {},
       "sendDate": "2023-11-02T14:05:28.736Z",
       "authorId": 5,
       "id": 36,
@@ -1770,7 +1849,6 @@
     },
     {
       "name": "К чаю",
-      "photo": {},
       "sendDate": "2023-11-02T15:25:48.009Z",
       "authorId": 5,
       "id": 37,
@@ -1778,7 +1856,6 @@
     },
     {
       "name": "Лето",
-      "photo": {},
       "sendDate": "2023-11-02T21:52:47.917Z",
       "authorId": 5,
       "id": 38,
@@ -1786,7 +1863,6 @@
     },
     {
       "name": "Зима",
-      "photo": {},
       "sendDate": "2023-11-02T21:52:58.915Z",
       "authorId": 5,
       "id": 39,
@@ -1794,7 +1870,6 @@
     },
     {
       "name": "Осень",
-      "photo": {},
       "sendDate": "2023-11-02T21:53:11.836Z",
       "authorId": 5,
       "id": 40,
@@ -1802,7 +1877,6 @@
     },
     {
       "name": "Весна",
-      "photo": {},
       "sendDate": "2023-11-02T21:53:44.669Z",
       "authorId": 5,
       "id": 42,
@@ -1810,7 +1884,6 @@
     },
     {
       "name": "Завтраки",
-      "photo": {},
       "sendDate": "2023-11-03T00:38:14.576Z",
       "authorId": 5,
       "id": 43,
@@ -1818,7 +1891,6 @@
     },
     {
       "name": "Ужины",
-      "photo": {},
       "sendDate": "2023-11-03T00:38:24.735Z",
       "authorId": 5,
       "id": 44,
@@ -1826,7 +1898,6 @@
     },
     {
       "name": "Обеды",
-      "photo": {},
       "sendDate": "2023-11-03T00:38:36.749Z",
       "authorId": 5,
       "id": 45,
@@ -1834,7 +1905,6 @@
     },
     {
       "name": "Перекусы",
-      "photo": {},
       "sendDate": "2023-11-03T00:38:52.808Z",
       "authorId": 5,
       "id": 46,
@@ -1842,7 +1912,6 @@
     },
     {
       "name": "Американское",
-      "photo": {},
       "sendDate": "2023-11-08T17:47:12.941Z",
       "authorId": 5,
       "id": 51,
@@ -1850,10 +1919,57 @@
     },
     {
       "name": "Английская кухня",
-      "photo": {},
       "sendDate": "2023-11-08T17:48:05.185Z",
       "authorId": 5,
       "id": 52,
+      "status": "public"
+    },
+    {
+      "name": "Торты",
+      "photo": "0.06026697417021509.png",
+      "sendDate": "2023-11-21T13:06:13.409Z",
+      "authorId": 1,
+      "id": 53,
+      "status": "public"
+    },
+    {
+      "name": "Блины",
+      "photo": "0.41994391652452356.png",
+      "sendDate": "2023-11-21T13:15:57.344Z",
+      "authorId": 1,
+      "id": 54,
+      "status": "public"
+    },
+    {
+      "name": "Креативные бутерброды",
+      "photo": "0.13803836473374798.png",
+      "sendDate": "2023-11-21T13:21:29.467Z",
+      "authorId": 1,
+      "id": 55,
+      "status": "public"
+    },
+    {
+      "name": "Супы",
+      "photo": "0.9039072012224714.png",
+      "sendDate": "2023-11-21T13:25:03.528Z",
+      "authorId": 1,
+      "id": 56,
+      "status": "public"
+    },
+    {
+      "name": "Чизкейки",
+      "photo": "0.5746482115662492.png",
+      "sendDate": "2023-11-21T13:45:23.363Z",
+      "authorId": 1,
+      "id": 57,
+      "status": "public"
+    },
+    {
+      "name": "Хлебобулочные изделия",
+      "photo": "0.9888074567065963.png",
+      "sendDate": "2023-11-21T14:00:22.791Z",
+      "authorId": 1,
+      "id": 58,
       "status": "public"
     }
   ],
@@ -1861,7 +1977,6 @@
     {
       "id": 1,
       "name": "Праздники",
-      "photoUrl": "",
       "categories": [
         1,
         2,
@@ -1876,31 +1991,31 @@
     {
       "id": 2,
       "name": "Системы питания",
-      "photoUrl": "",
       "categories": [
         3,
         4,
         5,
         47,
-        48
+        48,
+        59,
+        60
       ]
     },
     {
       "id": 3,
       "name": "Контроль веса",
-      "photoUrl": "",
       "categories": [
         6,
         7,
         8,
         35,
-        50
+        50,
+        60
       ]
     },
     {
       "id": 4,
       "name": "Кухни мира",
-      "photoUrl": "",
       "categories": [
         25,
         26,
@@ -1913,30 +2028,27 @@
     {
       "id": 5,
       "name": "Сезонные",
-      "photoUrl": "",
       "categories": [
         38,
         39,
         40,
-        42,
-        53
+        42
       ]
     },
     {
       "id": 6,
       "name": "По времени",
-      "photoUrl": "",
       "categories": [
         43,
         44,
         45,
-        46
+        46,
+        56
       ]
     },
     {
       "id": 9,
       "name": "По ингредиентам",
-      "photoUrl": "",
       "categories": [
         11,
         9
@@ -1945,17 +2057,21 @@
     {
       "id": 7,
       "name": "Экзотика",
-      "photoUrl": "",
-      "categories": []
+      "categories": [
+        55
+      ]
     },
     {
       "id": 8,
       "name": "Сладости и десерты",
-      "photoUrl": "",
       "categories": [
         10,
         18,
-        19
+        19,
+        53,
+        54,
+        57,
+        58
       ]
     },
     {
@@ -1965,7 +2081,6 @@
         28,
         30
       ],
-      "photo": {},
       "status": "public",
       "authorId": 0,
       "sendDate": ""
@@ -1976,7 +2091,6 @@
       "categories": [
         37
       ],
-      "photo": {},
       "status": "public",
       "authorId": 0,
       "sendDate": ""
@@ -4939,65 +5053,62 @@
       "status": "public"
     },
     {
+      "id": 80,
+      "mainImage": "\\x",
       "name": "Куриные котлеты с сыром «Папараць кветка»",
-      "reports": [],
-      "statistics": [
-        {
-          "user": 1,
-          "answer": true
-        },
-        {
-          "user": 27,
-          "answer": true
-        }
-      ],
+      "description": "Вкусные, не сложные в приготовлении, белорусские куриные котлеты с поэтическим названием «папараць кветка», т.е. «цветок папороти». В середину котлеты заворачиваем сыр с маслом.\n\n",
+      "preparationTime": "",
+      "cookingTime": "",
+      "servings": 1,
+      "origin": "",
       "ingredients": [
         {
           "name": "Куриное филе",
-          "quantity": "750",
-          "unit": "г"
+          "unit": "г",
+          "quantity": "750"
         },
         {
           "name": "Лук репчатый",
-          "quantity": "1-2",
-          "unit": "шт"
+          "unit": "шт",
+          "quantity": "1-2"
         },
         {
           "name": "Яйцо",
-          "quantity": "1",
-          "unit": "шт"
+          "unit": "шт",
+          "quantity": "1"
         },
         {
           "name": "Сыр твердый",
-          "quantity": "100",
-          "unit": "г"
+          "unit": "г",
+          "quantity": "100"
         },
         {
           "name": "Масло сливочное",
-          "quantity": "100",
-          "unit": "г"
+          "unit": "г",
+          "quantity": "100"
         },
         {
           "name": "Батон",
-          "quantity": "",
-          "unit": ""
+          "unit": "",
+          "quantity": ""
         },
         {
           "name": "Масло растительное",
-          "quantity": "100",
-          "unit": "г"
+          "unit": "г",
+          "quantity": "100"
         },
         {
           "name": "Соль",
-          "quantity": "",
-          "unit": ""
+          "unit": "",
+          "quantity": ""
         },
         {
           "name": "Перец черный молотый",
-          "quantity": "",
-          "unit": ""
+          "unit": "",
+          "quantity": ""
         }
       ],
+      "nutritions": [],
       "instructions": [
         {
           "name": "Продукты для куриных котлет с сыром \"Папараць кветка\".\n\n",
@@ -5098,34 +5209,43 @@
           ]
         }
       ],
-      "mainImage": null,
-      "description": "Вкусные, не сложные в приготовлении, белорусские куриные котлеты с поэтическим названием «папараць кветка», т.е. «цветок папороти». В середину котлеты заворачиваем сыр с маслом.\n\n",
-      "history": "",
-      "preparationTime": "",
-      "cookingTime": "",
-      "origin": "",
-      "nutritions": [],
-      "servings": 1,
-      "authorId": 1,
       "categories": [
         25
       ],
-      "cooksId": [
-        1,
-        27
-      ],
+      "authorId": 1,
       "likesId": [
         1,
         27,
-        5
+        5,
+        39
       ],
+      "cooksId": [
+        1,
+        27,
+        39
+      ],
+      "history": "",
+      "comments": [],
+      "publicationDate": "2023-11-07T22:47:06.608",
       "favoritesId": [
         1
       ],
-      "id": 80,
-      "comments": [],
-      "publicationDate": "2023-11-07T22:47:06.608Z",
-      "status": "public"
+      "status": "public",
+      "reports": [],
+      "statistics": [
+        {
+          "user": 1,
+          "answer": true
+        },
+        {
+          "user": 27,
+          "answer": true
+        },
+        {
+          "user": 39,
+          "answer": false
+        }
+      ]
     },
     {
       "name": "nnnbbnbnn",
@@ -5613,10 +5733,10 @@
     {
       "id": 1,
       "username": "chef_alexey_zimin",
+      "avatarUrl": "0.055663267461138144.png",
       "description": "Всем привет. Я журналист, телеведущий, шеф-повар, автор ТВ-программы «Готовим с Алексеем Зиминым», куратор гастрономического фестиваля «Праздник Еды», главный редактор русскоязычного журнала ZIMA Magazine, автор бестселлеров «Единицы условности», «Кухня супермаркета», «Кухня рынка» и «Кухня навсегда». Буду рад видеть вас у себя в подписчиках.",
       "quote": "Когда вы допустили столько же ошибок, сколько и я, вы можете быть так же хороши, как и я.",
       "email": "alexey@example.com",
-      "password": "Password300",
       "fullName": "Алексей Зимин",
       "followersIds": [
         3,
@@ -5627,22 +5747,21 @@
       ],
       "socialNetworks": [
         {
-          "name": "pinterest",
-          "link": "https://pinterest.com/alex_zimin"
+          "link": "https://pinterest.com/alex_zimin",
+          "name": "pinterest"
         },
         {
-          "name": "twitter",
-          "link": "https://twitter.com/chef_zimin"
+          "link": "https://twitter.com/chef_zimin",
+          "name": "twitter"
         },
         {
-          "name": "ВКонтакте",
-          "link": "https://vk.com/chef_alexey_zimin"
+          "link": "https://vk.com/chef_alexey_zimin",
+          "name": "ВКонтакте"
         }
       ],
       "personalWebsite": "https://www.chefalexeyzimin.com/",
       "location": "Москва, Россия",
-      "registrationDate": "2023-01-15",
-      "profileViews": 7698,
+      "profileViews": 7702,
       "role": "moderator",
       "notifications": [],
       "permissions": [
@@ -5740,7 +5859,7 @@
         },
         {
           "context": "show-my-page",
-          "enabled": false
+          "enabled": true
         },
         {
           "context": "hide-author",
@@ -5764,37 +5883,36 @@
         },
         {
           "context": "show-section-deleting",
-          "enabled": false
+          "enabled": true
         },
         {
           "context": "show-category-deleting",
-          "enabled": false
+          "enabled": true
         }
-      ],
-      "permanent": [
-        "масло",
-        "соль"
       ],
       "exclusions": [
         "мука",
         "картофель"
       ],
+      "permanent": [
+        "масло",
+        "соль"
+      ],
       "emojiStatus": {
+        "id": "hat-chef",
+        "set": "apple",
         "name": "Hat Chef",
-        "shortNames": [
-          "hat-chef"
-        ],
+        "colons": ":hat-chef:",
+        "custom": true,
+        "imageUrl": "assets/images/emojis/chef-hat.png",
         "keywords": [
           "chef",
           "hat"
         ],
-        "imageUrl": "assets/images/emojis/chef-hat.png",
-        "id": "hat-chef",
-        "custom": true,
-        "set": "apple",
-        "colons": ":hat-chef:"
-      },
-      "avatarUrl": "0.7266665280889792.png"
+        "shortNames": [
+          "hat-chef"
+        ]
+      }
     },
     {
       "id": 3,
@@ -5805,8 +5923,8 @@
       "password": "Password400",
       "fullName": "Максим Иванов",
       "followersIds": [
-        1,
-        2
+        2,
+        1
       ],
       "socialNetworks": [
         {
@@ -5821,7 +5939,7 @@
       "personalWebsite": "https://www.travelandeat.com/",
       "location": "Нью-Йорк, США",
       "registrationDate": "2023-05-10",
-      "profileViews": 5871,
+      "profileViews": 5875,
       "role": "user",
       "notifications": [
         {
@@ -5905,6 +6023,18 @@
           "message": "Рецепт «Мяу» успешно отправлен на проверку",
           "title": "Рецепт отправлен на проверку",
           "timestamp": "2023-11-13T14:22:27.091Z",
+          "read": false,
+          "notificationDate": ""
+        },
+        {
+          "id": 8,
+          "relatedLink": "/cooks/list/1",
+          "context": "user",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Алексей Зимин подписался на тебя",
+          "title": "Новый подписчик",
+          "timestamp": "2023-11-21T01:52:06.973Z",
           "read": false,
           "notificationDate": ""
         }
@@ -5997,631 +6127,670 @@
     {
       "id": 4,
       "username": "cooking_adventures",
+      "avatarUrl": "",
       "description": "Со мной каждый день — это новое кулинарное приключение. Готовим вместе!",
       "quote": "Приготовление еды — это искусство, и я его художник.",
       "email": "cooking@example.com",
-      "password": "password4",
       "fullName": "Ольга Смирнова",
       "followersIds": [
         2,
         6,
-        1
+        1,
+        5
       ],
       "socialNetworks": [
         {
-          "name": "instagram",
-          "link": "https://www.instagram.com/cooking_adventures/"
+          "link": "https://www.instagram.com/cooking_adventures/",
+          "name": "instagram"
         },
         {
-          "name": "youtube",
-          "link": "https://www.youtube.com/user/cooking_adventures/"
+          "link": "https://www.youtube.com/user/cooking_adventures/",
+          "name": "youtube"
         }
       ],
       "personalWebsite": "https://www.cookingadventures.com/",
       "location": "Лондон, Великобритания",
-      "registrationDate": "2023-04-02",
-      "profileViews": 4987,
+      "profileViews": 4991,
       "role": "user",
       "notifications": [
         {
           "id": 1,
-          "relatedLink": "/cooks/list/25",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «Lorem laborum nulla» приготовил кулинар @plan_checking и оставил положительный отзыв",
-          "title": "Твой рецепт приготовили",
-          "timestamp": "2023-11-06T02:12:09.018Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт приготовили",
+          "context": "recipe",
+          "message": "Твой рецепт «Lorem laborum nulla» приготовил кулинар @plan_checking и оставил положительный отзыв",
+          "relatedId": 0,
+          "timestamp": "2023-11-06T02:12:09.018Z",
+          "relatedLink": "/cooks/list/25",
           "notificationDate": ""
         },
         {
           "id": 2,
-          "relatedLink": "/cooks/list/25",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «Lorem laborum nulla» приготовил кулинар @plan_checking и оставил положительный отзыв",
-          "title": "Твой рецепт приготовили",
-          "timestamp": "2023-11-06T02:13:42.811Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт приготовили",
+          "context": "recipe",
+          "message": "Твой рецепт «Lorem laborum nulla» приготовил кулинар @plan_checking и оставил положительный отзыв",
+          "relatedId": 0,
+          "timestamp": "2023-11-06T02:13:42.811Z",
+          "relatedLink": "/cooks/list/25",
           "notificationDate": ""
         },
         {
           "id": 3,
-          "relatedLink": "/cooks/list/25",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «Lorem laborum nulla» приготовил кулинар @plan_checking и оставил негативный отзыв",
-          "title": "Твой рецепт приготовили",
-          "timestamp": "2023-11-06T02:59:00.258Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт приготовили",
+          "context": "recipe",
+          "message": "Твой рецепт «Lorem laborum nulla» приготовил кулинар @plan_checking и оставил негативный отзыв",
+          "relatedId": 0,
+          "timestamp": "2023-11-06T02:59:00.258Z",
+          "relatedLink": "/cooks/list/25",
           "notificationDate": ""
         },
         {
           "id": 4,
-          "relatedLink": "/cooks/list/25",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «aliqua labore velit» приготовил кулинар @plan_checking и оставил негативный отзыв",
-          "title": "Твой рецепт приготовили",
-          "timestamp": "2023-11-06T02:59:04.046Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт приготовили",
+          "context": "recipe",
+          "message": "Твой рецепт «aliqua labore velit» приготовил кулинар @plan_checking и оставил негативный отзыв",
+          "relatedId": 0,
+          "timestamp": "2023-11-06T02:59:04.046Z",
+          "relatedLink": "/cooks/list/25",
           "notificationDate": ""
         },
         {
           "id": 5,
-          "relatedLink": "/cooks/list/5",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «aliqua labore velit» приготовил кулинар Лина и оставил положительный отзыв",
-          "title": "Твой рецепт приготовили",
-          "timestamp": "2023-11-06T13:04:54.398Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт приготовили",
+          "context": "recipe",
+          "message": "Твой рецепт «aliqua labore velit» приготовил кулинар Лина и оставил положительный отзыв",
+          "relatedId": 0,
+          "timestamp": "2023-11-06T13:04:54.398Z",
+          "relatedLink": "/cooks/list/5",
           "notificationDate": ""
         },
         {
           "id": 6,
-          "relatedLink": "/recipes/list/16",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «aliqua labore velit» кто-то добавил в избранное",
-          "title": "Твой рецепт добавили в избранное",
-          "timestamp": "2023-11-06T13:07:48.803Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт добавили в избранное",
+          "context": "recipe",
+          "message": "Твой рецепт «aliqua labore velit» кто-то добавил в избранное",
+          "relatedId": 0,
+          "timestamp": "2023-11-06T13:07:48.803Z",
+          "relatedLink": "/recipes/list/16",
           "notificationDate": ""
         },
         {
           "id": 7,
-          "relatedLink": "/cooks/list/5",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «aliqua labore velit» приготовил кулинар Лина и оставил негативный отзыв",
-          "title": "Твой рецепт приготовили",
-          "timestamp": "2023-11-06T13:07:54.164Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт приготовили",
+          "context": "recipe",
+          "message": "Твой рецепт «aliqua labore velit» приготовил кулинар Лина и оставил негативный отзыв",
+          "relatedId": 0,
+          "timestamp": "2023-11-06T13:07:54.164Z",
+          "relatedLink": "/cooks/list/5",
           "notificationDate": ""
         },
         {
           "id": 8,
-          "relatedLink": "/cooks/list/5",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «aliqua labore velit» приготовил кулинар Лина и оставил негативный отзыв",
-          "title": "Твой рецепт приготовили",
-          "timestamp": "2023-11-06T13:09:15.194Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт приготовили",
+          "context": "recipe",
+          "message": "Твой рецепт «aliqua labore velit» приготовил кулинар Лина и оставил негативный отзыв",
+          "relatedId": 0,
+          "timestamp": "2023-11-06T13:09:15.194Z",
+          "relatedLink": "/cooks/list/5",
           "notificationDate": ""
         },
         {
           "id": 9,
-          "relatedLink": "/cooks/list/5",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «Lorem laborum nulla» понравился кулинару Лина",
-          "title": "Твой рецепт оценили",
-          "timestamp": "2023-11-06T13:16:31.325Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт оценили",
+          "context": "recipe",
+          "message": "Твой рецепт «Lorem laborum nulla» понравился кулинару Лина",
+          "relatedId": 0,
+          "timestamp": "2023-11-06T13:16:31.325Z",
+          "relatedLink": "/cooks/list/5",
           "notificationDate": ""
         },
         {
           "id": 10,
-          "relatedLink": "/cooks/list/5",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «aliqua labore velit» понравился кулинару Лина",
-          "title": "Твой рецепт оценили",
-          "timestamp": "2023-11-06T13:16:33.830Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт оценили",
+          "context": "recipe",
+          "message": "Твой рецепт «aliqua labore velit» понравился кулинару Лина",
+          "relatedId": 0,
+          "timestamp": "2023-11-06T13:16:33.830Z",
+          "relatedLink": "/cooks/list/5",
           "notificationDate": ""
         },
         {
           "id": 11,
-          "relatedLink": "/cooks/list/26",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «aliqua labore velit» понравился кулинару @willBeDelete",
-          "title": "Твой рецепт оценили",
-          "timestamp": "2023-11-06T18:57:58.312Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт оценили",
+          "context": "recipe",
+          "message": "Твой рецепт «aliqua labore velit» понравился кулинару @willBeDelete",
+          "relatedId": 0,
+          "timestamp": "2023-11-06T18:57:58.312Z",
+          "relatedLink": "/cooks/list/26",
           "notificationDate": ""
         },
         {
           "id": 12,
-          "relatedLink": "/cooks/list/26",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «aliqua labore velit» приготовил кулинар @willBeDelete и оставил положительный отзыв",
-          "title": "Твой рецепт приготовили",
-          "timestamp": "2023-11-06T18:58:02.125Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт приготовили",
+          "context": "recipe",
+          "message": "Твой рецепт «aliqua labore velit» приготовил кулинар @willBeDelete и оставил положительный отзыв",
+          "relatedId": 0,
+          "timestamp": "2023-11-06T18:58:02.125Z",
+          "relatedLink": "/cooks/list/26",
           "notificationDate": ""
         },
         {
           "id": 13,
-          "relatedLink": "/cooks/list/26",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «Lorem laborum nulla» понравился кулинару @willBeDelete",
-          "title": "Твой рецепт оценили",
-          "timestamp": "2023-11-06T18:58:19.297Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт оценили",
+          "context": "recipe",
+          "message": "Твой рецепт «Lorem laborum nulla» понравился кулинару @willBeDelete",
+          "relatedId": 0,
+          "timestamp": "2023-11-06T18:58:19.297Z",
+          "relatedLink": "/cooks/list/26",
           "notificationDate": ""
         },
         {
           "id": 14,
-          "relatedLink": "/cooks/list/26",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «aliqua labore velit» понравился кулинару @willBeDelete",
-          "title": "Твой рецепт оценили",
-          "timestamp": "2023-11-06T18:58:27.513Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт оценили",
+          "context": "recipe",
+          "message": "Твой рецепт «aliqua labore velit» понравился кулинару @willBeDelete",
+          "relatedId": 0,
+          "timestamp": "2023-11-06T18:58:27.513Z",
+          "relatedLink": "/cooks/list/26",
           "notificationDate": ""
         },
         {
           "id": 15,
-          "relatedLink": "/recipes/list/4",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «Lorem laborum nulla» кто-то добавил в избранное",
-          "title": "Твой рецепт добавили в избранное",
-          "timestamp": "2023-11-06T18:58:32.082Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт добавили в избранное",
+          "context": "recipe",
+          "message": "Твой рецепт «Lorem laborum nulla» кто-то добавил в избранное",
+          "relatedId": 0,
+          "timestamp": "2023-11-06T18:58:32.082Z",
+          "relatedLink": "/recipes/list/4",
           "notificationDate": ""
         },
         {
           "id": 16,
-          "relatedLink": "/recipes/list/16",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «aliqua labore velit» кто-то добавил в избранное",
-          "title": "Твой рецепт добавили в избранное",
-          "timestamp": "2023-11-07T00:50:53.642Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт добавили в избранное",
+          "context": "recipe",
+          "message": "Твой рецепт «aliqua labore velit» кто-то добавил в избранное",
+          "relatedId": 0,
+          "timestamp": "2023-11-07T00:50:53.642Z",
+          "relatedLink": "/recipes/list/16",
           "notificationDate": ""
         },
         {
           "id": 17,
-          "relatedLink": "/recipes/list/16",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «aliqua labore velit» кто-то добавил в избранное",
-          "title": "Твой рецепт добавили в избранное",
-          "timestamp": "2023-11-07T16:43:05.462Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт добавили в избранное",
+          "context": "recipe",
+          "message": "Твой рецепт «aliqua labore velit» кто-то добавил в избранное",
+          "relatedId": 0,
+          "timestamp": "2023-11-07T16:43:05.462Z",
+          "relatedLink": "/recipes/list/16",
           "notificationDate": ""
         },
         {
           "id": 18,
-          "relatedLink": "/recipes/list/16",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «aliqua labore velit» кто-то добавил в избранное",
-          "title": "Твой рецепт добавили в избранное",
-          "timestamp": "2023-11-07T16:43:15.513Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт добавили в избранное",
+          "context": "recipe",
+          "message": "Твой рецепт «aliqua labore velit» кто-то добавил в избранное",
+          "relatedId": 0,
+          "timestamp": "2023-11-07T16:43:15.513Z",
+          "relatedLink": "/recipes/list/16",
           "notificationDate": ""
         },
         {
           "id": 19,
-          "relatedLink": "/recipes/list/16",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «aliqua labore velit» кто-то добавил в избранное",
-          "title": "Твой рецепт добавили в избранное",
-          "timestamp": "2023-11-07T16:43:20.270Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт добавили в избранное",
+          "context": "recipe",
+          "message": "Твой рецепт «aliqua labore velit» кто-то добавил в избранное",
+          "relatedId": 0,
+          "timestamp": "2023-11-07T16:43:20.270Z",
+          "relatedLink": "/recipes/list/16",
           "notificationDate": ""
         },
         {
           "id": 20,
-          "relatedLink": "/recipes/list/81",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New Recipe!!! 💯💯💯 Fantastic »",
-          "title": "Новый рецепт от кулинара",
-          "timestamp": "2023-11-07T21:51:37.380Z",
           "read": false,
+          "type": "info",
+          "title": "Новый рецепт от кулинара",
+          "context": "recipe",
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New Recipe!!! 💯💯💯 Fantastic »",
+          "relatedId": 0,
+          "timestamp": "2023-11-07T21:51:37.380Z",
+          "relatedLink": "/recipes/list/81",
           "notificationDate": ""
         },
         {
           "id": 21,
-          "relatedLink": "/recipes/list/82",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New»",
-          "title": "Новый рецепт от кулинара",
-          "timestamp": "2023-11-07T21:53:30.739Z",
           "read": false,
+          "type": "info",
+          "title": "Новый рецепт от кулинара",
+          "context": "recipe",
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New»",
+          "relatedId": 0,
+          "timestamp": "2023-11-07T21:53:30.739Z",
+          "relatedLink": "/recipes/list/82",
           "notificationDate": ""
         },
         {
           "id": 22,
-          "relatedLink": "/recipes/list/83",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «gfgfg»",
-          "title": "Новый рецепт от кулинара",
-          "timestamp": "2023-11-07T21:54:35.153Z",
           "read": false,
+          "type": "info",
+          "title": "Новый рецепт от кулинара",
+          "context": "recipe",
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «gfgfg»",
+          "relatedId": 0,
+          "timestamp": "2023-11-07T21:54:35.153Z",
+          "relatedLink": "/recipes/list/83",
           "notificationDate": ""
         },
         {
           "id": 23,
-          "relatedLink": "/recipes/list/84",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «ваавава»",
-          "title": "Новый рецепт от кулинара",
-          "timestamp": "2023-11-07T21:56:12.162Z",
           "read": false,
+          "type": "info",
+          "title": "Новый рецепт от кулинара",
+          "context": "recipe",
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «ваавава»",
+          "relatedId": 0,
+          "timestamp": "2023-11-07T21:56:12.162Z",
+          "relatedLink": "/recipes/list/84",
           "notificationDate": ""
         },
         {
           "id": 24,
-          "relatedLink": "/recipes/list/85",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «fdfddfdf»",
-          "title": "Новый рецепт от кулинара",
-          "timestamp": "2023-11-07T21:58:05.763Z",
           "read": false,
+          "type": "info",
+          "title": "Новый рецепт от кулинара",
+          "context": "recipe",
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «fdfddfdf»",
+          "relatedId": 0,
+          "timestamp": "2023-11-07T21:58:05.763Z",
+          "relatedLink": "/recipes/list/85",
           "notificationDate": ""
         },
         {
           "id": 25,
-          "relatedLink": "/recipes/list/86",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New Recipe»",
-          "title": "Новый рецепт от кулинара",
-          "timestamp": "2023-11-07T21:58:51.180Z",
           "read": false,
+          "type": "info",
+          "title": "Новый рецепт от кулинара",
+          "context": "recipe",
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New Recipe»",
+          "relatedId": 0,
+          "timestamp": "2023-11-07T21:58:51.180Z",
+          "relatedLink": "/recipes/list/86",
           "notificationDate": ""
         },
         {
           "id": 26,
-          "relatedLink": "/recipes/list/87",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New Recipe»",
-          "title": "Новый рецепт от кулинара",
-          "timestamp": "2023-11-07T22:01:07.260Z",
           "read": false,
+          "type": "info",
+          "title": "Новый рецепт от кулинара",
+          "context": "recipe",
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «New Recipe»",
+          "relatedId": 0,
+          "timestamp": "2023-11-07T22:01:07.260Z",
+          "relatedLink": "/recipes/list/87",
           "notificationDate": ""
         },
         {
           "id": 27,
-          "relatedLink": "/recipes/list/90",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «👽🛸»",
-          "title": "Новый рецепт от кулинара",
-          "timestamp": "2023-11-07T22:15:46.106Z",
           "read": false,
+          "type": "info",
+          "title": "Новый рецепт от кулинара",
+          "context": "recipe",
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «👽🛸»",
+          "relatedId": 0,
+          "timestamp": "2023-11-07T22:15:46.106Z",
+          "relatedLink": "/recipes/list/90",
           "notificationDate": ""
         },
         {
           "id": 28,
-          "relatedLink": "/recipes/list/89",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «fddfdfdfdf»",
-          "title": "Новый рецепт от кулинара",
-          "timestamp": "2023-11-07T22:16:45.749Z",
           "read": false,
+          "type": "info",
+          "title": "Новый рецепт от кулинара",
+          "context": "recipe",
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «fddfdfdfdf»",
+          "relatedId": 0,
+          "timestamp": "2023-11-07T22:16:45.749Z",
+          "relatedLink": "/recipes/list/89",
           "notificationDate": ""
         },
         {
           "id": 29,
-          "relatedLink": "/recipes/list/91",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «reerer»",
-          "title": "Новый рецепт от кулинара",
-          "timestamp": "2023-11-07T22:17:45.230Z",
           "read": false,
+          "type": "info",
+          "title": "Новый рецепт от кулинара",
+          "context": "recipe",
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «reerer»",
+          "relatedId": 0,
+          "timestamp": "2023-11-07T22:17:45.230Z",
+          "relatedLink": "/recipes/list/91",
           "notificationDate": ""
         },
         {
           "id": 30,
-          "relatedLink": "/recipes/list/92",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «ffddffd»",
-          "title": "Новый рецепт от кулинара",
-          "timestamp": "2023-11-07T22:18:10.988Z",
           "read": false,
+          "type": "info",
+          "title": "Новый рецепт от кулинара",
+          "context": "recipe",
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «ffddffd»",
+          "relatedId": 0,
+          "timestamp": "2023-11-07T22:18:10.988Z",
+          "relatedLink": "/recipes/list/92",
           "notificationDate": ""
         },
         {
           "id": 31,
-          "relatedLink": "/recipes/list/93",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «ffddffd»",
-          "title": "Новый рецепт от кулинара",
-          "timestamp": "2023-11-07T22:18:52.920Z",
           "read": false,
+          "type": "info",
+          "title": "Новый рецепт от кулинара",
+          "context": "recipe",
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «ffddffd»",
+          "relatedId": 0,
+          "timestamp": "2023-11-07T22:18:52.920Z",
+          "relatedLink": "/recipes/list/93",
           "notificationDate": ""
         },
         {
           "id": 32,
-          "relatedLink": "/recipes/list/94",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «fddfffdf»",
-          "title": "Новый рецепт от кулинара",
-          "timestamp": "2023-11-07T22:21:54.348Z",
           "read": false,
+          "type": "info",
+          "title": "Новый рецепт от кулинара",
+          "context": "recipe",
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «fddfffdf»",
+          "relatedId": 0,
+          "timestamp": "2023-11-07T22:21:54.348Z",
+          "relatedLink": "/recipes/list/94",
           "notificationDate": ""
         },
         {
           "id": 33,
-          "relatedLink": "/recipes/list/95",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «jjkjjkkj»",
-          "title": "Новый рецепт от кулинара",
-          "timestamp": "2023-11-07T22:24:14.107Z",
           "read": false,
+          "type": "info",
+          "title": "Новый рецепт от кулинара",
+          "context": "recipe",
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «jjkjjkkj»",
+          "relatedId": 0,
+          "timestamp": "2023-11-07T22:24:14.107Z",
+          "relatedLink": "/recipes/list/95",
           "notificationDate": ""
         },
         {
           "id": 34,
-          "relatedLink": "/recipes/list/96",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «erreerre»",
-          "title": "Новый рецепт от кулинара",
-          "timestamp": "2023-11-07T22:25:13.056Z",
           "read": false,
+          "type": "info",
+          "title": "Новый рецепт от кулинара",
+          "context": "recipe",
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «erreerre»",
+          "relatedId": 0,
+          "timestamp": "2023-11-07T22:25:13.056Z",
+          "relatedLink": "/recipes/list/96",
           "notificationDate": ""
         },
         {
           "id": 35,
-          "relatedLink": "/recipes/list/97",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «jkkjjk»",
-          "title": "Новый рецепт от кулинара",
-          "timestamp": "2023-11-07T22:26:34.841Z",
           "read": false,
+          "type": "info",
+          "title": "Новый рецепт от кулинара",
+          "context": "recipe",
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «jkkjjk»",
+          "relatedId": 0,
+          "timestamp": "2023-11-07T22:26:34.841Z",
+          "relatedLink": "/recipes/list/97",
           "notificationDate": ""
         },
         {
           "id": 36,
-          "relatedLink": "/recipes/list/79",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «Кныш с картофелем»",
-          "title": "Новый рецепт от кулинара",
-          "timestamp": "2023-11-07T22:36:58.751Z",
           "read": false,
+          "type": "info",
+          "title": "Новый рецепт от кулинара",
+          "context": "recipe",
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «Кныш с картофелем»",
+          "relatedId": 0,
+          "timestamp": "2023-11-07T22:36:58.751Z",
+          "relatedLink": "/recipes/list/79",
           "notificationDate": ""
         },
         {
           "id": 37,
-          "relatedLink": "/cooks/list/27",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «aliqua labore velit» понравился пользователю \n            Лунтик 🌙",
-          "title": "Твой рецепт оценили",
-          "timestamp": "2023-11-08T03:04:03.226Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт оценили",
+          "context": "recipe",
+          "message": "Твой рецепт «aliqua labore velit» понравился пользователю \n            Лунтик 🌙",
+          "relatedId": 0,
+          "timestamp": "2023-11-08T03:04:03.226Z",
+          "relatedLink": "/cooks/list/27",
           "notificationDate": ""
         },
         {
           "id": 38,
-          "relatedLink": "/cooks/list/27",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «aliqua labore velit» приготовил кулинар Лунтик 🌙 и оставил положительный отзыв",
-          "title": "Твой рецепт приготовили",
-          "timestamp": "2023-11-08T03:25:56.901Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт приготовили",
+          "context": "recipe",
+          "message": "Твой рецепт «aliqua labore velit» приготовил кулинар Лунтик 🌙 и оставил положительный отзыв",
+          "relatedId": 0,
+          "timestamp": "2023-11-08T03:25:56.901Z",
+          "relatedLink": "/cooks/list/27",
           "notificationDate": ""
         },
         {
           "id": 39,
-          "relatedLink": "/recipes/list/16",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «aliqua labore velit» кто-то добавил в избранное",
-          "title": "Твой рецепт добавили в избранное",
-          "timestamp": "2023-11-08T04:12:38.185Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт добавили в избранное",
+          "context": "recipe",
+          "message": "Твой рецепт «aliqua labore velit» кто-то добавил в избранное",
+          "relatedId": 0,
+          "timestamp": "2023-11-08T04:12:38.185Z",
+          "relatedLink": "/recipes/list/16",
           "notificationDate": ""
         },
         {
           "id": 40,
-          "relatedLink": "/cooks/list/28",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «aliqua labore velit» понравился кулинару @newborn",
-          "title": "Твой рецепт оценили",
-          "timestamp": "2023-11-08T14:43:53.142Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт оценили",
+          "context": "recipe",
+          "message": "Твой рецепт «aliqua labore velit» понравился кулинару @newborn",
+          "relatedId": 0,
+          "timestamp": "2023-11-08T14:43:53.142Z",
+          "relatedLink": "/cooks/list/28",
           "notificationDate": ""
         },
         {
           "id": 41,
-          "relatedLink": "/cooks/list/28",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «aliqua labore velit» приготовил кулинар @newborn и оставил положительный отзыв",
-          "title": "Твой рецепт приготовили",
-          "timestamp": "2023-11-08T14:43:55.248Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт приготовили",
+          "context": "recipe",
+          "message": "Твой рецепт «aliqua labore velit» приготовил кулинар @newborn и оставил положительный отзыв",
+          "relatedId": 0,
+          "timestamp": "2023-11-08T14:43:55.248Z",
+          "relatedLink": "/cooks/list/28",
           "notificationDate": ""
         },
         {
           "id": 42,
-          "relatedLink": "/recipes/list/16",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «aliqua labore velit» кто-то добавил в избранное",
-          "title": "Твой рецепт добавили в избранное",
-          "timestamp": "2023-11-08T14:43:56.877Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт добавили в избранное",
+          "context": "recipe",
+          "message": "Твой рецепт «aliqua labore velit» кто-то добавил в избранное",
+          "relatedId": 0,
+          "timestamp": "2023-11-08T14:43:56.877Z",
+          "relatedLink": "/recipes/list/16",
           "notificationDate": ""
         },
         {
           "id": 43,
-          "relatedLink": "/recipes/list/83",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «Я справлюсь сам»",
-          "title": "Новый рецепт от кулинара",
-          "timestamp": "2023-11-08T22:37:41.374Z",
           "read": false,
+          "type": "info",
+          "title": "Новый рецепт от кулинара",
+          "context": "recipe",
+          "message": "Кулинар Алексей Зимин, на которого вы подписаны, поделился новым рецептом «Я справлюсь сам»",
+          "relatedId": 0,
+          "timestamp": "2023-11-08T22:37:41.374Z",
+          "relatedLink": "/recipes/list/83",
           "notificationDate": ""
         },
         {
           "id": 44,
-          "relatedLink": "/recipes/list/16",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «aliqua labore velit» кто-то добавил в избранное",
-          "title": "Твой рецепт добавили в избранное",
-          "timestamp": "2023-11-11T20:26:42.523Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт добавили в избранное",
+          "context": "recipe",
+          "message": "Твой рецепт «aliqua labore velit» кто-то добавил в избранное",
+          "relatedId": 0,
+          "timestamp": "2023-11-11T20:26:42.523Z",
+          "relatedLink": "/recipes/list/16",
           "notificationDate": ""
         },
         {
           "id": 45,
-          "relatedLink": "/cooks/list/0",
-          "context": "user",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар @ подписался на тебя",
-          "title": "Новый подписчик",
-          "timestamp": "2023-11-15T20:24:57.678Z",
           "read": false,
+          "type": "info",
+          "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар @ подписался на тебя",
+          "relatedId": 0,
+          "timestamp": "2023-11-15T20:24:57.678Z",
+          "relatedLink": "/cooks/list/0",
           "notificationDate": ""
         },
         {
           "id": 46,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Лина подписался на тебя",
-          "title": "Новый подписчик",
-          "timestamp": "2023-11-17T20:46:40.798Z",
           "read": false,
+          "type": "info",
+          "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар Лина подписался на тебя",
+          "relatedId": 0,
+          "timestamp": "2023-11-17T20:46:40.798Z",
+          "relatedLink": "/cooks/list/5",
           "notificationDate": ""
         },
         {
           "id": 47,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Лина подписался на тебя",
-          "title": "Новый подписчик",
-          "timestamp": "2023-11-17T20:46:44.199Z",
           "read": false,
+          "type": "info",
+          "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар Лина подписался на тебя",
+          "relatedId": 0,
+          "timestamp": "2023-11-17T20:46:44.199Z",
+          "relatedLink": "/cooks/list/5",
           "notificationDate": ""
         },
         {
           "id": 48,
-          "relatedLink": "/cooks/list/5",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «aliqua labore velit» понравился кулинару Лина",
-          "title": "Твой рецепт оценили",
-          "timestamp": "2023-11-18T17:35:14.758Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт оценили",
+          "context": "recipe",
+          "message": "Твой рецепт «aliqua labore velit» понравился кулинару Лина",
+          "relatedId": 0,
+          "timestamp": "2023-11-18T17:35:14.758Z",
+          "relatedLink": "/cooks/list/5",
           "notificationDate": ""
         },
         {
           "id": 49,
-          "relatedLink": "/cooks/list/1",
+          "read": false,
+          "type": "info",
+          "title": "Твой рецепт приготовили",
           "context": "recipe",
+          "message": "Твой рецепт «Lorem laborum nulla» приготовил кулинар Алексей Зимин и оставил положительный отзыв",
+          "relatedId": 0,
+          "timestamp": "2023-11-21T01:41:11.853Z",
+          "relatedLink": "/cooks/list/1",
+          "notificationDate": ""
+        },
+        {
+          "id": 50,
+          "read": false,
+          "type": "info",
+          "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар Полина подписался на тебя",
+          "relatedId": 0,
+          "timestamp": "2023-11-21T23:11:32.008Z",
+          "relatedLink": "/cooks/list/5",
+          "notificationDate": ""
+        },
+        {
+          "id": 51,
+          "read": false,
+          "type": "info",
+          "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар Полина подписался на тебя",
+          "relatedId": 0,
+          "timestamp": "2023-11-21T23:14:33.655Z",
+          "relatedLink": "/cooks/list/5",
+          "notificationDate": ""
+        },
+        {
+          "id": 52,
+          "relatedLink": "/cooks/list/5",
+          "context": "user",
           "type": "info",
           "relatedId": 0,
-          "message": "Твой рецепт «Lorem laborum nulla» приготовил кулинар Алексей Зимин и оставил положительный отзыв",
-          "title": "Твой рецепт приготовили",
-          "timestamp": "2023-11-21T01:41:11.853Z",
+          "message": "Кулинар Полина подписался на тебя",
+          "title": "Новый подписчик",
+          "timestamp": "2023-11-21T23:39:38.664Z",
           "read": false,
           "notificationDate": ""
         }
-      ]
+      ],
+      "permissions": [],
+      "exclusions": [],
+      "permanent": [],
+      "emojiStatus": null
     },
     {
-      "email": "polinaa.kuzmenokk@gmail.com",
-      "password": "Krabochki0",
-      "username": "krabochki",
       "id": 5,
-      "role": "admin",
+      "username": "krabochki",
+      "avatarUrl": "0.12783320075171156.jpg",
       "description": "",
       "quote": "Гениальной цитаты не будет",
-      "fullName": "Полина",
+      "email": "pollulsd@mail.ru",
+      "fullName": "Лина Кузьменок",
       "followersIds": [
         23,
         25,
@@ -6630,217 +6799,48 @@
       ],
       "socialNetworks": [
         {
-          "name": "pinterest",
-          "link": "https://www.pinterest.com/krabochki"
+          "link": "https://www.pinterest.com/krabochki",
+          "name": "pinterest"
         },
         {
-          "name": "facebook",
-          "link": "https://www.facebook.com/polina_kuzmenok"
+          "link": "https://www.facebook.com/polina_kuzmenok",
+          "name": "facebook"
         },
         {
-          "name": "ВКонтакте",
-          "link": "https://www.vk.com/nanananana_come_on"
+          "link": "https://www.vk.com/nanananana_come_on",
+          "name": "ВКонтакте"
         }
       ],
       "personalWebsite": "",
       "location": "Беларусь, Гродно",
-      "registrationDate": "2023-10-10",
-      "profileViews": 1945,
+      "profileViews": 1946,
+      "role": "admin",
       "notifications": [
         {
-          "id": 1,
-          "relatedLink": "/recipes/list/89",
-          "context": "recipe",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Рецепт «hhghghgh» успешно сохранен в ваших рецептах",
-          "title": "Рецепт создан",
-          "timestamp": "2023-11-20T16:37:50.090Z",
+          "context": "plan-reminder",
+          "id": 20,
+          "message": "Хотим вас предупредить, что у вас запланирован рецепт на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению этого вкусного блюда.<br>Запланированный рецепт:<br>ㅤКолдуны (начало через 3 дня)",
+          "notificationDate": "Wed Nov 22 2023",
           "read": true,
-          "notificationDate": ""
+          "relatedId": 0,
+          "relatedLink": "/plan/calendar",
+          "timestamp": "2023-11-21T21:23:14.612Z",
+          "title": "Начало запланированного рецепта уже скоро!",
+          "type": "warning"
         },
         {
-          "id": 2,
+          "id": 21,
           "relatedLink": "/cooks/list/5",
           "context": "user",
           "type": "success",
           "relatedId": 0,
           "message": "Твой профиль успешно изменен",
           "title": "Профиль изменен",
-          "timestamp": "2023-11-20T21:51:50.313Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 3,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-20T22:04:12.576Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 4,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-20T23:16:43.689Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 5,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-20T23:30:24.032Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 6,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-20T23:35:38.619Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 7,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-20T23:42:23.811Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 8,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-20T23:43:26.534Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 9,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-20T23:44:35.688Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 10,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-20T23:47:56.824Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 11,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-20T23:48:42.989Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 12,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-20T23:49:29.939Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 13,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-21T00:05:39.758Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 14,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-21T00:06:35.668Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 15,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-21T00:06:58.331Z",
-          "read": true,
-          "notificationDate": ""
-        },
-        {
-          "id": 16,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
-          "type": "success",
-          "relatedId": 0,
-          "message": "Твой профиль успешно изменен",
-          "title": "Профиль изменен",
-          "timestamp": "2023-11-21T00:07:15.515Z",
-          "read": true,
+          "timestamp": "2023-11-22T02:11:48.284Z",
+          "read": false,
           "notificationDate": ""
         }
       ],
-      "permanent": [],
       "permissions": [
         {
           "context": "you-delete-your-recipe",
@@ -6876,7 +6876,7 @@
         },
         {
           "context": "show-my-page",
-          "enabled": false
+          "enabled": true
         },
         {
           "context": "hide-author",
@@ -6885,47 +6885,58 @@
         {
           "context": "you-delete-your-comment",
           "enabled": false
+        },
+        {
+          "context": "like-on-your-recipe",
+          "enabled": true
+        },
+        {
+          "context": "your-recipe-commented",
+          "enabled": true
         }
       ],
-      "exclusions": [],
-      "avatarUrl": "0.11615724422597662.jpg",
+      "exclusions": [
+        "мука",
+        "flour"
+      ],
+      "permanent": [
+        "соль",
+        "salt"
+      ],
       "emojiStatus": {
-        "name": "Bubbles",
-        "unified": "1FAE7",
-        "keywords": [
-          "bubbles",
-          "soap",
-          "fun",
-          "carbonation",
-          "sparkling"
-        ],
-        "sheet": [
-          55,
-          19
-        ],
-        "hidden": [
-          "facebook"
-        ],
-        "shortName": "bubbles",
-        "shortNames": [
-          "bubbles"
-        ],
-        "id": "bubbles",
-        "native": "🫧",
-        "skinVariations": [],
+        "colons": ":fox_face:",
         "emoticons": [],
-        "text": "",
+        "hidden": [],
+        "id": "fox_face",
+        "keywords": [
+          "fox",
+          "animal",
+          "nature",
+          "face"
+        ],
+        "name": "Fox Face",
+        "native": "🦊",
         "set": "apple",
-        "colons": ":bubbles:"
+        "sheet": [
+          44,
+          28
+        ],
+        "shortName": "fox_face",
+        "shortNames": [
+          "fox_face"
+        ],
+        "skinVariations": [],
+        "text": "",
+        "unified": "1F98A"
       }
     },
     {
       "id": 6,
       "username": "health_nutrition",
+      "avatarUrl": "",
       "description": "Я здоровый образ жизни и питания. Поделюсь с вами рецептами и советами для поддержания здоровья.",
       "quote": "Здоровье — это настоящее богатство. Стремитесь к лучшей версии себя.",
       "email": "health@example.com",
-      "password": "password6",
       "fullName": "Анна Казакова",
       "followersIds": [
         3,
@@ -6934,422 +6945,552 @@
         2,
         4,
         9,
-        10
+        10,
+        5
       ],
       "socialNetworks": [
         {
-          "name": "instagram",
-          "link": "https://www.instagram.com/health_nutrition/"
+          "link": "https://www.instagram.com/health_nutrition/",
+          "name": "instagram"
         },
         {
-          "name": "facebook",
-          "link": "https://www.facebook.com/health_nutrition/"
+          "link": "https://www.facebook.com/health_nutrition/",
+          "name": "facebook"
         }
       ],
       "personalWebsite": "https://www.healthandnutrition.com/",
       "location": "Сидней, Австралия",
-      "registrationDate": "2023-06-18",
-      "profileViews": 4371,
+      "profileViews": 4372,
       "role": "user",
       "notifications": [
         {
           "id": 1,
-          "relatedLink": "/recipes/list/8",
-          "context": "comment",
+          "read": false,
           "type": "warning",
-          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
           "title": "Кто-то пожаловался на комментарий",
+          "context": "comment",
+          "message": "Кто-то пожаловался на твой комментарий «огнище» под рецептом «cupidatat enim ipsum»",
           "timestamp": "2023-11-01T20:44:03.378Z",
-          "read": false
+          "relatedLink": "/recipes/list/8"
         },
         {
           "id": 2,
-          "relatedLink": "/cooks/list/26",
-          "context": "user",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар @NPC. подписался на тебя",
-          "title": "Новый подписчик",
-          "timestamp": "2023-11-06T20:53:06.728Z",
           "read": false,
+          "type": "info",
+          "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар @NPC. подписался на тебя",
+          "relatedId": 0,
+          "timestamp": "2023-11-06T20:53:06.728Z",
+          "relatedLink": "/cooks/list/26",
           "notificationDate": ""
         },
         {
           "id": 3,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Лина подписался на тебя",
-          "title": "Новый подписчик",
-          "timestamp": "2023-11-17T20:30:03.732Z",
           "read": false,
+          "type": "info",
+          "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар Лина подписался на тебя",
+          "relatedId": 0,
+          "timestamp": "2023-11-17T20:30:03.732Z",
+          "relatedLink": "/cooks/list/5",
           "notificationDate": ""
         },
         {
           "id": 4,
+          "read": false,
+          "type": "info",
+          "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар Лина подписался на тебя",
+          "relatedId": 0,
+          "timestamp": "2023-11-17T20:30:11.230Z",
+          "relatedLink": "/cooks/list/5",
+          "notificationDate": ""
+        },
+        {
+          "id": 5,
+          "read": false,
+          "type": "info",
+          "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар Полина подписался на тебя",
+          "relatedId": 0,
+          "timestamp": "2023-11-21T23:10:21.234Z",
+          "relatedLink": "/cooks/list/5",
+          "notificationDate": ""
+        },
+        {
+          "id": 6,
+          "read": false,
+          "type": "info",
+          "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар Полина подписался на тебя",
+          "relatedId": 0,
+          "timestamp": "2023-11-21T23:10:37.035Z",
+          "relatedLink": "/cooks/list/5",
+          "notificationDate": ""
+        },
+        {
+          "id": 7,
+          "read": false,
+          "type": "info",
+          "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар Полина подписался на тебя",
+          "relatedId": 0,
+          "timestamp": "2023-11-21T23:15:35.422Z",
+          "relatedLink": "/cooks/list/5",
+          "notificationDate": ""
+        },
+        {
+          "id": 8,
           "relatedLink": "/cooks/list/5",
           "context": "user",
           "type": "info",
           "relatedId": 0,
-          "message": "Кулинар Лина подписался на тебя",
+          "message": "Кулинар Полина подписался на тебя",
           "title": "Новый подписчик",
-          "timestamp": "2023-11-17T20:30:11.230Z",
+          "timestamp": "2023-11-21T23:45:34.355Z",
           "read": false,
           "notificationDate": ""
         }
-      ]
+      ],
+      "permissions": [],
+      "exclusions": [],
+      "permanent": [],
+      "emojiStatus": null
     },
     {
       "id": 7,
       "username": "world_traveler",
+      "avatarUrl": "",
       "description": "Я путешественник и исследователь. Открою перед вами новые уголки мира и поделюсь впечатлениями.",
       "quote": "Путешествия обогащают душу. Открой мир вместе со мной.",
       "email": "traveler@example.com",
-      "password": "password7",
       "fullName": "Марк Джонсон",
       "followersIds": [
         3,
         6,
-        8
+        8,
+        5
       ],
       "socialNetworks": [
         {
-          "name": "instagram",
-          "link": "https://www.instagram.com/world_traveler/"
+          "link": "https://www.instagram.com/world_traveler/",
+          "name": "instagram"
         },
         {
-          "name": "twitter",
-          "link": "https://twitter.com/world_traveler/"
+          "link": "https://twitter.com/world_traveler/",
+          "name": "twitter"
         }
       ],
       "personalWebsite": "",
       "location": "Лиссабон, Португалия",
-      "registrationDate": "2023-07-24",
-      "profileViews": 3949,
+      "profileViews": 3951,
       "role": "user",
       "notifications": [
         {
           "id": 1,
-          "relatedLink": "/recipes/list/7",
-          "context": "recipe",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «id in amet» кто-то добавил в избранное",
-          "title": "Твой рецепт добавили в избранное",
-          "timestamp": "2023-11-08T19:54:30.664Z",
           "read": false,
+          "type": "info",
+          "title": "Твой рецепт добавили в избранное",
+          "context": "recipe",
+          "message": "Твой рецепт «id in amet» кто-то добавил в избранное",
+          "relatedId": 0,
+          "timestamp": "2023-11-08T19:54:30.664Z",
+          "relatedLink": "/recipes/list/7",
           "notificationDate": ""
         },
         {
           "id": 2,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Лина подписался на тебя",
-          "title": "Новый подписчик",
-          "timestamp": "2023-11-17T20:37:30.161Z",
           "read": false,
+          "type": "info",
+          "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар Лина подписался на тебя",
+          "relatedId": 0,
+          "timestamp": "2023-11-17T20:37:30.161Z",
+          "relatedLink": "/cooks/list/5",
           "notificationDate": ""
         },
         {
           "id": 3,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Лина подписался на тебя",
-          "title": "Новый подписчик",
-          "timestamp": "2023-11-17T20:37:32.458Z",
           "read": false,
+          "type": "info",
+          "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар Лина подписался на тебя",
+          "relatedId": 0,
+          "timestamp": "2023-11-17T20:37:32.458Z",
+          "relatedLink": "/cooks/list/5",
           "notificationDate": ""
         },
         {
           "id": 4,
+          "read": false,
+          "type": "info",
+          "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар Лина подписался на тебя",
+          "relatedId": 0,
+          "timestamp": "2023-11-17T20:37:50.203Z",
+          "relatedLink": "/cooks/list/5",
+          "notificationDate": ""
+        },
+        {
+          "id": 5,
+          "read": false,
+          "type": "info",
+          "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар Полина подписался на тебя",
+          "relatedId": 0,
+          "timestamp": "2023-11-21T23:16:57.398Z",
+          "relatedLink": "/cooks/list/5",
+          "notificationDate": ""
+        },
+        {
+          "id": 6,
           "relatedLink": "/cooks/list/5",
           "context": "user",
           "type": "info",
           "relatedId": 0,
-          "message": "Кулинар Лина подписался на тебя",
+          "message": "Кулинар Полина подписался на тебя",
           "title": "Новый подписчик",
-          "timestamp": "2023-11-17T20:37:50.203Z",
+          "timestamp": "2023-11-21T23:45:30.301Z",
           "read": false,
           "notificationDate": ""
         }
-      ]
+      ],
+      "permissions": [],
+      "exclusions": [],
+      "permanent": [],
+      "emojiStatus": null
     },
     {
       "id": 8,
       "username": "interior_designer",
+      "avatarUrl": "",
       "description": "Я дизайнер интерьеров и архитектор. Делюсь с вами своими творческими идеями для вашего дома.",
       "quote": "Каждый дом может быть уникальным. Сделайте ваш дом вашим искусством.",
       "email": "designer@example.com",
-      "password": "password8",
       "fullName": "Виктория Соловьева",
       "followersIds": [
         4,
         7,
         9,
-        1
+        1,
+        5
       ],
       "socialNetworks": [
         {
-          "name": "instagram",
-          "link": "https://www.instagram.com/interior_designer/"
+          "link": "https://www.instagram.com/interior_designer/",
+          "name": "instagram"
         },
         {
-          "name": "pinterest",
-          "link": "https://www.pinterest.com/interior_designer/"
+          "link": "https://www.pinterest.com/interior_designer/",
+          "name": "pinterest"
         }
       ],
       "personalWebsite": "https://www.interiordesignsbyvictoria.com/",
       "location": "Милан, Италия",
-      "registrationDate": "2023-08-12",
-      "profileViews": 3273,
+      "profileViews": 3275,
       "role": "user",
       "notifications": [
         {
           "id": 1,
-          "relatedLink": "/cooks/list/26",
-          "context": "recipe",
+          "read": true,
           "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «exercitation aute eiusmod» понравился кулинару @willBeDelete",
           "title": "Твой рецепт оценили",
+          "context": "recipe",
+          "message": "Твой рецепт «exercitation aute eiusmod» понравился кулинару @willBeDelete",
+          "relatedId": 0,
           "timestamp": "2023-11-06T18:58:28.189Z",
-          "read": false,
+          "relatedLink": "/cooks/list/26",
           "notificationDate": ""
         },
         {
           "id": 2,
-          "relatedLink": "/cooks/list/26",
-          "context": "user",
+          "read": true,
           "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар @NPC. подписался на тебя",
           "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар @NPC. подписался на тебя",
+          "relatedId": 0,
           "timestamp": "2023-11-06T20:53:07.393Z",
-          "read": false,
+          "relatedLink": "/cooks/list/26",
           "notificationDate": ""
         },
         {
           "id": 3,
-          "relatedLink": "/recipes/list/1",
-          "context": "calendar-recipe",
+          "read": true,
           "type": "info",
-          "relatedId": 0,
-          "message": "Ваш рецепт «Шоколадное мороженое» кто-то запланировал!",
           "title": "Ваш рецепт запланировали",
+          "context": "calendar-recipe",
+          "message": "Ваш рецепт «Шоколадное мороженое» кто-то запланировал!",
+          "relatedId": 0,
           "timestamp": "2023-11-08T03:30:21.569Z",
-          "read": false,
+          "relatedLink": "/recipes/list/1",
           "notificationDate": ""
         },
         {
           "id": 4,
-          "relatedLink": "/recipes/list/1",
-          "context": "calendar-recipe",
+          "read": true,
           "type": "info",
-          "relatedId": 0,
-          "message": "Ваш рецепт «Шоколадное мороженое» кто-то запланировал!",
           "title": "Ваш рецепт запланировали",
+          "context": "calendar-recipe",
+          "message": "Ваш рецепт «Шоколадное мороженое» кто-то запланировал!",
+          "relatedId": 0,
           "timestamp": "2023-11-08T03:31:24.352Z",
-          "read": false,
+          "relatedLink": "/recipes/list/1",
           "notificationDate": ""
         },
         {
           "id": 5,
-          "relatedLink": "/recipes/list/5",
-          "context": "recipe",
+          "read": true,
           "type": "info",
-          "relatedId": 0,
-          "message": "Твой рецепт «exercitation aute eiusmod» кто-то добавил в избранное",
           "title": "Твой рецепт добавили в избранное",
+          "context": "recipe",
+          "message": "Твой рецепт «exercitation aute eiusmod» кто-то добавил в избранное",
+          "relatedId": 0,
           "timestamp": "2023-11-09T19:12:25.494Z",
-          "read": false,
+          "relatedLink": "/recipes/list/5",
           "notificationDate": ""
         },
         {
           "id": 6,
-          "relatedLink": "/recipes/list/1",
-          "context": "calendar-recipe",
+          "read": true,
           "type": "info",
-          "relatedId": 0,
-          "message": "Ваш рецепт «Шоколадное мороженое» кто-то запланировал!",
           "title": "Ваш рецепт запланировали",
+          "context": "calendar-recipe",
+          "message": "Ваш рецепт «Шоколадное мороженое» кто-то запланировал!",
+          "relatedId": 0,
           "timestamp": "2023-11-17T18:27:33.693Z",
-          "read": false,
+          "relatedLink": "/recipes/list/1",
           "notificationDate": ""
         },
         {
           "id": 7,
-          "relatedLink": "/recipes/list/3",
-          "context": "calendar-recipe",
+          "read": true,
           "type": "info",
-          "relatedId": 0,
-          "message": "Ваш рецепт «sunt ea anim» кто-то запланировал!",
           "title": "Ваш рецепт запланировали",
+          "context": "calendar-recipe",
+          "message": "Ваш рецепт «sunt ea anim» кто-то запланировал!",
+          "relatedId": 0,
           "timestamp": "2023-11-17T18:27:58.624Z",
-          "read": false,
+          "relatedLink": "/recipes/list/3",
           "notificationDate": ""
         },
         {
           "id": 8,
-          "relatedLink": "/recipes/list/1",
-          "context": "calendar-recipe",
+          "read": true,
           "type": "info",
-          "relatedId": 0,
-          "message": "Ваш рецепт «Шоколадное мороженое» кто-то запланировал!",
           "title": "Ваш рецепт запланировали",
+          "context": "calendar-recipe",
+          "message": "Ваш рецепт «Шоколадное мороженое» кто-то запланировал!",
+          "relatedId": 0,
           "timestamp": "2023-11-17T19:33:29.628Z",
-          "read": false,
+          "relatedLink": "/recipes/list/1",
           "notificationDate": ""
         },
         {
           "id": 9,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
+          "read": true,
           "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Лина подписался на тебя",
           "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар Лина подписался на тебя",
+          "relatedId": 0,
           "timestamp": "2023-11-17T19:55:56.938Z",
-          "read": false,
+          "relatedLink": "/cooks/list/5",
+          "notificationDate": ""
+        },
+        {
+          "id": 10,
+          "read": true,
+          "type": "info",
+          "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар Полина подписался на тебя",
+          "relatedId": 0,
+          "timestamp": "2023-11-21T23:13:39.266Z",
+          "relatedLink": "/cooks/list/5",
           "notificationDate": ""
         }
-      ]
+      ],
+      "permissions": [],
+      "exclusions": [],
+      "permanent": [],
+      "emojiStatus": null
     },
     {
       "id": 9,
       "username": "tech_enthusiast",
+      "avatarUrl": "",
       "description": "Я люблю технологии и новинки. Расскажу вам обо всем, что происходит в мире высоких технологий.",
       "quote": "Будущее уже здесь. Давайте создадим его вместе.",
       "email": "tech@example.com",
-      "password": "password9",
       "fullName": "Даниил Козлов",
       "followersIds": [
         4,
         8,
         10,
-        1
+        1,
+        5
       ],
       "socialNetworks": [
         {
-          "name": "twitter",
-          "link": "https://twitter.com/tech_enthusiast/"
+          "link": "https://twitter.com/tech_enthusiast/",
+          "name": "twitter"
         },
         {
-          "name": "youtube",
-          "link": "https://www.youtube.com/user/tech_enthusiast/"
+          "link": "https://www.youtube.com/user/tech_enthusiast/",
+          "name": "youtube"
         }
       ],
       "personalWebsite": "https://www.techenthusiast.com/",
       "location": "Сан-Франциско, США",
-      "registrationDate": "2023-09-03",
-      "profileViews": 2795,
+      "profileViews": 2796,
       "role": "user",
       "notifications": [
         {
           "id": 1,
-          "relatedLink": "/cooks/list/26",
-          "context": "user",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар @NPC. подписался на тебя",
-          "title": "Новый подписчик",
-          "timestamp": "2023-11-06T20:53:08.028Z",
           "read": false,
+          "type": "info",
+          "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар @NPC. подписался на тебя",
+          "relatedId": 0,
+          "timestamp": "2023-11-06T20:53:08.028Z",
+          "relatedLink": "/cooks/list/26",
           "notificationDate": ""
         },
         {
           "id": 2,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Лина подписался на тебя",
-          "title": "Новый подписчик",
-          "timestamp": "2023-11-17T20:20:44.312Z",
           "read": false,
+          "type": "info",
+          "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар Лина подписался на тебя",
+          "relatedId": 0,
+          "timestamp": "2023-11-17T20:20:44.312Z",
+          "relatedLink": "/cooks/list/5",
           "notificationDate": ""
         },
         {
           "id": 3,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Лина подписался на тебя",
-          "title": "Новый подписчик",
-          "timestamp": "2023-11-17T20:22:37.316Z",
           "read": false,
+          "type": "info",
+          "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар Лина подписался на тебя",
+          "relatedId": 0,
+          "timestamp": "2023-11-17T20:22:37.316Z",
+          "relatedLink": "/cooks/list/5",
           "notificationDate": ""
         },
         {
           "id": 4,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Лина подписался на тебя",
-          "title": "Новый подписчик",
-          "timestamp": "2023-11-17T20:22:49.260Z",
           "read": false,
+          "type": "info",
+          "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар Лина подписался на тебя",
+          "relatedId": 0,
+          "timestamp": "2023-11-17T20:22:49.260Z",
+          "relatedLink": "/cooks/list/5",
           "notificationDate": ""
         },
         {
           "id": 5,
-          "relatedLink": "/cooks/list/5",
-          "context": "user",
-          "type": "info",
-          "relatedId": 0,
-          "message": "Кулинар Лина подписался на тебя",
-          "title": "Новый подписчик",
-          "timestamp": "2023-11-17T20:37:25.119Z",
           "read": false,
+          "type": "info",
+          "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар Лина подписался на тебя",
+          "relatedId": 0,
+          "timestamp": "2023-11-17T20:37:25.119Z",
+          "relatedLink": "/cooks/list/5",
           "notificationDate": ""
         },
         {
           "id": 6,
+          "read": false,
+          "type": "info",
+          "title": "Новый подписчик",
+          "context": "user",
+          "message": "Кулинар Лина подписался на тебя",
+          "relatedId": 0,
+          "timestamp": "2023-11-17T20:37:27.162Z",
+          "relatedLink": "/cooks/list/5",
+          "notificationDate": ""
+        },
+        {
+          "id": 7,
           "relatedLink": "/cooks/list/5",
           "context": "user",
           "type": "info",
           "relatedId": 0,
-          "message": "Кулинар Лина подписался на тебя",
+          "message": "Кулинар Полина подписался на тебя",
           "title": "Новый подписчик",
-          "timestamp": "2023-11-17T20:37:27.162Z",
+          "timestamp": "2023-11-21T23:13:00.963Z",
           "read": false,
           "notificationDate": ""
         }
-      ]
+      ],
+      "permissions": [],
+      "exclusions": [],
+      "permanent": [],
+      "emojiStatus": null
     },
     {
       "id": 10,
       "username": "book_lover",
+      "avatarUrl": "",
       "description": "Я книжный маньяк и литературный критик. Расскажу вам обо всех лучших книгах и авторах.",
       "quote": "Чтение — это путешествие в мире воображения. Путешествуйте с книгами.",
       "email": "book@example.com",
-      "password": "password10",
       "fullName": "Мария Смирнова",
       "followersIds": [
         6,
-        9
+        9,
+        5
       ],
       "socialNetworks": [
         {
-          "name": "instagram",
-          "link": "https://www.instagram.com/book_lover/"
+          "link": "https://www.instagram.com/book_lover/",
+          "name": "instagram"
         },
         {
-          "name": "pinterest",
-          "link": "https://www.pinterest.com/book_lover/"
+          "link": "https://www.pinterest.com/book_lover/",
+          "name": "pinterest"
         }
       ],
       "personalWebsite": "",
       "location": "Лондон, Великобритания",
-      "registrationDate": "2023-10-19",
-      "profileViews": 2366,
-      "role": "user"
+      "profileViews": 2367,
+      "role": "user",
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "/cooks/list/5",
+          "context": "user",
+          "type": "info",
+          "relatedId": 0,
+          "message": "Кулинар Полина подписался на тебя",
+          "title": "Новый подписчик",
+          "timestamp": "2023-11-21T23:15:38.083Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ],
+      "permissions": [],
+      "exclusions": [],
+      "permanent": [],
+      "emojiStatus": null
     },
     {
       "id": 20,
@@ -7428,7 +7569,7 @@
       "personalWebsite": "",
       "location": "Беларусь (Гомель)",
       "registrationDate": "2023-10-30",
-      "profileViews": 23,
+      "profileViews": 24,
       "emojiStatus": {
         "name": "Weary Face",
         "unified": "1F629",
@@ -9155,6 +9296,198 @@
         "set": "apple",
         "colons": ":hat-chef:"
       }
+    },
+    {
+      "id": 39,
+      "email": "pollulsd@mail.ru",
+      "password": "Polinka201606",
+      "username": "kragb",
+      "role": "user",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-21T16:33:25.107Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "/recipes/list/24",
+          "context": "comment",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Твой комментарий «Всем привет» успешно опубликован под рецептом «Чизкейк с клубникой»",
+          "title": "Комментарий опубликован",
+          "timestamp": "2023-11-21T21:06:08.262Z",
+          "read": true,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 40,
+      "email": "pollulsd@mail.ru",
+      "password": "dsdsdds54G",
+      "username": "useername",
+      "role": "user",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-21T16:52:14.239Z",
+      "profileViews": 0,
+      "notifications": []
+    },
+    {
+      "id": 41,
+      "email": "pollulsd@mail.ru",
+      "password": "dffdfdf65G",
+      "username": "fdfd",
+      "role": "user",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-21T16:53:54.132Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @fdfd 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-21T16:53:59.818Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 42,
+      "email": "pollulsd@mail.ru",
+      "password": "sdssd56G",
+      "username": "edfddf",
+      "role": "user",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-21T16:55:12.738Z",
+      "profileViews": 0,
+      "notifications": []
+    },
+    {
+      "id": 43,
+      "email": "pollulsd@mail.ru",
+      "password": "aaaaaaaaaaF4",
+      "username": "fdffd",
+      "role": "user",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-21T16:56:57.886Z",
+      "profileViews": 0,
+      "notifications": []
+    },
+    {
+      "id": 44,
+      "email": "kraas@mail.ru",
+      "password": "fddffF5j",
+      "username": "kijdf",
+      "role": "user",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-21T16:57:24.047Z",
+      "profileViews": 0,
+      "notifications": []
+    },
+    {
+      "id": 45,
+      "email": "ffdfd@mail.ru",
+      "password": "fdfddfdf65F4k",
+      "username": "jkkjkj",
+      "role": "user",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-21T16:58:58.483Z",
+      "profileViews": 0,
+      "notifications": []
+    },
+    {
+      "id": 46,
+      "email": "fdfffd@mail.ru",
+      "password": "fdfddf65G",
+      "username": "jjkkjjk",
+      "role": "user",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-21T17:00:02.767Z",
+      "profileViews": 0,
+      "notifications": [
+        {
+          "id": 1,
+          "relatedLink": "",
+          "context": "born",
+          "type": "success",
+          "relatedId": 0,
+          "message": "Добро пожаловать в Yummy, @jjkkjjk 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!",
+          "title": "Добро пожаловать",
+          "timestamp": "2023-11-21T17:00:11.099Z",
+          "read": false,
+          "notificationDate": ""
+        }
+      ]
+    },
+    {
+      "id": 47,
+      "email": "pollulsd@mail.ru",
+      "password": "fdff5G5h",
+      "username": "ssdsdsd",
+      "role": "user",
+      "description": "",
+      "quote": "",
+      "fullName": "",
+      "followersIds": [],
+      "socialNetworks": [],
+      "personalWebsite": "",
+      "location": "",
+      "registrationDate": "2023-11-21T17:00:45.120Z",
+      "profileViews": 0,
+      "notifications": []
     }
   ]
 }

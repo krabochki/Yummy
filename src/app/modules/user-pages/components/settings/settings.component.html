@@ -413,3 +413,5 @@
     "
   ></app-modal>
 </div>
+<app-modal  @modal [style]="'await'" [type]="'Ok'"  [noButtons]="true" [title]="'Подождите...'"
+  [type]="'Ok'" [description]="'Применяются внесенные изменения... Подождите немного...'" *ngIf="loading"></app-modal>

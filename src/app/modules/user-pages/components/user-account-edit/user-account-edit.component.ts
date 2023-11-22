@@ -61,8 +61,12 @@ export class UserAccountEditComponent
   @Output() closeEmitter = new EventEmitter<boolean>();
   @ViewChild('scrollContainer', { static: false }) scrollContainer?: ElementRef;
 
-  private supabase = supabase
+  private supabase = supabase;
   private supabaseFilepath: string = '';
+
+  viewedSteps: number[] = [];
+
+  loading = false;
 
   saveModal: boolean = false;
   closeModal: boolean = false;
@@ -134,25 +138,100 @@ export class UserAccountEditComponent
     });
   }
 
+  ngAfterContentChecked(): void {
+    this.cdr.detectChanges();
+  }
+
   goToPreviousStep() {
     if (this.currentStep > 0) {
       this.currentStep--;
+      this.scrollTop();
+    }
+  }
+
+  addViewedStep(i: number) {
+    if (!this.viewedSteps.includes(i)) {
+      this.viewedSteps.push(i);
+    }
+  }
+
+  notValid() {
+    return this.validNextSteps();
+  }
+  clickOnCircleStep(i: number) {
+    if (this.validNextSteps() === 0 || this.validNextSteps() > i) {
+      this.currentStep = i;
+      this.addViewedStep(this.currentStep);
 
       this.scrollTop();
     }
   }
 
-  ngAfterContentChecked(): void {
-    this.cdr.detectChanges();
+  buttonDisabled() {
+    return (
+      this.currentStep === this.validNextSteps() - 1 ||
+      this.currentStep === steps.length - 1
+    );
+  }
+
+  noValidStepDescription(step: number): string {
+    switch (step) {
+      case 0:
+        return 'Имя пользователя не должно быть занято и должно содержать только допустимые символы и содержать как минимум 4 символа';
+      case 1:
+        return 'Ссылка на личный сайт должна быть корректной ссылкой на сайт в Интернете';
+      case 2:
+        return 'Ссылки на соц. сети должны быть корректными ссылками на сайты в Интернете';
+    }
+    return '';
+  }
+
+  validNextSteps(): number {
+    for (let s = 0; s <= 2; s++) {
+      switch (s) {
+        case 0:
+          if (
+            !this.form.get('username')!.valid ||
+            !this.form.get('fullname')!.valid
+          ) {
+            return 1;
+          }
+          break;
+        case 1:
+          if (
+            (!this.form.get('quote')!.valid ||
+              !this.form.get('location')!.valid ||
+              !this.form.get('description')!.valid ||
+              !this.form.get('website')!.valid) &&
+            this.viewedSteps.includes(1)
+          ) {
+            return 2;
+          }
+          break;
+        case 2:
+          if (
+            (!this.form.get('facebook')!.valid ||
+              !this.form.get('pinterest')!.valid ||
+              !this.form.get('vk')!.valid ||
+              !this.form.get('twitter')!.valid) &&
+            this.viewedSteps.includes(2)
+          ) {
+            return 3;
+          }
+          break;
+      }
+    }
+    return 0;
   }
 
   scrollTop(): void {
     if (this.scrollContainer) this.scrollContainer.nativeElement.scrollTop = 0;
   }
-
   goToNextStep() {
     if (this.currentStep < this.steps.length - 1) {
       this.currentStep++;
+      this.addViewedStep(this.currentStep);
+
       this.scrollTop();
     }
   }
@@ -190,13 +269,12 @@ export class UserAccountEditComponent
     this.userService.users$.subscribe((data: IUser[]) => {
       this.users = data;
     });
-    
+
     if (this.editableUser.avatarUrl) {
       this.downloadUserpicFromSupabase(this.editableUser.avatarUrl);
       this.supabaseFilepath = this.editableUser.avatarUrl;
-    }
-    else {
-          this.showedUserpicImage = this.noUserpicImage;
+    } else {
+      this.showedUserpicImage = this.noUserpicImage;
     }
 
     this.beginningData = this.form.getRawValue();
@@ -266,9 +344,6 @@ export class UserAccountEditComponent
       }
     }
 
-    const userpicData = new FormData();
-    userpicData.append('image', this.form.get('userpic')?.value);
-
     this.newUser = {
       ...this.editableUser,
       username: this.form.value.username,
@@ -281,30 +356,36 @@ export class UserAccountEditComponent
       socialNetworks: socialNetworks,
     };
 
-    this.userService.updateUsers(this.newUser).subscribe(() => {
-      if (this.form.value.userpic) {
-        this.uploadExistingAvatarFromSupabase();
+    if (this.editableUser.avatarUrl)
+      this.deleteOldUserpic(this.editableUser.avatarUrl);
+
+    if (this.form.value.userpic) {
+      this.uploadExistingAvatarFromSupabase();
+    }
+    else {
+      this.updateSupabaseUser(this.newUser);
+    }
+    
+    this.authService.loginUser(this.newUser).subscribe((user) => {
+      if (user) {
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        this.authService.setCurrentUser(user);
       }
-      if (
-        this.editableUser.avatarUrl &&
-        this.newUser.avatarUrl !== this.editableUser.avatarUrl
-      ) {
-        this.deleteOldUserpic(this.editableUser.avatarUrl);
-      }
-      this.authService.loginUser(this.newUser).subscribe((user) => {
-        if (user) {
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          this.authService.setCurrentUser(user);
-          this.successModal = true;
-        }
-      });
     });
+  }
+
+  async updateSupabaseUser(user: IUser) {
+    this.loading = true;
+    this.cdr.markForCheck();
+    await this.userService.updateUserInSupabase(user);
+    this.loading = false;
+    this.successModal = true;
+    this.cdr.markForCheck();
   }
 
   handleSaveModal(answer: boolean) {
     if (answer) {
       this.updateUser();
-      this.successModal = true;
     }
     setTimeout(() => {
       this.renderer.addClass(document.body, 'hide-overflow');
@@ -327,7 +408,7 @@ export class UserAccountEditComponent
         'user',
         '/cooks/list/' + this.newUser.id,
       );
-      this.notifyService.sendNotification(notify, this.newUser).subscribe();
+      this.notifyService.sendNotification(notify, this.newUser)
     }
   }
   handleCloseModal(answer: boolean) {
@@ -370,21 +451,26 @@ export class UserAccountEditComponent
   }
 
   downloadUserpicFromSupabase(path: string) {
-     this.showedUserpicImage = this.supabase.storage
-       .from('userpics')
+    this.showedUserpicImage = this.supabase.storage
+      .from('userpics')
       .getPublicUrl(path).data.publicUrl;
   }
 
   async uploadExistingAvatarFromSupabase() {
+    this.loading = true;
     try {
       const file = this.form.get('userpic')?.value;
       const filePath = this.supabaseFilepath;
       await this.supabase.storage.from('userpics').upload(filePath, file);
+      this.updateSupabaseUser(this.newUser);
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
       }
+    } finally {
+      this.cdr.markForCheck();
     }
+    this.loading = false;
   }
   async deleteOldUserpic(path: string) {
     await this.supabase.storage.from('userpics').remove([path]);

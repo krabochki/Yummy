@@ -97,15 +97,13 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
       });
   }
 
-  supabase = supabase;
   noUserpic = 'assets/images/userpic.png';
 
   getUserpic(user: IUser) {
     if (user.avatarUrl) {
-      console.log(user.avatarUrl)
-      return this.supabase.storage.from('userpics').getPublicUrl(user.avatarUrl)
+      console.log(user.avatarUrl);
+      return supabase.storage.from('userpics').getPublicUrl(user.avatarUrl)
         .data.publicUrl;
-
     } else return this.noUserpic;
   }
 
@@ -117,6 +115,10 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
       this.object = 'followers';
     }
     this.cd.markForCheck();
+  }
+
+  async updateUser(user: IUser) {
+    await this.userService.updateUserInSupabase(user);
   }
 
   //подписка текущего пользователя на людей в списке
@@ -137,7 +139,7 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
           'user',
           '/cooks/list/' + this.currentUser.id,
         );
-        this.notifyService.sendNotification(notify, user).subscribe();
+        this.notifyService.sendNotification(notify, user)
       }
     }
   }
@@ -155,13 +157,6 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
     this.followingDisplay = this.following;
     this.followersDisplay = this.followers;
     this.searchQuery = '';
-  }
-
-  updateUser(user: IUser) {
-    this.userService
-      .updateUsers(user)
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe();
   }
 
   //переход по ссылке на человека

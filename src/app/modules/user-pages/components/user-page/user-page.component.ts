@@ -2,6 +2,7 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  NgZone,
   OnDestroy,
   OnInit,
   Renderer2,
@@ -243,7 +244,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
         });
       if (!this.myPage) {
         this.user.profileViews++;
-        this.userService.updateUsers(this.user).subscribe();
+      this.updateUser(this.currentUser);
       }
     });
   }
@@ -256,14 +257,11 @@ export class UserPageComponent implements OnInit, OnDestroy {
     this.showFollows = false;
   }
 
- downloadUserpicFromSupabase(path: string) {
-    this.userpicLoaded = false;
+  downloadUserpicFromSupabase(path: string) {
     this.avatar = this.supabase.storage
       .from('userpics')
       .getPublicUrl(path).data.publicUrl;
     this.cd.markForCheck();
-
-    this.userpicLoaded = true;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -275,22 +273,21 @@ export class UserPageComponent implements OnInit, OnDestroy {
   follow() {
     if (this.currentUser.id > 0) {
       this.user = this.userService.addFollower(this.user, this.currentUser.id);
-      this.userService.updateUsers(this.user).subscribe(() => {
-        if (this.userService.getPermission('new-follower', this.user)) {
-          const notify: INotification = this.notifyService.buildNotification(
-            'Новый подписчик',
-            `Кулинар ${
-              this.currentUser.fullName
-                ? this.currentUser.fullName
-                : '@' + this.currentUser.username
-            } подписался на тебя`,
-            'info',
-            'user',
-            '/cooks/list/' + this.currentUser.id,
-          );
-          this.notifyService.sendNotification(notify, this.user).subscribe();
-        }
-      });
+      this.updateUser(this.currentUser);
+      if (this.userService.getPermission('new-follower', this.user)) {
+        const notify: INotification = this.notifyService.buildNotification(
+          'Новый подписчик',
+          `Кулинар ${
+            this.currentUser.fullName
+              ? this.currentUser.fullName
+              : '@' + this.currentUser.username
+          } подписался на тебя`,
+          'info',
+          'user',
+          '/cooks/list/' + this.currentUser.id,
+        );
+        this.notifyService.sendNotification(notify, this.user)
+      }
     }
   }
 
@@ -300,7 +297,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
         this.user,
         this.currentUser.id,
       );
-      this.userService.updateUsers(this.user).subscribe();
+      this.updateUser(this.currentUser);
     }
   }
 
@@ -340,8 +337,8 @@ export class UserPageComponent implements OnInit, OnDestroy {
         'hire',
         `/cooks/list/${this.currentUser.id}`,
       );
-      this.userService.updateUsers(this.user).subscribe();
-      this.notifyService.sendNotification(notify, this.user).subscribe();
+      this.updateUser(this.currentUser);
+      this.notifyService.sendNotification(notify, this.user)
       this.hireSuccessModalShow = true;
     }
     this.hireModalShow = false;
@@ -357,17 +354,20 @@ export class UserPageComponent implements OnInit, OnDestroy {
     if (emoji.id !== this.selectedEmoji?.id) {
       this.selectedEmoji = emoji;
       this.currentUser.emojiStatus = emoji;
-      this.userService.updateUsers(this.currentUser).subscribe();
+      this.updateUser(this.currentUser);
     }
     this.showEmojiPicker = false;
   }
 
+  async updateUser(user:IUser) {
+    await this.userService.updateUserInSupabase(user);
+  }
   protected unsetEmoji($event: any): void {
     $event.stopPropagation();
     $event.preventDefault();
     if (this.selectedEmoji) {
       this.currentUser.emojiStatus = undefined;
-      this.userService.updateUsers(this.currentUser).subscribe();
+      this.updateUser(this.currentUser);
       this.selectedEmoji = null;
       this.showEmojiPicker = false;
     }

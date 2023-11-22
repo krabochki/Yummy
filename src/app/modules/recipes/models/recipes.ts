@@ -26,6 +26,8 @@ export interface IRecipe {
   statistics: IRecipeStatistics[];
 }
 
+    
+
 export interface IRecipeStatistics{
   user: number,
   answer:boolean

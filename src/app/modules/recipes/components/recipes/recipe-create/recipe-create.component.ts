@@ -45,6 +45,7 @@ import { customPatternValidator } from 'src/tools/validators';
 import { numbers } from 'src/tools/regex';
 import { IngredientService } from '../../../services/ingredient.service';
 import { IIngredient } from '../../../models/ingredients';
+import { supabase } from 'src/app/modules/controls/image/supabase-data';
 
 @Component({
   selector: 'app-recipe-create',
@@ -73,6 +74,8 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
 
   isAwaitingApprove = false;
 
+  loading = false;
+
   recipeId = 0;
 
   users: IUser[] = [];
@@ -97,13 +100,15 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
 
   createdRecipe: IRecipe = nullRecipe;
 
-  ingredients:IIngredient[] = []
+  ingredients: IIngredient[] = [];
 
   protected destroyed$: Subject<void> = new Subject<void>();
 
   beginningData: any;
 
   editMode: boolean = false;
+
+  maxId = 0;
 
   constructor(
     private notifyService: NotificationService,
@@ -115,10 +120,13 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private recipeService: RecipeService,
     private fb: FormBuilder,
-    private ingredientService:IngredientService,
+    private ingredientService: IngredientService,
     public router: Router,
     private title: Title,
   ) {
+    this.recipeService.getMaxRecipeId().then((maxId) => {
+      this.maxId = maxId;
+    });
     this.mainImage = this.defaultImage;
     this.form = this.fb.group({
       recipeName: [
@@ -143,7 +151,6 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       image: [null], // Это поле для загрузки картинки
     });
   }
-
 
   blur() {
     this.categoryInputValue = ' ';
@@ -238,10 +245,13 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     this.renderer.addClass(document.body, 'hide-overflow');
     (<HTMLElement>document.querySelector('.header')).style.width =
       'calc(100% - 16px)';
-    
-    this.ingredientService.ingredients$.pipe(takeUntil(this.destroyed$)).subscribe(
-      (receivedIngredients:IIngredient[])=>this.ingredients = receivedIngredients
-    )
+
+    this.ingredientService.ingredients$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(
+        (receivedIngredients: IIngredient[]) =>
+          (this.ingredients = receivedIngredients),
+      );
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((currentUser: IUser) => {
@@ -606,11 +616,8 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     this.selectedCategories.forEach((element) => {
       categoriesIds.push(element.id);
     });
-    this.recipeService.recipes$.subscribe((data) => {
-      const recipes: IRecipe[] = data;
-      const maxId = Math.max(...recipes.map((u) => u.id));
-      this.recipeId = maxId + 1;
-    });
+
+    this.recipeId = this.maxId + 1;
 
     if (this.form.valid) {
       const recipeData: IRecipe = {
@@ -646,26 +653,66 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
           (i) => i === ingredient,
         );
         if (findedIngredient && findedIngredient.quantity) {
-          findedIngredient.quantity = ingredient.quantity.toString().replace(',', '.');
+          findedIngredient.quantity = ingredient.quantity
+            .toString()
+            .replace(',', '.');
         }
       });
       this.createdRecipe = recipeData;
 
-      this.recipeService.postRecipe(recipeData).subscribe(() => {
-        this.editedRecipe = recipeData;
+      this.postRecipeToSupabase(recipeData);
+    }
+  }
+  supabase = supabase;
+  async postRecipeToSupabase(recipe: IRecipe) {
+    this.loading = true;
+    try {
+      const { data, error } = await supabase.from('recipes').upsert([
+        {
+          id: recipe.id,
+          mainimage: recipe.mainImage,
+          name: recipe.name,
+          description: recipe.description,
+          preparationtime: recipe.preparationTime,
+          cookingtime: recipe.cookingTime,
+          servings: recipe.servings,
+          origin: recipe.origin,
+          ingredients: recipe.ingredients,
+          nutritions: recipe.nutritions,
+          instructions: recipe.instructions,
+          categories: recipe.categories,
+          authorid: recipe.authorId,
+          likesid: recipe.likesId,
+          cooksid: recipe.cooksId,
+          history: recipe.history,
+          comments: recipe.comments,
+          publicationdate: recipe.publicationDate,
+          favoritesid: recipe.favoritesId,
+          status: recipe.status,
+          reports: recipe.reports,
+          statistics: recipe.statistics,
+        },
+      ]);
 
+      if (error) {
+        console.error('Error updating recipe:', error);
+      } else {
+        console.log('Recipe updated successfully:', data);
+        this.editedRecipe = recipe;
         this.successModalShow = true;
-
-        this.cd.markForCheck();
-      });
+      }
+    } catch {
+    } finally {
+      this.loading = false;
+      this.cd.markForCheck();
     }
   }
 
-  controlInvalid(control: string, group:any) {
-     return (
-       group.get(control)?.invalid &&
-       (group.get(control)?.dirty || group.get(control)?.touched)
-     );
+  controlInvalid(control: string, group: any) {
+    return (
+      group.get(control)?.invalid &&
+      (group.get(control)?.dirty || group.get(control)?.touched)
+    );
   }
 
   sendNotificationsAfterPublishingRecipe() {
@@ -684,9 +731,8 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
         'recipe',
         '/recipes/list/' + this.createdRecipe.id,
       );
-      subscribes.push(
-        this.notifyService.sendNotification(notify, this.currentUser),
-      );
+        this.notifyService.sendNotification(notify, this.currentUser)
+      
     }
 
     const authorFollowers = this.userService.getFollowers(
@@ -700,15 +746,14 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     );
     authorFollowers.forEach((follower) => {
       if (this.userService.getPermission('new-recipe-from-following', follower))
-        subscribes.push(
-          this.notifyService.sendNotification(notifyForFollower, follower),
-        );
-    });
+          this.notifyService.sendNotification(notifyForFollower, follower)
+        
+    })
 
     forkJoin(subscribes).subscribe();
   }
 
-  editRecipe(): void {
+  async editRecipe() {
     const categoriesIds: number[] = [];
     this.selectedCategories.forEach((element) => {
       categoriesIds.push(element.id);
@@ -728,7 +773,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       nutritions: this.form.value.nutritions,
       servings: this.form.value.portions,
       categories: categoriesIds,
-      publicationDate: '',
+      publicationDate: getCurrentDate(),
       status: this.isAwaitingApprove
         ? this.currentUser.role === 'user'
           ? 'awaits'
@@ -741,10 +786,21 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
         (i) => i === ingredient,
       );
       if (findedIngredient && findedIngredient.quantity) {
-        findedIngredient.quantity = ingredient.quantity.toString().replace(',', '.');
+        findedIngredient.quantity = ingredient.quantity
+          .toString()
+          .replace(',', '.');
       }
     });
-    this.updatedRecipeEmitter.emit(recipeData);
+
+    this.loading = true;
+    this.cd.markForCheck();
+    try {
+      await this.recipeService.updateRecipeFunction(recipeData);
+      this.afterEditingRecipe();
+    } finally {
+      this.loading = false;
+      this.cd.markForCheck();
+    }
   }
 
   //модальные окна
@@ -787,7 +843,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     }
   }
   handleSuccessModal() {
-    this.router.navigateByUrl('recipes/list/' + (this.recipeId - 1));
+    this.router.navigateByUrl('recipes/list/' + this.recipeId);
 
     this.cd.markForCheck();
 
@@ -814,7 +870,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
         'recipe',
         '/recipes/list/' + this.editedRecipe.id,
       );
-      this.notifyService.sendNotification(notify, this.currentUser).subscribe();
+      this.notifyService.sendNotification(notify, this.currentUser)
     }
     if (
       this.isAwaitingApprove &&
@@ -824,6 +880,44 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       this.sendNotificationsAfterPublishingRecipe();
     }
   }
+
+  afterEditingRecipe() {
+    if (this.editedRecipe.id > 0) {
+      if (
+        this.userService.getPermission('you-edit-your-recipe', this.currentUser)
+      ) {
+        const notify: INotification = this.notifyService.buildNotification(
+          this.isAwaitingApprove
+            ? 'Рецепт изменен ' +
+                (this.currentUser.role === 'user'
+                  ? 'и отправлен на проверку'
+                  : 'и опубликован')
+            : 'Рецепт изменен',
+          `Рецепт «${this.editedRecipe.name}» изменен ${
+            this.isAwaitingApprove
+              ? this.currentUser.role === 'user'
+                ? 'и успешно отправлен на проверку'
+                : 'и опубликован'
+              : ''
+          }`,
+          'success',
+          'recipe',
+          '/recipes/list/' + this.editedRecipe.id,
+        );
+        this.notifyService
+          .sendNotification(notify, this.currentUser)
+      }
+
+      if (
+        this.isAwaitingApprove &&
+        this.currentUser.role !== 'user' &&
+        this.userService.getPermission('hide-author', this.currentUser)
+      ) {
+        this.sendNotificationsAfterPublishingRecipe();
+      }
+    }
+  }
+
   handleApproveModal(answer: boolean): void {
     if (answer) {
       this.isAwaitingApprove = true;

@@ -68,9 +68,7 @@
                 <div
                   class="delete"
                   *ngIf="myImage !== defaultImage"
-                  (click)="
-                    myImage = defaultImage;
-                    this.form.get('image')?.setValue(null)
+                  (click)="unsetImage()
                   "
                 >
                   <svg-icon
@@ -123,7 +121,7 @@
                 [group]="group"
                 [allSections]="allSections"
                 [placeholder]="
-                  'Выбери соответствующую секцию для твоей категории'
+                  'Выбери соответствующую секцию для твоей категории*'
                 "
               ></app-autocomplete>
             </div>
@@ -208,7 +206,7 @@
         [style]="'outlined'"
         [text]="'Назад'"
         (click)="goToPreviousStep()"
-        [disabled]="!(currentStep === 0)"
+        [disabled]="!(currentStep === 0) "
       ></app-button>
       <app-button
         [iconSize]="'min'"
@@ -217,8 +215,10 @@
         [rounded]="true"
         [style]="'filled'"
         [text]="'Вперед'"
-        (click)="goToNextStep()"
-        [disabled]="!(currentStep === steps.length - 1)"
+        (click)="!buttonDisabled() ? goToNextStep() : null"
+        [disabled]="
+          !buttonDisabled()
+        "
       ></app-button>
     </div>
   </div>
@@ -268,3 +268,5 @@
       : '')
   "
 ></app-modal>
+<app-modal @modal [style]="'await'" [type]="'Ok'" [noButtons]="true" [style]="'sec'" [title]="'Подождите...'"
+  [type]="'Ok'" [description]="'Загружаем данные о новой категории... Совсем скоро она будет готова...'" *ngIf="awaitModalShow"></app-modal>

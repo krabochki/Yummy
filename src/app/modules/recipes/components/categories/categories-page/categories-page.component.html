@@ -1,6 +1,6 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<div class="wrap" *ngIf="!this.isLoading; else loading">
+<div class="wrap" >
   <h1 *ngIf="getPublicCategories(section).length>0 || filter==='popular' || filter==='sections'">{{ title }}</h1>
 
   <app-button
@@ -158,9 +158,7 @@
   </div>
 </div>
 
-<ng-template #loading>
-  <p>Loading....</p>
-</ng-template>
+
 
 <app-category-creating style="position: fixed;z-index: 3;"
   (closeEmitter)="creatingMode = false"

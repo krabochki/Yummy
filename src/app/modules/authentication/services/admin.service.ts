@@ -28,10 +28,10 @@ export class AdminService {
     private ingredientService: IngredientService,
   ) {}
 
-  public blockComment(
+  async blockComment(
     report: ICommentReportForAdmin,
     recipes: IRecipe[],
-  ): Observable<IRecipe> {
+  ){
     const recipe = getRecipe(report.recipe, recipes);
 
     const updatedComments: IComment[] = recipe.comments.filter(
@@ -41,16 +41,16 @@ export class AdminService {
       (r) => r.comment !== report.comment,
     );
 
-    return this.recipeService.updateRecipe({
+    await this.recipeService.updateRecipeFunction({
       ...recipe,
       comments: updatedComments,
       reports: updatedReports,
     });
   }
 
-  public approveRecipe(recipe: IRecipe) {
+  async approveRecipe(recipe: IRecipe) {
     const approvedRecipe = this.recipeService.approveRecipe(recipe);
-    return this.recipeService.updateRecipe(approvedRecipe);
+    await this.recipeService.updateRecipeFunction(approvedRecipe);
   }
 
   approveIngredient(ingredient: IIngredient) {
@@ -80,9 +80,9 @@ export class AdminService {
     return subscribes;
   }
 
-  public dismissRecipe(recipe: IRecipe): Observable<IRecipe> {
+  async dismissRecipe(recipe: IRecipe) {
     const dismissedRecipe = this.recipeService.dismissRecipe(recipe);
-    return this.recipeService.updateRecipe(dismissedRecipe);
+    await this.recipeService.updateRecipeFunction(dismissedRecipe);
   }
 
   public updateSectionAfterDismissCategory(
@@ -95,20 +95,21 @@ export class AdminService {
 
     return this.sectionService.updateSections(section);
   }
-  public dismissCategory(category: ICategory): Observable<ICategory> {
-    return this.categoryService.deleteCategory(category.id);
+  async dismissCategory(category: ICategory) {
+    await this.categoryService.deleteCategoryFromSupabase(category.id);
   }
 
-  public approveCategory(category: ICategory): Observable<ICategory> {
+  async approveCategory(category: ICategory) {
     category.status = 'public';
-    return this.categoryService.updateCategory(category);
+    await this.categoryService.updateCategoryInSupabase(category);
+    
   }
 
-  public leaveComment(recipe: IRecipe, report: ICommentReportForAdmin) {
+  async leaveComment(recipe: IRecipe, report: ICommentReportForAdmin) {
     const updatedReports = recipe.reports.filter(
       (item) => item.comment !== report.comment,
     );
-    return this.recipeService.updateRecipe({
+   await this.recipeService.updateRecipeFunction({
       ...recipe,
       reports: updatedReports,
     });

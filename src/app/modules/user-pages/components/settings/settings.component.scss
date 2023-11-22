@@ -440,3 +440,8 @@ h3{
   height: 1.25em;
   fill: var(--color-foreground);
 }
+
+app-modal{
+  z-index: 10;
+  position: fixed;
+}

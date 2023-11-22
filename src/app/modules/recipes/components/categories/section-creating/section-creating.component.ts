@@ -103,13 +103,10 @@ export class SectionCreatingComponent
   }
 
   createSection() {
-    const userpicData = new FormData();
-    userpicData.append('image', this.form.get('image')?.value);
     const maxId = Math.max(...this.allSections.map((u) => u.id));
     this.newSection = {
       ...nullSection,
       name: this.form.value.name,
-      photo: userpicData,
       id: maxId + 1,
     };
 

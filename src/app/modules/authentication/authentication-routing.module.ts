@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthenticationComponent } from './authentication.component';
-import { EmailConfirmationComponent } from './components/email-confirmation/email-confirmation.component';
 import { LoginComponent } from './components/login/login.component';
 import { PasswordRecoveryComponent } from './components/password-recovery/password-recovery.component';
 import { RegisterComponent } from './components/register/register.component';
@@ -35,11 +34,7 @@ const routes: Routes = [
         component: GreetingsComponent,
         canActivate: [OnlyNoAuthGuard],
       },
-      {
-        path: 'email-confirmation ',
-        component: EmailConfirmationComponent,
-        canActivate: [OnlyNoAuthGuard],
-      },
+
       {
         path: 'control-dashboard',
         component: ControlDashboardComponent,

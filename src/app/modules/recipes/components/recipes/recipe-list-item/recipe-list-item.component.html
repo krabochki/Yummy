@@ -229,19 +229,6 @@
   @modal
 ></app-recipe-create>
 
-<app-modal
-  @modal
-  *ngIf="successEditModalShow"
-  [style]="'sec'"
-  [title]="'Рецепт успешно изменен'"
-  [type]="'Ok'"
-  (resultEmit)="handleSuccessEditModal()"
-  [buttonsText]="['Хорошо']"
-  [description]="
-    'Твой рецепт успешно изменен' +
-    (isAwaitingApprove ?currentUser.role==='user'? ' и ожидает одобрения модератора':' и опубликован' : '')
-  "
-></app-modal>
 
 <app-modal
   @modal
@@ -254,16 +241,6 @@
   [description]="'Ты действительно хочешь удалить этот рецепт?'"
 ></app-modal>
 
-<app-modal
-  @modal
-  *ngIf="successDeleteModalShow"
-  [style]="'sec'"
-  [title]="'Рецепт успешно удален'"
-  [type]="'Ok'"
-  (resultEmit)="handleSuccessDeleteModal()"
-  [buttonsText]="['Хорошо']"
-  [description]="'Этот рецепт успешно удален'"
-></app-modal>
 
 <app-modal
   @modal
@@ -310,3 +287,5 @@
   [buttonsText]="['Хорошо']"
   [description]="'Спасибо! Ваше мнение важно для нас и остальных кулинаров'"
 ></app-modal>
+<app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
+  [description]="'Загружаем данные о новом рецепте... Совсем скоро он будет готов...'" />

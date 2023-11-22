@@ -16,8 +16,9 @@ export class ModalComponent implements OnInit, OnDestroy {
   @Input() type?: 'yesOrNo' | 'Ok';
   @Input() title?: string;
   @Input() description?: string;
+  @Input() noButtons: boolean = false;
   @Input() buttonsText: string[] = ['Да', 'Нет'];
-  @Input() style: 'prim' | 'sec' = 'prim';
+  @Input() style: 'prim' | 'sec' | 'await' = 'prim';
 
   @Output() resultEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
 

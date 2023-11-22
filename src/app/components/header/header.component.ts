@@ -251,7 +251,6 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
             };
             this.notifyService
               .sendNotification(reminder, this.currentUser)
-              .subscribe();
           }
         });
       }
@@ -332,7 +331,6 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
         //присылаем увед
         this.notifyService
           .sendNotification(reminder, this.currentUser)
-          .subscribe();
       }
     }
 
@@ -365,13 +363,12 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
                 !(notify.context === 'plan-reminder-start' && notify.id === n.id),
             )
           }
-          console.log(this.currentUser)
         
         }
       }
     });
 
-    if (editUser) this.userService.updateUsers(this.currentUser).subscribe();
+    if (editUser) this.updateUser(this.currentUser)
   }
 
   trackByFn(index: number, element: INotification) {
@@ -452,7 +449,11 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
       notification.read = true;
     });
 
-    if (haveNotRead) this.userService.updateUsers(this.currentUser).subscribe();
+    if (haveNotRead) this.updateUser(this.currentUser)
+  }
+
+  async updateUser(user: IUser) {
+    await this.userService.updateUserInSupabase(user);
   }
 
   updateNotifies() {

@@ -31,7 +31,7 @@ export class UserService {
   }
 
   loadUsersData() {
-    this.loadUsersFromSupabase();
+    return this.loadUsersFromSupabase();
   }
 
   isUserSubscriber(user: IUser, userId: number) {
@@ -130,7 +130,7 @@ export class UserService {
   }
 
   loadUsersFromSupabase() {
-    supabase
+    return supabase
       .from('profiles')
       .select('*')
       .then((response) => {

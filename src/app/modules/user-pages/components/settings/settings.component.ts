@@ -186,9 +186,14 @@ export class SettingsComponent implements OnInit, OnDestroy {
     if (!nightModeDisabled) {
       document.body.classList.add('dark-mode');
       localStorage.setItem('theme', 'dark');
+            const favicon = document.querySelector('#favicon');
+            favicon?.setAttribute('href', 'assets/images/chef-day.png');
     } else {
       document.body.classList.remove('dark-mode');
       localStorage.setItem('theme', 'light');
+            const favicon = document.querySelector('#favicon');
+            favicon?.setAttribute('href', 'assets/images/chef-night.png');
+
     }
   } //переключ темной темы
 
@@ -242,8 +247,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
   async handleDeleteModal(event: boolean) {
     this.deleteModalShow = false;
 
-    if (event) {
+    if (event) {    this.loading = true;
+
       this.authService.logoutUser();
+      await this.authService.logout()
 
       if (this.user.id !== 0 && this.users.find((u) => u.id === this.user.id)) {
         //находим рецепты с лайками комментами приготовлениями  и тп от удаляемого пользователя
@@ -277,7 +284,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
           (p) => p.user === this.user.id,
         );
         if (deletingUserPlan)
-          this.planService.deletePlan(deletingUserPlan).subscribe();
+          await this.planService.deletePlanFromSupabase(deletingUserPlan.id);
 
         const usersForUpdate =
           this.userService.getUsersWhichWillBeUpdatedWhenUserDeleting(
@@ -288,8 +295,12 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
         //удаляем наконец пользователя
         await this.userService.deleteUserFromSupabase(this.user.id);
-        this.deleteUser();
+        await this.authService.deleteUserFromSupabase();
+            this.loading = false;
+
         this.router.navigateByUrl('/');
+
+
       }
     } else {
       setTimeout(() => {

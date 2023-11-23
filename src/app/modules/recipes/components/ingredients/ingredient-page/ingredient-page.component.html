@@ -5,7 +5,7 @@
  
 
   <div class="container">
-    <div class="image"></div>
+    <div class="image" [style.background-image]="'url('+(image?image:placeholder)+')'"></div>
 
     <div class="section-group center">
       <p class="reading-time">

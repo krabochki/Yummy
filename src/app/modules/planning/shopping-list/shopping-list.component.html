@@ -211,3 +211,6 @@
     'Вы уверены, что хотите удалить все продукты из вашего списка покупок?'
   " [type]="'yesOrNo'" [title]="'Подтвердите удаление всех продуктов'"
   (resultEmit)="handleDeletingAllProductsModal($event)"></app-modal>
+
+  <app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
+    [description]=" 'Вносим изменения... Подождите немного...'" />

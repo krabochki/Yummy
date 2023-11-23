@@ -116,7 +116,7 @@ export function popup() {
     return [
       transition(':enter', [
         style({ opacity: '0',height:0 }),
-        animate('500ms ease-in-out', style({ opacity: '1',height:'*'})),
+        animate('800ms ease-in-out', style({ opacity: '1',height:'*'})),
       ]),
       transition(':leave', [
         style({ opacity: '1' }),

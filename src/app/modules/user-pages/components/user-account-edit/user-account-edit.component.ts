@@ -106,7 +106,7 @@ export class UserAccountEditComponent
         ],
       ],
       fullname: [this.newUser.fullName, [Validators.maxLength(30)]],
-      quote: [this.newUser.quote, [Validators.maxLength(100)]],
+      quote: [this.newUser.quote, [Validators.maxLength(500)]],
       description: ['', [Validators.maxLength(2000)]],
       location: ['', [Validators.maxLength(30)]],
       website: [

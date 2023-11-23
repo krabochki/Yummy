@@ -96,6 +96,7 @@
 
       p:not(.quote, .label) {
         font-weight: 500;
+        font-size: 1.1em;
         margin-bottom: var(--space-xs);
       }
     }
@@ -119,6 +120,14 @@ svg {
   fill: var(--color-foreground);
   border-radius: 100%;
 }
+
+     .top-link {
+       line-height: 1;
+  
+       text-decoration: underline;
+  
+     
+     }
 
 @media (max-width: 900px) {
   .label {
@@ -225,7 +234,6 @@ a {
     transition: fill 0.2s ease-in-out;
   }
 
-  &:focus,
   &:hover {
     svg {
       fill: var(--color-secondary);

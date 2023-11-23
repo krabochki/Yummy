@@ -36,7 +36,6 @@ app-modal {
   text-overflow: ellipsis;
   max-width: 100%;
   overflow: hidden;
-  line-height: 1.2;
 }
 
 .categories {
@@ -278,13 +277,11 @@ h2 {
 }
 
 .nutrients {
-  * {
-    width: fit-content;
-    height: fit-content;
-  }
+
   height: fit-content;
   align-items: center;
   width: fit-content;
+  overflow: visible;
   column-gap: 0.5em;
   display: grid;
   grid-template-columns: max-content max-content;
@@ -804,6 +801,9 @@ app-social-button,.social{
   column-gap: 1em;
 }
 
+.nutr{
+    overflow: visible;
+}
 @media (max-width: 736px) {
   .statistic {
     justify-content: center;

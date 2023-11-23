@@ -106,7 +106,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   protected sectionCreatingMode: boolean = false;
   groupCreatingMode = false;
 
-  categoryPlaceholder= 'assets/images/category.png'
+  categoryPlaceholder = 'assets/images/category.png';
 
   protected reportCommentDismissModalShow: boolean = false;
   protected successReportCommentDismissModalShow: boolean = false;
@@ -466,7 +466,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
           notifyForAuthor,
           author,
           'your-reports-reviewed-moderator',
-        )
+        );
     }
   }
   private sendNotifyAfterApproveCategory(): void {
@@ -548,29 +548,28 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     this.updateUser(this.targetDemotedUser);
   }
 
-   downloadCategoryPicFromSupabase(path: string) {
-    return supabase.storage
-      .from('categories')
-      .getPublicUrl(path).data.publicUrl;
+  downloadCategoryPicFromSupabase(path: string) {
+    return supabase.storage.from('categories').getPublicUrl(path).data
+      .publicUrl;
   }
-
 
   private approveCategory() {
     if (this.actionCategory) {
-      this.adminService
-        .approveCategory(this.actionCategory)
+      this.adminService.approveCategory(this.actionCategory);
       this.successApproveCategoryModalShow = true;
     }
   }
   private dismissCategory() {
     if (this.actionCategory) {
-      this.adminService.dismissCategory(this.actionCategory)
-        if (this.actionCategory) {
-          const section = { ...this.getSection(this.actionCategory.id) };
-          this.adminService
-            .updateSectionAfterDismissCategory(section, this.actionCategory)
-            .subscribe(() => (this.successDismissCategoryModalShow = true));
-        }
+      this.adminService.dismissCategory(this.actionCategory);
+      if (this.actionCategory) {
+        const section = { ...this.getSection(this.actionCategory.id) };
+        this.adminService.updateSectionAfterDismissCategory(
+          section,
+          this.actionCategory,
+        );
+        this.successDismissCategoryModalShow = true;
+      }
     }
   }
   private approveRecipe(): void {
@@ -671,18 +670,11 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   handleIngredientModal(answer: boolean) {
     if (answer) {
       if (this.ingredientAction === 'approve') {
-        this.approveIngredient().subscribe(() => {
-          this.successIngredientModalShow = true;
-          this.cd.markForCheck();
-        });
+        this.approveIngredient();
       } else {
-        const subscribes = this.dismissIngredient();
-        if (subscribes.length > 0) {
-          forkJoin(subscribes).subscribe(() => {
-            this.successIngredientModalShow = true;
-            this.cd.markForCheck();
-          });
-        }
+        this.dismissIngredient();
+        this.successIngredientModalShow = true;
+        this.cd.markForCheck();
       }
     }
     this.ingredientModalShow = false;
@@ -707,27 +699,22 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  private approveIngredient(): Observable<IIngredient> {
-    return this.actionIngredient
-      ? this.adminService.approveIngredient(this.actionIngredient)
-      : EMPTY;
+  private approveIngredient() {
+    if (this.actionIngredient) {
+      this.adminService.approveIngredient(this.actionIngredient);
+      this.successIngredientModalShow = true;
+      this.cd.markForCheck();
+    }
   }
 
-  private dismissIngredient(): Observable<any>[] {
+  private dismissIngredient() {
     if (this.actionIngredient) {
-      let subscribes: Observable<any>[] = [];
-      subscribes.push(
-        this.adminService.dismissIngredient(this.actionIngredient),
+      this.adminService.dismissIngredient(this.actionIngredient);
+      this.adminService.updateIngredientGroupsAfterDismissingIngredient(
+        this.actionIngredient,
+        this.groups,
       );
-      const ingredientGroupsSubscribes =
-        this.adminService.updateIngredientGroupsAfterDismissingIngredient(
-          this.actionIngredient,
-          this.groups,
-        );
-      subscribes = [...subscribes, ...ingredientGroupsSubscribes];
-      return subscribes;
     }
-    return [];
   }
 
   handleSuccessIngredientModal() {

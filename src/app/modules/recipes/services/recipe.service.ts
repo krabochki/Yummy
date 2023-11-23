@@ -25,7 +25,7 @@ export class RecipeService {
   ) {}
 
   loadRecipeData() {
-    this.getRecipesFromSupabase();
+    return this.getRecipesFromSupabase();
   }
 
   getRecipesWhithIsEditedWhenUserDeleting(
@@ -127,10 +127,7 @@ export class RecipeService {
 
   getRecipesFromSupabase() {
     
-
-    
-    
-    this.supabase
+    return this.supabase
       .from('recipes')
       .select('*')
       .then((response) => {

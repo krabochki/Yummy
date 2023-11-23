@@ -180,12 +180,12 @@ export class CalendarComponent implements OnInit, OnDestroy {
     return this.recipeEvents.find((e) => e.id === id) || nullCalendarEvent;
   }
 
-  protected eventTimesChanged({
+  async eventTimesChanged({
     //перетаскивание события и изменение его даты
     event,
     newStart,
     newEnd,
-  }: CalendarEventTimesChangedEvent): void {
+  }: CalendarEventTimesChangedEvent) {
     const recipeEvent = this.findRecipeEvent(Number(event.id));
     const modifiedEvent: RecipeCalendarEvent = {
       ...event,
@@ -207,7 +207,12 @@ export class CalendarComponent implements OnInit, OnDestroy {
     if (endChanged || startChanged) {
       this.currentUserPlan.calendarEvents = this.recipeEvents;
       this.recipeEventsToCalendarEvents();
-      this.planService.updatePlan(this.currentUserPlan).subscribe();
+      this.loading = true;
+      this.cd.markForCheck();
+
+      await this.planService.updatePlanInSupabase(this.currentUserPlan);
+      this.loading = false;
+      this.cd.markForCheck();
     }
   }
 
@@ -231,8 +236,12 @@ export class CalendarComponent implements OnInit, OnDestroy {
       return;
     }
   }
+  loading = false;
 
-  deleteEvent(eventToDelete: RecipeCalendarEvent) {
+  async deleteEvent(eventToDelete: RecipeCalendarEvent) {
+    this.loading = true;
+    this.cd.markForCheck();
+
     this.recipeEvents = this.recipeEvents.filter(
       (event: RecipeCalendarEvent) => event !== eventToDelete,
     );
@@ -244,10 +253,10 @@ export class CalendarComponent implements OnInit, OnDestroy {
         (n) => n.id !== reminderNotify.id,
       );
     this.currentUserPlan.calendarEvents = this.recipeEvents;
-    const subscribes: Observable<any>[] = [];
-    subscribes.push(this.planService.updatePlan(this.currentUserPlan));
-    forkJoin(subscribes).subscribe();
+    await this.planService.updatePlanInSupabase(this.currentUserPlan);
     this.updateUser();
+    this.loading = false;
+    this.cd.markForCheck();
   }
 
   async updateUser() {

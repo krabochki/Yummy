@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { PlanService } from '../services/plan-service';
 import { IPlan, nullPlan } from '../models/plan';
 import { AuthService } from '../../authentication/services/auth.service';
@@ -71,6 +71,7 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
   }
 
   constructor(
+    private cd: ChangeDetectorRef,
     private planService: PlanService,
     private authService: AuthService,
     private fb: FormBuilder,
@@ -85,7 +86,7 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
     this.form = this.initNewShoppingListItemForm();
   }
 
-  drop(events: CdkDragDrop<string[]>) {
+  async drop(events: CdkDragDrop<string[]>) {
     this.bodyElement.classList.remove('inheritCursors');
     this.bodyElement.style.cursor = 'unset';
 
@@ -113,7 +114,11 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
           (i) => i.id === droppedProduct.id,
         );
         if (findedProduct) findedProduct.type = currentType.type.id;
-        this.planService.updatePlan(this.currentUserPlan).subscribe();
+          this.loading = true;
+          this.cd.markForCheck();
+        await this.planService.updatePlanInSupabase(this.currentUserPlan)
+          this.loading = false;
+          this.cd.markForCheck();
       }
     }
   }
@@ -222,7 +227,7 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
     return groupedProducts;
   }
 
-  protected addShoppingListItem(): void {
+  async addShoppingListItem() {
     if (this.form.valid) {
       let maxId = 0;
       if (this.shoppingList.length > 0)
@@ -236,8 +241,12 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
         note: this.form.value.note,
       };
       this.currentUserPlan.shoppingList.unshift(newProduct);
-      this.planService.updatePlan(this.currentUserPlan).subscribe();
+      this.loading = true;
+      this.cd.markForCheck();
+      await this.planService.updatePlanInSupabase(this.currentUserPlan);
       this.resetFormProduct();
+      this.loading = false;
+      this.cd.markForCheck();
     }
   }
 
@@ -261,32 +270,46 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
     });
   }
 
-  protected markProductAsBought(productId: number) {
+  async markProductAsBought(productId: number) {
     const findedProductIndex = this.shoppingList.findIndex(
       (g) => g.id === productId,
     );
     if (findedProductIndex !== -1) {
       const purchasedProduct = this.shoppingList[findedProductIndex];
       purchasedProduct.isBought = !purchasedProduct.isBought;
-
-      this.planService.updatePlan(this.currentUserPlan).subscribe();
+      this.loading = true;
+      this.cd.markForCheck();
+      await this.planService.updatePlanInSupabase(this.currentUserPlan);
+      this.loading = false;
+      this.cd.markForCheck();
     }
   }
-  protected removeProduct(productId: number) {
+  async removeProduct(productId: number) {
     const findedProduct = this.shoppingList.find((g) => g.id === productId);
 
     if (findedProduct) {
       this.currentUserPlan.shoppingList =
         this.currentUserPlan.shoppingList.filter((g) => g.id !== productId);
 
-      this.planService.updatePlan(this.currentUserPlan).subscribe();
+      this.loading = true;
+      this.cd.markForCheck();
+      await this.planService.updatePlanInSupabase(this.currentUserPlan);
+      this.loading = false;
+      this.cd.markForCheck();
     }
   }
 
-  protected removeAllProducts() {
+  loading = false;
+  async removeAllProducts() {
+    this.loading = true;
+    this.cd.markForCheck();
     this.currentUserPlan.shoppingList = [];
     this.shoppingList = [];
-    this.planService.updatePlan(this.currentUserPlan).subscribe();
+      this.loading = true;
+      this.cd.markForCheck();
+    await this.planService.updatePlanInSupabase(this.currentUserPlan);
+      this.loading = false;
+      this.cd.markForCheck();
   }
 
   public ngOnDestroy(): void {

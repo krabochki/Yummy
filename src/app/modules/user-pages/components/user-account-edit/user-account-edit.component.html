@@ -77,13 +77,13 @@
               <div class="form-control">
                 <h3>Имя пользователя</h3>
                 <app-usual-input [inputRequired]="true" [max]="20" id="username" formControlName="username"
-                  [placeholder]="'Придумай себе имя пользователя'" required [value]="form.get('username')?.value"
+                  [placeholder]="'Придумайте ваше имя пользователя'" required [value]="form.get('username')?.value"
                   [error]="
                     !form.get('username')?.hasError('usernameExists')
                       ? form.get('username')?.invalid &&
                         (form.get('username')?.dirty ||
                           form.get('username')?.touched)
-                        ? 'Имя пользователя должно содержать от 4 до 20 символов, среди которых могут быть буквы (минимум одна), цифры, а также нижние почеркивания и точки (не подряд)'
+                        ? 'Имя пользователя должно содержать от 4 до 20 символов, среди которых могут быть буквы английского алфавита (минимум одна), цифры, а также нижние почеркивания и точки (не подряд)'
                         : ''
                       : 'Это имя пользователя уже занято'
                   "></app-usual-input>
@@ -92,7 +92,7 @@
               <div class="form-control">
                 <h3>Полное имя</h3>
                 <app-usual-input [max]="30" id="fullname" formControlName="fullname"
-                  [value]="form.get('fullname')?.value" [placeholder]="'Введи свое полное имя'" [error]="
+                  [value]="form.get('fullname')?.value" [placeholder]="'Введите ваше полное имя'" [error]="
                     form.get('fullname')?.invalid &&
                     (form.get('fullname')?.dirty ||
                       form.get('fullname')?.touched)
@@ -107,11 +107,11 @@
           <div class="form-control">
             <h3>Личная цитата</h3>
 
-            <app-usual-input [inputType]="'textarea'" [value]="this.form.get('quote')?.value" [max]="100" id="quote"
-              formControlName="quote" [placeholder]="'Придумай себе личную цитату'" [error]="
+            <app-usual-input [inputType]="'textarea'" [value]="this.form.get('quote')?.value" [max]="500" id="quote"
+              formControlName="quote" [placeholder]="'Придумайте личную цитату'" [error]="
                 form.get('quote')?.invalid &&
                 (form.get('quote')?.dirty || form.get('quote')?.touched)
-                  ? 'Личная цитата не может содержать более 100 символов'
+                  ? 'Личная цитата не может содержать более 500 символов'
                   : ''
               "></app-usual-input>
           </div>
@@ -119,7 +119,7 @@
             <h3>Описание</h3>
             <app-usual-input [inputType]="'textarea'" [max]="2000" id="description" formControlName="description"
               [value]="this.form.get('description')?.value" [placeholder]="
-                'Введи описание своего профиля. Тут может все, что угодно'
+                'Введите описание своего профиля. Тут может все, что угодно'
               " [error]="
                 form.get('description')?.invalid &&
                 (form.get('description')?.dirty ||
@@ -131,7 +131,7 @@
           <div class="form-control">
             <h3>Личный веб-сайт</h3>
             <app-usual-input [max]="1000" id="website" formControlName="website" [value]="form.get('website')?.value"
-              [placeholder]="'Оставь ссылку на свой личный веб-сайт'" [error]="
+              [placeholder]="'Оставьте ссылку на свой личный веб-сайт'" [error]="
                 form.get('website')?.invalid &&
                 (form.get('website')?.dirty || form.get('website')?.touched)
                   ? 'Введенное значение не является корректной ссылкой на сайт в интернете. Пример: https://krabochki.com'
@@ -141,7 +141,7 @@
           <div class="form-control">
             <h3>Место проживания</h3>
             <app-usual-input [max]="30" [value]="form.get('location')?.value" id="location" formControlName="location"
-              [placeholder]="'Поделись местом своего проживания'" [error]="
+              [placeholder]="'Поделитесь местом своего проживания'" [error]="
                 form.get('location')?.invalid &&
                 (form.get('location')?.dirty || form.get('location')?.touched)
                   ? 'Место проживания не может содержать более 30 символов'
@@ -153,7 +153,7 @@
           <div class="form-control">
             <h3>Аккаунт в Pinterest</h3>
             <app-usual-input [max]="1000" [value]="form.get('pinterest')?.value" id="pinterest"
-              formControlName="pinterest" [placeholder]="'Оставь ссылку на свой аккаунт в Pinterest'" [error]="
+              formControlName="pinterest" [placeholder]="'Оставьте ссылку на ваш аккаунт в Pinterest'" [error]="
                 form.get('pinterest')?.invalid &&
                 (form.get('pinterest')?.dirty || form.get('pinterest')?.touched)
                   ? 'Введенное значение не является корректной ссылкой на аккаунт пользователя в Pintreset. Пример: https://pinterest.com/krabochki'
@@ -163,7 +163,7 @@
           <div class="form-control">
             <h3>Аккаунт во ВКонтакте</h3>
             <app-usual-input [max]="1000" id="vk" [value]="form.get('vk')?.value" formControlName="vk"
-              [placeholder]="'Оставь ссылку на свой аккаунт во ВКонтакте'" [error]="
+              [placeholder]="'Оставьте ссылку на ваш аккаунт во ВКонтакте'" [error]="
                 form.get('vk')?.invalid &&
                 (form.get('vk')?.dirty || form.get('vk')?.touched)
                   ? 'Введенное значение не является корректной ссылкой на аккаунт пользователя во ВКонтакте. Пример: https://vk.com/nanananana_come_on'
@@ -173,7 +173,7 @@
           <div class="form-control">
             <h3>Аккаунт в Twitter</h3>
             <app-usual-input [value]="form.get('twitter')?.value" [max]="1000" id="twitter" formControlName="twitter"
-              [placeholder]="'Оставь ссылку на свой аккаунт в Twitter'" [error]="
+              [placeholder]="'Оставьте ссылку на ваш аккаунт в Twitter'" [error]="
                 form.get('twitter')?.invalid &&
                 (form.get('twitter')?.dirty || form.get('twitter')?.touched)
                   ? 'Введенное значение не является корректной ссылкой на аккаунт пользователя в Twitter. Пример: https://twitter.com/krabochki'
@@ -183,7 +183,7 @@
           <div class="form-control">
             <h3>Аккаунт в Facebook</h3>
             <app-usual-input type="facebook" [max]="1000" [value]="form.get('facebook')?.value" id="facebook"
-              formControlName="facebook" [placeholder]="'Оставь ссылку на свой аккаунт в Facebook'" [error]="
+              formControlName="facebook" [placeholder]="'Оставьте ссылку на ваш аккаунт в Facebook'" [error]="
                 form.get('facebook')?.invalid &&
                 (form.get('facebook')?.dirty || form.get('facebook')?.touched)
                   ? 'Введенное значение не является корректной ссылкой на аккаунт пользователя в Facebook. Пример: https://facebook.com/krabochki'
@@ -193,25 +193,25 @@
         </div>
         <div *ngIf="currentStep === 3">
           <div class="buttons">
-            <p>
-              Если ты хочешь, чтобы изменения увидели все кулинары,
-              <em>сохрани</em> изменения в аккаунте
-            </p>
-            <app-button [title]="
-                !(areObjectsEqual() && form.valid)
-                  ? 'Ты должен изменить хотя бы одно поле, а также пользователь должен содержать как минимум имя пользователя и если ты указал ссылки, то они должны быть корректны'
-                  : ''
-              " [disabled]="areObjectsEqual() && form.valid" (click)="form.valid ? (saveModal = true) : null"
-              [text]="'Изменить'" [color]="'sec'" [style]="'filled'" [rounded]="true"></app-button>
+<div class="button">
+              <p>
+                Если вы хотите, чтобы изменения увидели все кулинары,
+                сохраните изменения в аккаунте.
+              </p>
+              <app-button [disabled]="areObjectsEqual() && form.valid" (click)="form.valid ? (saveModal = true) : null"
+                [text]="'Изменить'" [color]="'sec'" [style]="'filled'" [rounded]="true"></app-button>
+</div>
 
-            <p>
-              Если ты передумал обновлять аккаунт, просто <em>отмени</em> его
-              изменение. Все данные придется вводить повторно, если ты захочешь
-              изменить его снова
-            </p>
-
-            <app-button (click)="closeEditModal()" [text]="'Отменить'" [color]="'prim'" [style]="'outlined'"
-              type="button" [rounded]="true"></app-button>
+           <div class="button">
+              <p>
+                Если вы передумали обновлять аккаунт, просто отмените его
+                изменение. Все данные придется вводить повторно, если вы захотите
+                изменить его снова.
+              </p>
+  
+              <app-button (click)="closeEditModal()" [text]="'Отменить'" [color]="'prim'" [style]="'outlined'"
+                type="button" [rounded]="true"></app-button>
+           </div>
           </div>
         </div>
       </form>

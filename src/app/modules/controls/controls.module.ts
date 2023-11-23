@@ -19,6 +19,8 @@ import { UsualInputComponent } from './usual-input/usual-input.component';
 import { AutocompleteComponent } from './autocomplete/autocomplete.component';
 import {  AnonimPageComponent } from './anonim/anonim.component';
 import { TextFieldModule } from '@angular/cdk/text-field';
+import { AboutComponent } from './about/about.component';
+import { UserPolicyComponent } from './user-policy/user-policy.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +36,8 @@ import { TextFieldModule } from '@angular/cdk/text-field';
     AnonimPageComponent,
     UsualInputComponent,
     AutocompleteComponent,
+    AboutComponent,
+    UserPolicyComponent,
   ],
   imports: [
     CommonModule,

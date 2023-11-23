@@ -3,7 +3,12 @@
   align-items: center;
   justify-content: center;
 }
-
+button.action{
+  a{
+    text-decoration: none;
+    color: var(--color-secondary);
+  }
+}
 .background {
   top: 0;
   left: 0;

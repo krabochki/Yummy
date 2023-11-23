@@ -146,8 +146,7 @@ export class CategoryCreatingComponent
           break;
         case 1:
           if (
-            !this.form.get('section')!.valid &&
-            this.viewedSteps.includes(1)
+            !this.form.get('section')!.valid 
           ) {
             return 2;
           }
@@ -252,8 +251,7 @@ export class CategoryCreatingComponent
     if (this.form.get('section')!.value) {
       this.form.get('section')!.value.categories.push(this.newCategory.id);
       this.sectionService
-        .updateSections(this.form.get('section')!.value)
-        .subscribe();
+        .updateSectionInSupabase(this.form.get('section')!.value)
     }
   }
 

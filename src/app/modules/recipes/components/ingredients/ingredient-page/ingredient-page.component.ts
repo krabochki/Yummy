@@ -21,6 +21,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { trigger } from '@angular/animations';
 import { heightAnim } from 'src/tools/animations';
 import { setReadingTimeInMinutes } from 'src/tools/common';
+import { supabase } from 'src/app/modules/controls/image/supabase-data';
 
 @Component({
   selector: 'app-ingredient-page',
@@ -65,7 +66,7 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
   }
 
   get variations() {
-    return this.ingredient.variations.join(', ')
+    return this.ingredient.variations.join(', ');
   }
 
   get showReviewSection() {
@@ -103,10 +104,8 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
       this.ingredient.compatibleDishes?.length
     );
   }
-  
+
   get readingTimesInMinutes() {
-    
-    
     const combinedText = [
       this.ingredient.history,
       this.ingredient.description,
@@ -133,9 +132,11 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
   ) {}
 
+  placeholder = 'assets/images/ingredient.png';
   ngOnInit() {
     this.route.data.subscribe((data) => {
       this.ingredient = { ...data['IngredientResolver'] };
+      this.downloadImageFromSupabase();
 
       this.titleService.setTitle(this.ingredient.name);
 
@@ -174,6 +175,18 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
         });
       this.cd.markForCheck();
     });
+  }
+
+  image = '';
+
+  downloadImageFromSupabase() {
+    if (this.ingredient.image) {
+      this.image = supabase.storage
+        .from('ingredients')
+        .getPublicUrl(this.ingredient.image).data.publicUrl;
+    }
+
+    this.cd.markForCheck();
   }
 
   goToSection(section: string) {

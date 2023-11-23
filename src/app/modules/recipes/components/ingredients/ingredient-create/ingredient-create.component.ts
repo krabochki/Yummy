@@ -11,8 +11,19 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormArray, AbstractControl } from '@angular/forms';
-import { steps, Step, getInputPlaceholderOfControlGroup, getNameOfControlGroup } from './consts';
+import {
+  FormGroup,
+  FormBuilder,
+  Validators,
+  FormArray,
+  AbstractControl,
+} from '@angular/forms';
+import {
+  steps,
+  Step,
+  getInputPlaceholderOfControlGroup,
+  getNameOfControlGroup,
+} from './consts';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Router } from '@angular/router';
 import { trigger } from '@angular/animations';
@@ -21,6 +32,8 @@ import { Observable, Subject, forkJoin } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { customLinkPatternValidator } from 'src/tools/validators';
 import { anySiteMask } from 'src/tools/regex';
+import Compressor from 'compressorjs';
+
 import {
   ProductType,
   productTypes,
@@ -41,6 +54,7 @@ import {
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { getCurrentDate } from 'src/tools/common';
+import { supabase } from 'src/app/modules/controls/image/supabase-data';
 
 @Component({
   selector: 'app-ingredient-create',
@@ -75,6 +89,9 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
 
   autocompleteTypes: ProductType[] = [];
   selectedType: ProductType = productTypes[0];
+
+  loading = false;
+  supabaseFilepath = '';
   searchQuery: string = '';
   autocompleteShow: boolean = false;
   focused: boolean = false;
@@ -87,7 +104,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
   mainImage: string = '';
 
   protected destroyed$: Subject<void> = new Subject<void>();
-
+  maxId = 0;
   beginningData: any;
 
   get validForm() {
@@ -113,6 +130,9 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
   ) {
     this.mainImage = this.defaultImage;
+    this.ingredientService.getMaxIngredientId().then((maxId) => {
+      this.maxId = maxId;
+    });
     this.form = this.fb.group({
       ingredientName: [
         '',
@@ -149,7 +169,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
     this.beginningData = this.form.getRawValue();
   }
 
-  isControlValid(control:AbstractControl, field:string) {
+  isControlValid(control: AbstractControl, field: string) {
     return (
       control.get(field)?.invalid &&
       (control.get(field)?.dirty || control.get(field)?.touched)
@@ -182,21 +202,19 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
   }
   removeGroup(event: IIngredientsGroup) {
     this.selectedIngredientsGroups = this.selectedIngredientsGroups.filter(
-      (group) => group.id !== event.id
+      (group) => group.id !== event.id,
     );
   }
 
   mainPhotoChange(event: any) {
     const input = event.target as HTMLInputElement;
-    const mainpicFile: File | undefined = input.files?.[0];
+    const userpicFile: File | undefined = input.files?.[0];
 
-    if (mainpicFile) {
-      const mainPicData = new FormData();
-      mainPicData.append('file', mainpicFile);
-      this.form.get('image')?.setValue(mainPicData);
-
-      const objectURL = URL.createObjectURL(mainpicFile);
+    if (userpicFile) {
+      this.form.get('image')?.setValue(userpicFile);
+      const objectURL = URL.createObjectURL(userpicFile);
       this.mainImage = objectURL;
+      this.supabaseFilepath = this.setUserpicFilenameForSupabase();
     }
   }
 
@@ -266,14 +284,6 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
   }
 
   createIngredient(): void {
-    let maxId = 0;
-    this.ingredientService.ingredients$.subscribe(
-      (receivedIngredients: IIngredient[]) => {
-        const ingredients: IIngredient[] = receivedIngredients;
-        maxId = Math.max(...ingredients.map((u) => u.id));
-      },
-    );
-
     const externalLinks: ExternalLink[] = [];
     this.f('sources').controls.forEach((control) => {
       const externalLink: ExternalLink = {
@@ -284,44 +294,105 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
     });
 
     if (this.form.valid && this.selectedIngredientsGroups.length > 0) {
-      const newIngredientData: IIngredient = {
-        id: maxId + 1,
+      this.createdIngredient = {
+        id: this.maxId + 1,
         name: this.form.value.ingredientName,
         history: this.form.value.history,
         description: this.form.value.description,
         author: this.currentUser.id,
-        sendDate:getCurrentDate(),
-        variations: this.form.value.variations.map((item: { content: string }) => item.content),
+        sendDate: getCurrentDate(),
+        variations: this.form.value.variations.map(
+          (item: { content: string }) => item.content,
+        ),
         status: this.isManager ? 'public' : 'awaits',
-        image: this.form.value.image,
-        advantages: this.form.value.advantages.map((item: { content: string }) => item.content),
-        disadvantages: this.form.value.disadvantages.map((item: { content: string }) => item.content),
-        recommendedTo: this.form.value.recommendations.map((item: { content: string }) => item.content),
-        contraindicatedTo: this.form.value.contraindicates.map((item: { content: string }) => item.content),
+        image: this.form.value.image ? this.supabaseFilepath : '',
+        advantages: this.form.value.advantages.map(
+          (item: { content: string }) => item.content,
+        ),
+        disadvantages: this.form.value.disadvantages.map(
+          (item: { content: string }) => item.content,
+        ),
+        recommendedTo: this.form.value.recommendations.map(
+          (item: { content: string }) => item.content,
+        ),
+        contraindicatedTo: this.form.value.contraindicates.map(
+          (item: { content: string }) => item.content,
+        ),
         origin: this.form.value.origin,
-        precautions:this.form.value.precautions.map((item: { content: string }) => item.content),
-        compatibleDishes:this.form.value.compatibleDishes.map((item: { content: string }) => item.content),
-        cookingMethods: this.form.value.cookingMethods.map((item: { content: string }) => item.content),
-        tips: this.form.value.tips.map((item: { content: string }) => item.content),
+        precautions: this.form.value.precautions.map(
+          (item: { content: string }) => item.content,
+        ),
+        compatibleDishes: this.form.value.compatibleDishes.map(
+          (item: { content: string }) => item.content,
+        ),
+        cookingMethods: this.form.value.cookingMethods.map(
+          (item: { content: string }) => item.content,
+        ),
+        tips: this.form.value.tips.map(
+          (item: { content: string }) => item.content,
+        ),
         nutritions: this.form.value.nutritions,
-        storageMethods: this.form.value.storageMethods.map((item: { content: string }) => item.content),
+        storageMethods: this.form.value.storageMethods.map(
+          (item: { content: string }) => item.content,
+        ),
         externalLinks: externalLinks,
         shoppingListGroup: this.selectedType.id,
       };
 
-      this.createdIngredient = newIngredientData;
+      this.loadIngredientToSupabase();
 
-      this.ingredientService.postIngredient(newIngredientData).subscribe(() => {
-        const subscribes: Observable<IIngredientsGroup>[] = [];
-        this.selectedIngredientsGroups.forEach((group) => {
-          group.ingredients.push(newIngredientData.id);
-          subscribes.push(this.ingredientService.updateIngredientGroup(group));
-        });
-        forkJoin(subscribes).subscribe(() => {
-          this.successModalShow = true;
-          this.cd.markForCheck();
-        });
+      this.selectedIngredientsGroups.forEach((group) => {
+        group.ingredients.push(this.createdIngredient.id);
+        this.updateGroup(group);
       });
+    }
+  }
+
+  async updateGroup(group: IIngredientsGroup) {
+    await this.ingredientService.updateGroupInSupabase(group);
+  }
+
+  unsetImage() {
+    this.form.get('image')?.setValue(null);
+    this.mainImage = this.defaultImage;
+    this.supabaseFilepath = '';
+  }
+  async addCategoryToSupabase() {
+    this.loading = true;
+    this.cd.markForCheck();
+    await this.ingredientService.addIngredientToSupabase(
+      this.createdIngredient,
+    );
+    this.loading = false;
+    this.successModalShow = true;
+    this.cd.markForCheck();
+  }
+
+  private setUserpicFilenameForSupabase(): string {
+    const file = this.form.get('image')?.value;
+    const fileExt = file.name.split('.').pop();
+    return `${Math.random()}.${fileExt}`;
+  }
+
+  async loadIngredientToSupabase() {
+    this.loading = true;
+    try {
+      if (this.form.get('image')?.value) {
+        const file = this.form.get('image')?.value;
+        const filePath = this.supabaseFilepath;
+        await supabase.storage.from('ingredients').upload(filePath, file);
+      }
+      await this.ingredientService.addIngredientToSupabase(
+        this.createdIngredient,
+      );
+      this.successModalShow = true;
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+    } finally {
+      this.loading = false;
+      this.cd.markForCheck();
     }
   }
 
@@ -345,9 +416,11 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
           createdIngredientLink,
         );
 
-        this.notificationService
-          .sendNotification(notification, this.currentUser)
-        this.router.navigateByUrl(createdIngredientLink)
+        this.notificationService.sendNotification(
+          notification,
+          this.currentUser,
+        );
+        this.router.navigateByUrl(createdIngredientLink);
       }
     } else {
       if (
@@ -363,8 +436,10 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
           'ingredient',
           '',
         );
-        this.notificationService
-          .sendNotification(notification, this.currentUser)
+        this.notificationService.sendNotification(
+          notification,
+          this.currentUser,
+        );
       }
     }
   }

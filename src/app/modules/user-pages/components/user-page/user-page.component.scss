@@ -368,6 +368,7 @@ app-recipes-list {
 
     &:hover,
     &:focus {
+      padding-left: 0.5em;
       span {
         color: var(--color-primary-focus);
       }
@@ -402,6 +403,7 @@ app-recipes-list {
 
   &:hover,
   &:focus {
+          padding-left: 0.5em;
     a {
       color: var(--color-primary-focus);
     }

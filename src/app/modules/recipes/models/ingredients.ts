@@ -23,7 +23,7 @@ export interface IIngredient {
   storageMethods?: string[],//способы хранения  
   externalLinks?: ExternalLink[]; //доп ресурсы
   shoppingListGroup?: number; //основное
-  image: FormData | null;
+  image?: string;
 }
 export interface ExternalLink{
   name: string,
@@ -34,7 +34,7 @@ export interface IIngredientsGroup {
   id: number;
   name: string;
   ingredients: number[];
-  image:FormData|null
+  image?:string
 }
 
 export const nullIngredient: IIngredient = {
@@ -43,12 +43,10 @@ export const nullIngredient: IIngredient = {
   description: '',
   history: '',
   status:'public',
-  image: null,
   variations: [],
 };
 export const nullIngredientsGroup: IIngredientsGroup = {
   id: 0,
-  image:null,
   name: '',
   ingredients: [],
 };

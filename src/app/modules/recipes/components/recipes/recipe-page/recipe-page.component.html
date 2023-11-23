@@ -568,3 +568,5 @@
     <app-add-calendar-event [plan]="myPlan" [event]="targetCalendarEvent" @modal (closeEmitter)="addingToPlanMode = false" *ngIf="addingToPlanMode" style="position: fixed; z-index:10"/>
 
     
+<app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
+  [description]=" 'Вносим изменения... Подождите немного...'" />

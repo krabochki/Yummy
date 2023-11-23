@@ -14,6 +14,7 @@ export class UserService {
   private usersSubject = new BehaviorSubject<IUser[]>([]);
   users$ = this.usersSubject.asObservable();
   url: string = usersUrl;
+  
 
   getMaxUserId() {
     return supabase
@@ -31,7 +32,7 @@ export class UserService {
   }
 
   loadUsersData() {
-    this.loadUsersFromSupabase();
+    return this.loadUsersFromSupabase();
   }
 
   isUserSubscriber(user: IUser, userId: number) {
@@ -130,16 +131,16 @@ export class UserService {
   }
 
   loadUsersFromSupabase() {
-    supabase
-      .from('profiles')
-      .select('*')
-      .then((response) => {
-        const supRecipes = response.data;
-        const users = supRecipes?.map((supUser) => {
-          return this.translateUser(supUser);
-        });
-        if (users) this.usersSubject.next(users);
-      });
+   return supabase
+     .from('profiles')
+     .select('*')
+     .then((response) => {
+       const supRecipes = response.data;
+       const users = supRecipes?.map((supUser) => {
+         return this.translateUser(supUser);
+       });
+       if (users) this.usersSubject.next(users);
+     });
   }
 
   private translateUser(user: any): IUser {

@@ -29,6 +29,7 @@ import {
   nullIngredientsGroup,
 } from '../../../models/ingredients';
 import { IngredientService } from '../../../services/ingredient.service';
+import { supabase } from 'src/app/modules/controls/image/supabase-data';
 
 @Component({
   selector: 'app-group-creating',
@@ -42,6 +43,7 @@ export class GroupCreatingComponent
 {
   @Output() closeEmitter = new EventEmitter<boolean>();
 
+  maxId = 0;
   saveModal: boolean = false;
   closeModal: boolean = false;
   successModal: boolean = false;
@@ -69,6 +71,9 @@ export class GroupCreatingComponent
     private fb: FormBuilder,
     private ingredientService: IngredientService,
   ) {
+    this.ingredientService.getMaxGroupId().then((maxId) => {
+      this.maxId = maxId;
+    });
     this.form = this.fb.group({
       name: [
         '',
@@ -95,16 +100,18 @@ export class GroupCreatingComponent
       .pipe(takeUntil(this.destroyed$))
       .subscribe(
         (receivedIngredients: IIngredient[]) =>
-          (this.allIngredients = receivedIngredients.filter(i=>i.status === 'public')),
+          (this.allIngredients = receivedIngredients.filter(
+            (i) => i.status === 'public',
+          )),
       );
   }
 
   addIngredient(event: IIngredient) {
-      const findedIngredient: IIngredient =
-        this.selectedIngredients.find(
-          (ingredient) => ingredient.id === event.id,
-        ) || nullIngredient;
-      if (findedIngredient.id === 0) this.selectedIngredients.push(event);
+    const findedIngredient: IIngredient =
+      this.selectedIngredients.find(
+        (ingredient) => ingredient.id === event.id,
+      ) || nullIngredient;
+    if (findedIngredient.id === 0) this.selectedIngredients.push(event);
   }
 
   removeIngredient(event: IIngredient) {
@@ -121,6 +128,7 @@ export class GroupCreatingComponent
       this.form.get('image')?.setValue(userpicFile);
       const objectURL = URL.createObjectURL(userpicFile);
       this.myImage = objectURL;
+      this.supabaseFilepath = this.setCategoryPictureFilenameForSupabase();
     }
   }
 
@@ -131,31 +139,41 @@ export class GroupCreatingComponent
     );
   }
 
-  private createGroup() {
+  async createGroup() {
     const userpicData = new FormData();
     userpicData.append('image', this.form.get('image')?.value);
-    const maxId = Math.max(...this.allGroups.map((u) => u.id));
     const ingredientsOfGroup = this.selectedIngredients.map(
       (ingredient) => ingredient.id,
     );
-    
+
     this.newGroup = {
       ...nullIngredientsGroup,
       name: this.form.value.name,
-      image: userpicData,
-      id: maxId + 1,
+      image: this.form.value.image ? this.supabaseFilepath : undefined,
+      id: this.maxId + 1,
       ingredients: [...ingredientsOfGroup],
     };
+    this.loading = true;
+    this.cdr.markForCheck();
+    if (this.form.value.image) {
+     await this.loadSectionPicture();
+    }
+    await this.ingredientService.addGroupToSupabase(this.newGroup);
+    this.loading = false;
+    this.successModal = true;
 
-    this.ingredientService.postGroup(this.newGroup).subscribe(() => {
-      this.successModal = true;
-    });
+    this.cdr.markForCheck();
   }
+  unsetImage() {
+    this.form.get('image')?.setValue(null);
+    this.myImage = this.defaultImage;
+    this.supabaseFilepath = '';
+  }
+  loading = false;
 
   handleSaveModal(answer: boolean) {
     if (answer) {
       this.createGroup();
-      this.successModal = true;
     } else {
       this.addModalStyle();
     }
@@ -177,9 +195,8 @@ export class GroupCreatingComponent
   closeEditModal() {
     if (this.areObjectsEqual()) {
       this.closeModal = true;
-    }
-    else {
-       this.closeEmitter.emit(true);
+    } else {
+      this.closeEmitter.emit(true);
     }
   }
 
@@ -194,6 +211,22 @@ export class GroupCreatingComponent
         'calc(100% - 16px)';
     }, 0);
   }
+
+  supabaseFilepath = '';
+  awaitModalShow = false;
+
+  loadSectionPicture() {
+    const file = this.form.get('image')?.value;
+    const filePath = this.supabaseFilepath;
+    return supabase.storage.from('groups').upload(filePath, file);
+  }
+
+  private setCategoryPictureFilenameForSupabase(): string {
+    const file = this.form.get('image')?.value;
+    const fileExt = file.name.split('.').pop();
+    return `${Math.random()}.${fileExt}`;
+  }
+
   ngOnDestroy(): void {
     this.renderer.removeClass(document.body, 'hide-overflow');
     (<HTMLElement>document.querySelector('.header')).style.width = '100%';

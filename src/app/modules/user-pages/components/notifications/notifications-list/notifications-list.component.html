@@ -1,8 +1,8 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <div class="list">
-    <div class="close">
-     <svg-icon (click)="closeEmitter.emit()" [applyClass]="true" class="close-svg" [src]="'assets/images/svg/close.svg'"></svg-icon>
+    <div class="close"  (click)="closeEmitter.emit()">
+     <svg-icon [applyClass]="true" class="close-svg" [src]="'assets/images/svg/close.svg'"></svg-icon>
     </div> 
   <div class="main">
     <h1>Уведомления ({{ notifies.length }})</h1>
@@ -18,6 +18,7 @@
   </div>
   <div class="notifies" *ngIf="notifies.length > 0; else noAnyNotifies">
     <app-notify 
+    (hover)="hover.emit(notify)"
       [user]="user"
       *ngFor="let notify of notifies"
       [notify]="notify"

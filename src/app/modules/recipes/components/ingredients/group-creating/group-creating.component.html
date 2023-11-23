@@ -29,8 +29,7 @@
                     class="delete"
                     *ngIf="myImage !== defaultImage"
                     (click)="
-                      myImage = defaultImage;
-                      this.form.get('image')?.setValue(null)
+                      unsetImage()
                     "
                   >
                     <svg-icon
@@ -71,7 +70,7 @@
                  <div class="form-control">
               <h3>Начальные ингредиенты</h3>
   
-              <app-autocomplete  (ingredientEmitter)="addIngredient($event)"
+              <app-autocomplete [clearValueOnBlur]="true"  (ingredientEmitter)="addIngredient($event)"
                 [placeholder]="'Выберите ингредиенты в списке ниже'" [ingredients]="allIngredients" />
               <div class="tags">
                 <div class="tag" *ngFor="let selected of selectedIngredients">
@@ -157,3 +156,5 @@
   [buttonsText]="['Хорошо']"
   [description]="'Группа «'+ newGroup.name+'» успешно создана и опубликована'"
 ></app-modal>
+<app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
+  [description]=" 'Вносим изменения... Подождите немного...'" />

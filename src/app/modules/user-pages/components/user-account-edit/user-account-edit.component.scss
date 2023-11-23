@@ -21,7 +21,13 @@
                                   supported by Chrome, Edge, Opera and Firefox */
   }
 }
-
+.button {
+  display: grid;
+  column-gap: 3em;
+  align-items: center;
+  justify-content: center;
+  grid-template-columns: 1fr max-content;
+}
 .close-button {
 
   zoom: 0.9;
@@ -256,21 +262,18 @@ app-expanding-input {
 }
 
 .buttons {
-  zoom: 0.9;
-
+  zoom:0.9;
+  row-gap: 1.5em;
+  display: flex;
+  flex-direction: column;
   app-button {
     display: flex;
     justify-content: center;
-    margin-bottom: 1.5em;
   }
-
   p {
-    margin-bottom: 1em;
-    text-align: center;
-    line-height: 1;
+    line-height: 1.2;
   }
 }
-
 h3 {
   font-weight: 500;
   color: var(--color-secondary);
@@ -598,6 +601,14 @@ app-modal {
 
 
 @media(max-width:480px) {
+
+  .button {
+      display: grid;
+      row-gap: 1em;
+      align-items: center;
+      justify-content: center;
+      grid-template-columns: 1fr;
+    }
 
   .main-info-control-with-image {
     flex-direction: column-reverse;

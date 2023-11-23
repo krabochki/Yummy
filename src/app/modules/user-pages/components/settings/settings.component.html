@@ -76,7 +76,7 @@
                 </h3>
                 <p>{{ "@" + user.username }}</p>
               </div>
-              <button class="action disabled">Поменять пароль</button>
+              <button class="action "><a routerLink="/password-reset">Поменять пароль</a></button>
               <button class="action red" (click)="deleteModalShow = true">
                 Удалить аккаунт
               </button>
@@ -361,8 +361,8 @@
                 ></app-toogle-switch>
               </div>
               <div>
-                <p class="disabled"><a routerLink="/about">О сайте...</a></p>
-                <p class="disabled">
+                <p   ><a routerLink="/about">Узнать больше о сайте...</a></p>
+                <p  >
                   <a routerLink="/user-policy"
                     >Пользовательское соглашение...</a
                   >

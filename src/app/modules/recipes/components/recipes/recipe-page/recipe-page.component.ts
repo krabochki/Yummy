@@ -335,7 +335,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
             'recipe',
             '/cooks/list/' + this.currentUser.id,
           );
-          this.notifyService.sendNotification(notify, this.author)
+          this.notifyService.sendNotification(notify, this.author);
         }
       }
 
@@ -377,8 +377,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
           'comment',
           '/recipes/list/' + this.recipe.id,
         );
-        this.notifyService
-          .sendNotification(notify, this.currentUser)
+        this.notifyService.sendNotification(notify, this.currentUser);
       }
 
       if (
@@ -397,7 +396,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
           'comment',
           '/recipes/list/' + this.currentUser.id,
         );
-        this.notifyService.sendNotification(notify, this.author)
+        this.notifyService.sendNotification(notify, this.author);
       }
     } catch {}
   }
@@ -442,7 +441,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     this.cd.markForCheck();
   }
 
-  addToBasket(i: number, ingredient: Ingredient) {
+  async addToBasket(i: number, ingredient: Ingredient) {
     const groceryList = this.myPlan.shoppingList;
     let maxId = 0;
     if (groceryList.length > 0)
@@ -465,12 +464,17 @@ export class RecipePageComponent implements OnInit, OnDestroy {
       };
       groceryList.push(product);
       this.myPlan.shoppingList = groceryList;
-      this.planService.updatePlan(this.myPlan).subscribe(() => {
-        this.basket[i] = true;
-      });
+      this.loading = true;
+      this.cd.markForCheck();
+
+     await this.planService.updatePlanInSupabase(this.myPlan);
+
+      this.basket[i] = true;
+      this.loading = false;
+      this.cd.markForCheck();
     }
   }
-  removeFromBasket(i: number, ingredient: Ingredient) {
+  async removeFromBasket(i: number, ingredient: Ingredient) {
     const groceryList = this.myPlan.shoppingList;
     const findIndex = groceryList.findIndex(
       (ingr) =>
@@ -480,11 +484,16 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     if (findIndex !== -1) {
       groceryList.splice(findIndex, 1);
       this.myPlan.shoppingList = groceryList;
-      this.planService.updatePlan(this.myPlan).subscribe(() => {
-        this.basket[i] = false;
-      });
+      this.loading = true;
+      this.cd.markForCheck();
+      await this.planService.updatePlanInSupabase(this.myPlan);
+      this.loading = false;
+      this.cd.markForCheck();
+
+      this.basket[i] = false;
     }
   }
+  loading = false;
 
   getSimilarRecipes(publicRecipes: IRecipe[], maxRecipes: number): IRecipe[] {
     const recipesToAdd: IRecipe[] = [];
@@ -634,7 +643,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
             'recipe',
             '/recipes/list/' + this.recipe.id,
           );
-          this.notifyService.sendNotification(notify, this.author)
+          this.notifyService.sendNotification(notify, this.author);
         }
       }
     } finally {
@@ -682,8 +691,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
               'recipe',
               '/cooks/list/' + this.currentUser.id,
             );
-            this.notifyService
-              .sendNotification(notify, this.author)
+            this.notifyService.sendNotification(notify, this.author);
           }
         }
       }

@@ -62,7 +62,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   planRouterLinks = planRouterLinks;
 
   maxNumberOfPopupsInSameTime = 3;
-  popupLifetime = 5; //в секундах
+  popupLifetime = 7; //в секундах
 
   adminActionsCount = 0;
 
@@ -479,10 +479,24 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
 
   //удаление уведомления
   removePopup(popup: INotification): void {
-    const index = this.popups.indexOf(popup);
-    if (index !== -1) {
-      this.popups.splice(index, 1);
+    if (this.hovered !== popup.id) {
+      const index = this.popups.indexOf(popup);
+      if (index !== -1) {
+        this.popups.splice(index, 1);
+      }
     }
+  }
+
+  hovered = 0;
+
+  popupHover(popup:INotification) {
+    this.hovered = popup.id;
+  }
+  popupBlur(popup:INotification) {
+    this.hovered = 0;
+    setTimeout(() => {
+      this.removePopup(popup);
+    }, this.popupLifetime * 1000);
   }
 
   //добавление и автоудаление всплыв уведомления

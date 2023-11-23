@@ -14,6 +14,8 @@ export class NotificationsListComponent {
   @Input() notifies: INotification[] = [];
   @Input() user: IUser = { ...nullUser };
 
+  @Output() hover = new EventEmitter<INotification>();
+
   @Output() closeEmitter = new EventEmitter<boolean>();
 
   constructor(private notifyService: NotificationService,private cd: ChangeDetectorRef) { }

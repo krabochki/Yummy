@@ -28,8 +28,7 @@
                   class="delete"
                   *ngIf="myImage !== defaultImage"
                   (click)="
-                    myImage = defaultImage;
-                    this.form.get('image')?.setValue(null)
+                    unsetImage()
                   "
                 >
                   <svg-icon
@@ -139,3 +138,5 @@
   [buttonsText]="['Хорошо']"
   [description]="'Секция успешно опубликована'"
 ></app-modal>
+<app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
+  [description]="'Создаем новый раздел... Подождите немного...'" />

@@ -36,7 +36,7 @@ export interface SectionGroup {
     },
   ],
 })
-export class AutocompleteComponent implements OnChanges {
+export class AutocompleteComponent {
   @Output() categoryEmitter = new EventEmitter<ICategory>();
   @Output() sectionEmitter = new EventEmitter<ISection>();
   @Output() ingredientEmitter = new EventEmitter<IIngredient>();
@@ -87,14 +87,13 @@ export class AutocompleteComponent implements OnChanges {
     private ingredientService: IngredientService,
   ) {}
 
-  ngOnChanges() {
-    this.mySections = this.allSections;
-    this.fullGroup = this.group;
-    this.filterIngredientsGroups = this.ingredientsGroups;
-    this.filterIngredients = this.ingredients;
-  }
-
   focus() {
+    if (!this.value) {
+      this.mySections = this.allSections;
+      this.fullGroup = this.group;
+      this.filterIngredientsGroups = this.ingredientsGroups;
+      this.filterIngredients = this.ingredients;
+    }
     if (!this.startOnTyping || (this.startOnTyping && this.value)) {
       this.autocompleteShow = true;
     }
@@ -206,7 +205,7 @@ export class AutocompleteComponent implements OnChanges {
     this.filterIngredients = [];
     const searchQuery = this.value.toLowerCase().replace(/\s/g, '');
     const filterIngredients: IIngredient[] = [];
-    const allIngredients = this.ingredients;
+    const allIngredients = [...this.ingredients];
 
     allIngredients.forEach((ingredient: IIngredient) => {
       const ingredientNames: string[] =
@@ -215,8 +214,7 @@ export class AutocompleteComponent implements OnChanges {
         filterIngredients.push(ingredient);
       }
     });
-
-    this.filterIngredients = filterIngredients;
+    this.filterIngredients = [...filterIngredients];
   }
 
   searchIngredients() {

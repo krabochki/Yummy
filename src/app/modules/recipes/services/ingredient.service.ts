@@ -12,6 +12,7 @@ import {
 } from '../models/ingredients';
 import { RecipeService } from './recipe.service';
 import { baseComparator } from 'src/tools/common';
+import { supabase } from '../../controls/image/supabase-data';
 
 @Injectable({
   providedIn: 'root',
@@ -32,61 +33,11 @@ export class IngredientService {
   ) {}
 
   loadIngredientsGroupsData() {
-    this.getIngredientGroups().subscribe((data) => {
-      this.ingredientGroupsSubject.next(data);
-    });
+    return this.loadGroupsFromSupabase();
   }
 
   loadIngredientsData() {
-    this.getIngredients().subscribe((data) => {
-      this.ingredientSubject.next(data);
-    });
-  }
-
-  updateIngredientGroup(group: IIngredientsGroup) {
-    return this.http
-      .put<IIngredientsGroup>(`${this.urlIngredientsGroups}/${group.id}`, group)
-      .pipe(
-        tap((updatedGroup: IIngredientsGroup) => {
-          const currentGroups = this.ingredientGroupsSubject.value;
-          const index = currentGroups.findIndex(
-            (r) => r.id === updatedGroup.id,
-          );
-          if (index !== -1) {
-            const updatedGroups = [...currentGroups];
-            updatedGroups[index] = updatedGroup;
-
-            this.ingredientGroupsSubject.next(updatedGroups);
-          }
-        }),
-      );
-  }
-
-  updateIngredient(ingredient: IIngredient) {
-    return this.http
-      .put<IIngredient>(`${this.urlIngredients}/${ingredient.id}`, ingredient)
-      .pipe(
-        tap((updatedIngedient: IIngredient) => {
-          const currentIngredients = this.ingredientSubject.value;
-          const index = currentIngredients.findIndex(
-            (r) => r.id === updatedIngedient.id,
-          );
-          if (index !== -1) {
-            const updatedIngredients = [...currentIngredients];
-            updatedIngredients[index] = updatedIngedient;
-
-            this.ingredientSubject.next(updatedIngredients);
-          }
-        }),
-      );
-  }
-
-  getIngredientGroups() {
-    return this.http.get<IIngredientsGroup[]>(this.urlIngredientsGroups);
-  }
-
-  getIngredients() {
-    return this.http.get<IIngredient[]>(this.urlIngredients);
+    return this.loadIngredientsFromSupabase();
   }
 
   getAllNamesOfIngredient(ingredient: IIngredient): string[] {
@@ -116,7 +67,7 @@ export class IngredientService {
         variation.trim().toLowerCase(),
       );
       return targetVariations.some((targetVar) =>
-        currentVariations.includes(targetVar)
+        currentVariations.includes(targetVar),
       );
     });
     relatedIngredients = relatedIngredients.filter(
@@ -126,35 +77,7 @@ export class IngredientService {
     return relatedIngredients;
   }
 
-  deleteGroup(id: number) {
-    return this.http
-      .delete<IIngredientsGroup>(`${this.urlIngredientsGroups}/${id}`)
-      .pipe(
-        tap(() =>
-          this.ingredientGroupsSubject.next(
-            this.ingredientGroupsSubject.value.filter(
-              (group) => group.id !== id,
-            ),
-          ),
-        ),
-        catchError((error) => {
-          return throwError(error);
-        }),
-      );
-  }
 
-  deleteIngredient(id: number) {
-    return this.http.delete<IIngredient>(`${this.urlIngredients}/${id}`).pipe(
-      tap(() =>
-        this.ingredientSubject.next(
-          this.ingredientSubject.value.filter((ing) => ing.id !== id),
-        ),
-      ),
-      catchError((error) => {
-        return throwError(error);
-      }),
-    );
-  }
 
   getRecipesNumberOfGroup(
     group: IIngredientsGroup,
@@ -184,28 +107,6 @@ export class IngredientService {
     return Array.from(new Set(recipesIdsInGroup)).length;
   }
 
-  postGroup(group: IIngredientsGroup) {
-    return this.http
-      .post<IIngredientsGroup>(this.urlIngredientsGroups, group)
-      .pipe(
-        tap((newGroup: IIngredientsGroup) => {
-          const currentGroups = this.ingredientGroupsSubject.value;
-          const updatedGroups = [...currentGroups, newGroup];
-          this.ingredientGroupsSubject.next(updatedGroups);
-        }),
-      );
-  }
-
-  postIngredient(ingredient: IIngredient) {
-    return this.http.post<IIngredient>(this.urlIngredients, ingredient).pipe(
-      tap((newIngredient: IIngredient) => {
-        const currentIngredients = this.ingredientSubject.value;
-        const updatedIngedients = [...currentIngredients, newIngredient];
-        this.ingredientSubject.next(updatedIngedients);
-      }),
-    );
-  }
-
   findAllIngrdientsFitByName(name: string, ingredients: IIngredient[]) {
     const findedIngredients: IIngredient[] = [];
     const searchName = name.toLowerCase().trim();
@@ -217,8 +118,6 @@ export class IngredientService {
           const formattedVariation = variation.toLowerCase().trim();
           return searchName.includes(formattedVariation);
         });
-      
-       
 
       if (searchName.includes(formatIngredient) || variationsMatch) {
         findedIngredients.push(ingredient);
@@ -287,5 +186,235 @@ export class IngredientService {
     ingredients: IIngredient[],
   ): IIngredient[] {
     return ingredients.filter((i) => group.ingredients.includes(i.id));
+  }
+
+  getMaxIngredientId() {
+    return supabase
+      .from('ingredients')
+      .select('id')
+      .order('id', { ascending: false })
+      .limit(1)
+      .then((response) => {
+        if (response.data && response.data.length > 0) {
+          return response.data[0].id;
+        } else {
+          return 0;
+        }
+      });
+  }
+
+  getMaxGroupId() {
+    return supabase
+      .from('groups')
+      .select('id')
+      .order('id', { ascending: false })
+      .limit(1)
+      .then((response) => {
+        if (response.data && response.data.length > 0) {
+          return response.data[0].id;
+        } else {
+          return 0;
+        }
+      });
+  }
+
+  loadIngredientsFromSupabase() {
+    return supabase
+      .from('ingredients')
+      .select('*')
+      .then((response) => {
+        const supCategories = response.data;
+        const categories = supCategories?.map((supCategory) => {
+          return this.translateIngredient(supCategory);
+        });
+        if (categories) this.ingredientSubject.next(categories);
+      });
+  }
+
+  loadGroupsFromSupabase() {
+    return supabase
+      .from('groups')
+      .select('*')
+      .then((response) => {
+        const sGroups = response.data;
+        const groups = sGroups?.map((sGroup) => {
+          return this.translateGroup(sGroup);
+        });
+        if (groups) this.ingredientGroupsSubject.next(groups);
+      });
+  }
+  private translateGroup(group: any): IIngredientsGroup {
+    return {
+      id: group.id,
+      name: group.name,
+      ingredients: group.ingredients,
+      image: group.image,
+    } as IIngredientsGroup;
+  }
+  private translateIngredient(ingredient: any): IIngredient {
+    return {
+      id: ingredient.id,
+      name: ingredient.name,
+      history: ingredient.history,
+      description: ingredient.description,
+      variations: ingredient.variations,
+      advantages: ingredient.advantages,
+      disadvantages: ingredient.disadvantages,
+      recommendedTo: ingredient.recommendedto,
+      contraindicatedTo: ingredient.contraindicatedto,
+      status: ingredient.status,
+      origin: ingredient.origin,
+      precautions: ingredient.precautions, //меры предосторожности
+      compatibleDishes: ingredient.compatibledishes, // с чем сочетается
+      cookingMethods: ingredient.cookingmethods, //как готовить
+      tips: ingredient.tips,
+      author: ingredient.author,
+      sendDate: ingredient.senddate,
+      nutritions: ingredient.nutritions,
+      storageMethods: ingredient.storagemethods, //способы хранения
+      externalLinks: ingredient.externallinks, //доп ресурсы
+      shoppingListGroup: ingredient.shoppinglistgroup, //основное
+      image: ingredient.image,
+    } as IIngredient;
+  }
+  addIngredientToSupabase(ingredient: IIngredient) {
+    return supabase.from('ingredients').upsert([
+      {
+        id: ingredient.id,
+        name: ingredient.name,
+        history: ingredient.history,
+        description: ingredient.description,
+        variations: ingredient.variations,
+        advantages: ingredient.advantages,
+        disadvantages: ingredient.disadvantages,
+        recommendedto: ingredient.recommendedTo,
+        contraindicatedto: ingredient.contraindicatedTo,
+        status: ingredient.status,
+        origin: ingredient.origin,
+        precautions: ingredient.precautions, //меры предосторожности
+        compatibledishes: ingredient.compatibleDishes, // с чем сочетается
+        cookingmethods: ingredient.cookingMethods, //как готовить
+        tips: ingredient.tips,
+        author: ingredient.author,
+        senddate: ingredient.sendDate,
+        nutritions: ingredient.nutritions,
+        storagemethods: ingredient.storageMethods, //способы хранения
+        externallinks: ingredient.externalLinks, //доп ресурсы
+        shoppinglistgroup: ingredient.shoppingListGroup, //основное
+        image: ingredient.image,
+      },
+    ]);
+  }
+  addGroupToSupabase(group: IIngredientsGroup) {
+    return supabase.from('groups').upsert([
+      {
+        id: group.id,
+        name: group.name,
+        ingredients: group.ingredients,
+        image: group.image,
+      },
+    ]);
+  }
+  deleteIngredientFromSupabase(id: number) {
+    return supabase.from('ingredients').delete().eq('id', id);
+  }
+  deleteGroupFromSupabase(id: number) {
+    return supabase.from('groups').delete().eq('id', id);
+  }
+  updateIngredientInSupabase(ingredient: IIngredient) {
+    const { id, ...updateData } = ingredient;
+    return supabase
+      .from('ingredients')
+      .update({
+        id: ingredient.id,
+        name: ingredient.name,
+        history: ingredient.history,
+        description: ingredient.description,
+        variations: ingredient.variations,
+        advantages: ingredient.advantages,
+        disadvantages: ingredient.disadvantages,
+        recommendedto: ingredient.recommendedTo,
+        contraindicatedto: ingredient.contraindicatedTo,
+        status: ingredient.status,
+        origin: ingredient.origin,
+        precautions: ingredient.precautions, //меры предосторожности
+        compatibledishes: ingredient.compatibleDishes, // с чем сочетается
+        cookingmethods: ingredient.cookingMethods, //как готовить
+        tips: ingredient.tips,
+        author: ingredient.author,
+        senddate: ingredient.sendDate,
+        nutritions: ingredient.nutritions,
+        storagemethods: ingredient.storageMethods, //способы хранения
+        externallinks: ingredient.externalLinks, //доп ресурсы
+        shoppinglistgroup: ingredient.shoppingListGroup, //основное
+        image: ingredient.image,
+      })
+      .eq('id', id);
+  }
+  updateGroupInSupabase(group: IIngredientsGroup) {
+    const { id, ...updateData } = group;
+    return supabase
+      .from('groups')
+      .update({
+        id: group.id,
+        name: group.name,
+        ingredients: group.ingredients,
+        image: group.image,
+      })
+      .eq('id', id);
+  }
+
+  updateIngredientsAfterUPSERT(payload: any) {
+    const currentCategories = this.ingredientSubject.value;
+    const index = currentCategories.findIndex(
+      (r) => r.id === this.translateIngredient(payload).id,
+    );
+    if (index !== -1) {
+      const updatedCategories = [...currentCategories];
+      updatedCategories[index] = this.translateIngredient(payload);
+
+      this.ingredientSubject.next(updatedCategories);
+    }
+  }
+  updateGroupsAfterUPSERT(payload: any) {
+    const currentGroups = this.ingredientGroupsSubject.value;
+    const index = currentGroups.findIndex(
+      (r) => r.id === this.translateGroup(payload).id,
+    );
+    if (index !== -1) {
+      const updatedGroups = [...currentGroups];
+      updatedGroups[index] = this.translateGroup(payload);
+
+      this.ingredientGroupsSubject.next(updatedGroups);
+    }
+  }
+  updateGroupsAfterINSERT(payload: any) {
+    const currentGroups = this.ingredientGroupsSubject.value;
+    const updatedGroups = [...currentGroups, this.translateGroup(payload)];
+    this.ingredientGroupsSubject.next(updatedGroups);
+  }
+
+  updateIngredientsAfterINSERT(payload: any) {
+    const currentUsers = this.ingredientSubject.value;
+    const updatedCategories = [
+      ...currentUsers,
+      this.translateIngredient(payload),
+    ];
+    this.ingredientSubject.next(updatedCategories);
+  }
+  updateIngredientsAfterDELETE(payload: any) {
+    return this.ingredientSubject.next(
+      this.ingredientSubject.value.filter(
+        (ingredients) =>
+          ingredients.id !== this.translateIngredient(payload).id,
+      ),
+    );
+  }
+  updateGroupsAfterDELETE(payload: any) {
+    return this.ingredientGroupsSubject.next(
+      this.ingredientGroupsSubject.value.filter(
+        (group) => group.id !== this.translateIngredient(payload).id,
+      ),
+    );
   }
 }

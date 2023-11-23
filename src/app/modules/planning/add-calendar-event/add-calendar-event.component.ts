@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -81,6 +82,7 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
     private planService: PlanService,
     private calendarService: CalendarService,
     private renderer: Renderer2,
+    private cd:ChangeDetectorRef,
     private router: Router,
     private notifyService: NotificationService,
     private recipeService: RecipeService,
@@ -179,7 +181,7 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
     this.colorSource = 'custom';
   }
 
-  protected editEvent(): void {
+ private async editEvent() {
     const color = this.colors[this.selectedColorIndex];
     const newEvent = this.calendarService.createCalendarEvent(
       this.selectedRecipe.id,
@@ -205,12 +207,17 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
         this.plan.calendarEvents.find((event) => event.id === newEvent.id),
     );
     this.plan.calendarEvents[findedEventIndex] = newEvent;
-    this.planService
-      .updatePlan(this.plan)
-      .subscribe(() => (this.modalSuccessSaveShow = true));
+        this.loading = true;
+        this.cd.markForCheck();
+    await this.planService
+      .updatePlanInSupabase(this.plan)
+        this.loading = false;
+        this.cd.markForCheck();
+    this.modalSuccessSaveShow = true
   }
+  loading = false;
 
-  protected addEvent(): void {
+  async addEvent() {
     const color = this.colors[this.selectedColorIndex];
     const newEvent = this.calendarService.createCalendarEvent(
       0,
@@ -239,9 +246,13 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
     newEvent.id = maxId + 1;
 
     this.plan.calendarEvents = [...this.plan.calendarEvents, newEvent];
-    this.planService
-      .updatePlan(this.plan)
-      .subscribe(() => (this.modalSuccessSaveShow = true));
+        this.loading = true;
+    this.cd.markForCheck()
+    await this.planService
+      .updatePlanInSupabase(this.plan)
+    this.loading = false;
+    this.cd.markForCheck()
+    this.modalSuccessSaveShow = true;
 
     const findRecipe = this.allRecipes.find((r) => r.id === newEvent.recipe);
 

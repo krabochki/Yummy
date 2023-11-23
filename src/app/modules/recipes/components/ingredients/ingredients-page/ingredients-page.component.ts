@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import {
   IIngredient,
   IIngredientsGroup,
@@ -55,6 +55,7 @@ export class IngredientsPageComponent implements OnInit, OnDestroy {
     private recipeService: RecipeService,
     private ingredientService: IngredientService,
     private route: ActivatedRoute,
+    private cd: ChangeDetectorRef,
     private router: Router,
     private authService: AuthService,
     private titleService: Title,
@@ -74,9 +75,9 @@ export class IngredientsPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.getCurrentUserData()
-    this.route.data.subscribe((data) => {
-      this.context = data['filter'];
+    this.getCurrentUserData();
+    this.route.data.subscribe((mainData) => {
+      this.context = mainData['filter'];
 
       this.recipeService.recipes$
         .pipe(takeUntil(this.destroyed$))
@@ -86,46 +87,54 @@ export class IngredientsPageComponent implements OnInit, OnDestroy {
           this.ingredientService.ingredients$
             .pipe(takeUntil(this.destroyed$))
             .subscribe((data) => {
-              this.ingredients = data.filter((i) => i.status === 'public');
+              this.ingredients = [...data.filter((i) => i.status === 'public')];
 
-              this.ingredients = this.ingredientService.sortIngredients(
-                this.ingredients,
+              this.ingredients = [...this.ingredientService.sortIngredients(
+                [...this.ingredients],
                 this.recipes,
-              );
-            });
+              )];
+              this.ingredientService.ingredientsGroups$
+                .pipe(takeUntil(this.destroyed$))
+                .subscribe((data) => {
+                  this.ingredientGroups = [...data];
 
-          this.ingredientService.ingredientsGroups$
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe((data) => {
-              this.ingredientGroups = data;
+                  this.ingredients = [...this.ingredientService.sortIngredients(
+                    this.ingredients,
+                    this.recipes,
+                  )]
+                  if (!this.ingredientGroups.find((g) => g.id === 0)) {
+                    const popularGroup: IIngredientsGroup =
+                      this.getPopularGroup();
+                    this.ingredientGroups.unshift(popularGroup);
+                  }
+                  this.cd.markForCheck();
+                });
+                if (this.context !== 'all-groups') {
+                  if (this.context === 'ingredient-group') {
+                    this.group = { ...mainData['IngredientGroupResolver'] };
+                  } else {
+                    this.group = this.getPopularGroup();
+                  }
+                  this.ingredientsToShow = [
+                    ...this.ingredientsOfGroup(this.group).slice(
+                      0,
+                      this.START_DISPLAY_INGREDIENTS_ON_GROUP_PAGE,
+                    ),
+                  ];
+                  this.cd.markForCheck();
 
-              this.ingredients = this.ingredientService.sortIngredients(
-                this.ingredients,
-                this.recipes,
-              );
-              if (!this.ingredientGroups.find((g) => g.id === 0)) {
-                const popularGroup: IIngredientsGroup = this.getPopularGroup();
-                this.ingredientGroups.unshift(popularGroup);
-              }
+                  this.title = this.group.name;
+                } else if (this.context === 'all-groups') {
+                  this.title = 'Все ингредиенты';
+                }
+                this.cd.markForCheck();
+
+                this.titleService.setTitle(this.title);
+              this.cd.markForCheck();
             });
         });
 
-      if (this.context !== 'all-groups') {
-        if (this.context === 'ingredient-group') {
-          this.group = { ...data['IngredientGroupResolver'] };
-        } else {
-          this.group = this.getPopularGroup();
-        }
-        this.ingredientsToShow = this.ingredientsOfGroup(this.group).slice(
-          0,
-          this.START_DISPLAY_INGREDIENTS_ON_GROUP_PAGE,
-        );
-
-        this.title = this.group.name;
-      } else if (this.context === 'all-groups') {
-        this.title = 'Все ингредиенты';
-      }
-      this.titleService.setTitle(this.title);
+    
     });
   }
 
@@ -159,7 +168,7 @@ export class IngredientsPageComponent implements OnInit, OnDestroy {
     return {
       name: 'Популярные ингредиенты',
       id: 0,
-      image: null,
+      image: '',
       ingredients: this.getIngredientsIds(),
     };
   }

@@ -19,6 +19,7 @@ import { ISection, nullSection } from '../../../models/categories';
 import { Subject, takeUntil } from 'rxjs';
 import { SectionService } from '../../../services/section.service';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
+import { supabase } from 'src/app/modules/controls/image/supabase-data';
 
 @Component({
   selector: 'app-section-creating',
@@ -36,12 +37,13 @@ export class SectionCreatingComponent
   closeModal: boolean = false;
   successModal: boolean = false;
   newSection: ISection = { ...nullSection };
-
+  loading = false;
   myImage: string = '';
   defaultImage: string = '../../../../../assets/images/add-section.png';
   form: FormGroup;
   allSections: ISection[] = [];
   beginningData: any;
+  maxId = 0;
 
   ngAfterContentChecked(): void {
     this.cdr.detectChanges();
@@ -53,6 +55,9 @@ export class SectionCreatingComponent
     private fb: FormBuilder,
     private sectionService: SectionService,
   ) {
+    this.sectionService.getMaxCategoryId().then((maxId) => {
+      this.maxId = maxId;
+    });
     this.form = this.fb.group({
       name: [
         '',
@@ -92,6 +97,7 @@ export class SectionCreatingComponent
       this.form.get('image')?.setValue(userpicFile);
       const objectURL = URL.createObjectURL(userpicFile);
       this.myImage = objectURL;
+      this.supabaseFilepath = this.setUserpicFilenameForSupabase();
     }
   }
 
@@ -102,23 +108,31 @@ export class SectionCreatingComponent
     );
   }
 
-  createSection() {
-    const maxId = Math.max(...this.allSections.map((u) => u.id));
-    this.newSection = {
-      ...nullSection,
-      name: this.form.value.name,
-      id: maxId + 1,
-    };
+  async createSection() {
+   
+    this.loading = true;
+    this.cdr.markForCheck();
 
-    this.sectionService.postSection(this.newSection).subscribe(() => {
-      this.successModal = true;
-    });
+    await this.sectionService.addSectionToSupabase(this.newSection);
+    this.loading = false;
+    this.successModal = true;
+
+    this.cdr.markForCheck();
   }
 
   handleSaveModal(answer: boolean) {
+     this.newSection = {
+       ...nullSection,
+       photo: this.form.value.image ? this.supabaseFilepath : undefined,
+       name: this.form.value.name,
+       id: this.maxId + 1,
+     };
     if (answer) {
-      this.createSection();
-      this.successModal = true;
+      if (this.form.value.image) {
+        this.loadCategorypicToSupabase();
+      } else {
+        this.createSection();
+      }
     }
     setTimeout(() => {
       this.renderer.addClass(document.body, 'hide-overflow');
@@ -154,6 +168,40 @@ export class SectionCreatingComponent
     if (elem.target !== elem.currentTarget) return;
     this.closeEditModal();
   }
+
+  private setUserpicFilenameForSupabase(): string {
+    const file = this.form.get('image')?.value;
+    const fileExt = file.name.split('.').pop();
+    return `${Math.random()}.${fileExt}`;
+  }
+
+  unsetImage() {
+    this.form.get('image')?.setValue(null);
+    this.myImage = this.defaultImage;
+    this.supabaseFilepath = '';
+  }
+
+  supabaseFilepath = '';
+  async loadCategorypicToSupabase() {
+    this.loading = true;
+    this.cdr.markForCheck();
+    try {
+      const file = this.form.get('image')?.value;
+      const filePath = this.supabaseFilepath;
+      await supabase.storage.from('sections').upload(filePath, file);
+      await this.sectionService.addSectionToSupabase(this.newSection);
+      this.successModal = true;
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+    } finally {
+      this.loading = false;
+
+      this.cdr.markForCheck();
+    }
+  }
+
   ngOnDestroy(): void {
     this.renderer.removeClass(document.body, 'hide-overflow');
     (<HTMLElement>document.querySelector('.header')).style.width = '100%';

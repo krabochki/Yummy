@@ -47,7 +47,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   createUser: IUser = { ...nullUser };
   maxId = 0;
-
+  maxPlanId = 0;
   usernameValidator = usernameExistsValidator;
 
   constructor(
@@ -64,6 +64,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.form = this.fb.group({});
     this.usersService.getMaxUserId().then((maxId) => {
       this.maxId = maxId;
+    });
+    this.planService.getMaxPlanId().then((maxId) => {
+      this.maxPlanId = maxId;
     });
   }
 
@@ -136,20 +139,21 @@ export class RegisterComponent implements OnInit, OnDestroy {
     const { data, error } = await supabase.auth.signUp({
       email: user.email,
       password: user.password,
+
+      options: {
+        emailRedirectTo: 'http://localhost:4200/welcome',
+      },
     });
+    await this.authService.logout()
+    this.authService.logoutUser()
     if (error) {
       this.error = true;
     } else if (data.user?.identities?.length === 0) {
       this.error = true;
     } else {
       this.modalSuccessShow = true;
-      const newUserId = data.user?.id; // Получение id нового пользователя
-
       this.addUserToUsers(this.maxId + 1, user.username, user.email);
-
-      if (error) {
-        console.log(error);
-      }
+      this.addPlanToPlans(this.maxId + 1);
     }
     this.loading = false;
 
@@ -171,23 +175,16 @@ export class RegisterComponent implements OnInit, OnDestroy {
       };
 
       this.supabaseRegisration(userData);
-
-      // this.usersService.postUser(userData).subscribe(() => {
-      //   this.createUser = { ...userData };
-      //   const maxId = Math.max(...this.plans.map((u) => u.id));
-      //   const newUserPlan = {
-      //     ...nullPlan,
-      //     id: maxId + 1,
-      //     user: userData.id,
-      //   };
-      //   this.planService.addPlan(newUserPlan).subscribe(() => {
-      //     this.supabaseRegisration(userData);
-
-      //   });
-      // });
     }
   }
-
+  async addPlanToPlans(userId: number) {
+    await this.planService.addPlanToSupabase({
+      id: this.maxPlanId + 1,
+      user: userId,
+      calendarEvents: [],
+      shoppingList: [],
+    });
+  }
   async addUserToUsers(id: number, username: string, email: string) {
     const { error } = await this.usersService.addUserToSupabase(
       id,
@@ -212,7 +209,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
       'born',
       '',
     );
-    this.notifyService.sendNotification(notify, this.createUser)
+    this.notifyService.sendNotification(notify, this.createUser);
     this.modalSuccessShow = false;
   }
   get passwordNotValidError(): string {

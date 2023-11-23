@@ -210,7 +210,7 @@
                 (change)="mainPhotoChange($event)" />
             </div>
             <div class="delete" *ngIf="mainImage !== defaultImage" (click)="
-                mainImage = defaultImage; this.form.get('image')?.setValue(null)
+                unsetImage()
               ">
               <svg-icon [applyClass]="true" class="svg-trash" [src]="'assets/images/svg/trash.svg'"></svg-icon>
             </div>
@@ -458,3 +458,6 @@
   [type]="'yesOrNo'" (resultEmit)="handleCreateModal($event)" [buttonsText]="['Да', 'Нет']" [description]="
     'Вы уверены, что создать ингредиент ' + (isManager?'и опубликовать его':' и отправить его на проверку')+'?'
   "></app-modal>
+
+  <app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
+    [description]="'Создаем ингредент по введенным вами данным... Подождите немного...'" />

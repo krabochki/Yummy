@@ -18,6 +18,10 @@ export class CategoryService {
   private categoriesSubject = new BehaviorSubject<ICategory[]>([]);
   categories$ = this.categoriesSubject.asObservable();
 
+  constructor(){
+    
+  }
+
   getMaxCategoryId() {
     return supabase
       .from('categories')
@@ -34,7 +38,7 @@ export class CategoryService {
   }
 
   loadCategoriesFromSupabase() {
-    supabase
+   return supabase
       .from('categories')
       .select('*')
       .then((response) => {

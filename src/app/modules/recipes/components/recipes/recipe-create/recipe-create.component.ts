@@ -278,6 +278,8 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroyed$))
           .subscribe((data: ISection[]) => {
             this.allSections = data;
+            this.group = [];
+            this.fullGroup = [];
 
             this.allSections.forEach((section) => {
               if (section.categories.length > 0) {
@@ -613,7 +615,13 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
         ]),
       }),
     );
+
+     this.instructionImagesVisibility = Array.from(
+       { length: this.editedRecipe.instructions.length }
+     );
   }
+
+  instructionImagesVisibility:boolean[] = []
 
   removeInstruction(index: number) {
     this.f('instructions').removeAt(index);

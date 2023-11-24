@@ -130,7 +130,7 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
     private recipeService: RecipeService,
     private titleService: Title,
     private cd: ChangeDetectorRef,
-  ) {}
+  ) { }
 
   placeholder = 'assets/images/ingredient.png';
   ngOnInit() {
@@ -147,11 +147,11 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroyed$))
         .subscribe(
           (data) =>
-            (this.relatedIngredients =
-              this.ingredientService.getRelatedIngredients(
-                this.ingredient,
-                data,
-              )),
+          (this.relatedIngredients =
+            this.ingredientService.getRelatedIngredients(
+              this.ingredient,
+              data,
+            )),
         );
       this.recipeService.recipes$
         .pipe(takeUntil(this.destroyed$))
@@ -201,21 +201,43 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  oneColumn(context: 'advantages' | 'recommendations') {
+  oneColumn(context: 'advantages' | 'recommendations' | 'cooking') {
     switch (context) {
       case 'advantages':
-        return (
-          (this.ingredient.advantages || this.ingredient.disadvantages) &&
-          (!this.ingredient.advantages || this.ingredient.disadvantages)
-        );
+        if (this.ingredient.advantages && this.ingredient.disadvantages) {
+          return (
+            (this.ingredient.advantages.length > 0 &&
+              this.ingredient.disadvantages.length === 0) ||
+            (this.ingredient.advantages.length === 0 &&
+              this.ingredient.disadvantages.length > 0)
+          );
+        } else return false;
       case 'recommendations':
-        return (
-          (this.ingredient.recommendedTo ||
-            this.ingredient.contraindicatedTo) &&
-          (!this.ingredient.recommendedTo || this.ingredient.contraindicatedTo)
-        );
+        if (
+          this.ingredient.recommendedTo &&
+          this.ingredient.contraindicatedTo
+        ) {
+          return (
+            (this.ingredient.contraindicatedTo.length > 0 &&
+              this.ingredient.recommendedTo.length === 0) ||
+            (this.ingredient.contraindicatedTo.length === 0 &&
+              this.ingredient.recommendedTo.length > 0)
+          );
+        } else return false;
+      case 'cooking':
+        if (
+          this.ingredient.cookingMethods &&
+          this.ingredient.storageMethods
+        ) {
+          return (
+            (this.ingredient.cookingMethods.length > 0 &&
+              this.ingredient.storageMethods.length === 0) ||
+            (this.ingredient.cookingMethods.length === 0 &&
+              this.ingredient.storageMethods.length > 0)
+          );
+        } else return false;
     }
-  }
+    }
 
   addParagraphs(text: string) {
     return text.replace(/\n/g, '<br>');

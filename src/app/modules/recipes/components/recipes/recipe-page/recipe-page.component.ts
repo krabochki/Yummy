@@ -187,11 +187,13 @@ export class RecipePageComponent implements OnInit, OnDestroy {
                   else {
                     this.router.navigateByUrl('/recipes');
                   }
+                  this.cd.markForCheck();
                   this.titleService.setTitle(this.recipe.name);
 
                   this.ingredientService.ingredients$
                     .pipe(takeUntil(this.destroyed$))
                     .subscribe((receivedIngredients) => {
+                      
                       this.ingredients = receivedIngredients.filter(
                         (i) => i.status === 'public',
                       );
@@ -253,6 +255,8 @@ export class RecipePageComponent implements OnInit, OnDestroy {
                   this.downloadAvatars();
                   if (this.recipe.mainImage) {
                     this.downloadPicFromSupabase(this.recipe.mainImage);
+                  } else {
+                    this.recipe.mainImage = '';
                   }
 
                   this.setCategories();
@@ -321,9 +325,9 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   findIngredientByName(name: string) {
     return this.ingredientService.findIngredientByName(name, this.ingredients);
   }
-  handleSuccessVoteModal() {
+  async handleSuccessVoteModal() {
     try {
-      this.recipeService.updateRecipeFunction(this.recipe);
+      await this.recipeService.updateRecipeFunction(this.recipe);
       if (this.isRecipeCooked) {
         if (
           this.author.id !== this.currentUser.id &&
@@ -368,13 +372,15 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     return 0;
   }
 
-  addComment() {
+  async addComment() {
     const comment: IComment = this.commentService.makeComment(
       this.currentUser,
       this.commentForm.get('commentText')?.value,
     );
+    this.loading = true;
+    this.cd.markForCheck();
     try {
-      this.commentService.addCommentToRecipe(this.recipe, comment);
+      await this.commentService.addCommentToRecipe(this.recipe, comment);
 
       if (
         this.userService.getPermission('you-commented-recipe', this.currentUser)
@@ -386,7 +392,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
           'comment',
           '/recipes/list/' + this.recipe.id,
         );
-        this.notifyService.sendNotification(notify, this.currentUser);
+        await this.notifyService.sendNotification(notify, this.currentUser);
       }
 
       if (
@@ -405,9 +411,12 @@ export class RecipePageComponent implements OnInit, OnDestroy {
           'comment',
           '/recipes/list/' + this.currentUser.id,
         );
-        this.notifyService.sendNotification(notify, this.author);
+        await this.notifyService.sendNotification(notify, this.author);
       }
+      this.successCommentModalShow = true;
     } catch {}
+    this.loading = false;
+    this.cd.markForCheck();
   }
   setCategories(): void {
     this.categoryService.categories$
@@ -488,7 +497,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     const randomString = Date.now();
 
     this.picture =
-      supabase.storage.from('recipes').getPublicUrl(path).data.publicUrl 
+      supabase.storage.from('recipes').getPublicUrl(path).data.publicUrl;
 
     this.cd.markForCheck();
   }
@@ -673,7 +682,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     }
   }
 
-  likeThisRecipe() {
+  async likeThisRecipe() {
     if (this.currentUser.id === 0) {
       this.noAccessModalShow = true;
       return;
@@ -695,7 +704,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
       );
     }
     try {
-      this.recipeService.updateRecipeFunction(updatedRecipe);
+      await this.recipeService.updateRecipeFunction(updatedRecipe);
       if (this.isRecipeLiked) {
         if (this.isRecipeLiked) {
           if (
@@ -757,16 +766,14 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     this.noAccessModalShow = false;
   }
 
-  handleCommentModal(answer: boolean): void {
-    if (answer) {
-      this.addComment();
+  async handleCommentModal(answer: boolean) {
+     this.commentModalShow = false;
+  if (answer) {
+      await this.addComment();
       this.commentForm.get('commentText')?.setValue('');
       this.commentForm.get('commentText')?.markAsPristine();
       this.commentForm.get('commentText')?.markAsUntouched();
-
-      this.successCommentModalShow = true;
     }
-    this.commentModalShow = false;
   }
   handleSuccessCommentModal() {
     this.successCommentModalShow = false;

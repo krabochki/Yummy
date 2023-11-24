@@ -169,8 +169,8 @@ section {
   column-gap: 3em;
   grid-template-columns: repeat(2, 1fr);
 
-  .one-column {
-    grid-template-columns: max-content;
+  &.one-column {
+    grid-template-columns: 100%;
   }
 }
 
@@ -194,7 +194,6 @@ h2 {
   display: grid;
   border-left: 3px solid var(--color-primary);
   padding: 0.4em 0;
-  font-size: 0.9em;
   padding-left: 1em;
   row-gap: 1em;
   width: min-content;
@@ -235,7 +234,6 @@ section {
 
     li {
       line-height: 1.1;
-      font-size: 0.9em;
       align-items: center;
 
       .svg-link {

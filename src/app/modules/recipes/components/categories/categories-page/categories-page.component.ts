@@ -123,6 +123,7 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
       .subscribe((data: ISection[]) => {
         this.title = 'Разделы';
         this.titleService.setTitle(this.title);
+        this.sections=[]
         this.sections = this.sectionService.getSectionsWithCategories(
           data,
           this.categories,
@@ -163,6 +164,7 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
       };
       this.sections.push(popularSection);
     } else {
+
       //если это конкретная секция
       this.section = {...section}
       this.title = this.section.name;
@@ -170,7 +172,7 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
       this.sections.push(this.section);
     }
 
-    this.categoriesToShow = this.getCategoriesOfSection(this.section).slice(
+    this.categoriesToShow = this.getCategoriesOfSection({...this.section}).slice(
       0,
       10,
     );
@@ -212,6 +214,8 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
         }
       });
     }
+    console.log(section.name)
+    console.log(sectionCategories)
 
     return sectionCategories;
   }

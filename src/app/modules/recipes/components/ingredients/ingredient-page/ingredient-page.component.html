@@ -175,7 +175,7 @@
       <section id="review" class="section-group" *ngIf="showReviewSection">
         <h2>Обзор</h2>
         <section
-          *ngIf="ingredient.advantages || ingredient.disadvantages"
+          *ngIf="ingredient.advantages&&ingredient.advantages.length>0 || ingredient.disadvantages&&ingredient.disadvantages.length>0"
           class="double-block"
           [ngClass]="{ 'one-column': oneColumn('advantages') }"
         >
@@ -198,11 +198,11 @@
         </section>
 
         <section
-          *ngIf="ingredient.recommendedTo || ingredient.contraindicatedTo"
+          *ngIf="ingredient.recommendedTo&& ingredient.recommendedTo.length>0 || ingredient.contraindicatedTo&& ingredient.contraindicatedTo.length>0"
           class="double-block"
           [ngClass]="{ 'one-column': oneColumn('recommendations') }"
         >
-          <section class="positive" *ngIf="ingredient.recommendedTo">
+          <section class="positive" *ngIf="ingredient.recommendedTo&& ingredient.recommendedTo.length>0">
             <h3>Рекомендовано</h3>
             <ol [ngStyle]="noListStyle(ingredient.recommendedTo)">
               <li *ngFor="let recommendation of ingredient.recommendedTo">
@@ -211,7 +211,7 @@
             </ol>
           </section>
 
-          <section class="negative" *ngIf="ingredient.contraindicatedTo">
+          <section class="negative" *ngIf="ingredient.contraindicatedTo&& ingredient.contraindicatedTo.length>0">
             <h3>Противопоказано</h3>
             <ol [ngStyle]="noListStyle(ingredient.contraindicatedTo)">
               <li *ngFor="let contraindication of ingredient.contraindicatedTo">
@@ -234,9 +234,9 @@
         </section>
       </section>
 
-      <section id="cooking" class="section-group" *ngIf="showCookingSection">
+      <section   id="cooking" class="section-group" *ngIf="showCookingSection">
         <h2>Готовка</h2>
-        <section class="warning" *ngIf="ingredient.precautions">
+        <section  class="warning" *ngIf="ingredient.precautions &&ingredient.precautions.length>0 ">
           <h3>
             <svg-icon
               [applyClass]="true"
@@ -252,11 +252,11 @@
           </ol>
         </section>
 
-        <section
+        <section  [ngClass]="{ 'one-column': oneColumn('cooking') }"
           class="double-block"
-          *ngIf="ingredient.cookingMethods || ingredient.storageMethods"
+          *ngIf="ingredient.cookingMethods && ingredient.cookingMethods.length>0 || ingredient.storageMethods&& ingredient.storageMethods.length>0"
         >
-          <section *ngIf="ingredient.cookingMethods">
+          <section *ngIf="ingredient.cookingMethods && ingredient.cookingMethods.length>0 ">
             <h3>
               <svg-icon
                 [applyClass]="true"
@@ -271,7 +271,7 @@
               </li>
             </ol>
           </section>
-          <section *ngIf="ingredient.storageMethods">
+          <section *ngIf="ingredient.storageMethods && ingredient.storageMethods.length>0 ">
             <h3>
               <svg-icon
                 [applyClass]="true"
@@ -288,7 +288,7 @@
           </section>
         </section>
 
-        <section *ngIf="ingredient.compatibleDishes">
+        <section *ngIf="ingredient.compatibleDishes && ingredient.compatibleDishes.length>0 ">
           <h3>
             <svg-icon
               [applyClass]="true"

@@ -1,14 +1,17 @@
 .header {
   color: var(--color-foreground);
   text-align: center;
-  padding: 20px;
+  margin-bottom: 1em;
   p {
+    line-height: 1.2;
     letter-spacing: 2px;
   }
 }
 
 h1 {
   font-size: var(--font-xxl);
+  line-height: 1;
+  margin-bottom: 0.5rem;
   span {
     font-family: var(--font-family-accent);
     color: var(--color-primary);
@@ -24,7 +27,6 @@ h1 {
   padding: 1.5em;
   background-color: var(--color-background-deeper);
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .sections {
@@ -181,15 +183,7 @@ ul {
     border-style: solid;
     border-radius: 0 0 0 5px;
     border-color: var(--color-primary-lighter) var(--color-background);
-    -webkit-box-shadow:
-      0 1px 3px rgba(0, 0, 0, 0.15),
-      -1px 1px 3px rgba(0, 0, 0, 0.15);
-    -moz-box-shadow:
-      0 1px 3px rgba(0, 0, 0, 0.15),
-      -1px 1px 3px rgba(0, 0, 0, 0.15);
-    box-shadow:
-      0 1px 3px rgba(0, 0, 0, 0.15),
-      -1px 1px 3px rgba(0, 0, 0, 0.15);
+   
   }
 
   margin: 0 auto;
@@ -306,6 +300,9 @@ ul {
 
 @media (max-width: 768px) {
   .footer {
+    .info{
+      min-width: unset;
+    }
     width: 100%;
   }
   .dream-team {

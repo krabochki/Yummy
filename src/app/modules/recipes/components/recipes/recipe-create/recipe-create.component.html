@@ -148,8 +148,7 @@
                 class="delete"
                 *ngIf="mainImage !== defaultImage"
                 (click)="
-                  mainImage = defaultImage;
-                  this.form.get('image')?.setValue(null)
+                  unsetMainImage()
                 "
               >
                 <svg-icon

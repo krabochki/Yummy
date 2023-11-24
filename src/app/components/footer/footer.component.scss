@@ -121,15 +121,17 @@ svg {
   border-radius: 100%;
 }
 
-     .top-link {
-       line-height: 1;
-  
-       text-decoration: underline;
-  
-     
-     }
+.top-link {
+  line-height: 1;
+
+  text-decoration: underline;
+}
 
 @media (max-width: 900px) {
+  .top-link {
+    text-align: center;
+    margin: 0 auto;
+  }
   .label {
     text-align: center;
     justify-content: center;
@@ -205,6 +207,10 @@ svg {
   }
 }
 
+.disabled{
+  opacity: 0.5;
+  pointer-events: none;
+}
 @media (max-width: 480px) {
   .footer {
     padding: 0;

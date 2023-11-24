@@ -54,7 +54,9 @@ export class PasswordResetComponent implements OnInit {
   currentUser:IUser = nullUser
 
   async ngOnInit() {
-    this.authService.currentUser$.subscribe((user)=>this.currentUser=user)
+    this.authService.currentUser$.subscribe((user) => {
+      this.currentUser = user;
+     });
     this.form = this.fb.group({
       password: [
         '',

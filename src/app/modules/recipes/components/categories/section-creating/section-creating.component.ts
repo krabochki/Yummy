@@ -20,6 +20,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { SectionService } from '../../../services/section.service';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { supabase } from 'src/app/modules/controls/image/supabase-data';
+import { trimmedMinLengthValidator } from 'src/tools/validators';
 
 @Component({
   selector: 'app-section-creating',
@@ -62,6 +63,7 @@ export class SectionCreatingComponent
       name: [
         '',
         [
+          trimmedMinLengthValidator(4),
           Validators.required,
           Validators.minLength(4),
           Validators.maxLength(30),

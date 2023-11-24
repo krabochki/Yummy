@@ -247,7 +247,8 @@ li {
   height: 10em;
   border-radius: 100%;
   transition: 0.2s ease-in-out;
-  background-color: #fff;
+  border: 1px solid #e1e0e0;
+  background-color:#f4f4f4;
   margin: 0 auto;
   min-width: 10em;
   background-size: cover;
@@ -343,10 +344,11 @@ li {
   justify-content: center;
 }
 
-app-recipes-list {
-  width: 100%;
-  padding: 0 calc(150px + 100 * ((100vw - 900px) / (1280 - 900)));
+app-vertical-recipe-list {
+  width: 100%;padding: 0 calc(150px + 100 * ((100vw - 900px) / (1280 - 900)));
 }
+
+
 
 .socialAndAdd {
   display: grid;
@@ -386,6 +388,7 @@ app-recipes-list {
     }
   }
 }
+
 
 .additional ul .website {
   transition: 0.2s ease-in-out;
@@ -532,11 +535,11 @@ svg {
 }
 
 @media (max-width: 900px) {
-  app-recipes-list {
-    width: calc(330px + 100 * ((100vw - 550px) / (900 - 550)));
-    padding: 0;
-  }
 
+
+app-vertical-recipe-list {
+  padding: 0;
+      width: calc(330px + 100 * ((100vw - 550px) / (900 - 550)));}
   .emoji {
     zoom: 0.8;
   }

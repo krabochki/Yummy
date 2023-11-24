@@ -37,11 +37,11 @@ const routes: Routes = [
     path: 'about',
     component: AboutComponent,
   },
-  {
-    path: 'user-policy',
-    component: UserPolicyComponent
+  // {
+  //   path: 'user-policy',
+  //   component: UserPolicyComponent
     
-  },
+  // },
   {
     path: 'access-denied',
     component: AnonimPageComponent,

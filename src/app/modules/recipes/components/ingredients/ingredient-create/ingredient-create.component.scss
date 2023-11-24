@@ -61,11 +61,13 @@
     flex-direction: column;
   }
 }
-
+.description-container {
+  margin-bottom: 1em;
+}
 hr {
   height: 0.5px;
   width: 100%;
-  margin-top: 1.3em;
+  margin-top: 0.5em;
   opacity: 0.5;
   background-color: var(--color-foreground-unactive);
 }
@@ -295,12 +297,15 @@ app-autocomplete,
 
       .nav-step-line {
         width: 4em;
+        /* Регулируйте ширину линии */
         height: 1.5px;
+        /* Регулируйте высоту линии */
         background-color: var(--color-foreground-unactive);
 
         &.completed {
           background-color: var(--color-secondary);
         }
+
       }
 
       .nav-step-block-inner {
@@ -328,6 +333,11 @@ app-autocomplete,
           &.completed {
             color: var(--color-foreground);
           }
+
+          &.not-valid {
+            color: var(--color-primary);
+          }
+
         }
 
         .nav-step-circle {
@@ -351,6 +361,11 @@ app-autocomplete,
           &.active {
             border-color: var(--color-secondary);
             color: var(--color-secondary);
+          }
+
+          &.not-valid {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
           }
         }
       }

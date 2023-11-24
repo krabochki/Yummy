@@ -30,6 +30,7 @@ import {
 } from '../../../models/ingredients';
 import { IngredientService } from '../../../services/ingredient.service';
 import { supabase } from 'src/app/modules/controls/image/supabase-data';
+import { trimmedMinLengthValidator } from 'src/tools/validators';
 
 @Component({
   selector: 'app-group-creating',
@@ -81,6 +82,7 @@ export class GroupCreatingComponent
           Validators.required,
           Validators.minLength(4),
           Validators.maxLength(30),
+          trimmedMinLengthValidator(4),
         ],
       ],
       image: [null],

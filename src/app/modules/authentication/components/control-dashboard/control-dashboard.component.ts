@@ -164,6 +164,11 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     this.ingredientsInit();
   }
 
+  getDate(date: string) {
+    console.log(new Date(date));
+    return new Date(date);
+  }
+
   private ingredientsInit(): void {
     this.ingredientService.ingredients$
       .pipe(takeUntil(this.destroyed$))
@@ -497,7 +502,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
       );
     }
   }
-  private sendNotifiesAfterPublishingRecipe(approvedRecipe: IRecipe): void {
+  async sendNotifiesAfterPublishingRecipe(approvedRecipe: IRecipe) {
     if (this.actionRecipe) {
       const author: IUser = this.getUser(this.actionRecipe.authorId);
       {
@@ -505,7 +510,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
           this.actionRecipe,
           this.notifyService,
         );
-        this.sendNotifyWithPermission(
+        await this.sendNotifyWithPermission(
           notifyForAuthor,
           author,
           'manager-review-your-recipe',
@@ -521,11 +526,11 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
             approvedRecipe,
             this.notifyService,
           );
-          this.sendNotifyWithPermission(
-            notifyForFollower,
-            follower,
-            'new-recipe-from-following',
-          );
+            this.sendNotifyWithPermission(
+             notifyForFollower,
+             follower,
+             'new-recipe-from-following',
+           );
         });
       }
     }
@@ -572,14 +577,14 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
       }
     }
   }
-  private approveRecipe(): void {
-    if (this.actionRecipe) this.adminService.approveRecipe(this.actionRecipe);
+  async approveRecipe() {
+    if (this.actionRecipe) await this.adminService.approveRecipe(this.actionRecipe);
     this.actionRecipe &&
       this.userService.getPermission(
         'hide-author',
         this.getUser(this.actionRecipe.authorId),
       ) &&
-      this.sendNotifiesAfterPublishingRecipe(this.actionRecipe);
+     await this.sendNotifiesAfterPublishingRecipe(this.actionRecipe);
   }
   private dismissRecipe(): void {
     if (this.actionRecipe) {
@@ -738,16 +743,19 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     this.demoteModalShow = true;
   }
 
-  private sendNotifyWithPermission(
+  async sendNotifyWithPermission(
     notify: INotification,
     user: IUser,
     permission?: PermissionContext,
   ) {
-    if (permission)
-      return this.userService.getPermission(permission, user)
-        ? this.notifyService.sendNotification(notify, user)
-        : EMPTY;
-    return this.notifyService.sendNotification(notify, user);
+    if (permission) {
+      if (this.userService.getPermission(permission, user))
+        await this.notifyService.sendNotification(notify, user);
+
+    }
+    else {
+      await this.notifyService.sendNotification(notify, user);
+    }
   }
 
   //Получить конкретный экземпляр

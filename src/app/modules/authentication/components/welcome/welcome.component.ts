@@ -1,13 +1,17 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { supabase } from 'src/app/modules/controls/image/supabase-data';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-welcome',
   templateUrl: './welcome.component.html',
-  styleUrls: ['./welcome.component.scss']
+  styleUrls: ['./welcome.component.scss'],
 })
-export class WelcomeComponent {
+export class WelcomeComponent{
+  constructor(
+    private titleService: Title,
+  ) {
+    this.titleService.setTitle('Добро пожаловать');
+  }
 
 
 }

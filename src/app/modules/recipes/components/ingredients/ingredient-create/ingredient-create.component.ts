@@ -30,7 +30,7 @@ import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
 import { Observable, Subject, forkJoin } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { customLinkPatternValidator } from 'src/tools/validators';
+import { customLinkPatternValidator, trimmedMinLengthValidator } from 'src/tools/validators';
 import { anySiteMask } from 'src/tools/regex';
 import Compressor from 'compressorjs';
 
@@ -137,6 +137,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
       ingredientName: [
         '',
         [
+          trimmedMinLengthValidator(3),
           Validators.required,
           Validators.minLength(3),
           Validators.maxLength(50),
@@ -225,6 +226,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
           '',
           [
             Validators.required,
+            trimmedMinLengthValidator(2),
             Validators.minLength(2),
             Validators.maxLength(20),
           ],
@@ -241,6 +243,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
           '',
           [
             Validators.required,
+            trimmedMinLengthValidator(2),
             Validators.minLength(2),
             Validators.maxLength(50),
           ],
@@ -250,6 +253,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
           [
             Validators.required,
             Validators.minLength(5),
+            trimmedMinLengthValidator(5),
             Validators.maxLength(1000),
           ],
           customLinkPatternValidator(anySiteMask),
@@ -268,6 +272,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
           [
             Validators.required,
             Validators.minLength(3),
+            trimmedMinLengthValidator(3),
             Validators.maxLength(maxLength),
           ],
         ],
@@ -350,6 +355,101 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
 
   async updateGroup(group: IIngredientsGroup) {
     await this.ingredientService.updateGroupInSupabase(group);
+  }
+
+  clickOnCircleStep(i: number) {
+    if (this.validNextSteps() === 0 || this.validNextSteps() > i) {
+      this.currentStep = i;
+      this.scrollTop();
+    }
+  }
+
+  notValid() {
+    return this.validNextSteps();
+  }
+
+  noValidStepDescription(step: number): string {
+    switch (step) {
+      case 0:
+        return 'Название ингредиента обязательно, а также он должен содержать как минимум 1 группу ингредиентов';
+      case 1:
+        break;
+      case 2:
+        return 'Содержание всех добавленных полей обязательно должны содержать минимум 3 символа';
+      case 3:
+        return 'Содержание всех добавленных полей обязательно должны содержать минимум 3 символа';
+     
+      case 4:
+        return 'Название каждого нутриента должно содержать не менее 2 символов';
+      case 5:
+        return 'Название ссылки и сама ссылка на источник обязательны, а также ссылка должна быть корректной ссылкой на веб-сайт в интернете.'
+    }
+    return '';
+  }
+
+  validNextSteps(): number {
+    for (let s = 0; s <= 6; s++) {
+      switch (s) {
+        case 0:
+          if (
+            !(
+              this.form.get('ingredientName')!.valid &&
+              this.form.get('history')!.valid &&
+              this.form.get('description')!.valid &&
+              this.form.get('variations')!.valid &&
+              this.form.get('origin')!.valid &&
+              this.selectedIngredientsGroups.length > 0
+            )
+          ) {
+            return 1;
+          }
+          break;
+        case 1:
+          if (
+            !(
+              this.form.get('recommendations')!.valid &&
+              this.form.get('contraindicates')!.valid &&
+              this.form.get('advantages')!.valid &&
+              this.form.get('disadvantages')!.valid
+            )
+          ) {
+            return 2;
+          }
+          break;
+        case 2:
+          if (
+            !(
+              this.form.get('precautions')!.valid &&
+              this.form.get('compatibleDishes')!.valid &&
+              this.form.get('cookingMethods')!.valid
+            )
+          ) {
+            return 3;
+          }
+          break;
+        case 3:
+          if (
+            !(
+              this.form.get('tips')!.valid &&
+              this.form.get('storageMethods')!.valid
+            )
+          ) {
+            return 4;
+          }
+          break;
+        case 4:
+          if (!this.form.get('nutritions')!.valid) {
+            return 5;
+          }
+          break;
+        case 5:
+          if (!this.form.get('sources')!.valid) {
+            return 6;
+          }
+          break;
+      }
+    }
+    return 0;
   }
 
   unsetImage() {

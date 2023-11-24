@@ -6,6 +6,7 @@ import {
 import { usersUrl } from 'src/tools/source';
 import { allPunctuationMarks, brackets } from 'src/tools/regex';
 import { supabase } from '../../controls/image/supabase-data';
+import { getCurrentDate } from 'src/tools/common';
 
 @Injectable({
   providedIn: 'root',
@@ -171,6 +172,7 @@ export class UserService {
         id: id,
         username: username,
         email: email,
+        registrationDate: getCurrentDate(),
         role: 'user',
       },
     ]);
@@ -246,7 +248,6 @@ export class UserService {
 
   getPermission(context: PermissionContext, user: IUser): boolean {
     const permissions = user.permissions;
-
     //возвращаем что уведомление включено true, только если оно конкретно не установлено false
 
     if (permissions && permissions.length) {

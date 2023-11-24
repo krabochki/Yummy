@@ -60,7 +60,7 @@
                 </a>
                 <p class="report-date">
                   Рецепт отправлен
-                  {{ recipe.publicationDate | timePast | lowercase }}
+                  {{  getDate(recipe.publicationDate).toString() | timePast | lowercase }}
                 </p>
               </div>
               <div class="report-users">

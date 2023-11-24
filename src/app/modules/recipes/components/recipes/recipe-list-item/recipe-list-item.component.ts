@@ -28,6 +28,7 @@ import {
   notifyForAuthorOfApprovedRecipe,
   notifyForFollowersOfApprovedRecipeAuthor,
 } from 'src/app/modules/authentication/components/control-dashboard/notifications';
+import { supabase } from 'src/app/modules/controls/image/supabase-data';
 
 @Component({
   selector: 'app-recipe-list-item',
@@ -82,11 +83,23 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
     private planService: PlanService,
     private notifyService: NotificationService,
     private eRef: ElementRef,
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.currentUserInit();
     this.usersInit();
+    if (this.recipe.mainImage) {
+      this.downloadPicFromSupabase(this.recipe.mainImage);
+    }
+  }
+
+  picture = '';
+  downloadPicFromSupabase(path: string) {
+    this.picture = supabase.storage
+      .from('recipes')
+      .getPublicUrl(path).data.publicUrl;
+
+    this.cd.markForCheck();
   }
 
   private currentUserInit(): void {
@@ -106,6 +119,9 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
         const findedRecipe = receiverRecipes.find((recipe) => {
           return recipe.id === this.recipe.id;
         });
+        if (this.recipe.mainImage) {
+          this.downloadPicFromSupabase(this.recipe.mainImage);
+        }
         if (findedRecipe) this.recipe = findedRecipe;
         if (this.currentUser.id !== 0) {
           this.isRecipeLiked = this.recipe.likesId.includes(
@@ -136,6 +152,23 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
         this.cd.markForCheck();
       });
   }
+
+  async deleteInstuctionPhotos(recipe: IRecipe) {
+     const imageArray: any[] = recipe.instructions
+       .flatMap((instruction) => instruction.images)
+       .filter((i) => i.file !== null && i.file !== undefined);
+
+     await Promise.all(
+       imageArray.map(async (photo) => {
+         await supabase.storage.from('recipes').remove([photo.file]);
+       }),
+     );
+  }
+
+  async deleteOldPic(path: string) {
+    await supabase.storage.from('recipes').remove([path]);
+  }
+
   private plansInit(): void {
     this.planService.plans$
       .pipe(takeUntil(this.destroyed$))
@@ -154,13 +187,13 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
     this.isRecipeFavorite = !this.isRecipeFavorite;
     this.recipe = this.isRecipeFavorite
       ? this.recipeService.addRecipeToFavorites(
-        this.currentUser.id,
-        this.recipe,
-      )
+          this.currentUser.id,
+          this.recipe,
+        )
       : this.recipeService.removeRecipeFromFavorites(
-        this.currentUser.id,
-        this.recipe,
-      );
+          this.currentUser.id,
+          this.recipe,
+        );
 
     await this.recipeService.updateRecipeFunction(this.recipe);
     if (
@@ -179,7 +212,7 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
         'recipe',
         '/recipes/list/' + this.recipe.id,
       );
-      this.notifyService.sendNotification(notify, author)
+      this.notifyService.sendNotification(notify, author);
     }
   }
 
@@ -205,15 +238,16 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
       const author: IUser = this.author;
       const notify: INotification = this.notifyService.buildNotification(
         'Твой рецепт оценили',
-        `Твой рецепт «${this.recipe.name}» понравился кулинару ${this.currentUser.fullName
-          ? this.currentUser.fullName
-          : '@' + this.currentUser.username
+        `Твой рецепт «${this.recipe.name}» понравился кулинару ${
+          this.currentUser.fullName
+            ? this.currentUser.fullName
+            : '@' + this.currentUser.username
         }`,
         'info',
         'recipe',
         '/cooks/list/' + this.currentUser.id,
       );
-      this.notifyService.sendNotification(notify, author)
+      this.notifyService.sendNotification(notify, author);
     }
   }
   //готовим рецепт
@@ -261,7 +295,7 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
           'recipe',
           '/recipes/list/' + this.recipe.id,
         );
-        this.notifyService.sendNotification(notify, this.author)
+        this.notifyService.sendNotification(notify, this.author);
       }
     } else {
       this.recipe.status = 'public';
@@ -287,7 +321,7 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
         'recipe',
         '/recipes/list/' + this.recipe.id,
       );
-      this.notifyService.sendNotification(notify, this.author)
+      this.notifyService.sendNotification(notify, this.author);
     }
 
     const authorFollowers = this.userService.getFollowers(
@@ -300,9 +334,7 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
       this.notifyService,
     );
     authorFollowers.forEach((follower) => {
-
-      this.notifyService.sendNotification(notifyForFollower, follower)
-
+      this.notifyService.sendNotification(notifyForFollower, follower);
     });
 
     forkJoin(subscribes).subscribe();
@@ -347,18 +379,20 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
       ) {
         const notify: INotification = this.notifyService.buildNotification(
           'Твой рецепт приготовили',
-          `Твой рецепт «${this.recipe.name}» приготовил кулинар ${this.currentUser.fullName
-            ? this.currentUser.fullName
-            : '@' + this.currentUser.username
-          }${this.vote
-            ? ' и оставил положительный отзыв'
-            : ' и оставил негативный отзыв'
+          `Твой рецепт «${this.recipe.name}» приготовил кулинар ${
+            this.currentUser.fullName
+              ? this.currentUser.fullName
+              : '@' + this.currentUser.username
+          }${
+            this.vote
+              ? ' и оставил положительный отзыв'
+              : ' и оставил негативный отзыв'
           }`,
           'info',
           'recipe',
           '/cooks/list/' + this.currentUser.id,
         );
-        this.notifyService.sendNotification(notify, this.author)
+        this.notifyService.sendNotification(notify, this.author);
       }
 
       this.vote = false;
@@ -372,6 +406,8 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
   }
 
   async deleteRecipe() {
+    this.loading = true;
+
     this.planService.updatePlansAfterDeletingRecipe(
       this.plans,
       this.users,
@@ -379,20 +415,22 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
     );
 
     if (this.userService.getPermission('you-delete-your-recipe', this.author))
-      this.notifyService
-        .sendNotification(
-          this.notifyService.buildNotification(
-            'Твой рецепт удален',
-            `Вы успешно удалили свой рецепт «${this.recipe.name}».`,
-            'success',
-            'recipe',
-            '',
-          ),
-          this.author,
-        )
-    this.loading = true;
+      this.notifyService.sendNotification(
+        this.notifyService.buildNotification(
+          'Твой рецепт удален',
+          `Вы успешно удалили свой рецепт «${this.recipe.name}».`,
+          'success',
+          'recipe',
+          '',
+        ),
+        this.author,
+      );
     try {
+            if (this.recipe.mainImage)
+              await this.deleteOldPic(this.recipe.mainImage);
+
       await this.recipeService.removeRecipeFunction(this.recipe.id);
+      await this.deleteInstuctionPhotos(this.recipe);
     } finally {
       this.loading = false;
     }
@@ -411,21 +449,22 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
       const notify: INotification = this.notifyService.buildNotification(
         this.isAwaitingApprove
           ? 'Рецепт изменен ' +
-          (this.currentUser.role === 'user'
-            ? 'и отправлен на проверку'
-            : 'и опубликован')
+              (this.currentUser.role === 'user'
+                ? 'и отправлен на проверку'
+                : 'и опубликован')
           : 'Рецепт изменен',
-        `Рецепт «${this.editedRecipe.name}» изменен ${this.isAwaitingApprove
-          ? this.currentUser.role === 'user'
-            ? 'и успешно отправлен на проверку'
-            : 'и опубликован'
-          : ''
+        `Рецепт «${this.editedRecipe.name}» изменен ${
+          this.isAwaitingApprove
+            ? this.currentUser.role === 'user'
+              ? 'и успешно отправлен на проверку'
+              : 'и опубликован'
+            : ''
         }`,
         'success',
         'recipe',
         '/recipes/list/' + this.editedRecipe.id,
       );
-      this.notifyService.sendNotification(notify, this.currentUser)
+      this.notifyService.sendNotification(notify, this.currentUser);
     }
 
     if (

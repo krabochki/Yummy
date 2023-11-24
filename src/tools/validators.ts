@@ -79,4 +79,19 @@ export function usernameExistsValidator(users: IUser[], user:IUser) {
         return null;
       }
     };
+}
+  
+ export function trimmedMinLengthValidator(minLength: number) {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const trimmedValue = control.value.trim();
+      if (trimmedValue.length < minLength) {
+        return {
+          trimmedMinLength: {
+            requiredLength: minLength,
+            actualLength: trimmedValue.length,
+          },
+        };
+      }
+      return null;
+    };
   }

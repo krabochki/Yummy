@@ -17,6 +17,8 @@ import {
   customPatternValidator,
 } from 'src/tools/validators';
 import { supabase } from 'src/app/modules/controls/image/supabase-data';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 @Component({
   templateUrl: './password-recovery.component.html',
   styleUrls: ['../../common-styles.scss'],
@@ -44,6 +46,7 @@ export class PasswordRecoveryComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
+    
     this.usersService.users$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedUsers: IUser[]) => {

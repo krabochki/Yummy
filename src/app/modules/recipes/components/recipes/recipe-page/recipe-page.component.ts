@@ -40,6 +40,7 @@ import { IIngredient } from '../../../models/ingredients';
 import { RecipeCalendarEvent } from 'src/app/modules/planning/models/calendar';
 import { Location } from '@angular/common';
 import { supabase } from 'src/app/modules/controls/image/supabase-data';
+import { trimmedMinLengthValidator } from 'src/tools/validators';
 
 @Component({
   selector: 'app-recipe-page',
@@ -147,6 +148,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
         [
           Validators.required,
           Validators.minLength(5),
+          trimmedMinLengthValidator(5),
           Validators.maxLength(1000),
         ],
       ],
@@ -157,8 +159,6 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     this.route.data.subscribe((data: Data) => {
       this.recipe = data['RecipeResolver'];
       this.linkForSocials = window.location.href;
-
-      this.titleService.setTitle(this.recipe.name);
 
       this.userService.users$
         .pipe(takeUntil(this.destroyed$))
@@ -182,6 +182,13 @@ export class RecipePageComponent implements OnInit, OnDestroy {
               this.recipeService.recipes$
                 .pipe(takeUntil(this.destroyed$))
                 .subscribe((recipes: IRecipe[]) => {
+                  const finded = recipes.find((r) => r.id === this.recipe.id);
+                  if (finded) this.recipe = finded;
+                  else {
+                    this.router.navigateByUrl('/recipes');
+                  }
+                  this.titleService.setTitle(this.recipe.name);
+
                   this.ingredientService.ingredients$
                     .pipe(takeUntil(this.destroyed$))
                     .subscribe((receivedIngredients) => {
@@ -244,6 +251,9 @@ export class RecipePageComponent implements OnInit, OnDestroy {
                   });
 
                   this.downloadAvatars();
+                  if (this.recipe.mainImage) {
+                    this.downloadPicFromSupabase(this.recipe.mainImage);
+                  }
 
                   this.setCategories();
                   this.setReadingTimeInMinutes();
@@ -275,7 +285,6 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   }
 
   downloadAvatars() {
-    console.log(this.currentUser.avatarUrl);
     if (this.currentUser.avatarUrl)
       this.currentUserAvatar = this.getSupabaseLink(this.currentUser.avatarUrl);
     if (this.author.avatarUrl)
@@ -467,13 +476,27 @@ export class RecipePageComponent implements OnInit, OnDestroy {
       this.loading = true;
       this.cd.markForCheck();
 
-     await this.planService.updatePlanInSupabase(this.myPlan);
+      await this.planService.updatePlanInSupabase(this.myPlan);
 
       this.basket[i] = true;
       this.loading = false;
       this.cd.markForCheck();
     }
   }
+  picture = '';
+  downloadPicFromSupabase(path: string) {
+    const randomString = Date.now();
+
+    this.picture =
+      supabase.storage.from('recipes').getPublicUrl(path).data.publicUrl 
+
+    this.cd.markForCheck();
+  }
+
+  downloadInstructionPicFromSupabase(path: string) {
+    return supabase.storage.from('recipes').getPublicUrl(path).data.publicUrl;
+  }
+
   async removeFromBasket(i: number, ingredient: Ingredient) {
     const groceryList = this.myPlan.shoppingList;
     const findIndex = groceryList.findIndex(

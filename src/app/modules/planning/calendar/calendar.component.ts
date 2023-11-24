@@ -82,7 +82,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
     private userService: UserService,
   ) {
-    this.title.setTitle('План рецептов');
+    this.title.setTitle('Календарь рецептов');
     registerLocaleData(localeRu);
   }
 
@@ -101,6 +101,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
             const actualUser = receivedUsers.find(
               (u) => u.id === receivedUser.id,
             );
+            
             this.currentUser = actualUser ? actualUser : nullUser;
           });
       });

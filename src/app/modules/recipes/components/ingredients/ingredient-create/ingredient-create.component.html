@@ -10,30 +10,34 @@
       <div class="navigation">
         <div class="nav-step-circles-block">
           <div class="nav-step-block" *ngFor="let step of steps; let i = index">
-            <div class="nav-step-block-inner" (click)="currentStep = i; scrollTop()">
+            <div class="nav-step-block-inner" (click)="clickOnCircleStep(i)">
               <div class="nav-step-circle" [ngClass]="{
-                  active: i === currentStep,
-                  completed: i < currentStep
-                }">
+                        active: i === currentStep,
+                        completed: i < currentStep,
+                        'not-valid': notValid() === i + 1
+                      }">
                 {{ i + 1 }}
               </div>
               <p class="nav-step-short-title" [ngClass]="{
-                  active: i === currentStep,
-                  completed: i < currentStep
-                }">
+                        active: i === currentStep,
+                        completed: i < currentStep,
+                        'not-valid': notValid() === i + 1
+                      }">
                 {{ steps[i].shortTitle }}
               </p>
             </div>
             <div [ngClass]="{
-                completed: i < currentStep
-              }" *ngIf="i !== steps.length - 1" class="nav-step-line"></div>
+                      completed: i < currentStep
+                                    }" *ngIf="i !== steps.length - 1" class="nav-step-line"></div>
           </div>
         </div>
       </div>
     </div>
     <div class="unique-content">
-      <div>
-        <h2>{{ steps[currentStep].title }}</h2>
+    
+      <hr />
+
+      <form [formGroup]="form" #scrollContainer><div class="description-container">
         <button class="more-button" (click)="showInfo = !showInfo">
           <svg-icon [src]="'assets/images/svg/help.svg'" [applyClass]="true" class="help-svg"></svg-icon>
           Подробнее
@@ -42,10 +46,6 @@
           {{ steps[currentStep].description }}
         </p>
       </div>
-
-      <hr />
-
-      <form [formGroup]="form" #scrollContainer>
         <div class="step-container" *ngIf="currentStep === 0">
           <div class="form-control">
             <h3>Название ингредиента</h3>
@@ -60,8 +60,8 @@
           <div class="form-control">
             <h3>Группы ингредиентов</h3>
 
-            <app-autocomplete [disabled]="selectedIngredientsGroups.length === 5" (groupEmitter)="addGroup($event)"
-              [placeholder]="'Выберите группы ингредиентов в списке ниже*'" [ingredientsGroups]="groups" />
+            <app-autocomplete [clearValueOnBlur]="true" [disabled]="selectedIngredientsGroups.length === 5" (groupEmitter)="addGroup($event)"
+              [placeholder]="'Выберите группы ингредиентов из списка (минимум одну)*'" [ingredientsGroups]="groups" />
             <div class="tags">
               <div class="tag" *ngFor="let selected of selectedIngredientsGroups">
                 {{ selected.name }}
@@ -306,7 +306,8 @@
                       [placeholder]="'Название'" required></app-usual-input>
 
                     <app-usual-input [max]="6" [value]="nutrition.get('quantity')?.value" id="nutritionAmount{{ i }}"
-                      formControlName="quantity" [placeholder]="'Кол-во'" [showError]="false" [error]="
+                      formControlName="quantity"                       [onlyNumbers]="true"
+ [placeholder]="'Кол-во'" [showError]="false" [error]="
                         isControlValid(nutrition,'quantity')
                           ? 'Количество нутриента должно содержать не более 6 символов'
                           : ''
@@ -438,8 +439,12 @@
       <app-button [iconSize]="'min'" [color]="'sec'" [iconPosition]="'before'" [rounded]="true"
         [icon]="'arrow-previous'" [iconStyle]="'as-text'" [style]="'outlined'" [text]="'Назад'"
         (click)="goToPreviousStep()" [disabled]="!(currentStep === 0)"></app-button>
-      <app-button [iconSize]="'min'" [icon]="'arrow-next'" [color]="'sec'" [rounded]="true" [style]="'filled'"
-        [text]="'Вперед'" (click)="goToNextStep()" [disabled]="!(currentStep === steps.length - 1)"></app-button>
+        <app-button [title]="
+                  validNextSteps() !== 0 ? noValidStepDescription(currentStep) : ''
+                " [iconSize]="'min'" [icon]="'arrow-next'" [color]="'sec'" [rounded]="true" [style]="'filled'"
+          [text]="'Вперед'" (click)="validNextSteps() === 0 ? goToNextStep() : null" [disabled]="
+                  !(currentStep === steps.length - 1) && validNextSteps() === 0
+                "></app-button>
     </div>
   </div>
 </div>

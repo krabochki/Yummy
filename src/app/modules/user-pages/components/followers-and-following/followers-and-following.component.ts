@@ -101,7 +101,6 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
 
   getUserpic(user: IUser) {
     if (user.avatarUrl) {
-      console.log(user.avatarUrl);
       return supabase.storage.from('userpics').getPublicUrl(user.avatarUrl)
         .data.publicUrl;
     } else return this.noUserpic;
@@ -122,33 +121,32 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
   }
 
   //подписка текущего пользователя на людей в списке
-  follow(user: IUser) {
+  async follow(user: IUser) {
     if (this.currentUser.id > 0) {
-      this.userService.addFollower(user, this.currentUser?.id);
-      this.updateUser(user);
+      user = this.userService.addFollower(user, this.currentUser?.id);
+      await this.updateUser(user);
+      if (this.userService.getPermission('new-follower', user)) {
 
-      if (this.userService.getPermission('new-follower', this.user)) {
         const notify: INotification = this.notifyService.buildNotification(
           'Новый подписчик',
-          `Кулинар ${
-            this.currentUser.fullName
-              ? this.currentUser.fullName
-              : '@' + this.currentUser.username
+          `Кулинар ${this.currentUser.fullName
+            ? this.currentUser.fullName
+            : '@' + this.currentUser.username
           } подписался на тебя`,
           'info',
           'user',
           '/cooks/list/' + this.currentUser.id,
         );
-        this.notifyService.sendNotification(notify, user)
-      }
-    }
+        await this.notifyService.sendNotification(notify, user)
+      
+      } }
   }
 
   //отписка текущего пользователя от людей в списке
-  unfollow(user: IUser) {
+  async unfollow(user: IUser) {
     if (this.currentUser.id > 0) {
-      this.userService.removeFollower(user, this.currentUser?.id);
-      this.updateUser(user);
+      user = this.userService.removeFollower(user, this.currentUser?.id);
+      await this.updateUser(user);
     }
   }
 

@@ -14,7 +14,7 @@
     ></svg-icon>
   </div>
 </ng-template>
-<div [routerLink]="'/recipes/list/'+recipe.id" *ngIf="dataLoaded && recipe.id > 0; else sceleton" class="recipe">
+<div [style.background-image]="'url('+(picture?picture:'assets/images/svg/pancakes.png')+')'" [routerLink]="'/recipes/list/'+recipe.id" *ngIf="dataLoaded && recipe.id > 0; else sceleton" class="recipe">
   <div class="top" *ngIf="!shortView">
     <div
       [title]="

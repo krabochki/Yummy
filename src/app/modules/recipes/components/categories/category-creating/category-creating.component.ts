@@ -16,7 +16,7 @@ import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
 import { CategoryService } from '../../../services/category.service';
 
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ICategory, ISection, nullCategory } from '../../../models/categories';
 import { SectionGroup } from 'src/app/modules/controls/autocomplete/autocomplete.component';
 import { Subject, takeUntil } from 'rxjs';
@@ -28,6 +28,7 @@ import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { supabase } from 'src/app/modules/controls/image/supabase-data';
+import { trimmedMinLengthValidator } from 'src/tools/validators';
 
 @Component({
   selector: 'app-category-creating',
@@ -78,6 +79,7 @@ export class CategoryCreatingComponent
         [
           Validators.required,
           Validators.minLength(4),
+          trimmedMinLengthValidator(4),
           Validators.maxLength(30),
         ],
       ],
@@ -145,9 +147,7 @@ export class CategoryCreatingComponent
           }
           break;
         case 1:
-          if (
-            !this.form.get('section')!.valid 
-          ) {
+          if (!this.form.get('section')!.valid) {
             return 2;
           }
           break;
@@ -231,8 +231,6 @@ export class CategoryCreatingComponent
   fullGroup: SectionGroup[] = [];
 
   createCategory() {
-    const userpicData = new FormData();
-    userpicData.append('image', this.form.get('image')?.value);
     this.newCategory = {
       name: this.form.value.name,
       photo: this.form.value.image ? this.supabaseFilepath : undefined,
@@ -250,8 +248,9 @@ export class CategoryCreatingComponent
 
     if (this.form.get('section')!.value) {
       this.form.get('section')!.value.categories.push(this.newCategory.id);
-      this.sectionService
-        .updateSectionInSupabase(this.form.get('section')!.value)
+      this.sectionService.updateSectionInSupabase(
+        this.form.get('section')!.value,
+      );
     }
   }
 

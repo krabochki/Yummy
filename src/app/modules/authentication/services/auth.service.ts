@@ -1,12 +1,21 @@
-import { Injectable } from '@angular/core';
+import { ChangeDetectorRef, Injectable, NgZone } from '@angular/core';
 import { IUser, nullUser } from '../../user-pages/models/users';
-import { BehaviorSubject, EMPTY, Observable, filter, map, take } from 'rxjs';
+import {
+  BehaviorSubject,
+  EMPTY,
+  Observable,
+  filter,
+  map,
+  take,
+  throwError,
+} from 'rxjs';
 import { UserService } from '../../user-pages/services/user.service';
 import { IRecipe } from '../../recipes/models/recipes';
 import { usersUrl } from 'src/tools/source';
 import { IIngredient } from '../../recipes/models/ingredients';
 import { supabase, supabaseAdmin } from '../../controls/image/supabase-data';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +33,55 @@ export class AuthService {
 
   usersUrl = usersUrl;
 
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private router: Router,
+    private ngZone: NgZone,
+  ) {
+ 
+      //проверка состояния текущей сессии в реальном времени
+      supabase.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN')
+          if (session?.user.email)
+            this.loginUser({ ...nullUser, email: session?.user.email }).subscribe(
+              (user) => {
+                if (user) {
+                  this.setCurrentUser(user);
+                }
+              },
+            );
+        if (event === 'SIGNED_OUT') {
+          this.logoutUser();
+         this.ngZone.run(() => {
+           this.router.navigateByUrl('/');
+         });
+        }
+      })
+    
+  
+  }
+
+  async passwordReset(email: string, users: IUser[]) {
+    const resetUser = {
+      ...nullUser,
+      email: email,
+    };
+    try {
+      const finded = users.find((u) => u.email === resetUser.email);
+
+      if (!finded) {
+        throwError;
+      } else {
+        await supabase.auth.resetPasswordForEmail(resetUser.email, {
+          redirectTo: 'http://localhost:4200/password-reset',
+        });
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        throwError;
+      }
+    }
+  }
 
   loadCurrentUserData() {
     this.userService.users$.subscribe(() => {
@@ -56,9 +113,20 @@ export class AuthService {
   supabase = supabase;
 
   async supabaseLogin(user: IUser) {
-    const { data, error } = await supabase.auth.signInWithPassword({
+    await supabase.auth.signInWithPassword({
       email: user.email,
       password: user.password,
+    });
+  }
+
+  register(user: IUser) {
+    return supabase.auth.signUp({
+      email: user.email,
+      password: user.password,
+
+      options: {
+        emailRedirectTo: 'http://localhost:4200/welcome',
+      },
     });
   }
 
@@ -88,8 +156,8 @@ export class AuthService {
     return this.supabase.from('profiles').upsert(update);
   }
 
-   deleteUserFromSupabase() {
-  return supabaseAdmin.auth.admin.deleteUser(this.uid);
+  deleteUserFromSupabase() {
+    return supabaseAdmin.auth.admin.deleteUser(this.uid);
   }
 
   authChanges(
@@ -109,9 +177,8 @@ export class AuthService {
     return this.currentUserSubject.asObservable();
   }
 
-   logoutUser() {
+  logoutUser() {
     this.setCurrentUser({ ...nullUser });
-    localStorage.removeItem('currentUser');
   }
 
   logout() {

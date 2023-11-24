@@ -3,7 +3,7 @@ import { IComment, ICommentReport } from 'src/app/modules/recipes/models/comment
 export interface IRecipe {
   id: number; // Уникальный идентификатор рецепта
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  mainImage: FormData | null; // URL основного фото рецепта
+  mainImage?: string; // URL основного фото рецепта
   name: string; // Название рецепта
   description: string; // Описание рецепта
   preparationTime: string; // Время приготовления
@@ -34,7 +34,6 @@ export interface IRecipeStatistics{
 } 
 export const nullRecipe: IRecipe = {
   id: 0,
-  mainImage: null,
   name: '',
   description: '',
   cookingTime: '',
@@ -64,7 +63,7 @@ export interface Ingredient {
 export interface Instruction {
   name: string; // Название ингредиента
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  images: FormData[]; // Единица измерения
+  images: any; // Единица измерения
 }
 export interface Nutrition {
   name: string; // Название пищевой ценности

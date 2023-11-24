@@ -134,7 +134,8 @@ export class UserPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() {
+  ngOnInit() {   
+
     this.route.data.subscribe((data: Data) => {
       this.recipesEnabled = true;
       this.moreInfoEnabled = false;
@@ -150,6 +151,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
           } else {
             this.myPage = false;
           }
+          this.cd.markForCheck();
         });
 
       this.userService.users$
@@ -195,13 +197,21 @@ export class UserPageComponent implements OnInit, OnDestroy {
                 this.avatar = '';
               }
 
-              this.userRecipes = this.recipeService.getRecipesByUser(
-                this.allRecipes,
-                this.user.id,
-              );
-              this.userPublicRecipes = this.recipeService.getPublicRecipes(
-                this.userRecipes,
-              );
+              if (this.userService.getPermission('hide-author', this.user) || this.currentUser.id === this.user.id
+            || (this.currentUser.role==='moderator' && this.user.role!=='admin') ||this.user.role ==='admin'
+              ) {
+                this.userRecipes = this.recipeService.getRecipesByUser(
+                  this.allRecipes,
+                  this.user.id,
+                );
+                this.userPublicRecipes = this.recipeService.getPublicRecipes(
+                  this.userRecipes,
+                );
+              }
+              else {
+                this.userRecipes = [];
+                this.userPublicRecipes = [];
+              }
 
               if (
                 !this.myPage &&
@@ -252,6 +262,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
   goBack() {
     this.location.back();
   }
+  
 
   closeFollows() {
     this.showFollows = false;
@@ -270,10 +281,10 @@ export class UserPageComponent implements OnInit, OnDestroy {
   }
 
   //подписка текущего пользователя на людей в списке
-  follow() {
+  async follow() {
     if (this.currentUser.id > 0) {
       this.user = this.userService.addFollower(this.user, this.currentUser.id);
-      this.updateUser(this.currentUser);
+      await this.updateUser(this.user);
       if (this.userService.getPermission('new-follower', this.user)) {
         const notify: INotification = this.notifyService.buildNotification(
           'Новый подписчик',
@@ -286,18 +297,18 @@ export class UserPageComponent implements OnInit, OnDestroy {
           'user',
           '/cooks/list/' + this.currentUser.id,
         );
-        this.notifyService.sendNotification(notify, this.user)
+        await this.notifyService.sendNotification(notify, this.user)
       }
     }
   }
 
-  unfollow() {
+  async unfollow() {
     if (this.currentUser.id > 0) {
       this.user = this.userService.removeFollower(
         this.user,
         this.currentUser.id,
       );
-      this.updateUser(this.currentUser);
+      await this.updateUser(this.user);
     }
   }
 

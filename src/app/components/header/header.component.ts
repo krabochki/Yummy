@@ -154,30 +154,30 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   }
 
   recipesInit() {
-   combineLatest([
-     this.recipeService.recipes$,
-     this.ingredientService.ingredients$,
-     this.categoryService.categories$,
-   ])
-     .pipe(takeUntil(this.destroyed$))
-     .subscribe(([recipes, ingredients, categories]) => {
-       const awaitingRecipes = recipes.filter(
-         (r) => r.status === 'awaits',
-       ).length;
-       const reports = recipes.reduce((totalReports, recipe) => {
-         return totalReports + (recipe.reports ? recipe.reports.length : 0);
-       }, 0);
+    combineLatest([
+      this.recipeService.recipes$,
+      this.ingredientService.ingredients$,
+      this.categoryService.categories$,
+    ])
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(([recipes, ingredients, categories]) => {
+        const awaitingRecipes = recipes.filter(
+          (r) => r.status === 'awaits',
+        ).length;
+        const reports = recipes.reduce((totalReports, recipe) => {
+          return totalReports + (recipe.reports ? recipe.reports.length : 0);
+        }, 0);
 
-       const awaitingIngredients = ingredients.filter(
-         (i) => i.status === 'awaits',
-       ).length;
-       const awaitingCategories = categories.filter(
-         (c) => c.status === 'awaits',
-       ).length;
+        const awaitingIngredients = ingredients.filter(
+          (i) => i.status === 'awaits',
+        ).length;
+        const awaitingCategories = categories.filter(
+          (c) => c.status === 'awaits',
+        ).length;
 
-       this.adminActionsCount =
-         reports + awaitingRecipes + awaitingCategories + awaitingIngredients;
-     });
+        this.adminActionsCount =
+          reports + awaitingRecipes + awaitingCategories + awaitingIngredients;
+      });
   }
 
   ngDoCheck(): void {
@@ -236,7 +236,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
               alreadySentReminder = true; //если уже есть уведомление с типом напоминалка и прислано оно сегодня
           });
           if (!alreadySentReminder) {
-            const reminder:INotification = {
+            const reminder: INotification = {
               ...this.notifyService.buildNotification(
                 'Время начала запланированного рецепта настало!',
                 'Время начала запланированного вами рецепта «' +
@@ -249,8 +249,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
               relatedId: Number(event.id),
               notificationDate: shortTodayDate,
             };
-            this.notifyService
-              .sendNotification(reminder, this.currentUser)
+            this.notifyService.sendNotification(reminder, this.currentUser);
           }
         });
       }
@@ -329,8 +328,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
         )
       ) {
         //присылаем увед
-        this.notifyService
-          .sendNotification(reminder, this.currentUser)
+        this.notifyService.sendNotification(reminder, this.currentUser);
       }
     }
 
@@ -360,27 +358,27 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
             ...this.currentUser,
             notifications: this.currentUser.notifications.filter(
               (notify) =>
-                !(notify.context === 'plan-reminder-start' && notify.id === n.id),
-            )
-          }
-        
+                !(
+                  notify.context === 'plan-reminder-start' && notify.id === n.id
+                ),
+            ),
+          };
         }
       }
     });
 
-    if (editUser) this.updateUser(this.currentUser)
+    if (editUser) this.updateUser(this.currentUser);
   }
 
   trackByFn(index: number, element: INotification) {
     return element?.id;
   }
-  
-  openNotifies() {
-    if (!this.currentUser.id) { this.noAccessModalShow = true }
-    else this.notifiesOpen = true;
-  }
 
-   
+  openNotifies() {
+    if (!this.currentUser.id) {
+      this.noAccessModalShow = true;
+    } else this.notifiesOpen = true;
+  }
 
   currentUserInit() {
     this.authService.currentUser$
@@ -449,7 +447,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
       notification.read = true;
     });
 
-    if (haveNotRead) this.updateUser(this.currentUser)
+    if (haveNotRead) this.updateUser(this.currentUser);
   }
 
   async updateUser(user: IUser) {
@@ -476,26 +474,28 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
       this.cd.markForCheck();
     }
   }
-
+  removePopup(popup: INotification) {
+    const index = this.popups.indexOf(popup);
+    if (index !== -1) {
+      this.popups.splice(index, 1);
+    }
+  }
   //удаление уведомления
-  removePopup(popup: INotification): void {
+  autoRemovePopup(popup: INotification): void {
     if (this.hovered !== popup.id) {
-      const index = this.popups.indexOf(popup);
-      if (index !== -1) {
-        this.popups.splice(index, 1);
-      }
+      this.removePopup(popup);
     }
   }
 
   hovered = 0;
 
-  popupHover(popup:INotification) {
+  popupHover(popup: INotification) {
     this.hovered = popup.id;
   }
-  popupBlur(popup:INotification) {
+  popupBlur(popup: INotification) {
     this.hovered = 0;
     setTimeout(() => {
-      this.removePopup(popup);
+      this.autoRemovePopup(popup);
     }, this.popupLifetime * 1000);
   }
 
@@ -504,7 +504,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     this.popupHistory.push(popup.id);
     this.popups.unshift(popup);
     setTimeout(() => {
-      this.removePopup(popup);
+      this.autoRemovePopup(popup);
     }, this.popupLifetime * 1000);
   }
 

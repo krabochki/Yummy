@@ -359,28 +359,11 @@ export class UserAccountEditComponent
     if (this.editableUser.avatarUrl)
       this.deleteOldUserpic(this.editableUser.avatarUrl);
 
-    if (this.form.value.userpic) {
-      this.uploadExistingAvatarFromSupabase();
-    }
-    else {
-      this.updateSupabaseUser(this.newUser);
-    }
-    
-    this.authService.loginUser(this.newUser).subscribe((user) => {
-      if (user) {
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        this.authService.setCurrentUser(user);
-      }
-    });
+    this.updateUserInSupabase();
   }
 
   async updateSupabaseUser(user: IUser) {
-    this.loading = true;
-    this.cdr.markForCheck();
     await this.userService.updateUserInSupabase(user);
-    this.loading = false;
-    this.successModal = true;
-    this.cdr.markForCheck();
   }
 
   handleSaveModal(answer: boolean) {
@@ -408,7 +391,7 @@ export class UserAccountEditComponent
         'user',
         '/cooks/list/' + this.newUser.id,
       );
-      this.notifyService.sendNotification(notify, this.newUser)
+      this.notifyService.sendNotification(notify, this.newUser);
     }
   }
   handleCloseModal(answer: boolean) {
@@ -456,21 +439,30 @@ export class UserAccountEditComponent
       .getPublicUrl(path).data.publicUrl;
   }
 
-  async uploadExistingAvatarFromSupabase() {
+  async updateUserInSupabase() {
     this.loading = true;
+    this.cdr.markForCheck();
     try {
       const file = this.form.get('userpic')?.value;
-      const filePath = this.supabaseFilepath;
-      await this.supabase.storage.from('userpics').upload(filePath, file);
-      this.updateSupabaseUser(this.newUser);
+      if (file) {
+        const filePath = this.supabaseFilepath;
+        await this.supabase.storage.from('userpics').upload(filePath, file);
+      }
+      await this.updateSupabaseUser(this.newUser);
+      this.authService.loginUser(this.newUser).subscribe((user) => {
+        if (user) {
+          this.authService.setCurrentUser(user);
+        }
+      });
+      this.successModal = true;
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
       }
     } finally {
+      this.loading = false;
       this.cdr.markForCheck();
     }
-    this.loading = false;
   }
   async deleteOldUserpic(path: string) {
     await this.supabase.storage.from('userpics').remove([path]);

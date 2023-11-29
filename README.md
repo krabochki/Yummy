@@ -7,7 +7,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="src/assets/images/chef-night.png" alt="Logo" width="80" height="80">
+    <img src="src/assets/images/chef-day.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Yummy</h3>
@@ -75,8 +75,8 @@
 
 ### Технологии
 
-- IDE: Visual Studio Code
 - [![Angular][Angular.io]][Angular-url]
+- IDE: Visual Studio Code
 - Язык программирования: TypeScript
 - База данных: Supabase
 
@@ -111,12 +111,17 @@
 
 Автор проекта: Кузьменок Полина :)
 
-[@Instagram](https://twitter.com/your_username)
-[@LinkedIn](https://www.linkedin.com/in/polina-kuzmenok-550449291/)
-[@Telegram](https://t.me/krabochki)
-[@ВКонтакте](https://vk.com/nanananana_come_on)
-
-
+ <p align="center">
+    <br />
+    <a href="https://instagram.com/krabochki">Instagram</a>
+    ·
+    <a href="https://www.linkedin.com/in/polina-kuzmenok-550449291">LinkedIn</a>
+    ·
+    <a href="https://t.me/krabochki">Telegram</a>  
+    ·
+    <a href="https://vk.com/nanananana_come_on">ВКонтакте</a>
+  </p>
+  
 <p align="right">(<a href="#readme-top">наверх</a>)</p>
 
 <!-- ACKNOWLEDGMENTS -->

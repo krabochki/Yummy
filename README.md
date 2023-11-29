@@ -1,8 +1,6 @@
 
 <a name="readme-top"></a>
 
-[![LinkedIn][linkedin-shield]][https://www.linkedin.com/in/polina-kuzmenok-550449291/]
-
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
@@ -11,7 +9,7 @@
   </a>
 
   <h3 align="center">Yummy</h3>
-  <p align="center">2 0 2 3</p>
+  <p align="center">2023</p>
 
   <p align="center">
     Социальная сеть для обмена рецептами

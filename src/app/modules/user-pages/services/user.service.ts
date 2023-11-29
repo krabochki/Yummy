@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import { IUser, PermissionContext } from '../models/users';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, map, switchMap, take, tap, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+} from 'rxjs';
 import { usersUrl } from 'src/tools/source';
 import { allPunctuationMarks, brackets } from 'src/tools/regex';
+import { supabase } from '../../controls/image/supabase-data';
+import { getCurrentDate } from 'src/tools/common';
 
 @Injectable({
   providedIn: 'root',
@@ -12,15 +15,25 @@ export class UserService {
   private usersSubject = new BehaviorSubject<IUser[]>([]);
   users$ = this.usersSubject.asObservable();
   url: string = usersUrl;
+  
 
-  constructor(private http: HttpClient) {
- 
+  getMaxUserId() {
+    return supabase
+      .from('profiles')
+      .select('id')
+      .order('id', { ascending: false })
+      .limit(1)
+      .then((response) => {
+        if (response.data && response.data.length > 0) {
+          return response.data[0].id;
+        } else {
+          return 0;
+        }
+      });
   }
 
   loadUsersData() {
-    this.getUsers().subscribe((data) => {
-      this.usersSubject.next(data);
-    });
+    return this.loadUsersFromSupabase();
   }
 
   isUserSubscriber(user: IUser, userId: number) {
@@ -41,10 +54,8 @@ export class UserService {
     }
   }
 
-  getNearby(users: IUser[], user: IUser): IUser[]
-  {
+  getNearby(users: IUser[], user: IUser): IUser[] {
     if (user.location.trim() !== '') {
-
       const currentUserLocationWords = user.location
         .toLowerCase()
         .replace(brackets, ' ')
@@ -52,7 +63,6 @@ export class UserService {
 
       let matchingUsers = users.filter((item) => {
         if (item.location.trim() !== '') {
-
           const userLocationWords = item.location
             .toLowerCase()
             .replace(brackets, ' ')
@@ -62,15 +72,15 @@ export class UserService {
             userLocationWords.includes(word),
           );
         }
-        return null
+        return null;
       });
-    
+
       matchingUsers = matchingUsers.filter((item) => item.id !== user.id);
-    
+
       return matchingUsers;
-    }
-    else return []
-}
+    } else return [];
+  }
+
   getFollowing(users: IUser[], userId: number): IUser[] {
     const following: IUser[] = [];
     users.forEach((user: IUser) => {
@@ -84,10 +94,6 @@ export class UserService {
     return following;
   }
 
-  getUsers() {
-    return this.http.get<IUser[]>(this.url);
-  }
-
   deleteDataAboutDeletingUser(deletingId: number) {
     let users: IUser[] = [];
     this.users$.subscribe((data) => {
@@ -97,7 +103,7 @@ export class UserService {
           user.followersIds = user.followersIds?.filter(
             (element) => element !== deletingId,
           );
-          this.updateUsers(user);
+          this.updateUser(user);
         }
       });
     });
@@ -121,92 +127,135 @@ export class UserService {
     return user;
   }
 
-  updateUsers(user: IUser) {
-    const url = `${this.url}/${user.id}`;
-
-    return this.http
-      .put<IUser>(url, user)
-      .pipe(
-        switchMap((updatedUser) => {
-          // Обновление пользователей внутри Observable
-          return this.usersSubject.pipe(
-            take(1), // Берем только одно значение и отписываемся
-            map((currentUsers) => {
-              const index = currentUsers.findIndex(
-                (r) => r.id === updatedUser.id,
-              );
-              if (index !== -1) {
-                const updatedUsers = [...currentUsers];
-                updatedUsers[index] = updatedUser;
-                this.usersSubject.next(updatedUsers); // Обновляем Subject
-              }
-              return updatedUser; // Возвращаем обновленного пользователя
-            }),
-          );
-        }),
-        catchError((error) => {
-          // Обработка ошибки, если необходимо
-          return throwError(error);
-        }),
-      )
+  private async updateUser(user: IUser) {
+    await this.updateUserInSupabase(user);
   }
 
-  updateUser(user: IUser) {
-    return this.http.put<IUser>(`${this.url}/${user.id}`, user);
+  loadUsersFromSupabase() {
+   return supabase
+     .from('profiles')
+     .select('*')
+     .then((response) => {
+       const supRecipes = response.data;
+       const users = supRecipes?.map((supUser) => {
+         return this.translateUser(supUser);
+       });
+       if (users) this.usersSubject.next(users);
+     });
   }
 
-  getUsersWhichWillBeUpdatedWhenUserDeleting(users: IUser[], user: IUser): IUser[] {
-    const usersToUpdate:IUser[] = []
-    users.forEach(
-      u => {
-        if (u.followersIds.includes(user.id))
-        {
-          u.followersIds = u.followersIds.filter(f => f !== user.id)
-          usersToUpdate.push(u);
-        }
-      } 
-    )
+  private translateUser(user: any): IUser {
+    return {
+      id: user.id || 0, // Уникальный идентификатор пользователя
+      username: user.username || '', // Имя пользователя
+      avatarUrl: user.avatarurl || '', // URL аватара пользователя
+      description: user.description || '', // Описание пользователя
+      quote: user.quote || '', // Цитата пользователя
+      email: user.email,
+      fullName: user.fullname || '', // Полное имя пользователя
+      followersIds: user.followersids || [], // Список идентификаторов подписчиков
+      socialNetworks: user.socialnetworks || [], // Список социальных сетей пользователя
+      personalWebsite: user.personalwebsite || '', // Личный веб-сайт пользователя
+      location: user.location || '', // Локация пользователя
+      profileViews: user.profileviews || 0, // Количество просмотров профиля
+      role: user.role || 'user',
+      registrationDate:user.registrationDate,
+      notifications: user.notifications || [],
+      permissions: user.permissions || [],
+      exclusions: user.exclusions || [],
+      permanent: user.permanent || [],
+      emojiStatus: user.emojistatus || null,
+    } as IUser;
+  }
+  async addUserToSupabase(id: number, username: string, email: string) {
+    return supabase.from('profiles').upsert([
+      {
+        id: id,
+        username: username,
+        email: email,
+        registrationDate: getCurrentDate(),
+        role: 'user',
+      },
+    ]);
+  }
+  deleteUserFromSupabase(id: number) {
+    return supabase.from('profiles').delete().eq('id', id);
+  }
+  updateUserInSupabase(user: IUser) {
+    const { id, ...updateData } = user;
+    return supabase
+      .from('profiles')
+      .update({
+        username: user.username,
+        email: user.email,
+        avatarurl: user.avatarUrl || '',
+        description: user.description || '', // Описание пользователя
+        quote: user.quote || '', // Цитата пользователя
+        fullname: user.fullName || '', // Полное имя пользователя
+        followersids: user.followersIds || [], // Список идентификаторов подписчиков
+        socialnetworks: user.socialNetworks || [], // Список социальных сетей пользователя
+        personalwebsite: user.personalWebsite || '', // Личный веб-сайт пользователя
+        location: user.location || '', // Локация пользователя
+        profileviews: user.profileViews || 0, // Количество просмотров профиля
+        role: user.role || 'user',
+        notifications: user.notifications || [],
+        permissions: user.permissions || [],
+        exclusions: user.exclusions || [],
+        permanent: user.permanent || [],
+        emojistatus: user.emojiStatus || null,
+      })
+      .eq('id', id);
+  }
+
+  updateUsersAfterUPSERT(payload: any) {
+    const currentUsers = this.usersSubject.value;
+    const index = currentUsers.findIndex(
+      (r) => r.id === this.translateUser(payload).id,
+    );
+    if (index !== -1) {
+      const updatedUsers = [...currentUsers];
+      updatedUsers[index] = this.translateUser(payload);
+
+      this.usersSubject.next(updatedUsers);
+    }
+  }
+
+  updateUsersAfterINSERT(payload: any) {
+    const currentUsers = this.usersSubject.value;
+    const updatedUsers = [...currentUsers, this.translateUser(payload)];
+    this.usersSubject.next(updatedUsers);
+  }
+  updateUsersAfterDELETE(payload: any) {
+    this.usersSubject.next(
+      this.usersSubject.value.filter(
+        (users) => users.id !== this.translateUser(payload).id,
+      ),
+    );
+  }
+
+  getUsersWhichWillBeUpdatedWhenUserDeleting(
+    users: IUser[],
+    user: IUser,
+  ): IUser[] {
+    const usersToUpdate: IUser[] = [];
+    users.forEach((u) => {
+      if (u.followersIds.includes(user.id)) {
+        u.followersIds = u.followersIds.filter((f) => f !== user.id);
+        usersToUpdate.push(u);
+      }
+    });
     return usersToUpdate;
-  }
-
-  deleteUser(deletableUser:IUser) {
-    return this.http
-      .delete(`${this.url}/${deletableUser.id}`)
-      .pipe(
-        tap(() =>
-          this.usersSubject.next(
-            this.usersSubject.value.filter(
-              (user) => user.id !== deletableUser.id,
-            ),
-          ),
-        ),
-      );
   }
 
   getPermission(context: PermissionContext, user: IUser): boolean {
     const permissions = user.permissions;
-
     //возвращаем что уведомление включено true, только если оно конкретно не установлено false
 
     if (permissions && permissions.length) {
-          const permissionExist = permissions.find(
-            (p) => p.context === context,
-      );
+      const permissionExist = permissions.find((p) => p.context === context);
       if (permissionExist) return permissionExist.enabled;
       else return true;
     }
     return true;
-  }
-
-  postUser(user: IUser) {
-    return this.http
-      .post<IUser>(this.url, user)
-      .pipe(
-        tap((newUser: IUser) => {
-          const currentUsers = this.usersSubject.value;
-          const updatedUsers = [...currentUsers, newUser];
-          this.usersSubject.next(updatedUsers);
-        }),
-      )
   }
 }

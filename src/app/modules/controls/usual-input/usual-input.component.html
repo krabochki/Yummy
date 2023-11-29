@@ -10,7 +10,7 @@
 
     #input
     [value]="value"
-    (keyup)="change()"
+    (keyup)="filter();change()"
     [(ngModel)]="value"
     [disabled]="disabled || inputDisabled"
     autocomplete="off"
@@ -41,21 +41,21 @@
   </textarea>
   </ng-template>
 
-   <span class="resizer" *ngIf="inputType === 'textarea'"> <svg-icon class="resizer-icon" [src]="'assets/images/svg/resize.svg'" /></span>
+   <span class="resizer" *ngIf="inputType === 'textarea'"> <svg-icon class="resizer-icon" [src]="'/assets/images/svg/resize.svg'" /></span>
 
    <span class="eye" *ngIf="inputType==='password'" (click)="eye()">
       <svg-icon
         [applyClass]="true"
         [class]="error !== '' ? 'uncorrect' : 'correct'"
         *ngIf="!this.showPassword"
-        [src]="'../../../../assets/images/svg/eye-close.svg'"
+        [src]="'/assets/images/svg/eye-close.svg'"
       ></svg-icon>
 
       <svg-icon
         *ngIf="this.showPassword"
         [applyClass]="true"
                 [class]="error !== '' ? 'uncorrect' : 'correct'"
-        [src]="'../../../../assets/images/svg/eye-open.svg'"
+        [src]="'/assets/images/svg/eye-open.svg'"
       ></svg-icon>
     </span>
     

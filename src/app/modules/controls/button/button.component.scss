@@ -16,6 +16,7 @@ button.admin{
 
 }
 
+
 button.moder{
     background: var(--color-moderator);
   border: 3px solid var(--color-moderator);
@@ -228,9 +229,8 @@ button {
     width: 0;
     height: 0;
     content: "";
-    background-color: red;
     position: absolute;
-    transition: width 0.3s ease-in-out, height 0.3s ease-in-out;
+    transition: width 0.2s ease-in-out, height 0.2s ease-in-out;
     z-index: -1;
     border-radius: 100%;
     top: 0;

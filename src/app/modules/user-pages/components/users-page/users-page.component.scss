@@ -142,31 +142,20 @@ h2 {
     column-gap: 2em;
     display: flex;
     justify-content: space-between;
-    transition:  background-color 0.2s ease-in-out;
     scroll-snap-align: center;
 
     span {
       text-align: right;
-      transition: font-weight 0.2s ease-in-out;
       width: 8em;
       text-overflow: ellipsis;
       overflow: hidden;
-      line-height: 1.2;
       font-size: 0.8em;
-      &:hover {
-        font-weight: 500;
-      }
     }
 
     p {
-      transition:font-weight  0.2s ease-in-out;
       text-overflow: ellipsis;
-      line-height: 1.2;
       overflow: hidden;
       width:9em;
-      &:hover {
-        font-weight: 500;
-      }
     }
 
     &:hover {
@@ -174,11 +163,11 @@ h2 {
     }
 
     &:first-of-type {
-      padding-top: 1em;
+      padding-top: 0.75em;
     }
 
     &:last-of-type {
-      padding-bottom: 1em;
+      padding-bottom: 0.75em;
     }
 
     &:last-child {
@@ -191,9 +180,9 @@ h2 {
 
   max-height: 50vh;
   margin-top: 0.5em;
-  overflow-y: scroll !important;
+  overflow-y: auto !important;
   position: absolute;
-  border-radius: 1.5em 5px 5px 1.5em;
+  border-radius:  1.5em;
   display: flex;
   padding: 0;
   flex-direction: column;

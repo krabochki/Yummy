@@ -20,6 +20,7 @@ import { NotificationService } from 'src/app/modules/user-pages/services/notific
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { Router } from '@angular/router';
 import { RecipeService } from '../../../services/recipe.service';
+import { supabase } from 'src/app/modules/controls/image/supabase-data';
 
 @Component({
   selector: 'app-comment',
@@ -32,24 +33,27 @@ export class CommentComponent implements OnInit, OnDestroy {
   @Input() comment: IComment = nullComment;
   @Input() recipe: IRecipe = nullRecipe;
   protected destroyed$: Subject<void> = new Subject<void>();
-  public currentUser: IUser = {...nullUser};
-  public author: IUser = {...nullUser};
+  public currentUser: IUser = { ...nullUser };
+  avatar = '';
+  noAvatar = '/assets/images/userpic.png';
+  public author: IUser = { ...nullUser };
   public copyState = false; //скопирован ли текст комментария
   protected deleteCommentModalShow: boolean = false;
   protected reportCommentModalShow: boolean = false;
   protected successReportCommentModalShow: boolean = false;
   protected noAccessModalShow: boolean = false;
-  
+  loading = false;
+
   get showCommentAuthor() {
-    return this.commentService.showAuthor(this.author,this.currentUser)
+    return this.commentService.showAuthor(this.author, this.currentUser);
   }
   get showRecipeAuthor() {
-    return !this.recipeService.hideAuthor(this.currentUser,this.author)
+    return !this.recipeService.hideAuthor(this.currentUser, this.author);
   }
 
   constructor(
     private userService: UserService,
-    private router:Router,
+    private router: Router,
     private cd: ChangeDetectorRef,
     private authService: AuthService,
     private notifyService: NotificationService,
@@ -57,6 +61,12 @@ export class CommentComponent implements OnInit, OnDestroy {
     private commentService: CommentService,
     private recipeService: RecipeService,
   ) {}
+
+  downloadUserpicFromSupabase(path: string) {
+    this.avatar = supabase.storage
+      .from('userpics')
+      .getPublicUrl(path).data.publicUrl;
+  }
 
   public ngOnInit(): void {
     this.authService.currentUser$
@@ -70,126 +80,147 @@ export class CommentComponent implements OnInit, OnDestroy {
         const find: IUser | undefined = data.find(
           (user) => user.id === this.comment.authorId,
         );
-        if (find) this.author = find;
+        if (find) {
+          this.author = find;
+          if (this.author.avatarUrl)
+            this.downloadUserpicFromSupabase(this.author.avatarUrl);
+        }
       });
   }
 
-  deleteComment() {
+  async deleteComment() {
+    this.loading = true;
+    this.cd.markForCheck();
     if (this.recipe.reports) {
       this.recipe.reports = this.recipe.reports.filter(
         (item) => item.comment !== this.comment.id,
       );
     }
 
-    this.commentService
-      .deleteComment(this.comment, this.recipe)
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe(() => {
-
-        if (this.userService.getPermission('you-delete-your-comment', this.author)) {
-        
-          const notify: INotification = this.notifyService.buildNotification(
-            'Комментарий удален',
-            `Ты успешно удалил свой комментарий «${this.comment.text}» под рецептом «${this.recipe.name}»`,
-            'success',
-            'comment',
-            '/recipes/list/' + this.recipe.id,
-          );
-          this.notifyService.sendNotification(notify, this.author).subscribe();
-        }
-      });
+    await this.commentService.deleteComment(this.comment, this.recipe);
+    if (
+      this.userService.getPermission('you-delete-your-comment', this.author)
+    ) {
+      const notify: INotification = this.notifyService.buildNotification(
+        'Комментарий удален',
+        `Ты успешно удалил свой комментарий «${this.comment.text}» под рецептом «${this.recipe.name}»`,
+        'success',
+        'comment',
+        '/recipes/list/' + this.recipe.id,
+      );
+     await  this.notifyService.sendNotification(notify, this.author)
+    }
+    this.loading = false;
+    this.cd.markForCheck();
   }
 
-
-
-  likeComment() {
-    this.commentService
-      .likeComment(this.currentUser, this.comment, this.recipe)
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe(() => {
-        if (this.comment.likesId.includes(this.currentUser.id) && this.comment.authorId !== this.currentUser.id
-        && this.userService.getPermission('your-commented-liked', this.author)) {
-      
-          const notify: INotification = this.notifyService.buildNotification(
-            'Комментарий кому-то понравился',
-            `Твой комментарий «${this.comment.text}» под рецептом «${
-              this.recipe.name
-            }» понравился кулинару ${
-              this.currentUser.fullName
-                ? this.currentUser.fullName
-                : '@' + this.currentUser.username
-            }`,
-            'info',
-            'comment',
-            '/cooks/list/' + this.currentUser.id,
-          );
-          this.notifyService.sendNotification(notify, this.author).subscribe();
-        }
-      });
+  async likeComment() {
+    await this.commentService.likeComment(
+      this.currentUser,
+      this.comment,
+      this.recipe,
+    );
+    if (
+      this.comment.likesId.includes(this.currentUser.id) &&
+      this.comment.authorId !== this.currentUser.id &&
+      this.userService.getPermission('your-commented-liked', this.author)
+    ) {
+      const notify: INotification = this.notifyService.buildNotification(
+        'Комментарий кому-то понравился',
+        `Твой комментарий «${this.comment.text}» под рецептом «${this.recipe.name
+        }» понравился кулинару ${this.currentUser.fullName
+          ? this.currentUser.fullName
+          : '@' + this.currentUser.username
+        }`,
+        'info',
+        'comment',
+        '/cooks/list/' + this.currentUser.id,
+      );
+      await this.notifyService.sendNotification(notify, this.author)
+    }
   }
-  dislikeComment() {
-    this.commentService
-      .dislikeComment(this.currentUser, this.comment, this.recipe)
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe(() => {
-        if (this.comment.dislikesId.includes(this.currentUser.id) && this.comment.authorId !== this.currentUser.id
-        &&(this.userService.getPermission('your-commented-liked',this.author))) {
-          const notify: INotification = this.notifyService.buildNotification(
-            'Комментарий кому-то не понравился',
-            `Твой комментарий «${this.comment.text}» под рецептом «${
-              this.recipe.name
-            }» не понравился кулинару
+ async dislikeComment() {
+    await this.commentService.dislikeComment(
+      this.currentUser,
+      this.comment,
+      this.recipe,
+    );
+
+    if (
+      this.comment.dislikesId.includes(this.currentUser.id) &&
+      this.comment.authorId !== this.currentUser.id &&
+      this.userService.getPermission('your-commented-liked', this.author)
+    ) {
+      const notify: INotification = this.notifyService.buildNotification(
+        'Комментарий кому-то не понравился',
+        `Твой комментарий «${this.comment.text}» под рецептом «${
+          this.recipe.name
+        }» не понравился кулинару
             ${
               this.currentUser.fullName
                 ? this.currentUser.fullName
                 : '@' + this.currentUser.username
             }`,
-            'info',
-            'comment',
-            '/cooks/list/' + this.currentUser.id,
-          );
-          this.notifyService.sendNotification(notify, this.author).subscribe();
-        }
-      });
+        'info',
+        'comment',
+        '/cooks/list/' + this.currentUser.id,
+      );
+     await this.notifyService.sendNotification(notify, this.author)
+    }
   }
 
-  reportComment() {
-    this.reportCommentModalShow = false;
+  async reportComment() {
 
-    this.commentService
-      .reportComment(this.comment, this.recipe, this.currentUser)
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe(() => {
-        this.successReportCommentModalShow = true;
-        if (this.userService.getPermission('your-reports-reviewed-moderator',this.author)) {
-        
-          const notify: INotification = this.notifyService.buildNotification(
-            'Кто-то пожаловался на комментарий',
-            `Кто-то пожаловался на твой комментарий «${this.comment.text}» под рецептом «${this.recipe.name}». Жалоба ожидает рассмотрения модератора`,
-            'warning',
-            'comment',
-            '/recipes/list/' + this.recipe.id,
-          );
-          this.notifyService.sendNotification(notify, this.author).subscribe()
-        }
+    this.loading = true;
+    
+  this.cd.markForCheck();
 
-        if (this.userService.getPermission('your-reports-publish', this.currentUser)) {
-         
-          const notify = this.notifyService.buildNotification(
-            'Ты пожаловался на комментарий',
-            `Ты отправил жалобу на комментарий ${
-              this.showCommentAuthor?('кулинара ' +
+   await this.commentService.reportComment(
+      this.comment,
+      this.recipe,
+      this.currentUser,
+    );
+
+    if (
+      this.userService.getPermission(
+        'your-reports-reviewed-moderator',
+        this.author,
+      )
+    ) {
+      const notify: INotification = this.notifyService.buildNotification(
+        'Кто-то пожаловался на комментарий',
+        `Кто-то пожаловался на твой комментарий «${this.comment.text}» под рецептом «${this.recipe.name}». Жалоба ожидает рассмотрения модератора`,
+        'warning',
+        'comment',
+        '/recipes/list/' + this.recipe.id,
+      );
+      await this.notifyService.sendNotification(notify, this.author)
+    }
+
+    if (
+      this.userService.getPermission('your-reports-publish', this.currentUser)
+    ) {
+      const notify = this.notifyService.buildNotification(
+        'Ты пожаловался на комментарий',
+        `Ты отправил жалобу на комментарий ${
+          this.showCommentAuthor
+            ? 'кулинара ' +
               (this.author.fullName
                 ? this.author.fullName
-                : '@' + this.author.username)):''
-            } «${this.comment.text}» под рецептом «${this.recipe.name}»`,
-            'success',
-            'comment',
-            '/recipes/list/' + this.recipe.id,
-          );
-          this.notifyService.sendNotification(notify, this.currentUser).subscribe();
-        }
-      });
+                : '@' + this.author.username)
+            : ''
+        } «${this.comment.text}» под рецептом «${this.recipe.name}»`,
+        'success',
+        'comment',
+        '/recipes/list/' + this.recipe.id,
+      );
+      await this.notifyService.sendNotification(notify, this.currentUser)
+
+    }
+    this.loading = false;
+              this.successReportCommentModalShow = true;
+
+     this.cd.markForCheck();
   }
 
   get date() {

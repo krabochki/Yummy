@@ -21,7 +21,7 @@ import {
   planRoutes,
 } from './consts';
 import { NavigationEnd, Router } from '@angular/router';
-import { Subject, filter, takeUntil } from 'rxjs';
+import { Subject, combineLatest, filter, takeUntil } from 'rxjs';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
@@ -62,7 +62,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   planRouterLinks = planRouterLinks;
 
   maxNumberOfPopupsInSameTime = 3;
-  popupLifetime = 5; //в секундах
+  popupLifetime = 7; //в секундах
 
   adminActionsCount = 0;
 
@@ -80,7 +80,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
 
   noAccessModalShow: boolean = false;
 
-  baseSvgPath: string = '../../../assets/images/svg/';
+  baseSvgPath: string = '/assets/images/svg/';
 
   protected destroyed$: Subject<void> = new Subject<void>();
 
@@ -154,35 +154,29 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   }
 
   recipesInit() {
-    this.recipeService.recipes$
+    combineLatest([
+      this.recipeService.recipes$,
+      this.ingredientService.ingredients$,
+      this.categoryService.categories$,
+    ])
       .pipe(takeUntil(this.destroyed$))
-      .subscribe((recipes) => {
+      .subscribe(([recipes, ingredients, categories]) => {
         const awaitingRecipes = recipes.filter(
           (r) => r.status === 'awaits',
         ).length;
-        let reports = 0;
-        recipes.forEach((recipe) => {
-          if (recipe.reports) reports += recipe.reports.length;
-        });
-        this.ingredientService.ingredients$
-          .pipe(takeUntil(this.destroyed$))
-          .subscribe((ingredients) => {
-            const awaitingIngredients = ingredients.filter(
-              (i) => i.status === 'awaits',
-            ).length;
-            this.categoryService.categories$
-              .pipe(takeUntil(this.destroyed$))
-              .subscribe((categories) => {
-                const awaitingCategories = categories.filter(
-                  (c) => c.status === 'awaits',
-                ).length;
-                this.adminActionsCount =
-                  reports +
-                  awaitingRecipes +
-                  awaitingCategories +
-                  awaitingIngredients;
-              });
-          });
+        const reports = recipes.reduce((totalReports, recipe) => {
+          return totalReports + (recipe.reports ? recipe.reports.length : 0);
+        }, 0);
+
+        const awaitingIngredients = ingredients.filter(
+          (i) => i.status === 'awaits',
+        ).length;
+        const awaitingCategories = categories.filter(
+          (c) => c.status === 'awaits',
+        ).length;
+
+        this.adminActionsCount =
+          reports + awaitingRecipes + awaitingCategories + awaitingIngredients;
       });
   }
 
@@ -242,7 +236,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
               alreadySentReminder = true; //если уже есть уведомление с типом напоминалка и прислано оно сегодня
           });
           if (!alreadySentReminder) {
-            const reminder = {
+            const reminder: INotification = {
               ...this.notifyService.buildNotification(
                 'Время начала запланированного рецепта настало!',
                 'Время начала запланированного вами рецепта «' +
@@ -252,125 +246,138 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
                 'plan-reminder-start',
                 '/plan/calendar',
               ),
-              relatedId: event.id,
+              relatedId: Number(event.id),
               notificationDate: shortTodayDate,
             };
-            this.notifyService
-              .sendNotification(reminder, this.currentUser)
-              .subscribe();
+            this.notifyService.sendNotification(reminder, this.currentUser);
           }
         });
       }
     }
 
-    if (
-      this.userService.getPermission(
-        'planned-recipes-in-3-days',
-        this.currentUser,
-      )
-    ) {
-      if (eventsIn3Days.length > 0) {
-        //если че то есть :
-        const shortTodayDate = today.toDateString(); //сегодняшняя дата без часов
-        let alreadySentReminder = false; //прислано ли уже уведомление
-        const currentUserNotifications = this.currentUser.notifications;
-        alreadySentReminder =
-          currentUserNotifications.find(
-            (n) =>
+    //если че то есть :
+    const shortTodayDate = today.toDateString(); //сегодняшняя дата без часов
+    let alreadySentReminder = false; //прислано ли уже уведомление
+    alreadySentReminder =
+      currentUserNotifications.find(
+        (n) =>
+          n.context === 'plan-reminder' &&
+          n.notificationDate === shortTodayDate,
+      ) !== undefined;
+
+    const old3DaysReminders = currentUserNotifications.filter(
+      (n) =>
+        n.context === 'plan-reminder' && n.notificationDate < shortTodayDate,
+    );
+    if (old3DaysReminders.length > 0) {
+      this.currentUser = {
+        ...{ ...this.currentUser },
+        notifications: this.currentUser.notifications.filter(
+          (n) =>
+            !(
               n.context === 'plan-reminder' &&
-              n.notificationDate === shortTodayDate,
-          ) !== undefined;
-
-        //очищаем старые напоминалки
-
-        if (!alreadySentReminder) {
-          //если сегодня не напоминали
-          if (
-            this.currentUser.notifications.length !==
-            this.currentUser.notifications.filter(
-              (n) => n.context !== 'plan-reminder',
-            ).length
-          )
-            editUser = true;
-          this.currentUser.notifications =
-            this.currentUser.notifications.filter(
-              (n) => n.context !== 'plan-reminder',
-            );
-
-          let counter = 0;
-          const eventTitles = eventsIn3Days.map((event) => {
-            counter++;
-            const when = ` (начало ${this.timePastService
-              .timePast(event.start)
-              .toLowerCase()})`;
-            return (
-              'ㅤ' +
-              (eventsIn3Days.length > 1 ? counter + ') ' : '') +
-              event.title.trim() +
-              when
-            );
-          });
-          const eventString = eventTitles.join(', <br>');
-          const reminderText = `Хотим вас предупредить, что у вас запланирован${
-            eventsIn3Days.length > 1 ? 'ы' : ''
-          } рецепт${
-            eventsIn3Days.length > 1 ? 'ы' : ''
-          } на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению ${
-            eventsIn3Days.length > 1
-              ? 'этих вкусных блюд'
-              : 'этого вкусного блюда'
-          }.<br>Запланированны${eventsIn3Days.length > 1 ? 'е' : 'й'} рецепт${
-            eventsIn3Days.length > 1 ? 'ы' : ''
-          }:<br>${eventString}`;
-
-          const reminder = {
-            ...this.notifyService.buildNotification(
-              'Начало запланированного рецепта уже скоро!',
-              reminderText,
-              'warning',
-              'plan-reminder',
-              '/plan/calendar',
+              n.notificationDate < shortTodayDate
             ),
-            notificationDate: shortTodayDate,
-          };
-
-          //присылаем увед
-          this.notifyService
-            .sendNotification(reminder, this.currentUser)
-            .subscribe();
-        }
-      }
-
-      //очищаем напоминания о начале событий которые уже прошли
-      this.currentUser.notifications.forEach((n) => {
-        if (n.context === 'plan-reminder-start') {
-          const findedEvent = this.currentUserPlan.calendarEvents.find(
-            (e) => e.recipe === n.relatedId,
-          );
-          if (findedEvent) {
-            if (
-              (findedEvent.end && today > findedEvent.end) ||
-              (!findedEvent.end &&
-                today.getDate() !== findedEvent.start.getDate())
-            ) {
-              editUser = true;
-              this.currentUser.notifications =
-                this.currentUser.notifications.filter(
-                  (n) =>
-                    n.context !== 'plan-reminder-start' &&
-                    n.relatedId !== findedEvent.recipe,
-                );
-            }
-          }
-        }
-      });
+        ),
+      };
+      editUser = true;
     }
 
-    if (editUser) this.userService.updateUser(this.currentUser).subscribe();
+    if (!alreadySentReminder && eventsIn3Days.length > 0) {
+      //если сегодня не напоминали
+
+      let counter = 0;
+      const eventTitles = eventsIn3Days.map((event) => {
+        counter++;
+        const when = ` (начало ${this.timePastService
+          .timePast(event.start)
+          .toLowerCase()})`;
+        return (
+          'ㅤ' +
+          (eventsIn3Days.length > 1 ? counter + ') ' : '') +
+          event.title.trim() +
+          when
+        );
+      });
+      const eventString = eventTitles.join(', <br>');
+      const reminderText = `Хотим вас предупредить, что у вас запланирован${
+        eventsIn3Days.length > 1 ? 'ы' : ''
+      } рецепт${
+        eventsIn3Days.length > 1 ? 'ы' : ''
+      } на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению ${
+        eventsIn3Days.length > 1 ? 'этих вкусных блюд' : 'этого вкусного блюда'
+      }.<br>Запланированны${eventsIn3Days.length > 1 ? 'е' : 'й'} рецепт${
+        eventsIn3Days.length > 1 ? 'ы' : ''
+      }:<br>${eventString}`;
+
+      const reminder = {
+        ...this.notifyService.buildNotification(
+          'Начало запланированного рецепта уже скоро!',
+          reminderText,
+          'warning',
+          'plan-reminder',
+          '/plan/calendar',
+        ),
+        notificationDate: shortTodayDate,
+      };
+
+      if (
+        this.userService.getPermission(
+          'planned-recipes-in-3-days',
+          this.currentUser,
+        )
+      ) {
+        //присылаем увед
+        this.notifyService.sendNotification(reminder, this.currentUser);
+      }
+    }
+
+    //очищаем напоминания о начале событий которые уже прошли
+    this.currentUser.notifications.forEach((n) => {
+      if (n.context === 'plan-reminder-start') {
+        const findedEvent = this.currentUserPlan.calendarEvents.find(
+          (e) => e.id === n.relatedId,
+        );
+        if (findedEvent) {
+          if (
+            (findedEvent.end && today > new Date(findedEvent.end)) ||
+            (!findedEvent.end &&
+              today.getDate() !== findedEvent.start.getDate())
+          ) {
+            editUser = true;
+            this.currentUser.notifications =
+              this.currentUser.notifications.filter(
+                (n) =>
+                  n.context !== 'plan-reminder-start' &&
+                  n.relatedId !== findedEvent.recipe,
+              );
+          }
+        } else {
+          editUser = true;
+          this.currentUser = {
+            ...this.currentUser,
+            notifications: this.currentUser.notifications.filter(
+              (notify) =>
+                !(
+                  notify.context === 'plan-reminder-start' && notify.id === n.id
+                ),
+            ),
+          };
+        }
+      }
+    });
+
+    if (editUser) this.updateUser(this.currentUser);
   }
 
   trackByFn(index: number, element: INotification) {
     return element?.id;
+  }
+
+  openNotifies() {
+    if (!this.currentUser.id) {
+      this.noAccessModalShow = true;
+    } else this.notifiesOpen = true;
   }
 
   currentUserInit() {
@@ -388,7 +395,6 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
           const findUser = this.users.find((u) => u.id === receivedUser.id);
           if (findUser) {
             this.currentUser = findUser;
-            this.cookRouterLinks[0] = '/cooks/list/' + this.currentUser.id;
           }
         } else this.currentUser = receivedUser;
 
@@ -441,7 +447,11 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
       notification.read = true;
     });
 
-    if (haveNotRead) this.userService.updateUsers(this.currentUser).subscribe();
+    if (haveNotRead) this.updateUser(this.currentUser);
+  }
+
+  async updateUser(user: IUser) {
+    await this.userService.updateUserInSupabase(user);
   }
 
   updateNotifies() {
@@ -464,13 +474,29 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
       this.cd.markForCheck();
     }
   }
-
-  //удаление уведомления
-  removePopup(popup: INotification): void {
+  removePopup(popup: INotification) {
     const index = this.popups.indexOf(popup);
     if (index !== -1) {
       this.popups.splice(index, 1);
     }
+  }
+  //удаление уведомления
+  autoRemovePopup(popup: INotification): void {
+    if (this.hovered !== popup.id) {
+      this.removePopup(popup);
+    }
+  }
+
+  hovered = 0;
+
+  popupHover(popup: INotification) {
+    this.hovered = popup.id;
+  }
+  popupBlur(popup: INotification) {
+    this.hovered = 0;
+    setTimeout(() => {
+      this.autoRemovePopup(popup);
+    }, this.popupLifetime * 1000);
   }
 
   //добавление и автоудаление всплыв уведомления
@@ -478,7 +504,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     this.popupHistory.push(popup.id);
     this.popups.unshift(popup);
     setTimeout(() => {
-      this.removePopup(popup);
+      this.autoRemovePopup(popup);
     }, this.popupLifetime * 1000);
   }
 

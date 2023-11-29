@@ -13,7 +13,10 @@ import { UserService } from '../../user-pages/services/user.service';
   providedIn: 'root',
 })
 export class CommentService {
-  constructor(private recipeService: RecipeService, private userService:UserService) {}
+  constructor(
+    private recipeService: RecipeService,
+    private userService: UserService,
+  ) {}
 
   makeComment(user: IUser, content: string): IComment {
     const comment: IComment = {
@@ -25,9 +28,9 @@ export class CommentService {
     return comment;
   }
 
-  deleteComment(comment: IComment, recipe: IRecipe) {
+ async deleteComment(comment: IComment, recipe: IRecipe) {
     recipe.comments = recipe.comments.filter((item) => item.id !== comment.id);
-    return this.recipeService.updateRecipe(recipe);
+    await this.recipeService.updateRecipeFunction(recipe);
   }
   sortComments(comments: IComment[]): IComment[] {
     return comments.sort((commentA, commentB) => {
@@ -36,7 +39,7 @@ export class CommentService {
       else return 0;
     });
   }
-  reportComment(comment: IComment, recipe: IRecipe, reporter: IUser) {
+  async reportComment(comment: IComment, recipe: IRecipe, reporter: IUser) {
     let maxId: number = 0;
     if (recipe.reports) {
       maxId = recipe.reports.reduce((max, c) => (c.id > max ? c.id : max), 0);
@@ -50,15 +53,19 @@ export class CommentService {
     };
     if (!recipe.reports) recipe.reports = [];
     recipe.reports.push(report);
-    return this.recipeService.updateRecipe(recipe);
+    await this.recipeService.updateRecipeFunction(recipe);
   }
 
-  showAuthor(author: IUser, currentUser: IUser): boolean{
-    return (currentUser.id === author.id) || (author.role !== 'admin' && currentUser.role !== 'user') || this.userService.getPermission('comment-author', author)
+  showAuthor(author: IUser, currentUser: IUser): boolean {
+    return (
+      currentUser.id === author.id ||
+      (author.role !== 'admin' && currentUser.role !== 'user') ||
+      this.userService.getPermission('comment-author', author)
+    );
   }
 
-  likeComment(user: IUser, comment: IComment, recipe: IRecipe) {
-    const updatedComments = recipe.comments.map((item) => {
+  async likeComment(user: IUser, comment: IComment, recipe: IRecipe) {
+    recipe.comments.map((item) => {
       if (comment.id === item.id) {
         if (!comment.likesId.includes(user.id)) {
           comment.likesId.push(user.id);
@@ -72,11 +79,11 @@ export class CommentService {
         }
       }
     });
-    return this.recipeService.updateRecipe(recipe);
+    await this.recipeService.updateRecipeFunction(recipe);
   }
 
-  dislikeComment(user: IUser, comment: IComment, recipe: IRecipe) {
-    const updatedComments = recipe.comments.map((item) => {
+  async dislikeComment(user: IUser, comment: IComment, recipe: IRecipe) {
+     recipe.comments.map((item) => {
       if (comment.id === item.id) {
         if (!comment.dislikesId.includes(user.id)) {
           comment.dislikesId.push(user.id);
@@ -90,10 +97,10 @@ export class CommentService {
         }
       }
     });
-    return this.recipeService.updateRecipe(recipe);
+    await this.recipeService.updateRecipeFunction(recipe);
   }
 
-  addCommentToRecipe(recipe: IRecipe, comment: IComment) {
+  async addCommentToRecipe(recipe: IRecipe, comment: IComment) {
     const maxId = recipe.comments.reduce(
       (max, c) => (c.id > max ? c.id : max),
       0,
@@ -105,15 +112,15 @@ export class CommentService {
     } else {
       recipe.comments = [comment];
     }
-    return this.recipeService.updateRecipe(recipe);
+    await this.recipeService.updateRecipeFunction(recipe);
   }
 
-  removeCommentFromRecipe(recipe: IRecipe, commentId: number) {
+  async removeCommentFromRecipe(recipe: IRecipe, commentId: number) {
     if (recipe.comments) {
       recipe.comments = recipe.comments.filter(
         (comment) => comment.id !== commentId,
       );
     }
-    return this.recipeService.updateRecipe(recipe);
+    await this.recipeService.updateRecipeFunction(recipe);
   }
 }

@@ -2,9 +2,8 @@
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <div class="cont column">
 
-
  <div *ngIf="recipe.status==='public'" class="statistic">
-    <svg-icon [applyClass]="true" class="stat-svg" [src]="'../../../../../assets/images/svg/statistic.svg'"></svg-icon>
+    <svg-icon [applyClass]="true" class="stat-svg" [src]="'/assets/images/svg/statistic.svg'"></svg-icon>
     <p>{{!recipe.statistics||recipe.statistics.length===0?'Этот рецепт пока никто не приготовил':statisticPercent+'% кулинаров приготовили бы это снова'}}</p>
  </div>
 
@@ -14,29 +13,27 @@
       class="exit-button"
       [ngClass]="{
         'no-path':
-          this.router.url === this.routerEventsService.previousRoutePath.value
+          noPageToGoBack
       }"
       (click)="
-        !(this.router.url === this.routerEventsService.previousRoutePath.value)
-          ? onSkipHandler()
-          : null
+         noPageToGoBack? null: goBack()
       "
     >
       <svg-icon
         [applyClass]="true"
         class="exit"
-        [src]="'../../../../../assets/images/svg/go-back.svg'"
+        [src]="'/assets/images/svg/go-back.svg'"
       >
       </svg-icon>
     </div>
-    <div>
-      <h1>{{ recipe.name }}</h1>
+    <div style="overflow:visible">
+      <h1 style="overflow:visible">{{ recipe.name }}</h1>
 
       <p class="reading-time">
         <svg-icon
           class="read-icon"
           [applyClass]="true"
-          [src]="'../../../../../assets/images/svg/reading.svg'"
+          [src]="'/assets/images/svg/reading.svg'"
         ></svg-icon>
         <span style="display: inline">
           Чтение займет приблизительно {{ readingTimeInMinutes
@@ -55,11 +52,9 @@
       <div class="full-user-info column">
         <div class="row" class="short-info row">
           <a [ngClass]="{'no-link':author.id<1 || !hideAuthor}" class="row user-info" [routerLink]="author.id>0 && hideAuthor?'/cooks/list/' + author.id:null">
-            <img *ngIf="author.id>0 && hideAuthor"
+            <div *ngIf="author.id>0 && hideAuthor"
               class="userpic noselect"
-              src="../../../../../../assets/images/userpic.png"
-              alt="Фото пользователя"
-            />
+              [style.background-image]="'url('+(authorAvatar?authorAvatar:noAvatar)+')'"></div>
             <p>
               {{
               authorInfo
@@ -76,7 +71,7 @@
             <svg-icon
               class="head-icon"
               [applyClass]="true"
-              [src]="'../../../../../assets/images/svg/calendar.svg'"
+              [src]="'/assets/images/svg/calendar.svg'"
             ></svg-icon>
             <p>{{ recipe.publicationDate | timePast }}</p>
           </div>
@@ -87,7 +82,7 @@
               <svg-icon
                 class="head-icon"
                 [applyClass]="true"
-                [src]="'../../../../../assets/images/svg/private.svg'"
+                [src]="'/assets/images/svg/private.svg'"
               ></svg-icon>
 
               <p>Приватно</p>
@@ -96,7 +91,7 @@
               <svg-icon
                 class="head-icon"
                 [applyClass]="true"
-                [src]="'../../../../../assets/images/svg/awaits.svg'"
+                [src]="'/assets/images/svg/awaits.svg'"
               ></svg-icon>
 
               <p>На проверке</p>
@@ -108,7 +103,7 @@
             <svg-icon
               class="head-icon"
               [applyClass]="true"
-              [src]="'../../../../../assets/images/svg/like.svg'"
+              [src]="'/assets/images/svg/like.svg'"
             ></svg-icon>
 
             <p>{{ recipe.likesId.length }}</p>
@@ -118,7 +113,7 @@
             <svg-icon
               class="head-icon"
               [applyClass]="true"
-              [src]="'../../../../../assets/images/svg/cook.svg'"
+              [src]="'/assets/images/svg/cook.svg'"
             ></svg-icon>
 
             <p>{{ recipe.cooksId.length }}</p>
@@ -127,7 +122,7 @@
             <svg-icon
               class="head-icon"
               [applyClass]="true"
-              [src]="'../../../../../assets/images/svg/comment.svg'"
+              [src]="'/assets/images/svg/comment.svg'"
             ></svg-icon>
 
             <p>{{ recipe.comments.length }}</p>
@@ -150,7 +145,7 @@
       <div *ngIf="recipe.history !== ''">
         <button class="history-open noselect" (click)="showHistory = !showHistory">
           <svg-icon
-            [src]="'../../../../../assets/images/svg/history.svg'"
+            [src]="'/assets/images/svg/history.svg'"
             [applyClass]="true"
             class="history-svg"
           ></svg-icon>
@@ -172,7 +167,7 @@
             <svg-icon
               class="card-icon"
               [applyClass]="true"
-              [src]="'../../../../../assets/images/svg/preparation.svg'"
+              [src]="'/assets/images/svg/preparation.svg'"
             ></svg-icon>
 
             <p>{{ recipe.preparationTime }}</p>
@@ -185,7 +180,7 @@
             <svg-icon
               class="card-icon"
               [applyClass]="true"
-              [src]="'../../../../../assets/images/svg/time.svg'"
+              [src]="'/assets/images/svg/time.svg'"
             ></svg-icon>
             <p>{{ recipe.cookingTime }}</p>
           </div>
@@ -196,7 +191,7 @@
             <svg-icon
               class="card-icon"
               [applyClass]="true"
-              [src]="'../../../../../assets/images/svg/origin.svg'"
+              [src]="'/assets/images/svg/origin.svg'"
             ></svg-icon>
             <p>{{ recipe.origin }}</p>
           </div>
@@ -221,11 +216,10 @@
 
   <div class="column main">
     <div class="row center">
-      <img
+      <div
         class="main-photo noselect"
-        src="../../../../../../assets/images/no-recipe-photo.png"
-        alt=""
-      />
+        [style.background-image]="'url('+(picture||'/assets/images/no-recipe-photo.png')+')'"
+      ></div>
 
       <div class="ingredients" *ngIf="recipe.ingredients.length > 0">
         <h2 >Ингредиенты</h2>
@@ -251,7 +245,7 @@
             class="basket-icon"
             [applyClass]="true"
             [class]="basketMode ? 'basket-icon basket-mode' : 'basket-icon'"
-            [src]="'assets/images/svg/basket.svg'"
+            [src]="'/assets/images/svg/basket.svg'"
           ></svg-icon>
           {{ !basketMode ? "Составить" : "Убрать" }} список покупок
         </button>
@@ -267,7 +261,7 @@
                 *ngIf="iHaveIndgredient[i]"
                 class="checkbox-icon"
                 [applyClass]="true"
-                [src]="'assets/images/svg/checkbox.svg'"
+                [src]="'/assets/images/svg/checkbox.svg'"
               ></svg-icon>
             </div>
             <a
@@ -307,8 +301,15 @@
           class="row instruction"
           *ngFor="let instruction of recipe.instructions; let i = index"
         >
-          <p class="num">{{ i + 1 }}</p>
-          <p>{{ instruction.name }}</p>
+         <div class="i-content">
+            <p class="num">{{ i + 1 }}</p>
+            <p>{{ instruction.name }}</p>
+         </div>
+          <div  class="images" *ngIf="instruction.images" >
+          <ng-container *ngFor="let item of instruction.images">
+          <div class="i-image" [style.background-image]="'url('+downloadInstructionPicFromSupabase(item.file)+')'" *ngIf="item.file" ></div>
+          </ng-container>
+          </div>
         </div>
       </div>
 
@@ -318,7 +319,7 @@
             class="fav-icon"
             [applyClass]="true"
             [src]="
-              '../../../../../assets/images/svg/' +
+              '/assets/images/svg/' +
               (recipe.status === 'public'
                 ? isRecipeFavorite
                   ? 'fav-fill'
@@ -333,7 +334,7 @@
             class="fav-icon"
             [applyClass]="true"
             [src]="
-              '../../../../../assets/images/svg/planning/plan.svg'
+              '/assets/images/svg/planning/plan.svg'
             "
           ></svg-icon>
 
@@ -343,7 +344,7 @@
             [class]="isRecipeLiked ? 'like-icon liked' : 'like-icon'"
             [applyClass]="true"
             [src]="
-              '../../../../../assets/images/svg/' +
+              '/assets/images/svg/' +
               (isRecipeLiked ? 'like-fill' : 'like') +
               '.svg'
             "
@@ -357,7 +358,7 @@
             [class]="isRecipeCooked ? 'cook-icon cooked' : 'cook-icon'"
             [applyClass]="true"
             [src]="
-              '../../../../../assets/images/svg/' +
+              '/assets/images/svg/' +
               (isRecipeCooked ? 'cook-fill' : 'cook') +
               '.svg'
             "
@@ -412,7 +413,7 @@
           <div class="column i-comment">
             <div class="policy noselect">
               <svg-icon
-                [src]="'../../../../../assets/images/svg/community.svg'"
+                [src]="'/assets/images/svg/community.svg'"
                 [applyClass]="true"
                 class="community"
               ></svg-icon>
@@ -425,15 +426,10 @@
               </p>
             </div>
             <div class="row input-area" style="overflow: visible;">
-              <a  [routerLink]="'/cooks/list/' + currentUser.id">
-                <img 
-                 
-                  src="../../../../../../assets/images/userpic.png"
-                  class="userpic noselect"
-                  alt="userpic"
-                />
-              </a >
-
+                <div 
+                  [style.background-image]="'url('+(currentUserAvatar?currentUserAvatar:noAvatar)+')'"
+                  class="userpic noselect commentpic"
+                ></div>
               <form     class="noselect"              style="width: 100%; overflow: visible;"
  [formGroup]="commentForm">
                 <app-usual-input style="overflow: visible;"
@@ -578,3 +574,5 @@
     <app-add-calendar-event [plan]="myPlan" [event]="targetCalendarEvent" @modal (closeEmitter)="addingToPlanMode = false" *ngIf="addingToPlanMode" style="position: fixed; z-index:10"/>
 
     
+<app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
+  [description]=" 'Вносим изменения... Подождите немного...'" />

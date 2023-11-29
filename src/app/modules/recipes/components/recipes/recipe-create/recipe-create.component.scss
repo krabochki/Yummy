@@ -1,5 +1,6 @@
 
 
+
 .close-button{
  
   zoom:0.9;
@@ -65,7 +66,7 @@ app-modal{
     padding: 2em 3em;
     height: fit-content;
     display: flex;
-    align-items: start;
+    align-items: flex-start;
     row-gap: 1em;
     justify-content: center;
     flex-direction: column;
@@ -75,7 +76,7 @@ app-modal{
 hr {
   height: 0.5px;
   width: 100%;
-  margin-top: 1.3em;
+  margin-top: 0.75em;
   opacity: 0.5;
   background-color: var(--color-foreground-unactive);
 }
@@ -92,7 +93,6 @@ h1 {
 h2 {
   font-weight: 600;
   font-size: 1.2em;
-  margin-bottom: 0.3em;
 }
 
 .unique-content {
@@ -173,16 +173,20 @@ app-autocomplete,
   width: 100%;
 }
 .buttons {
+  row-gap: 1.5em;
+  display: flex;
+  flex-direction: column;
   zoom: 0.9;
+  .button{
+    align-items: center;
+    justify-content: center;
+  }
   app-button {
     display: flex;
     justify-content: center;
-    margin-bottom: 1.5em;
   }
   p {
-    margin-bottom: 1em;
-    text-align: center;
-    line-height: 1;
+    line-height: 1.2;
   }
 }
 
@@ -253,8 +257,8 @@ fill: var(--color-background);
 .unique-content {
   width: 100%;
   display: flex;
-  align-items: start;
-  justify-content: start;
+  align-items: flex-start;
+  justify-content: flex-start;
   flex-direction: column;
 
   .description {
@@ -288,6 +292,7 @@ fill: var(--color-background);
         &.completed {
           background-color: var(--color-secondary);
         }
+             
       }
 
       .nav-step-block-inner {
@@ -314,6 +319,10 @@ fill: var(--color-background);
           &.completed {
             color: var(--color-foreground);
           }
+ &.not-valid {
+   color: var(--color-primary);
+ }
+          
         }
         .nav-step-circle {
           display: flex;
@@ -336,6 +345,9 @@ fill: var(--color-background);
           &.active {
             border-color: var(--color-secondary);
             color: var(--color-secondary);
+          }
+          &.not-valid{
+            border-color: var(--color-primary);color: var(--color-primary);
           }
         }
       }
@@ -397,10 +409,21 @@ svg-icon {
   }
 }
 
+.inst-buttons{
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.15em;
+}
+
 .remove-button {
   cursor: pointer;
   width: 1.5em;
   height: 1.5em;
+
+  .img{
+    width: 2em;margin-top: 4em;
+    height: 2em;
+  }
 
   .svg-trash {
     fill: var(--color-primary);
@@ -410,6 +433,19 @@ svg-icon {
     align-items: center;
     justify-content: center;
   }
+
+    .svg-photo {
+
+      &.active{
+        fill:var(--color-primary)
+      }
+      fill: var(--color-secondary);
+      height: 100%;zoom: 1.4;
+      height: 1.2em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
   display: flex;
   align-items: center;
@@ -491,9 +527,10 @@ svg-icon {
       position: relative;
       border: 1px solid var(--color-foreground-unactive);
 
-      height: 7em;    background-color: var(--color-background-deeper-unactive);
+      height: 7em;    
 
-      background-size: cover;
+      background-size:cover;
+      background-color: #fff;
       background-position: center;
       border-radius: var(--space-m);
 
@@ -523,8 +560,12 @@ svg-icon {
 
 .error {
   line-height: 1;
-  margin-top: 0.2em;
+  margin-top: 1.2em;
   color: var(--color-primary);
+  p{
+    line-height: 1;
+    color: var(--color-primary);
+  }
   font-size: 0.7rem;
 }
 
@@ -821,11 +862,14 @@ app-modal{
   }
 }
 
+.description-container{
+  margin-bottom:1em;
+}
 .more-button{
         text-decoration: underline;
         display: flex;
         font-weight: 500;
-        align-items: end;
+        align-items: flex-end;
         column-gap: 0.5em;
         line-height: 1;
         justify-content: center;
@@ -835,7 +879,7 @@ app-modal{
           width: 1em;
           fill: var(--color-foreground);
           
-        align-items: end;
+        align-items: flex-end;
         justify-content: center;
         display: flex;
         }
@@ -843,9 +887,23 @@ app-modal{
 }
 
 
+.button {
+  display: grid;
+  column-gap: 3em;
+  align-items: center;
+  justify-content: center;
+  grid-template-columns: 1fr max-content;
+}
+
 @media(max-width:480px){
 
-  
+  .button {
+      display: grid;
+      row-gap: 1em;
+      align-items: center;
+      justify-content: center;
+      grid-template-columns: 1fr;
+    }
 .close-button{
  
   zoom:1.1;
@@ -954,3 +1012,4 @@ display: none;}
    
   }
 }
+

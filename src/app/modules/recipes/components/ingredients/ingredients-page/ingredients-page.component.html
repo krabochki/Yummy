@@ -6,9 +6,10 @@
   <app-button 
     *ngIf="context ==='all-groups'"
     class="add-category"
+    [disabled]="currentUser.id>0"
+    (click)="createIngredientButtonClick()"
     [icon]="'ingredients/create-ingredient'"
     [color]="'prim'"
-    (click)="ingredientCreatingMode = true;"
     [text]="'Создать ингредиент'"
     [rounded]="true"
   ></app-button>
@@ -18,7 +19,7 @@
         <svg-icon
           [applyClass]="true"
           class="fridge"
-          [src]="'assets/images/svg/fridge.svg'"
+          [src]="'/assets/images/svg/fridge.svg'"
         ></svg-icon>
       </div>
       <div class="content">
@@ -54,7 +55,7 @@
         <svg-icon
           [applyClass]="true"
           class="search-svg"
-          [src]="'assets/images/svg/search.svg'"
+          [src]="'/assets/images/svg/search.svg'"
         ></svg-icon>
       </div>
     </div>
@@ -67,7 +68,7 @@
               <svg-icon
                 [applyClass]="true"
                 class="sad-cook"
-                [src]="'assets/images/svg/ingredients/shocked-ingredients.svg'"
+                [src]="'/assets/images/svg/ingredients/shocked-ingredients.svg'"
               ></svg-icon>
             </div>
             <p>
@@ -82,8 +83,7 @@
             [routerLink]="
               '/ingredients/list' + item.id 
             "
-          >
-            <p
+         
               (mousedown)="navigateTo(
                 getGroupOfIngredient(item).length === 0
                   ? '/ingredients/groups/' + item.id
@@ -91,14 +91,7 @@
               )"
             >
               {{ item.name }}
-            </p>
-            <span
-              (mousedown)="navigateTo('/ingredients/groups/' + getGroupOfIngredient(item)[0].id)"
-              *ngIf="
-                context !== 'ingredient-group' && getGroupOfIngredient(item)[0].id !== 0
-              "
-              >{{ getGroupOfIngredient(item)[0].name }}</span
-            >
+       
           </li>
      </ng-container>
       </ul>
@@ -116,7 +109,7 @@
             <svg-icon
               class="arrow-svg"
               [applyClass]="true"
-              [src]="'assets/images/svg/go-back.svg'"
+              [src]="'/assets/images/svg/go-back.svg'"
             ></svg-icon>
           </a>
 
@@ -126,12 +119,14 @@
         </div>
       </div>
     </ng-container>
-    <ng-template #concreteGroup>
-      <div class="sections">
-        <app-ingredients-vertical-list
-          [ingredients]="ingredientsToShow"
-        />
-      </div>
+    <ng-template #concreteGroup >
+    <ng-container *ngIf="(ingredientsOfGroup(group).length>0)">
+        <div class="sections">
+          <app-ingredients-vertical-list
+            [ingredients]="ingredientsToShow"
+          />
+        </div>
+    </ng-container>
 
          <app-button
           [text]="'Загрузить еще...'"
@@ -148,3 +143,8 @@
 </div>
 
 <app-ingredient-create (closeEmitter)="ingredientCreatingMode = false" @modal *ngIf="ingredientCreatingMode" />
+
+<app-modal @modal *ngIf="noAccessModalShow" [style]="'prim'" [title]="'Доступ к разделу ограничен'" [type]="'yesOrNo'"
+  (resultEmit)="handleNoAccessModal($event)" [buttonsText]="['Давайте', 'Не сейчас']" [description]="
+    'Доступ к этой функции имеют только зарегистрированные пользователи. Хотите зарегистрироваться или войти в существующий аккаунт?'
+  "/>

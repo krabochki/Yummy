@@ -6,10 +6,7 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import {
-  passMask,
-  emailOrUsernameMask
-} from 'src/tools/regex';
+import { passMask, loginMask } from 'src/tools/regex';
 import { AuthService } from '../../services/auth.service';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
@@ -17,13 +14,11 @@ import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { customPatternValidator, usernameAndEmailNotExistsValidator } from 'src/tools/validators';
+import {
+  customPatternValidator,
+} from 'src/tools/validators';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -32,11 +27,29 @@ import { customPatternValidator, usernameAndEmailNotExistsValidator } from 'src/
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  successAttemptModalShow: boolean = false;
-  failAttemptModalShow: boolean = false;
-  users: IUser[] = [];
+  successModal: boolean = false;
+  loadingModal: boolean = false;
+  errorModal: boolean = false;
+  failInfo = '';
   form: FormGroup;
-  protected destroyed$: Subject<void> = new Subject<void>();
+  destroyed$: Subject<void> = new Subject<void>();
+  private users: IUser[] = [];
+
+  get passwordNotValidError() {
+    return this.form.get('password')?.invalid &&
+      (this.form.get('password')?.dirty || this.form.get('password')?.touched)
+      ? 'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'
+      : '';
+  }
+
+  get loginNotValidError() {
+    return !this.form.get('login')?.hasError('loginExists')
+      ? this.form.get('login')?.invalid &&
+        (this.form.get('login')?.dirty || this.form.get('login')?.touched)
+        ? 'Введите корректный адрес электронной почты'
+        : ''
+      : ' ';
+  }
 
   constructor(
     private authService: AuthService,
@@ -52,11 +65,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.usersService.users$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((receivedUsers: IUser[]) => {
-        this.users = receivedUsers;
-      });
+    this.usersInit();
 
     this.form = this.fb.group({
       login: [
@@ -64,8 +73,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         [
           Validators.required,
           Validators.maxLength(64),
-          customPatternValidator(emailOrUsernameMask),
-          usernameAndEmailNotExistsValidator(this.users),
+          customPatternValidator(loginMask),
         ],
       ],
       password: [
@@ -80,51 +88,63 @@ export class LoginComponent implements OnInit, OnDestroy {
     });
   }
 
-  loginUser(): void {
+  async loginUser() {
     if (this.form.valid) {
-      const userData: IUser = {
-        ...{...nullUser},
+      const user: IUser = {
+        ...nullUser,
         username: this.form.value.login,
         email: this.form.value.login,
         password: this.form.value.password,
       };
+      try {
+        this.loadingModal = true;
+        const { error } = await this.authService.signIn(
+          user.email,
+          user.password,
+        );
 
-      this.authService.loginUser(userData).subscribe((user: IUser | null) => {
-        if (user) {
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          this.authService.setCurrentUser(user);
-          this.successAttemptModalShow = true;
-          this.cd.markForCheck();
+        if (error) {
+          switch (error.message) {
+            case 'Email not confirmed':
+              this.failInfo =
+                'Вы пока не подтвердили аккаунт после регистрации. Проверьте письмо в вашей электронной почте';
+              break;
+            case 'Invalid login credentials':
+              this.failInfo =
+                'Скорее всего, вы где-то ошиблись. Такого пользователя не найдено. Перепроверьте данные и попробуйте снова';
+              break;
+            default:
+              this.failInfo =
+                'Произошла неизвестная ошибка при регистрации. Попробуйте снова';
+          }
+
+          this.errorModal = true;
+        } else {
+          const loginUser = this.authService.loginUser(user);
+            if (loginUser) {
+              this.authService.setCurrentUser(loginUser);
+              this.router.navigateByUrl('/');
+            } else {
+              this.errorModal = true;
+            }
         }
-        else {
-          this.failAttemptModalShow = true;
+      } catch (error) {
+        if (error instanceof Error) {
+          this.errorModal = true;
         }
-      });
+      } finally {
+        this.loadingModal = false;
+        this.cd.markForCheck();
+      }
     }
   }
 
-  get passwordNotValidError() {
-    return this.form.get('password')?.invalid &&
-          (this.form.get('password')?.dirty || this.form.get('password')?.touched)
-            ? 'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'
-            : '';
-  }
-  get loginNotValidError() {
-    return !this.form.get('login')?.hasError('loginExists')
-      ? this.form.get('login')?.invalid &&
-        (this.form.get('login')?.dirty || this.form.get('login')?.touched)
-        ? 'Введи корректный логин или электронную почту'
-        : ''
-      : '';
-  }
-
-  handleSuccessModalResult(): void {
-    this.successAttemptModalShow = false;
-    this.router.navigate(['/']);
-  }
-
-  handleFailModalResult(): void {
-    this.failAttemptModalShow = false;
+  private usersInit(): void {
+    this.usersService.users$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedUsers: IUser[]) => {
+        this.users = receivedUsers;
+      });
   }
 
   ngOnDestroy(): void {

@@ -3,11 +3,18 @@
     [(ngModel)]="value"
     [disabled]="disabled"
     (blur)="blur()"
+    (keyup)="change()"
     (ngModelChange)="search()"
     (focus)="focus()"
+     [ngClass]="{
+      uncorrect: error !== ''
+    }"
     type="text"
+     [maxlength]="max ? max : null"
     [placeholder]="placeholder"
-  />
+  /> 
+    <p class="howmuch noselect" *ngIf="(max!==undefined)">{{value? value.length:0 }}/{{ max }}</p>
+
 
   <div class="autocomplete" @height *ngIf="autocompleteShow">
     <div class="section noone" *ngIf="noAnySearchMatches">
@@ -33,6 +40,7 @@
         </ol>
       </div>
     </div>
+    
     <ng-container  *ngIf="context === 'groups'">
       <ol class="one-layer">
         <li
@@ -58,7 +66,7 @@
     <ng-container *ngIf="context === 'ingredients'">
       <ol class="one-layer">
         <li
-          (mousedown)="addIngredient(ingredient); this.value = ''"
+          (mousedown)="addIngredient(ingredient);"
           class="section"
           *ngFor="let ingredient of filterIngredients; let i = index"
         >

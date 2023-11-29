@@ -2,30 +2,24 @@
   <div class="content">
     <h1 class="label">Вход в аккаунт</h1>
     <p class="tagline">
-      Пожалуйста, введи свое имя пользователя/электронную почту и пароль, для
-      того чтобы войти в аккаунт.
+      Пожалуйста, введите вашу электронную почту и пароль, для того чтобы войти
+      в аккаунт.
     </p>
 
-     <form [formGroup]="form">
-     <div>
+    <form [formGroup]="form">
+      <div>
         <app-usual-input
           [inputRequired]="true"
-          type="text"
           [max]="64"
-          id="login"
           formControlName="login"
-          [placeholder]="'Логин или электронная почта'"
+          [placeholder]="'Электронная почта'"
           required
           [error]="loginNotValidError"
         ></app-usual-input>
-        <div class="error" *ngIf="form.get('login')?.hasError('loginExists')">
-                      Пользователя с такой электронной почтой или именем пользователя не существует
-                    </div>
-     </div>
-       <app-usual-input
-       [inputRequired]="true"
-       [inputType]="'password'"
-        id="password"
+      </div>
+      <app-usual-input
+        [inputRequired]="true"
+        [inputType]="'password'"
         formControlName="password"
         [placeholder]="'Пароль'"
         [max]="20"
@@ -34,17 +28,12 @@
       ></app-usual-input>
     </form>
 
-
     <hr />
 
     <a [routerLink]="'/password-recovery'">Восстановление пароля</a>
 
     <div class="buttons">
       <app-button
-        [ngStyle]="{
-          'pointer-events':
-            form.valid ? 'all' : 'none'
-        }"
         (click)="loginUser()"
         [disabled]="form.valid"
         [rounded]="true"
@@ -55,26 +44,25 @@
   </div>
 </div>
 
-<app-modal 
-  [ngStyle]="{'z-index':100}"
+<app-modal
+  [ngStyle]="{ 'z-index': 100 }"
   @modal
-  *ngIf="successAttemptModalShow"
-  [style]="'sec'"
-  [title]="'Успешный вход!'"
-  [type]="'Ok'"
-  (resultEmit)="handleSuccessModalResult()"
-  [buttonsText]="['На главную']"
-  [description]="'Вы успешно вошли в свой аккаунт!'"
-></app-modal>
-
-<app-modal 
-  [ngStyle]="{'z-index':100}"
-  @modal
-  *ngIf="failAttemptModalShow"
+  *ngIf="errorModal"
   [style]="'prim'"
   [title]="'Неудачная попытка входа'"
   [type]="'Ok'"
-  (resultEmit)="handleFailModalResult()"
+  (resultEmit)="errorModal = false"
   [buttonsText]="['Хорошо']"
-  [description]="'Вы ввели неправильный пароль'"
+  [description]="
+    failInfo || 'Произошла неизвестная ошибка при попытке входа в аккаунт'
+  "
 ></app-modal>
+
+<app-modal
+  [noButtons]="true"
+  [style]="'await'"
+  *ngIf="loadingModal"
+  [title]="'Подождите...'"
+  @modal
+  [description]="'Проверяем данные, которые вы ввели... Подождите немного...'"
+/>

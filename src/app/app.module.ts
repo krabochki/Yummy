@@ -21,13 +21,13 @@ import { UserPagesModule } from './modules/user-pages/user-pages.module';
 import { PlanService } from './modules/planning/services/plan-service';
 import { AuthService } from './modules/authentication/services/auth.service';
 import { IngredientService } from './modules/recipes/services/ingredient.service';
-import { AuthenticationModule } from './modules/authentication/authentication.module';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
 export function initializeSections(sectionSerivce: SectionService) {
   return () => sectionSerivce.loadSectionData();
 }
 export function initializeCategories(CategoryService: CategoryService) {
-  return () => CategoryService.loadCategoryData();
+  return () => CategoryService.loadCategoriesFromSupabase();
 }
 export function initializeRecipes(RecipeService: RecipeService) {
   return () => RecipeService.loadRecipeData();
@@ -62,7 +62,9 @@ export function initializeIngredientsGroupsData(ingredientService: IngredientSer
     UserPagesModule,
     AngularSvgIconModule.forRoot(),
   ],
-  providers: [
+  providers: [      { provide: LocationStrategy, useClass: HashLocationStrategy },
+
+
     UserService,
     {
       provide: APP_INITIALIZER,
@@ -120,7 +122,6 @@ export function initializeIngredientsGroupsData(ingredientService: IngredientSer
       deps: [IngredientService],
       multi: true,
     },
-
     AdminGuard,
     ModeratorGuard,
     RouteEventsService,

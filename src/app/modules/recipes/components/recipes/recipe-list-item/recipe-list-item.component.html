@@ -10,11 +10,11 @@
     <svg-icon
       [applyClass]="true"
       class="no-recipe-svg"
-      [src]="'assets/images/svg/no-recipe.svg'"
+      [src]="'/assets/images/svg/no-recipe.svg'"
     ></svg-icon>
   </div>
 </ng-template>
-<div *ngIf="dataLoaded && recipe.id > 0; else sceleton" class="recipe">
+<div [style.background-image]="'url('+(picture?picture:'/assets/images/svg/pancakes.png')+')'" [routerLink]="'/recipes/list/'+recipe.id" *ngIf="dataLoaded && recipe.id > 0; else sceleton" class="recipe">
   <div class="top" *ngIf="!shortView">
     <div
       [title]="
@@ -24,7 +24,7 @@
       "
       [ngClass]="{ disabled: recipe.status === 'awaits' }"
       *ngIf="recipe.authorId === currentUser.id || recipe.status === 'public'"
-      (click)="
+      (click)=" innerClick($event);
         recipe.status !== 'awaits'
           ? author.id !== currentUser.id && currentUser.id!==0
             ? makeThisRecipeFavorite()
@@ -35,13 +35,13 @@
     >
       <svg-icon
         *ngIf="recipe.status !== 'awaits' && author.id === currentUser.id && currentUser.id!==0"
-        [src]="'assets/images/svg/more.svg'"
+        [src]="'/assets/images/svg/more.svg'"
         [applyClass]="true"
         class="fav-icon"
       ></svg-icon>
       <svg-icon
         *ngIf="recipe.status === 'awaits' && author.id === currentUser.id"
-        [src]="'assets/images/svg/await.svg'"
+        [src]="'/assets/images/svg/await.svg'"
         [applyClass]="true"
         class="fav-icon"
       ></svg-icon>
@@ -51,7 +51,7 @@
          ( author.id !== currentUser.id ||  currentUser.id===0) &&
           !isRecipeFavorite
         "
-        [src]="'assets/images/svg/fav.svg'"
+        [src]="'/assets/images/svg/fav.svg'"
         [applyClass]="true"
         class="fav-icon"
       ></svg-icon>
@@ -61,7 +61,7 @@
           author.id !== currentUser.id &&
           isRecipeFavorite
         "
-        [src]="'assets/images/svg/fav-fill.svg'"
+        [src]="'/assets/images/svg/fav-fill.svg'"
         [applyClass]="true"
         class="fav-icon"
       ></svg-icon>
@@ -73,11 +73,11 @@
     >
       <div
         class="top-button"
-        (click)="editMode = true"
+        (click)="innerClick($event);editMode = true"
         *ngIf="recipe.status === 'private'"
       >
         <svg-icon
-          [src]="'assets/images/svg/pen.svg'"
+          [src]="'/assets/images/svg/pen.svg'"
           [applyClass]="true"
           class="remove-svg"
         ></svg-icon>
@@ -86,17 +86,17 @@
       <div
         class="top-button"
         *ngIf="recipe.status === 'public'"
-        (click)="makeThisRecipeFavorite()"
+        (click)="innerClick($event);makeThisRecipeFavorite()"
       >
         <svg-icon
           *ngIf="!isRecipeFavorite; else favorite"
-          [src]="'assets/images/svg/fav.svg'"
+          [src]="'/assets/images/svg/fav.svg'"
           [applyClass]="true"
           class="remove-svg"
         ></svg-icon>
         <ng-template #favorite>
           <svg-icon
-            [src]="'assets/images/svg/fav-fill.svg'"
+            [src]="'/assets/images/svg/fav-fill.svg'"
             [applyClass]="true"
             class="remove-svg"
           ></svg-icon>
@@ -106,19 +106,19 @@
       <div
         class="top-button"
         *ngIf="recipe.status === 'private'"
-        (click)="publishModalShow = true"
+        (click)="innerClick($event);publishModalShow = true"
       >
         <svg-icon
-          [src]="'assets/images/svg/publish.svg'"
+          [src]="'/assets/images/svg/publish.svg'"
           [applyClass]="true"
           class="remove-svg"
         ></svg-icon>
       </div>
-      <div class="top-button" (click)="deleteRecipeModalShow = true">
+      <div class="top-button" (click)="innerClick($event);deleteRecipeModalShow = true">
         <svg-icon
           [applyClass]="true"
           class="remove-svg"
-          [src]="'assets/images/svg/trash.svg'"
+          [src]="'/assets/images/svg/trash.svg'"
         ></svg-icon>
       </div>
     </div>
@@ -146,16 +146,16 @@
     </div>
 
     <div class="rate-panel" *ngIf="!shortView && recipe.status === 'public'">
-      <div class="rate-item likes" (click)="likeThisRecipe()">
+      <div class="rate-item likes" (click)="innerClick($event);likeThisRecipe()">
         <svg-icon
           *ngIf="!isRecipeLiked"
-          [src]="'assets/images/svg/like.svg'"
+          [src]="'/assets/images/svg/like.svg'"
           [applyClass]="true"
           class="like-icon"
         ></svg-icon>
         <svg-icon
           *ngIf="isRecipeLiked"
-          [src]="'assets/images/svg/like-fill.svg'"
+          [src]="'/assets/images/svg/like-fill.svg'"
           [applyClass]="true"
           class="like-icon liked"
         ></svg-icon>
@@ -165,7 +165,7 @@
       </div>
       <div
         class="rate-item cooks"
-        (click)="
+        (click)="innerClick($event);
           !isRecipeCooked && currentUser.id > 0
             ? (voteModalShow = true)
             : cookThisRecipe()
@@ -173,13 +173,13 @@
       >
         <svg-icon
           *ngIf="!isRecipeCooked"
-          [src]="'assets/images/svg/cook.svg'"
+          [src]="'/assets/images/svg/cook.svg'"
           [applyClass]="true"
           class="cook-icon"
         ></svg-icon>
         <svg-icon
           *ngIf="isRecipeCooked"
-          [src]="'assets/images/svg/cook-fill.svg'"
+          [src]="'/assets/images/svg/cook-fill.svg'"
           [applyClass]="true"
           class="cook-icon cooked"
         ></svg-icon>
@@ -192,7 +192,7 @@
       <div class="rate-item likes" style="cursor: default">
         <svg-icon
           [src]="
-            'assets/images/svg/' +
+            '/assets/images/svg/' +
             (recipe.status === 'awaits' ? 'awaits' : 'private') +
             '.svg'
           "
@@ -229,19 +229,6 @@
   @modal
 ></app-recipe-create>
 
-<app-modal
-  @modal
-  *ngIf="successEditModalShow"
-  [style]="'sec'"
-  [title]="'Рецепт успешно изменен'"
-  [type]="'Ok'"
-  (resultEmit)="handleSuccessEditModal()"
-  [buttonsText]="['Хорошо']"
-  [description]="
-    'Твой рецепт успешно изменен' +
-    (isAwaitingApprove ?currentUser.role==='user'? ' и ожидает одобрения модератора':' и опубликован' : '')
-  "
-></app-modal>
 
 <app-modal
   @modal
@@ -254,16 +241,6 @@
   [description]="'Ты действительно хочешь удалить этот рецепт?'"
 ></app-modal>
 
-<app-modal
-  @modal
-  *ngIf="successDeleteModalShow"
-  [style]="'sec'"
-  [title]="'Рецепт успешно удален'"
-  [type]="'Ok'"
-  (resultEmit)="handleSuccessDeleteModal()"
-  [buttonsText]="['Хорошо']"
-  [description]="'Этот рецепт успешно удален'"
-></app-modal>
 
 <app-modal
   @modal
@@ -310,3 +287,5 @@
   [buttonsText]="['Хорошо']"
   [description]="'Спасибо! Ваше мнение важно для нас и остальных кулинаров'"
 ></app-modal>
+<app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
+  [description]="'Загружаем данные о новом рецепте... Совсем скоро он будет готов...'" />

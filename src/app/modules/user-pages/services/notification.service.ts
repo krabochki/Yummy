@@ -3,7 +3,6 @@ import { UserService } from './user.service';
 import { INotification, nullNotification } from '../models/notifications';
 import { getCurrentDate } from 'src/tools/common';
 import { IUser } from '../models/users';
-import { EMPTY, take } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -46,15 +45,19 @@ export class NotificationService {
     return notification;
   }
 
-  removeNotification(notification: INotification, user: IUser) {
+  async updateUser(user: IUser) {
+    await this.userService.updateUserInSupabase(user);
+  }
+
+ async removeNotification(notification: INotification, user: IUser) {
     const actualUser = this.users.find((u) => u.id === user.id);
 
     if (actualUser) {
       actualUser.notifications = actualUser?.notifications.filter(
         (n) => n.id !== notification.id,
       );
-      return this.userService.updateUsers(actualUser);
-    } else return EMPTY;
+      await this.updateUser(actualUser);
+    }
   }
 
   clearAll(user: IUser) {
@@ -62,7 +65,7 @@ export class NotificationService {
       (n) =>
         n.context === 'plan-reminder-start' || n.context === 'plan-reminder',
     );
-    return this.userService.updateUsers(user);
+    return this.updateUser(user);
   }
 
   makeNotifyReaded(notify:INotification,user:IUser) {
@@ -71,7 +74,7 @@ export class NotificationService {
     if (findedNotification) {
       findedNotification.read = true;
     }
-    return this.userService.updateUsers(user);
+    return this.updateUser(user);
   }
 
   addNotificationToUser(notify: INotification, user: IUser) {
@@ -89,7 +92,7 @@ export class NotificationService {
     }
     return user;
   }
-  sendNotification(notification: INotification, user: IUser) {
+  async sendNotification(notification: INotification, user: IUser) {
     const actualUser = this.users.find((u) => u.id === user.id);
 
     if (actualUser) {
@@ -103,7 +106,6 @@ export class NotificationService {
       actualUser.notifications.push(notification);
     }
     if (actualUser)
-      return this.userService.updateUsers(actualUser).pipe(take(1));
-    else return EMPTY;
+      await this.updateUser(actualUser)
   }
 }

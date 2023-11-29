@@ -15,6 +15,9 @@ import { Title } from '@angular/platform-browser';
 import { RecipeService } from '../../../services/recipe.service';
 import { Subject, takeUntil } from 'rxjs';
 import { IRecipe } from '../../../models/recipes';
+import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
+import { AuthService } from 'src/app/modules/authentication/services/auth.service';
+import { baseComparator } from 'src/tools/common';
 
 @Component({
   selector: 'app-categories-page',
@@ -32,10 +35,11 @@ import { IRecipe } from '../../../models/recipes';
 export class CategoriesPageComponent implements OnInit, OnDestroy {
   sections: ISection[] = [];
   categories: ICategory[] = [];
-  isLoading = true;
 
   creatingMode = false;
   filter: string = '';
+
+  currentUser: IUser = { ...nullUser };
 
   section: ISection = nullSection;
   searchQuery: string = '';
@@ -49,6 +53,7 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
   popularCategories: ICategory[] = [];
 
   protected destroyed$: Subject<void> = new Subject<void>();
+  noAccessModalShow = false;
 
   constructor(
     private categoryService: CategoryService,
@@ -58,27 +63,56 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
     private titleService: Title,
     private recipeService: RecipeService,
+    private authService: AuthService,
   ) {}
 
-  getCategoriesData() {
+  getCurrentUserData() {
+    this.authService.currentUser$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedUser: IUser) => (this.currentUser = receivedUser));
+  }
+
+  handleNoAccessModal(event: boolean) {
+    if (event) {
+      this.router.navigateByUrl('/greetings');
+    }
+    this.noAccessModalShow = false;
+  }
+
+  createCategoryButtonClick() {
+    if (this.currentUser.id > 0) {
+      this.creatingMode = true;
+    } else {
+      this.noAccessModalShow = true;
+    }
+  }
+
+  getCategoriesData(section:ISection) {
     this.categoryService.categories$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((data: ICategory[]) => {
         this.categories = data;
         this.categories = this.categories.filter(
           (category) => category.status === 'public',
-        );
+        ); 
+
 
         this.recipeService.recipes$
           .pipe(takeUntil(this.destroyed$))
           .subscribe((recipes: IRecipe[]) => {
             this.recipes = recipes;
 
+            if(this.filter === 'popular' || this.filter ==='sections')
             this.popularCategories = this.categoryService.getPopularCategories(
               this.categories,
               recipes,
             );
+                    this.divideCategories(section);
+
+            this.cd.markForCheck();
+
           });
+        
         this.cd.markForCheck();
       });
   }
@@ -89,11 +123,12 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
       .subscribe((data: ISection[]) => {
         this.title = 'Разделы';
         this.titleService.setTitle(this.title);
+        this.sections=[]
         this.sections = this.sectionService.getSectionsWithCategories(
           data,
           this.categories,
         );
-        this.sections.sort((elem1: ISection, elem2: ISection) => {
+        this.sections= this.sections.sort((elem1: ISection, elem2: ISection) => {
           return elem1.name > elem2.name ? 1 : -1;
         });
         this.cd.markForCheck();
@@ -101,42 +136,48 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.getCurrentUserData();
     this.route.data.subscribe((data) => {
-      this.getCategoriesData();
       this.filter = data['filter'];
-      this.categories = this.categoryService.sortCategoriesByName(
-        this.categories,
-      );
-      if (this.filter === 'sections') {
-        // если это все секции
-        this.getSectionsData();
-      } else if (this.filter === 'popular') {
-        //если это секция популярных категорий
-        this.title = 'Популярные категории';
-        const popularCategoriesIds = this.popularCategories.map(
-          (element) => element.id,
-        );
-        const popularSection: ISection = {
-          ...nullSection,
-          categories: popularCategoriesIds,
-        };
-        this.sections.push(popularSection);
-      } else {
-        //если это конкретная секция
-        this.section = { ...data['SectionResolver'] };
-        this.title = this.section.name;
-        this.section.name = '';
-        this.sections.push(this.section);
-      }
-
-      this.categoriesToShow = this.getCategoriesOfSection(this.section).slice(
-        0,
-        10,
-      );
-
-      this.titleService.setTitle(this.title);
-      this.isLoading = false;
+      this.getCategoriesData( data['SectionResolver'] );
+      
     });
+  }
+
+  divideCategories(section: ISection) {
+    this.sections = []
+    this.categories = this.categoryService.sortCategoriesByName(
+      this.categories,
+    );
+    if (this.filter === 'sections') {
+      // если это все секции
+      this.getSectionsData();
+    } else if (this.filter === 'popular') {
+      //если это секция популярных категорий
+      this.title = 'Популярные категории';
+      const popularCategoriesIds = this.popularCategories.map(
+        (element) => element.id,
+      );
+      const popularSection: ISection = {
+        ...nullSection,
+        categories: popularCategoriesIds,
+      };
+      this.sections.push(popularSection);
+    } else {
+
+      //если это конкретная секция
+      this.section = {...section}
+      this.title = this.section.name;
+      this.section.name = '';
+      this.sections.push(this.section);
+    }
+
+    this.categoriesToShow = this.getCategoriesOfSection({...this.section}).slice(
+      0,
+      10,
+    );
+
+    this.titleService.setTitle(this.title);
   }
 
   getPublicCategories(section: ISection): ICategory[] {
@@ -183,7 +224,6 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
     return nullSection;
   }
 
-
   blurSearch() {
     this.autocompleteShow = false;
   }
@@ -195,9 +235,9 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
   }
   turnOnSearch() {
     this.autocompleteShow = true;
-    let categoriesToSearch = this.categories
-    if(this.filter==='section')
-     categoriesToSearch = this.getCategoriesOfSection(this.section)
+    let categoriesToSearch = this.categories;
+    if (this.filter === 'section')
+      categoriesToSearch = this.getCategoriesOfSection(this.section);
     if (this.searchQuery.length > 0) {
       this.autocomplete = [];
       const notEmptySections = this.sectionService.getNotEmptySections(
@@ -217,6 +257,9 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
       filterSections.forEach((filterSection) => {
         this.autocomplete.push(filterSection);
       });
+      this.autocomplete = this.autocomplete.sort((a, b) =>
+        baseComparator(a.name, b.name),
+      );
     } else this.autocompleteShow = false;
   }
   ngOnDestroy(): void {

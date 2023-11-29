@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ICategory, ISection } from 'src/app/modules/recipes/models/categories';
-import { IRecipe, Ingredient } from 'src/app/modules/recipes/models/recipes';
+import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
 import { Title } from '@angular/platform-browser';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
@@ -115,6 +115,10 @@ export class MainPageComponent implements OnInit, OnDestroy {
             ).slice(0,this.MAX_DISPLAY_SIZE);
           });
       });
+  }
+
+  clickBannerButton() {
+    return this.currentUser.id === 0 ? this.noAccessModalShow = true : null;
   }
 
   recipesInit() {

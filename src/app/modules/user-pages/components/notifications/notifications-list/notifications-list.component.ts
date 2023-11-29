@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { INotification } from '../../../models/notifications';
 import { IUser, nullUser } from '../../../models/users';
 import { NotificationService } from '../../../services/notification.service';
@@ -10,26 +10,30 @@ import { NotificationService } from '../../../services/notification.service';
   styleUrls: ['./notifications-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NotificationsListComponent {
+export class NotificationsListComponent implements OnChanges {
   @Input() notifies: INotification[] = [];
-  @Input() user: IUser = {...nullUser};
+  @Input() user: IUser = { ...nullUser };
+
+  @Output() hover = new EventEmitter<INotification>();
 
   @Output() closeEmitter = new EventEmitter<boolean>();
 
-  constructor(private notifyService:NotificationService){}
+  constructor(private notifyService: NotificationService,private cd: ChangeDetectorRef) { }
 
+
+  ngOnChanges() {
+    this.cd.markForCheck()
+  }
 
   get isSomethingForClear(): boolean {
     let isSomethingForClear: boolean = false;
     this.notifies.forEach(n => {
-      if (!n.context.includes('plan')) isSomethingForClear=true;
+      if (!n.context.includes('plan')) isSomethingForClear = true;
     });
     return isSomethingForClear;
   }
-  protected clearAll()
-  {
-    this.notifyService.clearAll(this.user).subscribe()
-    
+  protected clearAll() {
+    this.notifyService.clearAll(this.user);
   }
 
 

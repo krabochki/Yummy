@@ -41,6 +41,14 @@ import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { notifyForFollowersOfApprovedRecipeAuthor } from 'src/app/modules/authentication/components/control-dashboard/notifications';
+import {
+  customPatternValidator,
+  trimmedMinLengthValidator,
+} from 'src/tools/validators';
+import { numbers } from 'src/tools/regex';
+import { IngredientService } from '../../../services/ingredient.service';
+import { IIngredient } from '../../../models/ingredients';
+import { supabase } from 'src/app/modules/controls/image/supabase-data';
 
 @Component({
   selector: 'app-recipe-create',
@@ -63,9 +71,13 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
 
   currentUser: IUser = { ...nullUser };
 
+  categoryInputValue: string = '';
+
   form: FormGroup;
 
   isAwaitingApprove = false;
+
+  loading = false;
 
   recipeId = 0;
 
@@ -78,9 +90,9 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
   createModalShow = false;
 
   images: string[][] = [['']];
-  defaultImage: string = '../../../../../assets/images/add-main-photo.png';
+  defaultImage: string = '/assets/images/add-main-photo.png';
   defaultInstructionImage: string =
-    '../../../../../assets/images/add-photo.png';
+    '/assets/images/add-photo.png';
   mainImage: string = '';
 
   allSections: ISection[] = [];
@@ -91,11 +103,16 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
 
   createdRecipe: IRecipe = nullRecipe;
 
+  ingredients: IIngredient[] = [];
+
   protected destroyed$: Subject<void> = new Subject<void>();
 
+  startInstructionPhotos: string[] = [];
   beginningData: any;
 
   editMode: boolean = false;
+
+  maxId = 0;
 
   constructor(
     private notifyService: NotificationService,
@@ -107,14 +124,19 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private recipeService: RecipeService,
     private fb: FormBuilder,
+    private ingredientService: IngredientService,
     public router: Router,
     private title: Title,
   ) {
+    this.recipeService.getMaxRecipeId().then((maxId) => {
+      this.maxId = maxId;
+    });
     this.mainImage = this.defaultImage;
     this.form = this.fb.group({
       recipeName: [
         '',
         [
+          trimmedMinLengthValidator(3),
           Validators.required,
           Validators.minLength(3),
           Validators.maxLength(100),
@@ -135,10 +157,106 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     });
   }
 
+  blur() {
+    this.categoryInputValue = ' ';
+  }
+
+  close() {
+    this.areObjectsEqual()
+      ? (this.exitModalShow = true)
+      : this.closeEmitter.emit(true);
+  }
+  clickOnCircleStep(i: number) {
+    if (this.validNextSteps() === 0 || this.validNextSteps() > i) {
+      this.currentStep = i;
+      this.scrollTop();
+    }
+  }
+
+  notValid() {
+    return this.validNextSteps();
+  }
+
+  noValidStepDescription(step: number): string {
+    switch (step) {
+      case 0:
+        return 'Название рецепта обязательно и должно содержать от 3 до 100 символов';
+      case 1:
+        break;
+      case 2:
+        return 'У рецепта должно быть не более 5 категорий';
+      case 3:
+        return 'Название для каждого ингредиента рецепта обязательно и должно содержать не менее 2 и не более 50 символов';
+      case 4:
+        return 'Название для каждого нутриента рецепта обязательно и должно содержать не менее 2 и не более 20 символов';
+      case 5:
+        return 'Содержание для каждой инструкции рецепта обязательно и должно содержать не менее 2 и не более 1000 символов';
+    }
+    return '';
+  }
+
+  validNextSteps(): number {
+    for (let s = 0; s <= 6; s++) {
+      switch (s) {
+        case 0:
+          if (
+            !(
+              this.form.get('recipeName')!.valid &&
+              this.form.get('history')!.valid &&
+              this.form.get('description')!.valid
+            )
+          ) {
+            return 1;
+          }
+          break;
+        case 1:
+          if (
+            !(
+              this.form.get('preparationTime')!.valid &&
+              this.form.get('cookingTime')!.valid &&
+              this.form.get('origin')!.valid &&
+              this.form.get('portions')!.valid
+            )
+          ) {
+            return 2;
+          }
+          break;
+        case 2:
+          if (!(this.selectedCategories.length <= 5)) {
+            return 3;
+          }
+          break;
+        case 3:
+          if (!this.form.get('ingredients')!.valid) {
+            return 4;
+          }
+          break;
+        case 4:
+          if (!this.form.get('nutritions')!.valid) {
+            return 5;
+          }
+          break;
+        case 5:
+          if (!this.form.get('instructions')!.valid) {
+            return 6;
+          }
+          break;
+      }
+    }
+    return 0;
+  }
+
   ngOnInit(): void {
     this.renderer.addClass(document.body, 'hide-overflow');
     (<HTMLElement>document.querySelector('.header')).style.width =
       'calc(100% - 16px)';
+
+    this.ingredientService.ingredients$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(
+        (receivedIngredients: IIngredient[]) =>
+          (this.ingredients = receivedIngredients),
+      );
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((currentUser: IUser) => {
@@ -147,9 +265,9 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.userService.users$.pipe(takeUntil(this.destroyed$)).subscribe(
-      (data) => this.users = data
-    )
+    this.userService.users$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((data) => (this.users = data));
 
     this.categoryService.categories$
       .pipe(takeUntil(this.destroyed$))
@@ -160,6 +278,8 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroyed$))
           .subscribe((data: ISection[]) => {
             this.allSections = data;
+            this.group = [];
+            this.fullGroup = [];
 
             this.allSections.forEach((section) => {
               if (section.categories.length > 0) {
@@ -196,18 +316,12 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       this.form.get('origin')?.setValue(editedRecipe.origin);
       this.form.get('cookingTime')?.setValue(editedRecipe.cookingTime);
 
-      if (editedRecipe.mainImage !== null) {
-        try {
-          const mainImageData: FormData = editedRecipe.mainImage;
-          const mainpicFile = mainImageData.get('file') as File;
-          if (mainpicFile) {
-            this.form.get('image')?.setValue(mainImageData);
-            const objectURL = URL.createObjectURL(mainpicFile);
-            this.mainImage = objectURL;
-          }
-        } catch {
-          console.error('Ошибка при извлечении главной фотографии');
-        }
+      if (this.editedRecipe.mainImage) {
+        this.supabaseFilepath = this.editedRecipe.mainImage;
+
+        this.form.get('image')?.setValue('url');
+
+        this.downloadMainpicFromSupabase(this.editedRecipe.mainImage);
       }
 
       for (let i = 1; i <= editedRecipe.nutritions.length; i++) {
@@ -235,6 +349,10 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
         ingredientQuantity?.setValue(editedRecipe.ingredients[i - 1].quantity);
         ingredientUnit?.setValue(editedRecipe.ingredients[i - 1].unit);
       }
+      this.images = Array.from(
+        { length: this.editedRecipe.instructions.length },
+        () => Array.from({ length: 3 }, () => ''),
+      );
       for (let i = 1; i <= editedRecipe.instructions.length; i++) {
         this.addInstruction();
         const instructionsArray = this.form.get('instructions') as FormArray;
@@ -249,25 +367,31 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
         ) {
           const imagesArray = instructionGroup.get('images') as FormArray;
           const imageControl = imagesArray.at(j - 1);
-          const instructionImage: FormData = editedRecipe.instructions[i - 1]
-            .images[j - 1] as FormData;
+          const instructionImage: string =
+            editedRecipe.instructions[i - 1].images[j - 1];
           try {
-            if ((instructionImage.get('file') as File) !== null) {
-              const instructionImageData: FormData | undefined =
+            if (instructionImage !== null) {
+              const instructionImageData =
                 editedRecipe.instructions[i - 1].images[j - 1];
               if (instructionImageData && instructionImageData !== undefined) {
-                const instructionFile = instructionImageData.get(
-                  'file',
-                ) as File;
+                const instructionFile = instructionImageData;
                 if (instructionFile) {
-                  imageControl.setValue(instructionImageData);
-                  const objectURL = URL.createObjectURL(instructionFile);
-                  this.images[i][j] = objectURL;
+                  if (instructionImageData.file) {
+                    imageControl?.patchValue({
+                      file: '/' + instructionImageData.file,
+                    });
+
+                    this.images[i - 1][j - 1] =
+                      this.downloadInstuctionsPhotoFromSupabase(
+                        instructionImageData.file,
+                      );
+                    this.startInstructionPhotos.push(instructionImageData.file);
+                  }
                 }
               }
             }
-          } catch {
-            console.error('Ошибка при извлечении фотографии инструкции');
+          } catch (error) {
+            console.error(error);
           }
         }
       }
@@ -279,6 +403,15 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       }
     }
     this.beginningData = this.form.getRawValue();
+  }
+
+  private setFilenameForSupabase(value: string): string {
+    const fileExt = value.split('.').pop();
+    return `${Math.random()}.${fileExt}`;
+  }
+
+  loadPictureToSupabase(path: string, file: string) {
+    return supabase.storage.from('recipes').upload(path, file);
   }
 
   f(field: string): FormArray {
@@ -372,10 +505,8 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       const instuctionPicFile: File | undefined = input.files?.[0];
 
       if (instuctionPicFile) {
-        const instuctionPicData = new FormData();
-        instuctionPicData.append('file', instuctionPicFile);
         imageControl?.patchValue({
-          file: instuctionPicData,
+          file: instuctionPicFile,
         });
         const objectURL = URL.createObjectURL(instuctionPicFile);
         if (!this.images[instructionIndex]) {
@@ -385,21 +516,27 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       }
     }
   }
+
+  supabaseFilepath = '';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   mainPhotoChange(event: any) {
     const input = event.target as HTMLInputElement;
-    const mainpicFile: File | undefined = input.files?.[0];
+    const userpicFile: File | undefined = input.files?.[0];
 
-    if (mainpicFile) {
-      const mainPicData = new FormData();
-      mainPicData.append('file', mainpicFile);
-      this.form.get('image')?.setValue(mainPicData);
-
-      const objectURL = URL.createObjectURL(mainpicFile);
+    if (userpicFile) {
+      this.form.get('image')?.setValue(userpicFile);
+      const objectURL = URL.createObjectURL(userpicFile);
       this.mainImage = objectURL;
+      this.supabaseFilepath = this.setFilenameForSupabase(
+        this.form.get('image')?.value.name,
+      );
     }
   }
-
+  unsetMainImage() {
+    this.form.get('image')?.setValue(null);
+    this.mainImage = this.defaultImage;
+    this.supabaseFilepath = '';
+  }
   //--------------------
 
   createImageControl() {
@@ -414,12 +551,16 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
         name: [
           '',
           [
+            trimmedMinLengthValidator(2),
             Validators.required,
             Validators.minLength(2),
             Validators.maxLength(50),
           ],
         ],
-        quantity: ['', Validators.maxLength(6)],
+        quantity: [
+          '',
+          [Validators.maxLength(6), customPatternValidator(numbers)],
+        ],
         unit: ['', Validators.maxLength(10)],
       }),
     );
@@ -436,11 +577,15 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
           '',
           [
             Validators.required,
+            trimmedMinLengthValidator(2),
             Validators.minLength(2),
             Validators.maxLength(20),
           ],
         ],
-        quantity: ['', [Validators.maxLength(6)]],
+        quantity: [
+          '',
+          [Validators.maxLength(6), customPatternValidator(numbers)],
+        ],
         unit: ['', Validators.maxLength(10)],
       }),
     );
@@ -457,6 +602,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
           '',
           [
             Validators.required,
+            trimmedMinLengthValidator(2),
             Validators.minLength(2),
             Validators.maxLength(1000),
           ],
@@ -469,7 +615,13 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
         ]),
       }),
     );
+
+     this.instructionImagesVisibility = Array.from(
+       { length: this.editedRecipe.instructions.length }
+     );
   }
+
+  instructionImagesVisibility:boolean[] = []
 
   removeInstruction(index: number) {
     this.f('instructions').removeAt(index);
@@ -491,18 +643,31 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
 
   @Output() updatedRecipeEmitter = new EventEmitter<IRecipe>();
 
+  async loadInstuctionPhotos() {
+    for (const photo of this.instructionsPhotosUpload) {
+      await this.loadPictureToSupabase(photo.name, photo.file);
+    }
+  }
+
+  instructionsPhotosUpload: { file: any; name: string }[] = [];
   //обработчик отправки формы
   createRecipe(): void {
     const categoriesIds: number[] = [];
     this.selectedCategories.forEach((element) => {
       categoriesIds.push(element.id);
     });
-    this.recipeService.recipes$.subscribe((data) => {
-      const recipes: IRecipe[] = data;
-      const maxId = Math.max(...recipes.map((u) => u.id));
-      this.recipeId = maxId + 1;
-    });
 
+    this.recipeId = this.maxId + 1;
+
+    this.form.get('instructions')?.value.forEach((instruction: any) => {
+      instruction.images.forEach((image: any) => {
+        if (image.file) {
+          const name = this.setFilenameForSupabase(image.file.name);
+          this.instructionsPhotosUpload.push({ file: image.file, name: name });
+          image.file = name;
+        }
+      });
+    });
     if (this.form.valid) {
       const recipeData: IRecipe = {
         name: this.form.value.recipeName,
@@ -510,7 +675,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
         statistics: [],
         ingredients: this.form.value.ingredients,
         instructions: this.form.value.instructions,
-        mainImage: this.form.value.image,
+        mainImage: '',
         description: this.form.value.description,
         history: this.form.value.history,
         preparationTime: this.form.value.preparationTime,
@@ -532,23 +697,91 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
             : 'public'
           : 'private',
       };
-      this.createdRecipe = recipeData;
-
-      this.recipeService.postRecipe(recipeData).subscribe(() => {
-        this.editedRecipe = recipeData;
-
-        this.successModalShow = true;
-
-        this.cd.markForCheck();
+      recipeData.ingredients.forEach((ingredient) => {
+        const findedIngredient = recipeData.ingredients.find(
+          (i) => i === ingredient,
+        );
+        if (findedIngredient && findedIngredient.quantity) {
+          findedIngredient.quantity = ingredient.quantity
+            .toString()
+            .replace(',', '.');
+        }
       });
+      this.createdRecipe = recipeData;
+      this.postRecipeToSupabase(recipeData);
     }
+  }
+  async postRecipeToSupabase(recipe: IRecipe) {
+    this.loading = true;
+    this.cd.markForCheck();
+    try {
+      if (this.instructionsPhotosUpload.length > 0) {
+        await this.loadInstuctionPhotos();
+      }
+      const { data, error } = await supabase.from('recipes').upsert([
+        {
+          id: recipe.id,
+          name: recipe.name,
+          description: recipe.description,
+          preparationtime: recipe.preparationTime,
+          cookingtime: recipe.cookingTime,
+          servings: recipe.servings,
+          origin: recipe.origin,
+          ingredients: recipe.ingredients,
+          mainimage: this.form.value.image ? this.supabaseFilepath : undefined,
+          nutritions: recipe.nutritions,
+          instructions: recipe.instructions,
+          categories: recipe.categories,
+          authorid: recipe.authorId,
+          likesid: recipe.likesId,
+          cooksid: recipe.cooksId,
+          history: recipe.history,
+          comments: recipe.comments,
+          publicationdate: recipe.publicationDate,
+          favoritesid: recipe.favoritesId,
+          status: recipe.status,
+          reports: recipe.reports,
+          statistics: recipe.statistics,
+        },
+      ]);
+
+      if (this.form.get('image')?.value) {
+        await this.loadPictureToSupabase(
+          this.supabaseFilepath,
+          this.form.get('image')?.value,
+        );
+      }
+
+      if (error) {
+        console.error('Error updating recipe:', error);
+      } else {
+        this.editedRecipe = recipe;
+        this.successModalShow = true;
+        this.cd.markForCheck();
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      this.loading = false;
+      this.cd.markForCheck();
+    }
+  }
+
+  controlInvalid(control: string, group: any) {
+    return (
+      group.get(control)?.invalid &&
+      (group.get(control)?.dirty || group.get(control)?.touched)
+    );
   }
 
   sendNotificationsAfterPublishingRecipe() {
     const subscribes: Observable<IUser>[] = [];
 
     if (
-      this.userService.getPermission('manager-review-your-recipe', this.currentUser)
+      this.userService.getPermission(
+        'manager-review-your-recipe',
+        this.currentUser,
+      )
     ) {
       const notify: INotification = this.notifyService.buildNotification(
         'Рецепт успешно опубликован',
@@ -557,9 +790,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
         'recipe',
         '/recipes/list/' + this.createdRecipe.id,
       );
-      subscribes.push(
-        this.notifyService.sendNotification(notify, this.currentUser),
-      );
+      this.notifyService.sendNotification(notify, this.currentUser);
     }
 
     const authorFollowers = this.userService.getFollowers(
@@ -573,41 +804,124 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     );
     authorFollowers.forEach((follower) => {
       if (this.userService.getPermission('new-recipe-from-following', follower))
-        subscribes.push(
-          this.notifyService.sendNotification(notifyForFollower, follower),
-        );
+        this.notifyService.sendNotification(notifyForFollower, follower);
     });
 
     forkJoin(subscribes).subscribe();
   }
 
-  editRecipe(): void {
-    const categoriesIds: number[] = [];
-    this.selectedCategories.forEach((element) => {
-      categoriesIds.push(element.id);
-    });
 
-    const recipeData: IRecipe = {
-      ...this.editedRecipe,
-      name: this.form.value.recipeName,
-      ingredients: this.form.value.ingredients,
-      instructions: this.form.value.instructions,
-      mainImage: this.form.value.image,
-      description: this.form.value.description,
-      history: this.form.value.history,
-      preparationTime: this.form.value.preparationTime,
-      cookingTime: this.form.value.cookingTime,
-      origin: this.form.value.origin,
-      nutritions: this.form.value.nutritions,
-      servings: this.form.value.portions,
-      categories: categoriesIds,
-      publicationDate: '',
-      status: this.isAwaitingApprove ? this.currentUser.role==='user'? 'awaits' : 'public' : 'private',
-    };
-
-    this.updatedRecipeEmitter.emit(recipeData);
+  async deleteInstuctionPhotos(photos: string[]) {
+   
+     await Promise.all(
+       photos.map(async (photo) => {
+         await supabase.storage.from('recipes').remove([photo]);
+       }),
+     );
   }
 
+  async editRecipe() {
+    const allNewInstructionPhotos: string[] = [];
+    this.form.get('instructions')?.value.forEach((instruction: any) => {
+      instruction.images.forEach((image: any) => {
+        if (image.file && image.file.name) {
+          const name = this.setFilenameForSupabase(image.file.name);
+          this.instructionsPhotosUpload.push({ file: image.file, name: name });
+          image.file = name;
+        } else {
+          if (image.file) image.file = image.file.substring(1);
+        }
+        if (image.file) allNewInstructionPhotos.push(image.file);
+      });
+    });
+    const instructionsToDelete: string[] = [];
+    this.startInstructionPhotos.forEach((photo) => {
+      // Проверяем, есть ли строка во втором массиве
+      if (!allNewInstructionPhotos.includes(photo)) {
+        // Если нет, добавляем строку в третий массив
+        instructionsToDelete.push(photo);
+      }
+    });
+    
+      const categoriesIds: number[] = [];
+      this.selectedCategories.forEach((element) => {
+        categoriesIds.push(element.id);
+      });
+
+      const recipeData: IRecipe = {
+        ...this.editedRecipe,
+        name: this.form.value.recipeName,
+        ingredients: this.form.value.ingredients,
+        instructions: this.form.value.instructions,
+        mainImage: this.form.value.image ? this.supabaseFilepath : undefined,
+        description: this.form.value.description,
+        history: this.form.value.history,
+        preparationTime: this.form.value.preparationTime,
+        cookingTime: this.form.value.cookingTime,
+        origin: this.form.value.origin,
+        nutritions: this.form.value.nutritions,
+        servings: this.form.value.portions,
+        categories: categoriesIds,
+        publicationDate: getCurrentDate(),
+        status: this.isAwaitingApprove
+          ? this.currentUser.role === 'user'
+            ? 'awaits'
+            : 'public'
+          : 'private',
+      };
+
+      recipeData.ingredients.forEach((ingredient) => {
+        const findedIngredient = recipeData.ingredients.find(
+          (i) => i === ingredient,
+        );
+        if (findedIngredient && findedIngredient.quantity) {
+          findedIngredient.quantity = ingredient.quantity
+            .toString()
+            .replace(',', '.');
+        }
+      });
+
+      this.loading = true;
+      this.cd.markForCheck();
+    try {
+         if (this.instructionsPhotosUpload.length > 0) {
+           await this.loadInstuctionPhotos();
+         }
+         if (instructionsToDelete.length > 0) {
+           await this.deleteInstuctionPhotos(instructionsToDelete);
+      }
+      
+        if (recipeData.mainImage !== this.editedRecipe.mainImage) {
+          await this.loadPictureToSupabase(
+            this.supabaseFilepath,
+            this.form.get('image')?.value,
+          );
+          if (this.editedRecipe.mainImage)
+            await this.deleteOldPic(this.editedRecipe.mainImage);
+        }
+
+      await this.recipeService.updateRecipeFunction(recipeData);
+      this.successModalShow = true;
+      this.afterEditingRecipe();
+      } finally {
+        this.loading = false;
+        this.cd.markForCheck();
+      }
+  }
+
+  downloadMainpicFromSupabase(path: string) {
+    this.mainImage = supabase.storage
+      .from('recipes')
+      .getPublicUrl(path).data.publicUrl;
+  }
+
+  downloadInstuctionsPhotoFromSupabase(path: string): string {
+    return supabase.storage.from('recipes').getPublicUrl(path).data.publicUrl;
+  }
+
+  deleteOldPic(path: string) {
+    return supabase.storage.from('recipes').remove([path]);
+  }
   //модальные окна
   handleCreateRecipeModal(answer: boolean): void {
     if (answer) {
@@ -648,7 +962,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     }
   }
   handleSuccessModal() {
-    this.router.navigateByUrl('recipes/list/' + (this.recipeId - 1));
+    this.router.navigateByUrl('recipes/list/' + this.recipeId);
 
     this.cd.markForCheck();
 
@@ -675,12 +989,53 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
         'recipe',
         '/recipes/list/' + this.editedRecipe.id,
       );
-      this.notifyService.sendNotification(notify, this.currentUser).subscribe();
+      this.notifyService.sendNotification(notify, this.currentUser);
     }
-    if (this.isAwaitingApprove && this.currentUser.role !== 'user' && this.userService.getPermission('hide-author',this.currentUser)) {
+    if (
+      this.isAwaitingApprove &&
+      this.currentUser.role !== 'user' &&
+      this.userService.getPermission('hide-author', this.currentUser)
+    ) {
       this.sendNotificationsAfterPublishingRecipe();
     }
   }
+
+  afterEditingRecipe() {
+    if (this.editedRecipe.id > 0) {
+      if (
+        this.userService.getPermission('you-edit-your-recipe', this.currentUser)
+      ) {
+        const notify: INotification = this.notifyService.buildNotification(
+          this.isAwaitingApprove
+            ? 'Рецепт изменен ' +
+                (this.currentUser.role === 'user'
+                  ? 'и отправлен на проверку'
+                  : 'и опубликован')
+            : 'Рецепт изменен',
+          `Рецепт «${this.editedRecipe.name}» изменен ${
+            this.isAwaitingApprove
+              ? this.currentUser.role === 'user'
+                ? 'и успешно отправлен на проверку'
+                : 'и опубликован'
+              : ''
+          }`,
+          'success',
+          'recipe',
+          '/recipes/list/' + this.editedRecipe.id,
+        );
+        this.notifyService.sendNotification(notify, this.currentUser);
+      }
+
+      if (
+        this.isAwaitingApprove &&
+        this.currentUser.role !== 'user' &&
+        this.userService.getPermission('hide-author', this.currentUser)
+      ) {
+        this.sendNotificationsAfterPublishingRecipe();
+      }
+    }
+  }
+
   handleApproveModal(answer: boolean): void {
     if (answer) {
       this.isAwaitingApprove = true;

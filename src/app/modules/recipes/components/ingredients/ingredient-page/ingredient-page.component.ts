@@ -21,6 +21,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { trigger } from '@angular/animations';
 import { heightAnim } from 'src/tools/animations';
 import { setReadingTimeInMinutes } from 'src/tools/common';
+import { supabase } from 'src/app/modules/controls/image/supabase-data';
 
 @Component({
   selector: 'app-ingredient-page',
@@ -65,15 +66,15 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
   }
 
   get variations() {
-    return this.ingredient.variations.join(', ')
+    return this.ingredient.variations.join(', ');
   }
 
   get showReviewSection() {
     return (
-      this.ingredient.advantages ||
-      this.ingredient.disadvantages ||
-      this.ingredient.recommendedTo ||
-      this.ingredient.contraindicatedTo
+      this.ingredient.advantages?.length ||
+      this.ingredient.disadvantages?.length ||
+      this.ingredient.recommendedTo?.length ||
+      this.ingredient.contraindicatedTo?.length
     );
   }
 
@@ -82,10 +83,10 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
       this.showMainSection ||
       this.showCookingSection ||
       this.showReviewSection ||
-      this.ingredient.tips ||
-      this.ingredient.nutritions ||
-      this.ingredient.externalLinks
-    )
+      this.ingredient.tips?.length ||
+      this.ingredient.nutritions?.length ||
+      this.ingredient.externalLinks?.length
+    );
   }
   get showMainSection() {
     return (
@@ -97,16 +98,14 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
 
   get showCookingSection() {
     return (
-      this.ingredient.precautions ||
-      this.ingredient.cookingMethods ||
-      this.ingredient.storageMethods ||
-      this.ingredient.compatibleDishes
+      this.ingredient.precautions?.length ||
+      this.ingredient.cookingMethods?.length ||
+      this.ingredient.storageMethods?.length ||
+      this.ingredient.compatibleDishes?.length
     );
   }
-  
+
   get readingTimesInMinutes() {
-    
-    
     const combinedText = [
       this.ingredient.history,
       this.ingredient.description,
@@ -131,11 +130,13 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
     private recipeService: RecipeService,
     private titleService: Title,
     private cd: ChangeDetectorRef,
-  ) {}
+  ) { }
 
+  placeholder = '/assets/images/ingredient.png';
   ngOnInit() {
     this.route.data.subscribe((data) => {
       this.ingredient = { ...data['IngredientResolver'] };
+      this.downloadImageFromSupabase();
 
       this.titleService.setTitle(this.ingredient.name);
 
@@ -146,11 +147,11 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroyed$))
         .subscribe(
           (data) =>
-            (this.relatedIngredients =
-              this.ingredientService.getRelatedIngredients(
-                this.ingredient,
-                data,
-              )),
+          (this.relatedIngredients =
+            this.ingredientService.getRelatedIngredients(
+              this.ingredient,
+              data,
+            )),
         );
       this.recipeService.recipes$
         .pipe(takeUntil(this.destroyed$))
@@ -176,6 +177,18 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
     });
   }
 
+  image = '';
+
+  downloadImageFromSupabase() {
+    if (this.ingredient.image) {
+      this.image = supabase.storage
+        .from('ingredients')
+        .getPublicUrl(this.ingredient.image).data.publicUrl;
+    }
+
+    this.cd.markForCheck();
+  }
+
   goToSection(section: string) {
     const sectionTag = document.getElementById(section);
     if (sectionTag) {
@@ -188,21 +201,43 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  oneColumn(context: 'advantages' | 'recommendations') {
+  oneColumn(context: 'advantages' | 'recommendations' | 'cooking') {
     switch (context) {
       case 'advantages':
-        return (
-          (this.ingredient.advantages || this.ingredient.disadvantages) &&
-          (!this.ingredient.advantages || this.ingredient.disadvantages)
-        );
+        if (this.ingredient.advantages && this.ingredient.disadvantages) {
+          return (
+            (this.ingredient.advantages.length > 0 &&
+              this.ingredient.disadvantages.length === 0) ||
+            (this.ingredient.advantages.length === 0 &&
+              this.ingredient.disadvantages.length > 0)
+          );
+        } else return false;
       case 'recommendations':
-        return (
-          (this.ingredient.recommendedTo ||
-            this.ingredient.contraindicatedTo) &&
-          (!this.ingredient.recommendedTo || this.ingredient.contraindicatedTo)
-        );
+        if (
+          this.ingredient.recommendedTo &&
+          this.ingredient.contraindicatedTo
+        ) {
+          return (
+            (this.ingredient.contraindicatedTo.length > 0 &&
+              this.ingredient.recommendedTo.length === 0) ||
+            (this.ingredient.contraindicatedTo.length === 0 &&
+              this.ingredient.recommendedTo.length > 0)
+          );
+        } else return false;
+      case 'cooking':
+        if (
+          this.ingredient.cookingMethods &&
+          this.ingredient.storageMethods
+        ) {
+          return (
+            (this.ingredient.cookingMethods.length > 0 &&
+              this.ingredient.storageMethods.length === 0) ||
+            (this.ingredient.cookingMethods.length === 0 &&
+              this.ingredient.storageMethods.length > 0)
+          );
+        } else return false;
     }
-  }
+    }
 
   addParagraphs(text: string) {
     return text.replace(/\n/g, '<br>');

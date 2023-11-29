@@ -12,7 +12,10 @@
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none;
 }
-
+app-modal{
+  position: fixed;
+  z-index: 10;
+}
 .content {
   min-width: 30em;
   max-width: 30em;
@@ -94,7 +97,7 @@ h1 {
 
 h4 {
   @include flex;
-  justify-content: start;
+  justify-content: flex-start;
   font-weight: 500;
   column-gap: 1em;
   margin-bottom: 1em;
@@ -118,7 +121,7 @@ div.type:first-child h4 {
 .note {
   @include flex;
   opacity: 0.5;
-  justify-content: start;
+  justify-content: flex-start;
   column-gap: 0.5em;
   transition: scale 0.2s;
   zoom: 0.85;
@@ -161,13 +164,14 @@ li {
   &.purchased {
     .main-product-info {
       background-color: var(--color-background-deeper-unactive);
-      scale: 0.9;
      }
 
-    .note{
-      scale:0.9 
-    }
+     .cross-button,.buy-button,a,.product-quantity{
+      opacity: 0.5;
+     }
+
     * {
+      color: var(--color-foreground-unactive);
       text-decoration: line-through;
     }
 
@@ -499,7 +503,7 @@ a {
 .search-block {
   .text {
     @include flex;
-    justify-content: start;
+    justify-content: flex-start;
     column-gap: 1em;
     width: max-content;
   }
@@ -601,9 +605,9 @@ a {
   box-shadow: inset 2px 2px 10px rgba($color: #000000, $alpha: 0.02);
 
   margin-top: 0.5em;
-  overflow-y: scroll !important;
+  overflow-y: auto !important;
   position: absolute;
-  border-radius: 1.5em 5px 5px 1.5em;
+  border-radius: 1.5em;
   display: flex;
   padding: 0;
   flex-direction: column;

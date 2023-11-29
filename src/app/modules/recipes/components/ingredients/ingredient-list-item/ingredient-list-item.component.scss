@@ -63,10 +63,10 @@ app-modal{
 }
 
 .ingredient {
-    background-color: var(--color-background-deeper);
 
+
+    background-color: white;
     scroll-snap-align: start;
-    background-image: url("../../../../../../assets/images/ingredient.png");
     background-size: cover;
 
     @include flex;
@@ -84,6 +84,9 @@ app-modal{
     flex-direction: column;
     overflow: hidden;
 }
+.ingredient.null{
+    background-color: var(--color-background-deeper);
+}
 
 .ingredient.null p {
     width: 100%;
@@ -95,7 +98,7 @@ app-modal{
 
 h1 {
     sup {
-        font-size: 0.6em;
+        font-size: 0.5em;
     }
 
     cursor: pointer;
@@ -148,7 +151,7 @@ h1 {
 }
 
 .ingredient.null {
-    padding: 2em;
+    padding: 1.5em;
     background-image: none;
 
     p {

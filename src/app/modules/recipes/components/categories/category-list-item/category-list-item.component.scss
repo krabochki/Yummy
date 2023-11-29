@@ -55,10 +55,9 @@ app-modal{
 }
 
 .category {
-  background-color: var(--color-background-deeper);
+  background-color: white;
 
   scroll-snap-align: start;
-  background-image: url("../../../../../../assets/images/category.png");
   background-size: cover;
 
   @include flex;
@@ -84,31 +83,25 @@ app-modal{
 }
 
 
+.category.null{
+    background-color: var(--color-background-deeper);
+}
 
 h1 {
   sup {
-    font-size: 0.6em;
+    font-size: 0.5em;
   }
-
   cursor: pointer;
   position: relative;
   font-size:1.2em;
-
   line-height: 1;
-
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
-  /* Количество строк, которые вы хотите отобразить */
   overflow-wrap: break-word;
-  /* Разрешить перенос длинных слов */
   hyphens: auto;
-  /* Разрешить перенос слов */
-
-  white-space: normal;
-  /* Изменить на "normal" */
-  overflow-y: hidden;
-  overflow-x: hidden;
+   white-space: normal;
+  overflow: hidden;
   text-overflow: ellipsis;
 
   font-weight: 400;

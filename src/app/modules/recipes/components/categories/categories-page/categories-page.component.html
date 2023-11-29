@@ -1,15 +1,16 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<div class="wrap" *ngIf="!this.isLoading; else loading">
+<div class="wrap" >
   <h1 *ngIf="getPublicCategories(section).length>0 || filter==='popular' || filter==='sections'">{{ title }}</h1>
 
   <app-button
+    [disabled]="currentUser.id>0"
     class="add-category"
     [icon]="'add-category'"
     *ngIf="filter === 'sections'"
     [color]="'prim'"
     [text]="'Создать категорию'"
-            (click)="creatingMode = true"
+            (click)="createCategoryButtonClick()"
 
     [rounded]="true"
   ></app-button>
@@ -28,7 +29,7 @@
         <svg-icon
           [applyClass]="true"
           class="search-svg"
-          [src]="'../../../../../assets/images/svg/search.svg'"
+          [src]="'/assets/images/svg/search.svg'"
         ></svg-icon>
       </div>
     </div>
@@ -41,7 +42,7 @@
               <svg-icon
                 [applyClass]="true"
                 class="sad-cook"
-                [src]="'../../../../../assets/images/svg/sad-cook.svg'"
+                [src]="'/assets/images/svg/sad-cook.svg'"
               ></svg-icon>
             </div>
             <p>
@@ -59,26 +60,16 @@
         </div>
         <li
           *ngFor="let item of autocomplete"
-          [routerLink]="
-            filter !== 'sections' ? '/categories/list/' + item.id : null
-          "
-        >
-          <p
-            (mousedown)="navigateTo(
+           (mousedown)="navigateTo(
               getSectionOfCategory(item).id === 0
                 ? '/sections/list/' + item.id
                 : '/categories/list/' + item.id
             )"
-          >
+        >
+        
             {{ item.name }}
-          </p>
-          <span
-            (mousedown)="navigateTo('/sections/list/' + getSectionOfCategory(item).id)"
-            *ngIf="
-              filter !== 'my-recipes' && getSectionOfCategory(item).id !== 0
-            "
-            >{{ getSectionOfCategory(item).name }}</span
-          >
+        
+       
         </li>
       </ul>
     </div>
@@ -89,7 +80,7 @@
         <svg-icon
           [applyClass]="true"
           class="fridge"
-          [src]="'../../../../../assets/images/svg/fridge.svg'"
+          [src]="'/assets/images/svg/fridge.svg'"
         ></svg-icon>
       </div>
       <div class="content">
@@ -115,7 +106,7 @@
         <svg-icon
           class="arrow-svg"
           [applyClass]="true"
-          [src]="'../../../../../assets/images/svg/go-back.svg'"
+          [src]="'/assets/images/svg/go-back.svg'"
         ></svg-icon>
       </a>
 
@@ -136,7 +127,7 @@
           <svg-icon
             class="arrow-svg"
             [applyClass]="true"
-            [src]="'../../../../../assets/images/svg/go-back.svg'"
+            [src]="'/assets/images/svg/go-back.svg'"
           ></svg-icon>
         </a>
 
@@ -145,7 +136,8 @@
           [showRecipesNumber]="true"
           [categories]="getCategoriesOfSection(section).slice(0, 8)"
         ></app-horizontal-category-list>
-        <ng-template #oneSection>
+        
+        <ng-template #oneSection> 
           <app-vertical-category-list
             [showRecipesNumber]="true"
             [categories]="categoriesToShow"
@@ -167,12 +159,16 @@
   </div>
 </div>
 
-<ng-template #loading>
-  <p>Loading....</p>
-</ng-template>
+
 
 <app-category-creating style="position: fixed;z-index: 3;"
   (closeEmitter)="creatingMode = false"
   @modal
   *ngIf="creatingMode"
 ></app-category-creating>
+
+
+<app-modal @modal *ngIf="noAccessModalShow" [style]="'prim'" [title]="'Доступ к разделу ограничен'" [type]="'yesOrNo'"
+  (resultEmit)="handleNoAccessModal($event)" [buttonsText]="['Давайте', 'Не сейчас']" [description]="
+    'Доступ к этой функции имеют только зарегистрированные пользователи. Хотите зарегистрироваться или войти в существующий аккаунт?'
+  "></app-modal>

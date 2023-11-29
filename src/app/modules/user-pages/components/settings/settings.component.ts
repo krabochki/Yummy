@@ -1,6 +1,7 @@
 import { trigger } from '@angular/animations';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -19,7 +20,14 @@ import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
 import { PlanService } from 'src/app/modules/planning/services/plan-service';
 import { IPlan } from 'src/app/modules/planning/models/plan';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
-import { condifencialitySettings, managersPreferences, sections, social, steps, stepsIcons } from './conts';
+import {
+  condifencialitySettings,
+  managersPreferences,
+  sections,
+  social,
+  steps,
+  stepsIcons,
+} from './conts';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -64,7 +72,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   private destroyed$: Subject<void> = new Subject<void>();
 
-    get permanentIngredientExist(): boolean {
+  get permanentIngredientExist(): boolean {
     const formattedIngredients = this.permanentIngredients.map((ingredient) =>
       ingredient.trim().toLowerCase(),
     );
@@ -83,12 +91,12 @@ export class SettingsComponent implements OnInit, OnDestroy {
     return isIngredientAlreadyAdded;
   }
 
-
   constructor(
     private authService: AuthService,
     private router: Router,
     private recipeService: RecipeService,
     private renderer: Renderer2,
+    private cd:ChangeDetectorRef,
     private userService: UserService,
     private planService: PlanService,
   ) {
@@ -114,9 +122,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
       );
       this.user.exclusions = this.excludingIngredients;
     }
-    this.userService.updateUsers(this.user).subscribe();
+    this.updateUser(this.user)
   }
-
 
   showBlock(i: number) {
     if (this.user.role === 'user' && i === this.MANAGERS_SETTINGS_BLOCK_NUM)
@@ -127,7 +134,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   protected addPermanentIngredient(): void {
     if (!this.user.permanent) this.user.permanent = [];
     this.user.permanent.push(this.permanentIngredient);
-    this.userService.updateUsers(this.user).subscribe();
+    this.updateUser(this.user)
     this.permanentIngredientTouched = false;
     this.permanentIngredient = '';
   }
@@ -135,12 +142,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
   protected addExcludedIngredient(): void {
     if (!this.user.exclusions) this.user.exclusions = [];
     this.user.exclusions.push(this.excludedIngredient);
-    this.userService.updateUsers(this.user).subscribe();
+    this.updateUser(this.user)
     this.excludedIngredientTouched = false;
     this.excludedIngredient = '';
   }
-
-
 
   private getPlans(): void {
     this.planService.plans$
@@ -181,9 +186,14 @@ export class SettingsComponent implements OnInit, OnDestroy {
     if (!nightModeDisabled) {
       document.body.classList.add('dark-mode');
       localStorage.setItem('theme', 'dark');
+            const favicon = document.querySelector('#favicon');
+            favicon?.setAttribute('href', '/assets/images/chef-day.png');
     } else {
       document.body.classList.remove('dark-mode');
       localStorage.setItem('theme', 'light');
+            const favicon = document.querySelector('#favicon');
+            favicon?.setAttribute('href', '/assets/images/chef-night.png');
+
     }
   } //переключ темной темы
 
@@ -212,13 +222,16 @@ export class SettingsComponent implements OnInit, OnDestroy {
       this.permissions.push(permission);
     }
     this.user.permissions = this.permissions;
-    this.userService.updateUsers(this.user).subscribe();
+    this.updateUser(this.user)
   }
 
-  protected handleExitModal(event: boolean): void {
+  async handleExitModal(event: boolean) {
     this.exitModalShow = false;
     if (event) {
+      this.loading = true;
+      await this.authService.logout();
       this.authService.logoutUser();
+      this.loading = false;
       this.router.navigateByUrl('/');
     } else {
       setTimeout(() => {
@@ -227,11 +240,17 @@ export class SettingsComponent implements OnInit, OnDestroy {
     }
   }
 
-  protected handleDeleteModal(event: boolean): void {
+  async deleteRecipe(recipe: IRecipe) {
+    await this.recipeService.removeRecipeFunction(recipe.id);
+  }
+
+  async handleDeleteModal(event: boolean) {
     this.deleteModalShow = false;
 
-    if (event) {
+    if (event) {    this.loading = true;
+
       this.authService.logoutUser();
+      await this.authService.logout()
 
       if (this.user.id !== 0 && this.users.find((u) => u.id === this.user.id)) {
         //находим рецепты с лайками комментами приготовлениями  и тп от удаляемого пользователя
@@ -242,7 +261,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
           );
         //обновляем эти рецепты очищая упоминания о пользователе
         editedRecipes.forEach((recipe) => {
-          this.recipeService.updateRecipe(recipe).subscribe();
+          this.updateRecipe(recipe);
         });
         //находим все не публичные рецепты пользователя(публичные останутся с authorId -1 )
         const deletingRecipes =
@@ -257,29 +276,31 @@ export class SettingsComponent implements OnInit, OnDestroy {
             this.users,
             recipe,
           );
-          this.recipeService.deleteRecipe(recipe).subscribe();
+
+          this.deleteRecipe(recipe);
         });
         //удаляем полностью план удаляемого пользователя
         const deletingUserPlan = this.plans.find(
           (p) => p.user === this.user.id,
         );
         if (deletingUserPlan)
-          this.planService.deletePlan(deletingUserPlan).subscribe();
+          await this.planService.deletePlanFromSupabase(deletingUserPlan.id);
 
         const usersForUpdate =
           this.userService.getUsersWhichWillBeUpdatedWhenUserDeleting(
             this.users,
             this.user,
           );
-        usersForUpdate.forEach((u) =>
-          this.userService.updateUser(u).subscribe(),
-        );
+        usersForUpdate.forEach((u) => this.updateUser(u));
 
         //удаляем наконец пользователя
-
-        this.userService.deleteUser(this.user).subscribe();
+        await this.userService.deleteUserFromSupabase(this.user.id);
+        await this.authService.deleteUserFromSupabase();
+            this.loading = false;
 
         this.router.navigateByUrl('/');
+
+
       }
     } else {
       setTimeout(() => {
@@ -288,6 +309,24 @@ export class SettingsComponent implements OnInit, OnDestroy {
     }
   }
 
+  loading = false;
+
+  async deleteUser() {
+    this.loading = true;
+    await this.authService.deleteUserFromSupabase();
+    this.loading = false;
+  }
+  async updateUser(user: IUser) {
+    this.loading = true;
+    this.cd.markForCheck()
+    await this.userService.updateUserInSupabase(user);
+    this.loading = false;    this.cd.markForCheck();
+
+  }
+
+  async updateRecipe(recipe: IRecipe) {
+    await this.recipeService.updateRecipeFunction(recipe);
+  }
   protected clickBackgroundNotContent(elem: Event): void {
     //обработка нажатия на фон настроек, но не на блок с настройками
     if (elem.target !== elem.currentTarget) return;

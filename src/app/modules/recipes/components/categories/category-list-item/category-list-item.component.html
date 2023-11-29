@@ -1,31 +1,29 @@
-<div
+<a [routerLink]="
+        context === 'category'
+          ? '/categories/list/' + category.id
+          : '/sections/list/' + category.id
+      "
   class="category-cont noselect"
-  [title]="category.name + ' [' + recipesNumber + ']'"
+  [title]="title"
   *ngIf="category.id > 0; else nullCategory"
 >
  <div class="category-wrap">
-    <div class="category" *ngIf="category.id > 0; else nullCategory">
+    <div class="category" *ngIf="category.id > 0; else nullCategory" [style.background-image]="'url('+(picture?picture:placeholder)+')'">
     
      
     </div>
      <button class="delete" 
-     (click)="deleteModalShow=true" *ngIf="currentUser.role!=='user' && showDeletingButton">
+     (click)="clickDeleteButton($event)" *ngIf="currentUser.role!=='user' && showDeletingButton">
         <svg-icon class="trash-svg" [applyClass]="true" [src]="'assets/images/svg/trash.svg'"/>
       </button>
  </div>
-  <a  [routerLink]="
-        context === 'category'
-          ? '/categories/list/' + category.id
-          : '/sections/list/' + category.id
-      ">
     <div
      
       style="position: relative; overflow: visible"
     >
-      <h1 class="name"><sup>{{recipesNumber}} </sup>{{category.name}}</h1>
+      <h1 class="name"><sup>({{recipesNumber}})</sup>{{category.name}}</h1>
     </div>
-  </a>
-</div>
+</a>
 
 <ng-template #nullCategory>
   <div class="category null">
@@ -33,10 +31,12 @@
     <svg-icon
       [applyClass]="true"
       class="svg"
-      [src]="'assets/images/svg/no-category.svg'"
+      [src]="'/assets/images/svg/no-category.svg'"
     ></svg-icon>
   </div>
 </ng-template>
 
 <app-modal @modal (resultEmit)="handleDeleteModal($event)" [type]="'yesOrNo'" [buttonsText]="['Да','Отмена']" [style]="'prim'" [description]="'Вы уверены, что хотите удалить эту ' + (context==='category'?'категорию?':'секцию?')" [title]="'Удаление '+(context==='category'?'категории':'секции')" *ngIf="deleteModalShow"></app-modal>
-<app-modal @modal (resultEmit)="handleSuccessDeleteModal()" [type]="'Ok'" [buttonsText]="['Хорошо']" [style]="'sec'" [description]="(context==='category'?'Категория':'Секция')+' успешно удалена'" [title]="(context==='category'?'Категория':'Секция')+' удалена'" *ngIf="successDeleteModalShow"></app-modal>
+
+<app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
+  [description]="loadingText || 'Вносим изменения... Подождите немного...'" />

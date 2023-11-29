@@ -35,9 +35,12 @@ import {
   ShoppingListItem,
   nullProduct,
 } from 'src/app/modules/planning/models/shopping-list';
-import { CalendarEvent } from 'angular-calendar';
 import { IngredientService } from '../../../services/ingredient.service';
 import { IIngredient } from '../../../models/ingredients';
+import { RecipeCalendarEvent } from 'src/app/modules/planning/models/calendar';
+import { Location } from '@angular/common';
+import { supabase } from 'src/app/modules/controls/image/supabase-data';
+import { trimmedMinLengthValidator } from 'src/tools/validators';
 
 @Component({
   selector: 'app-recipe-page',
@@ -52,6 +55,11 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   protected addingToPlanMode: boolean = false;
 
   recipe: IRecipe = nullRecipe;
+
+  authorAvatar = '';
+  noAvatar = '/assets/images/userpic.png';
+  currentUserAvatar = '';
+  supabase = supabase;
 
   categories: ICategory[] = [];
   downRecipes: IRecipe[] = [];
@@ -92,8 +100,12 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   commentsToShow: IComment[] = [];
 
   myPlan: IPlan = nullPlan;
-  protected targetCalendarEvent: CalendarEvent = nullCalendarEvent;
+  protected targetCalendarEvent: RecipeCalendarEvent = nullCalendarEvent;
   vote: boolean = false;
+
+  get noPageToGoBack() {
+    return window.history.length <= 1;
+  }
 
   get date() {
     return getFormattedDate(this.recipe.publicationDate);
@@ -105,10 +117,10 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     return this.recipeService.hideAuthor(this.currentUser, this.author);
   }
 
-  get authorInfo(): string{
-    if (this.author.id <= 0) return 'Автор удален'
-    if (!this.hideAuthor) return 'Автор скрыт'
-    return  !this.author.fullName
+  get authorInfo(): string {
+    if (this.author.id <= 0) return 'Автор удален';
+    if (!this.hideAuthor) return 'Автор скрыт';
+    return !this.author.fullName
       ? '@' + this.author.username
       : this.author.fullName;
   }
@@ -128,6 +140,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     private ingredientService: IngredientService,
     private categoryService: CategoryService,
     private cd: ChangeDetectorRef,
+    private location: Location,
   ) {
     this.commentForm = this.fb.group({
       commentText: [
@@ -135,6 +148,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
         [
           Validators.required,
           Validators.minLength(5),
+          trimmedMinLengthValidator(5),
           Validators.maxLength(1000),
         ],
       ],
@@ -145,8 +159,6 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     this.route.data.subscribe((data: Data) => {
       this.recipe = data['RecipeResolver'];
       this.linkForSocials = window.location.href;
-
-      this.titleService.setTitle(this.recipe.name);
 
       this.userService.users$
         .pipe(takeUntil(this.destroyed$))
@@ -170,10 +182,20 @@ export class RecipePageComponent implements OnInit, OnDestroy {
               this.recipeService.recipes$
                 .pipe(takeUntil(this.destroyed$))
                 .subscribe((recipes: IRecipe[]) => {
+                  const finded = recipes.find((r) => r.id === this.recipe.id);
+                  if (finded) this.recipe = finded;
+                  else {
+                    this.router.navigateByUrl('/recipes');
+                  }
+                  this.cd.markForCheck();
+                  this.titleService.setTitle(this.recipe.name);
+
                   this.ingredientService.ingredients$
                     .pipe(takeUntil(this.destroyed$))
                     .subscribe((receivedIngredients) => {
-                      this.ingredients = receivedIngredients.filter(i=>i.status === 'public');
+                      this.ingredients = receivedIngredients.filter(
+                        (i) => i.status === 'public',
+                      );
                     });
 
                   this.statisticPercent = Number(
@@ -185,7 +207,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
                       this.recipeService.getPublicRecipes(recipes);
                     this.downRecipes = this.getSimilarRecipes(publicRecipes, 4);
                   }
-                  if (this.hideAuthor) {
+                  if (this.hideAuthor && this.author.id > 0) {
                     this.alsoFromThisCook = this.recipeService
                       .getRecipesByUser(
                         this.recipeService.getPublicRecipes(recipes),
@@ -218,6 +240,24 @@ export class RecipePageComponent implements OnInit, OnDestroy {
                     this.commentsToShow = this.recipe.comments.slice(0, 4);
                   }
 
+                  this.recipe.ingredients.forEach((ingredient) => {
+                    const findedIngredient = this.recipe.ingredients.find(
+                      (i) => i === ingredient,
+                    );
+                    if (findedIngredient && findedIngredient.quantity !== '') {
+                      findedIngredient.quantity = ingredient.quantity
+                        .toString()
+                        .replace(',', '.');
+                    }
+                  });
+
+                  this.downloadAvatars();
+                  if (this.recipe.mainImage) {
+                    this.downloadPicFromSupabase(this.recipe.mainImage);
+                  } else {
+                    this.recipe.mainImage = '';
+                  }
+
                   this.setCategories();
                   this.setReadingTimeInMinutes();
                   this.setStatistics();
@@ -239,6 +279,19 @@ export class RecipePageComponent implements OnInit, OnDestroy {
             });
         });
     });
+  }
+
+  private getSupabaseLink(path: string) {
+    return this.supabase.storage.from('userpics').getPublicUrl(path).data
+      .publicUrl;
+  }
+
+  downloadAvatars() {
+    if (this.currentUser.avatarUrl)
+      this.currentUserAvatar = this.getSupabaseLink(this.currentUser.avatarUrl);
+    if (this.author.avatarUrl)
+      this.authorAvatar = this.getSupabaseLink(this.author.avatarUrl);
+    this.cd.markForCheck();
   }
 
   protected addToPlan(): void {
@@ -270,39 +323,34 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   findIngredientByName(name: string) {
     return this.ingredientService.findIngredientByName(name, this.ingredients);
   }
-  handleSuccessVoteModal() {
-    this.recipeService
-      .updateRecipe(this.recipe)
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe(() => {
-        if (this.isRecipeCooked) {
-          if (
-            this.author.id !== this.currentUser.id &&
-            this.userService.getPermission('cook-on-your-recipe', this.author)
-          ) {
-            const notify: INotification = this.notifyService.buildNotification(
-              'Твой рецепт приготовили',
-              `Твой рецепт «${this.recipe.name}» приготовил кулинар ${
-                this.currentUser.fullName
-                  ? this.currentUser.fullName
-                  : '@' + this.currentUser.username
-              }${
-                this.vote
-                  ? ' и оставил положительный отзыв'
-                  : ' и оставил негативный отзыв'
-              }`,
-              'info',
-              'recipe',
-              '/cooks/list/' + this.currentUser.id,
-            );
-            this.notifyService
-              .sendNotification(notify, this.author)
-              .subscribe();
-          }
-        }
+  async handleSuccessVoteModal() {
+    await this.recipeService.updateRecipeFunction(this.recipe);
+    if (this.isRecipeCooked) {
+      if (
+        this.author.id !== this.currentUser.id &&
+        this.userService.getPermission('cook-on-your-recipe', this.author)
+      ) {
+        const notify: INotification = this.notifyService.buildNotification(
+          'Твой рецепт приготовили',
+          `Твой рецепт «${this.recipe.name}» приготовил кулинар ${
+            this.currentUser.fullName
+              ? this.currentUser.fullName
+              : '@' + this.currentUser.username
+          }${
+            this.vote
+              ? ' и оставил положительный отзыв'
+              : ' и оставил негативный отзыв'
+          }`,
+          'info',
+          'recipe',
+          '/cooks/list/' + this.currentUser.id,
+        );
+        this.notifyService.sendNotification(notify, this.author);
+      }
+    }
 
-        this.vote = false;
-      });
+    this.vote = false;
+
     this.successVoteModalShow = false;
   }
 
@@ -319,51 +367,49 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     return 0;
   }
 
-  addComment() {
+  async addComment() {
     const comment: IComment = this.commentService.makeComment(
       this.currentUser,
       this.commentForm.get('commentText')?.value,
     );
-    this.commentService
-      .addCommentToRecipe(this.recipe, comment)
-      .subscribe(() => {
-        if (
-          this.userService.getPermission(
-            'you-commented-recipe',
-            this.currentUser,
-          )
-        ) {
-          const notify: INotification = this.notifyService.buildNotification(
-            'Комментарий опубликован',
-            `Твой комментарий «${comment.text}» успешно опубликован под рецептом «${this.recipe.name}»`,
-            'success',
-            'comment',
-            '/recipes/list/' + this.recipe.id,
-          );
-          this.notifyService
-            .sendNotification(notify, this.currentUser)
-            .subscribe();
-        }
+    this.loading = true;
+    this.cd.markForCheck();
+    await this.commentService.addCommentToRecipe(this.recipe, comment);
 
-        if (
-          this.currentUser.id !== this.author.id &&
-          this.userService.getPermission('your-recipe-commented', this.author)
-        ) {
-          const notify: INotification = this.notifyService.buildNotification(
-            'Ваш рецепт прокомментировали',
-            `Ваш рецепт «${this.recipe.name}» прокомментировал 
+    if (
+      this.userService.getPermission('you-commented-recipe', this.currentUser)
+    ) {
+      const notify: INotification = this.notifyService.buildNotification(
+        'Комментарий опубликован',
+        `Твой комментарий «${comment.text}» успешно опубликован под рецептом «${this.recipe.name}»`,
+        'success',
+        'comment',
+        '/recipes/list/' + this.recipe.id,
+      );
+      await this.notifyService.sendNotification(notify, this.currentUser);
+    }
+
+    if (
+      this.currentUser.id !== this.author.id &&
+      this.userService.getPermission('your-recipe-commented', this.author)
+    ) {
+      const notify: INotification = this.notifyService.buildNotification(
+        'Ваш рецепт прокомментировали',
+        `Ваш рецепт «${this.recipe.name}» прокомментировал 
           кулинар ${
             this.currentUser.fullName
               ? this.currentUser.fullName
               : '@' + this.currentUser.username
           }`,
-            'info',
-            'comment',
-            '/recipes/list/' + this.currentUser.id,
-          );
-          this.notifyService.sendNotification(notify, this.author).subscribe();
-        }
-      });
+        'info',
+        'comment',
+        '/recipes/list/' + this.currentUser.id,
+      );
+      await this.notifyService.sendNotification(notify, this.author);
+    }
+    this.successCommentModalShow = true;
+    this.loading = false;
+    this.cd.markForCheck();
   }
   setCategories(): void {
     this.categoryService.categories$
@@ -406,7 +452,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     this.cd.markForCheck();
   }
 
-  addToBasket(i: number, ingredient: Ingredient) {
+  async addToBasket(i: number, ingredient: Ingredient) {
     const groceryList = this.myPlan.shoppingList;
     let maxId = 0;
     if (groceryList.length > 0)
@@ -423,18 +469,36 @@ export class RecipePageComponent implements OnInit, OnDestroy {
         ...nullProduct,
         id: maxId + 1,
         name: find.name,
-        type: relatedIngredient.shoppingListGroup || 0 ,
+        type: relatedIngredient.shoppingListGroup || 0,
         howMuch: (find.quantity ? find.quantity + ' ' : '') + find.unit,
         relatedRecipe: this.recipe.id,
       };
       groceryList.push(product);
       this.myPlan.shoppingList = groceryList;
-      this.planService.updatePlan(this.myPlan).subscribe(() => {
-        this.basket[i] = true;
-      });
+      this.loading = true;
+      this.cd.markForCheck();
+
+      await this.planService.updatePlanInSupabase(this.myPlan);
+
+      this.basket[i] = true;
+      this.loading = false;
+      this.cd.markForCheck();
     }
   }
-  removeFromBasket(i: number, ingredient: Ingredient) {
+  picture = '';
+  downloadPicFromSupabase(path: string) {
+    this.picture = supabase.storage
+      .from('recipes')
+      .getPublicUrl(path).data.publicUrl;
+
+    this.cd.markForCheck();
+  }
+
+  downloadInstructionPicFromSupabase(path: string) {
+    return supabase.storage.from('recipes').getPublicUrl(path).data.publicUrl;
+  }
+
+  async removeFromBasket(i: number, ingredient: Ingredient) {
     const groceryList = this.myPlan.shoppingList;
     const findIndex = groceryList.findIndex(
       (ingr) =>
@@ -444,11 +508,16 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     if (findIndex !== -1) {
       groceryList.splice(findIndex, 1);
       this.myPlan.shoppingList = groceryList;
-      this.planService.updatePlan(this.myPlan).subscribe(() => {
-        this.basket[i] = false;
-      });
+      this.loading = true;
+      this.cd.markForCheck();
+      await this.planService.updatePlanInSupabase(this.myPlan);
+      this.loading = false;
+      this.cd.markForCheck();
+
+      this.basket[i] = false;
     }
   }
+  loading = false;
 
   getSimilarRecipes(publicRecipes: IRecipe[], maxRecipes: number): IRecipe[] {
     const recipesToAdd: IRecipe[] = [];
@@ -566,7 +635,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     this.readingTimeInMinutes = setReadingTimeInMinutes(combinedText);
   }
 
-  makeThisRecipeFavorite() {
+  async makeThisRecipeFavorite() {
     if (this.currentUser.id === 0) {
       this.noAccessModalShow = true;
       return;
@@ -583,31 +652,26 @@ export class RecipePageComponent implements OnInit, OnDestroy {
         this.recipe,
       );
     }
-    this.recipeService
-      .updateRecipe(this.recipe)
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe(() => {
-        if (this.isRecipeFavorite) {
-          if (
-            this.author.id !== this.currentUser.id &&
-            this.userService.getPermission('fav-on-your-recipe', this.author)
-          ) {
-            const notify: INotification = this.notifyService.buildNotification(
-              'Твой рецепт добавили в избранное',
-              `Твой рецепт «${this.recipe.name}» кто-то добавил в избранное`,
-              'info',
-              'recipe',
-              '/recipes/list/' + this.recipe.id,
-            );
-            this.notifyService
-              .sendNotification(notify, this.author)
-              .subscribe();
-          }
-        }
-      });
+
+    await this.recipeService.updateRecipeFunction(this.recipe);
+    if (this.isRecipeFavorite) {
+      if (
+        this.author.id !== this.currentUser.id &&
+        this.userService.getPermission('fav-on-your-recipe', this.author)
+      ) {
+        const notify: INotification = this.notifyService.buildNotification(
+          'Твой рецепт добавили в избранное',
+          `Твой рецепт «${this.recipe.name}» кто-то добавил в избранное`,
+          'info',
+          'recipe',
+          '/recipes/list/' + this.recipe.id,
+        );
+        this.notifyService.sendNotification(notify, this.author);
+      }
+    }
   }
 
-  likeThisRecipe() {
+  async likeThisRecipe() {
     if (this.currentUser.id === 0) {
       this.noAccessModalShow = true;
       return;
@@ -628,39 +692,32 @@ export class RecipePageComponent implements OnInit, OnDestroy {
         this.recipe,
       );
     }
-    this.recipeService
-      .updateRecipe(updatedRecipe)
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe(() => {
-        if (this.isRecipeLiked) {
-          if (this.isRecipeLiked) {
-            if (
-              this.author.id !== this.currentUser.id &&
-              this.userService.getPermission('like-on-your-recipe', this.author)
-            ) {
-              const notify: INotification =
-                this.notifyService.buildNotification(
-                  'Твой рецепт оценили',
-                  `Твой рецепт «${this.recipe.name}» понравился пользователю 
+    await this.recipeService.updateRecipeFunction(updatedRecipe);
+    if (this.isRecipeLiked) {
+      if (this.isRecipeLiked) {
+        if (
+          this.author.id !== this.currentUser.id &&
+          this.userService.getPermission('like-on-your-recipe', this.author)
+        ) {
+          const notify: INotification = this.notifyService.buildNotification(
+            'Твой рецепт оценили',
+            `Твой рецепт «${this.recipe.name}» понравился пользователю 
             ${
               this.currentUser.fullName
                 ? this.currentUser.fullName
                 : '@' + this.currentUser.username
             }`,
-                  'info',
-                  'recipe',
-                  '/cooks/list/' + this.currentUser.id,
-                );
-              this.notifyService
-                .sendNotification(notify, this.author)
-                .subscribe();
-            }
-          }
+            'info',
+            'recipe',
+            '/cooks/list/' + this.currentUser.id,
+          );
+          this.notifyService.sendNotification(notify, this.author);
         }
-      });
+      }
+    }
   }
   //готовим рецепт
-  cookThisRecipe() {
+  async cookThisRecipe() {
     if (this.currentUser.id === 0) {
       this.noAccessModalShow = true;
       return;
@@ -684,10 +741,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
         this.recipe,
         this.currentUser.id,
       );
-      this.recipeService
-        .updateRecipe(this.recipe)
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe();
+      await this.recipeService.updateRecipeFunction(this.recipe);
     }
   }
 
@@ -698,16 +752,14 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     this.noAccessModalShow = false;
   }
 
-  handleCommentModal(answer: boolean): void {
+  async handleCommentModal(answer: boolean) {
+    this.commentModalShow = false;
     if (answer) {
-      this.addComment();
+      await this.addComment();
       this.commentForm.get('commentText')?.setValue('');
       this.commentForm.get('commentText')?.markAsPristine();
       this.commentForm.get('commentText')?.markAsUntouched();
-
-      this.successCommentModalShow = true;
     }
-    this.commentModalShow = false;
   }
   handleSuccessCommentModal() {
     this.successCommentModalShow = false;
@@ -758,8 +810,8 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSkipHandler() {
-    this.router.navigate([this.routerEventsService.previousRoutePath.value]);
+  goBack() {
+    this.location.back();
   }
   loadMoreComments() {
     const currentLength = this.commentsToShow.length;

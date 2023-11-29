@@ -15,14 +15,14 @@
     <div class="circle">
       <span>{{ awaitingRecipes.length }} </span>
       <p>
-        <span appPluralRu="" [value]="awaitingRecipes.length" [arVariants]="['рецепт', 'рецепта', 'рецептов']"></span>
+        <span appPluralRu="" [value]="awaitingRecipes.length" [arVariants]="recipeArVariants"></span>
         на проверку
       </p>
     </div>
     <div class="circle">
       <span>{{ reports.length }}</span>
       <p>
-        <span appPluralRu="" [value]="reports.length" [arVariants]="['жалоба', 'жалобы', 'жалоб']"></span>
+        <span appPluralRu="" [value]="reports.length" [arVariants]="reportsArVariants"></span>
         на комментарии
       </p>
     </div>
@@ -30,7 +30,7 @@
       <span>{{ categoriesForCheck.length }}</span>
       <p>
         <span appPluralRu="" [value]="categoriesForCheck.length"
-          [arVariants]="['категория', 'категории', 'категорий']"></span>
+          [arVariants]="categoriesArVariants"></span>
         на проверку
       </p>
     </div>
@@ -38,7 +38,7 @@
       <span>{{ allAwaitingIngredients.length }}</span>
       <p>
         <span appPluralRu="" [value]="allAwaitingIngredients.length"
-          [arVariants]="['ингредиент', 'ингредиента', 'ингредиентов']"></span>
+          [arVariants]="ingredientsArVariants"></span>
         на проверку
       </p>
     </div>
@@ -55,12 +55,12 @@
           <div class="reports">
             <div class="report" *ngFor="let recipe of awaitingRecipesToShow">
               <div class="report-header">
-                <a class="report-recipe" [routerLink]="'/recipes/list/' + recipe.id">
+                <a class="report-recipe"  [routerLink]="'/recipes/list/' + recipe.id">
                   {{ recipe.name }}
                 </a>
                 <p class="report-date">
                   Рецепт отправлен
-                  {{ recipe.publicationDate | timePast | lowercase }}
+                  {{  getDate(recipe.publicationDate).toString() | timePast | lowercase }}
                 </p>
               </div>
               <div class="report-users">
@@ -70,7 +70,7 @@
                     getName(getUser(recipe.authorId)) }}</a>
                 </p>
               </div>
-              <div class="recipe-image"></div>
+              <div class="recipe-image" [style.background-image]="'url(' + getRecipeImageSupabaseLink(recipe.mainImage)+')'"></div>
               <div class="report-buttons">
                 <app-button [text]="'Принять'" (click)="awaitingRecipeActionClick('approve', recipe)"
                   [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
@@ -220,16 +220,10 @@
                   </a>
                 </p>
               </div>
-              <div class="category-image"></div>
+              <div class="category-image" [style.background-image]="'url('+(this.category.photo?downloadCategoryPicFromSupabase(this.category.photo):categoryPlaceholder)+')'"></div>
               <div class="report-buttons">
-                <app-button [text]="'Принять'" (click)="
-                    actionCategory = category;
-                    approveCategoryActionModalShow = true
-                  " [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
-                <app-button [text]="'Отклонить'" (click)="
-                    actionCategory = category;
-                    dismissCategoryActionModalShow = true
-                  " [color]="currentUser.role" [style]="'filled-min'" [rounded]="true"></app-button>
+                <app-button [text]="'Принять'" (click)="categoryActionClick('approve',category)" [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
+                <app-button [text]="'Отклонить'" (click)="categoryActionClick('dismiss',category)" [color]="currentUser.role" [style]="'filled-min'" [rounded]="true"></app-button>
               </div>
             </div>
           </div>

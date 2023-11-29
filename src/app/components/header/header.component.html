@@ -3,7 +3,7 @@
 
 <div class="popups">
   <div class="popup" @popup *ngFor="let item of popups">
-    <app-notify [popup]="true" [user]="currentUser" (notifyDeleteClick)="removePopup(item)"
+    <app-notify (hover)="popupHover($event)" (blurEmitter)="popupBlur($event)"  [popup]="true" [user]="currentUser" (notifyDeleteClick)="removePopup(item)"
       [notify]="item"></app-notify>
   </div>
 </div>
@@ -70,7 +70,7 @@
         </a>
 
         <a (click)="
-            !currentUser.id ? (noAccessModalShow = true) : (notifiesOpen = true)
+            openNotifies()
           ">
           <div *ngIf="currentUser.id > 0 && notificationCount > 0" class="count">
             {{ notificationCount }}

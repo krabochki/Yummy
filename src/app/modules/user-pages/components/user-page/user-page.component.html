@@ -1,10 +1,10 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <ng-template #skeleton>
-  <div class="container skeleton" class="noselect" @fadeIn>
+  <div class="container skeleton noselect" @fadeIn>
     <div class="block block1">
       <div class="row main">
-        <img src="../../../../../assets/images/userpic.png" alt="User Photo" />
+        <div class="userpic" ></div>
         <div class="col info">
           <div class="col name">
             <h1>Loading FullName</h1>
@@ -124,14 +124,9 @@
     <div
       class="svg-button exit"
       [ngClass]="{
-        'no-path':
-          this.router.url === this.routerEventsService.previousRoutePath.value
+        'no-path': noPageToGoBack
       }"
-      (click)="
-        this.router.url === this.routerEventsService.previousRoutePath.value
-          ? null
-          : onSkipHandler()
-      "
+      (click)="noPageToGoBack ? null : goBack()"
     >
       <svg-icon
         [applyClass]="true"
@@ -145,38 +140,36 @@
         (click)="settingsShow = !settingsShow"
         [applyClass]="true"
         class="svg"
-        [src]="'assets/images/svg/settings.svg'"
+        [src]="'/assets/images/svg/settings.svg'"
       >
       </svg-icon>
     </div>
     <div class="row main">
       <div class="img-cont">
-        <div #emojiPicker>
-          <div
-            
+        <div
+          [ngClass]="{ 'emoji-button': !selectedEmoji && isSameUser }"
+          #emojiPicker
+        >
+          <button
             [ngClass]="{
               'no-emoji': !selectedEmoji && isSameUser,
-              'emoji-picker-open':showEmojiPicker
+              'emoji-picker-open': showEmojiPicker
             }"
             [style.cursor]="isSameUser ? 'pointer' : 'default'"
             [title]="
               isSameUser
                 ? selectedEmoji
-                  ? 'Нажмите на кнопку 2 раза, чтобы убрать статус'
+                  ? 'Нажмите на левую кнопку мыши, чтобы убрать эмодзи статус'
                   : 'Нажмите, чтобы выбрать эмодзи статус'
                 : ''
             "
             class="emoji-status"
-            (dblclick)="unsetEmoji()"
-            (click)="
-              isSameUser
-                ? (showEmojiPicker = !showEmojiPicker)
-                : null
-            "
+            (contextmenu)="selectedEmoji ? unsetEmoji($event) : null"
+            (click)="openEmojiPicker()"
           >
             <svg-icon
               *ngIf="!selectedEmoji && isSameUser"
-              [src]="'assets/images/svg/smile.svg'"
+              [src]="'/assets/images/svg/smile.svg'"
               [applyClass]="true"
               class="add-emoji"
             />
@@ -187,7 +180,7 @@
               [emoji]="selectedEmoji"
               [size]="44"
             ></ngx-emoji>
-          </div>
+          </button>
           <emoji-mart
             [darkMode]="false"
             @modal
@@ -204,22 +197,31 @@
         </div>
         <button
           class="hire-button"
-          *ngIf="currentUser.role === 'admin' && this.user.role === 'user' && showHireButton"
+          *ngIf="
+            currentUser.role === 'admin' &&
+            this.user.role === 'user' &&
+            showHireButton
+          "
           (click)="hireModalShow = true"
         >
           <svg-icon
             class="hire-svg"
             [applyClass]="true"
-            [src]="'assets/images/svg/case.svg'"
+            [src]="'/assets/images/svg/case.svg'"
           ></svg-icon>
         </button>
 
-        <img
-          class="noselect"
-          [src]="'assets/images/userpic.png'"
-          alt="User Photo"
-        />
+        <div
+          [ngClass]="{'loading':!userpicLoaded}"
+          class="userpic"
+          [style.background-image]="
+            'url(' + (this.avatar?this.avatar:'/assets/images/userpic.png') + ')'
+          "
+        ></div>
+
+        
       </div>
+      
       <div class="col info">
         <div class="col name">
           <h1>{{ user.fullName }}</h1>
@@ -257,7 +259,8 @@
         ></app-button>
       </div>
     </div>
-    <div class="row" class="statistics noselect">
+
+                  <div class="row" class="statistics noselect">
       <div class="col">
         <p>
           <span class="bold">{{ userRecipes.length }} </span>
@@ -321,7 +324,7 @@
         <p>У этого кулинара пока нет своих рецептов :(</p>
 
         <svg-icon
-          [src]="'assets/images/svg/sad-cook.svg'"
+          [src]="'/assets/images/svg/sad-cook.svg'"
           [svgStyle]="{
             'height.em': '12',
             'width.em': '12',
@@ -364,7 +367,7 @@
             <a [href]="social.link" class="center">
               <svg-icon
                 [src]="
-                  'assets/images/svg/non-fill-' +
+                  '/assets/images/svg/non-fill-' +
                   (social.name === 'ВКонтакте' ? 'vkontakte' : social.name) +
                   '.svg'
                 "
@@ -388,16 +391,29 @@
         <ul>
           <li class="row center website" *ngIf="user?.personalWebsite">
             <svg-icon
-              [src]="'assets/images/svg/planet.svg'"
+              [src]="'/assets/images/svg/planet.svg'"
               class="red-svg"
               [applyClass]="true"
             >
             </svg-icon>
             <a [href]="user.personalWebsite">Личный сайт</a>
           </li>
+          <li *ngIf="user.role !== 'user' && showRole" class="row center">
+            <svg-icon
+              [src]="'/assets/images/svg/star-user.svg'"
+              [svgStyle]="{
+                'width.em': '1.2',
+                'height.em': '1',
+                fill: 'var(--color-foreground)'
+              }"
+            ></svg-icon>
+            <p>
+              {{ user.role === "admin" ? "Администратор" : "Модератор" }} Yummy
+            </p>
+          </li>
           <li class="row center" *ngIf="user?.location">
             <svg-icon
-              [src]="'assets/images/svg/geo.svg'"
+              [src]="'/assets/images/svg/geo.svg'"
               [svgStyle]="{
                 'width.em': '1.2',
                 'height.em': '1',
@@ -406,9 +422,9 @@
             ></svg-icon>
             <p>{{ user.location }}</p>
           </li>
-          <li class="row center" *ngIf="user?.registrationDate">
+          <li class="row center" *ngIf="user.registrationDate">
             <svg-icon
-              [src]="'../../../../../assets/images/svg/info.svg'"
+              [src]="'/assets/images/svg/info.svg'"
               [svgStyle]="{
                 'width.em': '1.2',
                 'height.em': '1',
@@ -421,7 +437,7 @@
           </li>
           <li class="row center">
             <svg-icon
-              [src]="'../../../../../assets/images/svg/analytics.svg'"
+              [src]="'/assets/images/svg/analytics.svg'"
               [svgStyle]="{
                 'width.em': '1.2',
                 'height.em': '1',

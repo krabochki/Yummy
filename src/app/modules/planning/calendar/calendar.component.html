@@ -17,7 +17,7 @@
         >
           Ранее
         </button>
-        <button class="btn primary" mwlCalendarToday [(viewDate)]="viewDate">
+        <button class="btn primary"  mwlCalendarToday [(viewDate)]="viewDate">
           Сегодня
         </button>
         <button
@@ -64,6 +64,7 @@
   </div>
 
   <div [ngSwitch]="view">
+   
     <mwl-calendar-month-view
       *ngSwitchCase="CalendarView.Month"
       [viewDate]="viewDate"
@@ -113,7 +114,7 @@
 
   <app-add-calendar-event
     [currentUser]="currentUser"
-    [event]="targetEvent"
+    [event]="findRecipeEvent(targetEvent.id)"
     [plan]="currentUserPlan"
     @modal
     style="position: fixed; z-index: 10"
@@ -131,21 +132,21 @@
     <ng-container *ngFor="let event of events" >
       <div class="edit">
         <button
-          (click)="targetEvent = event; createMode = true"
+          (click)="targetEvent = findRecipeEvent(event.id); createMode = true"
           class="noselect clear-all-button"
         >
           <svg-icon
             [applyClass]="true"
             class="clear-all-icon edit"
-            [src]="'../../../../../assets/images/svg/grocery/edit.svg'"
+            [src]="'/assets/images/svg/grocery/edit.svg'"
           ></svg-icon>
         </button>
       </div>
       <div class="name">
         <a
-          [ngClass]="{ 'real-link': event.recipe }"
+          [ngClass]="{ 'real-link': findRecipeEvent(event.id).recipe }"
           [routerLink]="
-            event.recipe ? '/recipes/list/' + event.recipe : null
+            findRecipeEvent(event.id).recipe ? '/recipes/list/' + findRecipeEvent(event.id).recipe : null
           "
           ><p>{{ event.title }}</p></a
         >
@@ -161,9 +162,9 @@
       </div>
 
       <div class="date">
-        <p *ngIf="eventInPast(event)" class="status past" >Событие уже прошло</p>
-        <p *ngIf="eventIsNow(event)" class="status now">Событие актуально</p>
-        <p *ngIf="eventInFuture(event)" class="status future">Событие предстоит</p>
+        <p *ngIf="eventInPast(findRecipeEvent(event.id))" class="status past" >Событие уже прошло</p>
+        <p *ngIf="eventIsNow(findRecipeEvent(event.id))" class="status now">Событие актуально</p>
+        <p *ngIf="eventInFuture(findRecipeEvent(event.id))" class="status future">Событие предстоит</p>
         <ng-container *ngIf="!event.allDay">
           <p class="fulldate">
             <span>Начало: </span> {{ event.start | date: "shortTime" }}
@@ -185,19 +186,21 @@
         <ng-container *ngIf="event.allDay">
           <ng-container *ngIf="event.end && event.start.getDate()!==event.end.getDate()">
                <p>
-                 Начало: {{event.start | date:"fullDate"}} 
+                 <span>Начало:</span> {{event.start | date:"fullDate"}} 
             ({{event.start.toString() | timePast | lowercase}})
                </p>
                <p>
-                Конец: {{event.end | date:"fullDate"}}
+                <span>Конец:</span> {{event.end | date:"fullDate"}}
           ({{event.end.toString() | timePast | lowercase}})
                </p>
           
 
           </ng-container>
              <ng-container *ngIf="!event.end || event.end.getDate()===event.start.getDate()">
-             Весь день: {{event.start | date:"fullDate"}}
-          (начало {{event.start.toString() | timePast | lowercase}})
+            <span class="both">
+               <span>Весь день:</span> {{event.start | date:"fullDate"}} 
+            (начало {{event.start.toString() | timePast | lowercase}})
+            </span>
           </ng-container>
          
         </ng-container>
@@ -205,12 +208,12 @@
       </div>
 
       <div class="delete">
-        <button (click)="deleteEvent(event)" class="noselect clear-all-button">
+        <button (click)="deleteEventClick(findRecipeEvent(event.id))" class="noselect clear-all-button">
           <svg-icon
             [applyClass]="true"
             class="clear-all-icon"
             [src]="
-              '../../../../../assets/images/svg/grocery/delete-product.svg'
+              '/assets/images/svg/grocery/delete-product.svg'
             "
           ></svg-icon>
         </button>
@@ -349,3 +352,9 @@
   </div>
 
 </div>
+
+
+<app-modal @modal *ngIf="deleteModalShow" (resultEmit)="handleDeleteModal($event)" [buttonsText]="['Да','Отмена']" [description]="'Вы уверены, что хотите удалить запланированный рецепт из «Календаря рецептов»?'" [title]="'Подтвердите удаление рецепта'" [style]="'prim'" [type]="'yesOrNo'" />
+
+  <app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
+    [description]=" 'Вносим изменения... Подождите немного...'" />

@@ -84,6 +84,8 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
 
   private destroyed$: Subject<void> = new Subject<void>();
 
+  noAccessModalShow = false;
+
   ngOnInit(): void {
     this.usersInit();
 
@@ -93,10 +95,28 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
         this.router.navigateByUrl('/recipes');
       this.setRecipeType(this.filter);
 
-      this.currentUserInit(data['CategoryResolver'],data['IngredientResolver']);
+      this.currentUserInit(
+        data['CategoryResolver'],
+        data['IngredientResolver'],
+      );
 
       this.dataLoad = true;
     });
+  }
+
+  handleNoAccessModal(event: boolean) {
+    if (event) {
+      this.router.navigateByUrl('/greetings');
+    }
+    this.noAccessModalShow = false;
+  }
+
+  createRecipeButtonClick() {
+    if (this.currentUser.id > 0) {
+      this.creatingMode = true;
+    } else {
+      this.noAccessModalShow = true;
+    }
   }
 
   private setRecipeType(filter: string): void {
@@ -147,7 +167,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
         this.recipeType = RecipeType.MostFavorite;
         break;
       case 'ingredient-recipes':
-        this.recipeType =RecipeType.ByIngredient
+        this.recipeType = RecipeType.ByIngredient;
     }
   }
 
@@ -155,7 +175,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     const author = this.getUser(recipe.authorId);
     return !this.recipeService.hideAuthor(this.currentUser, author);
   }
-  
+
   private categoryInit(categoryFromData: ICategory, recipes: IRecipe[]): void {
     this.category = categoryFromData;
 
@@ -236,15 +256,13 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     this.followingRecipes = this.getFollowingRecipes(publicRecipes);
     this.followingRecipes = this.followingRecipes.filter((r) => {
       return this.currentUser.role === 'user' ||
-      this.getUser(r.authorId).role === 'admin'
+        this.getUser(r.authorId).role === 'admin'
         ? this.userService.getPermission(
             'hide-author',
             this.getUser(r.authorId),
           )
         : true;
     });
-
-    
   }
 
   private setRecipesByType(): void {
@@ -310,21 +328,28 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     this.followingRecipes = this.followingRecipes.slice(0, 8);
   }
 
-  private recipeSourceInit(categoryFromData: ICategory, ingredientFromData:IIngredient): void {
+  private recipeSourceInit(
+    categoryFromData: ICategory,
+    ingredientFromData: IIngredient,
+  ): void {
     this.recipeService.recipes$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedRecipes: IRecipe[]) => {
         if (this.recipeType === RecipeType.Category) {
           this.categoryInit(categoryFromData, receivedRecipes);
-          return
+          return;
         }
         if (this.recipeType === RecipeType.ByIngredient) {
-      
           this.ingredient = ingredientFromData;
-          this.allRecipes = this.recipeService.getRecipesByIngredient(this.recipeService.getPublicAndAllMyRecipes(receivedRecipes,this.currentUser.id), ingredientFromData);
-          this.recipesToShow = this.allRecipes.slice(0, 8)
-        }
-        else {
+          this.allRecipes = this.recipeService.getRecipesByIngredient(
+            this.recipeService.getPublicAndAllMyRecipes(
+              receivedRecipes,
+              this.currentUser.id,
+            ),
+            ingredientFromData,
+          );
+          this.recipesToShow = this.allRecipes.slice(0, 8);
+        } else {
           this.currentUserPlanInit();
           this.getRecipesOfAllTypes(receivedRecipes);
           this.setRecipesByType();
@@ -347,12 +372,15 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
       });
   }
 
-  private currentUserInit(categoryFromData: ICategory, ingredientFromData:IIngredient): void {
+  private currentUserInit(
+    categoryFromData: ICategory,
+    ingredientFromData: IIngredient,
+  ): void {
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((user: IUser) => {
         this.currentUser = user;
-        this.recipeSourceInit(categoryFromData,ingredientFromData);
+        this.recipeSourceInit(categoryFromData, ingredientFromData);
       });
   }
 
@@ -367,9 +395,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
   }
   protected getNoRecipesTextByRecipetype(recipeType: RecipeType): string {
     if (recipeType === RecipeType.ByIngredient) {
-      return (
-       `Ни один кулинар пока что не создал рецепт с ингредиентом «${this.ingredient.name}». Можете создать рецепт сами или перейти ко всем ингредиентам`
-      );
+      return `Ни один кулинар пока что не создал рецепт с ингредиентом «${this.ingredient.name}». Можете создать рецепт сами или перейти ко всем ингредиентам`;
     }
     return recipeNoRecipesText[recipeType] || '';
   }
@@ -442,22 +468,15 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
 
       const filterRecipes: IRecipe[] = this.allRecipes.filter(
         (recipe: IRecipe) =>
-          recipe.name.toLowerCase().replace(/\s/g, '').includes(search) ||
-          (!this.showAuthor(recipe)
-            ? this.getUser(recipe.authorId)
-                .fullName.toLowerCase()
-                .replace(/\s/g, '')
-                .includes(search) ||
-              this.getUser(recipe.authorId)
-                .username.toLowerCase()
-                .replace(/\s/g, '')
-                .includes(search)
-            : null),
+          recipe.name.toLowerCase().replace(/\s/g, '').includes(search),
       );
 
       filterRecipes.forEach((element) => {
         this.autocomplete.push(element);
       });
+      this.autocomplete = this.autocomplete.sort((a, b) =>
+        baseComparator(a.name, b.name),
+      );
     } else this.autocompleteShow = false;
   }
 

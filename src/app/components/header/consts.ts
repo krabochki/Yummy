@@ -1,6 +1,5 @@
 export const cooksSelectItems: string[] = [
   'Кулинары',
-  'Ваш профиль',
   'Ваши подписки',
   'Все кулинары',
   'Обновления',
@@ -29,12 +28,10 @@ export const planSelectItems: string[] = [
   'Планнер',
   'Календарь рецептов',
   'Подборки',
-  'Советы',
   'Список покупок',
 ];
 
 export const cookRouterLinks: string[] = [
-  '/cooks/list/',
   '/cooks/following/',
   '/cooks',
   '/cooks/updates',
@@ -43,7 +40,6 @@ export const cookRouterLinks: string[] = [
 export const planRouterLinks: string[] = [
   '/plan/calendar',
   '/plan/collections',
-  '/plan/tips',
   '/plan/shopping-list',
 ];
 
@@ -55,14 +51,10 @@ export function userRoutes(id: number) {
     },
     {
       routeLink: cookRouterLinks[1],
-      disabled: !id,
-    },
-    {
-      routeLink: cookRouterLinks[2],
       disabled: false,
     },
     {
-      routeLink: cookRouterLinks[3],
+      routeLink: cookRouterLinks[2],
       disabled: !id,
     },
   ];
@@ -70,18 +62,14 @@ export function userRoutes(id: number) {
 
 export function planRoutes(id: number) {
   return [
-    { routeLink: planRouterLinks[0],      disabled: !id,
- },
+    { routeLink: planRouterLinks[0], disabled: !id },
+
     {
       routeLink: planRouterLinks[1],
       disabled: false,
     },
     {
       routeLink: planRouterLinks[2],
-      disabled: false,
-    },
-    {
-      routeLink: planRouterLinks[3],
       disabled: !id,
     },
   ];

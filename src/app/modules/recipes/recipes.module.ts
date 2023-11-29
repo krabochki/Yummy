@@ -66,6 +66,7 @@ import { GroupCreatingComponent } from './components/ingredients/group-creating/
     IngredientListItemComponent,
     GroupCreatingComponent,
     IngredientCreateComponent
+    
   ],
   imports: [
     CommonModule,
@@ -77,8 +78,6 @@ import { GroupCreatingComponent } from './components/ingredients/group-creating/
     RecipesRoutingModule,
     ScrollingModule,
     SvgIconComponent,
-    ControlsModule,
-    ControlsModule,
     CommonModule,
     AsyncPipe,
     CdkDropList,

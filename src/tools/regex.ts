@@ -13,3 +13,6 @@ export const anySiteMask =
 
 export const allPunctuationMarks = /[\s,.;:!]+/;
 export const brackets = /[(){}[\]<>]/g;
+
+export const numbers =
+  /^(?!0+$)([1-9]\d*(\.\d+)?|[1-9]\d*(,\d+)?|0(\.\d+|,\d+)?)?$/;

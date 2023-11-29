@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { Subject, takeUntil } from 'rxjs';
 import { IUser, nullUser } from '../../models/users';
@@ -10,6 +10,8 @@ import { heightAnim } from 'src/tools/animations';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { UsersType, noUsersText, userTitles } from './consts';
 import { Title } from '@angular/platform-browser';
+import { baseComparator } from 'src/tools/common';
+import { ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-users-page',
@@ -18,6 +20,7 @@ import { Title } from '@angular/platform-browser';
     './users-page.component.scss',
     '../../../authentication/common-styles.scss',
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [trigger('auto-complete', heightAnim())],
 })
 export class UsersPageComponent implements OnInit, OnDestroy {
@@ -40,6 +43,7 @@ export class UsersPageComponent implements OnInit, OnDestroy {
   protected searchQuery: string = '';
   protected autocompleteShow: boolean = false;
   protected autocompleteUsersList: IUser[] = [];
+  init = false;
 
   constructor(
     private userService: UserService,
@@ -48,6 +52,7 @@ export class UsersPageComponent implements OnInit, OnDestroy {
     private router: Router,
     private authService: AuthService,
     private route: ActivatedRoute,
+    private cd: ChangeDetectorRef,
   ) {}
 
   public ngOnInit(): void {
@@ -55,87 +60,108 @@ export class UsersPageComponent implements OnInit, OnDestroy {
       this.filter = data['filter'];
       this.setUserType(this.filter);
     });
+
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((data) => {
         this.currentUser = data;
+        this.userService.users$
+          .pipe(takeUntil(this.destroyed$))
+          .subscribe((data) => {
+            this.users = data;
+            if (!this.init && this.users.length > 0) {
+              this.initializeUsers();
+              this.init = true;
+            }
+            this.currentUserFollowingUsers = this.getCurrentUserFollowingUsers(
+              this.users,
+            );
+
+            switch (this.userType) {
+              case UsersType.Following:
+                this.allUsers = this.currentUserFollowingUsers;
+                break;
+            }
+            this.cd.markForCheck();
+          });
       });
     this.recipeService.recipes$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((data) => {
         this.recipes = data;
       });
-    this.userService.users$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((data) => {
-        this.users = data;
-
-        this.popularUsers = this.getPopularUsers(this.users);
-        this.nearbyUsers = this.getNearbyUsers(this.users);
-        this.moreProductiveUsers = this.getMoreProductiveUsers(this.users);
-        this.currentUserFollowingUsers = this.getCurrentUserFollowingUsers(
-          this.users,
-        );
-        this.administratorsAndModerators = this.getAdministratorssAndModerators(
-          this.users,
-        );
-        this.administratorsAndModerators =
-          this.administratorsAndModerators.filter((m) => this.showStatus(m));
-        this.currentUserFollowersUsers = this.getCurrentUserFollowersUsers(
-          this.users,
-        );
-        this.newUsers = this.getNewUsers(this.users);
-        this.moreViewedUsers = this.getMoreViewedUsers(this.users);
-
-        switch (this.userType) {
-          case UsersType.All:
-            this.allUsers = this.users;
-            this.popularUsers = this.getPublicUsers(this.popularUsers);
-            this.nearbyUsers = this.getPublicUsers(this.nearbyUsers);
-            this.moreProductiveUsers = this.getPublicUsers(
-              this.moreProductiveUsers,
-            );
-            this.currentUserFollowersUsers = this.getPublicUsers(
-              this.currentUserFollowersUsers,
-            );
-            this.currentUserFollowingUsers = this.getPublicUsers(
-              this.currentUserFollowingUsers,
-            );
-            this.newUsers = this.getPublicUsers(this.newUsers);
-            this.administratorsAndModerators = this.getPublicUsers(
-              this.administratorsAndModerators,
-            );
-            this.moreViewedUsers = this.getPublicUsers(this.moreViewedUsers);
-            break;
-          case UsersType.Nearby:
-            this.allUsers = this.nearbyUsers;
-            break;
-          case UsersType.Popular:
-            this.allUsers = this.popularUsers;
-            break;
-          case UsersType.Followers:
-            this.allUsers = this.currentUserFollowersUsers;
-            break;
-          case UsersType.Following:
-            this.allUsers = this.currentUserFollowingUsers;
-            break;
-          case UsersType.MostViewed:
-            this.allUsers = this.moreViewedUsers;
-            break;
-          case UsersType.Productive:
-            this.allUsers = this.moreProductiveUsers;
-            break;
-          case UsersType.Managers:
-            this.allUsers = this.administratorsAndModerators;
-            break;
-          case UsersType.New:
-            this.allUsers = this.newUsers;
-        }
-        this.showUsers = this.getPublicUsers(this.allUsers).slice(0, 6);
-
-        this.title.setTitle(this.getTitleByUserType(this.userType));
-      });
+    //списки юзеров создаются только 1 раз а при подписке и тд обновляется уже сам элемент списка  а список не сортируется заново
   }
+
+  initializeUsers() {
+    this.users = this.users.sort((a, b) => baseComparator(a.id, b.id));
+    this.popularUsers = this.getPopularUsers(this.users);
+    this.nearbyUsers = this.getNearbyUsers(this.users);
+    this.moreProductiveUsers = this.getMoreProductiveUsers(this.users);
+    this.currentUserFollowingUsers = this.getCurrentUserFollowingUsers(
+      this.users,
+    );
+    this.administratorsAndModerators = this.getAdministratorssAndModerators(
+      this.users,
+    );
+    this.administratorsAndModerators = this.administratorsAndModerators.filter(
+      (m) => this.showStatus(m),
+    );
+    this.currentUserFollowersUsers = this.getCurrentUserFollowersUsers(
+      this.users,
+    );
+    this.newUsers = this.getNewUsers(this.users);
+    this.moreViewedUsers = this.getMoreViewedUsers(this.users);
+
+    switch (this.userType) {
+      case UsersType.All:
+        this.allUsers = this.users;
+        this.popularUsers = this.getPublicUsers(this.popularUsers);
+        this.nearbyUsers = this.getPublicUsers(this.nearbyUsers);
+        this.moreProductiveUsers = this.getPublicUsers(
+          this.moreProductiveUsers,
+        );
+        this.currentUserFollowersUsers = this.getPublicUsers(
+          this.currentUserFollowersUsers,
+        );
+        this.currentUserFollowingUsers = this.getPublicUsers(
+          this.currentUserFollowingUsers,
+        );
+        this.newUsers = this.getPublicUsers(this.newUsers);
+        this.administratorsAndModerators = this.getPublicUsers(
+          this.administratorsAndModerators,
+        );
+        this.moreViewedUsers = this.getPublicUsers(this.moreViewedUsers);
+        break;
+      case UsersType.Nearby:
+        this.allUsers = this.nearbyUsers;
+        break;
+      case UsersType.Popular:
+        this.allUsers = this.popularUsers;
+        break;
+      case UsersType.Followers:
+        this.allUsers = this.currentUserFollowersUsers;
+        break;
+      case UsersType.Following:
+        this.allUsers = this.currentUserFollowingUsers;
+        break;
+      case UsersType.MostViewed:
+        this.allUsers = this.moreViewedUsers;
+        break;
+      case UsersType.Productive:
+        this.allUsers = this.moreProductiveUsers;
+        break;
+      case UsersType.Managers:
+        this.allUsers = this.administratorsAndModerators;
+        break;
+      case UsersType.New:
+        this.allUsers = this.newUsers;
+    }
+    this.showUsers = this.getPublicUsers(this.allUsers).slice(0, 6);
+
+    this.title.setTitle(this.getTitleByUserType(this.userType));
+  }
+
   showStatus(user: IUser) {
     return this.userService.getPermission('show-status', user);
   }
@@ -154,7 +180,9 @@ export class UsersPageComponent implements OnInit, OnDestroy {
   }
 
   private getNewUsers(users: IUser[]): IUser[] {
-    users = users.sort((u1, u2) =>  u1.registrationDate < u2.registrationDate ? 1 : -1);
+    users = users.sort((u1, u2) =>
+      u1.registrationDate < u2.registrationDate ? 1 : -1,
+    );
     return users;
   }
 
@@ -200,9 +228,13 @@ export class UsersPageComponent implements OnInit, OnDestroy {
   }
 
   private getPopularUsers(users: IUser[]): IUser[] {
-    return [...users].sort(
-      (n1, n2) => n2.followersIds.length - n1.followersIds.length,
+    const popularUsers = [...users].sort((u1, u2) =>
+      this.userService.getFollowers(this.users, u2.id).length >
+      this.userService.getFollowers(this.users, u1.id).length
+        ? 1
+        : -1,
     );
+    return popularUsers;
   }
   private getNearbyUsers(users: IUser[]): IUser[] {
     return this.userService.getNearby(users, this.currentUser);

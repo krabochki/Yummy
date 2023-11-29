@@ -6,7 +6,7 @@
       <svg-icon
         class="close-svg"
         [applyClass]="true"
-        [src]="'assets/images/svg/close.svg'"
+        [src]="'/assets/images/svg/close.svg'"
       ></svg-icon>
     </button>
 
@@ -39,7 +39,7 @@
                   class="svg-trash"
                   [applyClass]="true"
                   [src]="
-                    'assets/images/svg/settings/' +
+                    '/assets/images/svg/settings/' +
                     stepsIcons[i] +
                     (step === i ? '-fill' : '') +
                     '.svg'
@@ -58,7 +58,7 @@
                   <svg-icon
                     [applyClass]="true"
                     class="icon"
-                    [src]="'assets/images/svg/settings/mail.svg'"
+                    [src]="'/assets/images/svg/settings/mail.svg'"
                   />
                   Электронная почта
                 </h3>
@@ -69,14 +69,14 @@
                   <svg-icon
                     [applyClass]="true"
                     class="icon"
-                    [src]="'assets/images/svg/settings/username.svg'"
+                    [src]="'/assets/images/svg/settings/username.svg'"
                   />
 
                   Имя пользователя
                 </h3>
                 <p>{{ "@" + user.username }}</p>
               </div>
-              <button class="action disabled">Поменять пароль</button>
+              <button class="action "><a routerLink="/password-reset">Поменять пароль</a></button>
               <button class="action red" (click)="deleteModalShow = true">
                 Удалить аккаунт
               </button>
@@ -91,7 +91,7 @@
                     [applyClass]="true"
                     class="icon"
                     [src]="
-                      'assets/images/svg/settings/' + section.icon + '.svg'
+                      '/assets/images/svg/settings/' + section.icon + '.svg'
                     "
                   />
                   {{ section.title }}
@@ -140,7 +140,7 @@
                       [applyClass]="true"
                       class="icon"
                       [src]="
-                        'assets/images/svg/settings/' + section.icon + '.svg'
+                        '/assets/images/svg/settings/' + section.icon + '.svg'
                       "
                     />
                     {{ section.title }}
@@ -175,7 +175,7 @@
                       [applyClass]="true"
                       class="icon"
                       [src]="
-                        'assets/images/svg/settings/' + section.icon + '.svg'
+                        '/assets/images/svg/settings/' + section.icon + '.svg'
                       "
                     />
                     {{ section.title }}
@@ -206,7 +206,7 @@
                   <svg-icon
                     [applyClass]="true"
                     class="icon"
-                    [src]="'assets/images/svg/permanent.svg'"
+                    [src]="'/assets/images/svg/permanent.svg'"
                   />
                   Ваши постоянные продукты
                 </h3>
@@ -267,7 +267,7 @@
                     <svg-icon
                       [applyClass]="true"
                       class="delete-svg"
-                      [src]="'assets/images/svg/close.svg'"
+                      [src]="'/assets/images/svg/close.svg'"
                     />
                   </button>
                 </div>
@@ -278,7 +278,7 @@
                   <svg-icon
                     [applyClass]="true"
                     class="icon"
-                    [src]="'assets/images/svg/gluten.svg'"
+                    [src]="'/assets/images/svg/gluten.svg'"
                   />
                   Исключения для поиска
                 </h3>
@@ -339,7 +339,7 @@
                     <svg-icon
                       [applyClass]="true"
                       class="delete-svg"
-                      [src]="'assets/images/svg/close.svg'"
+                      [src]="'/assets/images/svg/close.svg'"
                     />
                   </button>
                 </div>
@@ -361,9 +361,9 @@
                 ></app-toogle-switch>
               </div>
               <div>
-                <p class="disabled"><a routerLink="/about">О сайте...</a></p>
-                <p class="disabled">
-                  <a routerLink="/user-policy"
+                <p   ><a routerLink="/about">Узнать больше о сайте...</a></p>
+                <p  >
+                  <a class="disabled"
                     >Пользовательское соглашение...</a
                   >
                 </p>
@@ -413,3 +413,5 @@
     "
   ></app-modal>
 </div>
+<app-modal  @modal [style]="'await'" [type]="'Ok'"  [noButtons]="true" [title]="'Подождите...'"
+  [type]="'Ok'" [description]="'Применяются внесенные изменения... Подождите немного...'" *ngIf="loading"></app-modal>

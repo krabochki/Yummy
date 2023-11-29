@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export function getCurrentDate():string{
      return new Date().toJSON()
@@ -62,4 +63,4 @@ export function getZoom(count: number, diff:number, maxZoom?:number, baseZoom?: 
     const words = recipeText.split(/\s+/);
     const wordCount = words.length;
     return Math.ceil(wordCount / wordsPerMinute);
-  }
+}

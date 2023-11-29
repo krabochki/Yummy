@@ -5,13 +5,13 @@
     *ngIf="style === 'banner'"
     class="svg-arrow"
     [applyClass]="true"
-    [src]="'../../../../../assets/images/svg/go-back.svg'"
+    [src]="'/assets/images/svg/go-back.svg'"
   ></svg-icon>
   <svg-icon
     [class]="iconStyle === 'as-text' ? 'svg as-text' : 'svg'"
     *ngIf="icon !== ''"
     [applyClass]="true"
     class="svg"
-    [src]="'../../../../../assets/images/svg/' + icon + '.svg'"
+    [src]="'/assets/images/svg/' + icon + '.svg'"
   ></svg-icon>
 </button>

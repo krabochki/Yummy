@@ -4,7 +4,7 @@ import { INotification } from "./notifications";
 export interface IUser {
   id: number; // Уникальный идентификатор пользователя
   username: string; // Имя пользователя
-  avatarUrl: FormData | null; // URL аватара пользователя
+  avatarUrl?: string; // URL аватара пользователя
   description: string; // Описание пользователя
   quote: string; // Цитата пользователя
   email: string; // Почта пользователя
@@ -82,7 +82,6 @@ export const nullUser: IUser = {
   password: '',
   username: '',
   role: 'user',
-  avatarUrl: null,
   description: '',
   quote: '',
   fullName: '',

@@ -8,6 +8,15 @@ table {
  
 }
 
+app-modal{
+  z-index: 10;
+  position: fixed;
+}
+
+.active{
+  font-weight: 800 !important;
+}
+
 .no-recipes{
   color: var(--color-foreground-unactive);
   text-align: center;
@@ -148,7 +157,6 @@ h1 {
     padding: 0.6em 2em;
     &.primary {
       zoom: 1;
-      font-weight: 700;
       background-color: var(--color-primary);
     }
   }
@@ -167,11 +175,8 @@ justify-content: center
   color: var(--color-primary);
   transition: 0.2s ease-in-out;
 
-  &:focus,
   &:hover {
-    
-    transform: translateY(-0.1em);
-    color: var(--color-primary-focus);
+        color: var(--color-primary-focus);
     .clear-all-icon {
       fill: var(--color-primary-focus);
     }
@@ -213,15 +218,15 @@ justify-content: center
 }
 
 .status{
-  font-size: 0.9em;
+  font-weight:600;
   &.future{
-    color: rgb(115, 208, 255);
+    color: #59aef3;
   }
   &.past{
-    color: rgb(255, 94, 94);
+    color: var(--color-primary)
   }
   &.now{
-    color:rgb(179, 255, 112)
+    color:rgb(113, 218, 117)
   }
 }
 
@@ -257,9 +262,13 @@ justify-content: center
     row-gap: 0.5em;
   
     justify-content: center;
-    align-items: start;
+    align-items: flex-start;
    span{
       font-weight: 600;
+
+      &.both{
+        font-weight: 400;
+      }
     }
 
     &:nth-child(2n+1){

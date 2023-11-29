@@ -20,7 +20,7 @@
           </p>
           <div class="no-reps-icon">
             <svg-icon class="no-recipes-svg" [applyClass]="true"
-              [src]="'assets/images/svg/grocery/no-recipes.svg'"></svg-icon>
+              [src]="'/assets/images/svg/grocery/no-recipes.svg'"></svg-icon>
           </div>
         </ng-template>
 
@@ -47,10 +47,8 @@
                     <svg-icon [ngStyle]="{ fill: d.type.color }" *ngIf="item.isBought" [applyClass]="true"
                       class="checkbox-svg" [src]="baseSvgPath + 'checkbox.svg'"></svg-icon>
                   </button>
-                  <a tabindex="-1" [ngClass]="{ link: item.relatedRecipe }" [routerLink]="
-                      item.relatedRecipe
-                        ? '/recipes/list/' + item.relatedRecipe
-                        : null
+                  <a tabindex="-1" [ngClass]="{ link: realLink(item) }" [routerLink]="
+                      getLink(item)
                     " class="product-name">
                     {{ item.name }}
                   </a>
@@ -132,7 +130,7 @@
                       " [max]="50" [placeholder]="'Название'"></app-usual-input>
 
                     <app-usual-input [max]="17" formControlName="howMuch" [value]="form.value.howMuch"
-                      [placeholder]="'Количество'"></app-usual-input>
+                      [placeholder]="'Кол-во и ед. изм.'"></app-usual-input>
                   </div>
                   <app-usual-input class="zoom" [value]="form.value.note" [max]="100" formControlName="note"
                     [placeholder]="'Заметка'"></app-usual-input>
@@ -213,3 +211,6 @@
     'Вы уверены, что хотите удалить все продукты из вашего списка покупок?'
   " [type]="'yesOrNo'" [title]="'Подтвердите удаление всех продуктов'"
   (resultEmit)="handleDeletingAllProductsModal($event)"></app-modal>
+
+  <app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
+    [description]=" 'Вносим изменения... Подождите немного...'" />

@@ -23,8 +23,8 @@ import { Subject, takeUntil } from 'rxjs';
 import { usernameExistsValidator } from 'src/tools/validators';
 import { getCurrentDate } from 'src/tools/common';
 import { PlanService } from 'src/app/modules/planning/services/plan-service';
-import { IPlan, nullPlan } from 'src/app/modules/planning/models/plan';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
+
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
@@ -33,16 +33,44 @@ import { NotificationService } from 'src/app/modules/user-pages/services/notific
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegisterComponent implements OnInit, OnDestroy {
-  modalAreYouSureShow: boolean = false;
-  modalSuccessShow: boolean = false;
-  users: IUser[] = [];
   form: FormGroup;
-  protected destroyed$: Subject<void> = new Subject<void>();
-  private plans: IPlan[] = [];
+  failText = '';
+  confirmModal: boolean = false;
+  successModal: boolean = false;
+  loadingModal: boolean = false;
+  errorModal: boolean = false;
 
-  createUser: IUser = { ...nullUser };
+  private users: IUser[] = [];
 
+  destroyed$: Subject<void> = new Subject<void>();
+
+  private createUser: IUser = { ...nullUser };
+  private maxUserId = 0;
+  private maxPlanId = 0;
   usernameValidator = usernameExistsValidator;
+
+  get passwordNotValidError(): string {
+    return this.form.get('password')?.invalid &&
+      (this.form.get('password')?.dirty || this.form.get('password')?.touched)
+      ? 'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'
+      : '';
+  }
+  get emailNotValidError(): string {
+    return !this.form.get('email')?.hasError('emailExists')
+      ? this.form.get('email')?.invalid &&
+        (this.form.get('email')?.dirty || this.form.get('email')?.touched)
+        ? 'Введи корректный адрес электронной почты'
+        : ''
+      : ' ';
+  }
+  get usernameNotValidError(): string {
+    return !this.form.get('username')?.hasError('usernameExists')
+      ? this.form.get('username')?.invalid &&
+        (this.form.get('username')?.dirty || this.form.get('username')?.touched)
+        ? 'Имя пользователя должно содержать от 4 до 20 символов, среди которых могут быть буквы (минимум одна), цифры, а также нижние почеркивания и точки (не подряд)'
+        : ''
+      : ' ';
+  }
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -56,20 +84,17 @@ export class RegisterComponent implements OnInit, OnDestroy {
   ) {
     this.titleService.setTitle('Регистрация');
     this.form = this.fb.group({});
+    this.usersService.getMaxUserId().then((maxId) => {
+      this.maxUserId = maxId;
+    });
+    this.planService.getMaxPlanId().then((maxId) => {
+      this.maxPlanId = maxId;
+    });
   }
 
   ngOnInit(): void {
-    this.planService.plans$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((receivedPlans: IPlan[]) => {
-        this.plans = receivedPlans;
-      });
-    this.usersService.users$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((receivedUsers: IUser[]) => {
-        this.users = receivedUsers;
-      });
-
+    this.usersInit();
+    
     this.form = this.fb.group({
       email: [
         '',
@@ -103,10 +128,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
     });
   }
 
-  registration(): void {
+  async registration() {
     if (this.form.valid) {
       const maxId = Math.max(...this.users.map((u) => u.id));
-      const userData: IUser = {
+      const newUser: IUser = {
         ...{ ...nullUser },
         username: this.form.value.username,
         email: this.form.value.email,
@@ -115,62 +140,80 @@ export class RegisterComponent implements OnInit, OnDestroy {
         id: maxId + 1,
       };
 
-      localStorage.setItem('currentUser', JSON.stringify(userData));
-      this.usersService.postUser(userData).subscribe(() => {
-        this.authService.setCurrentUser(userData);
-        this.modalSuccessShow = true;
-        const maxId = Math.max(...this.plans.map((u) => u.id));
-        const newUserPlan = {
-          ...nullPlan,
-          id: maxId + 1,
-          user: userData.id,
-        };
-        this.planService.addPlan(newUserPlan).subscribe();
-
-        const notify = this.notifyService.buildNotification(
-          'Добро пожаловать',
-          `Добро пожаловать в Yummy, @${userData.username} 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!`,
-          'success',
-          'born',
-          '',
-        );
-        this.notifyService.sendNotification(notify,userData).subscribe()
+      this.loadingModal = true;
+      const isEmailTaken = this.users.some(
+        (searchingUser) => searchingUser.username === newUser.username,
+      );
+      const isUsernameTaken = this.users.some(
+        (searchingUser) => searchingUser.username === newUser.username,
+      );
+      if (isUsernameTaken || isEmailTaken) {
+        this.loadingModal = false;
+        this.errorModal = true;
+        this.failText = isUsernameTaken
+          ? 'Имя пользователя, которое вы ввели, уже занято. Пожалуйста, измените данные и попробуйте ещё раз.'
+          : 'Почта, которую вы ввели, уже занята. Пожалуйста, измените данные и попробуйте ещё раз.';
         this.cd.markForCheck();
-      });
+        return;
+      }
+      const { error } = await this.authService.register(newUser);
+
+      if (error) {
+        this.errorModal = true;
+      } else {
+        await this.addUserToUsers(
+          this.maxUserId + 1,
+          newUser.username,
+          newUser.email,
+        );
+
+        await this.addPlanToPlans(this.maxUserId + 1);
+        await this.authService.logout();
+        this.authService.logoutUser();
+        this.successModal = true;
+      }
+      this.loadingModal = false;
+      this.cd.markForCheck();
     }
   }
+  async addPlanToPlans(userId: number) {
+    await this.planService.addPlanToSupabase({
+      id: this.maxPlanId + 1,
+      user: userId,
+      calendarEvents: [],
+      shoppingList: [],
+    });
+  }
+  async addUserToUsers(id: number, username: string, email: string) {
+    await this.usersService.addUserToSupabase(id, username, email);
+  }
 
-  handleAreYouSureModalResult(result: boolean): void {
+  handleConfirmModal(result: boolean): void {
     if (result) {
       this.registration();
     }
-    this.modalAreYouSureShow = false;
+    this.confirmModal = false;
   }
-  handleSuccessModalResult(): void {
+  async handleSuccessModal() {
     this.router.navigate(['/']);
-    this.modalSuccessShow = false;
+
+    const notify = this.notifyService.buildNotification(
+      'Добро пожаловать',
+      `Добро пожаловать в Yummy, @${this.createUser.username} 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!`,
+      'success',
+      'born',
+      '',
+    );
+    await this.notifyService.sendNotification(notify, this.createUser);
+    this.successModal = false;
   }
-  get passwordNotValidError(): string {
-    return this.form.get('password')?.invalid &&
-      (this.form.get('password')?.dirty || this.form.get('password')?.touched)
-      ? 'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'
-      : '';
-  }
-  get emailNotValidError(): string {
-    return !this.form.get('email')?.hasError('emailExists')
-      ? this.form.get('email')?.invalid &&
-        (this.form.get('email')?.dirty || this.form.get('email')?.touched)
-        ? 'Введи корректный адрес электронной почты'
-        : ''
-      : '';
-  }
-  get usernameNotValidError(): string {
-    return !this.form.get('username')?.hasError('usernameExists')
-      ? this.form.get('username')?.invalid &&
-        (this.form.get('username')?.dirty || this.form.get('username')?.touched)
-        ? 'Имя пользователя должно содержать от 4 до 20 символов, среди которых могут быть буквы (минимум одна), цифры, а также нижние почеркивания и точки (не подряд)'
-        : ''
-      : '';
+
+  private usersInit(): void {
+    this.usersService.users$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedUsers: IUser[]) => {
+        this.users = receivedUsers;
+      });
   }
 
   ngOnDestroy(): void {

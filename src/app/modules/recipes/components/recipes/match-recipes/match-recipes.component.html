@@ -9,25 +9,27 @@
 
       <div class="categories">
         <div *ngFor="let item of group; let i = index" class="section">
-          <button class="section-name" [ngClass]="{ 'active-section-name': sectionStates[i] }"
-            (click)="toggleSection(i)">
-            {{ item.section.name }}
-          </button>
+          <a [routerLink]="'/sections/list/'+item.section.id" class="section-name" [ngClass]="{ 'active-section-name': sectionStates[i] }"
+            >
+           <p (click)="toggleSection(i,$event)"> {{ item.section.name }}</p>
+          </a>
           <div @height class="categories-list" *ngIf="sectionStates[i]">
-            <button class="category" (click)="toggleCategory(i, j)"
-              *ngFor="let category of item.categories; let j = index">
-              <div class="toogle">
-                <svg-icon @modal [applyClass]="true" [class]="'checkbox'" *ngIf="categoryStates[i][j]"
-                  [src]="baseSvgPath + 'checkbox.svg'"></svg-icon>
-              </div>
-
-              <div class="category-box">
-                <div class="category-name">{{ category.name }}</div>
-
-                <span class="count noselect">
-                  {{ getCategoryRecipesNumber(category.id) }}</span>
-              </div>
-            </button>
+           <a  [routerLink]="'/categories/list/'+category.id"  *ngFor="let category of item.categories; let j = index">
+              <button class="category" (click)="toggleCategory(i, j, $event)"
+               >
+                <div class="toogle">
+                  <svg-icon @modal [applyClass]="true" [class]="'checkbox'" *ngIf="categoryStates[i][j]"
+                    [src]="baseSvgPath + 'checkbox.svg'"></svg-icon>
+                </div>
+  
+                <div class="category-box">
+                  <div class="category-name">{{ category.name }}</div>
+  
+                  <span class="count noselect">
+                    {{ getCategoryRecipesNumber(category.id) }}</span>
+                </div>
+              </button>
+           </a>
           </div>
         </div>
       </div>
@@ -57,25 +59,19 @@
             <input [(ngModel)]="searchQuery" (ngModelChange)="search()" placeholder="Введите ингредиент"
               (focus)="focusIngredientSearch()" type="text" />
             <div class="magnifier">
-              <svg-icon [src]="'assets/images/svg/search.svg'" class="search-svg" [applyClass]="true" />
+              <svg-icon [src]="'/assets/images/svg/search.svg'" class="search-svg" [applyClass]="true" />
             </div>
           </div>
           <ul @height *ngIf="showIngredientsAutocomplete" class="autocomplete">
             <div class="no-ingredients-founded" *ngIf="autoIngredients.length === 0">
               Ингредиентов не найдено
 
-              <svg-icon [applyClass]="true" class="svg-no-ingredients" [src]="'assets/images/svg/no-ingredients.svg'" />
+              <svg-icon [applyClass]="true" class="svg-no-ingredients" [src]="'/assets/images/svg/no-ingredients.svg'" />
             </div>
             <a *ngFor="let ingredient of autoIngredients" [routerLink]="findIngredientByName(ingredient).id
                           ? ('/ingredients/list/'+findIngredientByName(ingredient).id)
                           :null">
-              <li (click)="autocompleteClick(ingredient, $event)" class="a-ingredient">
-                <p>{{ ingredient }}</p>
-                <span class="recipes-count">{{ uniqueIngredientsArray[ingredient] }}
-                  <span appPluralRu="" [arVariants]="['рецепт', 'рецепта', 'рецептов']"
-                    [value]="uniqueIngredientsArray[ingredient]"></span>
-                </span>
-              </li>
+              <li (click)="autocompleteClick(ingredient, $event)" class="a-ingredient">{{ingredient.trim()}}</li>
             </a>
           </ul>
         </div>
@@ -206,8 +202,8 @@
       </div>
       <ng-template #noRecipes>
         <div class="no-recipes-founded">
-          <p>По твоему запросу не найдено ни одного рецепта</p>
-          <svg-icon [applyClass]="true" class="svg-no-recipes" [src]="'assets/images/svg/no-recipes-founded.svg'" />
+          <p>По вашему запросу не найдено ни одного рецепта</p>
+          <svg-icon [applyClass]="true" class="svg-no-recipes" [src]="'/assets/images/svg/sad-little-cook.svg'" />
         </div>
       </ng-template>
     </div>

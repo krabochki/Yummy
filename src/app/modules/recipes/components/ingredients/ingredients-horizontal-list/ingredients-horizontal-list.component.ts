@@ -1,5 +1,13 @@
-import { Component, ElementRef, HostListener, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
-import { IIngredient, nullIngredient } from '../../../models/ingredients';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  Input,
+  OnChanges,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { nullIngredient } from '../../../models/ingredients';
 import { DragScrollComponent } from 'ngx-drag-scroll';
 import { dragStart, dragEnd } from 'src/tools/common';
 
@@ -31,11 +39,11 @@ export class IngredientsHorizontalListComponent implements OnChanges, OnInit {
   }
 
   dragStart(): void {
-    dragStart();
+    if (this.showScrollButtons) dragStart();
   }
 
   dragEnd(): void {
-    dragEnd();
+    if (this.showScrollButtons) dragEnd();
   }
 
   scrollLeft() {

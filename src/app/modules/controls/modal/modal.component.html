@@ -1,12 +1,18 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<div class="modal-dialog" (click)="clickBackgroundNotContent($event)">
+<div class="modal-dialog" (click)="!noButtons?clickBackgroundNotContent($event):null">
   <div class="modal-content">
     <div class="modal-header">
-      <h4 [ngStyle]="{'color':this.style==='prim'?'var(--color-primary)':'var(--color-secondary)'}">{{ title }}</h4>
+      <h4 [ngStyle]="{'color':this.style==='prim'?'var(--color-primary)':this.style==='sec'?'var(--color-secondary)':'var(--color-sky)'}">{{ title }}</h4>
     </div>
     <div class="modal-body">
       <p>{{ description }}</p>
+      <div class="lds-ring" *ngIf="noButtons">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
     </div>
     
           <ng-template #okButtons >
@@ -14,8 +20,8 @@
 
       </ng-template>
 
-      <hr>
-    <div class="modal-footer">
+      <hr *ngIf="!noButtons">
+    <div class="modal-footer" *ngIf="!noButtons">
       <ng-container *ngIf="type === 'yesOrNo' ; else okButtons">
         <app-button [style]="'filled'" [color]="style" [text]="buttonsText[0]"  [rounded]="true" (click)="onOkClick()"></app-button>
         <app-button [style]="'filled-min'"  [color]="style" [text]="buttonsText[1]" [rounded]="true" (click)="onNoClick()"></app-button>

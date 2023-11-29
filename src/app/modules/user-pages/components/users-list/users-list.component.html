@@ -1,1 +1,1 @@
-<div class="main-wrap"><app-users-list-item (demoteClick)="demote($event)" [adminpanel]="adminpanel" *ngFor="let user of users" [user]="user"></app-users-list-item></div>
+<div class="main-wrap"><app-users-list-item (demoteClick)="demote($event)" [adminpanel]="adminpanel" *ngFor="let user of users" [userId]="user.id"></app-users-list-item></div>

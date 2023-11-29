@@ -2,7 +2,8 @@ import { CommonModule, Location } from '@angular/common';
 import { LOCALE_ID, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SvgIconComponent, provideAngularSvgIcon } from 'angular-svg-icon';
-import { AuthGuard } from '../authentication/guards/auth.guard';
+import { AuthGuard } from '../authentication/guards/auth.guard';import { NgOptimizedImage } from '@angular/common';
+
 import { ControlsModule } from '../controls/controls.module';
 import { RouteEventsService } from '../controls/route-events.service';
 import { RecipesModule } from '../recipes/recipes.module';
@@ -40,6 +41,7 @@ import { EmojiComponent } from '@ctrl/ngx-emoji-mart/ngx-emoji';
     ControlsModule,
     RecipesModule,
     TimePastPipe,
+    NgOptimizedImage,
     PickerComponent,
     SvgIconComponent,
     EmojiComponent,

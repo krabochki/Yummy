@@ -1,11 +1,25 @@
-<app-header  class="unstyled" (headerHeight)="getHeaderHeight($event)"></app-header>
-
-<div class="container">
-  <div class="content">
-    <div [ngStyle]="{ height: spaceUnderHeaderHeight + 'px' }"></div>
-    <router-outlet></router-outlet>
+<div [style.display]="loaded?'inline':'none'">
+  <app-header  class="unstyled" (headerHeight)="getHeaderHeight($event)"></app-header>
+  
+  <div class="container" >
+    <div class="content">
+      <div [ngStyle]="{ height: spaceUnderHeaderHeight + 'px' }"></div>
+      <router-outlet></router-outlet>
+    </div>
+  
+    <footer class="footer">
+      <app-footer></app-footer>
+    </footer>
   </div>
-  <footer class="footer">
-    <app-footer></app-footer>
-  </footer>
+  
 </div>
+    <div class="content loading" *ngIf="!loaded"> 
+<div class="lds-ring">
+        <img [src]="'/assets/gifs/'+gif" alt="preloader">
+
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+</div>
+    </div>

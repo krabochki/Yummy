@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
 import { Observable, of } from "rxjs";
 import { IUser } from "src/app/modules/user-pages/models/users";
@@ -78,5 +79,20 @@ export function usernameExistsValidator(users: IUser[], user:IUser) {
       } else {
         return null;
       }
+    };
+}
+  
+ export function trimmedMinLengthValidator(minLength: number) {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const trimmedValue = control.value.trim();
+      if (trimmedValue.length < minLength) {
+        return {
+          trimmedMinLength: {
+            requiredLength: minLength,
+            actualLength: trimmedValue.length,
+          },
+        };
+      }
+      return null;
     };
   }

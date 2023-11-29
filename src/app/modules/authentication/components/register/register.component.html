@@ -11,37 +11,35 @@
         <app-usual-input
           [inputRequired]="true"
           [max]="20"
-          type="text"
-          id="username"
           formControlName="username"
           [placeholder]="'Имя пользователя'"
           required
           [error]="usernameNotValidError"
         ></app-usual-input>
-                        <div class="error" *ngIf="form.get('username')?.hasError('usernameExists')">
-                    Это имя пользователя уже занято
-                  </div>
+        <div
+          class="error"
+          *ngIf="form.get('username')?.hasError('usernameExists')"
+        >
+          Это имя пользователя уже занято
+        </div>
       </div>
-     <div>
+      <div>
         <app-usual-input
           [inputRequired]="true"
           type="text"
           [max]="64"
-          id="email"
           formControlName="email"
           [placeholder]="'Электронная почта'"
           required
           [error]="emailNotValidError"
         ></app-usual-input>
         <div class="error" *ngIf="form.get('email')?.hasError('emailExists')">
-                    Пользователь с такой электронной почтой уже существует
-                  </div>
-     </div>
-       <app-usual-input
-              [inputType]="'password'"
-
-       [inputRequired]="true"
-        id="password"
+          Пользователь с такой электронной почтой уже существует
+        </div>
+      </div>
+      <app-usual-input
+        [inputType]="'password'"
+        [inputRequired]="true"
         formControlName="password"
         [placeholder]="'Пароль'"
         [max]="20"
@@ -50,15 +48,11 @@
       ></app-usual-input>
     </form>
 
-
     <hr />
 
     <div class="buttons">
       <app-button
-        [ngStyle]="{
-          'pointer-events': form.valid ? 'all' : 'none'
-        }"
-        (click)="modalAreYouSureShow = true"
+        (click)="form.valid ? (confirmModal = true) : false"
         [disabled]="form.valid"
         [rounded]="true"
         [color]="'prim'"
@@ -71,26 +65,47 @@
 <app-modal
   @modal
   [style]="'prim'"
-  *ngIf="modalAreYouSureShow"
+  *ngIf="confirmModal"
   [title]="'Подтвердите регистрацию'"
   [type]="'yesOrNo'"
-  (resultEmit)="handleAreYouSureModalResult($event)"
+  (resultEmit)="handleConfirmModal($event)"
   [buttonsText]="['Да', 'Нет']"
   [description]="
     'Вы уверены, что хотите зарегистрироваться с введенными данными?'
   "
 ></app-modal>
 
-
 <app-modal
   [style]="'sec'"
   @modal
-  *ngIf="modalSuccessShow"
+  *ngIf="successModal"
   [title]="'Успешная регистрация!'"
   [type]="'Ok'"
-  (resultEmit)="handleSuccessModalResult()"
+  (resultEmit)="handleSuccessModal()"
   [buttonsText]="['На главную']"
   [description]="
-    'Регистрация с введенными данными прошла успешно. Вы можете пользоваться всеми функциями сайта.'
+    'Регистрация прошла успешно. Подтвердите электронную почту и после этого ваш аккаунт будет активирован!'
   "
 ></app-modal>
+
+<app-modal
+  [style]="'prim'"
+  @modal
+  *ngIf="errorModal"
+  [title]="'Ошибка регистрации'"
+  [type]="'Ok'"
+  (resultEmit)="errorModal = false; failText = ''"
+  [buttonsText]="['Хорошо']"
+  [description]="
+    failText || 'Произошла неизвестная ошибка при попытке регистрации'
+  "
+></app-modal>
+
+<app-modal
+  [noButtons]="true"
+  [style]="'await'"
+  *ngIf="loadingModal"
+  [title]="'Подождите...'"
+  @modal
+  [description]="'Проверяем данные, которые вы ввели... Подождите немного...'"
+/>

@@ -1,10 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, Router } from '@angular/router';
-
 import { AuthService } from '../../authentication/services/auth.service';
-import { RecipeService } from '../services/recipe.service';
 import { IUser, nullUser } from '../../user-pages/models/users';
-import { IRecipe } from '../models/recipes';
 import { IngredientService } from '../services/ingredient.service';
 import { IIngredient } from '../models/ingredients';
 

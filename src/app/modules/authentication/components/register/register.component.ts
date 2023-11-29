@@ -195,7 +195,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.confirmModal = false;
   }
   async handleSuccessModal() {
-    this.router.navigate(['/']);
 
     const notify = this.notifyService.buildNotification(
       'Добро пожаловать',
@@ -206,6 +205,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
     );
     await this.notifyService.sendNotification(notify, this.createUser);
     this.successModal = false;
+        this.router.navigate(['/']);
+
   }
 
   private usersInit(): void {

@@ -72,9 +72,9 @@
 
 ### Технологии
 
-- [![Angular][Angular.io]][Angular-url]
-- IDE: Visual Studio Code
+- Фреймворк: Angular
 - Язык программирования: TypeScript
+- IDE: Visual Studio Code
 - База данных: Supabase
 
 <p align="right">(<a href="#readme-top">наверх</a>)</p>
@@ -126,15 +126,15 @@
 ## Библиотеки
 
 Используемые библиотеки:
-- angular-svg-icon ^17.0.0,
-- angular-flatpickr ^7.3.0,
-- angular-material ^0.7.7,
-- angular-calendar ^0.31.0,
-- ngx-emoji-mart ^9.2.0,
-- ng-disable-scroll ^0.1.1,
-- ng-time-past-pipe ^3.1.0,
-- ngx-drag-scroll ^16.0.0,
-- ngx-sharebuttons ^13.0.0,
-- time-ago-pipe 1.3.2
+- angular-svg-icon,
+- angular-flatpickr,
+- angular-material,
+- angular-calendar,
+- ngx-emoji-mart,
+- ng-disable-scroll,
+- ng-time-past-pipe,
+- ngx-drag-scroll,
+- ngx-sharebuttons,
+- time-ago-pipe
 
 <p align="right">(<a href="#readme-top">наверх</a>)</p>

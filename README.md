@@ -26,17 +26,17 @@
 <details>
   <summary>Содержание</summary>
   <ol>
-    <li><a href="#usage">О проекте</a></li>
-    <li><a href="#roadmap">Технологии</a></li>
-    <li><a href="#contributing">Начало разработки</a></li>
-    <li><a href="#license">Периодичность использования</a></li>
-    <li><a href="#contact">Автор</a></li>
-    <li><a href="#acknowledgments">Библиотеки</a></li>
+    <li><a href="#about">О проекте</a></li>
+    <li><a href="#stack">Технологии</a></li>
+    <li><a href="#start">Начало разработки</a></li>
+    <li><a href="#usage">Периодичность использования</a></li>
+    <li><a href="#author">Автор</a></li>
+    <li><a href="#libs">Библиотеки</a></li>
   </ol>
 </details>
 
 <!-- ABOUT THE PROJECT -->
-
+<a href="about"></a>
 ## О проекте
 
 Проект "Yummy" представляет собой веб-приложение, созданное для любителей кулинарии и профессиональных кулинаров. Цель приложения - облегчить обмен рецептами, идеями и кулинарным опытом между пользователями.

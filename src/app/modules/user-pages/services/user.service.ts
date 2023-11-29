@@ -132,16 +132,17 @@ export class UserService {
   }
 
   loadUsersFromSupabase() {
-   return supabase
-     .from('profiles')
-     .select('*')
-     .then((response) => {
-       const supRecipes = response.data;
-       const users = supRecipes?.map((supUser) => {
-         return this.translateUser(supUser);
-       });
-       if (users) this.usersSubject.next(users);
-     });
+
+    return supabase
+      .from('profiles')
+      .select('*')
+      .then((response) => {
+        const supRecipes = response.data;
+        const users = supRecipes?.map((supUser) => {
+          return this.translateUser(supUser);
+        });
+        if (users) this.usersSubject.next(users);
+      });
   }
 
   private translateUser(user: any): IUser {

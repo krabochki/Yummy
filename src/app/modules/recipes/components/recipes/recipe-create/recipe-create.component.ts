@@ -25,7 +25,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Router } from '@angular/router';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
-import { IRecipe, Instruction, nullRecipe } from '../../../models/recipes';
+import { IRecipe, nullRecipe } from '../../../models/recipes';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { RecipeService } from '../../../services/recipe.service';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
@@ -90,9 +90,9 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
   createModalShow = false;
 
   images: string[][] = [['']];
-  defaultImage: string = '../../../../../assets/images/add-main-photo.png';
+  defaultImage: string = '/assets/images/add-main-photo.png';
   defaultInstructionImage: string =
-    '../../../../../assets/images/add-photo.png';
+    '/assets/images/add-photo.png';
   mainImage: string = '';
 
   allSections: ISection[] = [];
@@ -753,7 +753,6 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       }
 
       if (error) {
-        console.log(error.message);
         console.error('Error updating recipe:', error);
       } else {
         this.editedRecipe = recipe;

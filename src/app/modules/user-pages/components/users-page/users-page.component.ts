@@ -234,7 +234,6 @@ export class UsersPageComponent implements OnInit, OnDestroy {
         ? 1
         : -1,
     );
-    console.log(popularUsers);
     return popularUsers;
   }
   private getNearbyUsers(users: IUser[]): IUser[] {

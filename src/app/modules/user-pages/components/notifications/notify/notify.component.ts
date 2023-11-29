@@ -75,7 +75,7 @@ export class NotifyComponent {
   }
 
   get icon() {
-    const basePath = 'assets/images/svg/';
+    const basePath = '/assets/images/svg/';
     if (this.notify.context === 'hire') return basePath + 'case.svg';
     if (this.notify.context === 'born') return basePath + 'champagne.svg';
     if (this.notify.context === 'demote') return basePath + 'demote.svg';

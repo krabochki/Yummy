@@ -4,7 +4,7 @@ import { MainPageComponent } from './modules/recipes/components/main-page/main-p
 import { PageNotFoundComponent } from './modules/controls/page-not-found/page-not-found.component';
 import { AnonimPageComponent } from './modules/controls/anonim/anonim.component';
 import { AboutComponent } from './modules/controls/about/about.component';
-import { UserPolicyComponent } from './modules/controls/user-policy/user-policy.component';
+
 const routes: Routes = [
   { path: '', component: MainPageComponent },
   {

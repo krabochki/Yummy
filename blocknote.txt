@@ -1,8 +1,0 @@
-
-  loadUsersData() 
-  getUsers()
-  addFollower(user: IUser, followerId: number): IUser 
-  removeFollower(user: IUser, followerId: number)
-  updateUsers(user: IUser) 
-  deleteUser(deletableUser:IUser)
-  postUser(user: IUser)

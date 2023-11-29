@@ -2,7 +2,6 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  NgZone,
   OnDestroy,
   OnInit,
   Renderer2,
@@ -17,20 +16,17 @@ import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
 import { fadeIn, heightAnim, modal } from 'src/tools/animations';
 import { trigger } from '@angular/animations';
 import {
-  DomSanitizer,
-  SafeResourceUrl,
   Title,
 } from '@angular/platform-browser';
 import { Location, registerLocaleData } from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
-import { RouteEventsService } from 'src/app/modules/controls/route-events.service';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { NotificationService } from '../../services/notification.service';
 import { INotification } from '../../models/notifications';
 import { getFormattedDate } from 'src/tools/common';
 import { customEmojis, emojisRuLocale } from './emoji-picker-data';
-import { Emoji, EmojiData } from '@ctrl/ngx-emoji-mart/ngx-emoji';
+import { EmojiData } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { supabase } from 'src/app/modules/controls/image/supabase-data';
 
 @Component({

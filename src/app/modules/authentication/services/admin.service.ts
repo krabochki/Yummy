@@ -5,12 +5,10 @@ import {
   ICommentReportForAdmin,
 } from '../../recipes/models/comments';
 import {
-  getComment,
   getRecipe,
 } from '../components/control-dashboard/quick-actions';
 import { IRecipe } from '../../recipes/models/recipes';
 import { RecipeService } from '../../recipes/services/recipe.service';
-import { Observable } from 'rxjs';
 import { ICategory, ISection } from '../../recipes/models/categories';
 import { CategoryService } from '../../recipes/services/category.service';
 import { SectionService } from '../../recipes/services/section.service';

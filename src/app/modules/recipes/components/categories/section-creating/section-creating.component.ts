@@ -12,13 +12,11 @@ import {
   ViewChild,
 } from '@angular/core';
 import { trigger } from '@angular/animations';
-import { heightAnim, modal } from 'src/tools/animations';
-import { CategoryService } from '../../../services/category.service';
+import {  modal } from 'src/tools/animations';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ISection, nullSection } from '../../../models/categories';
 import { Subject, takeUntil } from 'rxjs';
 import { SectionService } from '../../../services/section.service';
-import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { supabase } from 'src/app/modules/controls/image/supabase-data';
 import { trimmedMinLengthValidator } from 'src/tools/validators';
 
@@ -40,7 +38,7 @@ export class SectionCreatingComponent
   newSection: ISection = { ...nullSection };
   loading = false;
   myImage: string = '';
-  defaultImage: string = '../../../../../assets/images/add-section.png';
+  defaultImage: string = '/assets/images/add-section.png';
   form: FormGroup;
   allSections: ISection[] = [];
   beginningData: any;

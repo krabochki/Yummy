@@ -34,7 +34,7 @@ export class UsersListItemComponent implements OnInit, OnDestroy {
   user: IUser = { ...nullUser };
   @Output() demoteClick = new EventEmitter<IUser>();
   emoji: EmojiData | null = null;
-  noAvatar = 'assets/images/userpic.png';
+  noAvatar = '/assets/images/userpic.png';
   avatar: string = '';
   noAccessModalShow = false;
 

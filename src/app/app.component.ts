@@ -1,6 +1,6 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RecipeService } from './modules/recipes/services/recipe.service';
-import { combineLatest, map } from 'rxjs';
+import { map } from 'rxjs';
 import { supabase } from './modules/controls/image/supabase-data';
 import { UserService } from './modules/user-pages/services/user.service';
 import { CategoryService } from './modules/recipes/services/category.service';
@@ -8,8 +8,6 @@ import { SectionService } from './modules/recipes/services/section.service';
 import { IngredientService } from './modules/recipes/services/ingredient.service';
 import { PlanService } from './modules/planning/services/plan-service';
 import { AuthService } from './modules/authentication/services/auth.service';
-import { nullUser } from './modules/user-pages/models/users';
-import { userRoutes } from './components/header/consts';
 
 @Component({
   selector: 'app-root',
@@ -212,10 +210,10 @@ export class AppComponent implements OnInit {
     if (localStorage.getItem('theme') === 'dark') {
       this.gif = 'preloader-dark.gif';
       document.body.classList.add('dark-mode');
-      favicon?.setAttribute('href', 'assets/images/chef-day.png');
+      favicon?.setAttribute('href', '/assets/images/chef-day.png');
     } else {
       localStorage.setItem('theme', 'light');
-      favicon?.setAttribute('href', 'assets/images/chef-night.png');
+      favicon?.setAttribute('href', '/assets/images/chef-night.png');
     }
     if (!this.loaded) {
       this.recipeService.loadRecipeData().then(() => {

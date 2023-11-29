@@ -8,10 +8,8 @@ import {
 import {
   IIngredient,
   IIngredientsGroup,
-  nullIngredient,
 } from '../../../models/ingredients';
-import { Observable, Subject, find, forkJoin, takeUntil } from 'rxjs';
-import { IRecipe } from '../../../models/recipes';
+import { Subject, takeUntil } from 'rxjs';
 import { RecipeService } from '../../../services/recipe.service';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import {
@@ -140,7 +138,7 @@ export class IngredientListItemComponent implements OnInit, OnDestroy {
     await supabase.storage.from('ingredients').remove([path]);
   }
 
-  placeholder = 'assets/images/ingredient.png';
+  placeholder = '/assets/images/ingredient.png';
   picture = '';
   downloadUserpicFromSupabase(path: string) {
     if (this.ingredient.ingredients) {

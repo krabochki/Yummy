@@ -6,7 +6,7 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { passMask, emailOrUsernameMask, loginMask } from 'src/tools/regex';
+import { passMask, loginMask } from 'src/tools/regex';
 import { AuthService } from '../../services/auth.service';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
@@ -18,9 +18,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import {
   customPatternValidator,
-  usernameAndEmailNotExistsValidator,
 } from 'src/tools/validators';
-import { supabase } from 'src/app/modules/controls/image/supabase-data';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',

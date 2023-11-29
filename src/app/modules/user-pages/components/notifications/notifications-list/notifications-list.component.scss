@@ -82,9 +82,9 @@
    display: flex;
     flex-direction: column;
 
-    justify-content: start;
-    align-items: start;
-    align-content: start;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
       margin-bottom: 3em;
 
 }

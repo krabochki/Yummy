@@ -85,7 +85,7 @@
     padding: 2em 3em;
     height: fit-content;
     display: flex;
-    align-items: start;
+    align-items:flex-start;
     row-gap: 1em;
     justify-content: center;
     flex-direction: column;
@@ -289,8 +289,8 @@ h3 {
 .unique-content {
   width: 100%;
   display: flex;
-  align-items: start;
-  justify-content: start;
+  align-items: flex-start;
+  justify-content: flex-start;
   flex-direction: column;
 
   .description {
@@ -580,7 +580,7 @@ app-modal {
   text-decoration: underline;
   display: flex;
   font-weight: 500;
-  align-items: end;
+  align-items: flex-end;
   column-gap: 0.5em;
   line-height: 1;
   justify-content: center;
@@ -591,7 +591,7 @@ app-modal {
     width: 1em;
     fill: var(--color-foreground);
 
-    align-items: end;
+    align-items: flex-end;
     justify-content: center;
     display: flex;
   }

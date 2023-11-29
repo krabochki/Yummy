@@ -16,7 +16,7 @@ import {
 } from 'src/app/modules/recipes/models/categories';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { SectionService } from 'src/app/modules/recipes/services/section.service';
-import { EMPTY, Observable, Subject, forkJoin, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import {
   IComment,
   ICommentReportForAdmin,
@@ -106,7 +106,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   protected sectionCreatingMode: boolean = false;
   groupCreatingMode = false;
 
-  categoryPlaceholder = 'assets/images/category.png';
+  categoryPlaceholder = '/assets/images/category.png';
 
   protected reportCommentDismissModalShow: boolean = false;
   protected successReportCommentDismissModalShow: boolean = false;
@@ -165,7 +165,6 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   }
 
   getDate(date: string) {
-    console.log(new Date(date));
     return new Date(date);
   }
 

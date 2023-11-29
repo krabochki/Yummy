@@ -55,7 +55,7 @@
     padding: 2em 3em;
     height: fit-content;
     display: flex;
-    align-items: start;
+    align-items: flex-start;
     row-gap: 1em;
     justify-content: center;
     flex-direction: column;
@@ -267,8 +267,8 @@ app-autocomplete,
 .unique-content {
   width: 100%;
   display: flex;
-  align-items: start;
-  justify-content: start;
+  align-items: flex-start;
+  justify-content: flex-start;
   flex-direction: column;
 
   .description {
@@ -553,7 +553,7 @@ svg-icon {
 .search-block {
   .text {
     @include flex;
-    justify-content: start;
+    justify-content: flex-start;
     column-gap: 1em;
     width: max-content;
   }
@@ -915,7 +915,7 @@ app-modal {
   text-decoration: underline;
   display: flex;
   font-weight: 500;
-  align-items: end;
+  align-items: flex-end;
   column-gap: 0.5em;
   line-height: 1;
   justify-content: center;

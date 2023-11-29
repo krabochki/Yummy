@@ -1,13 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
   Input,
-  NgZone,
   OnChanges,
   OnInit,
   Output,
@@ -15,7 +12,6 @@ import {
   forwardRef,
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
-import { take } from 'rxjs';
 
 @Component({
   selector: 'app-usual-input',

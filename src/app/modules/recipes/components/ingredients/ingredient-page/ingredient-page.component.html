@@ -9,7 +9,7 @@
 
     <div class="section-group center">
       <p class="reading-time">
-        <svg-icon class="read-icon" [applyClass]="true" [src]="'assets/images/svg/reading.svg'" />
+        <svg-icon class="read-icon" [applyClass]="true" [src]="'/assets/images/svg/reading.svg'" />
         <span style="display: inline">
           Чтение займет приблизительно {{ readingTimesInMinutes
           }}<span appPluralRu="" [value]="readingTimesInMinutes" [arVariants]="[' минуту', ' минуты', ' минут']"></span>
@@ -20,7 +20,7 @@
           <svg-icon
             [applyClass]="true"
             class="icon"
-            [src]="'assets/images/svg/layers.svg'"
+            [src]="'/assets/images/svg/layers.svg'"
           />
           Содержание
         </h3>
@@ -124,7 +124,7 @@
             <svg-icon
               [applyClass]="true"
               class="icon"
-              [src]="'assets/images/svg/description.svg'"
+              [src]="'/assets/images/svg/description.svg'"
             />
             Описание
           </h3>
@@ -139,7 +139,7 @@
             <svg-icon
               [applyClass]="true"
               class="icon"
-              [src]="'assets/images/svg/origin.svg'"
+              [src]="'/assets/images/svg/origin.svg'"
             />
             Место происхождения
           </h3>
@@ -152,7 +152,7 @@
             <svg-icon
               [applyClass]="true"
               class="icon"
-              [src]="'assets/images/svg/history.svg'"
+              [src]="'/assets/images/svg/history.svg'"
             />История
           </h3>
 
@@ -224,12 +224,12 @@
           <svg-icon
             [applyClass]="true"
             class="cook-icon angel"
-            [src]="'assets/images/svg/angel.svg'"
+            [src]="'/assets/images/svg/angel.svg'"
           />
           <svg-icon
             [applyClass]="true"
             class="cook-icon demon"
-            [src]="'assets/images/svg/demon.svg'"
+            [src]="'/assets/images/svg/demon.svg'"
           />
         </section>
       </section>
@@ -241,7 +241,7 @@
             <svg-icon
               [applyClass]="true"
               class="icon"
-              [src]="'assets/images/svg/iwarning.svg'"
+              [src]="'/assets/images/svg/iwarning.svg'"
             />
             Меры предосторожности
           </h3>
@@ -261,7 +261,7 @@
               <svg-icon
                 [applyClass]="true"
                 class="icon"
-                [src]="'assets/images/svg/bulb.svg'"
+                [src]="'/assets/images/svg/bulb.svg'"
               />
               Способы приготовления
             </h3>
@@ -276,7 +276,7 @@
               <svg-icon
                 [applyClass]="true"
                 class="icon"
-                [src]="'assets/images/svg/ifridge.svg'"
+                [src]="'/assets/images/svg/ifridge.svg'"
               />
               Способы хранения
             </h3>
@@ -293,7 +293,7 @@
             <svg-icon
               [applyClass]="true"
               class="icon"
-              [src]="'assets/images/svg/puzzle.svg'"
+              [src]="'/assets/images/svg/puzzle.svg'"
             />
             Сочетания
           </h3>
@@ -343,7 +343,7 @@
         >
           <li *ngFor="let externalLink of ingredient.externalLinks">
             <svg-icon
-              [src]="'assets/images/svg/link.svg'"
+              [src]="'/assets/images/svg/link.svg'"
               [applyClass]="true"
               class="svg-link"
             />

@@ -49,9 +49,12 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
-              "src/assets"            ],
+              "src/assets" ,
+            "src/tools"           ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/calendar.styles.css",
+              "src/emojis.scss"
 
             ],
             "scripts": []
@@ -61,13 +64,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "4mb",
+                  "maximumError": "5mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "20kb",
+                  "maximumError": "25kb"
                 }
               ],
               "outputHashing": "all"
@@ -87,10 +90,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "yummy:build:production"
+              "buildTarget": "yummy:build:production"
             },
             "development": {
-              "browserTarget": "yummy:build:development"
+              "buildTarget": "yummy:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -98,7 +101,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "yummy:build"
+            "buildTarget": "yummy:build"
           }
         },
         "test": {

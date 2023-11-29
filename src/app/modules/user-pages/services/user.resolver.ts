@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
 import { EMPTY, Observable } from 'rxjs';
-import { catchError, map, take } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { UserService } from './user.service';
 import { IUser, nullUser } from '../models/users';
 import { AuthService } from '../../authentication/services/auth.service';

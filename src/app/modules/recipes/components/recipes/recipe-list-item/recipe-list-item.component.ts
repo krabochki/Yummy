@@ -20,12 +20,9 @@ import { Observable, Subject, forkJoin, takeUntil } from 'rxjs';
 import { getCurrentDate } from 'src/tools/common';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
-import { CalendarService } from 'src/app/modules/planning/services/calendar.service';
 import { PlanService } from 'src/app/modules/planning/services/plan-service';
 import { IPlan } from 'src/app/modules/planning/models/plan';
-import { AdminService } from 'src/app/modules/authentication/services/admin.service';
 import {
-  notifyForAuthorOfApprovedRecipe,
   notifyForFollowersOfApprovedRecipeAuthor,
 } from 'src/app/modules/authentication/components/control-dashboard/notifications';
 import { supabase } from 'src/app/modules/controls/image/supabase-data';

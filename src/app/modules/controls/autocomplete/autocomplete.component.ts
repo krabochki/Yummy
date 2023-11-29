@@ -2,11 +2,9 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnChanges,
   Output,
   forwardRef,
 } from '@angular/core';
-import { Subject } from 'rxjs';
 import { ICategory, ISection } from '../../recipes/models/categories';
 import { Router } from '@angular/router';
 import { trigger } from '@angular/animations';

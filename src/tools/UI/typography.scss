@@ -1,52 +1,51 @@
-
-
 :root {
 
-    --font-2xl:2.25em;
-    --font-xxl:2em;
-    --font-xl:1.6em;
-    --font-l:1.45em;
-    --font-m:1.27em;
-    --base:1em;
-    --font-s:0.83em;
-    --font-xs:0.6em;
+    --font-2xl: 2.25em;
+    --font-xxl: 2em;
+    --font-xl: 1.6em;
+    --font-l: 1.45em;
+    --font-m: 1.27em;
+    --base: 1em;
+    --font-s: 0.83em;
+    --font-xs: 0.6em;
 
-	--font-family-main: 'URW Geometric';
-	--font-family-accent: 'Appetite new';
-   
+    --font-family-main: 'URW Geometric';
+    --font-family-accent: 'Appetite new';
+
 }
 
 
 
 
 $maxWidth: 1280;
+
 @mixin adaptive-font($pcSize, $mobSize) {
-	$addSize: $pcSize - $mobSize;
-	$maxWidth: $maxWidth - 320;
-	font-size: calc(#{$mobSize + px} + #{$addSize} * ((100vw - 320px) / #{$maxWidth}));
+    $addSize: $pcSize - $mobSize;
+    $maxWidth: $maxWidth - 320;
+    font-size: calc(#{$mobSize + px} + #{$addSize} * ((100vw - 320px) / #{$maxWidth}));
 }
 
 
 
-:root{
+:root {
 
-@include adaptive-font(18,12);
+    @include adaptive-font(18, 12);
 
 }
 
-@media (max-width:480px){
-    :root{
+@media (max-width:480px) {
+    :root {
 
-    @include adaptive-font(22,15);
+        @include adaptive-font(22, 15);
     }
 
-    }
-
- 
+}
 
 
-@mixin contrast-font{
-	color: var(--color-background)
+
+
+@mixin contrast-font {
+    color: var(--color-background)
 }
 
 
@@ -58,40 +57,44 @@ $maxWidth: 1280;
 @font-face {
     font-family: 'URW Geometric';
     src: url(../../assets/fonts/URWGEOMETRIC-THIN.TTF) format('truetype'),
-    	 url(../../assets/fonts/URWGEOMETRIC-THIN.woff) format('woff'),
-    	 url(../../assets/fonts/URWGEOMETRIC-THIN.woff2) format('woff2');
+        url(../../assets/fonts/URWGEOMETRIC-THIN.woff) format('woff'),
+        url(../../assets/fonts/URWGEOMETRIC-THIN.woff2) format('woff2');
     font-weight: 100;
     font-style: normal;
 }
+
 @font-face {
     font-family: 'URW Geometric';
     src: url(../../assets/fonts/URWGEOMETRIC-EXTRALIGHT.TTF) format('truetype'),
-    	 url(../../assets/fonts/URWGEOMETRIC-EXTRALIGHT.woff) format('woff'),
-    	 url(../../assets/fonts/URWGEOMETRIC-EXTRALIGHT.woff2) format('woff2');
+        url(../../assets/fonts/URWGEOMETRIC-EXTRALIGHT.woff) format('woff'),
+        url(../../assets/fonts/URWGEOMETRIC-EXTRALIGHT.woff2) format('woff2');
     font-weight: 200;
     font-style: normal;
 }
+
 @font-face {
     font-family: 'URW Geometric';
     src: url(../../assets/fonts/URWGEOMETRIC-LIGHT.TTF) format('truetype'),
-    	 url(../../assets/fonts/URWGEOMETRIC-LIGHT.woff) format('woff'),
-    	 url(../../assets/fonts/URWGEOMETRIC-LIGHT.woff2) format('woff2');
+        url(../../assets/fonts/URWGEOMETRIC-LIGHT.woff) format('woff'),
+        url(../../assets/fonts/URWGEOMETRIC-LIGHT.woff2) format('woff2');
     font-weight: 300;
     font-style: normal;
 }
+
 @font-face {
     font-family: 'URW Geometric';
     src: url(../../assets/fonts/URWGEOMETRIC-REGULAR.TTF) format('truetype'),
-    	 url(../../assets/fonts/URWGEOMETRIC-REGULAR.WOFF) format('woff'),
-    	 url(../../assets/fonts/URWGEOMETRIC-REGULAR.WOFF2) format('woff2');
+        url(../../assets/fonts/URWGEOMETRIC-REGULAR.WOFF) format('woff'),
+        url(../../assets/fonts/URWGEOMETRIC-REGULAR.WOFF2) format('woff2');
     font-weight: 400;
     font-style: normal;
 }
+
 @font-face {
     font-family: 'URW Geometric';
     src: url(../../assets/fonts/URWGEOMETRIC-ITALIC.TTF) format('truetype'),
-    	 url(../../assets/fonts/URWGEOMETRIC-ITALIC.woff) format('woff'),
-    	 url(../../assets/fonts/URWGEOMETRIC-ITALIC.woff2) format('woff2');
+        url(../../assets/fonts/URWGEOMETRIC-ITALIC.woff) format('woff'),
+        url(../../assets/fonts/URWGEOMETRIC-ITALIC.woff2) format('woff2');
     font-weight: 400;
     font-style: italic;
 }
@@ -99,56 +102,62 @@ $maxWidth: 1280;
 @font-face {
     font-family: 'URW Geometric';
     src: url(../../assets/fonts/URWGEOMETRIC-MEDIUM.TTF) format('truetype'),
-    	 url(../../assets/fonts/URWGEOMETRIC-MEDIUM.woff) format('woff'),
-    	 url(../../assets/fonts/URWGEOMETRIC-MEDIUM.woff2) format('woff2');
+        url(../../assets/fonts/URWGEOMETRIC-MEDIUM.woff) format('woff'),
+        url(../../assets/fonts/URWGEOMETRIC-MEDIUM.woff2) format('woff2');
     font-weight: 500;
     font-style: normal;
 }
+
 @font-face {
     font-family: 'URW Geometric';
     src: url(../../assets/fonts/URWGEOMETRIC-SEMIBOLD.TTF) format('truetype'),
-    	 url(../../assets/fonts/URWGEOMETRIC-SEMIBOLD.woff) format('woff'),
-    	 url(../../assets/fonts/URWGEOMETRIC-SEMIBOLD.woff2) format('woff2');
+        url(../../assets/fonts/URWGEOMETRIC-SEMIBOLD.woff) format('woff'),
+        url(../../assets/fonts/URWGEOMETRIC-SEMIBOLD.woff2) format('woff2');
     font-weight: 600;
     font-style: normal;
 }
+
 @font-face {
     font-family: 'URW Geometric';
     src: url(../../assets/fonts/URWGEOMETRIC-BOLD.TTF) format('truetype'),
-    	 url(../../assets/fonts/URWGEOMETRIC-BOLD.woff) format('woff'),
-    	 url(../../assets/fonts/URWGEOMETRIC-BOLD.woff2) format('woff2');
+        url(../../assets/fonts/URWGEOMETRIC-BOLD.woff) format('woff'),
+        url(../../assets/fonts/URWGEOMETRIC-BOLD.woff2) format('woff2');
     font-weight: 700;
     font-style: normal;
 }
+
 @font-face {
     font-family: 'URW Geometric';
     src: url(../../assets/fonts/URWGEOMETRIC-EXTRABOLD.TTF) format('truetype'),
-    	 url(../../assets/fonts/URWGEOMETRIC-EXTRABOLD.woff) format('woff'),
-    	 url(../../assets/fonts/URWGEOMETRIC-EXTRABOLD.woff2) format('woff2');
+        url(../../assets/fonts/URWGEOMETRIC-EXTRABOLD.woff) format('woff'),
+        url(../../assets/fonts/URWGEOMETRIC-EXTRABOLD.woff2) format('woff2');
     font-weight: 800;
     font-style: normal;
 }
+
 @font-face {
     font-family: 'URW Geometric';
     src: url(../../assets/fonts/URWGEOMETRIC-HEAVY.TTF) format('truetype'),
-    	 url(../../assets/fonts/URWGEOMETRIC-HEAVY.woff) format('woff'),
-    	 url(../../assets/fonts/URWGEOMETRIC-HEAVY.woff2) format('woff2');
+        url(../../assets/fonts/URWGEOMETRIC-HEAVY.woff) format('woff'),
+        url(../../assets/fonts/URWGEOMETRIC-HEAVY.woff2) format('woff2');
     font-weight: 900;
     font-style: normal;
 }
+
 @font-face {
     font-family: 'URW Geometric';
     src: url(../../assets/fonts/URWGEOMETRIC-BLACK.TTF) format('truetype'),
-    	 url(../../assets/fonts/URWGEOMETRIC-BLACK.woff) format('woff'),
-    	 url(../../assets/fonts/URWGEOMETRIC-BLACK.woff2) format('woff2');
+        url(../../assets/fonts/URWGEOMETRIC-BLACK.woff) format('woff'),
+        url(../../assets/fonts/URWGEOMETRIC-BLACK.woff2) format('woff2');
     font-weight: 1000;
     font-style: normal;
 }
+
 @font-face {
     font-family: 'Appetite New';
     src: url(../../assets/fonts/APPETITENEW.TTF) format('truetype'),
-    	 url(../../assets/fonts/APPETITENEW.woff) format('woff'),
-    	 url(../../assets/fonts/APPETITENEW.woff2) format('woff2');
+        url(../../assets/fonts/APPETITENEW.woff) format('woff'),
+        url(../../assets/fonts/APPETITENEW.woff2) format('woff2');
     font-weight: 400;
     font-style: normal;
 }

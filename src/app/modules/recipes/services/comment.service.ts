@@ -65,7 +65,7 @@ export class CommentService {
   }
 
   async likeComment(user: IUser, comment: IComment, recipe: IRecipe) {
-    const updatedComments = recipe.comments.map((item) => {
+    recipe.comments.map((item) => {
       if (comment.id === item.id) {
         if (!comment.likesId.includes(user.id)) {
           comment.likesId.push(user.id);
@@ -83,7 +83,7 @@ export class CommentService {
   }
 
   async dislikeComment(user: IUser, comment: IComment, recipe: IRecipe) {
-    const updatedComments = recipe.comments.map((item) => {
+     recipe.comments.map((item) => {
       if (comment.id === item.id) {
         if (!comment.dislikesId.includes(user.id)) {
           comment.dislikesId.push(user.id);

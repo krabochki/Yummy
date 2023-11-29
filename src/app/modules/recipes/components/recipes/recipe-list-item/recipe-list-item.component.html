@@ -10,11 +10,11 @@
     <svg-icon
       [applyClass]="true"
       class="no-recipe-svg"
-      [src]="'assets/images/svg/no-recipe.svg'"
+      [src]="'/assets/images/svg/no-recipe.svg'"
     ></svg-icon>
   </div>
 </ng-template>
-<div [style.background-image]="'url('+(picture?picture:'assets/images/svg/pancakes.png')+')'" [routerLink]="'/recipes/list/'+recipe.id" *ngIf="dataLoaded && recipe.id > 0; else sceleton" class="recipe">
+<div [style.background-image]="'url('+(picture?picture:'/assets/images/svg/pancakes.png')+')'" [routerLink]="'/recipes/list/'+recipe.id" *ngIf="dataLoaded && recipe.id > 0; else sceleton" class="recipe">
   <div class="top" *ngIf="!shortView">
     <div
       [title]="
@@ -35,13 +35,13 @@
     >
       <svg-icon
         *ngIf="recipe.status !== 'awaits' && author.id === currentUser.id && currentUser.id!==0"
-        [src]="'assets/images/svg/more.svg'"
+        [src]="'/assets/images/svg/more.svg'"
         [applyClass]="true"
         class="fav-icon"
       ></svg-icon>
       <svg-icon
         *ngIf="recipe.status === 'awaits' && author.id === currentUser.id"
-        [src]="'assets/images/svg/await.svg'"
+        [src]="'/assets/images/svg/await.svg'"
         [applyClass]="true"
         class="fav-icon"
       ></svg-icon>
@@ -51,7 +51,7 @@
          ( author.id !== currentUser.id ||  currentUser.id===0) &&
           !isRecipeFavorite
         "
-        [src]="'assets/images/svg/fav.svg'"
+        [src]="'/assets/images/svg/fav.svg'"
         [applyClass]="true"
         class="fav-icon"
       ></svg-icon>
@@ -61,7 +61,7 @@
           author.id !== currentUser.id &&
           isRecipeFavorite
         "
-        [src]="'assets/images/svg/fav-fill.svg'"
+        [src]="'/assets/images/svg/fav-fill.svg'"
         [applyClass]="true"
         class="fav-icon"
       ></svg-icon>
@@ -77,7 +77,7 @@
         *ngIf="recipe.status === 'private'"
       >
         <svg-icon
-          [src]="'assets/images/svg/pen.svg'"
+          [src]="'/assets/images/svg/pen.svg'"
           [applyClass]="true"
           class="remove-svg"
         ></svg-icon>
@@ -90,13 +90,13 @@
       >
         <svg-icon
           *ngIf="!isRecipeFavorite; else favorite"
-          [src]="'assets/images/svg/fav.svg'"
+          [src]="'/assets/images/svg/fav.svg'"
           [applyClass]="true"
           class="remove-svg"
         ></svg-icon>
         <ng-template #favorite>
           <svg-icon
-            [src]="'assets/images/svg/fav-fill.svg'"
+            [src]="'/assets/images/svg/fav-fill.svg'"
             [applyClass]="true"
             class="remove-svg"
           ></svg-icon>
@@ -109,7 +109,7 @@
         (click)="innerClick($event);publishModalShow = true"
       >
         <svg-icon
-          [src]="'assets/images/svg/publish.svg'"
+          [src]="'/assets/images/svg/publish.svg'"
           [applyClass]="true"
           class="remove-svg"
         ></svg-icon>
@@ -118,7 +118,7 @@
         <svg-icon
           [applyClass]="true"
           class="remove-svg"
-          [src]="'assets/images/svg/trash.svg'"
+          [src]="'/assets/images/svg/trash.svg'"
         ></svg-icon>
       </div>
     </div>
@@ -149,13 +149,13 @@
       <div class="rate-item likes" (click)="innerClick($event);likeThisRecipe()">
         <svg-icon
           *ngIf="!isRecipeLiked"
-          [src]="'assets/images/svg/like.svg'"
+          [src]="'/assets/images/svg/like.svg'"
           [applyClass]="true"
           class="like-icon"
         ></svg-icon>
         <svg-icon
           *ngIf="isRecipeLiked"
-          [src]="'assets/images/svg/like-fill.svg'"
+          [src]="'/assets/images/svg/like-fill.svg'"
           [applyClass]="true"
           class="like-icon liked"
         ></svg-icon>
@@ -173,13 +173,13 @@
       >
         <svg-icon
           *ngIf="!isRecipeCooked"
-          [src]="'assets/images/svg/cook.svg'"
+          [src]="'/assets/images/svg/cook.svg'"
           [applyClass]="true"
           class="cook-icon"
         ></svg-icon>
         <svg-icon
           *ngIf="isRecipeCooked"
-          [src]="'assets/images/svg/cook-fill.svg'"
+          [src]="'/assets/images/svg/cook-fill.svg'"
           [applyClass]="true"
           class="cook-icon cooked"
         ></svg-icon>
@@ -192,7 +192,7 @@
       <div class="rate-item likes" style="cursor: default">
         <svg-icon
           [src]="
-            'assets/images/svg/' +
+            '/assets/images/svg/' +
             (recipe.status === 'awaits' ? 'awaits' : 'private') +
             '.svg'
           "

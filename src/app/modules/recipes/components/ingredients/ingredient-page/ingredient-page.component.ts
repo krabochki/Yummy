@@ -132,7 +132,7 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
   ) { }
 
-  placeholder = 'assets/images/ingredient.png';
+  placeholder = '/assets/images/ingredient.png';
   ngOnInit() {
     this.route.data.subscribe((data) => {
       this.ingredient = { ...data['IngredientResolver'] };

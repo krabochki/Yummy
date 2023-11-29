@@ -80,7 +80,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
 
   noAccessModalShow: boolean = false;
 
-  baseSvgPath: string = '../../../assets/images/svg/';
+  baseSvgPath: string = '/assets/images/svg/';
 
   protected destroyed$: Subject<void> = new Subject<void>();
 

@@ -33,7 +33,7 @@ import { IIngredient } from '../../recipes/models/ingredients';
 export class ShoppingListComponent implements OnInit, OnDestroy {
   protected shoppingList: ShoppingListItem[] = [];
 
-  protected baseSvgPath: string = '../../../../../assets/images/svg/grocery/';
+  protected baseSvgPath: string = '/assets/images/svg/grocery/';
 
   private currentUser: IUser = { ...nullUser };
   private currentUserPlan: IPlan = nullPlan;

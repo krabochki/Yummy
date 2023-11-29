@@ -17,8 +17,6 @@ import {
   customPatternValidator,
 } from 'src/tools/validators';
 import { supabase } from 'src/app/modules/controls/image/supabase-data';
-import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
 @Component({
   templateUrl: './password-recovery.component.html',
   styleUrls: ['../../common-styles.scss'],
@@ -85,7 +83,7 @@ export class PasswordRecoveryComponent implements OnInit, OnDestroy {
           this.errorModal = true;
         } else {
           await supabase.auth.resetPasswordForEmail(resetUser.email, {
-            redirectTo: 'http://localhost:4200/password-reset',
+            redirectTo: 'https://prod-yummy.vercel.app/#/password-reset',
           });
           this.successModal = true;
           this.cd.markForCheck();

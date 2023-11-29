@@ -1,6 +1,6 @@
 <div class="main" (mouseleave)="blurEmitter.emit(notify)" (mouseenter)="hover.emit(notify)" [ngClass]="getClass()">
     <button *ngIf="!notify.context.includes('plan')" class="delete-button" (click)="deleteNotify()">
-        <svg-icon class="delete" [applyClass]="true" [src]="'assets/images/svg/close.svg'"></svg-icon>
+        <svg-icon class="delete" [applyClass]="true" [src]="'/assets/images/svg/close.svg'"></svg-icon>
     </button>
     <a class="body"  [routerLink]="notify.relatedLink?notify.relatedLink:null" >
 

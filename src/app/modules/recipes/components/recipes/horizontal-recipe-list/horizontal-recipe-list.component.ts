@@ -1,6 +1,6 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, HostListener, Input, OnChanges, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, Input, OnChanges, ViewChild } from '@angular/core';
 import { DragScrollComponent } from 'ngx-drag-scroll';
-import { IRecipe, nullRecipe } from 'src/app/modules/recipes/models/recipes';
+import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 import { dragEnd, dragStart } from 'src/tools/common';
 
 @Component({

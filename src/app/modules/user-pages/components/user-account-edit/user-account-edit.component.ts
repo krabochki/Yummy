@@ -321,7 +321,7 @@ export class UserAccountEditComponent
     );
   }
 
-  updateUser() {
+  async updateUser() {
     const socialNetworks: SocialNetwork[] = [];
 
     const socialNetworksData: SocialNetwork[] = [
@@ -349,10 +349,10 @@ export class UserAccountEditComponent
       socialNetworks: socialNetworks,
     };
 
-    if (this.editableUser.avatarUrl)
-      this.deleteOldUserpic(this.editableUser.avatarUrl);
+    await this.updateUserInSupabase();
 
-    this.updateUserInSupabase();
+    if (this.editableUser.avatarUrl)
+      await this.deleteOldUserpic(this.editableUser.avatarUrl);
   }
 
   async updateSupabaseUser(user: IUser) {
@@ -371,7 +371,7 @@ export class UserAccountEditComponent
     this.saveModal = false;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  handleSuccessModal(answer: boolean) {
+  async handleSuccessModal(answer: boolean) {
     this.closeEmitter.emit(true);
 
     this.successModal = false;
@@ -384,7 +384,7 @@ export class UserAccountEditComponent
         'user',
         '/cooks/list/' + this.newUser.id,
       );
-      this.notifyService.sendNotification(notify, this.newUser);
+      await this.notifyService.sendNotification(notify, this.newUser);
     }
   }
   handleCloseModal(answer: boolean) {
@@ -442,7 +442,7 @@ export class UserAccountEditComponent
         await supabase.storage.from('userpics').upload(filePath, file);
       }
       await this.updateSupabaseUser(this.newUser);
-      
+
       this.successModal = true;
     } catch (error) {
       if (error instanceof Error) {

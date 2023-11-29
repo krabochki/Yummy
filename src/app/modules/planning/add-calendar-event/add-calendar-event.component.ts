@@ -1,21 +1,17 @@
 import {
   ChangeDetectorRef,
   Component,
-  ElementRef,
   EventEmitter,
-  HostListener,
   Input,
   OnDestroy,
   OnInit,
   Output,
   Renderer2,
-  ViewChild,
 } from '@angular/core';
 import { palette } from './palette';
 import { PlanService } from '../services/plan-service';
 import { IPlan, nullCalendarEvent, nullPlan } from '../models/plan';
 import { CalendarService } from '../services/calendar.service';
-import { CalendarEvent } from 'angular-calendar';
 import { IUser, nullUser } from '../../user-pages/models/users';
 import { IRecipe, nullRecipe } from '../../recipes/models/recipes';
 import { Router } from '@angular/router';
@@ -27,7 +23,6 @@ import { Subject, takeUntil } from 'rxjs';
 import { endOfDay, startOfDay } from 'date-fns';
 import { NotificationService } from '../../user-pages/services/notification.service';
 import { getModalDescription, getModalTitle } from './const';
-import { getUser } from '../../authentication/components/control-dashboard/quick-actions';
 import {
   INotification,
   nullNotification,

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { CalendarEvent } from 'angular-calendar';
 import { EventColor } from 'calendar-utils';
 import { RecipeCalendarEvent } from '../models/calendar';
 

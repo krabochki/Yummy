@@ -159,6 +159,7 @@ export class UserService {
       location: user.location || '', // Локация пользователя
       profileViews: user.profileviews || 0, // Количество просмотров профиля
       role: user.role || 'user',
+      registrationDate:user.registrationDate,
       notifications: user.notifications || [],
       permissions: user.permissions || [],
       exclusions: user.exclusions || [],

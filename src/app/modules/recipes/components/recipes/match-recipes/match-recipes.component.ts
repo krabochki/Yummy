@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-prototype-builtins */
 import {
   ChangeDetectionStrategy,
@@ -30,7 +31,7 @@ import { AuthService } from 'src/app/modules/authentication/services/auth.servic
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { getZoom } from 'src/tools/common';
 import { IngredientService } from '../../../services/ingredient.service';
-import { IIngredient, nullIngredient } from '../../../models/ingredients';
+import { IIngredient } from '../../../models/ingredients';
 
 @Component({
   selector: 'app-match-recipes',
@@ -40,7 +41,7 @@ import { IIngredient, nullIngredient } from '../../../models/ingredients';
   animations: [trigger('height', heightAnim()), trigger('modal', modal())],
 })
 export class MatchRecipesComponent implements OnInit, OnDestroy {
-  protected baseSvgPath: string = 'assets/images/svg/';
+  protected baseSvgPath: string = '/assets/images/svg/';
   private categories: ICategory[] = []; //изначальные данные
   private sections: ISection[] = [];
   private recipes: IRecipe[] = [];

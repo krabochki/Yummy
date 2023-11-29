@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { ICategory, ISection } from '../models/categories';
 import { BehaviorSubject } from 'rxjs';

@@ -97,7 +97,7 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
       });
   }
 
-  noUserpic = 'assets/images/userpic.png';
+  noUserpic = '/assets/images/userpic.png';
 
   getUserpic(user: IUser) {
     if (user.avatarUrl) {

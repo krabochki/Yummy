@@ -7,8 +7,8 @@
       <input [(ngModel)]="searchQuery" (ngModelChange)="filter()" class="search-div" @search *ngIf="searchMode"
         placeholder="Начните вводить запрос" />
 
-      <div class="svg-button">
-        <svg-icon (click)="searchOnOff();closeEmitter.emit(true)" src="../../../../../assets/images/svg/go-back.svg"
+      <div class="svg-button" (click)="searchOnOff();closeEmitter.emit(true)">
+        <svg-icon  src="/assets/images/svg/go-back.svg"
           class="svg" [applyClass]="true">
         </svg-icon>
       </div>
@@ -17,7 +17,7 @@
             (this.object === 'followers' && followers.length === 0) ||
             (this.object === 'following' && following.length === 0)
         }" [@magnifier]="searchMode ? 'open' : 'closed'" (click)="searchOnOff()">
-        <svg-icon src="../../../../../assets/images/svg/search.svg" class="svg magn" [applyClass]="true">
+        <svg-icon src="/assets/images/svg/search.svg" class="svg magn" [applyClass]="true">
         </svg-icon>
       </div>
     </div>
@@ -39,7 +39,7 @@
             <p>Этот кулинар пока ни на кого не подписался :(</p>
 
             <svg-icon [src]="
-                  '../../../../../assets/images/svg/sad-cook.svg'
+                  '/assets/images/svg/sad-cook.svg'
                 " [svgStyle]="{
                 
                 'height.em': '9', 'width.em':'9',
@@ -52,7 +52,7 @@
             Попробуйте изменить параметры поиска
 
             <svg-icon [src]="
-                  '../../../../../assets/images/svg/sad-cook.svg'
+                  '/assets/images/svg/sad-cook.svg'
                 " [svgStyle]="{
                 
                 'height.em': '9', 'width.em':'9',
@@ -93,7 +93,7 @@
 
 
             <svg-icon [src]="
-                  '../../../../../assets/images/svg/sad-cook.svg'
+                  '/assets/images/svg/sad-cook.svg'
                 " [svgStyle]="{
                 
                 'height.em': '9', 'width.em':'9',
@@ -108,7 +108,7 @@
 
 
             <svg-icon [src]="
-                  '../../../../../assets/images/svg/sad-cook.svg'
+                  '/assets/images/svg/sad-cook.svg'
                 " [svgStyle]="{
                 
                 'height.em': '9', 'width.em':'9',

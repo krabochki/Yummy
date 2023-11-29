@@ -3,7 +3,6 @@ import { UserService } from './user.service';
 import { INotification, nullNotification } from '../models/notifications';
 import { getCurrentDate } from 'src/tools/common';
 import { IUser } from '../models/users';
-import { EMPTY, take } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',

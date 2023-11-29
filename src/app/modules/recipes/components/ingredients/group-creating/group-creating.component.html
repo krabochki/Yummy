@@ -4,7 +4,7 @@
   <div class="inner">
     <div class="close-button" (click)="closeEditModal()">
       <svg-icon
-        [src]="'assets/images/svg/close.svg'"
+        [src]="'/assets/images/svg/close.svg'"
         [applyClass]="true"
         class="close-svg"
       ></svg-icon>
@@ -35,7 +35,7 @@
                     <svg-icon
                       [applyClass]="true"
                       class="svgTrash"
-                      [src]="'assets/images/svg/trash.svg'"
+                      [src]="'/assets/images/svg/trash.svg'"
                     ></svg-icon>
                   </div>
                   <div
@@ -76,7 +76,7 @@
                 <div class="tag" *ngFor="let selected of selectedIngredients">
                   {{ selected.name }}
                   <span (click)="removeIngredient(selected)" class="remove-tag"><svg-icon [applyClass]="true"
-                      class="remove-tag-svg" [src]="'assets/images/svg/close.svg'"></svg-icon></span>
+                      class="remove-tag-svg" [src]="'/assets/images/svg/close.svg'"></svg-icon></span>
                 </div>
               </div>
               <div *ngIf="selectedIngredients.length === 0" class="no-categories">

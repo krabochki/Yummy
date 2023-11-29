@@ -128,7 +128,7 @@ export class SectionService {
     return supabase.from('sections').delete().eq('id', id);
   }
   async updateSectionInSupabase(section: ISection) {
-    const { id, ...updateData } = section;
+    const { id } = section;
     await supabase
       .from('sections')
       .update({

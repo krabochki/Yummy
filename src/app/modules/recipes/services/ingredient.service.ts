@@ -1,14 +1,12 @@
 import { Injectable } from '@angular/core';
-import { ICategory, ISection, nullSection } from '../models/categories';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { ingredientsGroupsUrl, ingredientsUrl } from 'src/tools/source';
 import { IRecipe } from '../models/recipes';
 import {
   IIngredient,
   IIngredientsGroup,
   nullIngredient,
-  nullIngredientsGroup,
 } from '../models/ingredients';
 import { RecipeService } from './recipe.service';
 import { baseComparator } from 'src/tools/common';

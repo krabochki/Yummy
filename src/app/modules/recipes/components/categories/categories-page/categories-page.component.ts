@@ -214,8 +214,6 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
         }
       });
     }
-    console.log(section.name)
-    console.log(sectionCategories)
 
     return sectionCategories;
   }

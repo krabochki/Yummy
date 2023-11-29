@@ -140,7 +140,7 @@
         (click)="settingsShow = !settingsShow"
         [applyClass]="true"
         class="svg"
-        [src]="'assets/images/svg/settings.svg'"
+        [src]="'/assets/images/svg/settings.svg'"
       >
       </svg-icon>
     </div>
@@ -169,7 +169,7 @@
           >
             <svg-icon
               *ngIf="!selectedEmoji && isSameUser"
-              [src]="'assets/images/svg/smile.svg'"
+              [src]="'/assets/images/svg/smile.svg'"
               [applyClass]="true"
               class="add-emoji"
             />
@@ -207,7 +207,7 @@
           <svg-icon
             class="hire-svg"
             [applyClass]="true"
-            [src]="'assets/images/svg/case.svg'"
+            [src]="'/assets/images/svg/case.svg'"
           ></svg-icon>
         </button>
 
@@ -215,7 +215,7 @@
           [ngClass]="{'loading':!userpicLoaded}"
           class="userpic"
           [style.background-image]="
-            'url(' + (this.avatar?this.avatar:'assets/images/userpic.png') + ')'
+            'url(' + (this.avatar?this.avatar:'/assets/images/userpic.png') + ')'
           "
         ></div>
 
@@ -324,7 +324,7 @@
         <p>У этого кулинара пока нет своих рецептов :(</p>
 
         <svg-icon
-          [src]="'assets/images/svg/sad-cook.svg'"
+          [src]="'/assets/images/svg/sad-cook.svg'"
           [svgStyle]="{
             'height.em': '12',
             'width.em': '12',
@@ -367,7 +367,7 @@
             <a [href]="social.link" class="center">
               <svg-icon
                 [src]="
-                  'assets/images/svg/non-fill-' +
+                  '/assets/images/svg/non-fill-' +
                   (social.name === 'ВКонтакте' ? 'vkontakte' : social.name) +
                   '.svg'
                 "
@@ -391,7 +391,7 @@
         <ul>
           <li class="row center website" *ngIf="user?.personalWebsite">
             <svg-icon
-              [src]="'assets/images/svg/planet.svg'"
+              [src]="'/assets/images/svg/planet.svg'"
               class="red-svg"
               [applyClass]="true"
             >
@@ -400,7 +400,7 @@
           </li>
           <li *ngIf="user.role !== 'user' && showRole" class="row center">
             <svg-icon
-              [src]="'assets/images/svg/star-user.svg'"
+              [src]="'/assets/images/svg/star-user.svg'"
               [svgStyle]="{
                 'width.em': '1.2',
                 'height.em': '1',
@@ -413,7 +413,7 @@
           </li>
           <li class="row center" *ngIf="user?.location">
             <svg-icon
-              [src]="'assets/images/svg/geo.svg'"
+              [src]="'/assets/images/svg/geo.svg'"
               [svgStyle]="{
                 'width.em': '1.2',
                 'height.em': '1',
@@ -422,9 +422,9 @@
             ></svg-icon>
             <p>{{ user.location }}</p>
           </li>
-          <li class="row center" *ngIf="user?.registrationDate">
+          <li class="row center" *ngIf="user.registrationDate">
             <svg-icon
-              [src]="'../../../../../assets/images/svg/info.svg'"
+              [src]="'/assets/images/svg/info.svg'"
               [svgStyle]="{
                 'width.em': '1.2',
                 'height.em': '1',
@@ -437,7 +437,7 @@
           </li>
           <li class="row center">
             <svg-icon
-              [src]="'../../../../../assets/images/svg/analytics.svg'"
+              [src]="'/assets/images/svg/analytics.svg'"
               [svgStyle]="{
                 'width.em': '1.2',
                 'height.em': '1',

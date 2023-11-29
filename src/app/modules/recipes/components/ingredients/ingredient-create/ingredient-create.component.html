@@ -3,7 +3,7 @@
 <div class="outer" (click)="clickBackgroundNotContent($event)">
   <div class="inner">
     <div class="close-button" (click)="closeIngredientCreating()">
-      <svg-icon [src]="'assets/images/svg/close.svg'" [applyClass]="true" class="close-svg"></svg-icon>
+      <svg-icon [src]="'/assets/images/svg/close.svg'" [applyClass]="true" class="close-svg"></svg-icon>
     </div>
     <div class="header">
       <h1>Создание ингредиента</h1>
@@ -39,7 +39,7 @@
 
       <form [formGroup]="form" #scrollContainer><div class="description-container">
         <button class="more-button" (click)="showInfo = !showInfo">
-          <svg-icon [src]="'assets/images/svg/help.svg'" [applyClass]="true" class="help-svg"></svg-icon>
+          <svg-icon [src]="'/assets/images/svg/help.svg'" [applyClass]="true" class="help-svg"></svg-icon>
           Подробнее
         </button>
         <p class="description" *ngIf="showInfo" @height>
@@ -66,7 +66,7 @@
               <div class="tag" *ngFor="let selected of selectedIngredientsGroups">
                 {{ selected.name }}
                 <span (click)="removeGroup(selected)" class="remove-tag"><svg-icon [applyClass]="true"
-                    class="remove-tag-svg" [src]="'assets/images/svg/close.svg'"></svg-icon></span>
+                    class="remove-tag-svg" [src]="'/assets/images/svg/close.svg'"></svg-icon></span>
               </div>
             </div>
             <div *ngIf="selectedIngredientsGroups.length === 5" class="max-categories">
@@ -121,14 +121,14 @@
                       <p>Ничего не найдено</p>
 
                       <svg-icon [applyClass]="true" class="tomato"
-                        [src]="'assets/images/svg/grocery/shocked-tomato.svg'" />
+                        [src]="'/assets/images/svg/grocery/shocked-tomato.svg'" />
                     </div>
                   </div>
                   <li *ngFor="let item of autocompleteTypes" (mousedown)="chooseRecipe(item)">
                     <p class="text">
                       <svg-icon class="autocomplete-svg" [applyClass]="true" [src]="
                           item.image
-                            ? 'assets/images/svg/grocery/' +
+                            ? '/assets/images/svg/grocery/' +
                               item?.image +
                               '.svg'
                             : ''
@@ -168,7 +168,7 @@
                   <div class="instruction">
                     <div class="instruction-text">
                       <div tabindex="-1" class="drag" cdkDragHandle>
-                        <svg-icon [applyClass]="true" class="svg-drag" [src]="'assets/images/svg/drag.svg'">
+                        <svg-icon [applyClass]="true" class="svg-drag" [src]="'/assets/images/svg/drag.svg'">
                         </svg-icon>
                       </div>
                       <div class="num">{{ i + 1 }}</div>
@@ -183,7 +183,7 @@
 
                       <button type="button" tabindex="-1" (click)="removeBaseTextControl(i, 'variations')"
                         class="remove-button">
-                        <svg-icon [applyClass]="true" class="svg-trash" [src]="'assets/images/svg/trash.svg'">
+                        <svg-icon [applyClass]="true" class="svg-trash" [src]="'/assets/images/svg/trash.svg'">
                         </svg-icon>
                       </button>
                     </div>
@@ -212,7 +212,7 @@
             <div class="delete" *ngIf="mainImage !== defaultImage" (click)="
                 unsetImage()
               ">
-              <svg-icon [applyClass]="true" class="svg-trash" [src]="'assets/images/svg/trash.svg'"></svg-icon>
+              <svg-icon [applyClass]="true" class="svg-trash" [src]="'/assets/images/svg/trash.svg'"></svg-icon>
             </div>
           </div>
         </div>
@@ -237,7 +237,7 @@
                     <div class="instruction">
                       <div class="instruction-text">
                         <div tabindex="-1" class="drag" cdkDragHandle>
-                          <svg-icon [applyClass]="true" class="svg-drag" [src]="'assets/images/svg/drag.svg'">
+                          <svg-icon [applyClass]="true" class="svg-drag" [src]="'/assets/images/svg/drag.svg'">
                           </svg-icon>
                         </div>
                         <div class="num">{{ i + 1 }}</div>
@@ -253,7 +253,7 @@
 
                         <button type="button" tabindex="-1" (click)="removeBaseTextControl(i, controlGroup)"
                           class="remove-button">
-                          <svg-icon [applyClass]="true" class="svg-trash" [src]="'assets/images/svg/trash.svg'">
+                          <svg-icon [applyClass]="true" class="svg-trash" [src]="'/assets/images/svg/trash.svg'">
                           </svg-icon>
                         </button>
                       </div>
@@ -293,7 +293,7 @@
                   <div class="nutrition">
                     <div tabindex="-1" class="drag" cdkDragHandle>
                       <svg-icon [applyClass]="true" class="svg-drag"
-                        [src]="'../../../../../assets/images/svg/drag.svg'">
+                        [src]="'../../../../..//assets/images/svg/drag.svg'">
                       </svg-icon>
                     </div>
                     <div class="num">{{ i + 1 }}</div>
@@ -318,7 +318,7 @@
 
                     <button type="button" tabindex="-1" (click)="removeBaseTextControl(i, 'nutritions')"
                       class="remove-button">
-                      <svg-icon [applyClass]="true" class="svg-trash" [src]="'assets/images/svg/trash.svg'">
+                      <svg-icon [applyClass]="true" class="svg-trash" [src]="'/assets/images/svg/trash.svg'">
                       </svg-icon>
                     </button>
                   </div>
@@ -357,7 +357,7 @@
                   class="nutrition-cont" cdkDragBoundary=".boundary">
                   <div class="source">
                     <div tabindex="-1" class="drag" cdkDragHandle>
-                      <svg-icon [applyClass]="true" class="svg-drag" [src]="'assets/images/svg/drag.svg'">
+                      <svg-icon [applyClass]="true" class="svg-drag" [src]="'/assets/images/svg/drag.svg'">
                       </svg-icon>
                     </div>
                     <div class="num">{{ i + 1 }}</div>
@@ -379,7 +379,7 @@
 
                     <button type="button" tabindex="-1" (click)="removeBaseTextControl(i, 'sources')"
                       class="remove-button">
-                      <svg-icon [applyClass]="true" class="svg-trash" [src]="'assets/images/svg/trash.svg'">
+                      <svg-icon [applyClass]="true" class="svg-trash" [src]="'/assets/images/svg/trash.svg'">
                       </svg-icon>
                     </button>
                   </div>

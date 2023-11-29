@@ -1,12 +1,8 @@
-import { ChangeDetectorRef, Injectable, NgZone } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { IUser, nullUser } from '../../user-pages/models/users';
 import {
   BehaviorSubject,
-  EMPTY,
   Observable,
-  filter,
-  map,
-  take,
   throwError,
 } from 'rxjs';
 import { UserService } from '../../user-pages/services/user.service';
@@ -94,7 +90,6 @@ export class AuthService {
 
           const loginUser = this.loginUser({ ...iuser });
           if (loginUser && loginUser.email === user.email) {
-            console.log(loginUser);
             this.currentUserSubject.next(loginUser);
           } else {
             this.currentUserSubject.next({ ...nullUser });
@@ -125,7 +120,7 @@ export class AuthService {
       password: user.password,
 
       options: {
-        emailRedirectTo: 'http://localhost:4200/welcome',
+        emailRedirectTo: 'https://prod-yummy.vercel.app/#/welcome',
       },
     });
   }

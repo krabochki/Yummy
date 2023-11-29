@@ -16,7 +16,7 @@ import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
 import { CategoryService } from '../../../services/category.service';
 
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ICategory, ISection, nullCategory } from '../../../models/categories';
 import { SectionGroup } from 'src/app/modules/controls/autocomplete/autocomplete.component';
 import { Subject, takeUntil } from 'rxjs';
@@ -49,7 +49,7 @@ export class CategoryCreatingComponent
   categories: ICategory[] = [];
 
   myImage: string = '';
-  defaultImage: string = '../../../../../assets/images/add-category.png';
+  defaultImage: string = '/assets/images/add-category.png';
   form: FormGroup;
   beginningData: any;
   maxId = 0;

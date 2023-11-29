@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export function getCurrentDate():string{
      return new Date().toJSON()

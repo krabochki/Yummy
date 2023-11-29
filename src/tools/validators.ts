@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
 import { Observable, of } from "rxjs";
 import { IUser } from "src/app/modules/user-pages/models/users";

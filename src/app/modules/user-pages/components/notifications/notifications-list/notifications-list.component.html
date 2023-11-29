@@ -2,7 +2,7 @@
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <div class="list">
     <div class="close"  (click)="closeEmitter.emit()">
-     <svg-icon [applyClass]="true" class="close-svg" [src]="'assets/images/svg/close.svg'"></svg-icon>
+     <svg-icon [applyClass]="true" class="close-svg" [src]="'/assets/images/svg/close.svg'"></svg-icon>
     </div> 
   <div class="main">
     <h1>Уведомления ({{ notifies.length }})</h1>
@@ -10,7 +10,7 @@
       <svg-icon
         class="trash"
         [applyClass]="true"
-        [src]="'assets/images/svg/trash.svg'"
+        [src]="'/assets/images/svg/trash.svg'"
       />
       Очистить все
     </button>
@@ -30,7 +30,7 @@
       <svg-icon
         class="mail-cook"
         [applyClass]="true"
-        [src]="'assets/images/svg/mail-cook.svg'"
+        [src]="'/assets/images/svg/mail-cook.svg'"
       ></svg-icon>
     </div>
   </ng-template>

@@ -24,7 +24,6 @@ import { usernameExistsValidator } from 'src/tools/validators';
 import { getCurrentDate } from 'src/tools/common';
 import { PlanService } from 'src/app/modules/planning/services/plan-service';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
-import { supabase } from 'src/app/modules/controls/image/supabase-data';
 
 @Component({
   selector: 'app-register',

@@ -1,4 +1,4 @@
-const basePath = '../../../../../assets/images/plan/'
+const basePath = '/assets/images/plan/'
 
 
 interface ICollection {

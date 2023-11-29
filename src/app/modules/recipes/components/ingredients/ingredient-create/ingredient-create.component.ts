@@ -28,11 +28,10 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Router } from '@angular/router';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
-import { Observable, Subject, forkJoin } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { customLinkPatternValidator, trimmedMinLengthValidator } from 'src/tools/validators';
 import { anySiteMask } from 'src/tools/regex';
-import Compressor from 'compressorjs';
 
 import {
   ProductType,
@@ -100,7 +99,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
   successModalShow: boolean = false;
   exitModalShow: boolean = false;
 
-  defaultImage: string = 'assets/images/add-ingredient.png';
+  defaultImage: string = '/assets/images/add-ingredient.png';
   mainImage: string = '';
 
   protected destroyed$: Subject<void> = new Subject<void>();

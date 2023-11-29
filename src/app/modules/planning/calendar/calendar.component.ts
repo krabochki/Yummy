@@ -5,10 +5,10 @@ import {
   ChangeDetectorRef,
   OnDestroy,
 } from '@angular/core';
-import { endOfDay, isSameDay, isSameMonth } from 'date-fns';
+import { isSameDay, isSameMonth } from 'date-fns';
 import localeRu from '@angular/common/locales/ru';
 
-import { Observable, Subject, forkJoin, take, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import {
   CalendarEvent,
   CalendarEventTimesChangedEvent,
@@ -26,7 +26,6 @@ import { heightAnim, modal } from 'src/tools/animations';
 import { CalendarService } from '../services/calendar.service';
 import { UserService } from '../../user-pages/services/user.service';
 import { RecipeCalendarEvent } from '../models/calendar';
-import { baseComparator } from 'src/tools/common';
 
 @Component({
   selector: 'app-calendar',

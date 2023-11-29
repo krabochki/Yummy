@@ -187,12 +187,12 @@ export class SettingsComponent implements OnInit, OnDestroy {
       document.body.classList.add('dark-mode');
       localStorage.setItem('theme', 'dark');
             const favicon = document.querySelector('#favicon');
-            favicon?.setAttribute('href', 'assets/images/chef-day.png');
+            favicon?.setAttribute('href', '/assets/images/chef-day.png');
     } else {
       document.body.classList.remove('dark-mode');
       localStorage.setItem('theme', 'light');
             const favicon = document.querySelector('#favicon');
-            favicon?.setAttribute('href', 'assets/images/chef-night.png');
+            favicon?.setAttribute('href', '/assets/images/chef-night.png');
 
     }
   } //переключ темной темы

@@ -3,7 +3,7 @@
 <div class="outer" (click)="clickBackgroundNotContent($event)">
   <div class="inner">
     <div class="close-button" (click)="closeEditModal()">
-      <svg-icon [src]="'../../../../../assets/images/svg/close.svg'" [applyClass]="true" class="close-svg"></svg-icon>
+      <svg-icon [src]="'/assets/images/svg/close.svg'" [applyClass]="true" class="close-svg"></svg-icon>
     </div>
     <div class="header">
       <h1>Изменение аккаунта</h1>
@@ -45,7 +45,7 @@
         <div class="description-container">
 
           <button class="more-button" (click)="showInfo = !showInfo">
-            <svg-icon [src]="'../../../../../assets/images/svg/help.svg'" [applyClass]="true"
+            <svg-icon [src]="'/assets/images/svg/help.svg'" [applyClass]="true"
               class="help-svg"></svg-icon>
             Подробнее
           </button>
@@ -66,7 +66,7 @@
                     unsetImage()
                   ">
                   <svg-icon [applyClass]="true" class="svgTrash"
-                    [src]="'../../../../../assets/images/svg/trash.svg'"></svg-icon>
+                    [src]="'/assets/images/svg/trash.svg'"></svg-icon>
                 </div>
                 <div class="userpic" [ngClass]="{
                     'have-image': this.form.get('userpic')?.value
@@ -119,7 +119,7 @@
             <h3>Описание</h3>
             <app-usual-input [inputType]="'textarea'" [max]="2000" id="description" formControlName="description"
               [value]="this.form.get('description')?.value" [placeholder]="
-                'Введите описание своего профиля. Тут может все, что угодно'
+                'Введите описание своего профиля. Тут может быть все, что угодно'
               " [error]="
                 form.get('description')?.invalid &&
                 (form.get('description')?.dirty ||

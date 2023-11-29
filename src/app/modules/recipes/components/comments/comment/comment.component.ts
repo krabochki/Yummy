@@ -35,7 +35,7 @@ export class CommentComponent implements OnInit, OnDestroy {
   protected destroyed$: Subject<void> = new Subject<void>();
   public currentUser: IUser = { ...nullUser };
   avatar = '';
-  noAvatar = 'assets/images/userpic.png';
+  noAvatar = '/assets/images/userpic.png';
   public author: IUser = { ...nullUser };
   public copyState = false; //скопирован ли текст комментария
   protected deleteCommentModalShow: boolean = false;

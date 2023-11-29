@@ -14,14 +14,11 @@ import {
 import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
 import {
-  AbstractControl,
   FormBuilder,
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { ISection, nullSection } from '../../../models/categories';
 import { Subject, takeUntil } from 'rxjs';
-import { SectionService } from '../../../services/section.service';
 import {
   IIngredient,
   IIngredientsGroup,
@@ -52,7 +49,7 @@ export class GroupCreatingComponent
 
   selectedIngredients: IIngredient[] = [];
   myImage: string = '';
-  defaultImage: string = '../../../../../assets/images/add-group.png';
+  defaultImage: string = '/assets/images/add-group.png';
   form: FormGroup;
   allGroups: IIngredientsGroup[] = [];
   beginningData: any;

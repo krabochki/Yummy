@@ -1,0 +1,92 @@
+body {
+  --color-primary: #f5484a;
+    --color-primary-focus: #ee0000;
+  --color-secondary: #ffab2c;
+  --color-secondary-focus: #ff9900;
+
+  
+
+  --color-foreground: #212121;
+  --color-background: #fff;
+  --color-background-deeper: rgb(235, 235, 235);
+  --color-not-read: rgb(214, 214, 214);
+  --color-primary-lighter: #ffd3d3;
+  --color-primary-lighter-focus: #ffb5b5;
+  --color-secondary-lighter: #ffe6c1;
+  --color-secondary-lighter-focus: #ffc876;
+
+  --color-background-deeper-unactive: #f4f4f4;
+  --color-foreground-unactive: #808080;
+  --color-foreground-unactive-lighter: #a1a1a1;
+
+  --scroll-thumb: #cccccc;
+  --scroll-body: #e1e0e0;
+  --scroll-body-modal:#8b8b8b;
+
+  --color-admin: #d659f6;
+  --color-admin-lighter: #f1b8ff;
+  --color-admin-lighter-focus: #eca0ff;
+  --color-admin-focus: #c826f0;
+  --color-moderator: #5dedb8;
+  --color-moderator-lighter: #c4ffe9;
+  --color-moderator-lighter-focus: #a6ffde;
+  --color-moderator-focus: #16e79b;
+
+  --modal: rgba(33, 33, 33, 0.5);
+  --modal-black: rgba(33, 33, 33, 0.5);
+  --modal-sett: rgba(33, 33, 33, 0.2);
+
+  --twitter: #49b2f4;
+  --facebook:  #4994f7;
+  --vk:#7094bd ;
+  --pinterest: #c73d4d;
+
+}
+
+
+.dark-mode {
+
+      --twitter: #1da1f2;
+  --facebook:  #1877f2;
+  --vk:#4a76a8 ;
+  --pinterest: #bd081c;
+
+
+  --color-primary: #fe6668;
+  --scroll-body-modal:#191919;
+  --color-secondary: #ffb446;
+
+  --color-foreground: #e3e3e3;
+  --color-background: #272727;
+  --color-background-deeper: #363636;
+  --not-read: #494949;
+  --color-primary-lighter: #ffb8b8;
+
+  --color-background-deeper-unactive: #313131;
+  --color-foreground-unactive: #a1a1a1 ;
+
+  --color-admin: #e88bff;
+  --color-admin-lighter: #f3d4fb;
+  --color-admin-lighter-focus: #f3c1ff;
+  --color-admin-focus: #da56fb;
+  --color-moderator: #4ad4a1;
+  --color-moderator-lighter: #cdffed;
+  --color-moderator-lighter-focus: #acffe1;
+  --color-moderator-focus: #00d184;
+
+  --color-primary-focus: #ff4b4b;
+  --color-secondary-focus: #ff9c33;
+
+  --color-primary-lighter-focus: #ffabab;
+  --color-secondary-lighter: #ffe6c1;
+  --color-secondary-lighter-focus: #ffddaa;
+
+  --color-foreground-unactive-lighter: #a1a1a1;
+
+  --scroll-thumb: #717171;
+  --scroll-body: #535353;
+  --modal-black: rgba(0, 0, 0, 0.5);
+
+  --modal: rgba(217, 217, 217, 0.5);
+  --modal-sett: rgba(217, 217, 217, 0.2);
+}

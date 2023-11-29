@@ -1,0 +1,13 @@
+:root {
+    
+    --space-unit: 1em;
+    --space-xxs:  calc(0.25 * var(--space-unit));
+    --space-xs:   calc(0.5 * var(--space-unit));
+    --space-s:   calc(0.75 * var(--space-unit));
+    --space-m:   calc(1.25 * var(--space-unit));
+    --space-l:   calc(2 * var(--space-unit));
+    --space-xl:   calc(2.5 * var(--space-unit));
+    --space-xxl:   calc(4 * var(--space-unit));
+    --space-2xl:  calc(5 * var(--space-unit));
+    --space-3xl:  calc(6 * var(--space-unit));
+}

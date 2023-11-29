@@ -28,6 +28,7 @@ import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { supabase } from 'src/app/modules/controls/image/supabase-data';
+import { trimmedMinLengthValidator } from 'src/tools/validators';
 
 @Component({
   selector: 'app-category-creating',
@@ -48,7 +49,7 @@ export class CategoryCreatingComponent
   categories: ICategory[] = [];
 
   myImage: string = '';
-  defaultImage: string = '../../../../../assets/images/add-category.png';
+  defaultImage: string = '/assets/images/add-category.png';
   form: FormGroup;
   beginningData: any;
   maxId = 0;
@@ -78,6 +79,7 @@ export class CategoryCreatingComponent
         [
           Validators.required,
           Validators.minLength(4),
+          trimmedMinLengthValidator(4),
           Validators.maxLength(30),
         ],
       ],
@@ -145,10 +147,7 @@ export class CategoryCreatingComponent
           }
           break;
         case 1:
-          if (
-            !this.form.get('section')!.valid &&
-            this.viewedSteps.includes(1)
-          ) {
+          if (!this.form.get('section')!.valid) {
             return 2;
           }
           break;
@@ -232,8 +231,6 @@ export class CategoryCreatingComponent
   fullGroup: SectionGroup[] = [];
 
   createCategory() {
-    const userpicData = new FormData();
-    userpicData.append('image', this.form.get('image')?.value);
     this.newCategory = {
       name: this.form.value.name,
       photo: this.form.value.image ? this.supabaseFilepath : undefined,
@@ -251,9 +248,9 @@ export class CategoryCreatingComponent
 
     if (this.form.get('section')!.value) {
       this.form.get('section')!.value.categories.push(this.newCategory.id);
-      this.sectionService
-        .updateSections(this.form.get('section')!.value)
-        .subscribe();
+      this.sectionService.updateSectionInSupabase(
+        this.form.get('section')!.value,
+      );
     }
   }
 
@@ -334,7 +331,6 @@ export class CategoryCreatingComponent
 
   supabaseFilepath = '';
   awaitModalShow = false;
-  supabase = supabase;
 
   private setUserpicFilenameForSupabase(): string {
     const file = this.form.get('image')?.value;
@@ -347,7 +343,7 @@ export class CategoryCreatingComponent
     try {
       const file = this.form.get('image')?.value;
       const filePath = this.supabaseFilepath;
-      await this.supabase.storage.from('categories').upload(filePath, file);
+      await supabase.storage.from('categories').upload(filePath, file);
       await this.categoryService.addCategoryToSupabase(category);
       this.successModal = true;
     } catch (error) {

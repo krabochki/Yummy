@@ -19,7 +19,7 @@
         <svg-icon
           [applyClass]="true"
           class="fridge"
-          [src]="'assets/images/svg/fridge.svg'"
+          [src]="'/assets/images/svg/fridge.svg'"
         ></svg-icon>
       </div>
       <div class="content">
@@ -55,7 +55,7 @@
         <svg-icon
           [applyClass]="true"
           class="search-svg"
-          [src]="'assets/images/svg/search.svg'"
+          [src]="'/assets/images/svg/search.svg'"
         ></svg-icon>
       </div>
     </div>
@@ -68,7 +68,7 @@
               <svg-icon
                 [applyClass]="true"
                 class="sad-cook"
-                [src]="'assets/images/svg/ingredients/shocked-ingredients.svg'"
+                [src]="'/assets/images/svg/ingredients/shocked-ingredients.svg'"
               ></svg-icon>
             </div>
             <p>
@@ -109,7 +109,7 @@
             <svg-icon
               class="arrow-svg"
               [applyClass]="true"
-              [src]="'assets/images/svg/go-back.svg'"
+              [src]="'/assets/images/svg/go-back.svg'"
             ></svg-icon>
           </a>
 
@@ -119,12 +119,14 @@
         </div>
       </div>
     </ng-container>
-    <ng-template #concreteGroup>
-      <div class="sections">
-        <app-ingredients-vertical-list
-          [ingredients]="ingredientsToShow"
-        />
-      </div>
+    <ng-template #concreteGroup >
+    <ng-container *ngIf="(ingredientsOfGroup(group).length>0)">
+        <div class="sections">
+          <app-ingredients-vertical-list
+            [ingredients]="ingredientsToShow"
+          />
+        </div>
+    </ng-container>
 
          <app-button
           [text]="'Загрузить еще...'"

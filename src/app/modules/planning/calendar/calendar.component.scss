@@ -265,6 +265,10 @@ justify-content: center
     align-items: flex-start;
    span{
       font-weight: 600;
+
+      &.both{
+        font-weight: 400;
+      }
     }
 
     &:nth-child(2n+1){

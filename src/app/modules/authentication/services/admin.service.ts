@@ -5,12 +5,10 @@ import {
   ICommentReportForAdmin,
 } from '../../recipes/models/comments';
 import {
-  getComment,
   getRecipe,
 } from '../components/control-dashboard/quick-actions';
 import { IRecipe } from '../../recipes/models/recipes';
 import { RecipeService } from '../../recipes/services/recipe.service';
-import { Observable } from 'rxjs';
 import { ICategory, ISection } from '../../recipes/models/categories';
 import { CategoryService } from '../../recipes/services/category.service';
 import { SectionService } from '../../recipes/services/section.service';
@@ -53,31 +51,36 @@ export class AdminService {
     await this.recipeService.updateRecipeFunction(approvedRecipe);
   }
 
-  approveIngredient(ingredient: IIngredient) {
+  async approveIngredient(ingredient: IIngredient) {
     const approvedIngredient: IIngredient = {
       ...{ ...ingredient },
       status: 'public',
     };
-    return this.ingredientService.updateIngredient(approvedIngredient);
+    await this.ingredientService.updateIngredientInSupabase(
+      approvedIngredient,
+    );
   }
 
-  dismissIngredient(ingredient: IIngredient) {
-    return this.ingredientService.deleteIngredient(ingredient.id);
+  async dismissIngredient(ingredient: IIngredient) {
+    await this.ingredientService.deleteIngredientFromSupabase(ingredient.id);
   }
 
-  updateIngredientGroupsAfterDismissingIngredient(ingredient: IIngredient, groups:IIngredientsGroup[]):Observable<IIngredientsGroup>[] {
+  updateIngredientGroupsAfterDismissingIngredient(ingredient: IIngredient, groups:IIngredientsGroup[]) {
     const ingredientGroups = groups.filter(g => g.ingredients.includes(ingredient.id));
-    const subscribes:Observable<IIngredientsGroup>[] = [];
     if (ingredientGroups.length > 0) {
       ingredientGroups.forEach(ingredientGroup => {
         const updatedGroup = {
           ...{ ...ingredientGroup },
           ingredients: { ...ingredientGroup }.ingredients.filter(i => i !== ingredient.id)
         }
-        subscribes.push(this.ingredientService.updateIngredientGroup(updatedGroup))
+        this.updateGroup(updatedGroup)
       });
     }
-    return subscribes;
+  }
+
+  async updateGroup(group: IIngredientsGroup) {
+    await this.ingredientService.updateGroupInSupabase(group);
+
   }
 
   async dismissRecipe(recipe: IRecipe) {
@@ -93,7 +96,7 @@ export class AdminService {
       (categoryId) => categoryId !== category?.id,
     );
 
-    return this.sectionService.updateSections(section);
+    this.sectionService.updateSectionInSupabase(section);
   }
   async dismissCategory(category: ICategory) {
     await this.categoryService.deleteCategoryFromSupabase(category.id);

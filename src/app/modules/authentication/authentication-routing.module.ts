@@ -8,6 +8,9 @@ import { GreetingsComponent } from './components/greetings/greetings.component';
 import { OnlyNoAuthGuard } from './guards/only-no-auth.guard';
 import { ControlDashboardComponent } from './components/control-dashboard/control-dashboard.component';
 import { ModeratorGuard } from './guards/moderator.guard';
+import { PasswordResetComponent } from './components/password-reset/password-reset.component';
+import { WelcomeComponent } from './components/welcome/welcome.component';
+import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
   {
@@ -28,6 +31,15 @@ const routes: Routes = [
         path: 'password-recovery',
         component: PasswordRecoveryComponent,
         canActivate: [OnlyNoAuthGuard],
+      },
+      {
+        path: 'welcome',
+        canActivate:[AuthGuard],
+        component: WelcomeComponent,
+      },
+      {
+        path: 'password-reset',
+        component: PasswordResetComponent,
       },
       {
         path: 'greetings',

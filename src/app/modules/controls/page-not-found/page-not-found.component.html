@@ -1,7 +1,7 @@
     <div class="container one-column not-found margin">
         <div class="not-found">
 
-            <svg-icon [applyClass]="true" class="svg-pic" [src]="'../../../../../assets/images/svg/sad-cook-not-found.svg'"></svg-icon>
+            <svg-icon [applyClass]="true" class="svg-pic" [src]="'/assets/images/svg/sad-cook-not-found.svg'"></svg-icon>
            
 
         </div>
@@ -11,7 +11,7 @@
     
             <hr>
            <div class="buttons">
-                <app-button routerLink="/" [rounded]="true" [color]="'prim'" [text]="'На главную'"></app-button>
+                <app-button (click)="noPageToGoBack?goToMain():goBack()" [rounded]="true" [color]="'prim'" [text]="noPageToGoBack?'На главную':'Назад'"></app-button>
            </div>
        </div>
     </div>

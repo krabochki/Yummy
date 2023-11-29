@@ -17,7 +17,8 @@ import { RecipesModule } from '../recipes/recipes.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TimePastPipe } from 'ng-time-past-pipe';
 import { UserPagesModule } from '../user-pages/user-pages.module';
-import { uuid } from 'uuidv4';
+import { PasswordResetComponent } from './components/password-reset/password-reset.component';
+import { WelcomeComponent } from './components/welcome/welcome.component';
 @NgModule({
   declarations: [
 
@@ -27,6 +28,8 @@ import { uuid } from 'uuidv4';
     PasswordRecoveryComponent,
     GreetingsComponent,
     ControlDashboardComponent,
+    PasswordResetComponent,
+    WelcomeComponent,
     
 
   ],

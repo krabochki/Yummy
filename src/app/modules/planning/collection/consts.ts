@@ -1,4 +1,4 @@
-const basePath = '../../../../../assets/images/plan/'
+const basePath = '/assets/images/plan/'
 
 
 interface ICollection {
@@ -86,21 +86,21 @@ const meals: ICollection = {
       name: 'Идеи для завтраков',
       description:
         'Начните свой день с вкусных и питательных завтраков. У нас есть рецепты для разнообразных завтраков, чтобы подарить вам энергию и хорошее настроение с самого утра.',
-      link: '/categories/list/43',
+      link: '/ingredients/groups/13',
       image: basePath + 'breakfast.jpg',
     },
     {
       name: 'Вдохновение для обедов',
       description:
         'Обед - отличное время для перерыва и наслаждения вкусными блюдами. Исследуйте наши рецепты обедов, чтобы приготовить себе сытный и вкусный обед за короткое время.',
-      link: '/categories/list/45',
+      link: '/ingredients/groups/11',
       image: basePath + 'lunch.jpg',
     },
     {
       name: 'Изысканные ужины',
       description:
         'Завершите свой день вкусным и удовлетворяющим ужином. У нас есть рецепты для разнообразных ужинов, чтобы создать атмосферу уютного вечера за столом.',
-      link: '/categories/list/44',
+      link: '/ingredients/groups/12',
       image: basePath + 'dinner.jpg',
     },
     {
@@ -109,7 +109,7 @@ const meals: ICollection = {
         'Время для легких перекусов и полдников. Исследуйте наши рецепты для быстрых и вкусных закусок, которые поднимут вам настроение в любое время дня.',
       image: basePath + 'snack.jpg',
 
-      link: '/categories/list/46',
+      link: '/ingredients/groups/14',
     },
     {
       name: 'Ингредиенты для вдохновляющих завтраков',

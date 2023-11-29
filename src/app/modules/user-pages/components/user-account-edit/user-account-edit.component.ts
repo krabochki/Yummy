@@ -40,13 +40,7 @@ import {
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { NotificationService } from '../../services/notification.service';
 import { INotification } from '../../models/notifications';
-import { createClient } from '@supabase/supabase-js';
-import {
-  supabaseUrl,
-  supabaseKey,
-  supabase,
-} from 'src/app/modules/controls/image/supabase-data';
-
+import { supabase } from 'src/app/modules/controls/image/supabase-data';
 @Component({
   selector: 'app-user-account-edit',
   templateUrl: './user-account-edit.component.html',
@@ -61,7 +55,6 @@ export class UserAccountEditComponent
   @Output() closeEmitter = new EventEmitter<boolean>();
   @ViewChild('scrollContainer', { static: false }) scrollContainer?: ElementRef;
 
-  private supabase = supabase;
   private supabaseFilepath: string = '';
 
   viewedSteps: number[] = [];
@@ -106,7 +99,7 @@ export class UserAccountEditComponent
         ],
       ],
       fullname: [this.newUser.fullName, [Validators.maxLength(30)]],
-      quote: [this.newUser.quote, [Validators.maxLength(100)]],
+      quote: [this.newUser.quote, [Validators.maxLength(500)]],
       description: ['', [Validators.maxLength(2000)]],
       location: ['', [Validators.maxLength(30)]],
       website: [
@@ -328,7 +321,7 @@ export class UserAccountEditComponent
     );
   }
 
-  updateUser() {
+  async updateUser() {
     const socialNetworks: SocialNetwork[] = [];
 
     const socialNetworksData: SocialNetwork[] = [
@@ -356,31 +349,14 @@ export class UserAccountEditComponent
       socialNetworks: socialNetworks,
     };
 
-    if (this.editableUser.avatarUrl)
-      this.deleteOldUserpic(this.editableUser.avatarUrl);
+    await this.updateUserInSupabase();
 
-    if (this.form.value.userpic) {
-      this.uploadExistingAvatarFromSupabase();
-    }
-    else {
-      this.updateSupabaseUser(this.newUser);
-    }
-    
-    this.authService.loginUser(this.newUser).subscribe((user) => {
-      if (user) {
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        this.authService.setCurrentUser(user);
-      }
-    });
+    if (this.editableUser.avatarUrl)
+      await this.deleteOldUserpic(this.editableUser.avatarUrl);
   }
 
   async updateSupabaseUser(user: IUser) {
-    this.loading = true;
-    this.cdr.markForCheck();
     await this.userService.updateUserInSupabase(user);
-    this.loading = false;
-    this.successModal = true;
-    this.cdr.markForCheck();
   }
 
   handleSaveModal(answer: boolean) {
@@ -395,7 +371,7 @@ export class UserAccountEditComponent
     this.saveModal = false;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  handleSuccessModal(answer: boolean) {
+  async handleSuccessModal(answer: boolean) {
     this.closeEmitter.emit(true);
 
     this.successModal = false;
@@ -408,7 +384,7 @@ export class UserAccountEditComponent
         'user',
         '/cooks/list/' + this.newUser.id,
       );
-      this.notifyService.sendNotification(notify, this.newUser)
+      await this.notifyService.sendNotification(notify, this.newUser);
     }
   }
   handleCloseModal(answer: boolean) {
@@ -451,28 +427,33 @@ export class UserAccountEditComponent
   }
 
   downloadUserpicFromSupabase(path: string) {
-    this.showedUserpicImage = this.supabase.storage
+    this.showedUserpicImage = supabase.storage
       .from('userpics')
       .getPublicUrl(path).data.publicUrl;
   }
 
-  async uploadExistingAvatarFromSupabase() {
+  async updateUserInSupabase() {
     this.loading = true;
+    this.cdr.markForCheck();
     try {
       const file = this.form.get('userpic')?.value;
-      const filePath = this.supabaseFilepath;
-      await this.supabase.storage.from('userpics').upload(filePath, file);
-      this.updateSupabaseUser(this.newUser);
+      if (file) {
+        const filePath = this.supabaseFilepath;
+        await supabase.storage.from('userpics').upload(filePath, file);
+      }
+      await this.updateSupabaseUser(this.newUser);
+
+      this.successModal = true;
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
       }
     } finally {
+      this.loading = false;
       this.cdr.markForCheck();
     }
-    this.loading = false;
   }
   async deleteOldUserpic(path: string) {
-    await this.supabase.storage.from('userpics').remove([path]);
+    await supabase.storage.from('userpics').remove([path]);
   }
 }

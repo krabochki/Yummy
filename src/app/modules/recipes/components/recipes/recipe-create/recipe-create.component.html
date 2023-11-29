@@ -4,7 +4,7 @@
   <div class="inner">
     <div class="close-button" (click)="close()">
       <svg-icon
-        [src]="'assets/images/svg/close.svg'"
+        [src]="'/assets/images/svg/close.svg'"
         [applyClass]="true"
         class="close-svg"
       ></svg-icon>
@@ -58,7 +58,7 @@
         <div class="description-container">
           <button class="more-button" (click)="showInfo = !showInfo">
             <svg-icon
-              [src]="'assets/images/svg/help.svg'"
+              [src]="'/assets/images/svg/help.svg'"
               [applyClass]="true"
               class="help-svg"
             ></svg-icon>
@@ -148,14 +148,13 @@
                 class="delete"
                 *ngIf="mainImage !== defaultImage"
                 (click)="
-                  mainImage = defaultImage;
-                  this.form.get('image')?.setValue(null)
+                  unsetMainImage()
                 "
               >
                 <svg-icon
                   [applyClass]="true"
                   class="svg-trash"
-                  [src]="'assets/images/svg/trash.svg'"
+                  [src]="'/assets/images/svg/trash.svg'"
                 ></svg-icon>
               </div>
             </div>
@@ -271,7 +270,7 @@
                 ><svg-icon
                   [applyClass]="true"
                   class="remove-tag-svg"
-                  [src]="'assets/images/svg/close.svg'"
+                  [src]="'/assets/images/svg/close.svg'"
                 ></svg-icon
               ></span>
             </div>
@@ -311,7 +310,7 @@
                       <svg-icon
                         [applyClass]="true"
                         class="svg-drag"
-                        [src]="'assets/images/svg/drag.svg'"
+                        [src]="'/assets/images/svg/drag.svg'"
                       >
                       </svg-icon>
                     </div>
@@ -359,7 +358,7 @@
                       <svg-icon
                         [applyClass]="true"
                         class="svg-trash"
-                        [src]="'assets/images/svg/trash.svg'"
+                        [src]="'/assets/images/svg/trash.svg'"
                       >
                       </svg-icon>
                     </button>
@@ -424,7 +423,7 @@
                       <svg-icon
                         [applyClass]="true"
                         class="svg-drag"
-                        [src]="'assets/images/svg/drag.svg'"
+                        [src]="'/assets/images/svg/drag.svg'"
                       >
                       </svg-icon>
                     </div>
@@ -477,7 +476,7 @@
                       <svg-icon
                         [applyClass]="true"
                         class="svg-trash"
-                        [src]="'assets/images/svg/trash.svg'"
+                        [src]="'/assets/images/svg/trash.svg'"
                       >
                       </svg-icon>
                     </button>
@@ -542,7 +541,7 @@
                         <svg-icon
                           [applyClass]="true"
                           class="svg-drag"
-                          [src]="'assets/images/svg/drag.svg'"
+                          [src]="'/assets/images/svg/drag.svg'"
                         >
                         </svg-icon>
                       </div>
@@ -566,23 +565,32 @@
                             : ''
                         "
                       ></app-usual-input>
-
-                      <button
-                        type="button"
-                        tabindex="-1"
-                        (click)="removeInstruction(i)"
-                        class="remove-button"
-                      >
-                        <svg-icon
-                          [applyClass]="true"
-                          class="svg-trash"
-                          [src]="'assets/images/svg/trash.svg'"
+<div class="inst-buttons">
+  
+                        <button
+                          type="button"
+                          tabindex="-1"
+                          (click)="removeInstruction(i)"
+                          class="remove-button"
                         >
+                          <svg-icon
+                            [applyClass]="true"
+                            class="svg-trash"
+                            [src]="'/assets/images/svg/trash.svg'"
+                          >
+                          </svg-icon>
+                        </button>
+
+                        <div class="remove-button img" (click)="instructionImagesVisibility[i]=!instructionImagesVisibility[i]">
+                        <svg-icon [class]="instructionImagesVisibility[i]?'svg-photo active':'svg-photo'" [applyClass]="true"  [src]="'/assets/images/svg/'+(instructionImagesVisibility[i]?'nophoto':'photo')+'.svg'">
                         </svg-icon>
-                      </button>
+                        </div>
+</div>
                     </div>
 
                     <div
+                    @height
+                    *ngIf="instructionImagesVisibility[i]"
                       tabindex="-1"
                       formArrayName="images"
                       class="instruction-images"
@@ -618,7 +626,7 @@
                               [applyClass]="true"
                               class="svg-trash"
                               [src]="
-                                'assets/images/svg/trash.svg'
+                                '/assets/images/svg/trash.svg'
                               "
                             ></svg-icon>
                           </div>

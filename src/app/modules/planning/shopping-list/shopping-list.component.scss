@@ -12,7 +12,10 @@
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none;
 }
-
+app-modal{
+  position: fixed;
+  z-index: 10;
+}
 .content {
   min-width: 30em;
   max-width: 30em;
@@ -94,7 +97,7 @@ h1 {
 
 h4 {
   @include flex;
-  justify-content: start;
+  justify-content: flex-start;
   font-weight: 500;
   column-gap: 1em;
   margin-bottom: 1em;
@@ -118,7 +121,7 @@ div.type:first-child h4 {
 .note {
   @include flex;
   opacity: 0.5;
-  justify-content: start;
+  justify-content: flex-start;
   column-gap: 0.5em;
   transition: scale 0.2s;
   zoom: 0.85;
@@ -500,7 +503,7 @@ a {
 .search-block {
   .text {
     @include flex;
-    justify-content: start;
+    justify-content: flex-start;
     column-gap: 1em;
     width: max-content;
   }

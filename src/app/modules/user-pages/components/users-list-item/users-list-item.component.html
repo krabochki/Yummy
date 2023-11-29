@@ -13,7 +13,7 @@
                 <div>
                     <div class="star-h1">
                         <div class="star" *ngIf="user.role!=='user' && showStatus(user)"> <svg-icon class="star-svg"
-                                [applyClass]="true" [src]="'assets/images/svg/user-star.svg'"></svg-icon></div>
+                                [applyClass]="true" [src]="'/assets/images/svg/user-star.svg'"></svg-icon></div>
                         <h1
                             [title]="showStatus(user)?(user.role==='admin'?'Это администратор Yummy':user.role==='moderator'?'Это модератор Yummy':''):''">
                             {{user.fullName}}</h1>
@@ -22,7 +22,7 @@
                 </div>
             </a>
             <p class="location" *ngIf="user.location!==''">
-                <svg-icon class="geo" [applyClass]="true" [src]="'assets/images/svg/geo.svg'"></svg-icon>
+                <svg-icon class="geo" [applyClass]="true" [src]="'/assets/images/svg/geo.svg'"></svg-icon>
                 <span [title]="user.location"> {{user.location}}</span>
 
             </p>
@@ -37,10 +37,10 @@
             [class]="isFollower || adminpanel?'unfollow':'follow'" *ngIf="currentUser.id!==user.id">
 
             <ng-container *ngIf="!adminpanel">
-                <svg-icon *ngIf="!isFollower" class="follow-svg" [src]="'assets/images/svg/follow.svg'"></svg-icon>
-                <svg-icon *ngIf="isFollower" class="follow-svg" [src]="'assets/images/svg/unfollow.svg'"></svg-icon>
+                <svg-icon *ngIf="!isFollower" class="follow-svg" [src]="'/assets/images/svg/follow.svg'"></svg-icon>
+                <svg-icon *ngIf="isFollower" class="follow-svg" [src]="'/assets/images/svg/unfollow.svg'"></svg-icon>
             </ng-container>
-            <svg-icon *ngIf="adminpanel" class="follow-svg" [src]="'assets/images/svg/demote.svg'"></svg-icon>
+            <svg-icon *ngIf="adminpanel" class="follow-svg" [src]="'/assets/images/svg/demote.svg'"></svg-icon>
 
         </button>
     </div>

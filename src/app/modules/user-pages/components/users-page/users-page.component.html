@@ -15,7 +15,7 @@
         <svg-icon
           [applyClass]="true"
           class="search-svg"
-          [src]="'../../../../../assets/images/svg/search.svg'"
+          [src]="'/assets/images/svg/search.svg'"
         ></svg-icon>
       </div>
     </div>
@@ -28,7 +28,7 @@
               <svg-icon
                 [applyClass]="true"
                 class="sad-cook"
-                [src]="'../../../../../assets/images/svg/no-such-cooks.svg'"
+                [src]="'/assets/images/svg/no-such-cooks.svg'"
               ></svg-icon>
             </div>
             <p>
@@ -42,7 +42,7 @@
           (mousedown)="navigateTo('/cooks/list/' + item.id)"
         >
           <p>{{ item.fullName?item.fullName:'@'+item.username }}</p>
-          <span *ngIf="item.fullName">@{{ item.username }}</span>
+          <span *ngIf="item.fullName">{{'@'+item.username }}</span>
         </li>
       </ul>
     </div>
@@ -69,7 +69,7 @@
             <svg-icon
               [applyClass]="true"
               class="fridge"
-              [src]="'../../../../assets/images/svg/fridge.svg'"
+              [src]="'/assets/images/svg/fridge.svg'"
             ></svg-icon>
           </div>
           <div class="content">
@@ -101,7 +101,7 @@
         <svg-icon
           class="arrow-svg"
           [applyClass]="true"
-          [src]="'../../../../../assets/images/svg/go-back.svg'"
+          [src]="'/assets/images/svg/go-back.svg'"
         ></svg-icon>
       </div>
 
@@ -120,7 +120,7 @@
         <svg-icon
           class="arrow-svg"
           [applyClass]="true"
-          [src]="'../../../../../assets/images/svg/go-back.svg'"
+          [src]="'/assets/images/svg/go-back.svg'"
         ></svg-icon>
       </div>
 
@@ -139,7 +139,7 @@
         <svg-icon
           class="arrow-svg"
           [applyClass]="true"
-          [src]="'../../../../../assets/images/svg/go-back.svg'"
+          [src]="'/assets/images/svg/go-back.svg'"
         ></svg-icon>
       </div>
 
@@ -155,7 +155,7 @@
         <svg-icon
           class="arrow-svg"
           [applyClass]="true"
-          [src]="'../../../../../assets/images/svg/go-back.svg'"
+          [src]="'/assets/images/svg/go-back.svg'"
         ></svg-icon>
       </div>
 
@@ -171,7 +171,7 @@
         <svg-icon
           class="arrow-svg"
           [applyClass]="true"
-          [src]="'../../../../../assets/images/svg/go-back.svg'"
+          [src]="'/assets/images/svg/go-back.svg'"
         ></svg-icon>
       </div>
       <app-users-list [users]="popularUsers.slice(0, 6)"></app-users-list>
@@ -183,7 +183,7 @@
         <svg-icon
           class="arrow-svg"
           [applyClass]="true"
-          [src]="'../../../../../assets/images/svg/go-back.svg'"
+          [src]="'/assets/images/svg/go-back.svg'"
         ></svg-icon>
       </div>
       <app-users-list [users]="moreViewedUsers.slice(0, 6)"></app-users-list>
@@ -195,7 +195,7 @@
         <svg-icon
           class="arrow-svg"
           [applyClass]="true"
-          [src]="'../../../../../assets/images/svg/go-back.svg'"
+          [src]="'/assets/images/svg/go-back.svg'"
         ></svg-icon>
       </div>
       <app-users-list
@@ -212,7 +212,7 @@
         <svg-icon
           class="arrow-svg"
           [applyClass]="true"
-          [src]="'../../../../../assets/images/svg/go-back.svg'"
+          [src]="'/assets/images/svg/go-back.svg'"
         ></svg-icon>
       </div>
 

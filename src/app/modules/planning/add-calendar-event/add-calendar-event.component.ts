@@ -1,20 +1,17 @@
 import {
+  ChangeDetectorRef,
   Component,
-  ElementRef,
   EventEmitter,
-  HostListener,
   Input,
   OnDestroy,
   OnInit,
   Output,
   Renderer2,
-  ViewChild,
 } from '@angular/core';
 import { palette } from './palette';
 import { PlanService } from '../services/plan-service';
 import { IPlan, nullCalendarEvent, nullPlan } from '../models/plan';
 import { CalendarService } from '../services/calendar.service';
-import { CalendarEvent } from 'angular-calendar';
 import { IUser, nullUser } from '../../user-pages/models/users';
 import { IRecipe, nullRecipe } from '../../recipes/models/recipes';
 import { Router } from '@angular/router';
@@ -26,7 +23,6 @@ import { Subject, takeUntil } from 'rxjs';
 import { endOfDay, startOfDay } from 'date-fns';
 import { NotificationService } from '../../user-pages/services/notification.service';
 import { getModalDescription, getModalTitle } from './const';
-import { getUser } from '../../authentication/components/control-dashboard/quick-actions';
 import {
   INotification,
   nullNotification,
@@ -81,6 +77,7 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
     private planService: PlanService,
     private calendarService: CalendarService,
     private renderer: Renderer2,
+    private cd:ChangeDetectorRef,
     private router: Router,
     private notifyService: NotificationService,
     private recipeService: RecipeService,
@@ -179,7 +176,7 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
     this.colorSource = 'custom';
   }
 
-  protected editEvent(): void {
+ private async editEvent() {
     const color = this.colors[this.selectedColorIndex];
     const newEvent = this.calendarService.createCalendarEvent(
       this.selectedRecipe.id,
@@ -205,12 +202,17 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
         this.plan.calendarEvents.find((event) => event.id === newEvent.id),
     );
     this.plan.calendarEvents[findedEventIndex] = newEvent;
-    this.planService
-      .updatePlan(this.plan)
-      .subscribe(() => (this.modalSuccessSaveShow = true));
+        this.loading = true;
+        this.cd.markForCheck();
+    await this.planService
+      .updatePlanInSupabase(this.plan)
+        this.loading = false;
+        this.cd.markForCheck();
+    this.modalSuccessSaveShow = true
   }
+  loading = false;
 
-  protected addEvent(): void {
+  async addEvent() {
     const color = this.colors[this.selectedColorIndex];
     const newEvent = this.calendarService.createCalendarEvent(
       0,
@@ -239,9 +241,13 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
     newEvent.id = maxId + 1;
 
     this.plan.calendarEvents = [...this.plan.calendarEvents, newEvent];
-    this.planService
-      .updatePlan(this.plan)
-      .subscribe(() => (this.modalSuccessSaveShow = true));
+        this.loading = true;
+    this.cd.markForCheck()
+    await this.planService
+      .updatePlanInSupabase(this.plan)
+    this.loading = false;
+    this.cd.markForCheck()
+    this.modalSuccessSaveShow = true;
 
     const findRecipe = this.allRecipes.find((r) => r.id === newEvent.recipe);
 

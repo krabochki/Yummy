@@ -1,25 +1,34 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import {
   IIngredient,
   IIngredientsGroup,
-  nullIngredient,
 } from '../../../models/ingredients';
-import { Observable, Subject, find, forkJoin, takeUntil } from 'rxjs';
-import { IRecipe } from '../../../models/recipes';
+import { Subject, takeUntil } from 'rxjs';
 import { RecipeService } from '../../../services/recipe.service';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
-import { IUser, PermissionContext, nullUser } from 'src/app/modules/user-pages/models/users';
+import {
+  IUser,
+  PermissionContext,
+  nullUser,
+} from 'src/app/modules/user-pages/models/users';
 import { IngredientService } from '../../../services/ingredient.service';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
 import { PluralizationService } from 'src/app/modules/controls/directives/plural.service';
+import { supabase } from 'src/app/modules/controls/image/supabase-data';
 
 @Component({
   selector: 'app-ingredient-list-item',
   templateUrl: './ingredient-list-item.component.html',
   styleUrls: ['./ingredient-list-item.component.scss'],
-  animations: [trigger('modal',modal())]
+  animations: [trigger('modal', modal())],
 })
 export class IngredientListItemComponent implements OnInit, OnDestroy {
   @Input() ingredient: any = null;
@@ -27,7 +36,6 @@ export class IngredientListItemComponent implements OnInit, OnDestroy {
 
   currentUser: IUser = nullUser;
   deleteModalShow: boolean = false;
-  successDeleteModalShow: boolean = false;
   private groups: IIngredientsGroup[] = [];
   private ingredients: IIngredient[] = [];
   protected destroyed$: Subject<void> = new Subject<void>();
@@ -45,8 +53,9 @@ export class IngredientListItemComponent implements OnInit, OnDestroy {
     private recipeService: RecipeService,
     private userService: UserService,
     private authService: AuthService,
+    private cd: ChangeDetectorRef,
     private ingredientService: IngredientService,
-    private pluralService:PluralizationService
+    private pluralService: PluralizationService,
   ) {}
   ngOnInit() {
     this.ingredientService.ingredients$
@@ -56,12 +65,13 @@ export class IngredientListItemComponent implements OnInit, OnDestroy {
           (this.ingredients = receivedIngredients.filter(
             (i) => i.status === 'public',
           )),
-    );
+      );
     this.ingredientService.ingredientsGroups$
       .pipe(takeUntil(this.destroyed$))
       .subscribe(
-        (receivedGroups: IIngredientsGroup[]) =>
-          this.groups = receivedGroups
+        (receivedGroups: IIngredientsGroup[]) => {
+          (this.groups = receivedGroups)
+        },
       );
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
@@ -74,6 +84,10 @@ export class IngredientListItemComponent implements OnInit, OnDestroy {
             data,
             this.currentUser.id,
           );
+        if (this.ingredient.image) {
+          this.downloadUserpicFromSupabase(this.ingredient.image);
+        }
+
         if (this.context === 'ingredient') {
           this.recipesNumber = this.recipeService.getRecipesByIngredient(
             publicAndAllMyRecipes,
@@ -90,7 +104,7 @@ export class IngredientListItemComponent implements OnInit, OnDestroy {
       });
   }
 
-  get title(): string{
+  get title(): string {
     return this.ingredient.ingredients
       ? `${this.ingredient.name} (в ингредиентах этой группы ${
           this.recipesNumber
@@ -113,48 +127,79 @@ export class IngredientListItemComponent implements OnInit, OnDestroy {
       ? '/ingredients/groups/' + this.ingredient.id
       : '/ingredients/list/' + this.ingredient.id;
   }
+  loading = false;
 
   protected handleDeleteModal(answer: boolean) {
-    if (answer) this.successDeleteModalShow = true;
+    if (answer) this.deleteIngredient();
+
     this.deleteModalShow = false;
   }
-
-  protected handleSuccessDeleteModal() {
-    this.successDeleteModalShow = false;
-    setTimeout(() => {
-      this.deleteIngredient();
-    }, 300);
+  async deleteOldIngredientPic(path: string) {
+    await supabase.storage.from('ingredients').remove([path]);
   }
 
-  deleteIngredient() {
-
-    if (this.context === 'group') {
-      this.ingredientService.deleteGroup(this.ingredient.id).subscribe()
+  placeholder = '/assets/images/ingredient.png';
+  picture = '';
+  downloadUserpicFromSupabase(path: string) {
+    if (this.ingredient.ingredients) {
+        this.picture = supabase.storage
+          .from('groups')
+          .getPublicUrl(path).data.publicUrl;
+    } else {
+      this.picture = supabase.storage
+        .from('ingredients')
+        .getPublicUrl(path).data.publicUrl;
     }
-    else {
-      this.ingredientService.deleteIngredient(this.ingredient.id).subscribe(() => {
-        const subscribes: Observable<IIngredientsGroup>[] = [];
-        //перебираем группы ингредиента и убираем ингредиент из списка ингредиентов группы
-        const groups: IIngredientsGroup[] = this.ingredientService.getGroupOfIngredient(this.groups, this.ingredient);
-        groups.forEach((group) => {
-          const updatedGroup = {
-            ...{ ...group },
-            ingredients: {...group}.ingredients.filter(i=>i!==this.ingredient.id)
-          }
-          subscribes.push(this.ingredientService.updateIngredientGroup(updatedGroup))
-        });
-        forkJoin(subscribes).subscribe();
+
+    this.cd.markForCheck();
+  }
+
+  async deleteIngredient() {
+    if (this.context === 'group') {
+      this.loading = true;
+      this.cd.markForCheck();
+      await this.ingredientService.deleteGroupFromSupabase(this.ingredient.id);
+      this.loading = false;
+      this.cd.markForCheck();
+    } else {
+      this.loading = true;
+      this.cd.markForCheck();
+      await this.ingredientService.deleteIngredientFromSupabase(
+        this.ingredient.id,
+      );
+      if (this.ingredient.image)
+        this.deleteOldIngredientPic(this.ingredient.image);
+      this.loading = false;
+      this.cd.markForCheck();
+
+      //перебираем группы ингредиента и убираем ингредиент из списка ингредиентов группы
+      const groups: IIngredientsGroup[] =
+        this.ingredientService.getGroupOfIngredient(
+          this.groups,
+          this.ingredient,
+        );
+      groups.forEach((group) => {
+        const updatedGroup = {
+          ...{ ...group },
+          ingredients: { ...group }.ingredients.filter(
+            (i) => i !== this.ingredient.id,
+          ),
+        };
+        this.updateGroup(updatedGroup);
       });
     }
-
   }
 
-    clickDeleteButton($event: any) {
+  async updateGroup(group: IIngredientsGroup) {
+    await this.ingredientService.updateGroupInSupabase(group);
+  }
+
+  clickDeleteButton($event: any) {
     $event.preventDefault();
     $event.stopPropagation();
     this.deleteModalShow = true;
-    }
-  
+  }
+
   ngOnDestroy(): void {
     this.destroyed$.next();
     this.destroyed$.complete();

@@ -1,12 +1,17 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { IUser, nullUser } from '../../user-pages/models/users';
-import { BehaviorSubject, EMPTY, Observable, filter, map, take } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  throwError,
+} from 'rxjs';
 import { UserService } from '../../user-pages/services/user.service';
 import { IRecipe } from '../../recipes/models/recipes';
 import { usersUrl } from 'src/tools/source';
 import { IIngredient } from '../../recipes/models/ingredients';
 import { supabase, supabaseAdmin } from '../../controls/image/supabase-data';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -20,51 +25,109 @@ export class AuthService {
     new BehaviorSubject<IUser>({ ...nullUser });
   currentUser$ = this.currentUserSubject.asObservable();
 
+  users: IUser[] = [];
   uid = '';
 
   usersUrl = usersUrl;
 
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private router: Router,
+    private ngZone: NgZone,
+  ) {
+    this.userService.users$.subscribe((users) => (this.users = users));
+    //проверка состояния текущей сессии в реальном времени
+    // supabase.auth.onAuthStateChange((event, session) => {
+    //   //   if (event === 'SIGNED_IN')
+    //   //     if (session?.user.email)
+    //   //       this.loginUser({ ...nullUser, email: session?.user.email }).subscribe(
+    //   //         (user) => {
+    //   //           if (user) {
+    //   //             this.setCurrentUser(user);
+    //   //           }
+    //   //         },
+    //   //       );
+    //   //   if (event === 'SIGNED_OUT') {
+    //   //     this.logoutUser();
+    //   //    this.ngZone.run(() => {
+    //   //    });
+    //   //   }
+    //   // })
+    // });
+  }
 
-  loadCurrentUserData() {
-    this.userService.users$.subscribe(() => {
-      const user = this.session?.user;
+  async passwordReset(email: string, users: IUser[]) {
+    const resetUser = {
+      ...nullUser,
+      email: email,
+    };
+    try {
+      const finded = users.find((u) => u.email === resetUser.email);
 
-      if (user?.email) {
-        const iuser: IUser = {
-          ...nullUser,
-          email: user?.email,
-        };
-
-        this.loginUser(iuser).subscribe((user) => {
-          if (user) {
-            this.setCurrentUser(user);
-          }
+      if (!finded) {
+        throwError;
+      } else {
+        await supabase.auth.resetPasswordForEmail(resetUser.email, {
+          redirectTo: 'http://localhost:4200/password-reset',
         });
       }
-    });
+    } catch (error) {
+      if (error instanceof Error) {
+        throwError;
+      }
+    }
+  }
+
+  loadCurrentUserData() {
+    this.userService.users$.subscribe(() =>
+      supabase.auth.onAuthStateChange((event, session) => {
+        const user = { ...session?.user };
+        if (user && user.email) {
+          const iuser: IUser = {
+            ...nullUser,
+            email: user.email,
+          };
+
+          const loginUser = this.loginUser({ ...iuser });
+          if (loginUser && loginUser.email === user.email) {
+            this.currentUserSubject.next(loginUser);
+          } else {
+            this.currentUserSubject.next({ ...nullUser });
+          }
+        }
+      }),
+    );
   }
 
   async setCurrentUser(user: IUser) {
-    this.supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(({ data }) => {
       const session = data.session;
       this.uid = session?.user.id || '';
       this.currentUserSubject.next({ ...user });
     });
   }
 
-  supabase = supabase;
-
   async supabaseLogin(user: IUser) {
-    const { data, error } = await supabase.auth.signInWithPassword({
+    await supabase.auth.signInWithPassword({
       email: user.email,
       password: user.password,
     });
   }
 
+  register(user: IUser) {
+    return supabase.auth.signUp({
+      email: user.email,
+      password: user.password,
+
+      options: {
+        emailRedirectTo: 'https://prod-yummy.vercel.app/#/welcome',
+      },
+    });
+  }
+
   _session: Session | null = null;
   get session() {
-    this.supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(({ data }) => {
       this._session = data.session;
     });
 
@@ -72,11 +135,7 @@ export class AuthService {
   }
 
   profile(user: IUser) {
-    return this.supabase
-      .from('profiles')
-      .select(`*`)
-      .eq('id', user.id)
-      .single();
+    return supabase.from('profiles').select(`*`).eq('id', user.id).single();
   }
 
   updateProfile(profile: IUser) {
@@ -85,17 +144,17 @@ export class AuthService {
       updated_at: new Date(),
     };
 
-    return this.supabase.from('profiles').upsert(update);
+    return supabase.from('profiles').upsert(update);
   }
 
-   deleteUserFromSupabase() {
-  return supabaseAdmin.auth.admin.deleteUser(this.uid);
+  deleteUserFromSupabase() {
+    return supabaseAdmin.auth.admin.deleteUser(this.uid);
   }
 
   authChanges(
     callback: (event: AuthChangeEvent, session: Session | null) => void,
   ) {
-    return this.supabase.auth.onAuthStateChange(callback);
+    return supabase.auth.onAuthStateChange(callback);
   }
 
   async signIn(email: string, password: string) {
@@ -109,14 +168,12 @@ export class AuthService {
     return this.currentUserSubject.asObservable();
   }
 
-   logoutUser() {
+  logoutUser() {
     this.setCurrentUser({ ...nullUser });
-    localStorage.removeItem('currentUser');
-    console.log(this.session?.user);
   }
 
   logout() {
-    return this.supabase.auth.signOut();
+    return supabase.auth.signOut();
   }
 
   isEmailExist(users: IUser[], email: string): boolean {
@@ -131,13 +188,9 @@ export class AuthService {
   }
 
   loginUser(user: IUser) {
-    return this.userService.users$.pipe(
-      map((users) => {
-        return users.length > 0
-          ? users?.find((u) => u.email === user.email) || null
-          : null;
-      }),
-    );
+    return this.users.length > 0
+      ? this.users?.find((u) => u.email === user.email) || null
+      : null;
   }
 
   checkValidity(recipe: IRecipe, user: IUser): boolean {

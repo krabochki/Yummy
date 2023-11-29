@@ -35,14 +35,14 @@ export class CommentComponent implements OnInit, OnDestroy {
   protected destroyed$: Subject<void> = new Subject<void>();
   public currentUser: IUser = { ...nullUser };
   avatar = '';
-  noAvatar = 'assets/images/userpic.png';
-  private supabase = supabase;
+  noAvatar = '/assets/images/userpic.png';
   public author: IUser = { ...nullUser };
   public copyState = false; //скопирован ли текст комментария
   protected deleteCommentModalShow: boolean = false;
   protected reportCommentModalShow: boolean = false;
   protected successReportCommentModalShow: boolean = false;
   protected noAccessModalShow: boolean = false;
+  loading = false;
 
   get showCommentAuthor() {
     return this.commentService.showAuthor(this.author, this.currentUser);
@@ -63,7 +63,7 @@ export class CommentComponent implements OnInit, OnDestroy {
   ) {}
 
   downloadUserpicFromSupabase(path: string) {
-    this.avatar = this.supabase.storage
+    this.avatar = supabase.storage
       .from('userpics')
       .getPublicUrl(path).data.publicUrl;
   }
@@ -88,14 +88,16 @@ export class CommentComponent implements OnInit, OnDestroy {
       });
   }
 
-  deleteComment() {
+  async deleteComment() {
+    this.loading = true;
+    this.cd.markForCheck();
     if (this.recipe.reports) {
       this.recipe.reports = this.recipe.reports.filter(
         (item) => item.comment !== this.comment.id,
       );
     }
 
-    this.commentService.deleteComment(this.comment, this.recipe);
+    await this.commentService.deleteComment(this.comment, this.recipe);
     if (
       this.userService.getPermission('you-delete-your-comment', this.author)
     ) {
@@ -106,12 +108,14 @@ export class CommentComponent implements OnInit, OnDestroy {
         'comment',
         '/recipes/list/' + this.recipe.id,
       );
-      this.notifyService.sendNotification(notify, this.author)
+     await  this.notifyService.sendNotification(notify, this.author)
     }
+    this.loading = false;
+    this.cd.markForCheck();
   }
 
-  likeComment() {
-    this.commentService.likeComment(
+  async likeComment() {
+    await this.commentService.likeComment(
       this.currentUser,
       this.comment,
       this.recipe,
@@ -132,11 +136,11 @@ export class CommentComponent implements OnInit, OnDestroy {
         'comment',
         '/cooks/list/' + this.currentUser.id,
       );
-      this.notifyService.sendNotification(notify, this.author)
+      await this.notifyService.sendNotification(notify, this.author)
     }
   }
-  dislikeComment() {
-    this.commentService.dislikeComment(
+ async dislikeComment() {
+    await this.commentService.dislikeComment(
       this.currentUser,
       this.comment,
       this.recipe,
@@ -161,20 +165,22 @@ export class CommentComponent implements OnInit, OnDestroy {
         'comment',
         '/cooks/list/' + this.currentUser.id,
       );
-      this.notifyService.sendNotification(notify, this.author)
+     await this.notifyService.sendNotification(notify, this.author)
     }
   }
 
-  reportComment() {
-    this.reportCommentModalShow = false;
+  async reportComment() {
 
-    this.commentService.reportComment(
+    this.loading = true;
+    
+  this.cd.markForCheck();
+
+   await this.commentService.reportComment(
       this.comment,
       this.recipe,
       this.currentUser,
     );
 
-    this.successReportCommentModalShow = true;
     if (
       this.userService.getPermission(
         'your-reports-reviewed-moderator',
@@ -188,7 +194,7 @@ export class CommentComponent implements OnInit, OnDestroy {
         'comment',
         '/recipes/list/' + this.recipe.id,
       );
-      this.notifyService.sendNotification(notify, this.author)
+      await this.notifyService.sendNotification(notify, this.author)
     }
 
     if (
@@ -208,8 +214,13 @@ export class CommentComponent implements OnInit, OnDestroy {
         'comment',
         '/recipes/list/' + this.recipe.id,
       );
-      this.notifyService.sendNotification(notify, this.currentUser)
+      await this.notifyService.sendNotification(notify, this.currentUser)
+
     }
+    this.loading = false;
+              this.successReportCommentModalShow = true;
+
+     this.cd.markForCheck();
   }
 
   get date() {

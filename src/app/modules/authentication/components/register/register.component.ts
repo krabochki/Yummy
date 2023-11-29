@@ -19,14 +19,11 @@ import {
   emailExistsValidator,
 } from 'src/tools/validators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { usernameExistsValidator } from 'src/tools/validators';
 import { getCurrentDate } from 'src/tools/common';
 import { PlanService } from 'src/app/modules/planning/services/plan-service';
-import { IPlan, nullPlan } from 'src/app/modules/planning/models/plan';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
-import { supabase } from 'src/app/modules/controls/image/supabase-data';
-import { uuid } from 'uuidv4';
 
 @Component({
   selector: 'app-register',
@@ -36,19 +33,44 @@ import { uuid } from 'uuidv4';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegisterComponent implements OnInit, OnDestroy {
-  modalAreYouSureShow: boolean = false;
-  modalSuccessShow: boolean = false;
-  users: IUser[] = [];
   form: FormGroup;
-  loading = false;
   failText = '';
-  protected destroyed$: Subject<void> = new Subject<void>();
-  private plans: IPlan[] = [];
+  confirmModal: boolean = false;
+  successModal: boolean = false;
+  loadingModal: boolean = false;
+  errorModal: boolean = false;
 
-  createUser: IUser = { ...nullUser };
-  maxId = 0;
+  private users: IUser[] = [];
 
+  destroyed$: Subject<void> = new Subject<void>();
+
+  private createUser: IUser = { ...nullUser };
+  private maxUserId = 0;
+  private maxPlanId = 0;
   usernameValidator = usernameExistsValidator;
+
+  get passwordNotValidError(): string {
+    return this.form.get('password')?.invalid &&
+      (this.form.get('password')?.dirty || this.form.get('password')?.touched)
+      ? 'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'
+      : '';
+  }
+  get emailNotValidError(): string {
+    return !this.form.get('email')?.hasError('emailExists')
+      ? this.form.get('email')?.invalid &&
+        (this.form.get('email')?.dirty || this.form.get('email')?.touched)
+        ? 'Введи корректный адрес электронной почты'
+        : ''
+      : ' ';
+  }
+  get usernameNotValidError(): string {
+    return !this.form.get('username')?.hasError('usernameExists')
+      ? this.form.get('username')?.invalid &&
+        (this.form.get('username')?.dirty || this.form.get('username')?.touched)
+        ? 'Имя пользователя должно содержать от 4 до 20 символов, среди которых могут быть буквы (минимум одна), цифры, а также нижние почеркивания и точки (не подряд)'
+        : ''
+      : ' ';
+  }
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -63,22 +85,16 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.titleService.setTitle('Регистрация');
     this.form = this.fb.group({});
     this.usersService.getMaxUserId().then((maxId) => {
-      this.maxId = maxId;
+      this.maxUserId = maxId;
+    });
+    this.planService.getMaxPlanId().then((maxId) => {
+      this.maxPlanId = maxId;
     });
   }
 
   ngOnInit(): void {
-    this.planService.plans$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((receivedPlans: IPlan[]) => {
-        this.plans = receivedPlans;
-      });
-    this.usersService.users$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((receivedUsers: IUser[]) => {
-        this.users = receivedUsers;
-      });
-
+    this.usersInit();
+    
     this.form = this.fb.group({
       email: [
         '',
@@ -112,56 +128,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
     });
   }
 
-  private supabase = supabase;
-
-  async supabaseRegisration(user: IUser) {
-    this.loading = true;
-    console.log(this.users);
-    const isEmailTaken = this.users.some(
-      (searchingUser) => searchingUser.username === user.username,
-    );
-    const isUsernameTaken = this.users.some(
-      (searchingUser) => searchingUser.username === user.username,
-    );
-    if (isUsernameTaken || isEmailTaken) {
-      this.loading = false;
-      this.error = true;
-      this.failText = isUsernameTaken
-        ? 'Имя пользователя, которое вы ввели, уже занято. Пожалуйста, измените данные и попробуйте ещё раз.'
-        : 'Почта, которую вы ввели, уже занята. Пожалуйста, измените данные и попробуйте ещё раз.';
-      this.cd.markForCheck();
-      return;
-    }
-
-    const { data, error } = await supabase.auth.signUp({
-      email: user.email,
-      password: user.password,
-    });
-    if (error) {
-      this.error = true;
-    } else if (data.user?.identities?.length === 0) {
-      this.error = true;
-    } else {
-      this.modalSuccessShow = true;
-      const newUserId = data.user?.id; // Получение id нового пользователя
-
-      this.addUserToUsers(this.maxId + 1, user.username, user.email);
-
-      if (error) {
-        console.log(error);
-      }
-    }
-    this.loading = false;
-
-    this.cd.markForCheck();
-  }
-
-  error = false;
-
-  registration(): void {
+  async registration() {
     if (this.form.valid) {
       const maxId = Math.max(...this.users.map((u) => u.id));
-      const userData: IUser = {
+      const newUser: IUser = {
         ...{ ...nullUser },
         username: this.form.value.username,
         email: this.form.value.email,
@@ -170,39 +140,61 @@ export class RegisterComponent implements OnInit, OnDestroy {
         id: maxId + 1,
       };
 
-      this.supabaseRegisration(userData);
+      this.loadingModal = true;
+      const isEmailTaken = this.users.some(
+        (searchingUser) => searchingUser.username === newUser.username,
+      );
+      const isUsernameTaken = this.users.some(
+        (searchingUser) => searchingUser.username === newUser.username,
+      );
+      if (isUsernameTaken || isEmailTaken) {
+        this.loadingModal = false;
+        this.errorModal = true;
+        this.failText = isUsernameTaken
+          ? 'Имя пользователя, которое вы ввели, уже занято. Пожалуйста, измените данные и попробуйте ещё раз.'
+          : 'Почта, которую вы ввели, уже занята. Пожалуйста, измените данные и попробуйте ещё раз.';
+        this.cd.markForCheck();
+        return;
+      }
+      const { error } = await this.authService.register(newUser);
 
-      // this.usersService.postUser(userData).subscribe(() => {
-      //   this.createUser = { ...userData };
-      //   const maxId = Math.max(...this.plans.map((u) => u.id));
-      //   const newUserPlan = {
-      //     ...nullPlan,
-      //     id: maxId + 1,
-      //     user: userData.id,
-      //   };
-      //   this.planService.addPlan(newUserPlan).subscribe(() => {
-      //     this.supabaseRegisration(userData);
+      if (error) {
+        this.errorModal = true;
+      } else {
+        await this.addUserToUsers(
+          this.maxUserId + 1,
+          newUser.username,
+          newUser.email,
+        );
 
-      //   });
-      // });
+        await this.addPlanToPlans(this.maxUserId + 1);
+        await this.authService.logout();
+        this.authService.logoutUser();
+        this.successModal = true;
+      }
+      this.loadingModal = false;
+      this.cd.markForCheck();
     }
   }
-
+  async addPlanToPlans(userId: number) {
+    await this.planService.addPlanToSupabase({
+      id: this.maxPlanId + 1,
+      user: userId,
+      calendarEvents: [],
+      shoppingList: [],
+    });
+  }
   async addUserToUsers(id: number, username: string, email: string) {
-    const { error } = await this.usersService.addUserToSupabase(
-      id,
-      username,
-      email,
-    );
+    await this.usersService.addUserToSupabase(id, username, email);
   }
 
-  handleAreYouSureModalResult(result: boolean): void {
+  handleConfirmModal(result: boolean): void {
     if (result) {
       this.registration();
     }
-    this.modalAreYouSureShow = false;
+    this.confirmModal = false;
   }
-  handleSuccessModalResult(): void {
+  async handleSuccessModal() {
     this.router.navigate(['/']);
 
     const notify = this.notifyService.buildNotification(
@@ -212,30 +204,16 @@ export class RegisterComponent implements OnInit, OnDestroy {
       'born',
       '',
     );
-    this.notifyService.sendNotification(notify, this.createUser)
-    this.modalSuccessShow = false;
+    await this.notifyService.sendNotification(notify, this.createUser);
+    this.successModal = false;
   }
-  get passwordNotValidError(): string {
-    return this.form.get('password')?.invalid &&
-      (this.form.get('password')?.dirty || this.form.get('password')?.touched)
-      ? 'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'
-      : '';
-  }
-  get emailNotValidError(): string {
-    return !this.form.get('email')?.hasError('emailExists')
-      ? this.form.get('email')?.invalid &&
-        (this.form.get('email')?.dirty || this.form.get('email')?.touched)
-        ? 'Введи корректный адрес электронной почты'
-        : ''
-      : ' ';
-  }
-  get usernameNotValidError(): string {
-    return !this.form.get('username')?.hasError('usernameExists')
-      ? this.form.get('username')?.invalid &&
-        (this.form.get('username')?.dirty || this.form.get('username')?.touched)
-        ? 'Имя пользователя должно содержать от 4 до 20 символов, среди которых могут быть буквы (минимум одна), цифры, а также нижние почеркивания и точки (не подряд)'
-        : ''
-      : ' ';
+
+  private usersInit(): void {
+    this.usersService.users$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedUsers: IUser[]) => {
+        this.users = receivedUsers;
+      });
   }
 
   ngOnDestroy(): void {

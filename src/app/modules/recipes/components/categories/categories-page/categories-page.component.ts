@@ -94,8 +94,7 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
         this.categories = data;
         this.categories = this.categories.filter(
           (category) => category.status === 'public',
-        ); this.cd.markForCheck();
-        this.divideCategories(section)
+        ); 
 
 
         this.recipeService.recipes$
@@ -103,12 +102,18 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
           .subscribe((recipes: IRecipe[]) => {
             this.recipes = recipes;
 
+            if(this.filter === 'popular' || this.filter ==='sections')
             this.popularCategories = this.categoryService.getPopularCategories(
               this.categories,
               recipes,
-            );        this.cd.markForCheck();
+            );
+                    this.divideCategories(section);
+
+            this.cd.markForCheck();
 
           });
+        
+        this.cd.markForCheck();
       });
   }
 
@@ -118,11 +123,12 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
       .subscribe((data: ISection[]) => {
         this.title = 'Разделы';
         this.titleService.setTitle(this.title);
+        this.sections=[]
         this.sections = this.sectionService.getSectionsWithCategories(
           data,
           this.categories,
         );
-        this.sections.sort((elem1: ISection, elem2: ISection) => {
+        this.sections= this.sections.sort((elem1: ISection, elem2: ISection) => {
           return elem1.name > elem2.name ? 1 : -1;
         });
         this.cd.markForCheck();
@@ -138,7 +144,8 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  divideCategories(section:ISection) {
+  divideCategories(section: ISection) {
+    this.sections = []
     this.categories = this.categoryService.sortCategoriesByName(
       this.categories,
     );
@@ -157,14 +164,15 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
       };
       this.sections.push(popularSection);
     } else {
+
       //если это конкретная секция
-      this.section = section
+      this.section = {...section}
       this.title = this.section.name;
       this.section.name = '';
       this.sections.push(this.section);
     }
 
-    this.categoriesToShow = this.getCategoriesOfSection(this.section).slice(
+    this.categoriesToShow = this.getCategoriesOfSection({...this.section}).slice(
       0,
       10,
     );

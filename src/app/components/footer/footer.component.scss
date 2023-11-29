@@ -96,6 +96,7 @@
 
       p:not(.quote, .label) {
         font-weight: 500;
+        font-size: 1.1em;
         margin-bottom: var(--space-xs);
       }
     }
@@ -120,7 +121,17 @@ svg {
   border-radius: 100%;
 }
 
+.top-link {
+  line-height: 1;
+
+  text-decoration: underline;
+}
+
 @media (max-width: 900px) {
+  .top-link {
+    text-align: center;
+    margin: 0 auto;
+  }
   .label {
     text-align: center;
     justify-content: center;
@@ -196,6 +207,10 @@ svg {
   }
 }
 
+.disabled{
+  opacity: 0.5;
+  pointer-events: none;
+}
 @media (max-width: 480px) {
   .footer {
     padding: 0;
@@ -225,7 +240,6 @@ a {
     transition: fill 0.2s ease-in-out;
   }
 
-  &:focus,
   &:hover {
     svg {
       fill: var(--color-secondary);

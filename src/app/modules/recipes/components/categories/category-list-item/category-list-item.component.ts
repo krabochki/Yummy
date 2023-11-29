@@ -9,7 +9,7 @@ import {
 
 import { RecipeService } from '../../../services/recipe.service';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
-import { Observable, Subject, forkJoin, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import {
   IUser,
   PermissionContext,
@@ -39,13 +39,14 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
   @Input() showRecipesNumber: boolean = false;
   @Input() context: 'section' | 'category' = 'category';
 
+
   protected currentUser: IUser = { ...nullUser };
-  supabase = supabase;
 
   protected destroyed$: Subject<void> = new Subject<void>();
 
   private categories: ICategory[] = [];
   private sections: ISection[] = [];
+  loadingText = ''
   private recipes: IRecipe[] = [];
   loading = false;
   recipesNumber = 0;
@@ -82,9 +83,17 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
   ) {}
 
   downloadUserpicFromSupabase(path: string) {
-    this.picture = this.supabase.storage
-      .from('categories')
-      .getPublicUrl(path).data.publicUrl;
+    if (this.category.categories) {
+              this.picture = supabase.storage
+          .from('sections')
+          .getPublicUrl(path).data.publicUrl;
+
+    } else {
+        this.picture = supabase.storage
+          .from('categories')
+          .getPublicUrl(path).data.publicUrl;
+    }
+  
     this.cd.markForCheck();
   }
 
@@ -152,7 +161,19 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
     this.deleteModalShow = false;
   }
 
+  async deleteSectionFromSupabase(section: ISection) {
+
+    this.loadingText = 'Удаляем раздел... Подождите немного...';
+    this.loading = true;
+    this.cd.markForCheck();
+    await this.sectionService.deleteSectionFromSupabase(section.id);
+    this.loading = false;
+    this.cd.markForCheck();
+  }
+
   async deleteCategoryFromSupabase(category: ICategory) {
+        this.loadingText = 'Удаляем категорию... Подождите немного...';
+
     this.loading = true;
     this.cd.markForCheck();
     await this.categoryService.deleteCategoryFromSupabase(category.id);
@@ -162,7 +183,6 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
   }
 
   updateRecipesAfterDeletingCategory() {
-    const subscribes: Observable<IRecipe | ISection>[] = [];
     const section: ISection = this.sectionService.getSectionOfCategory(
       this.sections,
       this.category,
@@ -170,7 +190,7 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
     section.categories = section.categories.filter(
       (c) => c !== this.category.id,
     );
-    subscribes.push(this.sectionService.updateSections(section));
+    this.sectionService.updateSectionInSupabase(section);
     this.recipeService
       .getRecipesByCategory(this.recipes, this.category)
       .forEach((recipe) => {
@@ -179,16 +199,19 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
           categories: recipe.categories.filter((c) => c !== this.category.id),
         };
         this.updateRecipe(updatedRecipe);
-        forkJoin(subscribes).subscribe();
       });
   }
 
   protected deleteCategory(): void {
     if (this.context === 'category') {
       this.deleteCategoryFromSupabase(this.category);
-    } else this.sectionService.deleteSection(this.category.id).subscribe();
+    } else this.deleteSectionFromSupabase(this.category);
     if (this.category.photo) {
-      this.deleteOldPic(this.category.photo);
+      if (this.category.categories) {
+        this.deleteOldSectionPic(this.category.photo);
+      } else {
+        this.deleteOldCategoryPic(this.category.photo);
+      }
     }
   }
 
@@ -204,8 +227,12 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
     return this.userService.getPermission(permissionName, this.currentUser);
   }
 
-  async deleteOldPic(path: string) {
-    await this.supabase.storage.from('categories').remove([path]);
+  async deleteOldCategoryPic(path: string) {
+    await supabase.storage.from('categories').remove([path]);
+  }
+
+  async deleteOldSectionPic(path: string) {
+    await supabase.storage.from('sections').remove([path]);
   }
 
   ngOnDestroy(): void {

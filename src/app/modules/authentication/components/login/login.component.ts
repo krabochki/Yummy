@@ -6,7 +6,7 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { passMask, emailOrUsernameMask, loginMask } from 'src/tools/regex';
+import { passMask, loginMask } from 'src/tools/regex';
 import { AuthService } from '../../services/auth.service';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
@@ -18,9 +18,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import {
   customPatternValidator,
-  usernameAndEmailNotExistsValidator,
 } from 'src/tools/validators';
-import { supabase } from 'src/app/modules/controls/image/supabase-data';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -29,14 +27,29 @@ import { supabase } from 'src/app/modules/controls/image/supabase-data';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  successAttemptModalShow: boolean = false;
-  loading = false;
-  failAttemptModalShow: boolean = false;
-  failInfo = ''
-  users: IUser[] = [];
+  successModal: boolean = false;
+  loadingModal: boolean = false;
+  errorModal: boolean = false;
+  failInfo = '';
   form: FormGroup;
-  noEmailValidation = false;
-  protected destroyed$: Subject<void> = new Subject<void>();
+  destroyed$: Subject<void> = new Subject<void>();
+  private users: IUser[] = [];
+
+  get passwordNotValidError() {
+    return this.form.get('password')?.invalid &&
+      (this.form.get('password')?.dirty || this.form.get('password')?.touched)
+      ? 'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'
+      : '';
+  }
+
+  get loginNotValidError() {
+    return !this.form.get('login')?.hasError('loginExists')
+      ? this.form.get('login')?.invalid &&
+        (this.form.get('login')?.dirty || this.form.get('login')?.touched)
+        ? 'Введите корректный адрес электронной почты'
+        : ''
+      : ' ';
+  }
 
   constructor(
     private authService: AuthService,
@@ -52,11 +65,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.usersService.users$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((receivedUsers: IUser[]) => {
-        this.users = receivedUsers;
-      });
+    this.usersInit();
 
     this.form = this.fb.group({
       login: [
@@ -79,96 +88,63 @@ export class LoginComponent implements OnInit, OnDestroy {
     });
   }
 
-
-  loginUser(): void {
+  async loginUser() {
     if (this.form.valid) {
-      const userData: IUser = {
-        ...{ ...nullUser },
+      const user: IUser = {
+        ...nullUser,
         username: this.form.value.login,
         email: this.form.value.login,
         password: this.form.value.password,
       };
+      try {
+        this.loadingModal = true;
+        const { error } = await this.authService.signIn(
+          user.email,
+          user.password,
+        );
 
-      this.supabaseLogin(userData);
-
-      // this.authService.loginUser(userData).subscribe((user: IUser | null) => {
-      //   if (user) {
-      //     localStorage.setItem('currentUser', JSON.stringify(user));
-      //     this.authService.setCurrentUser(user);
-      //     this.successAttemptModalShow = true;
-      //     this.cd.markForCheck();
-      //   }
-      //   else {
-      //     this.failAttemptModalShow = true;
-      //   }
-      // });
-    }
-  }
-
-  get passwordNotValidError() {
-    return this.form.get('password')?.invalid &&
-      (this.form.get('password')?.dirty || this.form.get('password')?.touched)
-      ? 'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'
-      : '';
-  }
-  get loginNotValidError() {
-    return !this.form.get('login')?.hasError('loginExists')
-      ? this.form.get('login')?.invalid &&
-        (this.form.get('login')?.dirty || this.form.get('login')?.touched)
-        ? 'Введите корректный адрес электронной почты'
-        : ''
-      : ' ';
-  }
-  supabase = supabase;
-
-  async supabaseLogin(user: IUser): Promise<void> {
-    try {
-      this.loading = true;
-      const { error } = await this.authService.signIn(
-        user.email,
-        user.password,
-      );
-
-      if (error) {
-        switch (error.name) {
-          case 'EmailValidation':
-            this.noEmailValidation = true;
-            break;
-          case 'AuthApiError':
-            this.failInfo =
-              'Скорее всего, вы где-то ошиблись. Такого пользователя не найдено. Перепроверьте данные и попробуйте снова';
-        }
-        console.log(this.users)
-          this.failAttemptModalShow = true;
-      } else {
-        this.authService.loginUser(user).subscribe((user: IUser | null) => {
-          if (user) {
-            this.authService.setCurrentUser(user);
-            this.router.navigateByUrl('/');
-          } else {
-            this.failAttemptModalShow = true;
+        if (error) {
+          switch (error.message) {
+            case 'Email not confirmed':
+              this.failInfo =
+                'Вы пока не подтвердили аккаунт после регистрации. Проверьте письмо в вашей электронной почте';
+              break;
+            case 'Invalid login credentials':
+              this.failInfo =
+                'Скорее всего, вы где-то ошиблись. Такого пользователя не найдено. Перепроверьте данные и попробуйте снова';
+              break;
+            default:
+              this.failInfo =
+                'Произошла неизвестная ошибка при регистрации. Попробуйте снова';
           }
-        });
+
+          this.errorModal = true;
+        } else {
+          const loginUser = this.authService.loginUser(user);
+            if (loginUser) {
+              this.authService.setCurrentUser(loginUser);
+              this.router.navigateByUrl('/');
+            } else {
+              this.errorModal = true;
+            }
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          this.errorModal = true;
+        }
+      } finally {
+        this.loadingModal = false;
         this.cd.markForCheck();
       }
-    } catch (error) {
-      if (error instanceof Error) {
-        this.failAttemptModalShow = true;
-        this.cd.markForCheck();
-      }
-    } finally {
-      this.loading = false;
-      this.cd.markForCheck();
     }
   }
 
-  handleSuccessModalResult(): void {
-    this.successAttemptModalShow = false;
-    this.router.navigate(['/']);
-  }
-
-  handleFailModalResult(): void {
-    this.failAttemptModalShow = false;
+  private usersInit(): void {
+    this.usersService.users$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedUsers: IUser[]) => {
+        this.users = receivedUsers;
+      });
   }
 
   ngOnDestroy(): void {

@@ -1,7 +1,6 @@
 import { Router, ActivatedRouteSnapshot } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, EMPTY, map } from 'rxjs';
-import { ICategory } from '../models/categories';
 import { IngredientService } from './ingredient.service';
 import { IIngredient } from '../models/ingredients';
 

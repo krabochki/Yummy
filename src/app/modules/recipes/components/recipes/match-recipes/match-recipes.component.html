@@ -59,14 +59,14 @@
             <input [(ngModel)]="searchQuery" (ngModelChange)="search()" placeholder="Введите ингредиент"
               (focus)="focusIngredientSearch()" type="text" />
             <div class="magnifier">
-              <svg-icon [src]="'assets/images/svg/search.svg'" class="search-svg" [applyClass]="true" />
+              <svg-icon [src]="'/assets/images/svg/search.svg'" class="search-svg" [applyClass]="true" />
             </div>
           </div>
           <ul @height *ngIf="showIngredientsAutocomplete" class="autocomplete">
             <div class="no-ingredients-founded" *ngIf="autoIngredients.length === 0">
               Ингредиентов не найдено
 
-              <svg-icon [applyClass]="true" class="svg-no-ingredients" [src]="'assets/images/svg/no-ingredients.svg'" />
+              <svg-icon [applyClass]="true" class="svg-no-ingredients" [src]="'/assets/images/svg/no-ingredients.svg'" />
             </div>
             <a *ngFor="let ingredient of autoIngredients" [routerLink]="findIngredientByName(ingredient).id
                           ? ('/ingredients/list/'+findIngredientByName(ingredient).id)
@@ -203,7 +203,7 @@
       <ng-template #noRecipes>
         <div class="no-recipes-founded">
           <p>По вашему запросу не найдено ни одного рецепта</p>
-          <svg-icon [applyClass]="true" class="svg-no-recipes" [src]="'assets/images/svg/sad-little-cook.svg'" />
+          <svg-icon [applyClass]="true" class="svg-no-recipes" [src]="'/assets/images/svg/sad-little-cook.svg'" />
         </div>
       </ng-template>
     </div>

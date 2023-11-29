@@ -8,7 +8,7 @@
   *ngIf="ingredient.id > 0; else nullCategory"
 >
   <div class="ingredient-wrap">
-    <div class="ingredient" *ngIf="ingredient.id > 0; else nullCategory"></div>
+    <div class="ingredient"  [style.background-image]="'url('+(picture?picture:placeholder)+')'" *ngIf="ingredient.id > 0; else nullCategory"></div>
     <button
       class="delete"
       (click)="clickDeleteButton($event)"
@@ -17,7 +17,7 @@
       <svg-icon
         class="trash-svg"
         [applyClass]="true"
-        [src]="'assets/images/svg/trash.svg'"
+        [src]="'/assets/images/svg/trash.svg'"
       />
     </button>
   </div>
@@ -35,7 +35,7 @@
     <svg-icon
       [applyClass]="true"
       class="svg"
-      [src]="'assets/images/svg/shocked-apples.svg'"
+      [src]="'/assets/images/svg/shocked-apples.svg'"
     ></svg-icon>
   </div>
 </ng-template>
@@ -56,21 +56,6 @@
   "
   *ngIf="deleteModalShow"
 ></app-modal>
-<app-modal
-  @modal
-  (resultEmit)="handleSuccessDeleteModal()"
-  [type]="'Ok'"
-  [buttonsText]="['Хорошо']"
-  [style]="'sec'"
-  [description]="
-    (context === 'ingredient' ? 'Ингредиент' : 'Группа ингредиентов') +
-    ' успешно удален' +
-    (context === 'ingredient' ? '' : 'а')
-  "
-  [title]="
-    (context === 'ingredient' ? 'Ингредиент' : 'Группа ингредиентов') +
-    ' удален' +
-    (context === 'ingredient' ? '' : 'а')
-  "
-  *ngIf="successDeleteModalShow"
-></app-modal>
+
+<app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
+  [description]=" 'Вносим изменения... Подождите немного...'" />

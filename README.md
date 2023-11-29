@@ -1,23 +1,131 @@
-# Yummy
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.2.
+<a name="readme-top"></a>
 
-## Development server
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <a href="https://github.com/othneildrew/Best-README-Template">
+    <img src="src/assets/images/chef-day.png" alt="Logo" width="80" height="80">
+  </a>
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+  <h3 align="center">Yummy</h3>
+  <p align="center">2023</p>
 
-## JSON server
+  <p align="center">
+    Социальная сеть для обмена рецептами
+    <br />
+    <a href="https://yummy-world.vercel.app/">Проект в Vercel</a>
+    ·
+    <a href="https://github.com/krabochki/Yummy/issues">Баги</a>
+    ·
+    <a href="https://www.linkedin.com/in/polina-kuzmenok-550449291">LinkedIn автора</a>
+  </p>
+</div>
 
-Run `json-server --watch src/assets/data/data.json` for a json server. Navigate to `http://localhost:3000/`. Server will automatically reload if you change any of the source files.
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Содержание</summary>
+  <ol>
+    <li><a href="#about">О проекте</a></li>
+    <li><a href="#stack">Технологии</a></li>
+    <li><a href="#start">Начало разработки</a></li>
+    <li><a href="#usage">Периодичность использования</a></li>
+    <li><a href="#author">Автор</a></li>
+    <li><a href="#libs">Библиотеки</a></li>
+  </ol>
+</details>
 
-## Code scaffolding
+<!-- ABOUT THE PROJECT -->
+<a name="about"></a>
+## О проекте
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Проект "Yummy" представляет собой веб-приложение, созданное для любителей кулинарии и профессиональных кулинаров. Цель приложения - облегчить обмен рецептами, идеями и кулинарным опытом между пользователями.
+Сайт создан для людей, которые хотят найти сообщество по интересу, а также для людей, которые хотят найти конкретные рецепты, поделиться собственными рецептами, узнать больше о ингредиентах, планировать рецепты. 
+    <img src="src/assets/images/readme-community.png" alt="community" height="300" width="400">
 
-## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Доступная на данный момент функциональность: 
 
-## Further help
+- создание и редактирование рецептов, ингредиентов, категорий;
+- управление профилем пользователя;
+- оценка, сохранение и комментирование рецептов;
+- подписка на других пользователей;
+- планирование рецептов и создание списка покупок;
+- поиск рецептов по ингредиентам и категориям;
+- уведомления о запланированных рецептах и обновлениях от интересующих кулинаров;
+- настройки интерфейса и уведомлений;
+- обмен рецептами и страницами кулинаров в социальных сетях.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+<p align="right">(<a href="#readme-top">наверх</a>)</p>
+
+<a name="stack"></a>
+### Технологии
+
+- Фреймворк: Angular
+- Язык программирования: TypeScript
+- IDE: Visual Studio Code
+- База данных: Supabase
+
+<p align="right">(<a href="#readme-top">наверх</a>)</p>
+
+<!-- GETTING STARTED -->
+
+<a name="start"></a>
+## Начало разработки
+
+Запустите команду  `npm install` для установки необходимых для разработки зависимостей.
+
+Запустите `ng serve` для начала разработки. Откройте `http://localhost:4200/`. Приложение автоматически перезагрузится, если вы измените какой-либо из исходных файлов.
+
+Запустите "ng build", чтобы собрать проект. Сборка будет храниться в каталоге `dist/`.
+
+<p align="right">(<a href="#readme-top">наверх</a>)</p>
+
+<a name="usage"></a>
+## Периодичность использования
+
+Периодичность использования сайта может зависеть от различных факторов и потребностей пользователей. Предполагаемые случаи использования могут включать:
+- ежедневное использование: пользователи могут регулярно заходить на платформу для создания, редактирования и просмотра рецептов, общения с другими участниками и отслеживания обновлений;
+- планирование меню: возможность создания списков покупок и планирования приготовления рецептов может стимулировать использование сайта перед походом в магазин или во время подготовки кулинарных планов;
+- особые события: пользователи могут активнее использовать приложение во время особых событий, таких как праздники, вечеринки или другие случаи, требующие особого внимания к готовке;
+- получение уведомлений: периодичное использование может быть связано с получением уведомлений, например, пользователи будут заходить на сайт, чтобы проверить активность под своими рецептами;
+- интерес к кулинарным трендам: пользователи могут чаще посещать сайт при потребности в новых идеях и вдохновении.
+
+<p align="right">(<a href="#readme-top">наверх</a>)</p>
+
+<a name="author"></a>
+## Автор
+
+Автор проекта: Кузьменок Полина :)
+
+ <p align="center">
+    <br />
+    <a href="https://instagram.com/krabochki">Instagram</a>
+    ·
+    <a href="https://www.linkedin.com/in/polina-kuzmenok-550449291">LinkedIn</a>
+    ·
+    <a href="https://t.me/krabochki">Telegram</a>  
+    ·
+    <a href="https://vk.com/nanananana_come_on">ВКонтакте</a>
+  </p>
+  
+<p align="right">(<a href="#readme-top">наверх</a>)</p>
+
+<!-- ACKNOWLEDGMENTS -->
+<a name="libs"></a>
+
+## Библиотеки
+
+Используемые библиотеки:
+- angular-svg-icon;
+- angular-flatpickr;
+- angular-material;
+- angular-calendar;
+- ngx-emoji-mart;
+- ng-disable-scroll;
+- ng-time-past-pipe;
+- ngx-drag-scroll;
+- ngx-sharebuttons;
+- time-ago-pipe.
+
+<p align="right">(<a href="#readme-top">наверх</a>)</p>

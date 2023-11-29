@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { INotification } from '../../../models/notifications';
 import { IUser, nullUser } from '../../../models/users';
 import { NotificationService } from '../../../services/notification.service';
@@ -10,9 +10,11 @@ import { NotificationService } from '../../../services/notification.service';
   styleUrls: ['./notifications-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NotificationsListComponent {
+export class NotificationsListComponent implements OnChanges {
   @Input() notifies: INotification[] = [];
   @Input() user: IUser = { ...nullUser };
+
+  @Output() hover = new EventEmitter<INotification>();
 
   @Output() closeEmitter = new EventEmitter<boolean>();
 

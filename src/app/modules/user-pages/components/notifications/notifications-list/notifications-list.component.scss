@@ -82,9 +82,9 @@
    display: flex;
     flex-direction: column;
 
-    justify-content: start;
-    align-items: start;
-    align-content: start;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
       margin-bottom: 3em;
 
 }
@@ -115,9 +115,7 @@ app-notify{
   padding: 0 0;
 }
 
-.close{
-  display: none;
-}
+
 
 @media(max-width:768px){
   :host{
@@ -128,6 +126,8 @@ app-notify{
   }
 }
 @media(max-width:480px){
+  .close{
+  zoom: 1;  }
   :host{
     width:100%;
   }
@@ -137,36 +137,38 @@ app-notify{
   .no-notifies .mail-cook{
     width: 13em;
   }
-  .close-svg{
-    @include flex;
-    height: 0.7em;
-    fill: var(--color-foreground);
-  }
-
-  .close{
-
-    zoom: 0.9;
-    font-weight: 1000;
-    right: 1.5em;
-    z-index: 10;
-    top: 1em;
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.7;
-    width: 2em;
-    height: 2em;
-    border-radius: 100%;
-    cursor: pointer;
-    background-color: var(--scroll-body);
-    transition: opacity 0.2s ease-in-out;    zoom: 1.1;
-    font-weight: 1000;
-    right: 0;
-    top: 0;
-    padding-bottom: 0.25em;
-    padding-left: 0.25em;
-    border-radius: 0 0 0 100%;
-  }
+ 
 }
 
+
+ .close-svg {
+   @include flex;
+   height: 0.7em;
+   fill: var(--color-foreground);
+ }
+
+ .close {
+
+   font-weight: 1000;
+   zoom:0.9;
+   right: 1.5em;
+   z-index: 10;
+   top: 1em;
+   position: absolute;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   opacity: 0.7;
+   width: 2em;
+   height: 2em;
+   border-radius: 100%;
+   cursor: pointer;
+   background-color: var(--scroll-body);
+   transition: opacity 0.2s ease-in-out;
+   font-weight: 1000;
+   right: 0;
+   top: 0;
+   padding-bottom: 0.25em;
+   padding-left: 0.25em;
+   border-radius: 0 0 0 100%;
+ }

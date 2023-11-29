@@ -19,26 +19,24 @@ export class NotifyComponent {
   @Input() notify: INotification = nullNotification;
   @Input() user: IUser = nullUser;
   @Output() notifyDeleteClick = new EventEmitter();
+  @Output() hover = new EventEmitter<INotification>();
+  @Output() blurEmitter = new EventEmitter();
   @Input() popup: boolean = false;
 
-  constructor(private notificationService: NotificationService) { }
+  constructor(private notificationService: NotificationService) {}
   protected deleteNotify() {
-
     if (this.popup) {
       this.notificationService.makeNotifyReaded(this.notify, this.user);
       this.notifyDeleteClick.emit();
+    } else {
+      this.notificationService.removeNotification(this.notify, this.user);
     }
-    else {
-      this.notificationService
-        .removeNotification(this.notify, this.user)
-    }
-
   }
 
   getClass() {
     const styles: string[] = [];
     if (!this.notify.read) styles.push('not-readed');
-    if (this.popup) styles.push('popup')
+    if (this.popup) styles.push('popup');
     switch (this.notify.context) {
       case 'plan-reminder':
         styles.push('plan');
@@ -77,7 +75,7 @@ export class NotifyComponent {
   }
 
   get icon() {
-    const basePath = 'assets/images/svg/';
+    const basePath = '/assets/images/svg/';
     if (this.notify.context === 'hire') return basePath + 'case.svg';
     if (this.notify.context === 'born') return basePath + 'champagne.svg';
     if (this.notify.context === 'demote') return basePath + 'demote.svg';

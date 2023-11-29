@@ -4,7 +4,7 @@
   <div class="inner">
     <div class="close-button" (click)="closeEditModal()">
       <svg-icon
-        [src]="'../../../../../assets/images/svg/close.svg'"
+        [src]="'/assets/images/svg/close.svg'"
         [applyClass]="true"
         class="close-svg"
       ></svg-icon>
@@ -28,14 +28,13 @@
                   class="delete"
                   *ngIf="myImage !== defaultImage"
                   (click)="
-                    myImage = defaultImage;
-                    this.form.get('image')?.setValue(null)
+                    unsetImage()
                   "
                 >
                   <svg-icon
                     [applyClass]="true"
                     class="svgTrash"
-                    [src]="'../../../../../assets/images/svg/trash.svg'"
+                    [src]="'/assets/images/svg/trash.svg'"
                   ></svg-icon>
                 </div>
                 <div
@@ -139,3 +138,5 @@
   [buttonsText]="['Хорошо']"
   [description]="'Секция успешно опубликована'"
 ></app-modal>
+<app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
+  [description]="'Создаем новый раздел... Подождите немного...'" />

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-prototype-builtins */
 import {
   ChangeDetectionStrategy,
@@ -30,7 +31,7 @@ import { AuthService } from 'src/app/modules/authentication/services/auth.servic
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { getZoom } from 'src/tools/common';
 import { IngredientService } from '../../../services/ingredient.service';
-import { IIngredient, nullIngredient } from '../../../models/ingredients';
+import { IIngredient } from '../../../models/ingredients';
 
 @Component({
   selector: 'app-match-recipes',
@@ -40,7 +41,7 @@ import { IIngredient, nullIngredient } from '../../../models/ingredients';
   animations: [trigger('height', heightAnim()), trigger('modal', modal())],
 })
 export class MatchRecipesComponent implements OnInit, OnDestroy {
-  protected baseSvgPath: string = 'assets/images/svg/';
+  protected baseSvgPath: string = '/assets/images/svg/';
   private categories: ICategory[] = []; //изначальные данные
   private sections: ISection[] = [];
   private recipes: IRecipe[] = [];
@@ -139,7 +140,9 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
     this.categoryService.categories$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedCategories: ICategory[]) => {
-        if (receivedCategories.length > 0) {
+        this.group = [];
+        if ((receivedCategories.length > 0)) {
+          this.categories = [];
           receivedCategories.forEach((category) => {
             if (this.getCategoryRecipesNumber(category.id) > 0)
               this.categories.push(category);
@@ -154,6 +157,9 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedSections: ISection[]) => {
         if (receivedSections.length > 0) {
+          this.sections = [];
+              this.group = [];
+
           this.sections = receivedSections;
 
           //создаем обьект sectionGroup соответствующий секции
@@ -283,18 +289,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
     recipes.forEach((recipe) => {
       const checkedIngredients: string[] = [];
       recipe.ingredients.forEach((ingredient) => {
-        const formattedIngredients = this.permanentIngredients.map(
-          (ingredient) => ingredient.trim().toLowerCase(),
-        );
-        const formattedExclusions = this.permanentExcludedIngredients.map(
-          (ingredient) => ingredient.trim().toLowerCase(),
-        );
-        if (
-          !formattedIngredients.includes(
-            ingredient.name.toLowerCase().trim(),
-          ) &&
-          !formattedExclusions.includes(ingredient.name.toLowerCase().trim())
-        ) {
+     
           let ingredientName = ingredient.name.toLowerCase().trim();
 
           //основным считается ингредиент который более специфичен, например Репчатый лук будет именно ингредиентом Репчатый лук, а не Лук,
@@ -312,7 +307,23 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
             allIngredientsFindedByName.push(
               ingredient.name.toLowerCase().trim(),
             );
-          }
+        }
+        
+           const formattedIngredients = this.permanentIngredients.map(
+          (ingredient) => ingredient.trim().toLowerCase(),
+        );
+        const formattedExclusions = this.permanentExcludedIngredients.map(
+          (ingredient) => ingredient.trim().toLowerCase(),
+        );
+        if (
+          !allIngredientsFindedByName.some((ingredient) =>
+            formattedIngredients.includes(ingredient),
+          ) &&
+          !allIngredientsFindedByName.some((ingredient) =>
+            formattedExclusions.includes(ingredient),
+          )
+        ) {
+        
 
           const ingredientAlreadyCheckedInThisRecipe =
             allIngredientsFindedByName.some((ingredient) =>
@@ -329,6 +340,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
               checkedIngredients.push(oneOfIngredients.toLowerCase().trim());
             });
         }
+        
       });
     });
     ingredientCounts = this.onlyNoSelectedIngredients(ingredientCounts);
@@ -611,7 +623,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
   }
 
   getZoom(count: number): number {
-    return getZoom(count, 0.15, 7, 0.9);
+    return getZoom(count, 0.15, 5, 0.9);
   }
 
   autocompleteClick(ingredient: string, $event: any) {

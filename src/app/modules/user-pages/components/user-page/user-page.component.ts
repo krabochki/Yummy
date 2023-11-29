@@ -2,7 +2,6 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  NgZone,
   OnDestroy,
   OnInit,
   Renderer2,
@@ -17,27 +16,18 @@ import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
 import { fadeIn, heightAnim, modal } from 'src/tools/animations';
 import { trigger } from '@angular/animations';
 import {
-  DomSanitizer,
-  SafeResourceUrl,
   Title,
 } from '@angular/platform-browser';
 import { Location, registerLocaleData } from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
-import { RouteEventsService } from 'src/app/modules/controls/route-events.service';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { NotificationService } from '../../services/notification.service';
 import { INotification } from '../../models/notifications';
 import { getFormattedDate } from 'src/tools/common';
 import { customEmojis, emojisRuLocale } from './emoji-picker-data';
-import { Emoji, EmojiData } from '@ctrl/ngx-emoji-mart/ngx-emoji';
-import { createClient } from '@supabase/supabase-js';
-import {
-  supabaseUrl,
-  supabaseKey,
-  supabase,
-} from 'src/app/modules/controls/image/supabase-data';
-import { ImageService } from 'src/app/modules/controls/image/image.service';
+import { EmojiData } from '@ctrl/ngx-emoji-mart/ngx-emoji';
+import { supabase } from 'src/app/modules/controls/image/supabase-data';
 
 @Component({
   selector: 'app-user-page',
@@ -51,7 +41,6 @@ import { ImageService } from 'src/app/modules/controls/image/image.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserPageComponent implements OnInit, OnDestroy {
-  supabase = supabase;
   avatar: string = '';
 
   emojisRuLocale = emojisRuLocale;
@@ -109,6 +98,10 @@ export class UserPageComponent implements OnInit, OnDestroy {
     return this.currentUser.id === this.user.id;
   }
 
+  get showRole(): boolean{
+    return this.userService.getPermission('show-status', this.user);
+  }
+
   constructor(
     private authService: AuthService,
     private route: ActivatedRoute,
@@ -135,118 +128,135 @@ export class UserPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.route.data.subscribe((data: Data) => {
-      this.recipesEnabled = true;
-      this.moreInfoEnabled = false;
-      this.user = data['user'];
+    this.authService.currentUser$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((data) => {
+                  this.currentUser = {...data};
+        
 
-      this.authService.currentUser$
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe((data) => {
-          this.currentUser = data;
+        this.route.data.subscribe((data: Data) => {
+          this.recipesEnabled = true;
+          this.moreInfoEnabled = false;
+          this.user = data['user'];
+
 
           if (this.currentUser.id === this.user.id) {
             this.myPage = true;
           } else {
             this.myPage = false;
           }
-        });
 
-      this.userService.users$
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe((data) => {
-          this.users = data;
-          const findedUser = data.find((user) => user.id === this.user.id);
-
-          if (findedUser) {
-            this.user = findedUser;
-          }
-          this.selectedEmoji = this.user.emojiStatus
-            ? this.user.emojiStatus
-            : null;
-
-          this.titleService.setTitle(
-            this.user.fullName ? this.user.fullName : '@' + this.user.username,
-          );
-
-          if (this.currentUser.id === this.user.id) {
-            this.currentUser = this.user;
-            this.myPage = true;
-          }
-
-          this.userFollowers = this.userService.getFollowers(
-            data,
-            this.user.id,
-          );
-
-          this.userFollowing = this.userService.getFollowing(
-            data,
-            this.user.id,
-          );
-
-          this.recipeService.recipes$
+          this.userService.users$
             .pipe(takeUntil(this.destroyed$))
             .subscribe((data) => {
-              this.allRecipes = this.recipeService.getPopularRecipes(data);
+              this.users = data;
+              const findedUser = data.find((user) => user.id === this.user.id);
 
-              if (this.user.avatarUrl) {
-                this.downloadUserpicFromSupabase(this.user.avatarUrl);
-              } else {
-                this.avatar = '';
+              if (findedUser) {
+                this.user = findedUser;
+              }
+              this.selectedEmoji = this.user.emojiStatus
+                ? this.user.emojiStatus
+                : null;
+
+              this.titleService.setTitle(
+                this.user.fullName
+                  ? this.user.fullName
+                  : '@' + this.user.username,
+              );
+
+              if (this.currentUser.id === this.user.id) {
+                //this.currentUser = this.user;
+                this.myPage = true;
               }
 
-              this.userRecipes = this.recipeService.getRecipesByUser(
-                this.allRecipes,
+              this.userFollowers = this.userService.getFollowers(
+                data,
                 this.user.id,
               );
-              this.userPublicRecipes = this.recipeService.getPublicRecipes(
-                this.userRecipes,
+
+              this.userFollowing = this.userService.getFollowing(
+                data,
+                this.user.id,
               );
 
-              if (
-                !this.myPage &&
-                (this.currentUser.role === 'admin' ||
-                  this.currentUser.role === 'moderator')
-              ) {
-                this.userRecipes = this.recipeService.getNotPrivateRecipes(
-                  this.userRecipes,
-                );
-              } else if (
-                !this.myPage &&
-                this.currentUser.role !== 'admin' &&
-                this.currentUser.role !== 'moderator'
-              ) {
-                this.userRecipes = this.recipeService.getPublicRecipes(
-                  this.userRecipes,
-                );
-              }
+              this.recipeService.recipes$
+                .pipe(takeUntil(this.destroyed$))
+                .subscribe((data) => {
+                  this.allRecipes = this.recipeService.getPopularRecipes(data);
 
-              if (this.userRecipes.length === 0) {
-                this.moreInfoEnabled = true;
-                this.recipesEnabled = false;
-              }
-              this.cooks = 0;
-              this.likes = 0;
-              this.comments = 0;
-              this.userRecipes.forEach((recipe) => {
-                this.cooks += recipe.cooksId?.length;
-                this.likes += recipe.likesId?.length;
-                this.comments += recipe.comments?.length;
-                if (!this.cooks) this.cooks = 0;
-                if (!this.likes) this.likes = 0;
-                if (!this.comments) this.comments = 0;
-              });
+                  if (this.user.avatarUrl) {
+                    this.downloadUserpicFromSupabase(this.user.avatarUrl);
+                  } else {
+                    this.avatar = '';
+                  }
 
-              this.cd.markForCheck();
+                  if (
+                    this.userService.getPermission('hide-author', this.user) ||
+                    this.currentUser.id === this.user.id ||
+                    (this.currentUser.role === 'moderator' &&
+                      this.user.role !== 'admin') ||
+                    this.currentUser.role === 'admin'
+                  ) {
+                    this.userRecipes = this.recipeService.getRecipesByUser(
+                      this.allRecipes,
+                      this.user.id,
+                    );
+                    this.userPublicRecipes =
+                      this.recipeService.getPublicRecipes(this.userRecipes);
+                  } else {
+                    this.userRecipes = [];
+                    this.userPublicRecipes = [];
+                  }
 
-              this.dataLoaded = true;
+                  if (
+                    !this.myPage &&
+                    (this.currentUser.role === 'admin' ||
+                      this.currentUser.role === 'moderator')
+                  ) {
+                    this.userRecipes = this.recipeService.getNotPrivateRecipes(
+                      this.userRecipes,
+                    );
+                  } else if (
+                    !this.myPage &&
+                    this.currentUser.role !== 'admin' &&
+                    this.currentUser.role !== 'moderator'
+                  ) {
+                    this.userRecipes = this.recipeService.getPublicRecipes(
+                      this.userRecipes,
+                    );
+                  }
+
+                  if (this.userRecipes.length === 0) {
+                    this.moreInfoEnabled = true;
+                    this.recipesEnabled = false;
+                  }
+                  this.cooks = 0;
+                  this.likes = 0;
+                  this.comments = 0;
+                  this.userRecipes.forEach((recipe) => {
+                    this.cooks += recipe.cooksId?.length;
+                    this.likes += recipe.likesId?.length;
+                    this.comments += recipe.comments?.length;
+                    if (!this.cooks) this.cooks = 0;
+                    if (!this.likes) this.likes = 0;
+                    if (!this.comments) this.comments = 0;
+                  });
+
+                  this.cd.markForCheck();
+
+                  this.dataLoaded = true;
+                });
             });
+          this.cd.markForCheck();
         });
-      if (!this.myPage) {
-        this.user.profileViews++;
-      this.updateUser(this.currentUser);
-      }
-    });
+      });
+
+               if (!this.myPage) {
+                 this.user.profileViews++;
+                 this.updateUser(this.user);
+               }
+
   }
 
   goBack() {
@@ -258,7 +268,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
   }
 
   downloadUserpicFromSupabase(path: string) {
-    this.avatar = this.supabase.storage
+    this.avatar = supabase.storage
       .from('userpics')
       .getPublicUrl(path).data.publicUrl;
     this.cd.markForCheck();
@@ -270,10 +280,10 @@ export class UserPageComponent implements OnInit, OnDestroy {
   }
 
   //подписка текущего пользователя на людей в списке
-  follow() {
+  async follow() {
     if (this.currentUser.id > 0) {
       this.user = this.userService.addFollower(this.user, this.currentUser.id);
-      this.updateUser(this.currentUser);
+      await this.updateUser(this.user);
       if (this.userService.getPermission('new-follower', this.user)) {
         const notify: INotification = this.notifyService.buildNotification(
           'Новый подписчик',
@@ -286,18 +296,18 @@ export class UserPageComponent implements OnInit, OnDestroy {
           'user',
           '/cooks/list/' + this.currentUser.id,
         );
-        this.notifyService.sendNotification(notify, this.user)
+        await this.notifyService.sendNotification(notify, this.user);
       }
     }
   }
 
-  unfollow() {
+  async unfollow() {
     if (this.currentUser.id > 0) {
       this.user = this.userService.removeFollower(
         this.user,
         this.currentUser.id,
       );
-      this.updateUser(this.currentUser);
+      await this.updateUser(this.user);
     }
   }
 
@@ -338,7 +348,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
         `/cooks/list/${this.currentUser.id}`,
       );
       this.updateUser(this.currentUser);
-      this.notifyService.sendNotification(notify, this.user)
+      this.notifyService.sendNotification(notify, this.user);
       this.hireSuccessModalShow = true;
     }
     this.hireModalShow = false;
@@ -359,7 +369,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
     this.showEmojiPicker = false;
   }
 
-  async updateUser(user:IUser) {
+  async updateUser(user: IUser) {
     await this.userService.updateUserInSupabase(user);
   }
   protected unsetEmoji($event: any): void {

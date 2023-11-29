@@ -6,6 +6,7 @@ import {
 import { usersUrl } from 'src/tools/source';
 import { allPunctuationMarks, brackets } from 'src/tools/regex';
 import { supabase } from '../../controls/image/supabase-data';
+import { getCurrentDate } from 'src/tools/common';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +15,7 @@ export class UserService {
   private usersSubject = new BehaviorSubject<IUser[]>([]);
   users$ = this.usersSubject.asObservable();
   url: string = usersUrl;
+  
 
   getMaxUserId() {
     return supabase
@@ -130,6 +132,7 @@ export class UserService {
   }
 
   loadUsersFromSupabase() {
+
     return supabase
       .from('profiles')
       .select('*')
@@ -157,6 +160,7 @@ export class UserService {
       location: user.location || '', // Локация пользователя
       profileViews: user.profileviews || 0, // Количество просмотров профиля
       role: user.role || 'user',
+      registrationDate:user.registrationDate,
       notifications: user.notifications || [],
       permissions: user.permissions || [],
       exclusions: user.exclusions || [],
@@ -170,6 +174,7 @@ export class UserService {
         id: id,
         username: username,
         email: email,
+        registrationDate: getCurrentDate(),
         role: 'user',
       },
     ]);
@@ -245,7 +250,6 @@ export class UserService {
 
   getPermission(context: PermissionContext, user: IUser): boolean {
     const permissions = user.permissions;
-
     //возвращаем что уведомление включено true, только если оно конкретно не установлено false
 
     if (permissions && permissions.length) {

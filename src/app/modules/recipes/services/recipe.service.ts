@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { IRecipe, IRecipeStatistics } from '../models/recipes';
-import { BehaviorSubject, Observable, from, tap } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { recipesUrl } from 'src/tools/source';
 import { getCurrentDate } from 'src/tools/common';
 import { IPlan } from '../../planning/models/plan';
@@ -25,7 +25,7 @@ export class RecipeService {
   ) {}
 
   loadRecipeData() {
-    this.getRecipesFromSupabase();
+    return this.getRecipesFromSupabase();
   }
 
   getRecipesWhithIsEditedWhenUserDeleting(
@@ -123,14 +123,10 @@ export class RecipeService {
     return recipesForDeleting;
   }
 
-  supabase = supabase;
 
   getRecipesFromSupabase() {
     
-
-    
-    
-    this.supabase
+    return supabase
       .from('recipes')
       .select('*')
       .then((response) => {
@@ -177,7 +173,7 @@ export class RecipeService {
   }
 
   getMaxRecipeId() {
-    return this.supabase
+    return supabase
       .from('recipes')
       .select('id')
       .order('id', { ascending: false })
@@ -222,13 +218,13 @@ export class RecipeService {
   }
 
   removeRecipeFunction(recipeId: number) {
-    return this.supabase.from('recipes').delete().eq('id', recipeId);
+    return supabase.from('recipes').delete().eq('id', recipeId);
   }
 
   updateRecipeFunction(recipe: IRecipe) {
     const { id, ...updateData } = recipe;
 
-    return this.supabase
+    return supabase
       .from('recipes')
       .update({
         mainimage: recipe.mainImage,

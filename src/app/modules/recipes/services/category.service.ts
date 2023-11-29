@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import { ICategory, ISection } from '../models/categories';
 import { BehaviorSubject } from 'rxjs';
@@ -18,6 +19,10 @@ export class CategoryService {
   private categoriesSubject = new BehaviorSubject<ICategory[]>([]);
   categories$ = this.categoriesSubject.asObservable();
 
+  constructor(){
+    
+  }
+
   getMaxCategoryId() {
     return supabase
       .from('categories')
@@ -34,7 +39,7 @@ export class CategoryService {
   }
 
   loadCategoriesFromSupabase() {
-    supabase
+   return supabase
       .from('categories')
       .select('*')
       .then((response) => {

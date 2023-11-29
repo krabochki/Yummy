@@ -31,7 +31,7 @@
     <svg-icon
       [applyClass]="true"
       class="svg"
-      [src]="'assets/images/svg/no-category.svg'"
+      [src]="'/assets/images/svg/no-category.svg'"
     ></svg-icon>
   </div>
 </ng-template>
@@ -39,4 +39,4 @@
 <app-modal @modal (resultEmit)="handleDeleteModal($event)" [type]="'yesOrNo'" [buttonsText]="['Да','Отмена']" [style]="'prim'" [description]="'Вы уверены, что хотите удалить эту ' + (context==='category'?'категорию?':'секцию?')" [title]="'Удаление '+(context==='category'?'категории':'секции')" *ngIf="deleteModalShow"></app-modal>
 
 <app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
-  [description]="'Удаляем данные о категории... Подождите немного...'" />
+  [description]="loadingText || 'Вносим изменения... Подождите немного...'" />

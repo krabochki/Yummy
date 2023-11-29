@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, ElementRef, HostListener, Input, OnChanges, ViewChild } from '@angular/core';
 import { DragScrollComponent } from 'ngx-drag-scroll';
-import { ICategory, ISection, nullCategory, nullSection } from 'src/app/modules/recipes/models/categories';
+import { nullSection } from 'src/app/modules/recipes/models/categories';
 import { dragEnd, dragStart } from 'src/tools/common';
 
 @Component({

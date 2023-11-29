@@ -3,7 +3,6 @@ import { UserService } from './user.service';
 import { INotification, nullNotification } from '../models/notifications';
 import { getCurrentDate } from 'src/tools/common';
 import { IUser } from '../models/users';
-import { EMPTY, take } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -50,15 +49,15 @@ export class NotificationService {
     await this.userService.updateUserInSupabase(user);
   }
 
-  removeNotification(notification: INotification, user: IUser) {
+ async removeNotification(notification: INotification, user: IUser) {
     const actualUser = this.users.find((u) => u.id === user.id);
 
     if (actualUser) {
       actualUser.notifications = actualUser?.notifications.filter(
         (n) => n.id !== notification.id,
       );
-      return this.updateUser(actualUser);
-    } else return EMPTY;
+      await this.updateUser(actualUser);
+    }
   }
 
   clearAll(user: IUser) {
@@ -93,7 +92,7 @@ export class NotificationService {
     }
     return user;
   }
-  sendNotification(notification: INotification, user: IUser) {
+  async sendNotification(notification: INotification, user: IUser) {
     const actualUser = this.users.find((u) => u.id === user.id);
 
     if (actualUser) {
@@ -107,7 +106,6 @@ export class NotificationService {
       actualUser.notifications.push(notification);
     }
     if (actualUser)
-      return this.updateUser(actualUser)
-    else return EMPTY;
+      await this.updateUser(actualUser)
   }
 }

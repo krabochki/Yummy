@@ -7,7 +7,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { IIngredient, nullIngredient } from '../../../models/ingredients';
+import { nullIngredient } from '../../../models/ingredients';
 import { DragScrollComponent } from 'ngx-drag-scroll';
 import { dragStart, dragEnd } from 'src/tools/common';
 

@@ -132,7 +132,7 @@
 <br>
 <div align="center">
 
-## Автор 💡
+<h3 align="center"> Автор 💡</h3>
 
 
 

@@ -11,6 +11,7 @@
   </a>
 
   <h3 align="center">Yummy</h3>
+  <p align="center">2 0 2 3</p>
 
   <p align="center">
     Социальная сеть для обмена рецептами
@@ -19,7 +20,7 @@
     ·
     <a href="https://github.com/krabochki/Yummy/issues">Баги</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">LinkedIn автора</a>
+    <a href="https://www.linkedin.com/in/polina-kuzmenok-550449291">LinkedIn автора</a>
   </p>
 </div>
 
@@ -52,8 +53,6 @@
 <!-- ABOUT THE PROJECT -->
 
 ## О проекте
-
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
 
 Проект "Yummy" представляет собой веб-приложение, созданное для любителей кулинарии и профессиональных кулинаров. Цель приложения - облегчить обмен рецептами, идеями и кулинарным опытом между пользователями.
 Сайт создан для людей, которые хотят найти сообщество по интересу, а также для людей, которые хотят найти конкретные рецепты, поделиться собственными рецептами, узнать больше о ингредиентах, планировать рецепты. 

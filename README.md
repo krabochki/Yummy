@@ -8,17 +8,6 @@
 Фреймворк: Angular 16.2.2
 Язык программирования: TypeScript
 База данных: Supabase
-Используемые библиотеки:
-angular-svg-icon ^17.0.0,
-angular-flatpickr ^7.3.0,
-angular-material ^0.7.7,
-angular-calendar ^0.31.0,
-ngx-emoji-mart ^9.2.0,
-ng-disable-scroll ^0.1.1,
-ng-time-past-pipe ^3.1.0,
-ngx-drag-scroll ^16.0.0,
-ngx-sharebuttons ^13.0.0,
-time-ago-pipe 1.3.2
 
 <a name="readme-top"></a>
 

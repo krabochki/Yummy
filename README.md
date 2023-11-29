@@ -14,7 +14,7 @@
   <p align="center">
     Социальная сеть для обмена рецептами
     <br />
-    <a href="https://yummy-world.vercel.app/">Проект в Vercel</a>
+    <a href="https://yummy-kitchen.vercel.app/">Проект в Vercel</a>
     ·
     <a href="https://github.com/krabochki/Yummy/issues">Баги</a>
     ·

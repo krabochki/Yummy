@@ -22,9 +22,6 @@ time-ago-pipe 1.3.2
 
 
 
-## Автор
-Кузьменок Полина
-
 
 <a name="readme-top"></a>
 
@@ -46,7 +43,7 @@ time-ago-pipe 1.3.2
     ·
     <a href="https://github.com/krabochki/Yummy/issues">Баги</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Мой LinkedIn</a>
+    <a href="https://github.com/othneildrew/Best-README-Template/issues">LinkedIn автора</a>
   </p>
 </div>
 
@@ -98,7 +95,7 @@ time-ago-pipe 1.3.2
 - настройки интерфейса и уведомлений;
 - обмен рецептами и страницами кулинаров в социальных сетях.
 
-<p align="right">(<a href="#readme-top">В начало</a>)</p>
+<p align="right">(<a href="#readme-top">наверх</a>)</p>
 
 ### Технологии
 
@@ -107,7 +104,7 @@ time-ago-pipe 1.3.2
 - Язык программирования: TypeScript
 - База данных: Supabase
 
-<p align="right">(<a href="#readme-top">В начало</a>)</p>
+<p align="right">(<a href="#readme-top">наверх</a>)</p>
 
 <!-- GETTING STARTED -->
 
@@ -119,7 +116,7 @@ time-ago-pipe 1.3.2
 
 Запустите "ng build", чтобы собрать проект. Сборка будет храниться в каталоге `dist/`.
 
-<p align="right">(<a href="#readme-top">В начало</a>)</p>
+<p align="right">(<a href="#readme-top">наверх</a>)</p>
 
 
 ## Периодичность использования
@@ -131,7 +128,7 @@ time-ago-pipe 1.3.2
 - получение уведомлений: периодичное использование может быть связано с получением уведомлений, например, пользователи будут заходить на сайт, чтобы проверить активность под своими рецептами;
 - интерес к кулинарным трендам: пользователи могут чаще посещать сайт при потребности в новых идеях и вдохновении.
 
-<p align="right">(<a href="#readme-top">В начало</a>)</p>
+<p align="right">(<a href="#readme-top">наверх</a>)</p>
 
 
 ## Автор
@@ -144,7 +141,7 @@ time-ago-pipe 1.3.2
 [@ВКонтакте](https://vk.com/nanananana_come_on)
 
 
-<p align="right">(<a href="#readme-top">В начало</a>)</p>
+<p align="right">(<a href="#readme-top">наверх</a>)</p>
 
 <!-- ACKNOWLEDGMENTS -->
 
@@ -162,4 +159,4 @@ time-ago-pipe 1.3.2
 - ngx-sharebuttons ^13.0.0,
 - time-ago-pipe 1.3.2
 
-<p align="right">(<a href="#readme-top">В начало</a>)</p>
+<p align="right">(<a href="#readme-top">наверх</a>)</p>

@@ -26,25 +26,12 @@
 <details>
   <summary>Содержание</summary>
   <ol>
-    <li>
-      <a href="#about-the-project">О проекте</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
+    <li><a href="#usage">О проекте</a></li>
+    <li><a href="#roadmap">Технологии</a></li>
+    <li><a href="#contributing">Начало разработки</a></li>
+    <li><a href="#license">Периодичность использования</a></li>
+    <li><a href="#contact">Автор</a></li>
+    <li><a href="#acknowledgments">Библиотеки</a></li>
   </ol>
 </details>
 
@@ -81,7 +68,7 @@
 
 <!-- GETTING STARTED -->
 
-## Getting Started
+## Начало разработки
 
 Запустите команду  `npm install` для установки необходимых для разработки зависимостей.
 
@@ -126,15 +113,15 @@
 ## Библиотеки
 
 Используемые библиотеки:
-- angular-svg-icon,
-- angular-flatpickr,
-- angular-material,
-- angular-calendar,
-- ngx-emoji-mart,
-- ng-disable-scroll,
-- ng-time-past-pipe,
-- ngx-drag-scroll,
-- ngx-sharebuttons,
-- time-ago-pipe
+- angular-svg-icon;
+- angular-flatpickr;
+- angular-material;
+- angular-calendar;
+- ngx-emoji-mart;
+- ng-disable-scroll;
+- ng-time-past-pipe;
+- ngx-drag-scroll;
+- ngx-sharebuttons;
+- time-ago-pipe.
 
 <p align="right">(<a href="#readme-top">наверх</a>)</p>

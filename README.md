@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Yummy
 
 Проект "Yummy" представляет собой веб-приложение, созданное для любителей кулинарии и профессиональных кулинаров. Цель приложения - облегчить обмен рецептами, идеями и кулинарным опытом между пользователями.
@@ -22,19 +23,20 @@ time-ago-pipe 1.3.2
 
 
 
+=======
+>>>>>>> 97cf74bd996c2de2e28b3536a6fbd8df52197174
 
 <a name="readme-top"></a>
-
-[![LinkedIn][linkedin-shield]][https://www.linkedin.com/in/polina-kuzmenok-550449291/]
 
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
   <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="src/assets/images/chef-night.png" alt="Logo" width="80" height="80">
+    <img src="src/assets/images/chef-day.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Yummy</h3>
+  <p align="center">2023</p>
 
   <p align="center">
     Социальная сеть для обмена рецептами
@@ -43,7 +45,11 @@ time-ago-pipe 1.3.2
     ·
     <a href="https://github.com/krabochki/Yummy/issues">Баги</a>
     ·
+<<<<<<< HEAD
     <a href="https://github.com/othneildrew/Best-README-Template/issues">LinkedIn автора</a>
+=======
+    <a href="https://www.linkedin.com/in/polina-kuzmenok-550449291">LinkedIn автора</a>
+>>>>>>> 97cf74bd996c2de2e28b3536a6fbd8df52197174
   </p>
 </div>
 
@@ -51,36 +57,22 @@ time-ago-pipe 1.3.2
 <details>
   <summary>Содержание</summary>
   <ol>
-    <li>
-      <a href="#about-the-project">О проекте</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
+    <li><a href="#about">О проекте</a></li>
+    <li><a href="#stack">Технологии</a></li>
+    <li><a href="#start">Начало разработки</a></li>
+    <li><a href="#usage">Периодичность использования</a></li>
+    <li><a href="#author">Автор</a></li>
+    <li><a href="#libs">Библиотеки</a></li>
   </ol>
 </details>
 
 <!-- ABOUT THE PROJECT -->
-
+<a name="about"></a>
 ## О проекте
-
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
 
 Проект "Yummy" представляет собой веб-приложение, созданное для любителей кулинарии и профессиональных кулинаров. Цель приложения - облегчить обмен рецептами, идеями и кулинарным опытом между пользователями.
 Сайт создан для людей, которые хотят найти сообщество по интересу, а также для людей, которые хотят найти конкретные рецепты, поделиться собственными рецептами, узнать больше о ингредиентах, планировать рецепты. 
+    <img src="src/assets/images/readme-community.png" alt="community" height="300" width="400">
 
 
 Доступная на данный момент функциональность: 
@@ -97,18 +89,20 @@ time-ago-pipe 1.3.2
 
 <p align="right">(<a href="#readme-top">наверх</a>)</p>
 
+<a name="stack"></a>
 ### Технологии
 
-- IDE: Visual Studio Code
-- [![Angular][Angular.io]][Angular-url]
+- Фреймворк: Angular
 - Язык программирования: TypeScript
+- IDE: Visual Studio Code
 - База данных: Supabase
 
 <p align="right">(<a href="#readme-top">наверх</a>)</p>
 
 <!-- GETTING STARTED -->
 
-## Getting Started
+<a name="start"></a>
+## Начало разработки
 
 Запустите команду  `npm install` для установки необходимых для разработки зависимостей.
 
@@ -117,8 +111,12 @@ time-ago-pipe 1.3.2
 Запустите "ng build", чтобы собрать проект. Сборка будет храниться в каталоге `dist/`.
 
 <p align="right">(<a href="#readme-top">наверх</a>)</p>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 97cf74bd996c2de2e28b3536a6fbd8df52197174
 
+<a name="usage"></a>
 ## Периодичность использования
 
 Периодичность использования сайта может зависеть от различных факторов и потребностей пользователей. Предполагаемые случаи использования могут включать:
@@ -129,34 +127,53 @@ time-ago-pipe 1.3.2
 - интерес к кулинарным трендам: пользователи могут чаще посещать сайт при потребности в новых идеях и вдохновении.
 
 <p align="right">(<a href="#readme-top">наверх</a>)</p>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 97cf74bd996c2de2e28b3536a6fbd8df52197174
 
+<a name="author"></a>
 ## Автор
 
 Автор проекта: Кузьменок Полина :)
 
+<<<<<<< HEAD
 [@Instagram](https://twitter.com/your_username)
 [@LinkedIn](https://www.linkedin.com/in/polina-kuzmenok-550449291/)
 [@Telegram](https://t.me/krabochki)
 [@ВКонтакте](https://vk.com/nanananana_come_on)
 
 
+=======
+ <p align="center">
+    <br />
+    <a href="https://instagram.com/krabochki">Instagram</a>
+    ·
+    <a href="https://www.linkedin.com/in/polina-kuzmenok-550449291">LinkedIn</a>
+    ·
+    <a href="https://t.me/krabochki">Telegram</a>  
+    ·
+    <a href="https://vk.com/nanananana_come_on">ВКонтакте</a>
+  </p>
+  
+>>>>>>> 97cf74bd996c2de2e28b3536a6fbd8df52197174
 <p align="right">(<a href="#readme-top">наверх</a>)</p>
 
 <!-- ACKNOWLEDGMENTS -->
+<a name="libs"></a>
 
 ## Библиотеки
 
 Используемые библиотеки:
-- angular-svg-icon ^17.0.0,
-- angular-flatpickr ^7.3.0,
-- angular-material ^0.7.7,
-- angular-calendar ^0.31.0,
-- ngx-emoji-mart ^9.2.0,
-- ng-disable-scroll ^0.1.1,
-- ng-time-past-pipe ^3.1.0,
-- ngx-drag-scroll ^16.0.0,
-- ngx-sharebuttons ^13.0.0,
-- time-ago-pipe 1.3.2
+- angular-svg-icon;
+- angular-flatpickr;
+- angular-material;
+- angular-calendar;
+- ngx-emoji-mart;
+- ng-disable-scroll;
+- ng-time-past-pipe;
+- ngx-drag-scroll;
+- ngx-sharebuttons;
+- time-ago-pipe.
 
 <p align="right">(<a href="#readme-top">наверх</a>)</p>

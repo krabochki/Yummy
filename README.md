@@ -35,8 +35,9 @@
     <li><a href="#stack">Технологии</a></li>
     <li><a href="#start">Начало разработки</a></li>
     <li><a href="#usage">Периодичность использования</a></li>
-    <li><a href="#author">Автор</a></li>
     <li><a href="#libs">Библиотеки</a></li>
+        <li><a href="#author">Автор</a></li>
+
   </ol>
 </details>
 

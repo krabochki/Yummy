@@ -68,7 +68,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.usersInit();
-   
+
     this.form = this.fb.group({
       login: [
         '',
@@ -106,7 +106,6 @@ export class LoginComponent implements OnInit, OnDestroy {
         );
 
         if (error) {
-          console.log(error.message);
           switch (error.message) {
             case 'Email not confirmed':
               this.failInfo =
@@ -123,14 +122,13 @@ export class LoginComponent implements OnInit, OnDestroy {
 
           this.errorModal = true;
         } else {
-          this.authService.loginUser(user).subscribe((user) => {
-            if (user) {
-              this.authService.setCurrentUser(user);
+          const loginUser = this.authService.loginUser(user);
+            if (loginUser) {
+              this.authService.setCurrentUser(loginUser);
               this.router.navigateByUrl('/');
             } else {
               this.errorModal = true;
             }
-          });
         }
       } catch (error) {
         if (error instanceof Error) {

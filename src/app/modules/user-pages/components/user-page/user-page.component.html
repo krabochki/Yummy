@@ -398,7 +398,7 @@
             </svg-icon>
             <a [href]="user.personalWebsite">Личный сайт</a>
           </li>
-          <li *ngIf="user.role !== 'user'" class="row center">
+          <li *ngIf="user.role !== 'user' && showRole" class="row center">
             <svg-icon
               [src]="'assets/images/svg/star-user.svg'"
               [svgStyle]="{

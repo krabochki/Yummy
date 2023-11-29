@@ -29,6 +29,7 @@ export class AuthService {
     new BehaviorSubject<IUser>({ ...nullUser });
   currentUser$ = this.currentUserSubject.asObservable();
 
+  users: IUser[] = [];
   uid = '';
 
   usersUrl = usersUrl;
@@ -38,27 +39,25 @@ export class AuthService {
     private router: Router,
     private ngZone: NgZone,
   ) {
- 
-      //проверка состояния текущей сессии в реальном времени
-      supabase.auth.onAuthStateChange((event, session) => {
-        if (event === 'SIGNED_IN')
-          if (session?.user.email)
-            this.loginUser({ ...nullUser, email: session?.user.email }).subscribe(
-              (user) => {
-                if (user) {
-                  this.setCurrentUser(user);
-                }
-              },
-            );
-        if (event === 'SIGNED_OUT') {
-          this.logoutUser();
-         this.ngZone.run(() => {
-           this.router.navigateByUrl('/');
-         });
-        }
-      })
-    
-  
+    this.userService.users$.subscribe((users) => (this.users = users));
+    //проверка состояния текущей сессии в реальном времени
+    // supabase.auth.onAuthStateChange((event, session) => {
+    //   //   if (event === 'SIGNED_IN')
+    //   //     if (session?.user.email)
+    //   //       this.loginUser({ ...nullUser, email: session?.user.email }).subscribe(
+    //   //         (user) => {
+    //   //           if (user) {
+    //   //             this.setCurrentUser(user);
+    //   //           }
+    //   //         },
+    //   //       );
+    //   //   if (event === 'SIGNED_OUT') {
+    //   //     this.logoutUser();
+    //   //    this.ngZone.run(() => {
+    //   //    });
+    //   //   }
+    //   // })
+    // });
   }
 
   async passwordReset(email: string, users: IUser[]) {
@@ -84,33 +83,34 @@ export class AuthService {
   }
 
   loadCurrentUserData() {
-    this.userService.users$.subscribe(() => {
-      const user = this.session?.user;
+    this.userService.users$.subscribe(() =>
+      supabase.auth.onAuthStateChange((event, session) => {
+        const user = { ...session?.user };
+        if (user && user.email) {
+          const iuser: IUser = {
+            ...nullUser,
+            email: user.email,
+          };
 
-      if (user?.email) {
-        const iuser: IUser = {
-          ...nullUser,
-          email: user?.email,
-        };
-
-        this.loginUser(iuser).subscribe((user) => {
-          if (user) {
-            this.setCurrentUser(user);
+          const loginUser = this.loginUser({ ...iuser });
+          if (loginUser && loginUser.email === user.email) {
+            console.log(loginUser);
+            this.currentUserSubject.next(loginUser);
+          } else {
+            this.currentUserSubject.next({ ...nullUser });
           }
-        });
-      }
-    });
+        }
+      }),
+    );
   }
 
   async setCurrentUser(user: IUser) {
-    this.supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(({ data }) => {
       const session = data.session;
       this.uid = session?.user.id || '';
       this.currentUserSubject.next({ ...user });
     });
   }
-
-  supabase = supabase;
 
   async supabaseLogin(user: IUser) {
     await supabase.auth.signInWithPassword({
@@ -132,7 +132,7 @@ export class AuthService {
 
   _session: Session | null = null;
   get session() {
-    this.supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(({ data }) => {
       this._session = data.session;
     });
 
@@ -140,11 +140,7 @@ export class AuthService {
   }
 
   profile(user: IUser) {
-    return this.supabase
-      .from('profiles')
-      .select(`*`)
-      .eq('id', user.id)
-      .single();
+    return supabase.from('profiles').select(`*`).eq('id', user.id).single();
   }
 
   updateProfile(profile: IUser) {
@@ -153,7 +149,7 @@ export class AuthService {
       updated_at: new Date(),
     };
 
-    return this.supabase.from('profiles').upsert(update);
+    return supabase.from('profiles').upsert(update);
   }
 
   deleteUserFromSupabase() {
@@ -163,7 +159,7 @@ export class AuthService {
   authChanges(
     callback: (event: AuthChangeEvent, session: Session | null) => void,
   ) {
-    return this.supabase.auth.onAuthStateChange(callback);
+    return supabase.auth.onAuthStateChange(callback);
   }
 
   async signIn(email: string, password: string) {
@@ -182,7 +178,7 @@ export class AuthService {
   }
 
   logout() {
-    return this.supabase.auth.signOut();
+    return supabase.auth.signOut();
   }
 
   isEmailExist(users: IUser[], email: string): boolean {
@@ -197,13 +193,9 @@ export class AuthService {
   }
 
   loginUser(user: IUser) {
-    return this.userService.users$.pipe(
-      map((users) => {
-        return users.length > 0
-          ? users?.find((u) => u.email === user.email) || null
-          : null;
-      }),
-    );
+    return this.users.length > 0
+      ? this.users?.find((u) => u.email === user.email) || null
+      : null;
   }
 
   checkValidity(recipe: IRecipe, user: IUser): boolean {

@@ -169,6 +169,14 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     return new Date(date);
   }
 
+   getRecipeImageSupabaseLink(path?: string) {
+  if(path)
+    return supabase.storage
+      .from('recipes')
+        .getPublicUrl(path).data.publicUrl;
+    else return 'assets/images/svg/pancakes.png';
+  }
+
   private ingredientsInit(): void {
     this.ingredientService.ingredients$
       .pipe(takeUntil(this.destroyed$))
@@ -526,11 +534,11 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
             approvedRecipe,
             this.notifyService,
           );
-            this.sendNotifyWithPermission(
-             notifyForFollower,
-             follower,
-             'new-recipe-from-following',
-           );
+          this.sendNotifyWithPermission(
+            notifyForFollower,
+            follower,
+            'new-recipe-from-following',
+          );
         });
       }
     }
@@ -578,13 +586,14 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     }
   }
   async approveRecipe() {
-    if (this.actionRecipe) await this.adminService.approveRecipe(this.actionRecipe);
+    if (this.actionRecipe)
+      await this.adminService.approveRecipe(this.actionRecipe);
     this.actionRecipe &&
       this.userService.getPermission(
         'hide-author',
         this.getUser(this.actionRecipe.authorId),
       ) &&
-     await this.sendNotifiesAfterPublishingRecipe(this.actionRecipe);
+      (await this.sendNotifiesAfterPublishingRecipe(this.actionRecipe));
   }
   private dismissRecipe(): void {
     if (this.actionRecipe) {
@@ -751,9 +760,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     if (permission) {
       if (this.userService.getPermission(permission, user))
         await this.notifyService.sendNotification(notify, user);
-
-    }
-    else {
+    } else {
       await this.notifyService.sendNotification(notify, user);
     }
   }

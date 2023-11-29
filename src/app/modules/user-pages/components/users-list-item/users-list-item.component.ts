@@ -36,7 +36,6 @@ export class UsersListItemComponent implements OnInit, OnDestroy {
   emoji: EmojiData | null = null;
   noAvatar = 'assets/images/userpic.png';
   avatar: string = '';
-  supabase = supabase;
   noAccessModalShow = false;
 
   private destroyed$: Subject<void> = new Subject<void>();
@@ -111,7 +110,7 @@ export class UsersListItemComponent implements OnInit, OnDestroy {
   }
 
   downloadUserpicFromSupabase(path: string) {
-    this.avatar = this.supabase.storage
+    this.avatar = supabase.storage
       .from('userpics')
       .getPublicUrl(path).data.publicUrl;
   }

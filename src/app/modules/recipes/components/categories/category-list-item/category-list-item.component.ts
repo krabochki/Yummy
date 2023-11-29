@@ -41,7 +41,6 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
 
 
   protected currentUser: IUser = { ...nullUser };
-  supabase = supabase;
 
   protected destroyed$: Subject<void> = new Subject<void>();
 
@@ -85,12 +84,12 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
 
   downloadUserpicFromSupabase(path: string) {
     if (this.category.categories) {
-              this.picture = this.supabase.storage
+              this.picture = supabase.storage
           .from('sections')
           .getPublicUrl(path).data.publicUrl;
 
     } else {
-        this.picture = this.supabase.storage
+        this.picture = supabase.storage
           .from('categories')
           .getPublicUrl(path).data.publicUrl;
     }
@@ -229,11 +228,11 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
   }
 
   async deleteOldCategoryPic(path: string) {
-    await this.supabase.storage.from('categories').remove([path]);
+    await supabase.storage.from('categories').remove([path]);
   }
 
   async deleteOldSectionPic(path: string) {
-    await this.supabase.storage.from('sections').remove([path]);
+    await supabase.storage.from('sections').remove([path]);
   }
 
   ngOnDestroy(): void {

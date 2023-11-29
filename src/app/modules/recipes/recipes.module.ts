@@ -38,7 +38,6 @@ import { IngredientsHorizontalListComponent } from './components/ingredients/ing
 import { IngredientListItemComponent } from './components/ingredients/ingredient-list-item/ingredient-list-item.component';
 import { IngredientCreateComponent } from './components/ingredients/ingredient-create/ingredient-create.component';
 import { GroupCreatingComponent } from './components/ingredients/group-creating/group-creating.component';
-import { ImageUploadComponent } from './image-upload/image-upload.component';
 
 @NgModule({
   declarations: [
@@ -66,8 +65,8 @@ import { ImageUploadComponent } from './image-upload/image-upload.component';
     IngredientsHorizontalListComponent,
     IngredientListItemComponent,
     GroupCreatingComponent,
-    IngredientCreateComponent,
-    ImageUploadComponent
+    IngredientCreateComponent
+    
   ],
   imports: [
     CommonModule,

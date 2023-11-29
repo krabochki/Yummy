@@ -87,7 +87,6 @@ export class PasswordResetComponent implements OnInit {
       ? 'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'
       : '';
   }
-  supabase = supabase;
 
   async passwordReset(): Promise<void> {
     if (this.form.valid) {

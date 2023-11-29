@@ -123,11 +123,10 @@ export class RecipeService {
     return recipesForDeleting;
   }
 
-  supabase = supabase;
 
   getRecipesFromSupabase() {
     
-    return this.supabase
+    return supabase
       .from('recipes')
       .select('*')
       .then((response) => {
@@ -174,7 +173,7 @@ export class RecipeService {
   }
 
   getMaxRecipeId() {
-    return this.supabase
+    return supabase
       .from('recipes')
       .select('id')
       .order('id', { ascending: false })
@@ -219,13 +218,13 @@ export class RecipeService {
   }
 
   removeRecipeFunction(recipeId: number) {
-    return this.supabase.from('recipes').delete().eq('id', recipeId);
+    return supabase.from('recipes').delete().eq('id', recipeId);
   }
 
   updateRecipeFunction(recipe: IRecipe) {
     const { id, ...updateData } = recipe;
 
-    return this.supabase
+    return supabase
       .from('recipes')
       .update({
         mainimage: recipe.mainImage,

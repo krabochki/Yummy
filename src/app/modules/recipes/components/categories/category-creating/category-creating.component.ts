@@ -331,7 +331,6 @@ export class CategoryCreatingComponent
 
   supabaseFilepath = '';
   awaitModalShow = false;
-  supabase = supabase;
 
   private setUserpicFilenameForSupabase(): string {
     const file = this.form.get('image')?.value;
@@ -344,7 +343,7 @@ export class CategoryCreatingComponent
     try {
       const file = this.form.get('image')?.value;
       const filePath = this.supabaseFilepath;
-      await this.supabase.storage.from('categories').upload(filePath, file);
+      await supabase.storage.from('categories').upload(filePath, file);
       await this.categoryService.addCategoryToSupabase(category);
       this.successModal = true;
     } catch (error) {

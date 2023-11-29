@@ -40,13 +40,7 @@ import {
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { NotificationService } from '../../services/notification.service';
 import { INotification } from '../../models/notifications';
-import { createClient } from '@supabase/supabase-js';
-import {
-  supabaseUrl,
-  supabaseKey,
-  supabase,
-} from 'src/app/modules/controls/image/supabase-data';
-
+import { supabase } from 'src/app/modules/controls/image/supabase-data';
 @Component({
   selector: 'app-user-account-edit',
   templateUrl: './user-account-edit.component.html',
@@ -61,7 +55,6 @@ export class UserAccountEditComponent
   @Output() closeEmitter = new EventEmitter<boolean>();
   @ViewChild('scrollContainer', { static: false }) scrollContainer?: ElementRef;
 
-  private supabase = supabase;
   private supabaseFilepath: string = '';
 
   viewedSteps: number[] = [];
@@ -434,7 +427,7 @@ export class UserAccountEditComponent
   }
 
   downloadUserpicFromSupabase(path: string) {
-    this.showedUserpicImage = this.supabase.storage
+    this.showedUserpicImage = supabase.storage
       .from('userpics')
       .getPublicUrl(path).data.publicUrl;
   }
@@ -446,14 +439,10 @@ export class UserAccountEditComponent
       const file = this.form.get('userpic')?.value;
       if (file) {
         const filePath = this.supabaseFilepath;
-        await this.supabase.storage.from('userpics').upload(filePath, file);
+        await supabase.storage.from('userpics').upload(filePath, file);
       }
       await this.updateSupabaseUser(this.newUser);
-      this.authService.loginUser(this.newUser).subscribe((user) => {
-        if (user) {
-          this.authService.setCurrentUser(user);
-        }
-      });
+      
       this.successModal = true;
     } catch (error) {
       if (error instanceof Error) {
@@ -465,6 +454,6 @@ export class UserAccountEditComponent
     }
   }
   async deleteOldUserpic(path: string) {
-    await this.supabase.storage.from('userpics').remove([path]);
+    await supabase.storage.from('userpics').remove([path]);
   }
 }

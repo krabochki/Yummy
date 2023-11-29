@@ -411,7 +411,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
   }
 
   loadPictureToSupabase(path: string, file: string) {
-    return this.supabase.storage.from('recipes').upload(path, file);
+    return supabase.storage.from('recipes').upload(path, file);
   }
 
   f(field: string): FormArray {
@@ -711,7 +711,6 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       this.postRecipeToSupabase(recipeData);
     }
   }
-  supabase = supabase;
   async postRecipeToSupabase(recipe: IRecipe) {
     this.loading = true;
     this.cd.markForCheck();
@@ -912,7 +911,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
   }
 
   downloadMainpicFromSupabase(path: string) {
-    this.mainImage = this.supabase.storage
+    this.mainImage = supabase.storage
       .from('recipes')
       .getPublicUrl(path).data.publicUrl;
   }

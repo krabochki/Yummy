@@ -36,7 +36,6 @@ export class CommentComponent implements OnInit, OnDestroy {
   public currentUser: IUser = { ...nullUser };
   avatar = '';
   noAvatar = 'assets/images/userpic.png';
-  private supabase = supabase;
   public author: IUser = { ...nullUser };
   public copyState = false; //скопирован ли текст комментария
   protected deleteCommentModalShow: boolean = false;
@@ -64,7 +63,7 @@ export class CommentComponent implements OnInit, OnDestroy {
   ) {}
 
   downloadUserpicFromSupabase(path: string) {
-    this.avatar = this.supabase.storage
+    this.avatar = supabase.storage
       .from('userpics')
       .getPublicUrl(path).data.publicUrl;
   }

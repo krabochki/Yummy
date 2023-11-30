@@ -17,6 +17,7 @@ import { modal } from 'src/tools/animations';
 import {
   customPatternValidator,
   emailExistsValidator,
+  policyValidator,
 } from 'src/tools/validators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
@@ -94,8 +95,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.usersInit();
-    
+
     this.form = this.fb.group({
+      policy: [false, [policyValidator]],
       email: [
         '',
         [
@@ -139,6 +141,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
         registrationDate: getCurrentDate(),
         id: maxId + 1,
       };
+      this.createUser = newUser;
 
       this.loadingModal = true;
       const isEmailTaken = this.users.some(
@@ -170,6 +173,14 @@ export class RegisterComponent implements OnInit, OnDestroy {
         await this.addPlanToPlans(this.maxUserId + 1);
         await this.authService.logout();
         this.authService.logoutUser();
+          const notify = this.notifyService.buildNotification(
+            'Добро пожаловать',
+            `Добро пожаловать в Yummy, @${this.createUser.username} 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!`,
+            'success',
+            'born',
+            '',
+          );
+          await this.notifyService.sendNotification(notify, this.createUser);
         this.successModal = true;
       }
       this.loadingModal = false;
@@ -195,18 +206,9 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.confirmModal = false;
   }
   async handleSuccessModal() {
-
-    const notify = this.notifyService.buildNotification(
-      'Добро пожаловать',
-      `Добро пожаловать в Yummy, @${this.createUser.username} 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!`,
-      'success',
-      'born',
-      '',
-    );
-    await this.notifyService.sendNotification(notify, this.createUser);
+  
     this.successModal = false;
-        this.router.navigate(['/']);
-
+    this.router.navigate(['/']);
   }
 
   private usersInit(): void {

@@ -81,6 +81,7 @@ export class AuthService {
   loadCurrentUserData() {
     this.userService.users$.subscribe(() =>
       supabase.auth.onAuthStateChange((event, session) => {
+        console.log(session)
         const user = { ...session?.user };
         if (user && user.email) {
           const iuser: IUser = {

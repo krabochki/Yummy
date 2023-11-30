@@ -6,7 +6,7 @@
         <div>
             <a class="label" routerLink="/">Yummy</a>
                             <a class="top-link" routerLink="/about">Узнать больше о сайте</a>
-                            <a class="top-link disabled" >Пользовательское соглашение</a>
+                            <a class="top-link" routerLink="/user-policy">Пользовательское соглашение</a>
 
             <p class="quote">«Повара — это художники, рабочим материалом для которых является еда.
                 Кулинария — это искусство использования цветов, вкусов, запахов и форм для создания изысканного блюда».
@@ -16,9 +16,9 @@
             <div class="left">
                 <p>Рецепты</p>
                 <ul >
-                    <a (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" routerLink="/recipes/yours">Ваши рецепты</a>
+                    <a (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" [routerLink]="currentUser.id===0?null:'/recipes/yours'">Ваши рецепты</a>
                     <a  routerLink="/recipes">Все рецепты</a>
-                    <a (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" routerLink="/recipes/favorite">Закладки</a>
+                    <a (click)="linkClick()" [ngClass]="{'disabling':currentUser.id===0}" [routerLink]="currentUser.id===0?null:'/recipes/favorite'">Закладки</a>
                     <a routerLink="/ingredients">Ингредиенты</a>
                     <a routerLink="/match">Подбор рецептов</a>
 

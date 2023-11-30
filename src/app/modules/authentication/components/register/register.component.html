@@ -2,8 +2,8 @@
   <div class="content">
     <h1 class="label">Регистрация</h1>
     <p class="tagline">
-      Введи свою почту, а также придумай имя пользователя и пароль. Если ты
-      забудешь пароль, ты всегда сможешь восстановить его.
+      Введите вашу почту, а также придумайте имя пользователя и пароль. Если вы
+      забудете пароль, вы всегда сможете восстановить его.
     </p>
 
     <form [formGroup]="form">
@@ -46,6 +46,16 @@
         required
         [error]="passwordNotValidError"
       ></app-usual-input>
+      <button class="user-policy" >
+        <button class="checkbox" (click)="this.form.get('policy')?.setValue(!this.form.get('policy')?.value)">
+            <svg-icon *ngIf="this.form.get('policy')?.value===true" class="checkbox-icon" [applyClass]="true"
+              [src]="'/assets/images/svg/checkbox.svg'"></svg-icon>
+        </button>
+        <p>
+          Я согласен с правилами
+          <a routerLink="/user-policy">пользовательского соглашения</a>
+        </p>
+      </button>
     </form>
 
     <hr />

@@ -23,6 +23,15 @@ export function usernameExistsValidator(users: IUser[], user:IUser) {
     };
 }
   
+export const policyValidator: ValidatorFn = (
+  control: AbstractControl,
+): ValidationErrors | null => {
+  const policyValue = control.value;
+
+  // Если поле "policy" не равно true, возвращаем ошибку
+  return policyValue === true ? null : { invalidPolicy: true };
+};
+
 
  
  export function customPatternValidator(pattern: RegExp): ValidatorFn {

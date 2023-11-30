@@ -78,10 +78,29 @@ export class AuthService {
     }
   }
 
-  loadCurrentUserData() {
+  async checkUser() {
+    const session = await supabase.auth.getSession();
+    console.log(session.data.session)
+     const user = { ...session.data.session?.user };
+     if (user && user.email) {
+       const iuser: IUser = {
+         ...nullUser,
+         email: user.email,
+       };
+
+       const loginUser = this.loginUser({ ...iuser });
+       if (loginUser && loginUser.email === user.email) {
+         this.currentUserSubject.next(loginUser);
+       } else {
+         this.currentUserSubject.next({ ...nullUser });
+       }
+     }
+  }
+  async loadCurrentUserData() {
+    await this.checkUser();
+
     this.userService.users$.subscribe(() =>
       supabase.auth.onAuthStateChange((event, session) => {
-        console.log(session)
         const user = { ...session?.user };
         if (user && user.email) {
           const iuser: IUser = {

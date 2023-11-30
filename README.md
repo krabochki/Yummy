@@ -146,7 +146,7 @@
     ·
     <a href="https://t.me/krabochki">@Telegram</a>   
     ·
-    <a href="https://vk.com/nanananana_come_on">@Telegram</a>
+    <a href="https://vk.com/nanananana_come_on">@ВКонтакте</a>
   </p>
 
 <p align="right">(<a href="#readme-top">наверх</a>)</p>

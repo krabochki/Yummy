@@ -40,3 +40,6 @@ testem.log
 .DS_Store
 Thumbs.db
 desktop.ini
+
+#top secret 
+/src/app/modules/controls/image/top-secret.ts

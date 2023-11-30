@@ -78,46 +78,50 @@ export class AuthService {
     }
   }
 
-  async checkUser() {
-    const session = await supabase.auth.getSession();
-    console.log(session.data.session)
-     const user = { ...session.data.session?.user };
-     if (user && user.email) {
-       const iuser: IUser = {
-         ...nullUser,
-         email: user.email,
-       };
+  
+  
+   loadCurrentUserData() {
+     supabase.auth.onAuthStateChange((event, session) => {
+       if (event === 'SIGNED_IN')
+         
+         if (session?.user.email)
+         {
+                    console.log('auth change');
 
-       const loginUser = this.loginUser({ ...iuser });
-       if (loginUser && loginUser.email === user.email) {
-         this.currentUserSubject.next(loginUser);
-       } else {
-         this.currentUserSubject.next({ ...nullUser });
-       }
+           const iuser: IUser = {
+             ...nullUser,
+             email: session?.user.email,
+           };
+
+           const loginUser = this.loginUser({ ...iuser });
+           if (loginUser && loginUser.email === session?.user.email) {
+             this.currentUserSubject.next(loginUser);
+           } else {
+             this.currentUserSubject.next({ ...nullUser });
+           }
      }
-  }
-  async loadCurrentUserData() {
-    await this.checkUser();
+        
+       })
+     this.userService.users$.subscribe(() =>
+       supabase.auth.onAuthStateChange((event, session) => {
+         console.log('auth change')
+         const user = { ...session?.user };
+         if (user && user.email) {
+           const iuser: IUser = {
+             ...nullUser,
+             email: user.email,
+           };
 
-    this.userService.users$.subscribe(() =>
-      supabase.auth.onAuthStateChange((event, session) => {
-        const user = { ...session?.user };
-        if (user && user.email) {
-          const iuser: IUser = {
-            ...nullUser,
-            email: user.email,
-          };
-
-          const loginUser = this.loginUser({ ...iuser });
-          if (loginUser && loginUser.email === user.email) {
-            this.currentUserSubject.next(loginUser);
-          } else {
-            this.currentUserSubject.next({ ...nullUser });
-          }
-        }
-      }),
-    );
-  }
+           const loginUser = this.loginUser({ ...iuser });
+           if (loginUser && loginUser.email === user.email) {
+             this.currentUserSubject.next(loginUser);
+           } else {
+             this.currentUserSubject.next({ ...nullUser });
+           }
+         }
+       }),
+     );
+   }
 
   async setCurrentUser(user: IUser) {
     supabase.auth.getSession().then(({ data }) => {

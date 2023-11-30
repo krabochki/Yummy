@@ -414,8 +414,12 @@ button.action{
     }
   }
   .main-wrap .content .blocks {
-    height: calc(100vh - 6rem - 5em - 6.5em);
+    height: calc(100vh - 6rem - 5em - 4.5em);
     overflow: scroll;
+    
+    &::-webkit-scrollbar {
+        display: none;
+      }
   }
 
   .close {

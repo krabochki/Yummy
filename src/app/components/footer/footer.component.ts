@@ -1,5 +1,5 @@
 import { trigger } from '@angular/animations';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
@@ -11,6 +11,7 @@ import { modal } from 'src/tools/animations';
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
   animations: [trigger('modal', modal())],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FooterComponent implements OnInit, OnDestroy {
   currentUser: IUser = { ...nullUser };

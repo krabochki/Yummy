@@ -136,13 +136,7 @@ p {
   }
 }
 
-button.disabled,.follow-btn.follow-button.disabled {
-  background-color: color-mix(in srgb, var(--scroll-thumb) 90%, var(--color-foreground) 10%)  ;
-  cursor: default;
-   &:after{
-    display: none;
-   }
-}
+
 app-modal{
   position: fixed;
   z-index: 10;

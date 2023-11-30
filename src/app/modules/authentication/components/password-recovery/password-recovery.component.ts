@@ -84,7 +84,7 @@ export class PasswordRecoveryComponent implements OnInit, OnDestroy {
         } else {
           await supabase.auth.resetPasswordForEmail(resetUser.email, {
             redirectTo:
-              'https://yummy-kitchen.vercel.app/#/password-reset',
+              'https://yummy-kitchen.vercel.app/password-reset',
           });
           this.successModal = true;
           this.cd.markForCheck();

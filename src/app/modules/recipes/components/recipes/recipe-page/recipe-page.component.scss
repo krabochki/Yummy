@@ -262,7 +262,7 @@ h2 {
 
     .images{
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: repeat(3,1fr);
       column-gap: 2em;
 
       .i-image{
@@ -379,6 +379,8 @@ h2 {
 
 h1 {
   font-size: var(--font-xxl);
+  line-height: 1;
+  margin: 0.25em 0;
   font-family: var(--font-family-accent);
 }
 .header {
@@ -779,8 +781,8 @@ app-social-button,.social{
 
   .main-photo {
    
-        width: 40vw;
-        height: 40vw;
+        width: 45vw;
+        height: 45vw;
     margin-top: 2em;
   }
   .center {
@@ -928,6 +930,34 @@ hr {
   background-color: var(--color-foreground-unactive);
 }
 
+@media(max-width:768px) {
+  .instructions {
+
+
+
+    .instruction {
+      row-gap: 0.75em;
+
+      .images {
+        grid-template-columns: repeat(2, 1fr);
+        column-gap: 2em;
+        row-gap: 1em;
+
+        .i-image {
+          border-radius: 1em;
+          background-color: white;
+          height: 12em;
+          width: 100%;
+          background-position: center;
+          background-size: cover;
+        }
+      }
+
+
+    }
+  }
+}
+
 .ads-under-cont {
   h2 {
     margin-bottom: 0.75em;
@@ -1011,4 +1041,32 @@ hr {
     row-gap: 0.5em;
     width: auto;
   }
+
+        .instructions {
+    
+    
+    
+          .instruction {
+            row-gap: 0.75em;
+    
+            .images {
+              grid-template-columns: repeat(1, 1fr);
+              column-gap: 2em;
+              row-gap: 1em;
+    
+              .i-image {
+                border-radius: 1em;
+                background-color: white;
+                height: 14em;
+                width: 100%;
+                background-position: center;
+                background-size: cover;
+              }
+            }
+    
+    
+          }
+        }
 }
+
+

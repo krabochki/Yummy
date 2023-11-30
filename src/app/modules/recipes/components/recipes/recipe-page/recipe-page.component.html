@@ -239,7 +239,7 @@
         <button *ngIf="recipe.status==='public' || author.id===currentUser.id"
           class="basket-open-button noselect"
           [ngClass]="{ 'basket-mode': basketMode }"
-          (click)="basketMode = !basketMode"
+          (click)="currentUser.id>0?basketMode = !basketMode:noAccessModalShow=true"
         >
           <svg-icon
             class="basket-icon"
@@ -461,7 +461,7 @@
             <app-button 
               [style]="'filled'"
               [rounded]="true"
-              [disabled]="this.currentUser.id > 0 && commentForm.valid "
+              [disabled]="commentForm.valid "
               [color]="'sec'"
               (click)="
                 (this.currentUser.id>0&& commentForm.valid) ? commentModalShow=true : (this.currentUser.id===0?noAccessModalShow = true:null)

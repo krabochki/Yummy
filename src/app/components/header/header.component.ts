@@ -1,5 +1,6 @@
 import { trigger } from '@angular/animations';
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   DoCheck,
@@ -39,6 +40,7 @@ import { CategoryService } from 'src/app/modules/recipes/services/category.servi
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
+  changeDetection:ChangeDetectionStrategy.OnPush,
   animations: [
     trigger('modal', modal()),
     trigger('notifies', notifies()),
@@ -515,7 +517,8 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   }
 
   linkClick(link: string): void {
-    if (this.currentUser.id === 0) {
+  
+    if (link!=='/greetings' && this.currentUser.id === 0) {
       this.noAccessModalShow = true;
     } else {
       this.router.navigateByUrl(link);

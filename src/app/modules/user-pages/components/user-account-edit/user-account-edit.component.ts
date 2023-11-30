@@ -351,8 +351,9 @@ export class UserAccountEditComponent
 
     await this.updateUserInSupabase();
 
-    if (this.editableUser.avatarUrl)
+    if (this.editableUser.avatarUrl && this.newUser.avatarUrl !== this.editableUser.avatarUrl) {
       await this.deleteOldUserpic(this.editableUser.avatarUrl);
+    }
   }
 
   async updateSupabaseUser(user: IUser) {

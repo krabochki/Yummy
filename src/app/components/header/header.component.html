@@ -54,7 +54,7 @@
 
   <ng-container *ngIf="mobile">
     <div>
-      <div [class.unactive]="!currentUser.id" class="mobile-buttons-panel">
+      <div  class="mobile-buttons-panel">
         <a class="admin-panel" [ngClass]="{
             admin: currentUser.role === 'admin',
             moder: currentUser.role === 'moderator'
@@ -65,11 +65,12 @@
           ">
           <svg-icon class="admin-svg" [src]="svgPath('thick-star')" [class]="'svg'"></svg-icon>
         </a>
-        <a class="acc" (click)="linkClick('/cooks/list/' + currentUser.id)">
-          <svg-icon class="header-top-svg" [applyClass]="true" [src]="svgPath('header/account')" />
+        <a class="acc" [style]="currentUser.id>0?'':'margin:0'" (click)="currentUser.id>0?linkClick('/cooks/list/' + currentUser.id):linkClick('/greetings')">
+          <svg-icon *ngIf="currentUser.id>0" class="header-top-svg" [applyClass]="true" [src]="svgPath('header/account')" />
+          <svg-icon style="scale:0.86" *ngIf="currentUser.id===0" class="header-top-svg" [applyClass]="true" [src]="svgPath('header/login')" />
         </a>
 
-        <a (click)="
+        <a *ngIf="currentUser.id>0" (click)="
             openNotifies()
           ">
           <div *ngIf="currentUser.id > 0 && notificationCount > 0" class="count">
@@ -77,7 +78,7 @@
           </div>
           <svg-icon class="header-top-svg" [applyClass]="true" [src]="svgPath('header/notification')" />
         </a>
-        <a (click)="linkClick('plan')">
+        <a *ngIf="currentUser.id>0" (click)="linkClick('plan/calendar')">
           <svg-icon class="header-top-svg" [applyClass]="true" [src]="svgPath('header/calendar')" />
         </a>
       </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { RecipeService } from './modules/recipes/services/recipe.service';
 import { map } from 'rxjs';
 import { supabase } from './modules/controls/image/supabase-data';
@@ -7,12 +7,13 @@ import { CategoryService } from './modules/recipes/services/category.service';
 import { SectionService } from './modules/recipes/services/section.service';
 import { IngredientService } from './modules/recipes/services/ingredient.service';
 import { PlanService } from './modules/planning/services/plan-service';
-import { AuthService } from './modules/authentication/services/auth.service';
+
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
   loaded = false;
@@ -24,9 +25,9 @@ export class AppComponent implements OnInit {
     private userService: UserService,
     private categoryService: CategoryService,
     private planService: PlanService,
-    private authService: AuthService,
   ) {
-    const channel = supabase
+ 
+    supabase
       .channel('db-changes')
       .on(
         'postgres_changes',
@@ -179,8 +180,6 @@ export class AppComponent implements OnInit {
       .subscribe();
   }
 
-
-
   checkIfLoaded() {
     if (
       ((this.recipeService.recipes$.pipe(map((recipes) => recipes.length > 0)),
@@ -203,8 +202,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-  
-
     const favicon = document.querySelector('#favicon');
 
     if (localStorage.getItem('theme') === 'dark') {

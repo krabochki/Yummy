@@ -21,7 +21,7 @@ import { UserPagesModule } from './modules/user-pages/user-pages.module';
 import { PlanService } from './modules/planning/services/plan-service';
 import { AuthService } from './modules/authentication/services/auth.service';
 import { IngredientService } from './modules/recipes/services/ingredient.service';
-import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+import { LocationStrategy, PathLocationStrategy } from '@angular/common';
 
 export function initializeSections(sectionSerivce: SectionService) {
   return () => sectionSerivce.loadSectionData();
@@ -53,17 +53,17 @@ export function initializeIngredientsGroupsData(ingredientService: IngredientSer
 @NgModule({
   declarations: [AppComponent, HeaderComponent, FooterComponent],
   imports: [
-    BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
     RecipesModule,
     ControlsModule,
+    BrowserModule,
     UserPagesModule,
     AngularSvgIconModule.forRoot(),
   ],
-  providers: [      { provide: LocationStrategy, useClass: HashLocationStrategy },
-
+  providers: [
+    { provide: LocationStrategy, useClass: PathLocationStrategy },
 
     UserService,
     {

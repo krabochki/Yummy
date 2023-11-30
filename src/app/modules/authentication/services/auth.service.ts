@@ -120,7 +120,7 @@ export class AuthService {
       password: user.password,
 
       options: {
-        emailRedirectTo: 'https://yummy-kitchen.vercel.app/welcome',
+        emailRedirectTo: 'https://yummy-kitchen.vercel.app/#/welcome',
       },
     });
   }

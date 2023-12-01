@@ -3,7 +3,6 @@ import { IUser, PermissionContext } from '../models/users';
 import {
   BehaviorSubject,
 } from 'rxjs';
-import { usersUrl } from 'src/tools/source';
 import { allPunctuationMarks, brackets } from 'src/tools/regex';
 import { supabase } from '../../controls/image/supabase-data';
 import { getCurrentDate } from 'src/tools/common';
@@ -14,7 +13,6 @@ import { getCurrentDate } from 'src/tools/common';
 export class UserService {
   private usersSubject = new BehaviorSubject<IUser[]>([]);
   users$ = this.usersSubject.asObservable();
-  url: string = usersUrl;
   
 
   getMaxUserId() {

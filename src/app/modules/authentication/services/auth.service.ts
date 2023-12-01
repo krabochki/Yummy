@@ -3,7 +3,6 @@ import { IUser, nullUser } from '../../user-pages/models/users';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { UserService } from '../../user-pages/services/user.service';
 import { IRecipe } from '../../recipes/models/recipes';
-import { usersUrl } from 'src/tools/source';
 import { IIngredient } from '../../recipes/models/ingredients';
 import { supabase, supabaseAdmin } from '../../controls/image/supabase-data';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
@@ -23,8 +22,6 @@ export class AuthService {
 
   users: IUser[] = [];
   uid = '';
-
-  usersUrl = usersUrl;
 
   constructor(
     private userService: UserService,

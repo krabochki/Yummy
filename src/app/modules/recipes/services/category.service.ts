@@ -2,7 +2,6 @@
 import { Injectable } from '@angular/core';
 import { ICategory, ISection } from '../models/categories';
 import { BehaviorSubject } from 'rxjs';
-import { categoriesUrl } from 'src/tools/source';
 import { IRecipe } from '../models/recipes';
 import { supabase } from '../../controls/image/supabase-data';
 
@@ -14,7 +13,6 @@ interface CategoryCounts {
   providedIn: 'root',
 })
 export class CategoryService {
-  urlCategories: string = categoriesUrl;
 
   private categoriesSubject = new BehaviorSubject<ICategory[]>([]);
   categories$ = this.categoriesSubject.asObservable();

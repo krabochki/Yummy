@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { IRecipe, IRecipeStatistics } from '../models/recipes';
 import { BehaviorSubject } from 'rxjs';
-import { recipesUrl } from 'src/tools/source';
 import { getCurrentDate } from 'src/tools/common';
 import { IPlan } from '../../planning/models/plan';
 import { IUser } from '../../user-pages/models/users';
@@ -16,8 +15,6 @@ import { supabase } from '../../controls/image/supabase-data';
 export class RecipeService {
   recipesSubject = new BehaviorSubject<IRecipe[]>([]);
   recipes$ = this.recipesSubject.asObservable();
-
-  url: string = recipesUrl;
 
   constructor(
     private http: HttpClient,

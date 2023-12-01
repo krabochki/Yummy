@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ICategory, ISection, nullSection } from '../models/categories';
 import { BehaviorSubject } from 'rxjs';
-import { sectionsUrl } from 'src/tools/source';
 import { IRecipe } from '../models/recipes';
 import { supabase } from '../../controls/image/supabase-data';
 
@@ -9,7 +8,6 @@ import { supabase } from '../../controls/image/supabase-data';
   providedIn: 'root',
 })
 export class SectionService {
-  urlSections: string = sectionsUrl;
 
   sectionsSubject = new BehaviorSubject<ISection[]>([]);
   sections$ = this.sectionsSubject.asObservable();

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
-import { ingredientsGroupsUrl, ingredientsUrl } from 'src/tools/source';
 import { IRecipe } from '../models/recipes';
 import {
   IIngredient,
@@ -16,8 +15,6 @@ import { supabase } from '../../controls/image/supabase-data';
   providedIn: 'root',
 })
 export class IngredientService {
-  urlIngredients: string = ingredientsUrl;
-  urlIngredientsGroups: string = ingredientsGroupsUrl;
 
   ingredientSubject = new BehaviorSubject<IIngredient[]>([]);
   ingredients$ = this.ingredientSubject.asObservable();

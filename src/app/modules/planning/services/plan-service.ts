@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { IPlan, nullPlan } from '../models/plan';
 import { HttpClient } from '@angular/common/http';
-import { plansUrl } from 'src/tools/source';
 import { IUser } from '../../user-pages/models/users';
 import { IRecipe } from '../../recipes/models/recipes';
 import { NotificationService } from '../../user-pages/services/notification.service';
@@ -13,7 +12,6 @@ import { supabase } from '../../controls/image/supabase-data';
   providedIn: 'root',
 })
 export class PlanService {
-  private url = plansUrl;
 
   planSubject = new BehaviorSubject<IPlan[]>([]);
   plans$ = this.planSubject.asObservable();

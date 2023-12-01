@@ -62,6 +62,7 @@ export function initializeIngredientsGroupsData(ingredientService: IngredientSer
     AngularSvgIconModule.forRoot(),
   ],
   providers: [
+   { provide: LocationStrategy, useClass: HashLocationStrategy },
 
     UserService,
     {

@@ -24,6 +24,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { NotificationService } from '../../services/notification.service';
 import { INotification } from '../../models/notifications';
 import { supabase } from 'src/app/modules/controls/image/supabase-data';
+import { modal } from 'src/tools/animations';
 
 @Component({
   selector: 'app-followers-and-following',
@@ -31,6 +32,7 @@ import { supabase } from 'src/app/modules/controls/image/supabase-data';
   styleUrls: ['./followers-and-following.component.scss'],
   animations: [
     trigger('search', widthAnim()),
+    trigger('modal', modal()),
 
     trigger('magnifier', [
       state(
@@ -101,8 +103,8 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
 
   getUserpic(user: IUser) {
     if (user.avatarUrl) {
-      return supabase.storage.from('userpics').getPublicUrl(user.avatarUrl)
-        .data.publicUrl;
+      return supabase.storage.from('userpics').getPublicUrl(user.avatarUrl).data
+        .publicUrl;
     } else return this.noUserpic;
   }
 
@@ -126,21 +128,25 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
       user = this.userService.addFollower(user, this.currentUser?.id);
       await this.updateUser(user);
       if (this.userService.getPermission('new-follower', user)) {
-
         const notify: INotification = this.notifyService.buildNotification(
           'Новый подписчик',
-          `Кулинар ${this.currentUser.fullName
-            ? this.currentUser.fullName
-            : '@' + this.currentUser.username
+          `Кулинар ${
+            this.currentUser.fullName
+              ? this.currentUser.fullName
+              : '@' + this.currentUser.username
           } подписался на тебя`,
           'info',
           'user',
           '/cooks/list/' + this.currentUser.id,
         );
-        await this.notifyService.sendNotification(notify, user)
-      
-      } }
+        await this.notifyService.sendNotification(notify, user);
+      }
+    } else {
+      this.noAccessModalShow = true;
+    }
   }
+
+  noAccessModalShow = false;
 
   //отписка текущего пользователя от людей в списке
   async unfollow(user: IUser) {

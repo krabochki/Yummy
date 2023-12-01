@@ -241,7 +241,6 @@
               ? unfollow()
               : follow()
           "
-          [disabled]="!(currentUser.id === 0)"
           [color]="'prim'"
           [style]="
             userService.isUserSubscriber(user, currentUser.id) || myPage

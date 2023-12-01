@@ -68,7 +68,7 @@
               <p>{{ "@" + follower.username }}</p>
             </div>
             <div class="column">
-              <app-button [disabled]="!(this.currentUser.id===0)" *ngIf="follower.id !== currentUser?.id" (click)="
+              <app-button  *ngIf="follower.id !== currentUser?.id" (click)="
                   currentUserFollowingIds.includes(follower.id)
                     ? unfollow(follower)
                     : follow(follower)
@@ -124,7 +124,7 @@
               <p>{{ "@" + follower.username }}</p>
             </div>
             <div class="column">
-              <app-button [disabled]="!(this.currentUser.id===0)" *ngIf="follower.id !== currentUser?.id" (click)="
+              <app-button *ngIf="follower.id !== currentUser?.id" (click)="
                   currentUserFollowingIds.includes(follower.id)
                     ? unfollow(follower)
                     : follow(follower)
@@ -147,3 +147,8 @@
 
 </div>
 
+
+<app-modal @modal *ngIf="noAccessModalShow" [style]="'prim'" [title]="'Доступ к функции ограничен'" [type]="'yesOrNo'"
+  (resultEmit)="noAccessModalShow=false" [buttonsText]="['Давайте', 'Не сейчас']" [description]="
+    'Взаимодействовать с кулинарами могут только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'
+  "></app-modal>

@@ -6,7 +6,10 @@
 
   fill: var(--color-foreground);
 }
-
+app-modal{
+  position: fixed;
+  z-index: 100;
+}
 .magn {
   width: 1.75em;
   height: 1.75em;

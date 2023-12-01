@@ -73,6 +73,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
       : ' ';
   }
 
+
   constructor(
     private cd: ChangeDetectorRef,
     private authService: AuthService,
@@ -83,6 +84,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private planService: PlanService,
   ) {
+
     this.titleService.setTitle('Регистрация');
     this.form = this.fb.group({});
     this.usersService.getMaxUserId().then((maxId) => {
@@ -172,8 +174,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
         await this.addPlanToPlans(this.maxUserId + 1);
         await this.authService.logout();
-        this.authService.logoutUser();
-          const notify = this.notifyService.buildNotification(
+
+        const notify = this.notifyService.buildNotification(
             'Добро пожаловать',
             `Добро пожаловать в Yummy, @${this.createUser.username} 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!`,
             'success',

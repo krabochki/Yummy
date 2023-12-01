@@ -4,7 +4,6 @@
   <h1 *ngIf="getPublicCategories(section).length>0 || filter==='popular' || filter==='sections'">{{ title }}</h1>
 
   <app-button
-    [disabled]="currentUser.id>0"
     class="add-category"
     [icon]="'add-category'"
     *ngIf="filter === 'sections'"

@@ -6,7 +6,6 @@
   <app-button 
     *ngIf="context ==='all-groups'"
     class="add-category"
-    [disabled]="currentUser.id>0"
     (click)="createIngredientButtonClick()"
     [icon]="'ingredients/create-ingredient'"
     [color]="'prim'"

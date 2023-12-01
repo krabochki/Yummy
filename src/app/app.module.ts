@@ -11,7 +11,6 @@ import { ModeratorGuard } from './modules/authentication/guards/moderator.guard'
 import { ControlsModule } from './modules/controls/controls.module';
 import { FooterComponent } from './components/footer/footer.component';
 import { AngularSvgIconModule, SvgIconComponent } from 'angular-svg-icon';
-import { RouteEventsService } from './modules/controls/route-events.service';
 import { SectionService } from './modules/recipes/services/section.service';
 import { CategoryService } from './modules/recipes/services/category.service';
 import { RecipeService } from './modules/recipes/services/recipe.service';
@@ -21,7 +20,7 @@ import { UserPagesModule } from './modules/user-pages/user-pages.module';
 import { PlanService } from './modules/planning/services/plan-service';
 import { AuthService } from './modules/authentication/services/auth.service';
 import { IngredientService } from './modules/recipes/services/ingredient.service';
-import { HashLocationStrategy, LocationStrategy, PathLocationStrategy } from '@angular/common';
+import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 
 export function initializeSections(sectionSerivce: SectionService) {
   return () => sectionSerivce.loadSectionData();
@@ -63,7 +62,6 @@ export function initializeIngredientsGroupsData(ingredientService: IngredientSer
     AngularSvgIconModule.forRoot(),
   ],
   providers: [
-    { provide: LocationStrategy, useClass: HashLocationStrategy },
 
     UserService,
     {
@@ -124,7 +122,6 @@ export function initializeIngredientsGroupsData(ingredientService: IngredientSer
     },
     AdminGuard,
     ModeratorGuard,
-    RouteEventsService,
   ],
   bootstrap: [AppComponent],
   exports: [SvgIconComponent],

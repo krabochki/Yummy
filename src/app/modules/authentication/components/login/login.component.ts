@@ -6,7 +6,7 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { passMask, loginMask } from 'src/tools/regex';
+import { passMask, loginMask, emailOrUsernameMask } from 'src/tools/regex';
 import { AuthService } from '../../services/auth.service';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
@@ -16,9 +16,7 @@ import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import {
-  customPatternValidator,
-} from 'src/tools/validators';
+import { customPatternValidator } from 'src/tools/validators';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -46,7 +44,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     return !this.form.get('login')?.hasError('loginExists')
       ? this.form.get('login')?.invalid &&
         (this.form.get('login')?.dirty || this.form.get('login')?.touched)
-        ? 'Введите корректный адрес электронной почты'
+        ? 'Введите корректный логин (электронную почту или имя пользователя)'
         : ''
       : ' ';
   }
@@ -73,7 +71,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         [
           Validators.required,
           Validators.maxLength(64),
-          customPatternValidator(loginMask),
+          customPatternValidator(emailOrUsernameMask),
         ],
       ],
       password: [
@@ -97,36 +95,37 @@ export class LoginComponent implements OnInit, OnDestroy {
         password: this.form.value.password,
       };
       try {
+        const loginUser = this.authService.loginUser(user);
         this.loadingModal = true;
-        const { error } = await this.authService.signIn(
-          user.email,
-          user.password,
-        );
 
-        if (error) {
-          switch (error.message) {
-            case 'Email not confirmed':
-              this.failInfo =
-                'Вы пока не подтвердили аккаунт после регистрации. Проверьте письмо в вашей электронной почте';
-              break;
-            case 'Invalid login credentials':
-              this.failInfo =
-                'Скорее всего, вы где-то ошиблись. Такого пользователя не найдено. Перепроверьте данные и попробуйте снова';
-              break;
-            default:
-              this.failInfo =
-                'Произошла неизвестная ошибка при регистрации. Попробуйте снова';
-          }
-
-          this.errorModal = true;
-        } else {
-          const loginUser = this.authService.loginUser(user);
-            if (loginUser) {
-              this.authService.setCurrentUser(loginUser);
-              this.router.navigateByUrl('/');
-            } else {
-              this.errorModal = true;
+        if (loginUser) {
+          const { error } = await this.authService.signIn(
+            loginUser.email,
+            user.password,
+          );
+          if (error) {
+            switch (error.message) {
+              case 'Email not confirmed':
+                this.failInfo =
+                  'Вы пока не подтвердили аккаунт после регистрации. Проверьте письмо в вашей электронной почте';
+                break;
+              case 'Invalid login credentials':
+                this.failInfo =
+                  'Скорее всего, вы где-то ошиблись. Такого пользователя не найдено. Перепроверьте данные и попробуйте снова';
+                break;
+              default:
+                this.failInfo =
+                  'Произошла неизвестная ошибка при регистрации. Попробуйте снова';
             }
+
+            this.errorModal = true;
+          } else {
+            this.authService.setCurrentUser(loginUser);
+            this.router.navigateByUrl('/');
+          }
+        } else { this.failInfo =
+          'Скорее всего, вы где-то ошиблись. Такого пользователя не найдено. Перепроверьте данные и попробуйте снова';
+          this.errorModal = true;
         }
       } catch (error) {
         if (error instanceof Error) {

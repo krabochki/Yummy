@@ -1,10 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import { IUser, nullUser } from '../../user-pages/models/users';
-import {
-  BehaviorSubject,
-  Observable,
-  throwError,
-} from 'rxjs';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { UserService } from '../../user-pages/services/user.service';
 import { IRecipe } from '../../recipes/models/recipes';
 import { usersUrl } from 'src/tools/source';
@@ -36,24 +32,24 @@ export class AuthService {
     private ngZone: NgZone,
   ) {
     this.userService.users$.subscribe((users) => (this.users = users));
-    //проверка состояния текущей сессии в реальном времени
     // supabase.auth.onAuthStateChange((event, session) => {
-    //   //   if (event === 'SIGNED_IN')
-    //   //     if (session?.user.email)
-    //   //       this.loginUser({ ...nullUser, email: session?.user.email }).subscribe(
-    //   //         (user) => {
-    //   //           if (user) {
-    //   //             this.setCurrentUser(user);
-    //   //           }
-    //   //         },
-    //   //       );
-    //   //   if (event === 'SIGNED_OUT') {
-    //   //     this.logoutUser();
-    //   //    this.ngZone.run(() => {
-    //   //    });
-    //   //   }
-    //   // })
-    // });
+    //   if (event === 'SIGNED_IN')
+    //     if (session?.user.email) {
+    //       const user = { ...session?.user };
+    //       if (user && user.email) {
+    //         const iuser: IUser = {
+    //           ...nullUser,
+    //           email: user.email,
+    //         };
+    //         const loginUser = this.loginUser({ ...iuser });
+    //         if (loginUser && loginUser.email === user.email) {
+    //           this.currentUserSubject.next(loginUser);
+    //         } else {
+    //           this.currentUserSubject.next({ ...nullUser });
+    //         }
+    //       }
+    //     }
+  
   }
 
   async passwordReset(email: string, users: IUser[]) {
@@ -67,9 +63,7 @@ export class AuthService {
       if (!finded) {
         throwError;
       } else {
-        await supabase.auth.resetPasswordForEmail(resetUser.email, {
-          redirectTo: 'https://yummy-kitchen.vercel.app/#/password-reset',
-        });
+        await supabase.auth.resetPasswordForEmail(resetUser.email, {});
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -78,30 +72,29 @@ export class AuthService {
     }
   }
 
-  
-  
-   loadCurrentUserData() {
+ async  loadCurrentUserData() {
+ 
+    this.userService.users$.subscribe(() =>
+      supabase.auth.onAuthStateChange((event, session) => {
      
-    return this.userService.users$.subscribe(() =>
-       supabase.auth.onAuthStateChange((event, session) => {
-         console.log('auth change')
-         const user = { ...session?.user };
-         if (user && user.email) {
-           const iuser: IUser = {
-             ...nullUser,
-             email: user.email,
-           };
+        
+        const user = { ...session?.user };
+        if (user && user.email) {
+          const iuser: IUser = {
+            ...nullUser,
+            email: user.email,
+          };
 
-           const loginUser = this.loginUser({ ...iuser });
-           if (loginUser && loginUser.email === user.email) {
-             this.currentUserSubject.next(loginUser);
-           } else {
-             this.currentUserSubject.next({ ...nullUser });
-           }
-         }
-       }),
-     );
-   }
+          const loginUser = this.loginUser({ ...iuser });
+          if (loginUser && loginUser.email === user.email) {
+            this.currentUserSubject.next(loginUser);
+          } else {
+            this.currentUserSubject.next({ ...nullUser });
+          }
+        }
+      }),
+    );
+  }
 
   async setCurrentUser(user: IUser) {
     supabase.auth.getSession().then(({ data }) => {
@@ -115,16 +108,18 @@ export class AuthService {
     await supabase.auth.signInWithPassword({
       email: user.email,
       password: user.password,
+      
     });
   }
 
   register(user: IUser) {
     return supabase.auth.signUp({
       email: user.email,
-      password: user.password,
 
+      password: user.password,
       options: {
-        emailRedirectTo: 'https://yummy-kitchen.vercel.app/#/welcome',
+        emailRedirectTo:
+          window.location.protocol + '//' + window.location.host + '/welcome/',
       },
     });
   }
@@ -193,7 +188,7 @@ export class AuthService {
 
   loginUser(user: IUser) {
     return this.users.length > 0
-      ? this.users?.find((u) => u.email === user.email) || null
+      ? this.users?.find((u) => u.email === user.email || u.username === user.username) || null
       : null;
   }
 

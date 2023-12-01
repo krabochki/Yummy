@@ -46,7 +46,7 @@
         required
         [error]="passwordNotValidError"
       ></app-usual-input>
-      <button class="user-policy" >
+      <div class="user-policy" >
         <button class="checkbox" (click)="this.form.get('policy')?.setValue(!this.form.get('policy')?.value)">
             <svg-icon *ngIf="this.form.get('policy')?.value===true" class="checkbox-icon" [applyClass]="true"
               [src]="'/assets/images/svg/checkbox.svg'"></svg-icon>
@@ -55,7 +55,7 @@
           Я согласен с правилами
           <a routerLink="/user-policy">пользовательского соглашения</a>
         </p>
-      </button>
+      </div>
     </form>
 
     <hr />

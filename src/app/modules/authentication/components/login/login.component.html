@@ -2,7 +2,7 @@
   <div class="content">
     <h1 class="label">Вход в аккаунт</h1>
     <p class="tagline">
-      Пожалуйста, введите вашу электронную почту и пароль, для того чтобы войти
+      Пожалуйста, введите ваш логин (электронную почту или имя пользователя) и пароль, для того чтобы войти
       в аккаунт.
     </p>
 
@@ -12,7 +12,7 @@
           [inputRequired]="true"
           [max]="64"
           formControlName="login"
-          [placeholder]="'Электронная почта'"
+          [placeholder]="'Почта или имя пользователя'"
           required
           [error]="loginNotValidError"
         ></app-usual-input>

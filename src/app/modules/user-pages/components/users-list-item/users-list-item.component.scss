@@ -6,6 +6,7 @@ p {
   display: flex;
   column-gap: 0.3em;
   align-items: center;
+
 }
 
 .geo {
@@ -155,7 +156,6 @@ app-modal{
     text-overflow: ellipsis;
     font-size: 1em;
     line-height: 1;
-    line-height: 1.2;
   }
 
   h2 {
@@ -283,7 +283,14 @@ app-modal{
 }
 
 @media (max-width: 480px) {
+.star-h1 {
+    display: flex;
+    margin: 0.25em 0;
+    flex-direction: column;
+    row-gap: 0.1em;
+    align-items: center;
 
+  }
   .wrap .userpic .emoji {
     right: -0.6em;
     bottom: -0.5em;

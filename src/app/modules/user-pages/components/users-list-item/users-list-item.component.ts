@@ -45,7 +45,7 @@ export class UsersListItemComponent implements OnInit, OnDestroy {
   userRecipesLength: number = 0;
   isFollower: boolean = false;
   currentUser: IUser = { ...nullUser };
-
+  allRecipes:IRecipe[] =[]
   constructor(
     private userService: UserService,
     private recipeService: RecipeService,
@@ -59,11 +59,8 @@ export class UsersListItemComponent implements OnInit, OnDestroy {
     this.recipeService.recipes$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((data: IRecipe[]) => {
-        const recipes: IRecipe[] = data;
-        this.userRecipesLength = this.recipeService.getRecipesByUser(
-          recipes,
-          this.user.id,
-        ).length;
+        this.allRecipes = data;
+        
       });
 
     this.authService.currentUser$
@@ -93,6 +90,10 @@ export class UsersListItemComponent implements OnInit, OnDestroy {
             if (this.user.avatarUrl) {
               this.downloadUserpicFromSupabase(this.user.avatarUrl);
             }
+            this.userRecipesLength = this.recipeService.getRecipesByUser(
+              this.allRecipes,
+              this.user.id,
+            ).length;
             this.cd.markForCheck();
           });
       });

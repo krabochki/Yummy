@@ -9,7 +9,6 @@
       <app-button
         class="add-recipe"
         [icon]="'add-recipe'"
-        [disabled]="currentUser.id>0"
         *ngIf="filter === 'my-recipes' || filter === 'all'"
         (click)="createRecipeButtonClick()"
         [color]="'prim'"

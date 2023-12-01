@@ -60,6 +60,11 @@ export class UsersPageComponent implements OnInit, OnDestroy {
       this.filter = data['filter'];
       this.setUserType(this.filter);
     });
+      this.recipeService.recipes$
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe((data) => {
+          this.recipes = data;
+        });
 
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
@@ -85,11 +90,7 @@ export class UsersPageComponent implements OnInit, OnDestroy {
             this.cd.markForCheck();
           });
       });
-    this.recipeService.recipes$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((data) => {
-        this.recipes = data;
-      });
+  
     //списки юзеров создаются только 1 раз а при подписке и тд обновляется уже сам элемент списка  а список не сортируется заново
   }
 
@@ -97,7 +98,7 @@ export class UsersPageComponent implements OnInit, OnDestroy {
     this.users = this.users.sort((a, b) => baseComparator(a.id, b.id));
     this.popularUsers = this.getPopularUsers(this.users);
     this.nearbyUsers = this.getNearbyUsers(this.users);
-    this.moreProductiveUsers = this.getMoreProductiveUsers(this.users);
+    this.moreProductiveUsers = this.getMoreProductiveUsers(this.users,this.recipes);
     this.currentUserFollowingUsers = this.getCurrentUserFollowingUsers(
       this.users,
     );
@@ -266,17 +267,17 @@ export class UsersPageComponent implements OnInit, OnDestroy {
     return this.userService.getFollowers(users, this.currentUser.id);
   }
 
-  private getMoreProductiveUsers(users: IUser[]): IUser[] {
+  private getMoreProductiveUsers(users: IUser[],recipes:IRecipe[]): IUser[] {
     const moreProductive = [...users].sort((n1, n2) => {
       if (
-        this.getUserRecipesLength(n1, this.recipes) >
-        this.getUserRecipesLength(n2, this.recipes)
+        this.getUserRecipesLength(n1, recipes) >
+        this.getUserRecipesLength(n2, recipes)
       ) {
         return -1;
       }
       if (
-        this.getUserRecipesLength(n1, this.recipes) <
-        this.getUserRecipesLength(n2, this.recipes)
+        this.getUserRecipesLength(n1, recipes) <
+        this.getUserRecipesLength(n2, recipes)
       ) {
         return 1;
       }

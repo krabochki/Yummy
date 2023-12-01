@@ -13,8 +13,6 @@ const routes: Routes = [
 
     children: [
       {
-        pathMatch: 'prefix',
-
         path: 'cooks',
         data: { filter: 'all' },
 
@@ -22,21 +20,18 @@ const routes: Routes = [
       },
 
       {
-        pathMatch: 'full',
         path: 'cooks/popular',
         data: { filter: 'popular' },
 
         component: UsersPageComponent,
       },
       {
-        pathMatch: 'full',
         path: 'cooks/managers',
         data: { filter: 'managers' },
 
         component: UsersPageComponent,
       },
       {
-        pathMatch: 'full',
         path: 'cooks/followers',
         data: { filter: 'followers' },
         canActivate: [AuthGuard],
@@ -44,7 +39,6 @@ const routes: Routes = [
         component: UsersPageComponent,
       },
       {
-        pathMatch: 'full',
         path: 'cooks/following',
         data: { filter: 'following' },
         canActivate: [AuthGuard],
@@ -52,14 +46,12 @@ const routes: Routes = [
         component: UsersPageComponent,
       },
       {
-        pathMatch: 'full',
         path: 'cooks/productive',
         data: { filter: 'productive' },
 
         component: UsersPageComponent,
       },
       {
-        pathMatch: 'full',
         path: 'cooks/nearby',
         data: { filter: 'nearby' },
         canActivate: [AuthGuard],
@@ -67,27 +59,24 @@ const routes: Routes = [
         component: UsersPageComponent,
       },
       {
-        pathMatch: 'full',
         path: 'cooks/most-viewed',
         data: { filter: 'most-viewed' },
 
         component: UsersPageComponent,
       },
       {
-        pathMatch: 'full',
         path: 'cooks/new',
         data: { filter: 'new' },
 
         component: UsersPageComponent,
       },
       {
-        pathMatch: 'full',
         path: 'cooks/list/:id',
         component: UserPageComponent,
         resolve: { user: UserResolver },
       },
 
-      {  pathMatch : 'full',
+      {
         path: 'cooks/updates',
         canActivate: [AuthGuard],
         data: { filter: 'updates' },

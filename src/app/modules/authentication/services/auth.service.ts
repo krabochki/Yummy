@@ -119,7 +119,7 @@ export class AuthService {
       password: user.password,
       options: {
         emailRedirectTo:
-          window.location.protocol + '//' + window.location.host + '/welcome/',
+          'https://yummy-kitchen.vercel.app/#/welcome/',
       },
     });
   }

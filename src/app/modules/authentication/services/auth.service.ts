@@ -68,7 +68,7 @@ export class AuthService {
         throwError;
       } else {
         await supabase.auth.resetPasswordForEmail(resetUser.email, {
-          redirectTo: 'http://localhost:4200/password-reset',
+          redirectTo: 'https://yummy-kitchen.vercel.app/#/password-reset',
         });
       }
     } catch (error) {
@@ -81,28 +81,8 @@ export class AuthService {
   
   
    loadCurrentUserData() {
-     supabase.auth.onAuthStateChange((event, session) => {
-       if (event === 'SIGNED_IN')
-         
-         if (session?.user.email)
-         {
-                    console.log('auth change');
-
-           const iuser: IUser = {
-             ...nullUser,
-             email: session?.user.email,
-           };
-
-           const loginUser = this.loginUser({ ...iuser });
-           if (loginUser && loginUser.email === session?.user.email) {
-             this.currentUserSubject.next(loginUser);
-           } else {
-             this.currentUserSubject.next({ ...nullUser });
-           }
-     }
-        
-       })
-     this.userService.users$.subscribe(() =>
+     
+    return this.userService.users$.subscribe(() =>
        supabase.auth.onAuthStateChange((event, session) => {
          console.log('auth change')
          const user = { ...session?.user };

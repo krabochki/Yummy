@@ -21,9 +21,14 @@ import { PlanService } from './modules/planning/services/plan-service';
 import { AuthService } from './modules/authentication/services/auth.service';
 import { IngredientService } from './modules/recipes/services/ingredient.service';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
+import { UpdatesService } from './modules/common-pages/services/updates.service';
+import { CommonPagesModule } from './modules/common-pages/common-pages.module';
 
 export function initializeSections(sectionSerivce: SectionService) {
   return () => sectionSerivce.loadSectionData();
+}
+export function initializeUpdates(updateService: UpdatesService) {
+  return () => updateService.loadUpdatesData();
 }
 export function initializeCategories(CategoryService: CategoryService) {
   return () => CategoryService.loadCategoriesFromSupabase();
@@ -45,7 +50,9 @@ export function initializeIngredients(ingredientService: IngredientService) {
   return () => ingredientService.loadIngredientsData();
 }
 
-export function initializeIngredientsGroupsData(ingredientService: IngredientService) {
+export function initializeIngredientsGroupsData(
+  ingredientService: IngredientService,
+) {
   return () => ingredientService.loadIngredientsGroupsData();
 }
 
@@ -59,10 +66,11 @@ export function initializeIngredientsGroupsData(ingredientService: IngredientSer
     ControlsModule,
     BrowserModule,
     UserPagesModule,
+    CommonPagesModule,
     AngularSvgIconModule.forRoot(),
   ],
   providers: [
-   { provide: LocationStrategy, useClass: HashLocationStrategy },
+    { provide: LocationStrategy, useClass: HashLocationStrategy },
 
     UserService,
     {
@@ -119,6 +127,13 @@ export function initializeIngredientsGroupsData(ingredientService: IngredientSer
       provide: APP_INITIALIZER,
       useFactory: initializeIngredientsGroupsData,
       deps: [IngredientService],
+      multi: true,
+    },
+    UpdatesService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeUpdates,
+      deps: [UpdatesService],
       multi: true,
     },
     AdminGuard,

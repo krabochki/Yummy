@@ -12,7 +12,6 @@ import { RecipeService } from '../../../services/recipe.service';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
-import { RouteEventsService } from 'src/app/modules/controls/route-events.service';
 import { CategoryService } from '../../../services/category.service';
 import { ICategory } from '../../../models/categories';
 import { trigger } from '@angular/animations';
@@ -136,7 +135,6 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private commentService: CommentService,
     public router: Router,
-    public routerEventsService: RouteEventsService,
     private ingredientService: IngredientService,
     private categoryService: CategoryService,
     private cd: ChangeDetectorRef,

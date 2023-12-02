@@ -53,7 +53,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   get passwordNotValidError(): string {
     return this.form.get('password')?.invalid &&
       (this.form.get('password')?.dirty || this.form.get('password')?.touched)
-      ? 'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'
+      ? 'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква английского алфавита'
       : '';
   }
   get emailNotValidError(): string {
@@ -68,11 +68,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
     return !this.form.get('username')?.hasError('usernameExists')
       ? this.form.get('username')?.invalid &&
         (this.form.get('username')?.dirty || this.form.get('username')?.touched)
-        ? 'Имя пользователя должно содержать от 4 до 20 символов, среди которых могут быть буквы (минимум одна), цифры, а также нижние почеркивания и точки (не подряд)'
+        ? 'Имя пользователя должно содержать от 4 до 20 символов, среди которых могут быть буквы английского алфавита (минимум одна), цифры, а также нижние почеркивания и точки (не подряд)'
         : ''
       : ' ';
   }
-
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -84,15 +83,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private planService: PlanService,
   ) {
-
     this.titleService.setTitle('Регистрация');
     this.form = this.fb.group({});
-    this.usersService.getMaxUserId().then((maxId) => {
-      this.maxUserId = maxId;
-    });
-    this.planService.getMaxPlanId().then((maxId) => {
-      this.maxPlanId = maxId;
-    });
   }
 
   ngOnInit(): void {
@@ -134,48 +126,58 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   async registration() {
     if (this.form.valid) {
-      const maxId = Math.max(...this.users.map((u) => u.id));
-      const newUser: IUser = {
-        ...{ ...nullUser },
-        username: this.form.value.username,
-        email: this.form.value.email,
-        password: this.form.value.password,
-        registrationDate: getCurrentDate(),
-        id: maxId + 1,
-      };
-      this.createUser = newUser;
-
       this.loadingModal = true;
-      const isEmailTaken = this.users.some(
-        (searchingUser) => searchingUser.username === newUser.username,
-      );
-      const isUsernameTaken = this.users.some(
-        (searchingUser) => searchingUser.username === newUser.username,
-      );
-      if (isUsernameTaken || isEmailTaken) {
-        this.loadingModal = false;
-        this.errorModal = true;
-        this.failText = isUsernameTaken
-          ? 'Имя пользователя, которое вы ввели, уже занято. Пожалуйста, измените данные и попробуйте ещё раз.'
-          : 'Почта, которую вы ввели, уже занята. Пожалуйста, измените данные и попробуйте ещё раз.';
-        this.cd.markForCheck();
-        return;
-      }
-      const { error } = await this.authService.register(newUser);
+      this.cd.markForCheck()
 
-      if (error) {
-        this.errorModal = true;
-      } else {
-        await this.addUserToUsers(
-          this.maxUserId + 1,
-          newUser.username,
-          newUser.email,
+      await this.usersService.getMaxUserId().then((maxId) => {
+        this.maxUserId = maxId;
+      });
+      
+    await this.planService.getMaxPlanId().then((maxId) => {
+      this.maxPlanId = maxId;
+    });
+      if (this.maxUserId !== 0 && this.maxPlanId !==0) {
+        const maxId = Math.max(...this.users.map((u) => u.id));
+        const newUser: IUser = {
+          ...{ ...nullUser },
+          username: this.form.value.username,
+          email: this.form.value.email,
+          password: this.form.value.password,
+          registrationDate: getCurrentDate(),
+          id: maxId + 1,
+        };
+        this.createUser = newUser;
+
+        const isEmailTaken = this.users.some(
+          (searchingUser) => searchingUser.username === newUser.username,
         );
+        const isUsernameTaken = this.users.some(
+          (searchingUser) => searchingUser.username === newUser.username,
+        );
+        if (isUsernameTaken || isEmailTaken) {
+          this.loadingModal = false;
+          this.errorModal = true;
+          this.failText = isUsernameTaken
+            ? 'Имя пользователя, которое вы ввели, уже занято. Пожалуйста, измените данные и попробуйте ещё раз.'
+            : 'Почта, которую вы ввели, уже занята. Пожалуйста, измените данные и попробуйте ещё раз.';
+          this.cd.markForCheck();
+          return;
+        }
+        const { error } = await this.authService.register(newUser);
 
-        await this.addPlanToPlans(this.maxUserId + 1);
-        await this.authService.logout();
+        if (error) {
+          this.errorModal = true;
+        } else {
+          await this.addUserToUsers(
+            this.maxUserId + 1,
+            newUser.username,
+            newUser.email,
+          );
 
-        const notify = this.notifyService.buildNotification(
+          await this.addPlanToPlans(this.maxUserId + 1);
+          await this.authService.logout();
+
+          const notify = this.notifyService.buildNotification(
             'Добро пожаловать',
             `Добро пожаловать в Yummy, @${this.createUser.username} 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!`,
             'success',
@@ -183,11 +185,21 @@ export class RegisterComponent implements OnInit, OnDestroy {
             '',
           );
           await this.notifyService.sendNotification(notify, this.createUser);
-        this.successModal = true;
+          this.successModal = true;
+        }
+        this.loadingModal = false;
+        this.cd.markForCheck();
       }
-      this.loadingModal = false;
-      this.cd.markForCheck();
+      else {
+          this.failText =
+            'Невозможно найти пользователей для присвоения вам уникального номера. Скорее всего, произошел сбой в работе сайта или сбой в вашем Интернет-подключении. Попробуйте перезагрузить страницу.';
+        this.errorModal = true;
+                this.loadingModal = false;
+
+        this.cd.markForCheck();
+      }
     }
+    
   }
   async addPlanToPlans(userId: number) {
     await this.planService.addPlanToSupabase({
@@ -208,7 +220,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.confirmModal = false;
   }
   async handleSuccessModal() {
-  
     this.successModal = false;
     this.router.navigate(['/']);
   }

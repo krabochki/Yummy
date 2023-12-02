@@ -9,6 +9,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
+  Renderer2,
 } from '@angular/core';
 import {
   cookRouterLinks,
@@ -27,7 +28,13 @@ import { AuthService } from 'src/app/modules/authentication/services/auth.servic
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
-import { count, modal, notifies, popup } from 'src/tools/animations';
+import {
+  count,
+  heightAnim,
+  modal,
+  notifies,
+  popup,
+} from 'src/tools/animations';
 import { IPlan, nullPlan } from 'src/app/modules/planning/models/plan';
 import { PlanService } from 'src/app/modules/planning/services/plan-service';
 import { CalendarService } from 'src/app/modules/planning/services/calendar.service';
@@ -36,14 +43,17 @@ import { TimePastService } from 'ng-time-past-pipe';
 import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
 import { IngredientService } from 'src/app/modules/recipes/services/ingredient.service';
 import { CategoryService } from 'src/app/modules/recipes/services/category.service';
+import { supabase } from 'src/app/modules/controls/image/supabase-data';
+import { UpdatesService } from 'src/app/modules/common-pages/services/updates.service';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
-  changeDetection:ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger('modal', modal()),
     trigger('notifies', notifies()),
+    trigger('height', heightAnim()),
     trigger('count', count()),
     trigger('popup', popup()),
   ],
@@ -59,9 +69,18 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   recipeRouterLinks = recipeRouterLinks;
   recipeSelectItems = recipeSelectItems;
   cooksSelectItems = cooksSelectItems;
+
+  mobileRecipeSelectItems = recipeSelectItems.slice(1, 7);
+  mobileCooksSelectItems = cooksSelectItems.slice(1, 4);
+  mobilePlanSelectItems = planSelectItems.slice(1, 4);
+
   cookRouterLinks = cookRouterLinks;
   planSelectItems = planSelectItems;
   planRouterLinks = planRouterLinks;
+
+  mobileMenuOpen = false;
+
+  mobileSectionsOpen = [false, false, false];
 
   maxNumberOfPopupsInSameTime = 3;
   popupLifetime = 7; //в секундах
@@ -73,10 +92,13 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   currentUser: IUser = { ...nullUser };
   users: IUser[] = [];
 
+  exitModalShow = false;
   notifiesOpen: boolean = false;
   notifies: INotification[] = [];
 
   mobile: boolean = false;
+
+  avatar: string = '';
 
   private currentUserPlan: IPlan = nullPlan;
 
@@ -96,6 +118,43 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     return planRoutes(this.currentUser.id);
   }
 
+  hamburgerClick() {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+    if (this.mobileMenuOpen) this.addModalStyle();
+    else this.removeModalStyle();
+  }
+
+  private removeModalStyle(): void {
+    this.renderer.removeClass(document.body, 'hide-overflow');
+    (<HTMLElement>document.querySelector('.header')).style.width = '100%';
+  }
+
+  private addModalStyle(): void {
+    this.renderer.addClass(document.body, 'hide-overflow');
+    (<HTMLElement>document.querySelector('.header')).style.width =
+      'calc(100% - 16px)';
+  }
+
+  clickMobileMenuLink(link: string) {
+    this.router.navigateByUrl(link);
+    this.removeModalStyle();
+    this.mobileMenuOpen = false;
+  }
+
+  protected nightModeEmit(nightModeDisabled: boolean) {
+    if (!nightModeDisabled) {
+      document.body.classList.add('dark-mode');
+      localStorage.setItem('theme', 'dark');
+      const favicon = document.querySelector('#favicon');
+      favicon?.setAttribute('href', '/assets/images/chef-day.png');
+    } else {
+      document.body.classList.remove('dark-mode');
+      localStorage.setItem('theme', 'light');
+      const favicon = document.querySelector('#favicon');
+      favicon?.setAttribute('href', '/assets/images/chef-night.png');
+    }
+  } //переключ темной темы
+
   get notificationCount() {
     if (this.currentUser.notifications)
       return this.currentUser.notifications.filter((n) => n.read === false)
@@ -110,7 +169,9 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   private remindedAlready = false;
   constructor(
     public authService: AuthService,
+    private updateService: UpdatesService,
     public userService: UserService,
+    private renderer: Renderer2,
     public cd: ChangeDetectorRef,
     private notifyService: NotificationService,
     private router: Router,
@@ -155,14 +216,22 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     this.recipesInit();
   }
 
+  downloadUserpicFromSupabase(path: string) {
+    this.avatar = supabase.storage
+      .from('userpics')
+      .getPublicUrl(path).data.publicUrl;
+    this.cd.markForCheck();
+  }
+
   recipesInit() {
     combineLatest([
       this.recipeService.recipes$,
       this.ingredientService.ingredients$,
       this.categoryService.categories$,
+      this.updateService.updates$,
     ])
       .pipe(takeUntil(this.destroyed$))
-      .subscribe(([recipes, ingredients, categories]) => {
+      .subscribe(([recipes, ingredients, categories, updates]) => {
         const awaitingRecipes = recipes.filter(
           (r) => r.status === 'awaits',
         ).length;
@@ -173,12 +242,20 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
         const awaitingIngredients = ingredients.filter(
           (i) => i.status === 'awaits',
         ).length;
+        const awaitingUpdates =
+          this.currentUser.role === 'admin'
+            ? updates.filter((i) => i.status === 'awaits').length
+            : 0;
         const awaitingCategories = categories.filter(
           (c) => c.status === 'awaits',
         ).length;
 
         this.adminActionsCount =
-          reports + awaitingRecipes + awaitingCategories + awaitingIngredients;
+          reports +
+          awaitingRecipes +
+          awaitingCategories +
+          awaitingIngredients +
+          awaitingUpdates;
       });
   }
 
@@ -192,6 +269,8 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     if (event.target.innerWidth <= 481) {
       this.mobile = true;
     } else {
+      this.removeModalStyle();
+      this.mobileMenuOpen = false;
       this.mobile = false;
     }
     this.headerHeightChange();
@@ -375,17 +454,33 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   trackByFn(index: number, element: INotification) {
     return element?.id;
   }
-
+  loading = false;
   openNotifies() {
     if (!this.currentUser.id) {
       this.noAccessModalShow = true;
     } else this.notifiesOpen = true;
   }
 
+  async handleExitModal(answer: boolean) {
+    this.exitModalShow = false;
+
+    if (answer) {
+      this.loading = true;
+      await this.authService.logout();
+      this.authService.logoutUser();
+      this.router.navigateByUrl('/');
+      this.mobileMenuOpen = false;
+      this.loading = false;
+    }
+  }
+
   currentUserInit() {
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedUser) => {
+        if (receivedUser.avatarUrl) {
+          this.downloadUserpicFromSupabase(receivedUser.avatarUrl);
+        } else this.avatar = 'assets/images/userpic.png';
         if (
           receivedUser.id !== this.currentUser.id &&
           this.currentUser.id > 0
@@ -507,6 +602,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     this.popups.unshift(popup);
     setTimeout(() => {
       this.autoRemovePopup(popup);
+      this.cd.markForCheck();
     }, this.popupLifetime * 1000);
   }
 
@@ -517,8 +613,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   }
 
   linkClick(link: string): void {
-  
-    if (link!=='/greetings' && this.currentUser.id === 0) {
+    if (link !== '/greetings' && this.currentUser.id === 0) {
       this.noAccessModalShow = true;
     } else {
       this.router.navigateByUrl(link);

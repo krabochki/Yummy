@@ -36,7 +36,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   get passwordNotValidError() {
     return this.form.get('password')?.invalid &&
       (this.form.get('password')?.dirty || this.form.get('password')?.touched)
-      ? 'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'
+      ? 'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква английского алфавита'
       : '';
   }
 

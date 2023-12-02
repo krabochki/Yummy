@@ -8,6 +8,7 @@
     [maxlength]="max ? max : null"
             [type]="showPassword && inputType==='password'?'password':'text'"
 
+            (keydown.enter)="enter()"
     #input
     [value]="value"
     (keyup)="filter();change()"

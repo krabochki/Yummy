@@ -12,6 +12,13 @@
     }}
   </h1>
   <div class="circles">
+      <div class="circle" *ngIf="currentUser.role==='admin'"> 
+        <span>{{ updatesToReview.length }} </span>
+        <p>
+          <span appPluralRu="" [value]="updatesToReview.length" [arVariants]="updateArVariants"></span>
+          на проверку
+        </p>
+      </div>
     <div class="circle">
       <span>{{ awaitingRecipes.length }} </span>
       <p>
@@ -46,6 +53,62 @@
 
   <div class="content-wrap">
     <div class="block-wrap pad">
+        <div class="reports-block" *ngIf="updatesToReview.length > 0">
+          <h2 (click)="showUpdatesToReview = !showUpdatesToReview">
+            Обновления на проверку
+          </h2>
+        
+          <!-- export interface IUpdate {
+          tags: string[];
+          context: 'managers' | 'all'; -->
+          <div *ngIf="showUpdatesToReview" @height>
+            <div class="reports">
+              <div class="report"  *ngFor="let update of showedUpdatesToReview">
+                <div class="report-header">
+                  <a class="report-recipe" [routerLink]="update.link || null" [style]="update.link?null:'cursor:default'">
+                    {{ update.fullName }}
+                  </a>
+                  <p class="report-date">
+                    Обновление отправлено
+                    {{ getDate(update.date).toString() | timePast | lowercase }}
+                  </p>
+                </div>
+                <div class="description"> 
+                                    <p>Статус: {{update.state}}</p>
+
+                  <p>Описание: {{update.description}}</p>
+
+
+                                    <div class="tags">
+                                      <div class="tag"  *ngFor="let tag of update.tags">{{tag}}</div>
+                                    </div>
+
+                                                                        <p class="toNotify">*{{update.context}}</p>
+
+
+                </div>
+                <div class="report-users" *ngIf="update.author">
+                  <p class="reporter">
+                    Автор:
+                    <a class="report-user" [routerLink]="'/cooks/list/' + update.author">{{
+                      getName(getUser(update.author)) }}</a>
+                  </p>
+                </div>
+           
+                <div class="report-buttons">
+                  <app-button [text]="'Принять'" (click)="updateToReviewActionClick('approve', update)"
+                    [color]="'admin'" [style]="'filled'" [rounded]="true"></app-button>
+                  <app-button [text]="'Отклонить'" (click)="updateToReviewActionClick('dismiss', update)"
+                   [color]="'admin'" [style]="'filled-min'"
+                    [rounded]="true"></app-button>
+                </div>
+              </div>
+            </div>
+            <app-button class="more-reports-button" [text]="'Загрузить еще...'" (click)="loadMoreUpdates()"
+              *ngIf="updatesToReview.length > showedUpdatesToReview.length" [rounded]="true" [style]="'outlined'"
+              [color]="'prim'"></app-button>
+          </div>
+        </div>
       <div class="reports-block" *ngIf="awaitingRecipes.length > 0">
         <h2 (click)="showAwaitingRecipes = !showAwaitingRecipes">
           Рецепты на проверку
@@ -81,7 +144,7 @@
             </div>
           </div>
           <app-button class="more-reports-button" [text]="'Загрузить еще...'" (click)="loadMoreAwaitingRecipes()"
-            *ngIf="awaitingRecipes.length > awaitingRecipes.length" [rounded]="true" [style]="'outlined'"
+            *ngIf="awaitingRecipes.length > awaitingRecipesToShow.length" [rounded]="true" [style]="'outlined'"
             [color]="'prim'"></app-button>
         </div>
       </div>
@@ -165,10 +228,10 @@
               </div>
               <p class="report-content">
                 Содержание комментария:
-                <span>«{{
+               «{{
                   getComment(report.comment, getRecipe(report.recipe)).text
                   }}»
-                </span>
+                
               </p>
               <div class="report-buttons">
                 <app-button [text]="'Оставить'" (click)="reportActionClick('dismiss', report)"
@@ -315,6 +378,14 @@
   (resultEmit)="handleApproveRecipeModal($event)" [buttonsText]="['Да', 'Нет']"
   [description]="'Вы уверены, что хотите одобрить рецепт?'"></app-modal>
 
+  <app-modal @modal *ngIf="dismissUpdateModalShow" [style]="'prim'" [title]="'Отклонение обновления'" [type]="'yesOrNo'"
+  (resultEmit)="handleDismissUpdateModal($event)" [buttonsText]="['Да', 'Нет']"
+  [description]="'Вы уверены, что хотите отклонить обновление?'"></app-modal>
+
+<app-modal @modal *ngIf="approveUpdateModalShow" [style]="'sec'" [title]="'Одобрение обновления'" [type]="'yesOrNo'"
+  (resultEmit)="handleApproveUpdateModal($event)" [buttonsText]="['Да', 'Нет']"
+  [description]="'Вы уверены, что хотите одобрить обновление?'"></app-modal>
+
 <app-modal @modal *ngIf="successRecipeActionModalShow" [style]="'sec'" [title]="
     'Рецепт успешно ' + (adminAction === 'approve' ? 'одобрен' : 'отклонен')
   " [type]="'Ok'" (resultEmit)="handleSuccessRecipeActionModal()" [buttonsText]="['Хорошо']" [description]="
@@ -349,3 +420,14 @@
   [description]="getSuccessIngredientModalDescription()" />
 
 <app-group-creating @modal (closeEmitter)="groupCreatingMode = false" *ngIf="groupCreatingMode" />
+
+<app-modal @modal *ngIf="successUpdateActionModalShow" [style]="'sec'" [title]="
+    'Обновление успешно ' + (adminAction === 'approve' ? 'одобрено' : 'отклонено')
+  " [type]="'Ok'" (resultEmit)="handleSuccessUpdateActionModal()" [buttonsText]="['Хорошо']" [description]="
+    'Вы успешно ' +
+    (adminAction === 'approve' ? 'одобрили' : 'отклонили') +
+    ' это обновление'
+  "></app-modal>
+
+  <app-modal [noButtons]="true" [style]="'await'" *ngIf="loadingModal" [title]="'Подождите...'" @modal
+    [description]="'Выполняем операцию... Подождите немного...'" />

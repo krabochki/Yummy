@@ -35,6 +35,7 @@ export interface SectionGroup {
   ],
 })
 export class AutocompleteComponent {
+  @Output() anyEmitter = new EventEmitter<string>();
   @Output() categoryEmitter = new EventEmitter<ICategory>();
   @Output() sectionEmitter = new EventEmitter<ISection>();
   @Output() ingredientEmitter = new EventEmitter<IIngredient>();
@@ -52,6 +53,9 @@ export class AutocompleteComponent {
   filterIngredientsGroups: IIngredientsGroup[] = [];
   @Input() sectionMode = false;
   @Input() clearValueOnBlur = false;
+
+  @Input() anyData: string[] = [];
+  filterAnyData: string[] = [];
 
   isSleep: boolean = false; //подсвечивается ли плейсхолдер
   isFocused = false; //есть ли фокус в инпуте (нужно ли подсвечивать плейсхолдер)
@@ -77,6 +81,9 @@ export class AutocompleteComponent {
         return this.filterIngredientsGroups.length === 0;
       case 'sections':
         return this.mySections.length === 0;
+      case 'any':
+        return this.filterAnyData.length === 0;
+        return;
     }
   }
 
@@ -91,6 +98,7 @@ export class AutocompleteComponent {
       this.fullGroup = this.group;
       this.filterIngredientsGroups = this.ingredientsGroups;
       this.filterIngredients = this.ingredients;
+      this.filterAnyData = this.anyData;
     }
     if (!this.startOnTyping || (this.startOnTyping && this.value)) {
       this.autocompleteShow = true;
@@ -106,6 +114,7 @@ export class AutocompleteComponent {
       this.value = '';
       this.mySections = JSON.parse(JSON.stringify(this.allSections));
       this.filterIngredientsGroups = this.ingredientsGroups;
+      this.filterAnyData = this.anyData;
 
       this.filterIngredients = this.ingredients;
       this.group = JSON.parse(JSON.stringify(this.fullGroup));
@@ -122,6 +131,12 @@ export class AutocompleteComponent {
   addCategory(listCategory: ICategory) {
     this.categoryEmitter.emit(listCategory);
     this.copyOfFullGroup();
+  }
+  addAny(any: string) {
+    this.anyEmitter.emit(any);
+       setTimeout(() => {
+         this.filterAnyData = this.anyData;
+       }, 300);
   }
   addSection(listSection: ISection) {
     this.sectionEmitter.emit(listSection);
@@ -198,7 +213,25 @@ export class AutocompleteComponent {
       this.filterIngredientsGroups = this.ingredientsGroups;
     }
   }
+  searchAnyData() {
+    if (this.value !== '') {
+      this.filterAnyData = [];
+      const search = this.value.toLowerCase().replace(/\s/g, '');
+      const filterData: string[] = [];
+      const allData = this.anyData;
 
+      allData.forEach((item: string) => {
+        if (item.toLowerCase().replace(/\s/g, '').includes(search))
+          filterData.push(item);
+      });
+
+      filterData.forEach((element) => {
+        this.filterAnyData.push(element);
+      });
+    } else {
+      this.filterAnyData = this.anyData;
+    }
+  }
   filterIngredientsBySearchquery() {
     this.filterIngredients = [];
     const searchQuery = this.value.toLowerCase().replace(/\s/g, '');
@@ -217,8 +250,11 @@ export class AutocompleteComponent {
 
   searchIngredients() {
     if (this.value !== '') {
-      if((this.filterIngredients.length>0 && this.startOnTyping) || !this.startOnTyping)
-      this.autocompleteShow = true;
+      if (
+        (this.filterIngredients.length > 0 && this.startOnTyping) ||
+        !this.startOnTyping
+      )
+        this.autocompleteShow = true;
       this.filterIngredientsBySearchquery();
       if (this.startOnTyping && this.filterIngredients.length === 0) {
         this.autocompleteShow = false;
@@ -232,10 +268,11 @@ export class AutocompleteComponent {
     }
   }
 
-  get context(): 'sections' | 'groups' | 'ingredients' | 'categories' {
+  get context(): 'sections' | 'groups' | 'ingredients' | 'categories' | 'any' {
     if (this.sectionMode) return 'sections';
     if (this.ingredients.length > 0) return 'ingredients';
     if (this.ingredientsGroups.length > 0) return 'groups';
+    if (this.anyData.length > 0) return 'any';
     return 'categories';
   }
 
@@ -255,6 +292,8 @@ export class AutocompleteComponent {
       case 'categories':
         target = 'категорий';
         break;
+      case 'any':
+        return 'По вашему запросу ничего не найдено. Попробуйте изменить параметры поиска';
     }
     return `По вашему запросу нет никаких ${target}. Попробуйте изменить параметры поиска`;
   }
@@ -300,6 +339,9 @@ export class AutocompleteComponent {
 
       case 'categories':
         this.searchCategories();
+        break;
+      case 'any':
+        this.searchAnyData();
         break;
     }
   }

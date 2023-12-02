@@ -6,7 +6,7 @@ import { IUser } from '../../user-pages/models/users';
 @Component({
   selector: 'app-about',
   templateUrl: './about.component.html',
-  styleUrls: ['./about.component.scss']
+  styleUrls: ['../styles/common.scss']
 })
 export class AboutComponent implements OnInit{
 

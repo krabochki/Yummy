@@ -74,7 +74,7 @@ export class UserAccountEditComponent
   steps: Step[] = steps;
 
   showedUserpicImage: string = '';
-  noUserpicImage: string = 'assets/images/add-userpic.png';
+  noUserpicImage: string = '/assets/images/add-userpic.png';
 
   form: FormGroup;
   beginningData: any;

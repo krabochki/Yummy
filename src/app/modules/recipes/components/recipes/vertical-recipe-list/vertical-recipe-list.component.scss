@@ -76,6 +76,10 @@
   overflow-y: hidden;
   display: grid;
 
+  &::-webkit-scrollbar{
+    display: none;
+  }
+
   }
   .block{
     width:    13em;

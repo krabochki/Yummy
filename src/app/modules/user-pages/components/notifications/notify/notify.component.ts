@@ -41,6 +41,9 @@ export class NotifyComponent {
       case 'plan-reminder':
         styles.push('plan');
         break;
+      case 'update':
+        styles.push('update');
+        break;
       case 'born':
         styles.push('born');
         break;
@@ -51,7 +54,7 @@ export class NotifyComponent {
         styles.push('calendar-recipe');
         break;
       case 'hire':
-        styles.push('plan');
+        styles.push('hire');
         break;
       case 'demote':
         styles.push('error');
@@ -77,6 +80,7 @@ export class NotifyComponent {
   get icon() {
     const basePath = '/assets/images/svg/';
     if (this.notify.context === 'hire') return basePath + 'case.svg';
+    if (this.notify.context === 'update') return basePath + 'update.svg';
     if (this.notify.context === 'born') return basePath + 'champagne.svg';
     if (this.notify.context === 'demote') return basePath + 'demote.svg';
     if (this.notify.context === 'plan-reminder') return basePath + 'pot.svg';

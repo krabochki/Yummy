@@ -63,6 +63,15 @@
         </li>
       </ol>
     </ng-container>
+
+    <ng-container *ngIf="context === 'any'">
+      <ol class="one-layer">
+        <li (mousedown)="addAny(item); this.value = ''" *ngFor="let item of filterAnyData; let i = index">
+          <div class="num">{{ i + 1 }}</div>
+          <p class="content">{{ item }}</p>
+        </li>
+      </ol>
+    </ng-container>
     <ng-container *ngIf="context === 'ingredients'">
       <ol class="one-layer">
         <li

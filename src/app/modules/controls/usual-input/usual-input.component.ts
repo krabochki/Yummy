@@ -41,6 +41,7 @@ export class UsualInputComponent implements OnInit, OnChanges {
   @Input() inputRequired: boolean = false;
   @Output() blurEmitter = new EventEmitter<boolean>();
   @Output() focusEmitter = new EventEmitter<boolean>();
+  @Output() enterEmitter = new EventEmitter();
 
   showPassword = true; //показывается ли пароль
 
@@ -61,6 +62,10 @@ export class UsualInputComponent implements OnInit, OnChanges {
       this.change();
       this.getNotEmptyValue = true;
     }
+  }
+
+  enter() {
+    this.enterEmitter.emit();
   }
 
   change() {
@@ -94,16 +99,23 @@ export class UsualInputComponent implements OnInit, OnChanges {
   filter() {
     if (this.onlyNumbers) {
       this.value = this.value.replace(/[^0-9.,]/g, '');
-      if(this.value[0] === '0' && this.value.length> 1 && this.value[1]!==',' && this.value[1]!=='.') this.value = this.value.substring(1)
+      if (
+        this.value[0] === '0' &&
+        this.value.length > 1 &&
+        this.value[1] !== ',' &&
+        this.value[1] !== '.'
+      )
+        this.value = this.value.substring(1);
     }
   }
+
+  
 
   eye() {
     this.showPassword = !this.showPassword;
     this.input?.nativeElement.focus();
   }
 
-  
   onChange: any = () => {
     //
   };

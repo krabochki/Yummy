@@ -10,6 +10,7 @@
     --main: #da71fa; 
 }
 
+
 .hire{
         --main: var(--color-moderator); 
 
@@ -38,6 +39,9 @@ background-color: var(--not-read)
     background-color: var(--not-read);
 }
 
+.update {
+    --main: #ff9100;
+}
 .main{
     position: relative;
 }

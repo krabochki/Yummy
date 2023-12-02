@@ -37,7 +37,9 @@
  
   @media (max-width: 480px) {
   .recipe-list {
-
+  &::-webkit-scrollbar {
+      display: none;
+    }
     padding-right: 6%;
 justify-content: start;
     grid-auto-flow: column;

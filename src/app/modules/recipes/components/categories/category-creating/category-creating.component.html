@@ -111,7 +111,7 @@
         </div>
         <div class="step-container" *ngIf="currentStep === 1">
           <div class="form-control">
-            <h3>Категории</h3>
+            <h3>Раздел категории</h3>
 
             <div>
               <app-autocomplete
@@ -121,20 +121,20 @@
                 [group]="group"
                 [allSections]="allSections"
                 [placeholder]="
-                  'Выбери соответствующую секцию для твоей категории*'
+                  'Выбери соответствующий раздел для твоей категории*'
                 "
               ></app-autocomplete>
             </div>
           </div>
           <div class="form-control">
-            <h3>Секция твоей категории</h3>
+            <h3>Раздел твоей категории</h3>
             <div *ngIf="this.form.get('section')?.value" class="max-categories">
-              Вы можете выбрать только 1 секцию для своей категории
+              Вы можете выбрать только 1 раздел для своей категории
             </div>
           </div>
 
           <div *ngIf="!this.form.get('section')?.value" class="no-categories">
-            Вы пока не выбрали секцию
+            Вы пока не выбрали раздел
           </div>
           <div class="tags" *ngIf="this.form.get('section')?.value">
             <div class="tag">

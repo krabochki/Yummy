@@ -3,9 +3,10 @@ export interface INotification {
   type: 'info' | 'warning' | 'error' | 'success';
   context:
   | 'category'
-  |'hire'
-    | 'recipe'
-    | 'without'
+  | 'hire'
+  | 'recipe'
+  | 'without'
+ |'update'
   | 'comment'
   |'born'
   | 'user'

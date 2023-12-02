@@ -78,6 +78,11 @@ export const managersPreferences: NotificationSettingsSections[] = [
         description: 'Показывать кнопку удаления группы ингредиентов',
         area: 'show-ingredient-group-deleting',
       },
+      {
+        description:
+          'Присылать уведомления, связанные с публикацией ваших обновлений',
+        area: 'you-create-update',
+      },
     ],
   },
   {
@@ -89,6 +94,11 @@ export const managersPreferences: NotificationSettingsSections[] = [
         description: 'Уведомлять вас о потере вашего статуса модератора',
         area: 'you-was-fired',
       },
+      {
+        description:
+          'Присылать уведомления, связанные с рассмотрением ваших обновлений администратором',
+        area: 'your-update-review',
+      },
     ],
   },
   {
@@ -99,6 +109,10 @@ export const managersPreferences: NotificationSettingsSections[] = [
       {
         description: 'Показывать кнопку назначения модератора',
         area: 'new-moder-button',
+      },
+      {
+        description: 'Показывать кнопку удаления обновления',
+        area: 'show-delete-update',
       },
     ],
   },
@@ -174,6 +188,9 @@ export const sections: NotificationSettingsSections[] = [
       },
     ],
   },
+
+ 
+
   {
     title: 'Планирование',
     icon: 'plan',

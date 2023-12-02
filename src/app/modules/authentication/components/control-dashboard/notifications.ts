@@ -1,3 +1,4 @@
+import { IUpdate } from 'src/app/modules/common-pages/updates/updates/const';
 import { ICategory } from 'src/app/modules/recipes/models/categories';
 import { IComment } from 'src/app/modules/recipes/models/comments';
 import { IIngredient } from 'src/app/modules/recipes/models/ingredients';
@@ -88,7 +89,18 @@ export function notifyForAuthorOfApprovedRecipe(
     '/recipes/list/' + approvedRecipe.id,
   );
 }
-
+export function notifyForAuthorOfApprovedUpdate(
+  approvedUpdate: IUpdate,
+  notifyService: NotificationService,
+) {
+  return notifyService.buildNotification(
+    'Обновление одобрено',
+    `Ваше обновление «${approvedUpdate.shortName}» одобрено администратором`,
+    'success',
+    'without',
+    '/updates',
+  );
+}
 export function notifyForFollowersOfApprovedRecipeAuthor(
   author: IUser,
   recipe: IRecipe,
@@ -122,7 +134,24 @@ export function notifyForAuthorOfDismissedRecipe(
   );
 }
 
-export function notifyForAuthorOfIngredient(ingredient: IIngredient, action: 'approve'|'dismiss',notifyService:NotificationService):INotification {
+export function notifyForAuthorOfDismissedUpdate(
+  update: IUpdate,
+  notifyService: NotificationService,
+): INotification {
+  return notifyService.buildNotification(
+    'Обновление отклонено',
+    `Ваше обновление «${update.shortName}» отклонено администратором`,
+    'error',
+    'without',
+    '',
+  );
+}
+
+export function notifyForAuthorOfIngredient(
+  ingredient: IIngredient,
+  action: 'approve' | 'dismiss',
+  notifyService: NotificationService,
+): INotification {
   const verb = action === 'approve' ? 'одобрен' : 'отклонен';
   const link = action === 'approve' ? '/ingredients/list/' + ingredient.id : '';
   return notifyService.buildNotification(
@@ -130,7 +159,7 @@ export function notifyForAuthorOfIngredient(ingredient: IIngredient, action: 'ap
     `Созданный вами и отправленный на проверку ингредиент «${ingredient.name}» ${verb}`,
     action === 'approve' ? 'success' : 'error',
     'ingredient',
-    link
+    link,
   );
 }
 

@@ -1,7 +1,7 @@
 
 <div class="wrap">
 
-  <drag-scroll (dragStart)="dragStart()" (dragEnd)="dragEnd()" class="drag" #nav  [drag-disabled]="disableDrag" [snap-disabled]="disableDrag"  > 
+  <drag-scroll  (dragStart)="dragStart()" (dragEnd)="dragEnd()" class="drag" #nav  [drag-disabled]="disableDrag" [snap-disabled]="disableDrag"  > 
      <app-recipe-list-item drag-scroll-item   [showAuthor]="showAuthor" class="content" *ngFor="let item of recipes; let i = index"
         [recipe]="recipes[i]"></app-recipe-list-item>
   </drag-scroll>

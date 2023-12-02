@@ -1,10 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { MainPageComponent } from './modules/recipes/components/main-page/main-page.component';
-import { PageNotFoundComponent } from './modules/controls/page-not-found/page-not-found.component';
-import { AnonimPageComponent } from './modules/controls/anonim/anonim.component';
-import { AboutComponent } from './modules/controls/about/about.component';
-import { UserPolicyComponent } from './modules/controls/user-policy/user-policy.component';
+import { PageNotFoundComponent } from './modules/common-pages/page-not-found/page-not-found.component';
+import { AnonimPageComponent } from './modules/common-pages/anonim/anonim.component';
+import { AboutComponent } from './modules/common-pages/about/about.component';
+import { UserPolicyComponent } from './modules/common-pages/user-policy/user-policy.component';
+import { UpdatesComponent } from './modules/common-pages/updates/updates/updates.component';
 
 const routes: Routes = [
   { path: '', component: MainPageComponent },
@@ -38,11 +39,14 @@ const routes: Routes = [
     path: 'about',
     component: AboutComponent,
   },
-   {
-     path: 'user-policy',
-     component: UserPolicyComponent
-    
-   },
+  {
+    path: 'user-policy',
+    component: UserPolicyComponent,
+  },
+  {
+    path: 'updates',
+    component: UpdatesComponent,
+  },
   {
     path: 'access-denied',
     component: AnonimPageComponent,

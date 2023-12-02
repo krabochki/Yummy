@@ -7,7 +7,7 @@ import { CategoryService } from './modules/recipes/services/category.service';
 import { SectionService } from './modules/recipes/services/section.service';
 import { IngredientService } from './modules/recipes/services/ingredient.service';
 import { PlanService } from './modules/planning/services/plan-service';
-
+import { UpdatesService } from './modules/common-pages/services/updates.service';
 
 @Component({
   selector: 'app-root',
@@ -23,10 +23,10 @@ export class AppComponent implements OnInit {
     private ingredientService: IngredientService,
     private sectionsService: SectionService,
     private userService: UserService,
+    private updateService: UpdatesService,
     private categoryService: CategoryService,
     private planService: PlanService,
   ) {
- 
     supabase
       .channel('db-changes')
       .on(
@@ -67,6 +67,27 @@ export class AppComponent implements OnInit {
               break;
             case 'DELETE':
               planService.updatePlansAfterDELETE(payload.old);
+              break;
+          }
+        },
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'updates',
+        },
+        (payload) => {
+          switch (payload.eventType) {
+            case 'INSERT':
+              updateService.updateUpdatesAfterINSERT(payload.new);
+              break;
+            case 'UPDATE':
+              updateService.updateUpdatesAfterUPSERT(payload.new);
+              break;
+            case 'DELETE':
+              updateService.updateUpdatesAfterDELETE(payload.old);
               break;
           }
         },

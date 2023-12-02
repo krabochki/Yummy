@@ -159,24 +159,26 @@ export class MainPageComponent implements OnInit, OnDestroy {
       });
   }
 
+  getRecipesOfSection(section:ISection) {
+    return this.sectionService.getNumberRecipesOfSection(
+            section,
+            this.allRecipes,
+            this.categories)
+  }
+
   sectionInit() {
     this.sectionService.sections$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((data: ISection[]) => {
         this.allSections = data;
-        this.allSections = this.allSections.sort((a, b) =>
-          baseComparator(
-            this.sectionService.getNumberRecipesOfSection(
-              b,
-              this.allRecipes,
-              this.categories,
-            ),
-            this.sectionService.getNumberRecipesOfSection(
-              a,
-              this.allRecipes,
-              this.categories,
-            ),
-          ),
+        this.allSections = this.allSections.sort((a, b) => {
+          if (this.getRecipesOfSection(b) > this.getRecipesOfSection(a)) return 1
+          else if (this.getRecipesOfSection(a) === this.getRecipesOfSection(b)) {
+            if (a.name > b.name) return 1; else return -1;
+          }
+          else return -1;
+          
+        }
         );
         this.allSections = this.sectionService
           .getNotEmptySections(this.allSections)

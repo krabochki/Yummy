@@ -38,9 +38,11 @@ import {
   getName,
   notifyForAuthorOfApprovedCategory,
   notifyForAuthorOfApprovedRecipe,
+  notifyForAuthorOfApprovedUpdate,
   notifyForAuthorOfBlockedComment,
   notifyForAuthorOfDismissedCategory,
   notifyForAuthorOfDismissedRecipe,
+  notifyForAuthorOfDismissedUpdate,
   notifyForAuthorOfIngredient,
   notifyForAuthorOfLeavedComment,
   notifyForDemotedUser,
@@ -55,6 +57,11 @@ import {
 } from 'src/app/modules/recipes/models/ingredients';
 import { baseComparator } from 'src/tools/common';
 import { supabase } from 'src/app/modules/controls/image/supabase-data';
+import { UpdatesService } from 'src/app/modules/common-pages/services/updates.service';
+import {
+  IUpdate,
+  nullUpdate,
+} from 'src/app/modules/common-pages/updates/updates/const';
 @Component({
   selector: 'app-control-dashboard',
   templateUrl: './control-dashboard.component.html',
@@ -79,6 +86,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
 
   //расскрыт ли раздел
   protected showCommentReports: boolean = false;
+  showUpdatesToReview: boolean = false;
   protected showAwaitingRecipes: boolean = false;
   protected showCategoriesForCheck: boolean = false;
   protected showSections: boolean = false;
@@ -123,6 +131,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   protected demoteSuccessModalShow = false;
 
   recipeArVariants = ['рецепт', 'рецепта', 'рецептов'];
+  updateArVariants = ['обновление', 'обнволений', 'обновления'];
   reportsArVariants = ['жалоба', 'жалобы', 'жалоб'];
   categoriesArVariants = ['категория', 'категории', 'категорий'];
   ingredientsArVariants = ['ингредиент', 'ингредиента', 'ингредиентов'];
@@ -130,6 +139,9 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   ingredientAction: 'approve' | 'dismiss' | null = null;
   ingredientModalShow: boolean = false;
   successIngredientModalShow: boolean = false;
+
+  updatesToReview: IUpdate[] = [];
+  showedUpdatesToReview: IUpdate[] = [];
 
   START_INGREDIENTS_DISPLAY_SIZE = 3;
   START_SECTIONS_DISPLAY_SIZE = 10;
@@ -141,6 +153,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   constructor(
     private recipeService: RecipeService,
     private cd: ChangeDetectorRef,
+    private updateService: UpdatesService,
     private adminService: AdminService,
     private titleService: Title,
     private authService: AuthService,
@@ -161,18 +174,32 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     this.recipesInit();
     this.currentUserInit();
     this.sectionsInit();
+    this.updatesInit();
     this.ingredientsInit();
+  }
+
+  updatesInit() {
+    this.updateService.updates$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedUpdates: IUpdate[]) => {
+        this.updatesToReview = receivedUpdates.filter(
+          (u) => u.status === 'awaits',
+        );
+
+        this.showedUpdatesToReview = this.updatesToReview.slice(
+          0,
+          this.START_INGREDIENTS_DISPLAY_SIZE,
+        );
+      });
   }
 
   getDate(date: string) {
     return new Date(date);
   }
 
-   getRecipeImageSupabaseLink(path?: string) {
-  if(path)
-    return supabase.storage
-      .from('recipes')
-        .getPublicUrl(path).data.publicUrl;
+  getRecipeImageSupabaseLink(path?: string) {
+    if (path)
+      return supabase.storage.from('recipes').getPublicUrl(path).data.publicUrl;
     else return 'assets/images/svg/pancakes.png';
   }
 
@@ -306,7 +333,13 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
       this.SECTIONS_TO_LOAD_SIZE,
     );
   }
-
+  protected loadMoreUpdates(): void {
+    this.showedUpdatesToReview = this.loadMore(
+      this.updatesToReview,
+      this.showedUpdatesToReview,
+      this.SECTIONS_TO_LOAD_SIZE,
+    );
+  }
   loadMoreGroups(): void {
     this.showedGroups = this.loadMore(
       this.groups,
@@ -364,12 +397,44 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     }
     this.dismissRecipeModalShow = false;
   }
-  protected handleApproveRecipeModal(answer: boolean): void {
+  async handleApproveRecipeModal(answer: boolean) {
     if (answer) {
       this.adminAction = 'approve';
+      await this.approveRecipe();
+
       this.successRecipeActionModalShow = true;
     }
     this.approveRecipeModalShow = false;
+  }
+  successUpdateActionModalShow = false;
+  async handleDismissUpdateModal(answer: boolean) {
+    this.dismissUpdateModalShow = false;
+
+    if (answer) {
+      this.adminAction = 'dismiss';
+      this.loadingModal = true;
+      this.cd.markForCheck();
+      await this.dismissUpdate();
+      this.loadingModal = false;
+      this.successUpdateActionModalShow = true;
+
+      this.cd.markForCheck();
+    }
+  }
+  loadingModal = false;
+  async handleApproveUpdateModal(answer: boolean) {
+    this.approveUpdateModalShow = false;
+
+    if (answer) {
+      this.adminAction = 'approve';
+      this.loadingModal = true;
+      this.cd.markForCheck();
+      await this.approveUpdate();
+      this.loadingModal = false;
+      this.successUpdateActionModalShow = true;
+
+      this.cd.markForCheck();
+    }
   }
   protected handleDemoteModal(answer: boolean): void {
     if (answer) {
@@ -386,14 +451,9 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   }
   protected handleSuccessRecipeActionModal(): void {
     this.successRecipeActionModalShow = false;
-
-    if (this.actionRecipe) {
-      if (this.adminAction === 'approve') {
-        this.approveRecipe();
-      } else {
-        this.dismissRecipe();
-      }
-    }
+  }
+  protected handleSuccessUpdateActionModal(): void {
+    this.successUpdateActionModalShow = false;
   }
   protected handleSuccessDemoteModal(): void {
     this.demoteSuccessModalShow = false;
@@ -584,29 +644,81 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
       }
     }
   }
+
   async approveRecipe() {
-    if (this.actionRecipe)
-      await this.adminService.approveRecipe(this.actionRecipe);
-    this.actionRecipe &&
-      this.userService.getPermission(
-        'hide-author',
-        this.getUser(this.actionRecipe.authorId),
-      ) &&
-      (await this.sendNotifiesAfterPublishingRecipe(this.actionRecipe));
-  }
-  private dismissRecipe(): void {
     if (this.actionRecipe) {
-      this.adminService.dismissRecipe(this.actionRecipe);
+      await this.adminService.approveRecipe(this.actionRecipe);
+      if (
+        this.userService.getPermission(
+          'hide-author',
+          this.getUser(this.actionRecipe.authorId),
+        )
+      )
+        await this.sendNotifiesAfterPublishingRecipe(this.actionRecipe);
+    }
+  }
+  async dismissRecipe() {
+    if (this.actionRecipe) {
+      await this.adminService.dismissRecipe(this.actionRecipe);
       if (this.actionRecipe) {
         const author: IUser = this.getUser(this.actionRecipe.authorId);
         const notify = notifyForAuthorOfDismissedRecipe(
           this.actionRecipe,
           this.notifyService,
         );
-        this.sendNotifyWithPermission(
+        await this.sendNotifyWithPermission(
           notify,
           author,
           'manager-review-your-recipe',
+        );
+      }
+    }
+  }
+
+  async approveUpdate() {
+    if (this.actionUpdate) {
+      const update = this.adminService.approveUpdate(this.actionUpdate);
+      await this.updateService.updateUpdateInSupabase(update);
+      if (this.actionUpdate.author) {
+        const author: IUser = this.getUser(this.actionUpdate.author);
+
+        const notify = notifyForAuthorOfApprovedUpdate(
+          this.actionUpdate,
+          this.notifyService,
+        );
+        await this.sendNotifyWithPermission(
+          notify,
+          author,
+          'your-update-review',
+        );
+        const updateNotification = this.notifyService.buildNotification(
+          this.actionUpdate.shortName,
+          'Вышло новое обновление! Вы можете ознакомиться с ним на странице всех обновлений',
+          'success',
+          'update',
+          '/updates',
+        );
+        await this.updateService.addNotificationToUsers(
+          updateNotification,
+          this.users,
+          this.actionUpdate.context,
+        );
+      }
+    }
+  }
+  async dismissUpdate() {
+    if (this.actionUpdate) {
+      await this.updateService.deleteUpdateFromSupabase(this.actionUpdate.id);
+      if (this.actionUpdate.author) {
+        const author: IUser = this.getUser(this.actionUpdate.author);
+        const notify = notifyForAuthorOfDismissedUpdate(
+          this.actionUpdate,
+          this.notifyService,
+        );
+        await this.sendNotifyWithPermission(
+          notify,
+          author,
+          'your-update-review',
         );
       }
     }
@@ -746,6 +858,21 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
     }
     this.actionRecipe = recipe;
   }
+  protected updateToReviewActionClick(
+    action: 'approve' | 'dismiss',
+    update: IUpdate,
+  ): void {
+    if (action === 'approve') {
+      this.approveUpdateModalShow = true;
+    } else {
+      this.dismissUpdateModalShow = true;
+    }
+    this.actionUpdate = update;
+  }
+  approveUpdateModalShow = false;
+  dismissUpdateModalShow = false;
+
+  actionUpdate: IUpdate = nullUpdate;
   protected demoteActionClick(user: IUser) {
     this.targetDemotedUser = user;
     this.demoteModalShow = true;

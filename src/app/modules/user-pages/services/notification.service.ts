@@ -21,13 +21,15 @@ export class NotificationService {
     context:
       | 'category'
       | 'recipe'
+      |'update'
       | 'without'
       | 'comment'
       | 'hire'
       | 'born'
       | 'user'
       | 'calendar-recipe'
-      |'ingredient'
+      | 'ingredient'
+      |'update'
       | 'demote'
       | 'plan-reminder'
       | 'plan-reminder-start',

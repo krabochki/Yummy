@@ -34,7 +34,10 @@ export type role = 'admin' | 'moderator' | 'user';
 export type PermissionContext =
   | 'like-on-your-recipe'
   | 'show-adminpanel'
+  | 'you-create-update'
+  | 'show-delete-update'
   | 'cook-on-your-recipe'
+  | 'your-update-review'
   | 'plan-on-your-recipe'
   | 'show-category-deleting'
   | 'show-section-deleting'

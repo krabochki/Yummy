@@ -1,12 +1,16 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<div class="modal-dialog" (click)="!noButtons?clickBackgroundNotContent($event):null">
+<div class="modal-dialog" (click)="!noButtons ? !noBackgroundClose ? clickBackgroundNotContent($event):null:null">
   <div class="modal-content">
     <div class="modal-header">
-      <h4 [ngStyle]="{'color':this.style==='prim'?'var(--color-primary)':this.style==='sec'?'var(--color-secondary)':'var(--color-sky)'}">{{ title }}</h4>
+      <h4 [ngStyle]="{'color':this.style==='prim'?'var(--color-primary)':this.style==='sec'?'var(--color-secondary)':this.style==='vote'?'rgb(255, 31, 113)':'var(--color-sky)'}">{{ title }}</h4>
     </div>
     <div class="modal-body">
       <p>{{ description }}</p>
+      <div *ngIf="this.style==='vote'">
+        
+        <svg-icon [applyClass]="true" class="interview" [src]="'assets/images/svg/interview.svg'"></svg-icon>
+      </div>
       <div class="lds-ring" *ngIf="noButtons">
         <div></div>
         <div></div>

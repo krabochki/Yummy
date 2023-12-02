@@ -206,10 +206,25 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
 
         this.shoppingList = [...this.sortByBought(this.actualShoppingList)];
       }
+      this.cd.markForCheck();
       //если добавили или удалили что-то то обновляю список, если просто отметили купленным то нет(чтобы анимация работала)
     });
   }
 
+  navigateToAddProduct() { 
+ const sectionTag = document.getElementById('add-product');
+    if (sectionTag) {
+   console.log(sectionTag)
+   const headerHeight =
+     document.getElementsByClassName('header')[0].clientHeight;
+   window.scrollTo({
+     top: sectionTag.offsetTop - headerHeight,
+     behavior: 'smooth',
+   });
+ }
+
+  }
+  
   private divideShoppingListByTypes(list: ShoppingListItem[]): {
     [key: string]: ShoppingListItem[];
   } {

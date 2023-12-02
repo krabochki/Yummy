@@ -293,7 +293,8 @@ h2 {
     width: 100%;
     .form {
       display: grid;
-      grid-template-columns: min-content 1fr min-content;
+      margin-top: 1em;
+      grid-template-columns: 1fr calc(4px + 1.2em) ;
       align-items: center;
       justify-content: center;
       width: 100%;
@@ -327,6 +328,7 @@ h2 {
         min-width: calc(4px + 1.2em);
         height: calc(4px + 1.2em);
         border-radius: 100%;
+        max-width:calc(4px + 1.2em);
         background-color: var(--color-primary);
 
         .svg {
@@ -371,6 +373,30 @@ h2 {
 
 .zoom {
   zoom: 0.8;
+}
+h2{
+  display: flex;
+  justify-content: center;
+  column-gap: 1em;
+  align-items: center;
+  line-height: 1;
+  margin-bottom: 0.25em;
+}
+h2 button{
+  background-color: var(--color-secondary);
+  color: var(--color-background);
+  font-weight: 700;
+  width: 1.7rem;
+
+  padding-bottom: 0.1em;
+  font-size: 0.95em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  
+  height: 1.7rem;
+  border-radius: 100%;
 }
 
 .product-name,
@@ -459,12 +485,9 @@ a {
   .content {
     min-width: 100%;
     max-width: 100%;
-    app-button {
-      display: flex;
-      width: max-content;
-      margin: 0 auto;
-    }
+    
   }
+
   .row {
     zoom: 0.94;
     display: flex;

@@ -1,5 +1,25 @@
 @import "../../../../tools/UI/UI.scss";
 
+button.vote {
+  background: rgb(251, 67, 134);
+  border: 3px solid rgb(251, 67, 134);
+
+  &:after {
+    background-color: rgb(255, 31, 113);
+  }
+
+  &:focus,
+  &:hover {
+    border-color: rgb(255, 31, 113);
+  }
+
+  &.disabled {
+    background: var(--color-foreground-unactive);
+    border-color: var(--color-foreground-unactive);
+  }
+
+}
+
 button.admin{
     background: var(--color-admin);
   border: 3px solid var(--color-admin);
@@ -113,6 +133,26 @@ button.sec {
   fill:var(--color-secondary-focus);
 }
   }
+}
+
+button.filled-min.vote {
+  background: rgb(255, 134, 178);
+  border: 3px solid rgb(255, 134, 178);
+
+  &:after {
+    background-color: rgb(251, 67, 134);
+  }
+
+  &:focus,
+  &:hover {
+    border-color: rgb(251, 67, 134);
+  }
+
+  &.disabled {
+    background: var(--color-foreground-unactive);
+    border-color: var(--color-foreground-unactive);
+  }
+
 }
 button.filled-min.moder{
 

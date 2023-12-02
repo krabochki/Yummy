@@ -560,10 +560,10 @@
   [description]="'Вы уверены, что хотите опубликовать комментарий?'"
 ></app-modal>
 
-  <app-modal @modal *ngIf="voteModalShow" [style]="'sec'" [title]="'Оставьте отзыв'" [type]="'yesOrNo'"
-  (resultEmit)="handleVoteModal($event)" [buttonsText]="['Да', 'Нет']" [description]="
-    'В начале каждого рецепта вы можете увидеть, понравился ли он кулинарам, которые его приготовили. Поддержите функцию и проголосуйте тоже: вы бы приготовили этот рецепт снова?'
-  "></app-modal>
+  <app-modal @modal *ngIf="voteModalShow" [style]="'vote'" [title]="'Оставьте отзыв'" [type]="'yesOrNo'"
+  (resultEmit)="handleVoteModal($event)" [buttonsText]="['Приготовил бы', 'Не советую']" [description]="
+    'Поделитесь впечатлением для статистики рецепта: вы бы приготовили этот рецепт снова?'
+  " (closeEmit)="voteModalShow=false"></app-modal>
 
       <app-modal @modal *ngIf="successVoteModalShow" [style]="'sec'" [title]="'Ваш отзыв сохранен'" [type]="'Ok'"
   (resultEmit)="handleSuccessVoteModal()" [buttonsText]="['Хорошо']" [description]="

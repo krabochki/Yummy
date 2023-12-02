@@ -322,7 +322,6 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     return this.ingredientService.findIngredientByName(name, this.ingredients);
   }
   async handleSuccessVoteModal() {
-    await this.recipeService.updateRecipeFunction(this.recipe);
     if (this.isRecipeCooked) {
       if (
         this.author.id !== this.currentUser.id &&
@@ -728,6 +727,8 @@ export class RecipePageComponent implements OnInit, OnDestroy {
         this.currentUser.id,
         this.recipe,
       );
+          await this.recipeService.updateRecipeFunction(this.recipe);
+
       this.successVoteModalShow = true;
     } else {
       this.recipe = this.recipeService.uncookRecipe(

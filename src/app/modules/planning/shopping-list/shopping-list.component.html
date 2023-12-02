@@ -2,7 +2,7 @@
   <div class="grocery-list">
     <h1>Список покупок</h1>
 
-    <h2 class="main">Ваш список покупок</h2>
+    <h2 class="main">Ваш список покупок <button (click)="navigateToAddProduct()">+</button></h2>
 
     <p class="howMuch" *ngIf="actualShoppingList.length > 0">
       {{ actualShoppingList.length }}
@@ -14,7 +14,7 @@
       <div class="content">
         <ng-template #noProducts>
           <p class="no-products noselect">
-            В вашем списке ингредиентов пока нет продуктов. Попробуйте создать
+            В вашем списке покупок пока нет продуктов. Попробуйте создать
             новый продукт сами или добавить его из ингредиентов на странице
             какого-нибудь рецепта
           </p>
@@ -76,16 +76,13 @@
           <svg-icon [applyClass]="true" class="clear-all-icon" [src]="baseSvgPath + 'delete-product.svg'"></svg-icon>
         </button>
 
-        <div class="new-product">
-          <app-button [color]="'sec'" [rounded]="true" [text]="'Добавить продукт'" class="new-product-button-add"
-            (click)="newProductCreatingMode = !newProductCreatingMode">
-          </app-button>
+        <div class="new-product" id="add-product">
+        
 
-          <div class="new-product-popup" @height *ngIf="newProductCreatingMode">
+          <div class="new-product-popup" >
+            <h2>Новый продукт в списке покупок</h2>
             <div class="form">
-              <button class="form-btn eraser" (click)="resetFormProduct()">
-                <svg-icon class="svg" [applyClass]="true" [src]="baseSvgPath + 'eraser.svg'"></svg-icon>
-              </button>
+           
               <div class="main-inputs">
                 <div class="search-block">
                   <div class="search">
@@ -94,7 +91,7 @@
                           ? ' '
                           : ''
                       " (blurEmitter)="blur()" [(ngModel)]="searchQuery" [value]="searchQuery"
-                      (ngModelChange)="recipeSearching()" type="text" placeholder="Выбери тип из результатов поиска" />
+                      (ngModelChange)="recipeSearching()" type="text" placeholder="Выберите тип из результатов поиска" />
                   </div>
 
                   <div class="autocomplete-list" style="overflow: hidden">
@@ -119,7 +116,7 @@
                   </div>
                 </div>
 
-                <form [formGroup]="form" class="col">
+                <form [formGroup]="form" class="col" >
                   <div class="row">
                     <app-usual-input [inputRequired]="true" formControlName="name" required [value]="form.value.name"
                       [error]="
@@ -130,17 +127,23 @@
                       " [max]="50" [placeholder]="'Название'"></app-usual-input>
 
                     <app-usual-input [max]="17" formControlName="howMuch" [value]="form.value.howMuch"
-                      [placeholder]="'Кол-во и ед. изм.'"></app-usual-input>
+                      [placeholder]="'Количество и ед. измерения'"></app-usual-input>
                   </div>
                   <app-usual-input class="zoom" [value]="form.value.note" [max]="100" formControlName="note"
                     [placeholder]="'Заметка'"></app-usual-input>
+                    
                 </form>
+              
               </div>
+                <button class="form-btn eraser" (click)="resetFormProduct()">
+                  <svg-icon class="svg" [applyClass]="true" [src]="baseSvgPath + 'eraser.svg'"></svg-icon>
+                </button>
+                <app-button (click)="form.valid? addShoppingListItem() :null" [disabled]="!form.invalid" [text]="'Добавить продукт'"
+                  [rounded]="true" [color]="'sec'" [icon]="'/grocery/add-to-card'">
+                  <svg-icon class="svg" [applyClass]="true" [src]="baseSvgPath + 'add-to-card.svg'"></svg-icon>
+                </app-button>
 
-              <button (click)="addShoppingListItem()" [disabled]="form.invalid" [ngClass]="{ disabled: form.invalid }"
-                class="form-btn plus">
-                <svg-icon class="svg" [applyClass]="true" [src]="baseSvgPath + 'add.svg'"></svg-icon>
-              </button>
+            
 
               <div></div>
             </div>
@@ -149,7 +152,7 @@
       </div>
 
       <div class="cont noselect">
-        <h2 class="bottom">Почему это <span>важно</span>?</h2>
+        <h2 class="bottom"><p>Почему это <span>важно</span>?</p></h2>
 
         <p class="center">
           Раздел «Список продуктов» — это ваш надежный помощник в планировании и

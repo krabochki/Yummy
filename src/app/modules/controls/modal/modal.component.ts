@@ -18,22 +18,24 @@ export class ModalComponent implements OnInit, OnDestroy {
   @Input() description?: string;
   @Input() noButtons: boolean = false;
   @Input() buttonsText: string[] = ['Да', 'Нет'];
-  @Input() style: 'prim' | 'sec' | 'await' = 'prim';
+  @Input() style: 'prim' | 'sec' | 'await' | 'vote' = 'prim';
+
+  @Input() noBackgroundClose = false;
 
   @Output() resultEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() closeEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor(private renderer: Renderer2) {}
 
   ngOnInit(): void {
     this.renderer.addClass(document.body, 'hide-overflow');
-    (<HTMLElement>document.querySelector('.header')).style.width='calc(100% - 16px)'
+    (<HTMLElement>document.querySelector('.header')).style.width =
+      'calc(100% - 16px)';
     this.renderer.addClass(document.body, 'hide-overflow');
   }
   ngOnDestroy(): void {
     this.renderer.removeClass(document.body, 'hide-overflow');
-        (<HTMLElement>document.querySelector('.header')).style.width =
-          '100%';
-
+    (<HTMLElement>document.querySelector('.header')).style.width = '100%';
   }
 
   onOkClick() {
@@ -47,7 +49,10 @@ export class ModalComponent implements OnInit, OnDestroy {
   clickBackgroundNotContent(elem: Event) {
     //закрываем модальное окно при нажатии на фон как будто нажата кнопка "ОК" или "Нет"
     if (elem.target !== elem.currentTarget) return;
+    if (this.style === 'vote') this.closeEmit.emit(true);
+    return;
+
     if (this.type === 'Ok') this.resultEmit.emit(true);
-    if (this.type === 'yesOrNo') this.resultEmit.emit(false);
+      if (this.type === 'yesOrNo') this.resultEmit.emit(false);
   }
 }

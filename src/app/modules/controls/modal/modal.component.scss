@@ -16,6 +16,12 @@
   z-index: 9999;
 }
 
+.interview{
+  margin-top: 1em;
+  height: 10em;
+  fill: var(--color-foreground);
+}
+
 
 .lds-ring {
   --size:0.75em;
@@ -105,12 +111,16 @@ hr {
 
 @media (max-width: 768px) {
   .modal-content {
-    max-width: 25em;
+    max-width: 30em;
   }
 }
 @media (max-width: 480px) {
  
+  .interview{
+    display: none
+  }
   .modal-footer {
+    zoom:0.95;
     column-gap: var(--space-s);
   }
   .modal-dialog {

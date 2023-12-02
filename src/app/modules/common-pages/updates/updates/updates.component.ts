@@ -7,6 +7,7 @@ import { IUpdate } from './const';
 import { UserService } from '../../../user-pages/services/user.service';
 import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
+import { baseComparator } from 'src/tools/common';
 
 @Component({
   selector: 'app-updates',
@@ -48,6 +49,7 @@ export class UpdatesComponent implements OnInit {
       if (this.currentUser.role === 'user') {
         this.updates = this.updates.filter((u) => u.whoCanView === 'all');
       }
+      this.updates = this.updates.sort((a,b)=>baseComparator(new Date(b.date),new Date(a.date)))
       this.showedUpdates = this.updates.slice(0, this.START_UPDATES_TO_SHOW);
     });
   }

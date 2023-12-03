@@ -335,6 +335,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     this.recipeService.recipes$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedRecipes: IRecipe[]) => {
+        console.log(receivedRecipes)
         if (this.recipeType === RecipeType.Category) {
           this.categoryInit(categoryFromData, receivedRecipes);
           return;

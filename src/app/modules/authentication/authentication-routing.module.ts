@@ -34,7 +34,6 @@ const routes: Routes = [
       },
       {
         path: 'welcome',
-        canActivate:[AuthGuard],
         component: WelcomeComponent,
       },
       {

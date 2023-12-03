@@ -290,25 +290,27 @@ ul {
     }
 }
 
+.mobile{
+    display: none;
+}
 @media (max-width: 480px) {
+    .desktop{
+        display: none;
+    }
+    .mobile{
+        zoom:0.95;
+        display: inline;
+    }
   
     .row {
-            row-gap: 1.5em;
-    
-            margin-top: 2em;
-            justify-content: center;
-            align-items: center;
-            display: flex;
-            flex-direction: column;
+            column-gap: 1.5em;
     
             div {
                 &.btns{
 display: flex;
-    width: 100%;
     zoom:0.95;
     justify-content: center;
-    margin: 0 auto;
-    flex-direction: row;
+    margin: 0 ;
     column-gap: 1em;
                 }
                

@@ -7,6 +7,7 @@ import { IIngredient } from '../../recipes/models/ingredients';
 import { supabase, supabaseAdmin } from '../../controls/image/supabase-data';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import { Router } from '@angular/router';
+import { state } from 'src/tools/state';
 
 @Injectable({
   providedIn: 'root',
@@ -46,7 +47,6 @@ export class AuthService {
     //         }
     //       }
     //     }
-  
   }
 
   async passwordReset(email: string, users: IUser[]) {
@@ -69,12 +69,9 @@ export class AuthService {
     }
   }
 
- async  loadCurrentUserData() {
- 
+  async loadCurrentUserData() {
     this.userService.users$.subscribe(() =>
       supabase.auth.onAuthStateChange((event, session) => {
-     
-        
         const user = { ...session?.user };
         if (user && user.email) {
           const iuser: IUser = {
@@ -93,8 +90,21 @@ export class AuthService {
     );
   }
 
+  loginUserWithToken(hash: string) {
+    const urlSearchParams = new URLSearchParams(hash);
+    const accessToken = urlSearchParams.get('access_token');
+    const refreshToken = urlSearchParams.get('refresh_token');
+    if (accessToken && refreshToken) {
+      return supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      });
+    }
+    else return false;
+  }
+
   async setCurrentUser(user: IUser) {
-    supabase.auth.getSession().then(({ data }) => {
+    await supabase.auth.getSession().then(({ data }) => {
       const session = data.session;
       this.uid = session?.user.id || '';
       this.currentUserSubject.next({ ...user });
@@ -105,7 +115,6 @@ export class AuthService {
     await supabase.auth.signInWithPassword({
       email: user.email,
       password: user.password,
-      
     });
   }
 
@@ -116,7 +125,9 @@ export class AuthService {
       password: user.password,
       options: {
         emailRedirectTo:
-          'https://yummy-kitchen.vercel.app/#/welcome/',
+          state === 'dev'
+            ? 'http://localhost:4200/#/welcome'
+            : 'https://yummy-kitchen.vercel.app/#/welcome',
       },
     });
   }
@@ -185,7 +196,9 @@ export class AuthService {
 
   loginUser(user: IUser) {
     return this.users.length > 0
-      ? this.users?.find((u) => u.email === user.email || u.username === user.username) || null
+      ? this.users?.find(
+          (u) => u.email === user.email || u.username === user.username,
+        ) || null
       : null;
   }
 

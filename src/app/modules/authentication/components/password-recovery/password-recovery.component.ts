@@ -5,7 +5,7 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import {  loginMask } from 'src/tools/regex';
+import { loginMask } from 'src/tools/regex';
 import { Title } from '@angular/platform-browser';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
@@ -13,10 +13,9 @@ import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import {
-  customPatternValidator,
-} from 'src/tools/validators';
+import { customPatternValidator } from 'src/tools/validators';
 import { supabase } from 'src/app/modules/controls/image/supabase-data';
+import { state } from 'src/tools/state';
 @Component({
   templateUrl: './password-recovery.component.html',
   styleUrls: ['../../common-styles.scss'],
@@ -25,10 +24,10 @@ import { supabase } from 'src/app/modules/controls/image/supabase-data';
 })
 export class PasswordRecoveryComponent implements OnInit, OnDestroy {
   successModal: boolean = false;
-  loadingModal:boolean = false;
+  loadingModal: boolean = false;
   users: IUser[] = [];
   form: FormGroup;
-  errorModal:boolean = false;
+  errorModal: boolean = false;
   protected destroyed$: Subject<void> = new Subject<void>();
 
   constructor(
@@ -42,9 +41,7 @@ export class PasswordRecoveryComponent implements OnInit, OnDestroy {
     this.form = this.fb.group({});
   }
 
-
   ngOnInit(): void {
-    
     this.usersService.users$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedUsers: IUser[]) => {
@@ -84,7 +81,9 @@ export class PasswordRecoveryComponent implements OnInit, OnDestroy {
         } else {
           await supabase.auth.resetPasswordForEmail(resetUser.email, {
             redirectTo:
-              window.location.protocol + '//' + window.location.host + '/password-reset/',
+              state === 'dev'
+                ? 'http://localhost:4200/#/password-reset'
+                : 'https://yummy-kitchen.vercel.app/#/password-reset',
           });
           this.successModal = true;
           this.cd.markForCheck();
@@ -99,7 +98,6 @@ export class PasswordRecoveryComponent implements OnInit, OnDestroy {
       }
     }
   }
-
 
   ngOnDestroy(): void {
     this.destroyed$.next();

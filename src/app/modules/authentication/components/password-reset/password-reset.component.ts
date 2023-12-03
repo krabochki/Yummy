@@ -31,7 +31,8 @@ export class PasswordResetComponent implements OnInit {
   protected destroyed$: Subject<void> = new Subject<void>();
 
   user = nullUser;
-  recovering = false;
+
+  goHereFromUrl = false;
 
   constructor(
     private authService: AuthService,
@@ -47,16 +48,13 @@ export class PasswordResetComponent implements OnInit {
   }
   async handleSuccessModalResult() {
     this.successModal = false;
-    if (!this.recovering) {
+    if (!this.goHereFromUrl) {
       this.router.navigateByUrl('/login');
     } else this.router.navigateByUrl('/');
   }
-  currentUser:IUser = nullUser
+  currentUser: IUser = nullUser;
 
   async ngOnInit() {
-    this.authService.currentUser$.subscribe((user) => {
-      this.currentUser = user;
-     });
     this.form = this.fb.group({
       password: [
         '',
@@ -69,14 +67,24 @@ export class PasswordResetComponent implements OnInit {
       ],
     });
 
-    const code = this.route.snapshot.queryParams['code'];
-    if (code) {
-      this.recovering = true;
-      await supabase.auth.exchangeCodeForSession(code);
-    }
-    else {
-      if (this.currentUser.id === 0) {
-        this.router.navigateByUrl('/')
+    this.authService.currentUser$.subscribe((user) => {
+      this.currentUser = user;
+    });
+
+    const hashParams = window.location.hash
+      .substring(1)
+      .replace('/password-reset#', '');
+
+    if (this.currentUser.id === 0) {
+      const result = this.authService.loginUserWithToken(hashParams);
+      if (result !== false) {
+        this.goHereFromUrl = true;
+        const { error } = await result;
+        if (error) {
+          this.router.navigateByUrl('/');
+        }
+      } else {
+        this.router.navigateByUrl('/');
       }
     }
   }
@@ -97,7 +105,10 @@ export class PasswordResetComponent implements OnInit {
           password: this.form.get('password')?.value,
         });
         if (error) {
-          if (error.status === 422)
+          if (
+            error.message ===
+            'New password should be different from the old password.'
+          )
             this.infoError = 'Новый пароль должен отличаться от старого';
           else {
             this.infoError =
@@ -106,7 +117,7 @@ export class PasswordResetComponent implements OnInit {
           this.errorModal = true;
         } else {
           this.successModal = true;
-          if (!this.recovering) {
+          if (!this.goHereFromUrl) {
             this.authService.logoutUser();
             await this.authService.logout();
           }

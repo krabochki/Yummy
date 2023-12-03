@@ -70,8 +70,6 @@ export function initializeIngredientsGroupsData(
     AngularSvgIconModule.forRoot(),
   ],
   providers: [
-    { provide: LocationStrategy, useClass: HashLocationStrategy },
-
     UserService,
     {
       provide: APP_INITIALIZER,

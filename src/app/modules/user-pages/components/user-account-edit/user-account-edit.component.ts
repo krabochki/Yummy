@@ -130,7 +130,12 @@ export class UserAccountEditComponent
       userpic: [null],
     });
   }
+  birthDate: Date | null = null;
 
+  alert() {
+    console.log(new Date(this.editableUser.birthday))
+    console.log(this.birthDate)
+  }
   ngAfterContentChecked(): void {
     this.cdr.detectChanges();
   }
@@ -239,6 +244,7 @@ export class UserAccountEditComponent
     this.form.get('quote')?.setValue(this.newUser.quote);
     this.form.get('fullname')?.setValue(this.newUser.fullName);
     this.form.get('description')?.setValue(this.newUser.description);
+    this.birthDate = this.newUser.birthday ? new Date(this.newUser.birthday) : null;
     this.form.get('location')?.setValue(this.newUser.location);
     this.form.get('userpic')?.setValue(this.newUser.avatarUrl);
     this.form.get('website')?.setValue(this.newUser.personalWebsite);
@@ -315,6 +321,14 @@ export class UserAccountEditComponent
   //проверяем равны ли все поля в обьектах
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   areObjectsEqual(): boolean {
+   
+    if (
+      this.birthDate&&(
+      this.birthDate.toString() !=
+        new Date(this.editableUser.birthday).toString()
+      )
+    )
+      return true;
     return (
       JSON.stringify(this.beginningData) !==
       JSON.stringify(this.form.getRawValue())
@@ -340,6 +354,7 @@ export class UserAccountEditComponent
     this.newUser = {
       ...this.editableUser,
       username: this.form.value.username,
+      birthday:this.birthDate ? this.birthDate.toJSON() : '',
       fullName: this.form.value.fullname,
       avatarUrl: this.form.value.userpic ? this.supabaseFilepath : undefined,
       quote: this.form.value.quote,

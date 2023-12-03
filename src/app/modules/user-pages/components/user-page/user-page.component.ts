@@ -24,8 +24,8 @@ import { ChangeDetectionStrategy } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { NotificationService } from '../../services/notification.service';
 import { INotification } from '../../models/notifications';
-import { getFormattedDate } from 'src/tools/common';
-import { customEmojis, emojisRuLocale } from './emoji-picker-data';
+import { formatRussianDate, getFormattedDate, getZodiacSign } from 'src/tools/common';
+import { customEmojis, emojisRuLocale, zodiacIcons } from './emoji-picker-data';
 import { EmojiData } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { supabase } from 'src/app/modules/controls/image/supabase-data';
 
@@ -98,7 +98,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
     return this.currentUser.id === this.user.id;
   }
 
-  get showRole(): boolean{
+  get showRole(): boolean {
     return this.userService.getPermission('show-status', this.user);
   }
 
@@ -131,14 +131,14 @@ export class UserPageComponent implements OnInit, OnDestroy {
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((data) => {
-                  this.currentUser = {...data};
-        
+        this.currentUser = { ...data };
 
         this.route.data.subscribe((data: Data) => {
-          this.recipesEnabled = true;
-          this.moreInfoEnabled = false;
+          if (!this.moreInfoEnabled) {
+            this.recipesEnabled = true;
+            this.moreInfoEnabled = false;
+          }
           this.user = data['user'];
-
 
           if (this.currentUser.id === this.user.id) {
             this.myPage = true;
@@ -227,7 +227,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
                     );
                   }
 
-                  if (this.userRecipes.length === 0) {
+                  if (this.userRecipes.length === 0 ) {
                     this.moreInfoEnabled = true;
                     this.recipesEnabled = false;
                   }
@@ -252,15 +252,26 @@ export class UserPageComponent implements OnInit, OnDestroy {
         });
       });
 
-               if (!this.myPage) {
-                 this.user.profileViews++;
-                 this.updateUser(this.user);
-               }
-
+    if (!this.myPage) {
+      this.user.profileViews++;
+      this.updateUser(this.user);
+    }
   }
 
   goBack() {
     this.location.back();
+  }
+
+  get zodiacIcon() {
+    const zodiac = this.zodiacSign;
+    return zodiacIcons.find(i => i.zodiac === zodiac)?.icon || '';
+  }
+
+  get birthday() {
+    return formatRussianDate(new Date(this.user.birthday));
+  }
+  get zodiacSign() {
+    return getZodiacSign(new Date(this.user.birthday));
   }
 
   closeFollows() {

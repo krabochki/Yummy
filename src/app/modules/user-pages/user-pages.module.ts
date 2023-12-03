@@ -20,6 +20,7 @@ import { UserAccountEditComponent } from './components/user-account-edit/user-ac
 import { TimePastPipe } from 'ng-time-past-pipe';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
 import { EmojiComponent } from '@ctrl/ngx-emoji-mart/ngx-emoji';
+import { FlatpickrModule } from 'angularx-flatpickr';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { EmojiComponent } from '@ctrl/ngx-emoji-mart/ngx-emoji';
     SvgIconComponent,
     EmojiComponent,
     FormsModule,
+    FlatpickrModule,
     ReactiveFormsModule,
   ],
   providers: [

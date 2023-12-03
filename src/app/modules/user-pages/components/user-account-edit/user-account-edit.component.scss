@@ -193,11 +193,36 @@ app-count-input {
 .have-image {
   border: 3px solid var(--color-primary);
 }
+.date{
+  position: relative;
+  .deletedate{
+    background-color: var(--scroll-body);
+    border-radius: 100%;
+    width: 1.25em;
+    height: 1.25em;
+    zoom:0.9;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    bottom:0;margin:auto;
+    top:0;right: 0.75em;
+ 
+    .close-svg {
+      display: flex;
+      fill: var(--color-foreground-unactive);
+        align-items: center;
+        justify-content: center;
+        width: 0.55rem;
+        height: 0.55rem;
+      }
+    
+  }
+}
 
 .main-info-control-with-image {
   column-gap: 2em;
   display: flex;
-  align-items: center;
   width: 100%;
   justify-content: center;
 
@@ -228,7 +253,7 @@ app-count-input {
   fill: var(--color-background);
 }
 
-input {
+input.file {
   top: 0;
   cursor: pointer;
 

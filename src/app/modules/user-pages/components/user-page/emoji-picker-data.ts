@@ -232,3 +232,23 @@ export const customEmojis = [
     imageUrl: '/assets/images/emojis/chef-foot.png',
   },
 ];
+
+interface ZodiacIcon{
+  icon: string,
+  zodiac:string
+}
+
+export const zodiacIcons: ZodiacIcon[] = [
+    { icon: 'aries.svg', zodiac: 'Овен' },
+    { icon: 'taurus.svg', zodiac: 'Телец' },
+    { icon: 'gemini.svg', zodiac: 'Близнецы' },
+    { icon: 'cancer.svg', zodiac: 'Рак' },
+    { icon: 'leo.svg', zodiac: 'Лев' },
+    { icon: 'virgo.svg', zodiac: 'Дева' },
+    { icon: 'libra.svg', zodiac: 'Весы' },
+    { icon: 'scorpio.svg', zodiac: 'Скорпион' },
+    { icon: 'sagittarius.svg', zodiac: 'Стрелец' },
+    { icon: 'capricorn.svg', zodiac: 'Козерог' },
+    { icon: 'aquarius.svg', zodiac: 'Водолей' },
+    { icon: 'pisces.svg', zodiac: 'Рыбы' },
+];

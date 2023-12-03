@@ -2,6 +2,7 @@ import { EmojiData } from "@ctrl/ngx-emoji-mart/ngx-emoji";
 import { INotification } from "./notifications";
 
 export interface IUser {
+  birthday: string;
   id: number; // Уникальный идентификатор пользователя
   username: string; // Имя пользователя
   avatarUrl?: string; // URL аватара пользователя
@@ -82,6 +83,7 @@ export type PermissionContext =
 export const nullUser: IUser = {
   id: 0,
   email: '',
+  birthday:'',
   password: '',
   username: '',
   role: 'user',

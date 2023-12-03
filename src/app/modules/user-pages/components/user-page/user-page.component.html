@@ -410,6 +410,27 @@
               {{ user.role === "admin" ? "Администратор" : "Модератор" }} Yummy
             </p>
           </li>
+            <li *ngIf="user.birthday" class="row center">
+              <svg-icon [src]="'/assets/images/svg/cake.svg'" [svgStyle]="{
+                            'width.em': '1.2',
+                            'height.em': '1.1',
+                            fill: 'var(--color-foreground)'
+                          }"></svg-icon>
+              <p>
+              День рождения: {{birthday}}
+              </p>
+            </li>
+                        <li *ngIf="user.birthday" class="row center">
+                          <svg-icon [src]="'/assets/images/svg/zodiac/'+zodiacIcon" [svgStyle]="{
+                                                    'width.em': '1.2',
+                                                    'padding':'0 0.1em ',
+                                                    'height.em': '1.1',
+                                                    fill: 'var(--color-foreground)'
+                                                  }"></svg-icon>
+                          <p>
+                            Знак зодиака: {{zodiacSign}}
+                          </p>
+                        </li>
           <li class="row center" *ngIf="user?.location">
             <svg-icon
               [src]="'/assets/images/svg/geo.svg'"

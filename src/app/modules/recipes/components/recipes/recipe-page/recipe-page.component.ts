@@ -287,8 +287,12 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   downloadAvatars() {
     if (this.currentUser.avatarUrl)
       this.currentUserAvatar = this.getSupabaseLink(this.currentUser.avatarUrl);
+    else{
+      this.currentUser.avatarUrl = this.noAvatar
+    }
     if (this.author.avatarUrl)
       this.authorAvatar = this.getSupabaseLink(this.author.avatarUrl);
+    else this.authorAvatar = this.noAvatar
     this.cd.markForCheck();
   }
 

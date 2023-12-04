@@ -34,9 +34,12 @@ export class IngredientsPageComponent implements OnInit, OnDestroy {
   protected ingredientsToShow: IIngredient[] = [];
   protected destroyed$: Subject<void> = new Subject<void>();
   protected recipes: IRecipe[] = [];
+  
   searchQuery: string = '';
   autocompleteShow: boolean = false;
   autocomplete: any[] = [];
+
+  successEditModalShow = false;
 
   currentUser: IUser = { ...nullUser };
   noAccessModalShow = false;

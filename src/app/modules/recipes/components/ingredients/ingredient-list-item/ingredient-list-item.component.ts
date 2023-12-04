@@ -1,9 +1,11 @@
 import {
   ChangeDetectorRef,
   Component,
+  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
+  Output,
 } from '@angular/core';
 import {
   IIngredient,
@@ -33,6 +35,7 @@ import { supabase } from 'src/app/modules/controls/image/supabase-data';
 export class IngredientListItemComponent implements OnInit, OnDestroy {
   @Input() ingredient: any = null;
   @Input() context: 'ingredient' | 'group' = 'ingredient';
+  @Output() editEmitter = new EventEmitter();
 
   currentUser: IUser = nullUser;
   deleteModalShow: boolean = false;
@@ -47,7 +50,11 @@ export class IngredientListItemComponent implements OnInit, OnDestroy {
         : 'show-ingredient-group-deleting';
     return this.userService.getPermission(permissionName, this.currentUser);
   }
-
+  get showEditButton() {
+    const permissionName: PermissionContext = 'show-edit-ingredient-button';
+    return this.userService.getPermission(permissionName, this.currentUser);
+  }
+  editMode = false;
   recipesNumber = 0;
   constructor(
     private recipeService: RecipeService,
@@ -68,11 +75,9 @@ export class IngredientListItemComponent implements OnInit, OnDestroy {
       );
     this.ingredientService.ingredientsGroups$
       .pipe(takeUntil(this.destroyed$))
-      .subscribe(
-        (receivedGroups: IIngredientsGroup[]) => {
-          (this.groups = receivedGroups)
-        },
-      );
+      .subscribe((receivedGroups: IIngredientsGroup[]) => {
+        this.groups = receivedGroups;
+      });
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receiverUser: IUser) => (this.currentUser = receiverUser));
@@ -142,9 +147,9 @@ export class IngredientListItemComponent implements OnInit, OnDestroy {
   picture = '';
   downloadUserpicFromSupabase(path: string) {
     if (this.ingredient.ingredients) {
-        this.picture = supabase.storage
-          .from('groups')
-          .getPublicUrl(path).data.publicUrl;
+      this.picture = supabase.storage
+        .from('groups')
+        .getPublicUrl(path).data.publicUrl;
     } else {
       this.picture = supabase.storage
         .from('ingredients')
@@ -198,6 +203,12 @@ export class IngredientListItemComponent implements OnInit, OnDestroy {
     $event.preventDefault();
     $event.stopPropagation();
     this.deleteModalShow = true;
+  }
+
+  clickEditButton($event: any) {
+    $event.preventDefault();
+    $event.stopPropagation();
+    this.editMode = true;
   }
 
   ngOnDestroy(): void {

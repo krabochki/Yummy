@@ -6,6 +6,17 @@ div.container.not-found {
   }
 }
 
+.icon{
+position: absolute;
+width: 1.5em;
+height: 1.5em;
+top:0.3em;
+right:0.3em;
+fill: var(--color-foreground-unactive);
+}
+.control{
+  position: relative;
+}
 .user-policy{
   display: flex;
   align-items: center;

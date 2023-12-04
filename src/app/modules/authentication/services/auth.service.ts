@@ -29,7 +29,14 @@ export class AuthService {
     private router: Router,
     private ngZone: NgZone,
   ) {
-    this.userService.users$.subscribe((users) => (this.users = users));
+    this.userService.users$.subscribe((users) => {
+      this.users = users;
+    })
+
+  
+  }
+  
+  
     // supabase.auth.onAuthStateChange((event, session) => {
     //   if (event === 'SIGNED_IN')
     //     if (session?.user.email) {
@@ -47,7 +54,7 @@ export class AuthService {
     //         }
     //       }
     //     }
-  }
+  
 
   async passwordReset(email: string, users: IUser[]) {
     const resetUser = {
@@ -68,26 +75,32 @@ export class AuthService {
       }
     }
   }
-
-  async loadCurrentUserData() {
-    this.userService.users$.subscribe(() =>
+  loadCurrentUserData() {
+    this.userService.users$.subscribe(() => {
       supabase.auth.onAuthStateChange((event, session) => {
-        const user = { ...session?.user };
-        if (user && user.email) {
-          const iuser: IUser = {
-            ...nullUser,
-            email: user.email,
-          };
+        if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+          this.handleAuthStateChange(session);
+        }
+      });
+    });
+  }
 
-          const loginUser = this.loginUser({ ...iuser });
-          if (loginUser && loginUser.email === user.email) {
-            this.currentUserSubject.next(loginUser);
+  handleAuthStateChange(session:Session|null) {
+    const user = { ...session?.user };
+    if (user && user.email) {
+      this.loadUserFromSupabaseByEmail(user.email,true)
+        .then((loadedUser) => {
+          if (loadedUser) {
+            const user = this.userService.translateUser(loadedUser);
+            this.currentUserSubject.next(user);
           } else {
             this.currentUserSubject.next({ ...nullUser });
           }
-        }
-      }),
-    );
+        })
+        .catch((error) => {
+          console.error('Error loading user from Supabase:', error);
+        });
+    }
   }
 
   loginUserWithToken(hash: string) {
@@ -99,8 +112,7 @@ export class AuthService {
         access_token: accessToken,
         refresh_token: refreshToken,
       });
-    }
-    else return false;
+    } else return false;
   }
 
   async setCurrentUser(user: IUser) {
@@ -200,6 +212,36 @@ export class AuthService {
           (u) => u.email === user.email || u.username === user.username,
         ) || null
       : null;
+  }
+
+  async loadUserFromSupabaseByEmail(email: string,full?:boolean): Promise<number | null> {
+    return supabase
+      .from('profiles')
+      .select(full?'*':'id')
+      .eq('email', email)
+      .then((response) => {
+        if (response.data) {
+          const res = response.data[0];
+          if(!full)
+          if (res.id) {
+            return res.id;
+          } else {
+            return null;
+            }
+          else {
+            if (res)
+              return res;
+            else return null
+          }
+        } else {
+          return null;
+        }
+      });
+  }
+
+  async getUserByEmail(email: string) {
+    const user = await this.loadUserFromSupabaseByEmail(email);
+    return user;
   }
 
   checkValidity(recipe: IRecipe, user: IUser): boolean {

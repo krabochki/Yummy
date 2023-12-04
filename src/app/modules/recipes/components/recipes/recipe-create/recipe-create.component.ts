@@ -896,6 +896,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
             this.supabaseFilepath,
             this.form.get('image')?.value,
           );
+          
           if (this.editedRecipe.mainImage)
             await this.deleteOldPic(this.editedRecipe.mainImage);
         }

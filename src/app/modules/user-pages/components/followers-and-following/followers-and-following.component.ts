@@ -124,25 +124,31 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
 
   //подписка текущего пользователя на людей в списке
   async follow(user: IUser) {
-    if (this.currentUser.id > 0) {
-      user = this.userService.addFollower(user, this.currentUser?.id);
-      await this.updateUser(user);
-      if (this.userService.getPermission('new-follower', user)) {
-        const notify: INotification = this.notifyService.buildNotification(
-          'Новый подписчик',
-          `Кулинар ${
-            this.currentUser.fullName
+    if (!user.loading) {
+      if (this.currentUser.id > 0) {
+        user.loading = true;
+        this.cd.markForCheck();
+
+        user = this.userService.addFollower(user, this.currentUser?.id);
+        await this.updateUser(user);
+        if (this.userService.getPermission('new-follower', user)) {
+          const notify: INotification = this.notifyService.buildNotification(
+            'Новый подписчик',
+            `Кулинар ${this.currentUser.fullName
               ? this.currentUser.fullName
               : '@' + this.currentUser.username
-          } подписался на тебя`,
-          'info',
-          'user',
-          '/cooks/list/' + this.currentUser.id,
-        );
-        await this.notifyService.sendNotification(notify, user);
+            } подписался на тебя`,
+            'info',
+            'user',
+            '/cooks/list/' + this.currentUser.id,
+          );
+          await this.notifyService.sendNotification(notify, user);
+                user.loading = false;
+          this.cd.markForCheck();
+        }
+      } else {
+        this.noAccessModalShow = true;
       }
-    } else {
-      this.noAccessModalShow = true;
     }
   }
 
@@ -150,9 +156,14 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
 
   //отписка текущего пользователя от людей в списке
   async unfollow(user: IUser) {
-    if (this.currentUser.id > 0) {
-      user = this.userService.removeFollower(user, this.currentUser?.id);
-      await this.updateUser(user);
+    if (!user.loading) {
+      if (this.currentUser.id > 0) {
+        user.loading = true;
+        user = this.userService.removeFollower(user, this.currentUser?.id);
+        await this.updateUser(user);
+        user.loading = false;
+        this.cd.markForCheck();
+      }
     }
   }
 

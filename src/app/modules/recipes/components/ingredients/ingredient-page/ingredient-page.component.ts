@@ -19,22 +19,34 @@ import { CategoryService } from '../../../services/category.service';
 import { Title } from '@angular/platform-browser';
 import { Subject, takeUntil } from 'rxjs';
 import { trigger } from '@angular/animations';
-import { heightAnim } from 'src/tools/animations';
+import { heightAnim, modal } from 'src/tools/animations';
 import { setReadingTimeInMinutes } from 'src/tools/common';
 import { supabase } from 'src/app/modules/controls/image/supabase-data';
+import {
+  ProductType,
+  ShoppingListItem,
+  nullProduct,
+  productTypes,
+} from 'src/app/modules/planning/models/shopping-list';
+import { AuthService } from 'src/app/modules/authentication/services/auth.service';
+import { PlanService } from 'src/app/modules/planning/services/plan-service';
+import { IPlan, nullPlan } from 'src/app/modules/planning/models/plan';
 
 @Component({
   selector: 'app-ingredient-page',
   templateUrl: './ingredient-page.component.html',
   styleUrls: ['./ingredient-page.component.scss'],
-  animations: [trigger('height', heightAnim())],
+  animations: [trigger('height', heightAnim()),trigger('modal',modal())],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IngredientPageComponent implements OnInit, OnDestroy {
   ingredient: IIngredient = nullIngredient;
+  shoppingGroups = productTypes;
   recipes: IRecipe[] = [];
+  auth = false;
   showedCategories: ICategory[] = [];
-
+  loading = false;
+  plan: IPlan = nullPlan;
   relatedCategories: ICategory[] = [];
   groups: IIngredientsGroup[] = [];
   relatedIngredients: IIngredient[] = [];
@@ -45,6 +57,14 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
     return this.ingredientService
       .getGroupOfIngredient(this.groups, this.ingredient)
       .filter((g) => g.id !== 0);
+  }
+
+  get shoppingGroup(): ProductType {
+    return (
+      this.shoppingGroups.find(
+        (g) => g.id === this.ingredient.shoppingListGroup,
+      ) || this.shoppingGroups[0]
+    );
   }
 
   get nutritionWithContent() {
@@ -129,8 +149,10 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
     private ingredientService: IngredientService,
     private recipeService: RecipeService,
     private titleService: Title,
+    private planService: PlanService,
+    private authService: AuthService,
     private cd: ChangeDetectorRef,
-  ) { }
+  ) {}
 
   placeholder = '/assets/images/ingredient.png';
   ngOnInit() {
@@ -140,44 +162,71 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
 
       this.titleService.setTitle(this.ingredient.name);
 
-      this.ingredientService.ingredientsGroups$.subscribe(
-        (data) => (this.groups = data),
-      );
+      this.authService.currentUser$
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe((receivedUser) => {
+          this.auth = receivedUser.id > 0;
+          this.planService.plans$
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe(
+              (receivedPlans) =>
+              {
+                this.plan =
+                receivedPlans.find((p) => p.user === receivedUser.id) ||
+                nullPlan;
+
+this.cd.markForCheck()              }
+            );
+        });
+
       this.ingredientService.ingredients$
         .pipe(takeUntil(this.destroyed$))
-        .subscribe(
-          (data) =>
-          (this.relatedIngredients =
-            this.ingredientService.getRelatedIngredients(
-              this.ingredient,
-              data,
-            )),
-        );
-      this.recipeService.recipes$
-        .pipe(takeUntil(this.destroyed$))
         .subscribe((data) => {
-          this.recipes = this.recipeService.getRecipesByIngredient(
-            data,
-            this.ingredient,
-          );
-          this.categoryService.categories$
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe((data) => {
-              this.relatedCategories =
-                this.categoryService.getRelatedCategories(this.recipes, data);
-              this.relatedCategories =
-                this.categoryService.getPopularCategories(
-                  this.relatedCategories,
-                  this.recipes,
-                );
-              this.showedCategories = this.relatedCategories.slice(0, 3);
-            });
+          this.ingredient =
+            data.find((i) => i.id === this.ingredient.id) || this.ingredient;
+          this.relatedIngredients =
+            this.ingredientService.getRelatedIngredients(this.ingredient, data);
+          this.groupsInit();
+
+          this.recipesInit();
+          this.cd.markForCheck();
         });
+
       this.cd.markForCheck();
     });
   }
 
   image = '';
+
+  groupsInit() {
+    this.ingredientService.ingredientsGroups$.subscribe(
+      (data) => (this.groups = data),
+    );
+  }
+
+  recipesInit() {
+    this.recipeService.recipes$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((data) => {
+        this.recipes = this.recipeService.getRecipesByIngredient(
+          data,
+          this.ingredient,
+        );
+        this.categoryService.categories$
+          .pipe(takeUntil(this.destroyed$))
+          .subscribe((data) => {
+            this.relatedCategories = this.categoryService.getRelatedCategories(
+              this.recipes,
+              data,
+            );
+            this.relatedCategories = this.categoryService.getPopularCategories(
+              this.relatedCategories,
+              this.recipes,
+            );
+            this.showedCategories = this.relatedCategories.slice(0, 3);
+          });
+      });
+  }
 
   downloadImageFromSupabase() {
     if (this.ingredient.image) {
@@ -225,10 +274,7 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
           );
         } else return false;
       case 'cooking':
-        if (
-          this.ingredient.cookingMethods &&
-          this.ingredient.storageMethods
-        ) {
+        if (this.ingredient.cookingMethods && this.ingredient.storageMethods) {
           return (
             (this.ingredient.cookingMethods.length > 0 &&
               this.ingredient.storageMethods.length === 0) ||
@@ -237,7 +283,7 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
           );
         } else return false;
     }
-    }
+  }
 
   addParagraphs(text: string) {
     return text.replace(/\n/g, '<br>');
@@ -249,6 +295,36 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
 
   showAllCategories() {
     this.showedCategories = this.relatedCategories;
+  }
+
+  get addedAlready() {
+    return this.plan.shoppingList.find((p) => p.name === this.ingredient.name);
+  }
+
+  async addToBasket() {
+    this.loading = true;
+    this.cd.markForCheck();
+    let groceryList = this.plan.shoppingList;
+    if (!this.addedAlready) {
+      let maxId = 0;
+      if (groceryList.length > 0)
+        maxId = Math.max(...groceryList.map((g) => g.id));
+      const product: ShoppingListItem = {
+        ...nullProduct,
+        id: maxId + 1,
+        name: this.ingredient.name,
+        type: this.ingredient.shoppingListGroup || 0,
+      };
+      groceryList.push(product);
+    } else {
+      groceryList = groceryList.filter((p) => p.name !== this.ingredient.name);
+    }
+    this.plan.shoppingList = groceryList;
+
+    await this.planService.updatePlanInSupabase(this.plan);
+
+    this.loading = false;
+    this.cd.markForCheck();
   }
 
   ngOnDestroy(): void {

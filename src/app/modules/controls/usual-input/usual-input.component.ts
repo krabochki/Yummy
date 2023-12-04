@@ -38,6 +38,7 @@ export class UsualInputComponent implements OnInit, OnChanges {
   @Input() rows = 3;
   @Input() inputDisabled: boolean = false;
   @Input() inputType: 'input' | 'textarea' | 'password' = 'input';
+  @Input() pad = false;
   @Input() inputRequired: boolean = false;
   @Output() blurEmitter = new EventEmitter<boolean>();
   @Output() focusEmitter = new EventEmitter<boolean>();

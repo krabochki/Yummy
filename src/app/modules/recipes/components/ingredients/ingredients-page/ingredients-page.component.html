@@ -112,7 +112,7 @@
             ></svg-icon>
           </a>
 
-          <app-ingredients-horizontal-list
+          <app-ingredients-horizontal-list (editEmitter)="successEditModalShow=true"
             [ingredients]="ingredientsOfGroup(ingredientGroup).slice(0, MAX_DISPLAY_INGREDIENTS_IN_GROUP)"
           ></app-ingredients-horizontal-list>
         </div>
@@ -121,7 +121,7 @@
     <ng-template #concreteGroup >
     <ng-container *ngIf="(ingredientsOfGroup(group).length>0)">
         <div class="sections">
-          <app-ingredients-vertical-list
+          <app-ingredients-vertical-list (editEmitter)="successEditModalShow=true"
             [ingredients]="ingredientsToShow"
           />
         </div>
@@ -147,3 +147,9 @@
   (resultEmit)="handleNoAccessModal($event)" [buttonsText]="['Давайте', 'Не сейчас']" [description]="
     'Доступ к этой функции имеют только зарегистрированные пользователи. Хотите зарегистрироваться или войти в существующий аккаунт?'
   "/>
+
+
+  <app-modal @modal *ngIf="successEditModalShow" [style]="'sec'" [title]="'Ингредиент изменен'" [type]="'Ok'"
+    (resultEmit)="successEditModalShow=false" [buttonsText]="['Хорошо']" [description]="
+        'Ингредиент успешно изменен'
+      "></app-modal>

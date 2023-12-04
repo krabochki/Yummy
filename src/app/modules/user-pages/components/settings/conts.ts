@@ -75,6 +75,10 @@ export const managersPreferences: NotificationSettingsSections[] = [
         area: 'show-ingredient-deleting',
       },
       {
+        description: 'Показывать кнопку изменения ингредиента',
+        area: 'show-edit-ingredient-button',
+      },
+      {
         description: 'Показывать кнопку удаления группы ингредиентов',
         area: 'show-ingredient-group-deleting',
       },

@@ -68,11 +68,11 @@
               <p>{{ "@" + follower.username }}</p>
             </div>
             <div class="column">
-              <app-button  *ngIf="follower.id !== currentUser?.id" (click)="
+              <app-button   [disabled]="follower.loading?false:true" *ngIf="follower.id !== currentUser?.id" (click)="
                   currentUserFollowingIds.includes(follower.id)
                     ? unfollow(follower)
                     : follow(follower)
-                " [color]="'prim'" [text]="
+                " [color]="'prim'" [text]="follower.loading?'Подождите...':
                   currentUserFollowingIds.includes(follower.id)
                     ? 'Отписаться'
                     : 'Подписаться'
@@ -124,11 +124,11 @@
               <p>{{ "@" + follower.username }}</p>
             </div>
             <div class="column">
-              <app-button *ngIf="follower.id !== currentUser?.id" (click)="
+              <app-button [disabled]="!follower.loading || true" *ngIf="follower.id !== currentUser?.id" (click)="
                   currentUserFollowingIds.includes(follower.id)
                     ? unfollow(follower)
                     : follow(follower)
-                " [color]="'prim'" [text]="
+                 " [disabled]="follower.loading?false:true" [color]="'prim'" [text]=" follower.loading?'Подождите...' :
                   currentUserFollowingIds.includes(follower.id)
                     ? 'Отписаться'
                     : 'Подписаться'

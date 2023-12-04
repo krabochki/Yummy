@@ -16,16 +16,18 @@ app-modal{
 
 
 
-.delete {
+.delete{
+    top: 0;
+        right: 0;
+}
+.delete,.edit {
     @include flex;
     background-color: var(--color-primary);
     width: 2em;
     height: 2em;
     border-radius: 100%;
     position: absolute;
-    top: 0;
-    opacity: 0.65;
-    right: 0;
+ 
     zoom: 0.85;
     transition: 0.2s;
 
@@ -53,7 +55,6 @@ app-modal{
     }
 
     &:hover {
-        opacity: 1;
 
         &:after {
             width: 100%;
@@ -62,6 +63,21 @@ app-modal{
     }
 }
 
+app-ingredient-create{
+    z-index: 10;
+    position: fixed;
+}
+.edit {
+    background-color: var(--color-secondary);
+    left: 0;
+    bottom:0;
+
+    &:after {
+           
+            background-color: var(--color-secondary-focus);
+
+        }
+}
 .ingredient {
 
 

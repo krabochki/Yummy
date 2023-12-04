@@ -2,20 +2,24 @@
   <div class="content">
     <h1 class="label">Вход в аккаунт</h1>
     <p class="tagline">
-      Пожалуйста, введите ваш логин (электронную почту или имя пользователя) и пароль, для того чтобы войти
+      Пожалуйста, введите вашу электронную почту и пароль, для того чтобы войти
       в аккаунт.
     </p>
 
     <form [formGroup]="form">
       <div>
-        <app-usual-input
-          [inputRequired]="true"
-          [max]="64"
-          formControlName="login"
-          [placeholder]="'Почта или имя пользователя'"
-          required
-          [error]="loginNotValidError"
-        ></app-usual-input>
+      <div class="control">
+          <app-usual-input
+            [inputRequired]="true"
+            [max]="64"
+            formControlName="login"
+            [placeholder]="'Электронная почта'"
+            required
+            [error]="loginNotValidError"
+          ></app-usual-input>
+                    <svg-icon [src]="'/assets/images/svg/email.svg'" class="icon" [applyClass]="true"></svg-icon>
+
+      </div>
       </div>
       <app-usual-input
         [inputRequired]="true"

@@ -5,6 +5,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  Input,
   OnDestroy,
   OnInit,
   Output,
@@ -17,6 +18,7 @@ import {
   Validators,
   FormArray,
   AbstractControl,
+  FormControl,
 } from '@angular/forms';
 import {
   steps,
@@ -30,7 +32,10 @@ import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { customLinkPatternValidator, trimmedMinLengthValidator } from 'src/tools/validators';
+import {
+  customLinkPatternValidator,
+  trimmedMinLengthValidator,
+} from 'src/tools/validators';
 import { anySiteMask } from 'src/tools/regex';
 
 import {
@@ -84,6 +89,8 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
     ['tips', 'storageMethods'],
   ];
 
+  @Input() editedIngredient: IIngredient = nullIngredient;
+  @Output() editEmitter = new EventEmitter();
   selectedIngredientsGroups: IIngredientsGroup[] = [];
 
   autocompleteTypes: ProductType[] = [];
@@ -105,6 +112,12 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
   protected destroyed$: Subject<void> = new Subject<void>();
   maxId = 0;
   beginningData: any;
+
+  startGroups: number[] = [];
+
+  get edit() {
+    return this.editedIngredient.id > 0;
+  }
 
   get validForm() {
     return (
@@ -166,7 +179,103 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
     this.addModalStyle();
     this.currentUserInit();
     this.ingredientsGroupsInit();
+    this.editedIngredientInit();
     this.beginningData = this.form.getRawValue();
+  }
+  downloadMainpicFromSupabase(path: string) {
+    this.mainImage = supabase.storage
+      .from('ingredients')
+      .getPublicUrl(path).data.publicUrl;
+  }
+
+  editedIngredientInit() {
+    if (this.editedIngredient.id !== 0) {
+      // sources: this.fb.array([]),
+      this.form.get('ingredientName')?.setValue(this.editedIngredient.name);
+      this.form.get('description')?.setValue(this.editedIngredient.description);
+      this.form.get('history')?.setValue(this.editedIngredient.history);
+      this.form.get('origin')?.setValue(this.editedIngredient.origin);
+      this.editedIngredient.contraindicatedTo?.forEach((element) => {
+        this.addBaseTextControl('contraindicates', element);
+      });
+      this.editedIngredient.precautions?.forEach((element) => {
+        this.addBaseTextControl('precautions', element);
+      });
+      this.editedIngredient.compatibleDishes?.forEach((element) => {
+        this.addBaseTextControl('compatibleDishes', element);
+      });
+      this.editedIngredient.cookingMethods?.forEach((element) => {
+        this.addBaseTextControl('cookingMethods', element);
+      });
+      this.editedIngredient.tips?.forEach((element) => {
+        this.addBaseTextControl('tips', element);
+      });
+      this.editedIngredient.storageMethods?.forEach((element) => {
+        this.addBaseTextControl('storageMethods', element);
+      });
+      this.editedIngredient.advantages?.forEach((element) => {
+        this.addBaseTextControl('advantages', element);
+      });
+      this.editedIngredient.disadvantages?.forEach((element) => {
+        this.addBaseTextControl('disadvantages', element);
+      });
+      this.editedIngredient.variations?.forEach((element) => {
+        this.addBaseTextControl('variations', element);
+      });
+      this.editedIngredient.recommendedTo?.forEach((element) => {
+        this.addBaseTextControl('recommendations', element);
+      });
+      if (this.editedIngredient.image) {
+        this.supabaseFilepath = this.editedIngredient.image;
+        this.form.get('image')?.setValue('url');
+        this.downloadMainpicFromSupabase(this.editedIngredient.image);
+      }
+
+      if (this.editedIngredient.nutritions) {
+        for (let i = 1; i <= this.editedIngredient.nutritions.length; i++) {
+          this.addNutrition();
+          const nutritionsArray = this.form.get('nutritions') as FormArray;
+          const nutritionGroup = nutritionsArray.at(i - 1) as FormGroup;
+          const nutritionName = nutritionGroup.get('name') as FormControl;
+          const nutritionQuantity = nutritionGroup.get(
+            'quantity',
+          ) as FormControl;
+          const nutritionUnit = nutritionGroup.get('unit') as FormControl;
+          nutritionName?.setValue(this.editedIngredient.nutritions[i - 1].name);
+          nutritionQuantity?.setValue(
+            this.editedIngredient.nutritions[i - 1].quantity,
+          );
+          nutritionUnit?.setValue(this.editedIngredient.nutritions[i - 1].unit);
+        }
+      }
+
+      this.groups.forEach((group) => {
+        if (group.ingredients.includes(this.editedIngredient.id)) {
+          this.startGroups.push(group.id);
+          this.selectedIngredientsGroups.push(group);
+        }
+      });
+
+      if (this.editedIngredient.shoppingListGroup) {
+        const findedGroup = this.productTypes.find(
+          (t) => t.id === this.editedIngredient.shoppingListGroup,
+        );
+        this.selectedType = findedGroup || this.productTypes[0];
+        this.searchQuery = this.selectedType.name;
+        this.form.get('search')?.setValue(this.selectedType.name);
+      }
+      if (this.editedIngredient.externalLinks) {
+        for (let i = 1; i <= this.editedIngredient.externalLinks.length; i++) {
+          this.addSource();
+          const sourcesArray = this.form.get('sources') as FormArray;
+          const sourcesGroup = sourcesArray.at(i - 1) as FormGroup;
+          const sourceName = sourcesGroup.get('name') as FormControl;
+          const sourceLink = sourcesGroup.get('link') as FormControl;
+          sourceName?.setValue(this.editedIngredient.externalLinks[i - 1].name);
+          sourceLink?.setValue(this.editedIngredient.externalLinks[i - 1].link);
+        }
+      }
+    }
   }
 
   isControlValid(control: AbstractControl, field: string) {
@@ -261,13 +370,13 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
     );
   }
 
-  addBaseTextControl(controlGroup: string) {
+  addBaseTextControl(controlGroup: string, value?: string) {
     let maxLength = 500;
     if (controlGroup === 'variations') maxLength = 50;
     this.f(controlGroup).push(
       this.fb.group({
         content: [
-          '',
+          value || '',
           [
             Validators.required,
             Validators.minLength(3),
@@ -299,16 +408,16 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
 
     if (this.form.valid && this.selectedIngredientsGroups.length > 0) {
       this.createdIngredient = {
-        id: this.maxId + 1,
+        id: this.edit ? this.editedIngredient.id : this.maxId + 1,
         name: this.form.value.ingredientName,
         history: this.form.value.history,
         description: this.form.value.description,
-        author: this.currentUser.id,
-        sendDate: getCurrentDate(),
+        author: this.edit ? this.editedIngredient.author : this.currentUser.id,
+        sendDate: this.edit ? this.editedIngredient.sendDate : getCurrentDate(),
         variations: this.form.value.variations.map(
           (item: { content: string }) => item.content,
         ),
-        status: this.isManager ? 'public' : 'awaits',
+        status: this.edit ? 'public' : this.isManager ? 'public' : 'awaits',
         image: this.form.value.image ? this.supabaseFilepath : '',
         advantages: this.form.value.advantages.map(
           (item: { content: string }) => item.content,
@@ -343,12 +452,30 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
         shoppingListGroup: this.selectedType.id,
       };
 
-      this.loadIngredientToSupabase();
+      if (this.edit) {
+        this.editIngredientInSupabase();
+      } else {
+        this.loadIngredientToSupabase();
+      }
 
       this.selectedIngredientsGroups.forEach((group) => {
-        group.ingredients.push(this.createdIngredient.id);
-        this.updateGroup(group);
+        if (!group.ingredients.includes(this.editedIngredient.id)) {
+          group.ingredients.push(this.createdIngredient.id);
+          this.updateGroup(group);
+        }
       });
+      if (this.edit)
+        this.groups.forEach((group) => {
+          if (
+            this.startGroups.includes(group.id) &&
+            !this.selectedIngredientsGroups.find((g) => g.id === group.id)
+          ) {
+            group.ingredients = group.ingredients.filter(
+              (i) => i !== this.editedIngredient.id,
+            );
+            this.updateGroup(group);
+          }
+        });
     }
   }
 
@@ -377,11 +504,11 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
         return 'Содержание всех добавленных полей обязательно должны содержать минимум 3 символа';
       case 3:
         return 'Содержание всех добавленных полей обязательно должны содержать минимум 3 символа';
-     
+
       case 4:
         return 'Название каждого нутриента должно содержать не менее 2 символов';
       case 5:
-        return 'Название ссылки и сама ссылка на источник обязательны, а также ссылка должна быть корректной ссылкой на веб-сайт в интернете.'
+        return 'Название ссылки и сама ссылка на источник обязательны, а также ссылка должна быть корректной ссылкой на веб-сайт в интернете.';
     }
     return '';
   }
@@ -456,21 +583,43 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
     this.mainImage = this.defaultImage;
     this.supabaseFilepath = '';
   }
-  async addCategoryToSupabase() {
-    this.loading = true;
-    this.cd.markForCheck();
-    await this.ingredientService.addIngredientToSupabase(
-      this.createdIngredient,
-    );
-    this.loading = false;
-    this.successModalShow = true;
-    this.cd.markForCheck();
-  }
+
 
   private setUserpicFilenameForSupabase(): string {
     const file = this.form.get('image')?.value;
     const fileExt = file.name.split('.').pop();
     return `${Math.random()}.${fileExt}`;
+  }
+  async deleteOldIngredientPic(path: string) {
+    await supabase.storage.from('ingredients').remove([path]);
+  }
+  async editIngredientInSupabase() {
+    this.loading = true;
+    try {
+      if (this.editedIngredient.image !== this.createdIngredient.image) {
+        if (this.createdIngredient.image) {
+           await this.loadIngredientToSupabase();
+        }
+        if (this.editedIngredient.image)
+          await this.deleteOldIngredientPic(this.editedIngredient.image);
+      }
+
+      await this.ingredientService.updateIngredientInSupabase(
+        this.createdIngredient,
+      );
+            this.editEmitter.emit();
+
+            this.closeEmitter.emit();
+
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+    } finally {
+      this.loading = false;
+      this.cd.markForCheck();
+    
+    }
   }
 
   async loadIngredientToSupabase() {
@@ -653,6 +802,10 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
   }
 
   areObjectsEqual(): boolean {
+    if (this.edit)
+      if (this.editedIngredient.shoppingListGroup !== this.selectedType.id) return true;
+      if(this.editedIngredient.image)
+      if (this.form.get('image')?.value !== 'url') return true;
     return (
       JSON.stringify(this.beginningData) !==
       JSON.stringify(this.form.getRawValue())

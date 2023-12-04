@@ -2,6 +2,7 @@ import { EmojiData } from "@ctrl/ngx-emoji-mart/ngx-emoji";
 import { INotification } from "./notifications";
 
 export interface IUser {
+  loading?:boolean;
   birthday: string;
   id: number; // Уникальный идентификатор пользователя
   username: string; // Имя пользователя
@@ -35,6 +36,7 @@ export type role = 'admin' | 'moderator' | 'user';
 export type PermissionContext =
   | 'like-on-your-recipe'
   | 'show-adminpanel'
+  | 'show-edit-ingredient-button'
   | 'you-create-update'
   | 'show-delete-update'
   | 'cook-on-your-recipe'

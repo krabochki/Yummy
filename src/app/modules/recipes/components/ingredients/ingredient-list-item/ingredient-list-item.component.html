@@ -9,7 +9,7 @@
 >
   <div class="ingredient-wrap">
     <div class="ingredient"  [style.background-image]="'url('+(picture?picture:placeholder)+')'" *ngIf="ingredient.id > 0; else nullCategory"></div>
-    <button
+    <button 
       class="delete"
       (click)="clickDeleteButton($event)"
       *ngIf="currentUser.role !== 'user' && showDeletingButton"
@@ -19,6 +19,9 @@
         [applyClass]="true"
         [src]="'/assets/images/svg/trash.svg'"
       />
+    </button>
+    <button class="edit" (click)="clickEditButton($event)" *ngIf="currentUser.role !== 'user' && context==='ingredient'  && showEditButton">
+      <svg-icon class="trash-svg" [applyClass]="true" [src]="'/assets/images/svg/pen.svg'" />
     </button>
   </div>
 
@@ -59,3 +62,7 @@
 
 <app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
   [description]=" 'Вносим изменения... Подождите немного...'" />
+
+  <app-ingredient-create (editEmitter)="editEmitter.emit()" (closeEmitter)="editMode=false" @modal *ngIf="editMode" [editedIngredient]="ingredient"/>
+
+

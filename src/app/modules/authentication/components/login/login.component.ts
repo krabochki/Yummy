@@ -44,7 +44,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     return !this.form.get('login')?.hasError('loginExists')
       ? this.form.get('login')?.invalid &&
         (this.form.get('login')?.dirty || this.form.get('login')?.touched)
-        ? 'Введите корректный логин (электронную почту или имя пользователя)'
+        ? 'Введите корректную электронную почту'
         : ''
       : ' ';
   }
@@ -71,7 +71,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         [
           Validators.required,
           Validators.maxLength(64),
-          customPatternValidator(emailOrUsernameMask),
+          customPatternValidator(loginMask),
         ],
       ],
       password: [
@@ -90,19 +90,22 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (this.form.valid) {
       const user: IUser = {
         ...nullUser,
-        username: this.form.value.login,
         email: this.form.value.login,
         password: this.form.value.password,
       };
-      try {
-        const loginUser = this.authService.loginUser(user);
-        this.loadingModal = true;
 
-        if (loginUser) {
+      try {
+        this.loadingModal = true;
+        const loadedUserId = await this.authService.loadUserFromSupabaseByEmail(
+          user.email,
+        );
+
+        if (loadedUserId) {
           const { error } = await this.authService.signIn(
-            loginUser.email,
+            user.email,
             user.password,
           );
+
           if (error) {
             switch (error.message) {
               case 'Email not confirmed':
@@ -120,22 +123,21 @@ export class LoginComponent implements OnInit, OnDestroy {
 
             this.errorModal = true;
           } else {
-            this.authService.setCurrentUser(loginUser);
+            this.authService.setCurrentUser(this.users.find(u=>u.id===loadedUserId)||nullUser);
             this.router.navigateByUrl('/');
           }
-        } else { this.failInfo =
-          'Скорее всего, вы где-то ошиблись. Такого пользователя не найдено. Перепроверьте данные и попробуйте снова';
-          this.errorModal = true;
         }
       } catch (error) {
-        if (error instanceof Error) {
-          this.errorModal = true;
-        }
-      } finally {
-        this.loadingModal = false;
-        this.cd.markForCheck();
+        this.failInfo =
+          'Скорее всего, вы где-то ошиблись. Такого пользователя не найдено. Перепроверьте данные и попробуйте снова';
+        this.errorModal = true;
       }
+
+      this.loadingModal = false;
+              this.cd.markForCheck();
+
     }
+  
   }
 
   private usersInit(): void {

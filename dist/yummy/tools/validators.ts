@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
 import { Observable, of } from "rxjs";
+import { AuthService } from "src/app/modules/authentication/services/auth.service";
 import { IUser } from "src/app/modules/user-pages/models/users";
+import { UserService } from "src/app/modules/user-pages/services/user.service";
 
 export function usernameExistsValidator(users: IUser[], user:IUser) {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -54,23 +56,28 @@ export const policyValidator: ValidatorFn = (
 }
   
 
-  export function emailExistsValidator(users:IUser[]) {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const email = control.value;
+export async function emailExistsValidator(users: IUser[],authService:AuthService) {
 
-        if (email === undefined || email === '') {
-          return null; // Пустое значение считается допустимым
-        }
 
-        const emailExists = users.find((u) => u.email === email);
+  return async (control: AbstractControl): Promise<ValidationErrors | null> => {
+    const email = control.value;
 
-        if (emailExists !== undefined) {
-          return { emailExists: true }; // Устанавливаем ошибку с именем 'usernameExists'
-        }
-      else {return null}
+    if (email === undefined || email === '') {
+      return null; // Пустое значение считается допустимым
+    }
 
-    };
+    // Асинхронно загружаем пользователей из базы данных
+    const userInDatabase = await authService.loadUserFromSupabaseByEmail(email);
+
+    if (userInDatabase !== null) {
+      return { emailExists: true }; // Устанавливаем ошибку с именем 'emailExists'
+    } else {
+      return null;
+    }
+  };
 }
+
+
   
 
   export function usernameAndEmailNotExistsValidator(users: IUser[]) {

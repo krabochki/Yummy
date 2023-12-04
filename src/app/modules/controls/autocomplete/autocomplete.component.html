@@ -3,6 +3,8 @@
     [(ngModel)]="value"
     [disabled]="disabled"
     (blur)="blur()"
+    autocomplete="off"
+    
     (keyup)="change()"
     (ngModelChange)="search()"
     (focus)="focus()"

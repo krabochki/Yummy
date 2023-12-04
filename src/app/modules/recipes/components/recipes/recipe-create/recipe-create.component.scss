@@ -887,14 +887,6 @@ app-modal{
 }
 
 
-.button {
-  display: grid;
-  column-gap: 3em;
-  align-items: center;
-  justify-content: center;
-  grid-template-columns: 1fr max-content;
-}
-
 @media(max-width:480px){
 
   .button {

@@ -6,7 +6,7 @@
       <svg-icon [src]="'/assets/images/svg/close.svg'" [applyClass]="true" class="close-svg"></svg-icon>
     </div>
     <div class="header">
-      <h1>Создание ингредиента</h1>
+      <h1>{{edit?'Изменение ингредиента':'Создание ингредиента'}}</h1>
       <div class="navigation">
         <div class="nav-step-circles-block">
           <div class="nav-step-block" *ngFor="let step of steps; let i = index">
@@ -293,7 +293,7 @@
                   <div class="nutrition">
                     <div tabindex="-1" class="drag" cdkDragHandle>
                       <svg-icon [applyClass]="true" class="svg-drag"
-                        [src]="'../../../../..//assets/images/svg/drag.svg'">
+                        [src]="'/assets/images/svg/drag.svg'">
                       </svg-icon>
                     </div>
                     <div class="num">{{ i + 1 }}</div>
@@ -404,54 +404,62 @@
 
         <div *ngIf="currentStep === 6">
           <div class="buttons">
-            <p>
-              Если вы хотите, чтобы ингредиент увидели другие пользователи и
-              могли с ним взаимодействовать, <em>опубликуйте</em> его.<br />
-              Ингредиент будет опубликован
-              {{
-              currentUser.role === "user"
-              ? "после одобрения модератора"
-              : "после нажатия на кнопку"
-              }}
-            </p>
-            <app-button [disabled]="validForm" [title]="
-                !validForm
-                  ? 'Ингредиент должен содержать как минимум название и одну группу ингредиентов, а также все поля должны быть корректно заполнены'
-                  : ''
-              " (click)="validForm ? submitForm() : null" [text]="'Опубликовать'" [color]="'sec'" [style]="'outlined'"
-              [rounded]="true"></app-button>
-
-            <p>
-              Если вы передумали создавать ингредиент, <em>отмените</em> его
-              создание. <br />
-              Все данные придется вводить повторно, если вы захотите создать
-              этот ингредиент снова
-            </p>
-
-            <app-button (click)="closeIngredientCreating()" [text]="'Отменить'" [color]="'prim'" [style]="'outlined'"
-              [rounded]="true"></app-button>
+           <div class="button">
+              <p>
+                Если вы хотите, чтобы {{edit?'измененный':''}} ингредиент увидели другие пользователи и
+                могли с ним взаимодействовать, {{edit?'измените':'опубликуйте'}} его.
+                Ингредиент будет {{edit?'изменен':'опубликован'}}
+                {{
+                currentUser.role === "user"
+                ? "после одобрения модератора"
+                : "после нажатия на кнопку"
+                }}
+              </p>
+              <app-button [disabled]="validForm" [title]="
+                  !validForm
+                    ? 'Ингредиент должен содержать как минимум название и одну группу ингредиентов, а также все поля должны быть корректно заполнены'
+                    : ''
+                " (click)="validForm ? submitForm() : null" [text]="edit?'Изменить':'Опубликовать'" [color]="'sec'" [style]="'outlined'"
+                [rounded]="true"></app-button>
+           </div>
+<div class="button">
+  
+              <p>
+                Если вы передумали {{edit?'менять':'создавать'}} ингредиент, отмените его
+                {{edit?'изменение':'создание'}}.
+                Все данные придется вводить повторно, если вы захотите {{edit?'изменить':'создать'}}
+                этот ингредиент снова
+              </p>
+  
+              <app-button (click)="closeIngredientCreating()" [text]="'Отменить'" [color]="'prim'" [style]="'outlined'"
+                [rounded]="true"></app-button>
+</div>
           </div>
         </div>
       </form>
     </div>
 
     <div class="footer">
-      <app-button [iconSize]="'min'" [color]="'sec'" [iconPosition]="'before'" [rounded]="true"
-        [icon]="'arrow-previous'" [iconStyle]="'as-text'" [style]="'outlined'" [text]="'Назад'"
-        (click)="goToPreviousStep()" [disabled]="!(currentStep === 0)"></app-button>
-        <app-button [title]="
-                  validNextSteps() !== 0 ? noValidStepDescription(currentStep) : ''
-                " [iconSize]="'min'" [icon]="'arrow-next'" [color]="'sec'" [rounded]="true" [style]="'filled'"
-          [text]="'Вперед'" (click)="validNextSteps() === 0 ? goToNextStep() : null" [disabled]="
-                  !(currentStep === steps.length - 1) && validNextSteps() === 0
-                "></app-button>
+     <div>
+        <app-button [iconSize]="'min'" [color]="'sec'" [iconPosition]="'before'" [rounded]="true"
+          [icon]="'arrow-previous'" [iconStyle]="'as-text'" [style]="'outlined'" [text]="'Назад'"
+          (click)="goToPreviousStep()" *ngIf="!(currentStep === 0)"></app-button>
+     </div>
+        <div>
+          <app-button [title]="
+                    validNextSteps() !== 0 ? noValidStepDescription(currentStep) : ''
+                  " [iconSize]="'min'" [icon]="'arrow-next'" [color]="'sec'" [rounded]="true" [style]="'filled'"
+            [text]="'Вперед'" (click)="validNextSteps() === 0 ? goToNextStep() : null" *ngIf="!(currentStep === steps.length - 1) " [disabled]="
+                    validNextSteps() === 0
+                  "></app-button>
+        </div>
     </div>
   </div>
 </div>
 
-<app-modal @modal *ngIf="exitModalShow" [style]="'prim'" [title]="'Отмена создания ингредиента'" [type]="'yesOrNo'"
+<app-modal @modal *ngIf="exitModalShow" [style]="'prim'" [title]="'Отмена ' + (edit?'изменения':'создания')+' ингредиента'" [type]="'yesOrNo'"
   (resultEmit)="handleExitModal($event)" [buttonsText]="['Да', 'Нет']"
-  [description]="'Вы уверены, что не хотите создать ингредиент?'"></app-modal>
+  [description]="'Вы уверены, что не хотите ' + (edit?'изменить':'создать')+' ингредиент?'"></app-modal>
 
 <app-modal @modal *ngIf="successModalShow" [style]="'sec'" [title]="'Ингредиент создан'" [type]="'Ok'"
   (resultEmit)="handleSuccessModal()" [buttonsText]="['Хорошо']" [description]="
@@ -459,9 +467,9 @@
     (isManager ? ' и опубликован' : ' и отправлен на проверку')
   "></app-modal>
 
-<app-modal @modal *ngIf="createModalShow" [style]="'sec'" [title]="'Подтвердите создание ингредиента'"
+<app-modal @modal *ngIf="createModalShow" [style]="'sec'" [title]="'Подтвердите '+(edit?'изменение':'создание')+ ' ингредиента'"
   [type]="'yesOrNo'" (resultEmit)="handleCreateModal($event)" [buttonsText]="['Да', 'Нет']" [description]="
-    'Вы уверены, что создать ингредиент ' + (isManager?'и опубликовать его':' и отправить его на проверку')+'?'
+    'Вы уверены, что хотите ' +(edit?'изменить':'создать')+ ' ингредиент ' + (isManager?'':' и отправить его на проверку')+'?'
   "></app-modal>
 
   <app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal

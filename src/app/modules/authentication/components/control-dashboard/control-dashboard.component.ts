@@ -62,6 +62,7 @@ import {
   IUpdate,
   nullUpdate,
 } from 'src/app/modules/common-pages/updates/updates/const';
+import { actions } from './consts';
 @Component({
   selector: 'app-control-dashboard',
   templateUrl: './control-dashboard.component.html',
@@ -130,8 +131,15 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   protected demoteModalShow = false;
   protected demoteSuccessModalShow = false;
 
+  currentView:
+    | 'reports'
+    | 'recipes'
+    | 'categories'
+    | 'ingredients'
+    | 'updates' = 'recipes';
+
   recipeArVariants = ['рецепт', 'рецепта', 'рецептов'];
-  updateArVariants = ['обновление', 'обнволений', 'обновления'];
+  updateArVariants = ['обновление', 'обнволения', 'обновлений'];
   reportsArVariants = ['жалоба', 'жалобы', 'жалоб'];
   categoriesArVariants = ['категория', 'категории', 'категорий'];
   ingredientsArVariants = ['ингредиент', 'ингредиента', 'ингредиентов'];
@@ -147,6 +155,20 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   START_SECTIONS_DISPLAY_SIZE = 10;
   SECTIONS_TO_LOAD_SIZE = 3;
   START_INGREDIENTS_GROUPS_DISPLAY_SIZE = 10;
+  
+  actions = actions;
+
+  get nothing() {
+    return (
+      (this.currentView === 'recipes' && this.awaitingRecipes.length === 0) ||
+      (this.currentView === 'categories' &&
+        this.categoriesForCheck.length === 0) ||
+      (this.currentView === 'ingredients' &&
+        this.allAwaitingIngredients.length === 0) ||
+      (this.currentView === 'reports' && this.allReports.length === 0) ||
+      (this.currentView === 'updates' && this.updatesToReview.length === 0)
+    );
+  }
 
   protected destroyed$: Subject<void> = new Subject<void>();
 
@@ -240,12 +262,19 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
                 recipe: recipe.id,
               };
               this.allReports = [...this.allReports, reportForAdmin];
+               this.allReports = this.allReports.filter(
+                 (r) =>
+                   r.reporter !== this.currentUser.id &&
+                   this.getComment(r.comment, this.getRecipe(r.recipe))
+                     .authorId !== this.currentUser.id,
+               );
             });
 
           this.reports = this.allReports.slice(
             0,
             this.reports.length > 3 ? this.reports.length : 3,
           );
+         
         });
         this.recipes = receivedRecipes;
         this.awaitingRecipes =

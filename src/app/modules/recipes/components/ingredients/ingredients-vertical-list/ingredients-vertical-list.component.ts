@@ -1,4 +1,4 @@
-import { Component, HostListener, Input, OnChanges } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnChanges } from '@angular/core';
 import { nullIngredient } from '../../../models/ingredients';
 
 @Component({
@@ -9,6 +9,7 @@ import { nullIngredient } from '../../../models/ingredients';
 export class IngredientsVerticalListComponent implements OnChanges {
   @Input() ingredients: any[] = [];
   @Input() context: 'ingredient' | 'group' = 'ingredient';
+  @Input() editEmitter = new EventEmitter();
 
   ngOnChanges() {
     this.onResize();

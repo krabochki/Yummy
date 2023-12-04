@@ -8,14 +8,31 @@
 
     <form [formGroup]="form">
       <div>
-        <app-usual-input
-          [inputRequired]="true"
-          [max]="20"
-          formControlName="username"
-          [placeholder]="'Имя пользователя'"
-          required
-          [error]="usernameNotValidError"
-        ></app-usual-input>
+        <div class="control">
+          <app-usual-input [pad]="true" [inputRequired]="true" type="text" [max]="64" formControlName="email"
+            [placeholder]="'Электронная почта'" required [error]="emailNotValidError">
+          
+            
+          </app-usual-input>
+          <svg-icon [src]="'/assets/images/svg/email.svg'" class="icon" [applyClass]="true"></svg-icon>
+        </div>
+        <div class="error" *ngIf="form.get('email')?.hasError('emailExists')">
+          Пользователь с такой электронной почтой уже существует
+        </div>
+      </div>
+      <div>
+        <div class="control">
+          <app-usual-input
+            [inputRequired]="true"
+            [max]="20"
+            formControlName="username"
+            [placeholder]="'Имя пользователя'"
+            required
+            [error]="usernameNotValidError"
+          ></app-usual-input>
+                    <svg-icon [src]="'/assets/images/svg/badge.svg'" class="icon" [applyClass]="true"></svg-icon>
+
+        </div>
         <div
           class="error"
           *ngIf="form.get('username')?.hasError('usernameExists')"
@@ -23,20 +40,7 @@
           Это имя пользователя уже занято
         </div>
       </div>
-      <div>
-        <app-usual-input
-          [inputRequired]="true"
-          type="text"
-          [max]="64"
-          formControlName="email"
-          [placeholder]="'Электронная почта'"
-          required
-          [error]="emailNotValidError"
-        ></app-usual-input>
-        <div class="error" *ngIf="form.get('email')?.hasError('emailExists')">
-          Пользователь с такой электронной почтой уже существует
-        </div>
-      </div>
+      
       <app-usual-input
         [inputType]="'password'"
         [inputRequired]="true"

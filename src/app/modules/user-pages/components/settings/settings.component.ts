@@ -91,6 +91,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
     return isIngredientAlreadyAdded;
   }
 
+  get email() {
+    return this.authService.session?.user.email
+  }
+
   constructor(
     private authService: AuthService,
     private router: Router,

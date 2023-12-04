@@ -233,14 +233,9 @@
         <app-button
           class="noselect"
           (click)="
-            currentUser.id === 0
-              ? (noAccessModalShow = true)
-              : myPage
-              ? edit()
-              : userService.isUserSubscriber(user, currentUser.id)
-              ? unfollow()
-              : follow()
+            userButtonClick()
           "
+          [disabled]="!loading"
           [color]="'prim'"
           [style]="
             userService.isUserSubscriber(user, currentUser.id) || myPage
@@ -249,9 +244,10 @@
           "
           [rounded]="true"
           [text]="
+          
             this.myPage
               ? 'Изменить профиль'
-              : userService.isUserSubscriber(user, currentUser.id)
+              : loading ? 'Подождите...': userService.isUserSubscriber(user, currentUser.id)
               ? 'Отписаться'
               : 'Подписаться'
           "

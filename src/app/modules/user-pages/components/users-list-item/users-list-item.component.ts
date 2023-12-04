@@ -125,6 +125,8 @@ export class UsersListItemComponent implements OnInit, OnDestroy {
   }
 
   showStatus(user: IUser) {
+    if (this.currentUser.id === this.user.id) return true;
+    if (this.currentUser.role === 'admin') return true;
     return this.userService.getPermission('show-status', user);
   }
 

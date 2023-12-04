@@ -164,6 +164,8 @@ export class UsersPageComponent implements OnInit, OnDestroy {
   }
 
   showStatus(user: IUser) {
+    if (this.currentUser.id === user.id) return true;
+    if (this.currentUser.role === 'admin') return true;
     return this.userService.getPermission('show-status', user);
   }
 

@@ -4,6 +4,15 @@
   justify-content: center;
 }
 
+ .button {
+   align-items: center;
+   justify-content: center;display: grid;
+    column-gap: 3em;
+    grid-template-columns: 1fr max-content;
+ }
+* {
+  white-space: wrap
+}
 .close-button {
   zoom: 0.9;
 
@@ -246,11 +255,7 @@ app-autocomplete,
     margin-bottom: 1.5em;
   }
 
-  p {
-    margin-bottom: 1em;
-    text-align: center;
-    line-height: 1;
-  }
+
 }
 
 .no-categories {
@@ -931,6 +936,14 @@ app-modal {
 }
 
 @media (max-width: 480px) {
+
+  .button {
+      display: grid;
+      row-gap: 1em;
+      align-items: center;
+      justify-content: center;
+      grid-template-columns: 1fr;
+    }
   .close-button {
     zoom: 1.1;
 

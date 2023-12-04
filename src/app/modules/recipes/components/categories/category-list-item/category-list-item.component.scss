@@ -14,7 +14,6 @@
   border-radius: 100%;
   position: absolute;
   top: 0;
-  opacity: 0.65;
   right: 0;
   zoom: 0.85;
   transition: 0.2s;
@@ -35,7 +34,6 @@
     z-index: 1;
   }
   &:hover{
-    opacity: 1;
 
     &:after{
       width: 100%;

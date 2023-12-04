@@ -99,6 +99,8 @@ export class UserPageComponent implements OnInit, OnDestroy {
   }
 
   get showRole(): boolean {
+    if (this.myPage) return true;
+    if (this.currentUser.role === 'admin') return true;
     return this.userService.getPermission('show-status', this.user);
   }
 
@@ -292,33 +294,46 @@ export class UserPageComponent implements OnInit, OnDestroy {
 
   //подписка текущего пользователя на людей в списке
   async follow() {
-    if (this.currentUser.id > 0) {
-      this.user = this.userService.addFollower(this.user, this.currentUser.id);
-      await this.updateUser(this.user);
-      if (this.userService.getPermission('new-follower', this.user)) {
-        const notify: INotification = this.notifyService.buildNotification(
-          'Новый подписчик',
-          `Кулинар ${
-            this.currentUser.fullName
+    
+    if (!this.loading) {
+      this.loading = true;
+
+      if (this.currentUser.id > 0) {
+        const followedUser = this.userService.addFollower({ ...this.user }, this.currentUser.id);
+        await this.updateUser({ ...followedUser });
+        if (this.userService.getPermission('new-follower', followedUser)) {
+          const notify: INotification = this.notifyService.buildNotification(
+            'Новый подписчик',
+            `Кулинар ${this.currentUser.fullName
               ? this.currentUser.fullName
               : '@' + this.currentUser.username
-          } подписался на тебя`,
-          'info',
-          'user',
-          '/cooks/list/' + this.currentUser.id,
-        );
-        await this.notifyService.sendNotification(notify, this.user);
-      }
+            } подписался на тебя`,
+            'info',
+            'user',
+            '/cooks/list/' + this.currentUser.id,
+          );
+          await this.notifyService.sendNotification(notify, followedUser);
+        }
+      } this.loading = false;
+      this.cd.markForCheck();
     }
+
   }
 
+  loading = false;
+
   async unfollow() {
-    if (this.currentUser.id > 0) {
-      this.user = this.userService.removeFollower(
-        this.user,
-        this.currentUser.id,
-      );
-      await this.updateUser(this.user);
+    if (!this.loading) {
+      this.loading = true;
+      if (this.currentUser.id > 0) {
+        const unfollowedUser = this.userService.removeFollower(
+          { ...this.user },
+          this.currentUser.id,
+        );
+        await this.updateUser({...unfollowedUser});
+      }
+      this.loading = false;
+      this.cd.markForCheck();
     }
   }
 
@@ -381,7 +396,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
   }
 
   async updateUser(user: IUser) {
-    await this.userService.updateUserInSupabase(user);
+    await this.userService.updateUserInSupabase({...user});
   }
   protected unsetEmoji($event: any): void {
     $event.stopPropagation();
@@ -391,6 +406,30 @@ export class UserPageComponent implements OnInit, OnDestroy {
       this.updateUser(this.currentUser);
       this.selectedEmoji = null;
       this.showEmojiPicker = false;
+    }
+  }
+
+  userButtonClick() {
+
+    if (!this.loading) {
+      if (this.currentUser.id === 0) {
+        this.noAccessModalShow = true;
+      }
+      else {
+        if (this.myPage) {
+          this.edit();
+        }
+        else {
+          if (this.userService.isUserSubscriber(this.user, this.currentUser.id)) {
+            this.unfollow();
+          }
+          else {
+            this.follow();
+          }
+        }
+      }
+       
+    
     }
   }
 

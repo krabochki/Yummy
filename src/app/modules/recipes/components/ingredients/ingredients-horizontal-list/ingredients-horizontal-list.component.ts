@@ -1,10 +1,12 @@
 import {
   Component,
   ElementRef,
+  EventEmitter,
   HostListener,
   Input,
   OnChanges,
   OnInit,
+  Output,
   ViewChild,
 } from '@angular/core';
 import { nullIngredient } from '../../../models/ingredients';
@@ -19,6 +21,7 @@ import { dragStart, dragEnd } from 'src/tools/common';
 export class IngredientsHorizontalListComponent implements OnChanges, OnInit {
   @Input() ingredients: any[] = [];
   @Input() context: 'ingredient' | 'group' = 'ingredient';
+  @Output() editEmitter = new EventEmitter()
 
   @ViewChild('list') list: ElementRef | null = null;
   disableDrag = false;

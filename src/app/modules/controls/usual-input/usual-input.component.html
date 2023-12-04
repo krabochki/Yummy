@@ -3,7 +3,6 @@
 <div class="wrap">
   <input
 
-  
   *ngIf="inputType==='input' || inputType==='password';else textarea"
     [maxlength]="max ? max : null"
             [type]="showPassword && inputType==='password'?'password':'text'"
@@ -14,10 +13,12 @@
     (keyup)="filter();change()"
     [(ngModel)]="value"
     [disabled]="disabled || inputDisabled"
-    autocomplete="off"
     type="text"
     [ngClass]="{
       uncorrect: error !== ''
+    }"
+    [ngStyle]="{
+      'padding-right':pad?'2em':null
     }"
     [placeholder]="placeholder"
     (focus)="focus()"
@@ -25,10 +26,10 @@
   />
   <ng-template #textarea>
     <textarea
+    
       [ngClass]="{ active: !isSleep && isFocused, uncorrect: error !== '' }"
       spellcheck="false"
       #input
-      autocomplete="off"
       [maxlength]="max ? max : null"
       [(ngModel)]="value"
       cdkTextareaAutosize  

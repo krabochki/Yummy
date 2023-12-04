@@ -16,6 +16,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { customPatternValidator } from 'src/tools/validators';
 import { supabase } from 'src/app/modules/controls/image/supabase-data';
 import { state } from 'src/tools/state';
+import { AuthService } from '../../services/auth.service';
 @Component({
   templateUrl: './password-recovery.component.html',
   styleUrls: ['../../common-styles.scss'],
@@ -33,6 +34,7 @@ export class PasswordRecoveryComponent implements OnInit, OnDestroy {
   constructor(
     private titleService: Title,
     private fb: FormBuilder,
+    private authService:AuthService,
     private cd: ChangeDetectorRef,
     private usersService: UserService,
   ) {
@@ -74,22 +76,37 @@ export class PasswordRecoveryComponent implements OnInit, OnDestroy {
       const resetUser = { ...nullUser, email: this.form.get('email')?.value };
       try {
         this.loadingModal = true;
-        const finded = this.users.find((u) => u.email === resetUser.email);
 
-        if (!finded) {
-          this.errorModal = true;
-        } else {
-          await supabase.auth.resetPasswordForEmail(resetUser.email, {
+              const userInDatabase =
+                await this.authService.loadUserFromSupabaseByEmail(
+                  resetUser.email,
+                );
+
+        if (userInDatabase) {
+          // Выполняем сброс пароля, используя email из формы
+          const { error } = await supabase.auth.resetPasswordForEmail(resetUser.email, {
             redirectTo:
               state === 'dev'
                 ? 'http://localhost:4200/#/password-reset'
                 : 'https://yummy-kitchen.vercel.app/#/password-reset',
           });
-          this.successModal = true;
-          this.cd.markForCheck();
+          if (error) {
+            console.log(error)
+          }
+          else {
+
+            // Показываем модальное окно об успешной отправке ссылки на сброс пароля
+            this.successModal = true;
+            this.cd.markForCheck();
+          }
+        }
+        else {
+                    this.errorModal = true;
+
         }
       } catch (error) {
         if (error instanceof Error) {
+          // Показываем модальное окно об ошибке
           this.errorModal = true;
         }
       } finally {

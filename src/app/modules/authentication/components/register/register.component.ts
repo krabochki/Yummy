@@ -99,7 +99,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
           Validators.minLength(5),
           Validators.maxLength(64),
           customPatternValidator(loginMask),
-          emailExistsValidator(this.users),
         ],
       ],
       username: [
@@ -127,79 +126,86 @@ export class RegisterComponent implements OnInit, OnDestroy {
   async registration() {
     if (this.form.valid) {
       this.loadingModal = true;
-      this.cd.markForCheck()
+      this.cd.markForCheck();
 
-      await this.usersService.getMaxUserId().then((maxId) => {
-        this.maxUserId = maxId;
-      });
-      
-    await this.planService.getMaxPlanId().then((maxId) => {
-      this.maxPlanId = maxId;
-    });
-      if (this.maxUserId !== 0 && this.maxPlanId !==0) {
-        const maxId = Math.max(...this.users.map((u) => u.id));
-        const newUser: IUser = {
-          ...{ ...nullUser },
-          username: this.form.value.username,
-          email: this.form.value.email,
-          password: this.form.value.password,
-          registrationDate: getCurrentDate(),
-          id: maxId + 1,
-        };
-        this.createUser = newUser;
+      const userInDatabase = await this.authService.loadUserFromSupabaseByEmail(
+        this.form.value.email,
+      );
 
-        const isEmailTaken = this.users.some(
-          (searchingUser) => searchingUser.username === newUser.username,
-        );
-        const isUsernameTaken = this.users.some(
-          (searchingUser) => searchingUser.username === newUser.username,
-        );
-        if (isUsernameTaken || isEmailTaken) {
-          this.loadingModal = false;
-          this.errorModal = true;
-          this.failText = isUsernameTaken
-            ? 'Имя пользователя, которое вы ввели, уже занято. Пожалуйста, измените данные и попробуйте ещё раз.'
-            : 'Почта, которую вы ввели, уже занята. Пожалуйста, измените данные и попробуйте ещё раз.';
-          this.cd.markForCheck();
-          return;
-        }
-        const { error } = await this.authService.register(newUser);
-
-        if (error) {
-          this.errorModal = true;
-        } else {
-          await this.addUserToUsers(
-            this.maxUserId + 1,
-            newUser.username,
-            newUser.email,
-          );
-
-          await this.addPlanToPlans(this.maxUserId + 1);
-          await this.authService.logout();
-
-          const notify = this.notifyService.buildNotification(
-            'Добро пожаловать',
-            `Добро пожаловать в Yummy, @${this.createUser.username} 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!`,
-            'success',
-            'born',
-            '',
-          );
-          await this.notifyService.sendNotification(notify, this.createUser);
-          this.successModal = true;
-        }
+      if (userInDatabase !== null) {
         this.loadingModal = false;
+
+        this.failText =
+          'Почта, которую вы ввели, уже занята. Пожалуйста, измените данные и попробуйте ещё раз.';
+        this.errorModal = true;
         this.cd.markForCheck();
-      }
-      else {
+      } else {
+        await this.usersService.getMaxUserId().then((maxId) => {
+          this.maxUserId = maxId;
+        });
+
+        await this.planService.getMaxPlanId().then((maxId) => {
+          this.maxPlanId = maxId;
+        });
+        if (this.maxUserId !== 0 && this.maxPlanId !== 0) {
+          const maxId = Math.max(...this.users.map((u) => u.id));
+          const newUser: IUser = {
+            ...{ ...nullUser },
+            username: this.form.value.username,
+            email: this.form.value.email,
+            password: this.form.value.password,
+            registrationDate: getCurrentDate(),
+            id: maxId + 1,
+          };
+          this.createUser = newUser;
+
+          const isUsernameTaken = this.users.some(
+            (searchingUser) => searchingUser.username === newUser.username,
+          );
+          if (isUsernameTaken) {
+            this.loadingModal = false;
+            this.errorModal = true;
+            this.failText =
+              'Имя пользователя, которое вы ввели, уже занято. Пожалуйста, измените данные и попробуйте ещё раз.';
+            this.cd.markForCheck();
+            return;
+          }
+          const { error } = await this.authService.register(newUser);
+
+          if (error) {
+            this.errorModal = true;
+          } else {
+            await this.addUserToUsers(
+              this.maxUserId + 1,
+              newUser.username,
+              newUser.email,
+            );
+
+            await this.addPlanToPlans(this.maxUserId + 1);
+            await this.authService.logout();
+
+            const notify = this.notifyService.buildNotification(
+              'Добро пожаловать',
+              `Добро пожаловать в Yummy, @${this.createUser.username} 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!`,
+              'success',
+              'born',
+              '',
+            );
+            await this.notifyService.sendNotification(notify, this.createUser);
+            this.successModal = true;
+          }
+          this.loadingModal = false;
+          this.cd.markForCheck();
+        } else {
           this.failText =
             'Невозможно найти пользователей для присвоения вам уникального номера. Скорее всего, произошел сбой в работе сайта или сбой в вашем Интернет-подключении. Попробуйте перезагрузить страницу.';
-        this.errorModal = true;
-                this.loadingModal = false;
+          this.errorModal = true;
+          this.loadingModal = false;
 
-        this.cd.markForCheck();
+          this.cd.markForCheck();
+        }
       }
     }
-    
   }
   async addPlanToPlans(userId: number) {
     await this.planService.addPlanToSupabase({

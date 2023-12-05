@@ -90,7 +90,7 @@ export class AuthService {
   handleAuthStateChange(session: Session | null) {
     const user = { ...session?.user };
     if (user && user.email) {
-      this.loadUserFromSupabaseByEmail(user.email, true)
+      this.loadUserFromSupabaseByEmail(user.email)
         .then((loadedUser) => {
           if (loadedUser) {
             const user = this.userService.translateUser(loadedUser);
@@ -217,26 +217,19 @@ export class AuthService {
   }
 
   async loadUserFromSupabaseByEmail(
-    email: string,
-    full?: boolean,
+    email: string
   ): Promise<number | null> {
     return supabase
       .from('profiles')
-      .select(full ? '*' : 'id')
+      .select('*')
       .eq('email', email)
       .then((response) => {
         if (response.data) {
           const res = response.data[0];
-          if (!full)
-            if (res.id) {
-              return res.id;
-            } else {
-              return null;
-            }
-          else {
+         
             if (res) return res;
             else return null;
-          }
+          
         } else {
           return null;
         }

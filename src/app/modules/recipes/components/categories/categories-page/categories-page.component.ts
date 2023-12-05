@@ -89,6 +89,17 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
   }
 
   getCategoriesData(section: ISection) {
+    this.sectionService.sections$.subscribe(
+      (receivedSections) => {
+        const findedSection = receivedSections.find(s => s.id === section.id);
+        if (findedSection) {
+          section = findedSection;
+        }
+        else {
+          this.router.navigateByUrl('/sections')
+        }
+      }
+    )
     this.categoryService.categories$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((data: ICategory[]) => {

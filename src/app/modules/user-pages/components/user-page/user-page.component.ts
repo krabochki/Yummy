@@ -158,6 +158,9 @@ export class UserPageComponent implements OnInit, OnDestroy {
               if (findedUser) {
                 this.user = findedUser;
               }
+              else {
+                this.router.navigateByUrl('/cooks')
+              }
               this.selectedEmoji = this.user.emojiStatus
                 ? this.user.emojiStatus
                 : null;

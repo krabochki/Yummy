@@ -21,6 +21,7 @@ import { PlanService } from 'src/app/modules/planning/services/plan-service';
 import { IPlan, nullPlan } from 'src/app/modules/planning/models/plan';
 import { baseComparator } from 'src/tools/common';
 import { IIngredient, nullIngredient } from '../../../models/ingredients';
+import { CategoryService } from '../../../services/category.service';
 
 @Component({
   templateUrl: './some-recipes-page.component.html',
@@ -42,6 +43,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     private title: Title,
     private router: Router,
     private planService: PlanService,
+    private categoryService:CategoryService
   ) {
     const matchRecipes =
       this.router.getCurrentNavigation()?.extras.state?.['recipes'];
@@ -73,6 +75,8 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
   protected mostCooked: IRecipe[] = [];
   protected mostFavorite: IRecipe[] = [];
   protected matchRecipes: IRecipe[] = [];
+
+  categories:ICategory[] = []
 
   protected currentUser: IUser = { ...nullUser };
   protected searchQuery: string = '';
@@ -177,17 +181,32 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
   }
 
   private categoryInit(categoryFromData: ICategory, recipes: IRecipe[]): void {
-    this.category = categoryFromData;
 
-    const publicAndMyRecipes = this.recipeService.getPublicAndAllMyRecipes(
-      recipes,
-      this.currentUser.id,
-    );
-    this.allRecipes = this.recipeService.getRecipesByCategory(
-      publicAndMyRecipes,
-      this.category.id,
-    );
-    this.recipesToShow = this.allRecipes.slice(0, 8);
+    this.categoryService.categories$.pipe(takeUntil(this.destroyed$)).subscribe(
+      (receivedCategories: ICategory[]) => {
+        this.categories = receivedCategories.filter(c => c.status === 'public')
+      
+
+        const findedCategory = this.categories.find(category => category.id === categoryFromData.id)
+        if (findedCategory) {
+          this.category = categoryFromData;
+        }
+        else {
+          this.router.navigateByUrl('/sections')
+        }
+
+        const publicAndMyRecipes = this.recipeService.getPublicAndAllMyRecipes(
+          recipes,
+          this.currentUser.id,
+        );
+        this.allRecipes = this.recipeService.getRecipesByCategory(
+          publicAndMyRecipes,
+          this.category.id,
+        );
+        this.recipesToShow = this.allRecipes.slice(0, 8);
+      }
+    )
+   
   }
 
   private currentUserPlanInit(): void {

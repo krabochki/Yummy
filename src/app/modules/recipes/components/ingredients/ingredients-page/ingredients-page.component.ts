@@ -34,7 +34,7 @@ export class IngredientsPageComponent implements OnInit, OnDestroy {
   protected ingredientsToShow: IIngredient[] = [];
   protected destroyed$: Subject<void> = new Subject<void>();
   protected recipes: IRecipe[] = [];
-  
+
   searchQuery: string = '';
   autocompleteShow: boolean = false;
   autocomplete: any[] = [];
@@ -89,59 +89,57 @@ export class IngredientsPageComponent implements OnInit, OnDestroy {
 
           this.ingredientService.ingredients$
             .pipe(takeUntil(this.destroyed$))
-            .subscribe((data) => {
-              let ingredients = [
-                ...data.filter((i) => i.status === 'public'),
-              ];
-              ingredients = this.ingredientService.sortIngredients(
-                ingredients,
-                this.recipes,
-              );
-              this.ingredients = ingredients;
-
-              
+            .subscribe((receivedIngredients: IIngredient[]) => {
               this.ingredientService.ingredientsGroups$
                 .pipe(takeUntil(this.destroyed$))
                 .subscribe((data) => {
                   this.ingredientGroups = [...data];
 
-                  this.ingredients = [...this.ingredientService.sortIngredients(
-                    this.ingredients,
-                    this.recipes,
-                  )]
+                  const ingredients = this.ingredientService
+                    .sortIngredients(receivedIngredients, this.recipes)
+                    .filter((i) => i.status === 'public');
+                  this.ingredients = ingredients;
+
                   if (!this.ingredientGroups.find((g) => g.id === 0)) {
                     const popularGroup: IIngredientsGroup =
                       this.getPopularGroup();
                     this.ingredientGroups.unshift(popularGroup);
                   }
+
                   this.cd.markForCheck();
                 });
-                if (this.context !== 'all-groups') {
-                  if (this.context === 'ingredient-group') {
-                    this.group = { ...mainData['IngredientGroupResolver'] };
-                  } else {
-                    this.group = this.getPopularGroup();
+              if (this.context !== 'all-groups') {
+                if (this.context === 'ingredient-group') {
+                  const groupFromResolver = mainData['IngredientGroupResolver'];
+                  const findedGroup = this.ingredientGroups.find(group => group.id === groupFromResolver.id);
+                  if (findedGroup) {
+                    this.group = findedGroup;
                   }
-                  this.ingredientsToShow = [
-                    ...this.ingredientsOfGroup(this.group).slice(
-                      0,
-                      this.START_DISPLAY_INGREDIENTS_ON_GROUP_PAGE,
-                    ),
-                  ];
-                  this.cd.markForCheck();
-
-                  this.title = this.group.name;
-                } else if (this.context === 'all-groups') {
-                  this.title = 'Все ингредиенты';
+                  else {
+                    this.router.navigateByUrl('/')
+                  }
+                  
+                } else {
+                  this.group = this.getPopularGroup();
                 }
+                this.ingredientsToShow = [
+                  ...this.ingredientsOfGroup(this.group).slice(
+                    0,
+                    this.START_DISPLAY_INGREDIENTS_ON_GROUP_PAGE,
+                  ),
+                ];
                 this.cd.markForCheck();
 
-                this.titleService.setTitle(this.title);
+                this.title = this.group.name;
+              } else if (this.context === 'all-groups') {
+                this.title = 'Все ингредиенты';
+              }
+              this.cd.markForCheck();
+
+              this.titleService.setTitle(this.title);
               this.cd.markForCheck();
             });
         });
-
-    
     });
   }
 

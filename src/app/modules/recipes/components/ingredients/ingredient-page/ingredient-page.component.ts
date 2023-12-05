@@ -10,7 +10,7 @@ import {
   IIngredientsGroup,
   nullIngredient,
 } from '../../../models/ingredients';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IngredientService } from '../../../services/ingredient.service';
 import { RecipeService } from '../../../services/recipe.service';
 import { IRecipe, Nutrition } from '../../../models/recipes';
@@ -36,7 +36,7 @@ import { IPlan, nullPlan } from 'src/app/modules/planning/models/plan';
   selector: 'app-ingredient-page',
   templateUrl: './ingredient-page.component.html',
   styleUrls: ['./ingredient-page.component.scss'],
-  animations: [trigger('height', heightAnim()),trigger('modal',modal())],
+  animations: [trigger('height', heightAnim()), trigger('modal', modal())],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IngredientPageComponent implements OnInit, OnDestroy {
@@ -146,6 +146,7 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
   constructor(
     private categoryService: CategoryService,
     private route: ActivatedRoute,
+    private router: Router,
     private ingredientService: IngredientService,
     private recipeService: RecipeService,
     private titleService: Title,
@@ -168,26 +169,29 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
           this.auth = receivedUser.id > 0;
           this.planService.plans$
             .pipe(takeUntil(this.destroyed$))
-            .subscribe(
-              (receivedPlans) =>
-              {
-                this.plan =
+            .subscribe((receivedPlans) => {
+              this.plan =
                 receivedPlans.find((p) => p.user === receivedUser.id) ||
                 nullPlan;
 
-this.cd.markForCheck()              }
-            );
+              this.cd.markForCheck();
+            });
         });
 
       this.ingredientService.ingredients$
         .pipe(takeUntil(this.destroyed$))
         .subscribe((data) => {
-          this.ingredient =
-            data.find((i) => i.id === this.ingredient.id) || this.ingredient;
+          const findedIngredient = data.find(
+            (i) => i.id === this.ingredient.id,
+          );
+          if (findedIngredient) {
+            this.ingredient = findedIngredient;
+          } else {
+            this.router.navigateByUrl('/');
+          }
           this.relatedIngredients =
             this.ingredientService.getRelatedIngredients(this.ingredient, data);
           this.groupsInit();
-
           this.recipesInit();
           this.cd.markForCheck();
         });

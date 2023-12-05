@@ -16,7 +16,6 @@ import { AuthService } from '../../services/auth.service';
 import { modal } from 'src/tools/animations';
 import {
   customPatternValidator,
-  emailExistsValidator,
   policyValidator,
 } from 'src/tools/validators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -25,6 +24,7 @@ import { usernameExistsValidator } from 'src/tools/validators';
 import { getCurrentDate } from 'src/tools/common';
 import { PlanService } from 'src/app/modules/planning/services/plan-service';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
+import { IPlan } from 'src/app/modules/planning/models/plan';
 
 @Component({
   selector: 'app-register',
@@ -46,8 +46,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
   destroyed$: Subject<void> = new Subject<void>();
 
   private createUser: IUser = { ...nullUser };
-  private maxUserId = 0;
-  private maxPlanId = 0;
   usernameValidator = usernameExistsValidator;
 
   get passwordNotValidError(): string {
@@ -89,6 +87,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.usersInit();
+    this.plansInit();
 
     this.form = this.fb.group({
       policy: [false, [policyValidator]],
@@ -125,29 +124,23 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   async registration() {
     if (this.form.valid) {
-      this.loadingModal = true;
-      this.cd.markForCheck();
-
-      const userInDatabase = await this.authService.loadUserFromSupabaseByEmail(
-        this.form.value.email,
-      );
-
-      if (userInDatabase !== null) {
-        this.loadingModal = false;
-
-        this.failText =
-          'Почта, которую вы ввели, уже занята. Пожалуйста, измените данные и попробуйте ещё раз.';
-        this.errorModal = true;
+      try {
+        this.loadingModal = true;
         this.cd.markForCheck();
-      } else {
-        await this.usersService.getMaxUserId().then((maxId) => {
-          this.maxUserId = maxId;
-        });
 
-        await this.planService.getMaxPlanId().then((maxId) => {
-          this.maxPlanId = maxId;
-        });
-        if (this.maxUserId !== 0 && this.maxPlanId !== 0) {
+        const userInDatabase =
+          await this.authService.loadUserFromSupabaseByEmail(
+            this.form.value.email,
+          );
+
+        if (userInDatabase !== null) {
+          this.loadingModal = false;
+
+          this.failText =
+            'Почта, которую вы ввели, уже занята. Пожалуйста, измените данные и попробуйте ещё раз.';
+          this.errorModal = true;
+          this.cd.markForCheck();
+        } else {
           const maxId = Math.max(...this.users.map((u) => u.id));
           const newUser: IUser = {
             ...{ ...nullUser },
@@ -158,7 +151,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
             id: maxId + 1,
           };
           this.createUser = newUser;
-
           const isUsernameTaken = this.users.some(
             (searchingUser) => searchingUser.username === newUser.username,
           );
@@ -176,12 +168,13 @@ export class RegisterComponent implements OnInit, OnDestroy {
             this.errorModal = true;
           } else {
             await this.addUserToUsers(
-              this.maxUserId + 1,
+              maxId + 1,
               newUser.username,
               newUser.email,
             );
 
-            await this.addPlanToPlans(this.maxUserId + 1);
+
+            await this.addPlanToPlans(maxId + 1);
             await this.authService.logout();
 
             const notify = this.notifyService.buildNotification(
@@ -194,22 +187,22 @@ export class RegisterComponent implements OnInit, OnDestroy {
             await this.notifyService.sendNotification(notify, this.createUser);
             this.successModal = true;
           }
-          this.loadingModal = false;
-          this.cd.markForCheck();
-        } else {
-          this.failText =
-            'Невозможно найти пользователей для присвоения вам уникального номера. Скорее всего, произошел сбой в работе сайта или сбой в вашем Интернет-подключении. Попробуйте перезагрузить страницу.';
-          this.errorModal = true;
-          this.loadingModal = false;
-
           this.cd.markForCheck();
         }
+      } catch (error) {
+        console.log(error);
+        this.errorModal = true;
+      } finally {
+        this.loadingModal = false;
+        this.cd.markForCheck();
       }
     }
   }
   async addPlanToPlans(userId: number) {
+              const maxId = Math.max(...this.plans.map((u) => u.id));
+
     await this.planService.addPlanToSupabase({
-      id: this.maxPlanId + 1,
+      id: maxId + 1,
       user: userId,
       calendarEvents: [],
       shoppingList: [],
@@ -238,6 +231,14 @@ export class RegisterComponent implements OnInit, OnDestroy {
       });
   }
 
+  plans: IPlan[] = [];
+  private plansInit(): void {
+    this.planService.plans$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedPlans: IPlan[]) => {
+        this.plans = receivedPlans;
+      });
+  }
   ngOnDestroy(): void {
     this.destroyed$.next();
     this.destroyed$.complete();

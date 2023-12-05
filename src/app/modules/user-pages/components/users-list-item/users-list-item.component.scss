@@ -9,6 +9,13 @@ p {
 
 }
 
+.online{
+  border-radius: 100%;
+  width: 0.5em;
+  height: 0.5em;
+  background-color: rgb(113, 255, 113);
+}
+
 .geo {
   fill: var(--color-foreground);
   height: 1em;

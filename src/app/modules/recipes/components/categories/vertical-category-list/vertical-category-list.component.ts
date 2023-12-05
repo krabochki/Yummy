@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostListener, Input, OnChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, OnChanges, Output } from '@angular/core';
 import { ICategory, nullCategory } from '../../../models/categories';
 
 @Component({
@@ -10,8 +10,10 @@ import { ICategory, nullCategory } from '../../../models/categories';
 export class VerticalCategoryListComponent implements OnChanges {
   @Input() categories: ICategory[] = [];
   @Input() showRecipesNumber: boolean = false;
+  @Input() moreRowsForMobile: number = 0;
   @Input() context: 'category' | 'section' = 'category';
   @Input() moderMode = false;
+  @Output() editEmitter = new EventEmitter();
 
   ngOnChanges() {
     this.onResize();
@@ -36,8 +38,9 @@ export class VerticalCategoryListComponent implements OnChanges {
     switch (true) {
       case event < 480:
         this.filterNullBlocks();
-        if(this.categories.length <=2)
-        while (this.categories.length !== 3) this.categories.push(nullCategory);
+        if (this.categories.length <= 2)
+          while (this.categories.length !== 3)
+            this.categories.push(nullCategory);
         break;
       case event > 480 && event <= 610:
         this.blockScheme(2);

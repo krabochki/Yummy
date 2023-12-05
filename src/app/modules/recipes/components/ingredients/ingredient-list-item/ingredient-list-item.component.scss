@@ -63,7 +63,7 @@ app-modal{
     }
 }
 
-app-ingredient-create{
+app-ingredient-create,app-group-creating{
     z-index: 10;
     position: fixed;
 }
@@ -79,8 +79,19 @@ app-ingredient-create{
         }
 }
 .ingredient {
+position: relative;
+.caption {
 
+        width: 90%;
 
+        font-weight: 300;
+        font-size: 0.85em;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 5.75em;
+        color: #808080;
+    }
     background-color: white;
     scroll-snap-align: start;
     background-size: cover;
@@ -97,8 +108,8 @@ app-ingredient-create{
     width: 12vw;
     min-width: 8em;
     min-height: 8em;
+    justify-content: flex-end;
     flex-direction: column;
-    overflow: hidden;
 }
 .ingredient.null{
     background-color: var(--color-background-deeper);
@@ -160,8 +171,6 @@ h1 {
 @media (max-width: 480px) {
     .ingredient {
         height: 7em;
-        min-height: unset;
-        min-width: unset;
         width: 7em;
     }
 }
@@ -169,6 +178,7 @@ h1 {
 .ingredient.null {
     padding: 1.5em;
     background-image: none;
+    justify-content: center;
 
     p {
         overflow: visible;

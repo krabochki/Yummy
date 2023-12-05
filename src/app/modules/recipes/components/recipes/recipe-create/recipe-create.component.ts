@@ -53,7 +53,7 @@ import { supabase } from 'src/app/modules/controls/image/supabase-data';
 @Component({
   selector: 'app-recipe-create',
   templateUrl: './recipe-create.component.html',
-  styleUrls: ['./recipe-create.component.scss'],
+  styleUrls: ['../../../../styles/forms.scss'],
   animations: [trigger('modal', modal()), trigger('height', heightAnim())],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -616,9 +616,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       }),
     );
 
-     this.instructionImagesVisibility = Array.from(
-       { length: this.editedRecipe.instructions.length }
-     );
+     this.instructionImagesVisibility.push(false)
   }
 
   instructionImagesVisibility:boolean[] = []

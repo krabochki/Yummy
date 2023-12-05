@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, HostListener, Input, OnChanges, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, ViewChild } from '@angular/core';
 import { DragScrollComponent } from 'ngx-drag-scroll';
 import { nullSection } from 'src/app/modules/recipes/models/categories';
 import { dragEnd, dragStart } from 'src/tools/common';
@@ -12,16 +12,13 @@ import { dragEnd, dragStart } from 'src/tools/common';
 export class HorizontalCategoryListComponent implements OnChanges {
   @Input() categories: any[] = [];
   @Input() showRecipesNumber: boolean = false;
+  @Output() editEmitter = new EventEmitter();
 
   @ViewChild('list')
   list: ElementRef | null = null;
   @Input() context: 'category' | 'section' = 'category';
 
-
-
   showScrollButtons = true;
-
-
 
   filterNullBlocks() {
     this.categories = this.categories.filter((block) => block.id !== 0);
@@ -30,19 +27,16 @@ export class HorizontalCategoryListComponent implements OnChanges {
   disableDrag = false;
   @ViewChild('nav', { read: DragScrollComponent }) ds?: DragScrollComponent;
 
-
   ngOnChanges() {
     this.onResize();
   }
 
-  dragStart(): void{
-    if(this.showScrollButtons)
-      dragStart()
+  dragStart(): void {
+    if (this.showScrollButtons) dragStart();
   }
 
-  dragEnd(): void{
-    if (this.showScrollButtons)
-      dragEnd();
+  dragEnd(): void {
+    if (this.showScrollButtons) dragEnd();
   }
 
   scrollLeft() {
@@ -91,7 +85,7 @@ export class HorizontalCategoryListComponent implements OnChanges {
 
   @HostListener('window:resize', ['$event'])
   onResize() {
-        this.disableDrag = window.innerWidth < 480;
+    this.disableDrag = window.innerWidth < 480;
 
     const event = window.innerWidth;
     switch (true) {

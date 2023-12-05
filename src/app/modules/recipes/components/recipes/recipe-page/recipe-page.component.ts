@@ -287,13 +287,25 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   downloadAvatars() {
     if (this.currentUser.avatarUrl)
       this.currentUserAvatar = this.getSupabaseLink(this.currentUser.avatarUrl);
-    else{
-      this.currentUser.avatarUrl = this.noAvatar
+    else {
+      this.currentUser.avatarUrl = this.noAvatar;
     }
     if (this.author.avatarUrl)
       this.authorAvatar = this.getSupabaseLink(this.author.avatarUrl);
-    else this.authorAvatar = this.noAvatar
+    else this.authorAvatar = this.noAvatar;
     this.cd.markForCheck();
+  }
+
+  goToSection(section: string) {
+    const sectionTag = document.getElementById(section);
+    if (sectionTag) {
+      const headerHeight =
+        document.getElementsByClassName('header')[0].clientHeight;
+      window.scrollTo({
+        top: sectionTag.offsetTop - headerHeight,
+        behavior: 'smooth',
+      });
+    }
   }
 
   protected addToPlan(): void {
@@ -731,7 +743,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
         this.currentUser.id,
         this.recipe,
       );
-          await this.recipeService.updateRecipeFunction(this.recipe);
+      await this.recipeService.updateRecipeFunction(this.recipe);
 
       this.successVoteModalShow = true;
     } else {

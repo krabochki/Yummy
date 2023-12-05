@@ -51,7 +51,10 @@ export class IngredientListItemComponent implements OnInit, OnDestroy {
     return this.userService.getPermission(permissionName, this.currentUser);
   }
   get showEditButton() {
-    const permissionName: PermissionContext = 'show-edit-ingredient-button';
+     const permissionName: PermissionContext =
+       this.context === 'ingredient'
+         ? 'show-edit-ingredient-button'
+         : 'show-edit-group-button';
     return this.userService.getPermission(permissionName, this.currentUser);
   }
   editMode = false;
@@ -143,7 +146,7 @@ export class IngredientListItemComponent implements OnInit, OnDestroy {
     await supabase.storage.from('ingredients').remove([path]);
   }
 
-  placeholder = '/assets/images/ingredient.png';
+  placeholder = '/assets/images/ingredient-placeholder.png';
   picture = '';
   downloadUserpicFromSupabase(path: string) {
     if (this.ingredient.ingredients) {

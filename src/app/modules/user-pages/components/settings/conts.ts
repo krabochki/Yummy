@@ -65,6 +65,9 @@ export const managersPreferences: NotificationSettingsSections[] = [
       {
         description: 'Показывать кнопку удаления категории',
         area: 'show-category-deleting',
+      },   {
+        description: 'Показывать кнопку изменения категории',
+        area: 'show-category-edit',
       },
       {
         description: 'Показывать кнопку удаления секции',

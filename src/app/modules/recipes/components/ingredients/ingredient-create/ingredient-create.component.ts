@@ -63,7 +63,7 @@ import { supabase } from 'src/app/modules/controls/image/supabase-data';
 @Component({
   selector: 'app-ingredient-create',
   templateUrl: './ingredient-create.component.html',
-  styleUrls: ['./ingredient-create.component.scss'],
+  styleUrls: ['../../../../styles/forms.scss'],
   animations: [trigger('modal', modal()), trigger('height', heightAnim())],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -596,6 +596,9 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
   async editIngredientInSupabase() {
     this.loading = true;
     try {
+
+      
+
       if (this.editedIngredient.image !== this.createdIngredient.image) {
         if (this.createdIngredient.image) {
            await this.loadIngredientToSupabase();
@@ -630,6 +633,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
         const filePath = this.supabaseFilepath;
         await supabase.storage.from('ingredients').upload(filePath, file);
       }
+      
       await this.ingredientService.addIngredientToSupabase(
         this.createdIngredient,
       );
@@ -644,7 +648,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  sendNotifyAfterCreatingIngredient(): void {
+  async sendNotifyAfterCreatingIngredient() {
     let notification: INotification = nullNotification;
 
     if (this.isManager) {
@@ -664,7 +668,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
           createdIngredientLink,
         );
 
-        this.notificationService.sendNotification(
+        await this.notificationService.sendNotification(
           notification,
           this.currentUser,
         );
@@ -684,7 +688,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
           'ingredient',
           '',
         );
-        this.notificationService.sendNotification(
+        await this.notificationService.sendNotification(
           notification,
           this.currentUser,
         );

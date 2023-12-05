@@ -9,28 +9,20 @@
         class="close-svg"
       ></svg-icon>
     </div>
-<div class="cont">
+    <div class="cont">
       <div class="header">
         <h1>Создание группы ингредиентов</h1>
       </div>
-      <div class="unique-content">
+      <div class="unique-content min">
         <form [formGroup]="form" #scrollContainer>
           <div class="step-container">
             <div class="main-info-control-with-image">
-              <div class="form-control">
+              <div class="form-control circle img">
                 <div class="image">
-                  <input
-                    type="file"
-                    (change)="onUserpicChange($event)"
-                    accept="image/*"
-                  />
-  
                   <div
                     class="delete"
-                    *ngIf="myImage !== defaultImage"
-                    (click)="
-                      unsetImage()
-                    "
+                    *ngIf="groupImage !== defaultImage"
+                    (click)="unsetImage()"
                   >
                     <svg-icon
                       [applyClass]="true"
@@ -39,13 +31,21 @@
                     ></svg-icon>
                   </div>
                   <div
-                    class="userpic"
+                    class="photo"
                     [ngClass]="{
                       'have-image': this.form.get('image')?.value !== null
                     }"
-                    [ngStyle]="{ 'background-image': 'url(' + myImage + ')' }"
-                    alt="User Photo"
-                  ></div>
+                    [ngStyle]="{ 'background-image': 'url(' + groupImage + ')' }"
+                    alt="Изображение группы ингредиентов"
+                  >
+                    <input
+                                    class="input-image"
+
+                      type="file"
+                      (change)="onIngredientImageChange($event)"
+                      accept="image/*"
+                    />
+                  </div>
                 </div>
               </div>
               <div class="main-info-controls">
@@ -56,7 +56,7 @@
                     [max]="30"
                     id="name"
                     formControlName="name"
-                    [placeholder]="'Придумай название группе'"
+                    [placeholder]="'Придумайте название группе'"
                     required
                     [value]="form.get('name')?.value"
                     [error]="
@@ -67,59 +67,70 @@
                     "
                   ></app-usual-input>
                 </div>
-                 <div class="form-control">
-              <h3>Начальные ингредиенты</h3>
-  
-              <app-autocomplete [clearValueOnBlur]="true"  (ingredientEmitter)="addIngredient($event)"
-                [placeholder]="'Выберите ингредиенты в списке ниже'" [ingredients]="allIngredients" />
-              <div class="tags">
-                <div class="tag" *ngFor="let selected of selectedIngredients">
-                  {{ selected.name }}
-                  <span (click)="removeIngredient(selected)" class="remove-tag"><svg-icon [applyClass]="true"
-                      class="remove-tag-svg" [src]="'/assets/images/svg/close.svg'"></svg-icon></span>
+                <div class="form-control">
+                  <h3>Начальные ингредиенты</h3>
+
+                  <app-autocomplete
+                    [clearValueOnBlur]="true"
+                    (ingredientEmitter)="addIngredient($event)"
+                    [placeholder]="'Выберите ингредиенты в списке ниже'"
+                    [ingredients]="ingredients"
+                  />
+                  <div class="tags">
+                    <div
+                      class="tag"
+                      *ngFor="let selected of selectedIngredients"
+                    >
+                      {{ selected.name }}
+                      <span
+                        (click)="removeIngredient(selected)"
+                        class="remove-tag"
+                        ><svg-icon
+                          [applyClass]="true"
+                          class="remove-tag-svg"
+                          [src]="'/assets/images/svg/close.svg'"
+                        ></svg-icon
+                      ></span>
+                    </div>
+                  </div>
+                  <div
+                    *ngIf="selectedIngredients.length === 0"
+                    class="no-categories"
+                  >
+                    Вы пока не выбрали ни один ингредиент
+                  </div>
                 </div>
               </div>
-              <div *ngIf="selectedIngredients.length === 0" class="no-categories">
-                Вы пока не выбрали ни один ингредиент
-              </div>
             </div>
-               
-              </div>
+
+            <div class="buttons row">
+              <app-button
+                [title]="
+                  !(areObjectsEqual() && form.valid)
+                    ? 'Все поля должны быть корректно заполнены'
+                    : ''
+                "
+                [disabled]="areObjectsEqual() && form.valid"
+                (click)="form.valid ? (saveModal = true) : null"
+                [text]="'Опубликовать'"
+                [color]="'sec'"
+                [style]="'filled'"
+                [rounded]="true"
+              ></app-button>
+
+              <app-button
+                (click)="closeEditModal()"
+                [text]="'Отменить'"
+                [color]="'prim'"
+                [style]="'outlined'"
+                type="button"
+                [rounded]="true"
+              ></app-button>
             </div>
-  
-             <div class="buttons">
-                  
-                  <app-button
-                    [title]="
-                      !(areObjectsEqual() && form.valid)
-                        ? 'Все поля должны быть корректно заполнены'
-                        : ''
-                    "
-                    [disabled]="
-                      areObjectsEqual() && form.valid
-                    "
-                    (click)="form.valid ? (saveModal = true) : null"
-                    [text]="'Опубликовать'"
-                    [color]="'sec'"
-                    [style]="'filled'"
-                    [rounded]="true"
-                  ></app-button>
-  
-                  
-                  <app-button
-                    (click)="closeEditModal()"
-                    [text]="'Отменить'"
-                    [color]="'prim'"
-                    [style]="'outlined'"
-                    type="button"
-                    [rounded]="true"
-                  ></app-button>
-                </div>
-  
           </div>
         </form>
       </div>
-</div>
+    </div>
   </div>
 </div>
 
@@ -131,19 +142,19 @@
   [type]="'yesOrNo'"
   (resultEmit)="handleCloseModal($event)"
   [buttonsText]="['Да', 'Нет']"
-  [description]="'Вы уверены, что не хотите опубликовать группу?'"
+  [description]="'Вы уверены, что не хотите '+(edit?'менять':'сохранить')+' группу?'"
 >
 </app-modal>
 
 <app-modal
   @modal
   *ngIf="saveModal"
-  [style]="'prim'"
-  [title]="'Публикация группы'"
+  [style]="'sec'"
+  [title]="(edit?'Изменение':'сохранение')+' группы'"
   [type]="'yesOrNo'"
   (resultEmit)="handleSaveModal($event)"
   [buttonsText]="['Да', 'Нет']"
-  [description]="'Вы уверены, что хотите опубликовать группу?'"
+  [description]="'Вы уверены, что хотите '+(edit?'изменить':'сохранить')+' группу?'"
 ></app-modal>
 
 <app-modal
@@ -154,7 +165,15 @@
   [type]="'Ok'"
   (resultEmit)="handleSuccessModal()"
   [buttonsText]="['Хорошо']"
-  [description]="'Группа «'+ newGroup.name+'» успешно создана и опубликована'"
+  [description]="
+    'Группа «' + newGroup.name + '» успешно создана и опубликована'
+  "
 ></app-modal>
-<app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
-  [description]=" 'Вносим изменения... Подождите немного...'" />
+<app-modal
+  [noButtons]="true"
+  [style]="'await'"
+  *ngIf="loading"
+  [title]="'Подождите...'"
+  @modal
+  [description]="'Вносим изменения... Подождите немного...'"
+/>

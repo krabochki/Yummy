@@ -13,12 +13,17 @@ interface CategoryCounts {
   providedIn: 'root',
 })
 export class CategoryService {
-
   private categoriesSubject = new BehaviorSubject<ICategory[]>([]);
   categories$ = this.categoriesSubject.asObservable();
 
-  constructor(){
-    
+  constructor() {}
+
+  removeCategoryImageFromSupabase(path: string) {
+    return supabase.storage.from('categories').remove([path]);
+  }
+
+  loadCategoryImageToSupabase(path: string, file: File) {
+    return supabase.storage.from('categories').upload(path, file);
   }
 
   getMaxCategoryId() {
@@ -37,7 +42,7 @@ export class CategoryService {
   }
 
   loadCategoriesFromSupabase() {
-   return supabase
+    return supabase
       .from('categories')
       .select('*')
       .then((response) => {
@@ -59,7 +64,7 @@ export class CategoryService {
       sendDate: category.senddate,
     } as ICategory;
   }
-   addCategoryToSupabase(category:ICategory) {
+  addCategoryToSupabase(category: ICategory) {
     return supabase.from('categories').upsert([
       {
         id: category.id,
@@ -118,7 +123,6 @@ export class CategoryService {
     );
   }
 
-
   getRelatedCategories(
     recipes: IRecipe[],
     categories: ICategory[],
@@ -175,5 +179,4 @@ export class CategoryService {
 
     return sortedCategories;
   }
-
 }

@@ -29,6 +29,7 @@ import {
   stepsIcons,
 } from './conts';
 import { Subject, takeUntil } from 'rxjs';
+import { addModalStyle, removeModalStyle } from 'src/tools/common';
 
 @Component({
   selector: 'app-settings',
@@ -87,7 +88,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     );
     const formattedIngredient = this.excludedIngredient.trim().toLowerCase();
     const isIngredientAlreadyAdded =
-      formattedIngredients.includes(formattedIngredient);
+    formattedIngredients.includes(formattedIngredient);
     return isIngredientAlreadyAdded;
   }
 
@@ -108,7 +109,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    this.addModalStyle();
+    addModalStyle(this.renderer);
     this.getRecipes();
     this.getUsers();
     this.getPlans();
@@ -234,12 +235,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
     if (event) {
       this.loading = true;
       await this.authService.logout();
+      await this.authService.setOffline(this.user)
       this.authService.logoutUser();
       this.loading = false;
       this.router.navigateByUrl('/');
     } else {
       setTimeout(() => {
-        this.addModalStyle();
+        addModalStyle(this.renderer);
       });
     }
   }
@@ -308,7 +310,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       }
     } else {
       setTimeout(() => {
-        this.addModalStyle();
+        addModalStyle(this.renderer);
       });
     }
   }
@@ -339,19 +341,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   //cкрытие/добавление прокрутки к основному содержимому
 
-  private removeModalStyle(): void {
-    this.renderer.removeClass(document.body, 'hide-overflow');
-    (<HTMLElement>document.querySelector('.header')).style.width = '100%';
-  }
 
-  private addModalStyle(): void {
-    this.renderer.addClass(document.body, 'hide-overflow');
-    (<HTMLElement>document.querySelector('.header')).style.width =
-      'calc(100% - 16px)';
-  }
 
   public ngOnDestroy(): void {
-    this.removeModalStyle();
+    removeModalStyle(this.renderer);
     this.destroyed$.next();
     this.destroyed$.complete();
   }

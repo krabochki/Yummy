@@ -134,7 +134,7 @@ export class UserService {
     return supabase
       .from('profiles')
       .select(
-        'id, username, avatarurl, description, quote, fullname, followersids, socialnetworks, personalwebsite, location, profileviews, notifications, permissions, exclusions, permanent, emojistatus, role, registrationDate, birthday',
+        'id, username,online, avatarurl, description, quote, fullname, followersids, socialnetworks, personalwebsite, location, profileviews, notifications, permissions, exclusions, permanent, emojistatus, role, registrationDate, birthday',
       )
       .then((response) => {
         const supRecipes = response.data;
@@ -146,7 +146,8 @@ export class UserService {
   }
 
    translateUser(user: any): IUser {
-    return {
+     return {
+      online:user.online,
       id: user.id || 0, // Уникальный идентификатор пользователя
       username: user.username || '', // Имя пользователя
       avatarUrl: user.avatarurl || '', // URL аватара пользователя
@@ -188,6 +189,7 @@ export class UserService {
     return supabase
       .from('profiles')
       .update({
+        online: user.online,
         username: user.username,
         avatarurl: user.avatarUrl || '',
         description: user.description || '', // Описание пользователя

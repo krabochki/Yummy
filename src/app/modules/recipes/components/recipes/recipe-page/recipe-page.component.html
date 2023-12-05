@@ -98,7 +98,7 @@
             </ng-template>
           </div>
         </div>
-        <div class="short-info row noselect" *ngIf="this.recipe.status === 'public'">
+        <div class="short-info row noselect"  (click)="goToSection('stat')" *ngIf="this.recipe.status === 'public'">
           <div class="row likes">
             <svg-icon
               class="head-icon"
@@ -109,7 +109,7 @@
             <p>{{ recipe.likesId.length }}</p>
           </div>
 
-          <div class="row cooks">
+          <div class="row cooks" (click)="goToSection('stat')">
             <svg-icon
               class="head-icon"
               [applyClass]="true"
@@ -118,7 +118,7 @@
 
             <p>{{ recipe.cooksId.length }}</p>
           </div>
-          <div class="row comments">
+          <div class="row comments" (click)="goToSection('comments')">
             <svg-icon
               class="head-icon"
               [applyClass]="true"
@@ -313,7 +313,7 @@
         </div>
       </div>
 
-      <div class="row buttons noselect" *ngIf="this.recipe.status === 'public'">
+      <div class="row buttons noselect " id="stat" *ngIf="this.recipe.status === 'public'">
         <div title="Добавить рецепт в избранное" class="fav-button" (click)="makeThisRecipeFavorite()">
           <svg-icon
             class="fav-icon"
@@ -396,6 +396,7 @@
       <hr *ngIf="recipe.status === 'public'" />
 
       <div
+      id="comments"
         class="column"
         style="overflow: visible"
         *ngIf="this.recipe.status === 'public'"

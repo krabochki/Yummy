@@ -45,6 +45,8 @@ import { IngredientService } from 'src/app/modules/recipes/services/ingredient.s
 import { CategoryService } from 'src/app/modules/recipes/services/category.service';
 import { supabase } from 'src/app/modules/controls/image/supabase-data';
 import { UpdatesService } from 'src/app/modules/common-pages/services/updates.service';
+import { addModalStyle, removeModalStyle } from 'src/tools/common';
+import { IRecipe, nullRecipe } from 'src/app/modules/recipes/models/recipes';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -125,14 +127,11 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   }
 
   private removeModalStyle(): void {
-    this.renderer.removeClass(document.body, 'hide-overflow');
-    (<HTMLElement>document.querySelector('.header')).style.width = '100%';
+    removeModalStyle(this.renderer);
   }
 
   private addModalStyle(): void {
-    this.renderer.addClass(document.body, 'hide-overflow');
-    (<HTMLElement>document.querySelector('.header')).style.width =
-      'calc(100% - 16px)';
+    addModalStyle(this.renderer);
   }
 
   clickMobileMenuLink(link: string) {
@@ -216,6 +215,16 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     this.recipesInit();
   }
 
+  getUser(userId: number) {
+    return this.users.find((u) => u.id === userId) || nullUser;
+  }
+  getComment(commentId: number, recipe: IRecipe) {
+    return recipe.comments.find((c) => c.id === commentId);
+  }
+  getRecipe(recipeId: number, recipes: IRecipe[]) {
+    return recipes.find((r) => r.id === recipeId) || nullRecipe;
+  }
+
   downloadUserpicFromSupabase(path: string) {
     this.avatar = supabase.storage
       .from('userpics')
@@ -232,30 +241,40 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     ])
       .pipe(takeUntil(this.destroyed$))
       .subscribe(([recipes, ingredients, categories, updates]) => {
-        const awaitingRecipes = recipes.filter(
-          (r) => r.status === 'awaits',
-        ).length;
-        const reports = recipes.reduce((totalReports, recipe) => {
-          return totalReports + (recipe.reports ? recipe.reports.length : 0);
-        }, 0);
+        if (this.currentUser.id > 0 && this.currentUser.role !== 'user') {
+          const awaitingRecipes = recipes.filter(
+            (r) => r.status === 'awaits',
+          ).length;
+          const reports = recipes.reduce((totalReports, recipe) => {
+                  
+            const availableReports = recipe.reports.filter(
+              (r) => {
+                r.reporter !== this.currentUser.id && this.getComment(r.comment,recipe)?.authorId!==this.currentUser.id
+              },
+            );
+            return (
+              totalReports + (availableReports ? availableReports.length : 0)
+            );
+          }, 0);
 
-        const awaitingIngredients = ingredients.filter(
-          (i) => i.status === 'awaits',
-        ).length;
-        const awaitingUpdates =
-          this.currentUser.role === 'admin'
-            ? updates.filter((i) => i.status === 'awaits').length
-            : 0;
-        const awaitingCategories = categories.filter(
-          (c) => c.status === 'awaits',
-        ).length;
+          const awaitingIngredients = ingredients.filter(
+            (i) => i.status === 'awaits',
+          ).length;
+          const awaitingUpdates =
+            this.currentUser.role === 'admin'
+              ? updates.filter((i) => i.status === 'awaits').length
+              : 0;
+          const awaitingCategories = categories.filter(
+            (c) => c.status === 'awaits',
+          ).length;
 
-        this.adminActionsCount =
-          reports +
-          awaitingRecipes +
-          awaitingCategories +
-          awaitingIngredients +
-          awaitingUpdates;
+          this.adminActionsCount =
+            reports +
+            awaitingRecipes +
+            awaitingCategories +
+            awaitingIngredients +
+            awaitingUpdates;
+        }
       });
   }
 
@@ -467,6 +486,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     if (answer) {
       this.loading = true;
       await this.authService.logout();
+      this.authService.setOffline(this.currentUser);
       this.authService.logoutUser();
       this.router.navigateByUrl('/');
       this.mobileMenuOpen = false;

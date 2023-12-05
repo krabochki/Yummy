@@ -8,7 +8,7 @@
 
     <form [formGroup]="form">
       <div>
-      <div class="control">
+        <div class="control">
           <app-usual-input
             [inputRequired]="true"
             [max]="64"
@@ -17,9 +17,12 @@
             required
             [error]="loginNotValidError"
           ></app-usual-input>
-                    <svg-icon [src]="'/assets/images/svg/email.svg'" class="icon" [applyClass]="true"></svg-icon>
-
-      </div>
+          <svg-icon
+            [src]="'/assets/images/svg/email.svg'"
+            class="icon"
+            [applyClass]="true"
+          ></svg-icon>
+        </div>
       </div>
       <app-usual-input
         [inputRequired]="true"

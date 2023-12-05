@@ -10,26 +10,18 @@
       ></svg-icon>
     </div>
     <div class="header">
-      <h1>Создание секции</h1>
+      <h1>Создание раздела</h1>
     </div>
-    <div class="unique-content">
-      <form [formGroup]="form" #scrollContainer>
+    <div class="unique-content min">
+      <form [formGroup]="form" #scrollContainer autocomplete="false">
         <div class="step-container">
           <div class="main-info-control-with-image">
-            <div class="form-control">
+            <div class="form-control circle img">
               <div class="image">
-                <input
-                  type="file"
-                  (change)="onUserpicChange($event)"
-                  accept="image/*"
-                />
-
                 <div
                   class="delete"
-                  *ngIf="myImage !== defaultImage"
-                  (click)="
-                    unsetImage()
-                  "
+                  *ngIf="sectionImage !== defaultImage"
+                  (click)="unsetImage()"
                 >
                   <svg-icon
                     [applyClass]="true"
@@ -38,67 +30,86 @@
                   ></svg-icon>
                 </div>
                 <div
-                  class="userpic"
+                  class="photo"
                   [ngClass]="{
                     'have-image': this.form.get('image')?.value !== null
                   }"
-                  [ngStyle]="{ 'background-image': 'url(' + myImage + ')' }"
-                  alt="User Photo"
-                ></div>
+                  [ngStyle]="{
+                    'background-image': 'url(' + sectionImage + ')'
+                  }"
+                  alt="Изображение раздела"
+                >
+                  <input
+                    type="file"
+                    class="input-image"
+                    (change)="onSectionImageChange($event)"
+                    accept="image/*"
+                  />
+                </div>
               </div>
             </div>
             <div class="main-info-controls">
               <div class="form-control">
-                <h3>Название секции</h3>
-                <app-usual-input
-                  [inputRequired]="true"
-                  [max]="30"
-                  id="name"
-                  formControlName="name"
-                  [placeholder]="'Придумай название секции'"
-                  required
-                  [value]="form.get('name')?.value"
-                  [error]="
-                    form.get('name')?.invalid &&
-                    (form.get('name')?.dirty || form.get('name')?.touched)
-                      ? 'Название секции должно содержать от 4 до 30 символов'
-                      : ''
-                  "
-                ></app-usual-input>
+                <h3>Название раздела</h3>
+                  <app-usual-input
+                    [inputRequired]="true"
+                    [max]="30"
+                    id="name"
+                    formControlName="name"
+                    [placeholder]="'Придумайте название раздела'"
+                    required
+                    [value]="form.get('name')?.value"
+                    [error]="
+                      form.get('name')?.invalid &&
+                      (form.get('name')?.dirty || form.get('name')?.touched)
+                        ? 'Название раздела должно содержать от 4 до 30 символов'
+                        : ''
+                    "
+                  ></app-usual-input>
               </div>
-             
+              <div class="form-control" *ngIf="categories.length>0">
+                <h3>Начальные категории</h3>
+
+                <app-autocomplete [clearValueOnBlur]="true" (anyEmitter)="addCategory($event)"
+                  [placeholder]="'Выберите категории в списке ниже'" [anyData]="categoriesNames" />
+                <div class="tags">
+                  <div class="tag" *ngFor="let selected of selectedCategories">
+                    {{ selected.name }}
+                    <span (click)="removeCategory(selected.name)" class="remove-tag"><svg-icon [applyClass]="true" class="remove-tag-svg"
+                        [src]="'/assets/images/svg/close.svg'"></svg-icon></span>
+                  </div>
+                </div>
+                <div *ngIf="selectedCategories.length === 0" class="no-categories">
+                  Вы пока не выбрали ни одну категорию
+                </div>
+              </div>
             </div>
           </div>
 
-           <div class="buttons">
-                
-                <app-button
-                  [title]="
-                    !(areObjectsEqual() && form.valid)
-                      ? 'Все поля должны быть корректны'
-                      : ''
-                  "
-                  [disabled]="
-                    areObjectsEqual() && form.valid
-                  "
-                  (click)="form.valid ? (saveModal = true) : null"
-                  [text]="'Опубликовать'"
-                  [color]="'sec'"
-                  [style]="'filled'"
-                  [rounded]="true"
-                ></app-button>
+          <div class="buttons row">
+            <app-button
+              [title]="
+                !(areObjectsEqual() && form.valid)
+                  ? 'Все поля должны быть корректны'
+                  : ''
+              "
+              [disabled]="areObjectsEqual() && form.valid"
+              (click)="form.valid ? (saveModal = true) : null"
+              [text]="edit?'Изменить':'Опубликовать'"
+              [color]="'sec'"
+              [style]="'filled'"
+              [rounded]="true"
+            ></app-button>
 
-                
-                <app-button
-                  (click)="closeEditModal()"
-                  [text]="'Отменить'"
-                  [color]="'prim'"
-                  [style]="'outlined'"
-                  type="button"
-                  [rounded]="true"
-                ></app-button>
-              </div>
-
+            <app-button
+              (click)="closeEditModal()"
+              [text]="'Отменить'"
+              [color]="'prim'"
+              [style]="'outlined'"
+              type="button"
+              [rounded]="true"
+            ></app-button>
+          </div>
         </div>
       </form>
     </div>
@@ -113,30 +124,36 @@
   [type]="'yesOrNo'"
   (resultEmit)="handleCloseModal($event)"
   [buttonsText]="['Да', 'Нет']"
-  [description]="'Вы уверены, что не хотите опубликовать секцию?'"
+  [description]="'Вы уверены, что не хотите '+(edit?'менять':'опубликовать')+' раздел?'"
 >
 </app-modal>
 
 <app-modal
   @modal
   *ngIf="saveModal"
-  [style]="'prim'"
-  [title]="'Публикация секции'"
+  [style]="'sec'"
+  [title]="(edit?'Изменение':'Создание')+' раздела'"
   [type]="'yesOrNo'"
   (resultEmit)="handleSaveModal($event)"
   [buttonsText]="['Да', 'Нет']"
-  [description]="'Вы уверены, что хотите опубликовать секцию?'"
+  [description]="'Вы уверены, что хотите '+(edit?'изменить':'создать')+ ' раздел?'"
 ></app-modal>
 
 <app-modal
   @modal
   *ngIf="successModal"
   [style]="'sec'"
-  [title]="'Секция успешно сохранена'"
+  [title]="'Раздел успешно '+edit?'изменен':'создан'"
   [type]="'Ok'"
-  (resultEmit)="handleSuccessModal($event)"
+  (resultEmit)="handleSuccessModal()"
   [buttonsText]="['Хорошо']"
-  [description]="'Секция успешно опубликована'"
+  [description]="'Раздел успешно '+(edit?'изменен':'создан')"
 ></app-modal>
-<app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
-  [description]="'Создаем новый раздел... Подождите немного...'" />
+<app-modal
+  [noButtons]="true"
+  [style]="'await'"
+  *ngIf="loading"
+  [title]="'Подождите...'"
+  @modal
+  [description]="'Загружаем данные раздела... Подождите немного...'"
+/>

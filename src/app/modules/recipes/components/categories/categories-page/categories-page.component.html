@@ -110,6 +110,8 @@
       </a>
 
       <app-horizontal-category-list
+      (editEmitter)="successEditModal=true"
+
         [showRecipesNumber]="true"
         [categories]="popularCategories.slice(0, 8)"
       ></app-horizontal-category-list>
@@ -130,14 +132,14 @@
           ></svg-icon>
         </a>
 
-        <app-horizontal-category-list
+        <app-horizontal-category-list   (editEmitter)="successEditModal=true"
           *ngIf="filter === 'sections'; else oneSection"
           [showRecipesNumber]="true"
           [categories]="getCategoriesOfSection(section).slice(0, 8)"
         ></app-horizontal-category-list>
         
         <ng-template #oneSection> 
-          <app-vertical-category-list
+          <app-vertical-category-list  [moreRowsForMobile]="this.getCategoriesOfSection(this.section).length>4?2:this.getCategoriesOfSection(this.section).length>9 ?3:0"  (editEmitter)="successEditModal=true"
             [showRecipesNumber]="true"
             [categories]="categoriesToShow"
           ></app-vertical-category-list>
@@ -171,3 +173,8 @@
   (resultEmit)="handleNoAccessModal($event)" [buttonsText]="['Давайте', 'Не сейчас']" [description]="
     'Доступ к этой функции имеют только зарегистрированные пользователи. Хотите зарегистрироваться или войти в существующий аккаунт?'
   "></app-modal>
+
+    <app-modal @modal *ngIf="successEditModal" [style]="'sec'" [title]="'Категория изменена'" [type]="'Ok'"
+      (resultEmit)="successEditModal=false" [buttonsText]="['Хорошо']" [description]="
+            'Категория успешно изменена'
+          "></app-modal>

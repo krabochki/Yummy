@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, OnInit } from '@angular/core';
 import { RecipeService } from './modules/recipes/services/recipe.service';
 import { map } from 'rxjs';
 import { supabase } from './modules/controls/image/supabase-data';
@@ -8,6 +8,8 @@ import { SectionService } from './modules/recipes/services/section.service';
 import { IngredientService } from './modules/recipes/services/ingredient.service';
 import { PlanService } from './modules/planning/services/plan-service';
 import { UpdatesService } from './modules/common-pages/services/updates.service';
+import { AuthService } from './modules/authentication/services/auth.service';
+import { IUser, nullUser } from './modules/user-pages/models/users';
 
 @Component({
   selector: 'app-root',
@@ -18,15 +20,18 @@ import { UpdatesService } from './modules/common-pages/services/updates.service'
 export class AppComponent implements OnInit {
   loaded = false;
   gif = 'preloader-light.gif';
+  currentUser: IUser = nullUser;
   constructor(
     private recipeService: RecipeService,
     private ingredientService: IngredientService,
+    private authService: AuthService,
     private sectionsService: SectionService,
     private userService: UserService,
     private updateService: UpdatesService,
     private categoryService: CategoryService,
     private planService: PlanService,
   ) {
+   
     supabase
       .channel('db-changes')
       .on(
@@ -125,9 +130,10 @@ export class AppComponent implements OnInit {
             case 'INSERT':
               categoryService.updateCategoriesAfterINSERT(payload.new);
               break;
-            case 'UPDATE':
+            case 'UPDATE': {
               categoryService.updateCategoriesAfterUPSERT(payload.new);
               break;
+            }
             case 'DELETE':
               categoryService.updateCategoriesAfterDELETE(payload.old);
               break;
@@ -208,6 +214,7 @@ export class AppComponent implements OnInit {
       this.sectionsService.sections$.pipe(
         map((sections) => sections.length > 0),
       ),
+      this.updateService.updates$.pipe(map((updates) => updates.length > 0)),
       this.planService.plans$.pipe(map((plans) => plans.length > 0)),
       this.ingredientService.ingredients$.pipe(
         map((ingredients) => ingredients.length > 0),
@@ -222,9 +229,27 @@ export class AppComponent implements OnInit {
       this.loaded = true;
   }
 
-  ngOnInit() {
+  async setOnline() {
+               await this.authService.setOnline(this.currentUser);
+
+  }
+  async ngOnInit() {
     const favicon = document.querySelector('#favicon');
 
+     supabase.auth.onAuthStateChange((event, session) => {
+       if (event === 'SIGNED_OUT') {
+         if (this.currentUser.id > 0) {
+           if (session) this.authService.setOffline(this.currentUser);
+         }
+       }
+     });
+    this.authService.currentUser$.subscribe(
+      (receivedUser: IUser) => {
+        this.currentUser = receivedUser;
+        if (this.currentUser.id > 0 && !this.currentUser.online)
+          this.setOnline();
+      }
+    )
     if (localStorage.getItem('theme') === 'dark') {
       this.gif = 'preloader-dark.gif';
       document.body.classList.add('dark-mode');
@@ -235,6 +260,11 @@ export class AppComponent implements OnInit {
     }
     if (!this.loaded) {
       this.recipeService.loadRecipeData().then(() => {
+        this.checkIfLoaded();
+      });
+    }
+    if (!this.loaded) {
+      this.updateService.loadUpdatesData().then(() => {
         this.checkIfLoaded();
       });
     }
@@ -274,5 +304,12 @@ export class AppComponent implements OnInit {
 
   getHeaderHeight(headerHeight: number) {
     this.spaceUnderHeaderHeight = headerHeight;
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  async beforeUnloadHandler(event: any) {
+    if(this.currentUser.id>0)
+    await this.authService.setOffline(this.currentUser);
+    
   }
 }

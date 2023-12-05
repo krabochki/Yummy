@@ -8,7 +8,6 @@ import { supabase } from '../../controls/image/supabase-data';
   providedIn: 'root',
 })
 export class SectionService {
-
   sectionsSubject = new BehaviorSubject<ISection[]>([]);
   sections$ = this.sectionsSubject.asObservable();
 
@@ -36,6 +35,14 @@ export class SectionService {
       }
     });
     return sectionWithCategories;
+  }
+
+  removeSectionImageFromSupabase(path: string) {
+    return supabase.storage.from('sections').remove([path]);
+  }
+
+  loadSectionImageToSupabase(path: string, file: File) {
+    return supabase.storage.from('sections').upload(path, file);
   }
 
   getNotEmptySections(sections: ISection[]): ISection[] {
@@ -127,7 +134,7 @@ export class SectionService {
   }
   async updateSectionInSupabase(section: ISection) {
     const { id } = section;
-    await supabase
+    return supabase
       .from('sections')
       .update({
         id: section.id,

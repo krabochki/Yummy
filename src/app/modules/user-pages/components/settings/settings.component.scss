@@ -253,7 +253,7 @@ button.action{
     width: 2.9em;
   }
   & > div {
-    overflow-y: auto;
+    overflow-y: hidden;
     overflow-x: hidden;
     justify-content: center;
     align-items: flex-start;

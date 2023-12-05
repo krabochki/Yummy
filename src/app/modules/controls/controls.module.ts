@@ -42,6 +42,7 @@ import { TimePastPipe } from 'ng-time-past-pipe';
     ShareIconsModule,
     TimePastPipe,
     SvgIconComponent,
+    ReactiveFormsModule
   ],
   exports: [
     ButtonComponent,

@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { Renderer2 } from "@angular/core";
+
 export function getCurrentDate():string{
      return new Date().toJSON()
 }
@@ -105,4 +107,16 @@ export function getZodiacSign(date: Date): string {
   } else {
     return 'Рыбы';
   }
+}
+
+
+export function addModalStyle(renderer:Renderer2) {
+    renderer.addClass(document.body, 'hide-overflow');
+    (<HTMLElement>document.querySelector('.header')).style.width =
+      'calc(100% - 16px)';
+    renderer.addClass(document.body, 'hide-overflow');
+}
+export function removeModalStyle(renderer: Renderer2) {
+   renderer.removeClass(document.body, 'hide-overflow');
+   (<HTMLElement>document.querySelector('.header')).style.width = '100%';
 }

@@ -8,21 +8,19 @@
   *ngIf="ingredient.id > 0; else nullCategory"
 >
   <div class="ingredient-wrap">
-    <div class="ingredient"  [style.background-image]="'url('+(picture?picture:placeholder)+')'" *ngIf="ingredient.id > 0; else nullCategory"></div>
-    <button 
-      class="delete"
-      (click)="clickDeleteButton($event)"
-      *ngIf="currentUser.role !== 'user' && showDeletingButton"
-    >
-      <svg-icon
-        class="trash-svg"
-        [applyClass]="true"
-        [src]="'/assets/images/svg/trash.svg'"
-      />
+    <div class="ingredient"  [style.background-image]="'url('+(picture?picture:placeholder)+')'" *ngIf="ingredient.id > 0; else nullCategory">
+    <p class="caption" *ngIf="!picture"> {{context==='ingredient'?'Ингредиент':'Группа'}}<br> «{{ingredient.name}}»</p>
+    <button class="delete" (click)="clickDeleteButton($event)" *ngIf="currentUser.role !== 'user' && showDeletingButton">
+      <svg-icon class="trash-svg" [applyClass]="true" [src]="'/assets/images/svg/trash.svg'" />
     </button>
-    <button class="edit" (click)="clickEditButton($event)" *ngIf="currentUser.role !== 'user' && context==='ingredient'  && showEditButton">
+    <button class="edit" (click)="clickEditButton($event)"
+      *ngIf="currentUser.role !== 'user'  && showEditButton">
       <svg-icon class="trash-svg" [applyClass]="true" [src]="'/assets/images/svg/pen.svg'" />
     </button>
+  
+  
+  </div>
+  
   </div>
 
   <div style="position: relative; overflow: visible">
@@ -63,6 +61,9 @@
 <app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
   [description]=" 'Вносим изменения... Подождите немного...'" />
 
-  <app-ingredient-create (editEmitter)="editEmitter.emit()" (closeEmitter)="editMode=false" @modal *ngIf="editMode" [editedIngredient]="ingredient"/>
+  <app-ingredient-create (editEmitter)="editEmitter.emit()" (closeEmitter)="editMode=false" @modal *ngIf="editMode&&context==='ingredient'" [editedIngredient]="ingredient"/>
 
+
+  <app-group-creating  (editEmitter)="editEmitter.emit()" (closeEmitter)="editMode=false" @modal *ngIf="editMode && context==='group'"
+    [editedGroup]="ingredient" />
 

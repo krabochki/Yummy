@@ -49,8 +49,10 @@ export class ModalComponent implements OnInit, OnDestroy {
   clickBackgroundNotContent(elem: Event) {
     //закрываем модальное окно при нажатии на фон как будто нажата кнопка "ОК" или "Нет"
     if (elem.target !== elem.currentTarget) return;
-    if (this.style === 'vote') this.closeEmit.emit(true);
-    return;
+    if (this.style === 'vote') {
+      this.closeEmit.emit(true);
+      return;
+    }
 
     if (this.type === 'Ok') this.resultEmit.emit(true);
       if (this.type === 'yesOrNo') this.resultEmit.emit(false);

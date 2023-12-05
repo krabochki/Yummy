@@ -254,19 +254,23 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
       return;
     }
 
+
     this.isRecipeCooked = !this.isRecipeCooked;
+
 
     this.recipe = this.isRecipeCooked
       ? this.recipeService.cookRecipe(this.currentUser.id, this.recipe)
       : this.recipeService.uncookRecipe(this.currentUser.id, this.recipe);
+
 
     if (!this.isRecipeCooked) {
       this.recipe = this.recipeService.removeVote(
         this.recipe,
         this.currentUser.id,
       );
-      await this.recipeService.updateRecipeFunction(this.recipe);
     }
+        await this.recipeService.updateRecipeFunction(this.recipe);
+
     if (this.isRecipeCooked) this.successVoteModalShow = true;
   }
 
@@ -366,7 +370,6 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
   }
   async handleSuccessVoteModal() {
     this.successVoteModalShow = false;
-    await this.recipeService.updateRecipeFunction(this.recipe);
 
     setTimeout(() => {
       if (

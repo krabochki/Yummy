@@ -8,14 +8,18 @@
   *ngIf="category.id > 0; else nullCategory"
 >
  <div class="category-wrap">
-    <div class="category" *ngIf="category.id > 0; else nullCategory" [style.background-image]="'url('+(picture?picture:placeholder)+')'">
+   
+    <div class="category"  *ngIf="category.id > 0; else nullCategory" [style.background-image]="'url('+(picture?picture:placeholder)+')'">
     
-     
+     <p class="caption" *ngIf="!picture">{{context==='category'?'Категория':'Раздел'}}<br>«{{category.name}}»</p>
+    <button class="delete" (click)="clickDeleteButton($event)" *ngIf="currentUser.role!=='user' && showDeletingButton">
+      <svg-icon class="trash-svg" [applyClass]="true" [src]="'assets/images/svg/trash.svg'" />
+    </button>
+    <button class="edit" (click)="clickEditButton($event)" *ngIf="currentUser.role !== 'user'   && showEditButton">
+      <svg-icon class="trash-svg" [applyClass]="true" [src]="'/assets/images/svg/pen.svg'" />
+    </button>
     </div>
-     <button class="delete" 
-     (click)="clickDeleteButton($event)" *ngIf="currentUser.role!=='user' && showDeletingButton">
-        <svg-icon class="trash-svg" [applyClass]="true" [src]="'assets/images/svg/trash.svg'"/>
-      </button>
+   
  </div>
     <div
      
@@ -40,3 +44,8 @@
 
 <app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
   [description]="loadingText || 'Вносим изменения... Подождите немного...'" />
+
+  <app-category-creating (editEmitter)="editEmitter.emit()" [editedCategory]="category" (closeEmitter)="editMode=false" *ngIf="context==='category'&&editMode" @modal />
+
+    <app-section-creating (editEmitter)="editEmitter.emit()" [editedSection]="category"
+      (closeEmitter)=" editMode=false" *ngIf="context==='section'&&editMode" @modal />

@@ -87,8 +87,7 @@ button.prim {
 
 
 .svg{
-  height:var(--font-m);
-  fill:var(--color-background);
+  height: var(--font-m);width: var(--font-m);  fill:var(--color-background);
   display:flex;
   align-items: center;
   justify-content: center;

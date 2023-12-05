@@ -15,7 +15,6 @@ import { supabase } from '../../controls/image/supabase-data';
   providedIn: 'root',
 })
 export class IngredientService {
-
   ingredientSubject = new BehaviorSubject<IIngredient[]>([]);
   ingredients$ = this.ingredientSubject.asObservable();
 
@@ -71,8 +70,6 @@ export class IngredientService {
 
     return relatedIngredients;
   }
-
-
 
   getRecipesNumberOfGroup(
     group: IIngredientsGroup,
@@ -346,6 +343,16 @@ export class IngredientService {
       })
       .eq('id', id);
   }
+
+  removeGroupImageFromSupabase(path: string) {
+    return supabase.storage.from('groups').remove([path]);
+  }
+
+  loadGroupImageToSupabase(path: string, file: File) {
+    return supabase.storage.from('groups').upload(path, file);
+  }
+
+  
   updateGroupInSupabase(group: IIngredientsGroup) {
     const { id, ...updateData } = group;
     return supabase

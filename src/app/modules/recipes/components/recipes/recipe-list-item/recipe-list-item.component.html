@@ -14,7 +14,7 @@
     ></svg-icon>
   </div>
 </ng-template>
-<div [style.background-image]="'url('+(picture?picture:'/assets/images/svg/pancakes.png')+')'" [routerLink]="'/recipes/list/'+recipe.id" *ngIf="dataLoaded && recipe.id > 0; else sceleton" class="recipe">
+<div [ngClass]="{'placeholder':!picture}" [style.background-image]="'url('+(picture?picture:'/assets/images/cook.png')+')'" [routerLink]="'/recipes/list/'+recipe.id" *ngIf="dataLoaded && recipe.id > 0; else sceleton" class="recipe">
   <div class="top" *ngIf="!shortView">
     <div
       [title]="
@@ -269,12 +269,14 @@
 <app-modal
   @modal
   *ngIf="voteModalShow"
-  [style]="'sec'"
+  [style]="'vote'"
+  (closeEmit)="voteModalShow=false"
   [title]="'Оставьте отзыв'"
   [type]="'yesOrNo'"
+
   (resultEmit)="handleVoteModal($event)"
-  [buttonsText]="['Да', 'Нет']"
-  [description]="'Вы бы приготовили этот рецепт снова?'"
+  [buttonsText]="['Приготовил бы', 'Не советую']"
+  [description]="'Поделитесь впечатлением для статистики рецепта: вы бы приготовили этот рецепт снова?'"
 ></app-modal>
 
 <app-modal

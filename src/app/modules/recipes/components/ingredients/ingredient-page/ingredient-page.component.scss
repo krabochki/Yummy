@@ -55,6 +55,25 @@
     fill: var(--color-background);
   }
 }
+.image{
+  display: flex;
+  align-items: flex-end;
+  
+  justify-content: center;
+}
+ .caption {
+text-align: center;
+   width: 90%;
+
+   line-height: 1;
+   font-weight: 300;
+   font-size: 1.2em;
+
+   overflow: hidden;
+   text-overflow: ellipsis;
+   margin-bottom: 7.5em;
+   color: #808080;
+ }
 app-modal{
   z-index: 10;
   position: fixed;

@@ -83,15 +83,12 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   showedGroups: IIngredientsGroup[] = [];
 
   protected targetDemotedUser: IUser = nullUser;
-  protected showManagers: boolean = false;
 
   //расскрыт ли раздел
   protected showCommentReports: boolean = false;
   showUpdatesToReview: boolean = false;
   protected showAwaitingRecipes: boolean = false;
   protected showCategoriesForCheck: boolean = false;
-  protected showSections: boolean = false;
-  showGroups: boolean = false;
 
   protected adminAction: 'approve' | 'dismiss' = 'dismiss';
 
@@ -131,6 +128,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   protected demoteModalShow = false;
   protected demoteSuccessModalShow = false;
 
+  openGroup:'moders'|'groups'|'sections'|'hide'='hide'
   currentView:
     | 'reports'
     | 'recipes'

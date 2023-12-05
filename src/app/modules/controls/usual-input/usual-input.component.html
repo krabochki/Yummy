@@ -13,7 +13,6 @@
     (keyup)="filter();change()"
     [(ngModel)]="value"
     [disabled]="disabled || inputDisabled"
-    type="text"
     [ngClass]="{
       uncorrect: error !== ''
     }"

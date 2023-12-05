@@ -5,7 +5,7 @@
 <div class="wrap" [ngClass]="{'has-scroll':showScrollButtons}">
 
   <drag-scroll (dragStart)="dragStart()" (dragEnd)="dragEnd()" class="drag" #nav  [drag-disabled]="disableDrag" [snap-disabled]="disableDrag"  > 
-     <app-category-list-item drag-scroll-item [context]="context" [showRecipesNumber]="showRecipesNumber"   *ngFor="let item of categories, let i=index" [category]="categories[i]"></app-category-list-item>
+     <app-category-list-item (editEmitter)="editEmitter.emit()" drag-scroll-item [context]="context" [showRecipesNumber]="showRecipesNumber"   *ngFor="let item of categories, let i=index" [category]="categories[i]"></app-category-list-item>
   </drag-scroll>
   <button class="scroll-left" *ngIf="showScrollButtons">
     <svg-icon class="svg-arrow" (click)="scrollRight()" [applyClass]="true"

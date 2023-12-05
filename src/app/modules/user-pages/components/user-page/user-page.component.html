@@ -224,11 +224,13 @@
       
       <div class="col info">
         <div class="col name">
-          <h1>{{ user.fullName }}</h1>
+          <h1>
+            {{ user.fullName }}</h1>
           <p class="username">{{ "@" + user.username }}</p>
         </div>
 
         <p class="quote" *ngIf="user?.quote">{{ user.quote }}</p>
+        <p class="online" ><span [ngClass]="{'on':user.online}"></span> {{user.online?'Онлайн':'Оффлайн'}}</p>
 
         <app-button
           class="noselect"

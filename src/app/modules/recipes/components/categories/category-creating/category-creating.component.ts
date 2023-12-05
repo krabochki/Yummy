@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   AfterContentChecked,
   ChangeDetectionStrategy,
@@ -5,6 +6,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  Input,
   OnDestroy,
   OnInit,
   Output,
@@ -17,11 +19,20 @@ import { heightAnim, modal } from 'src/tools/animations';
 import { CategoryService } from '../../../services/category.service';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ICategory, ISection, nullCategory } from '../../../models/categories';
+import {
+  ICategory,
+  ISection,
+  nullCategory,
+  nullSection,
+} from '../../../models/categories';
 import { SectionGroup } from 'src/app/modules/controls/autocomplete/autocomplete.component';
 import { Subject, takeUntil } from 'rxjs';
 import { SectionService } from '../../../services/section.service';
-import { getCurrentDate } from 'src/tools/common';
+import {
+  addModalStyle,
+  getCurrentDate,
+  removeModalStyle,
+} from 'src/tools/common';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
@@ -33,7 +44,7 @@ import { trimmedMinLengthValidator } from 'src/tools/validators';
 @Component({
   selector: 'app-category-creating',
   templateUrl: './category-creating.component.html',
-  styleUrls: ['./category-creating.component.scss'],
+  styleUrls: ['../../../../styles/forms.scss'],
   animations: [trigger('modal', modal()), trigger('height', heightAnim())],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -41,23 +52,45 @@ export class CategoryCreatingComponent
   implements OnInit, AfterContentChecked, OnDestroy
 {
   @Output() closeEmitter = new EventEmitter<boolean>();
+  @Output() editEmitter = new EventEmitter();
+  @Input() editedCategory: ICategory = nullCategory;
+  @ViewChild('scrollContainer', { static: false }) scrollContainer?: ElementRef;
 
+  //modals
   saveModal: boolean = false;
   closeModal: boolean = false;
   successModal: boolean = false;
-  newCategory: ICategory = { ...nullCategory };
-  categories: ICategory[] = [];
+  awaitModalShow = false;
 
-  myImage: string = '';
+  private newCategory: ICategory = { ...nullCategory };
+  private maxId = 0;
+
+  //init data
+  sections: ISection[] = [];
+  group: SectionGroup[] = [];
+  categories: ICategory[] = [];
+  currentUser: IUser = { ...nullUser };
+  startSection: ISection = nullSection;
+
+  //images
+  categoryImage: string = '';
   defaultImage: string = '/assets/images/add-category.png';
+
+  //form
   form: FormGroup;
   beginningData: any;
-  maxId = 0;
 
-  viewedSteps: number[] = [];
+  supabaseFilepath = '';
 
-  ngAfterContentChecked(): void {
-    this.cdr.detectChanges();
+  currentStep: number = 0;
+  steps: Step[] = steps;
+
+  showInfo = false;
+
+  protected destroyed$: Subject<void> = new Subject<void>();
+
+  get editMode() {
+    return this.editedCategory.id > 0;
   }
 
   constructor(
@@ -86,16 +119,250 @@ export class CategoryCreatingComponent
       section: [null, [Validators.required]],
       image: [null],
     });
-    this.myImage = this.defaultImage;
+    this.categoryImage = this.defaultImage;
   }
 
-  @ViewChild('scrollContainer', { static: false }) scrollContainer?: ElementRef;
+  ngAfterContentChecked(): void {
+    this.cdr.detectChanges();
+  }
 
-  currentStep: number = 0;
+  public ngOnInit(): void {
+    addModalStyle(this.renderer);
+    this.categoriesInit();
+    this.currentUserInit();
+  }
 
-  showInfo = false;
+  private categoriesInit() {
+    this.categoryService.categories$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((data: ICategory[]) => {
+        this.categories = data.filter((c) => c.status === 'public');
+        this.sectionsInit();
+      });
+  }
 
-  steps: Step[] = steps;
+  private editedCategoryInit() {
+    if (this.editMode) {
+      const categorySection = this.sections.find((s) =>
+        s.categories.includes(this.editedCategory.id),
+      );
+
+      if (this.editedCategory.photo) {
+        this.downloadCategoryImageFromSupabase(this.editedCategory.photo);
+        this.supabaseFilepath = this.editedCategory.photo;
+        this.form.get('image')?.setValue('url');
+      }
+      this.form.get('name')?.setValue(this.editedCategory.name);
+      this.form.get('section')?.setValue(categorySection);
+      this.startSection = categorySection || nullSection;
+    }
+    this.beginningData = this.form.getRawValue();
+  }
+  private sectionsInit() {
+    this.sectionService.sections$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((data: ISection[]) => {
+        this.sections = data;
+        this.editedCategoryInit();
+      });
+  }
+
+  private currentUserInit() {
+    this.authService.currentUser$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((data: IUser) => {
+        this.currentUser = data;
+      });
+  }
+
+  private downloadCategoryImageFromSupabase(path: string) {
+    this.categoryImage = supabase.storage
+      .from('categories')
+      .getPublicUrl(path).data.publicUrl;
+  }
+
+  //images
+  onCategoryImageChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const userpicFile: File | undefined = input.files?.[0];
+
+    if (userpicFile) {
+      this.form.get('image')?.setValue(userpicFile);
+      const objectURL = URL.createObjectURL(userpicFile);
+      this.categoryImage = objectURL;
+      this.supabaseFilepath = this.setCategoryImageFilenameForSupabase();
+    }
+  }
+  unsetCategoryImage(): void {
+    this.form.get('image')?.setValue(null);
+    this.categoryImage = this.defaultImage;
+    this.supabaseFilepath = '';
+  }
+  private setCategoryImageFilenameForSupabase(): string {
+    const file = this.form.get('image')?.value;
+    const fileExt = file.name.split('.').pop();
+    return `${Math.random()}.${fileExt}`;
+  }
+
+  //section
+  clearSection(): void {
+    this.form.get('section')?.setValue(null);
+  }
+  selectSection(selectedSection: ISection): void {
+    this.form.get('section')?.setValue(selectedSection);
+  }
+
+  async createCategory() {
+    this.newCategory = {
+      name: this.form.value.name,
+      photo: this.form.value.image ? this.supabaseFilepath : '',
+      sendDate: getCurrentDate(),
+      authorId: this.editMode
+        ? this.editedCategory.authorId
+        : this.currentUser.id,
+      id: this.editedCategory.id > 0 ? this.editedCategory.id : this.maxId + 1,
+      status: this.editMode
+        ? 'public'
+        : this.currentUser.role === 'user'
+          ? 'awaits'
+          : 'public',
+    };
+
+    await this.addCategoryToSupabase(this.newCategory);
+  }
+
+  async loadCategoryImageToSupabase() {
+    const file = this.form.get('image')?.value;
+    const filePath = this.supabaseFilepath;
+    await this.categoryService.loadCategoryImageToSupabase(filePath, file);
+  }
+
+  async addCategoryToSupabase(category: ICategory) {
+    this.awaitModalShow = true;
+    this.cdr.markForCheck();
+    const section: ISection = this.form.get('section')?.value;
+
+    if (this.editMode) {
+      if (this.editedCategory.photo === null) {
+        this.editedCategory.photo = '';
+      }
+      if (this.editedCategory.photo !== this.newCategory.photo) {
+        if (this.newCategory.photo) {
+          await this.loadCategoryImageToSupabase();
+        }
+        if (this.editedCategory.photo) {
+          await this.categoryService.removeCategoryImageFromSupabase(
+            this.editedCategory.photo,
+          );
+        }
+      }
+      if (section.id !== this.startSection.id) {
+        this.startSection = {
+          ...this.startSection,
+          categories: this.startSection.categories.filter(
+            (c) => c !== category.id,
+          ),
+        };
+
+        await this.sectionService.updateSectionInSupabase(this.startSection);
+      }
+      await this.categoryService.updateCategoryInSupabase(category);
+    } else {
+      await this.categoryService.addCategoryToSupabase(category);
+      if (this.form.value.image) {
+        await this.loadCategoryImageToSupabase();
+      }
+    }
+
+    if (section) {
+      if (!this.editMode || section.id !== this.startSection.id) {
+        section.categories.push(this.newCategory.id);
+        await this.sectionService.updateSectionInSupabase(section);
+      }
+    }
+
+    this.awaitModalShow = false;
+    if (!this.editMode) {
+      this.successModal = true;
+    } else {
+      this.editEmitter.emit();
+      this.closeEmitter.emit(true);
+    }
+    this.cdr.markForCheck();
+  }
+
+  //modals
+  handleSaveModal(answer: boolean) {
+    if (answer) {
+      this.createCategory();
+    }
+    addModalStyle(this.renderer);
+    this.saveModal = false;
+  }
+  async handleSuccessModal() {
+    this.closeEmitter.emit(true);
+    this.successModal = false;
+    if (this.editedCategory.id === 0) {
+      if (
+        this.userService.getPermission(
+          'you-create-category',
+          this.currentUser,
+        ) &&
+        this.form.get('section')!.value
+      ) {
+        const notify: INotification = this.notifyService.buildNotification(
+          this.currentUser.role === 'user'
+            ? 'Категория отправлена на проверку'
+            : 'Категория опубликована',
+          `Созданная вами категория «${this.newCategory.name}» для секции «${
+            this.form.get('section')!.value.name
+          }» ${
+            this.currentUser.role === 'user'
+              ? 'отправлена на проверку'
+              : 'успешно опубликована'
+          }`,
+          'success',
+          'category',
+          this.currentUser.role === 'user'
+            ? ''
+            : '/categories/list/' + this.newCategory.id,
+        );
+        await this.notifyService.sendNotification(notify, this.currentUser);
+      }
+    }
+  }
+  handleCloseModal(answer: boolean) {
+    if (answer) {
+      this.closeEmitter.emit(true);
+    } else {
+      setTimeout(() => {
+        this.renderer.addClass(document.body, 'hide-overflow');
+        (<HTMLElement>document.querySelector('.header')).style.width =
+          'calc(100% - 16px)';
+      }, 0);
+    }
+    this.closeModal = false;
+  }
+
+  closeEditModal() {
+    this.areObjectsEqual() || this.form.get('image')?.value
+      ? (this.closeModal = true)
+      : this.closeEmitter.emit(true);
+  }
+
+  clickBackgroundNotContent(elem: Event) {
+    if (elem.target !== elem.currentTarget) return;
+    this.closeEditModal();
+  }
+
+  areObjectsEqual(): boolean {
+    return (
+      JSON.stringify(this.beginningData) !==
+      JSON.stringify(this.form.getRawValue())
+    );
+  }
+
+  //steps
 
   goToPreviousStep() {
     if (this.currentStep > 0) {
@@ -103,21 +370,12 @@ export class CategoryCreatingComponent
       this.scrollTop();
     }
   }
-
-  addViewedStep(i: number) {
-    if (!this.viewedSteps.includes(i)) {
-      this.viewedSteps.push(i);
-    }
-  }
-
   notValid() {
     return this.validNextSteps();
   }
   clickOnCircleStep(i: number) {
     if (this.validNextSteps() === 0 || this.validNextSteps() > i) {
       this.currentStep = i;
-      this.addViewedStep(this.currentStep);
-
       this.scrollTop();
     }
   }
@@ -162,203 +420,11 @@ export class CategoryCreatingComponent
   goToNextStep() {
     if (this.currentStep < this.steps.length - 1) {
       this.currentStep++;
-      this.addViewedStep(this.currentStep);
-
       this.scrollTop();
-    }
-  }
-  allSections: ISection[] = [];
-  allCategories: ICategory[] = [];
-  protected destroyed$: Subject<void> = new Subject<void>();
-
-  currentUser: IUser = { ...nullUser };
-  ngOnInit() {
-    this.renderer.addClass(document.body, 'hide-overflow');
-    (<HTMLElement>document.querySelector('.header')).style.width =
-      'calc(100% - 16px)';
-    this.renderer.addClass(document.body, 'hide-overflow');
-    this.categoryService.categories$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((data: ICategory[]) => {
-        this.allCategories = data;
-
-        this.sectionService.sections$
-          .pipe(takeUntil(this.destroyed$))
-          .subscribe((data: ISection[]) => {
-            this.allSections = data;
-          });
-      });
-    this.authService.currentUser$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((data: IUser) => {
-        this.currentUser = data;
-      });
-  }
-
-  onUserpicChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const userpicFile: File | undefined = input.files?.[0];
-
-    if (userpicFile) {
-      this.form.get('image')?.setValue(userpicFile);
-      const objectURL = URL.createObjectURL(userpicFile);
-      this.myImage = objectURL;
-      this.supabaseFilepath = this.setUserpicFilenameForSupabase();
-    }
-  }
-
-  unsetImage() {
-    this.form.get('image')?.setValue(null);
-    this.myImage = this.defaultImage;
-    this.supabaseFilepath = '';
-  }
-
-  areObjectsEqual(): boolean {
-    return this.form.get('name')!.value || this.form.get('section')!.value;
-  }
-
-  removeCategory() {
-    this.form.get('section')!.setValue(null);
-  }
-
-  //Работа с категориями
-  addCategory(event: ISection) {
-    this.form.get('section')!.setValue(event);
-  }
-
-  group: SectionGroup[] = [];
-
-  fullGroup: SectionGroup[] = [];
-
-  createCategory() {
-    this.newCategory = {
-      name: this.form.value.name,
-      photo: this.form.value.image ? this.supabaseFilepath : undefined,
-      sendDate: getCurrentDate(),
-      authorId: this.currentUser.id,
-      id: this.maxId + 1,
-      status: this.currentUser.role === 'user' ? 'awaits' : 'public',
-    };
-
-    if (this.form.value.image) {
-      this.loadCategorypicToSupabase(this.newCategory);
-    } else {
-      this.addCategoryToSupabase(this.newCategory);
-    }
-
-    if (this.form.get('section')!.value) {
-      this.form.get('section')!.value.categories.push(this.newCategory.id);
-      this.sectionService.updateSectionInSupabase(
-        this.form.get('section')!.value,
-      );
-    }
-  }
-
-  async addCategoryToSupabase(category: ICategory) {
-    this.awaitModalShow = true;
-    this.cdr.markForCheck();
-    await this.categoryService.addCategoryToSupabase(category);
-    this.awaitModalShow = false;
-    this.successModal = true;
-    this.cdr.markForCheck();
-  }
-
-  handleSaveModal(answer: boolean) {
-    if (answer) {
-      this.createCategory();
-    }
-    setTimeout(() => {
-      this.renderer.addClass(document.body, 'hide-overflow');
-      (<HTMLElement>document.querySelector('.header')).style.width =
-        'calc(100% - 16px)';
-    }, 0);
-    this.saveModal = false;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  handleSuccessModal(answer: boolean) {
-    this.closeEmitter.emit(true);
-    this.successModal = false;
-
-    if (
-      this.userService.getPermission('you-create-category', this.currentUser) &&
-      this.form.get('section')!.value
-    ) {
-      const notify: INotification = this.notifyService.buildNotification(
-        this.currentUser.role === 'user'
-          ? 'Категория отправлена на проверку'
-          : 'Категория опубликована',
-        `Созданная вами категория «${this.newCategory.name}» для секции «${
-          this.form.get('section')!.value.name
-        }» ${
-          this.currentUser.role === 'user'
-            ? 'отправлена на проверку'
-            : 'успешно опубликована'
-        }`,
-        'success',
-        'category',
-        this.currentUser.role === 'user'
-          ? ''
-          : '/categories/list/' + this.newCategory.id,
-      );
-      this.notifyService.sendNotification(notify, this.currentUser);
-    }
-  }
-  handleCloseModal(answer: boolean) {
-    if (answer) {
-      this.closeEmitter.emit(true);
-    } else {
-      setTimeout(() => {
-        this.renderer.addClass(document.body, 'hide-overflow');
-        (<HTMLElement>document.querySelector('.header')).style.width =
-          'calc(100% - 16px)';
-      }, 0);
-    }
-    this.closeModal = false;
-  }
-
-  closeEditModal() {
-    this.areObjectsEqual() || this.form.get('image')?.value
-      ? (this.closeModal = true)
-      : this.closeEmitter.emit(true);
-  }
-
-  clickBackgroundNotContent(elem: Event) {
-    if (elem.target !== elem.currentTarget) return;
-    this.areObjectsEqual() || this.form.get('image')?.value
-      ? (this.closeModal = true)
-      : this.closeEmitter.emit(true);
-  }
-
-  supabaseFilepath = '';
-  awaitModalShow = false;
-
-  private setUserpicFilenameForSupabase(): string {
-    const file = this.form.get('image')?.value;
-    const fileExt = file.name.split('.').pop();
-    return `${Math.random()}.${fileExt}`;
-  }
-
-  async loadCategorypicToSupabase(category: ICategory) {
-    this.awaitModalShow = true;
-    try {
-      const file = this.form.get('image')?.value;
-      const filePath = this.supabaseFilepath;
-      await supabase.storage.from('categories').upload(filePath, file);
-      await this.categoryService.addCategoryToSupabase(category);
-      this.successModal = true;
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error(error.message);
-      }
-    } finally {
-      this.awaitModalShow = false;
-
-      this.cdr.markForCheck();
     }
   }
 
   ngOnDestroy(): void {
-    this.renderer.removeClass(document.body, 'hide-overflow');
-    (<HTMLElement>document.querySelector('.header')).style.width = '100%';
+    removeModalStyle(this.renderer);
   }
 }

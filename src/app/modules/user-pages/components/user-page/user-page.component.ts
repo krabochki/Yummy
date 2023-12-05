@@ -134,6 +134,8 @@ export class UserPageComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe((data) => {
         this.currentUser = { ...data };
+        console.log(data)
+        this.cd.markForCheck()
 
         this.route.data.subscribe((data: Data) => {
           if (!this.moreInfoEnabled) {

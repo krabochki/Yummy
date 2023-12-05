@@ -15,32 +15,41 @@
         <div class="nav-step-circles-block">
           <div class="nav-step-block" *ngFor="let step of steps; let i = index">
             <div class="nav-step-block-inner" (click)="clickOnCircleStep(i)">
-              <div class="nav-step-circle" [ngClass]="{
-                          active: i === currentStep,
-                          completed: i < currentStep,
-                          'not-valid': notValid() === i + 1
-                        }">
+              <div
+                class="nav-step-circle"
+                [ngClass]="{
+                  active: i === currentStep,
+                  completed: i < currentStep,
+                  'not-valid': notValid() === i + 1
+                }"
+              >
                 {{ i + 1 }}
               </div>
-              <p class="nav-step-short-title" [ngClass]="{
-                          active: i === currentStep,
-                          completed: i < currentStep,
-                          'not-valid': notValid() === i + 1
-                        }">
+              <p
+                class="nav-step-short-title"
+                [ngClass]="{
+                  active: i === currentStep,
+                  completed: i < currentStep,
+                  'not-valid': notValid() === i + 1
+                }"
+              >
                 {{ steps[i].shortTitle }}
               </p>
             </div>
-            <div [ngClass]="{
-                        completed: i < currentStep
-                                      }" *ngIf="i !== steps.length - 1" class="nav-step-line"></div>
+            <div
+              [ngClass]="{
+                completed: i < currentStep
+              }"
+              *ngIf="i !== steps.length - 1"
+              class="nav-step-line"
+            ></div>
           </div>
         </div>
       </div>
     </div>
-    <div class="unique-content">
+    <div class="unique-content category-cont">
       <div>
         <h2>{{ steps[currentStep].title }}</h2>
-      
       </div>
 
       <hr />
@@ -48,7 +57,11 @@
       <form [formGroup]="form" #scrollContainer>
         <div class="description-container">
           <button class="more-button" (click)="showInfo = !showInfo">
-            <svg-icon [src]="'assets/images/svg/help.svg'" [applyClass]="true" class="help-svg"></svg-icon>
+            <svg-icon
+              [src]="'assets/images/svg/help.svg'"
+              [applyClass]="true"
+              class="help-svg"
+            ></svg-icon>
             Подробнее
           </button>
           <p class="description" *ngIf="showInfo" @height>
@@ -57,19 +70,14 @@
         </div>
         <div class="step-container" *ngIf="currentStep === 0">
           <div class="main-info-control-with-image">
-            <div class="form-control">
+            <div class="form-control circle img">
               <div class="image">
-                <input
-                  type="file"
-                  (change)="onUserpicChange($event)"
-                  accept="image/*"
-                />
+               
 
                 <div
                   class="delete"
-                  *ngIf="myImage !== defaultImage"
-                  (click)="unsetImage()
-                  "
+                  *ngIf="categoryImage !== defaultImage"
+                  (click)="unsetCategoryImage()"
                 >
                   <svg-icon
                     [applyClass]="true"
@@ -78,13 +86,17 @@
                   ></svg-icon>
                 </div>
                 <div
-                  class="userpic"
+                  class="photo"
                   [ngClass]="{
                     'have-image': this.form.get('image')?.value !== null
                   }"
-                  [ngStyle]="{ 'background-image': 'url(' + myImage + ')' }"
-                  alt="User Photo"
-                ></div>
+                  [ngStyle]="{
+                    'background-image': 'url(' + categoryImage + ')'
+                  }"
+                  alt="Изображение категории"
+                >
+              <input type="file"   class="input-image" (change)="onCategoryImageChange($event)" accept="image/*" />
+              </div>
               </div>
             </div>
             <div class="main-info-controls">
@@ -117,9 +129,9 @@
               <app-autocomplete
                 [disabled]="this.form.get('section')?.value !== null"
                 [sectionMode]="true"
-                (sectionEmitter)="addCategory($event)"
+                (sectionEmitter)="selectSection($event)"
                 [group]="group"
-                [allSections]="allSections"
+                [allSections]="sections"
                 [placeholder]="
                   'Выбери соответствующий раздел для твоей категории*'
                 "
@@ -138,8 +150,8 @@
           </div>
           <div class="tags" *ngIf="this.form.get('section')?.value">
             <div class="tag">
-              {{ this.form.get('section')?.value.name }}
-              <span (click)="removeCategory()" class="remove-tag"
+              {{ this.form.get("section")?.value.name }}
+              <span (click)="clearSection()" class="remove-tag"
                 ><svg-icon
                   [applyClass]="true"
                   class="remove-tag-svg"
@@ -154,19 +166,21 @@
           <div class="buttons">
             <div class="button">
               <p>
-                Если вы хотите, чтобы категорию увидели все кулинары,
+                Если вы хотите, чтобы
+                {{ editMode ? "обновленную" : "создание" }} категорию увидели
+                все кулинары,
                 {{
                   currentUser.role === "user"
                     ? "отправьте её на одобрение"
-                    : "опубликуйте её"
+                    : editMode
+                      ? "измените её"
+                      : "опубликуйте её"
                 }}.
               </p>
               <app-button
-                [disabled]="
-                  areObjectsEqual() && form.valid
-                "
+                [disabled]="areObjectsEqual() && form.valid"
                 (click)="form.valid ? (saveModal = true) : null"
-                [text]="'Опубликовать'"
+                [text]="editMode ? 'Изменить' : 'Опубликовать'"
                 [color]="'sec'"
                 [style]="'filled'"
                 [rounded]="true"
@@ -175,12 +189,13 @@
 
             <div class="button">
               <p>
-                Если вы передумали создавать категорию, просто
-                отмените её создание.
-                Все данные придется вводить повторно, если вы захотите создать её
-                снова.
+                Если вы передумали
+                {{ editMode ? "менять" : "создавать" }} категорию, просто
+                отмените её {{ editMode ? "изменение" : "создание" }}. Все
+                данные придется вводить повторно, если вы захотите
+                {{ editMode ? "изменить" : "создать" }} её снова.
               </p>
-  
+
               <app-button
                 (click)="closeEditModal()"
                 [text]="'Отменить'"
@@ -196,30 +211,33 @@
     </div>
 
     <div class="footer">
-      <app-button
-        [iconSize]="'min'"
-        [color]="'sec'"
-        [iconPosition]="'before'"
-        [rounded]="true"
-        [icon]="'arrow-previous'"
-        [iconStyle]="'as-text'"
-        [style]="'outlined'"
-        [text]="'Назад'"
-        (click)="goToPreviousStep()"
-        [disabled]="!(currentStep === 0) "
-      ></app-button>
-      <app-button
-        [iconSize]="'min'"
-        [icon]="'arrow-next'"
-        [color]="'sec'"
-        [rounded]="true"
-        [style]="'filled'"
-        [text]="'Вперед'"
-        (click)="!buttonDisabled() ? goToNextStep() : null"
-        [disabled]="
-          !buttonDisabled()
-        "
-      ></app-button>
+      <div>
+        <app-button
+          [iconSize]="'min'"
+          [color]="'sec'"
+          [iconPosition]="'before'"
+          [rounded]="true"
+          [icon]="'arrow-previous'"
+          [iconStyle]="'as-text'"
+          [style]="'outlined'"
+          [text]="'Назад'"
+          (click)="goToPreviousStep()"
+          *ngIf="!(currentStep === 0)"
+        ></app-button>
+      </div>
+      <div>
+        <app-button
+          [iconSize]="'min'"
+          [icon]="'arrow-next'"
+          [color]="'sec'"
+          [rounded]="true"
+          *ngIf="this.currentStep !== steps.length - 1"
+          [style]="'filled'"
+          [text]="'Вперед'"
+          (click)="!buttonDisabled() ? goToNextStep() : null"
+          [disabled]="!buttonDisabled()"
+        ></app-button>
+      </div>
     </div>
   </div>
 </div>
@@ -232,7 +250,11 @@
   [type]="'yesOrNo'"
   (resultEmit)="handleCloseModal($event)"
   [buttonsText]="['Да', 'Нет']"
-  [description]="'Вы уверены, что не хотите сохранить категорию?'"
+  [description]="
+    'Вы уверены, что не хотите ' +
+    (editMode ? 'менять' : 'сохранить') +
+    ' категорию?'
+  "
 >
 </app-modal>
 
@@ -245,7 +267,9 @@
   (resultEmit)="handleSaveModal($event)"
   [buttonsText]="['Да', 'Нет']"
   [description]="
-    'Вы уверены, что хотите создать категорию' +
+    'Вы уверены, что хотите ' +
+    (editMode ? 'изменить' : 'создать') +
+    ' категорию' +
     (currentUser.role === 'user'
       ? ' и отправить её на рассмотрение модератору'
       : '') +
@@ -257,16 +281,31 @@
   @modal
   *ngIf="successModal"
   [style]="'sec'"
-  [title]="'Категория успешно создана'"
+  [title]="
+    this.editMode ? 'Категория успешно изменена' : 'Категория успешно создана'
+  "
   [type]="'Ok'"
-  (resultEmit)="handleSuccessModal($event)"
+  (resultEmit)="handleSuccessModal()"
   [buttonsText]="['Хорошо']"
   [description]="
-    'Категория успешно создана' +
+    (this.editMode
+      ? 'Категория успешно создана'
+      : 'Категория успешно изменена') +
     (currentUser.role === 'user'
       ? ' и отправлена модератору на рассмотрение'
       : '')
   "
 ></app-modal>
-<app-modal @modal [style]="'await'" [type]="'Ok'" [noButtons]="true" [style]="'sec'" [title]="'Подождите...'"
-  [type]="'Ok'" [description]="'Загружаем данные о новой категории... Совсем скоро она будет готова...'" *ngIf="awaitModalShow"></app-modal>
+<app-modal
+  @modal
+  [style]="'await'"
+  [type]="'Ok'"
+  [noButtons]="true"
+  [style]="'sec'"
+  [title]="'Подождите...'"
+  [type]="'Ok'"
+  [description]="
+    'Загружаем данные категории... Совсем скоро она будет готова...'
+  "
+  *ngIf="awaitModalShow"
+></app-modal>

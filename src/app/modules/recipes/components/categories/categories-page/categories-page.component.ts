@@ -54,6 +54,7 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
 
   protected destroyed$: Subject<void> = new Subject<void>();
   noAccessModalShow = false;
+  successEditModal = false;
 
   constructor(
     private categoryService: CategoryService,
@@ -87,32 +88,30 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  getCategoriesData(section:ISection) {
+  getCategoriesData(section: ISection) {
     this.categoryService.categories$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((data: ICategory[]) => {
-        this.categories = data;
-        this.categories = this.categories.filter(
-          (category) => category.status === 'public',
-        ); 
-
+        this.categories = this.categoryService.sortCategoriesByName(
+          data.filter((category) => category.status === 'public'),
+        );
 
         this.recipeService.recipes$
           .pipe(takeUntil(this.destroyed$))
           .subscribe((recipes: IRecipe[]) => {
             this.recipes = recipes;
 
-            if(this.filter === 'popular' || this.filter ==='sections')
-            this.popularCategories = this.categoryService.getPopularCategories(
-              this.categories,
-              recipes,
-            );
-                    this.divideCategories(section);
+            if (this.filter === 'popular' || this.filter === 'sections')
+              this.popularCategories =
+                this.categoryService.getPopularCategories(
+                  this.categories,
+                  recipes,
+                );
+            this.divideCategories(section);
 
             this.cd.markForCheck();
-
           });
-        
+
         this.cd.markForCheck();
       });
   }
@@ -123,14 +122,16 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
       .subscribe((data: ISection[]) => {
         this.title = 'Разделы';
         this.titleService.setTitle(this.title);
-        this.sections=[]
+        this.sections = [];
         this.sections = this.sectionService.getSectionsWithCategories(
           data,
           this.categories,
         );
-        this.sections= this.sections.sort((elem1: ISection, elem2: ISection) => {
-          return elem1.name > elem2.name ? 1 : -1;
-        });
+        this.sections = this.sections.sort(
+          (elem1: ISection, elem2: ISection) => {
+            return elem1.name > elem2.name ? 1 : -1;
+          },
+        );
         this.cd.markForCheck();
       });
   }
@@ -139,16 +140,13 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
     this.getCurrentUserData();
     this.route.data.subscribe((data) => {
       this.filter = data['filter'];
-      this.getCategoriesData( data['SectionResolver'] );
-      
+      this.getCategoriesData(data['SectionResolver']);
     });
   }
 
   divideCategories(section: ISection) {
-    this.sections = []
-    this.categories = this.categoryService.sortCategoriesByName(
-      this.categories,
-    );
+    this.sections = [];
+
     if (this.filter === 'sections') {
       // если это все секции
       this.getSectionsData();
@@ -164,18 +162,16 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
       };
       this.sections.push(popularSection);
     } else {
-
       //если это конкретная секция
-      this.section = {...section}
+      this.section = { ...section };
       this.title = this.section.name;
       this.section.name = '';
       this.sections.push(this.section);
     }
 
-    this.categoriesToShow = this.getCategoriesOfSection({...this.section}).slice(
-      0,
-      10,
-    );
+    this.categoriesToShow = this.getCategoriesOfSection({
+      ...this.section,
+    }).slice(0, 10);
 
     this.titleService.setTitle(this.title);
   }

@@ -28,33 +28,36 @@ export class AuthService {
     private userService: UserService,
     private router: Router,
     private ngZone: NgZone,
+   
   ) {
-    this.userService.users$.subscribe((users) => {
-      this.users = users;
-    })
-
-  
   }
-  
-  
-    // supabase.auth.onAuthStateChange((event, session) => {
-    //   if (event === 'SIGNED_IN')
-    //     if (session?.user.email) {
-    //       const user = { ...session?.user };
-    //       if (user && user.email) {
-    //         const iuser: IUser = {
-    //           ...nullUser,
-    //           email: user.email,
-    //         };
-    //         const loginUser = this.loginUser({ ...iuser });
-    //         if (loginUser && loginUser.email === user.email) {
-    //           this.currentUserSubject.next(loginUser);
-    //         } else {
-    //           this.currentUserSubject.next({ ...nullUser });
-    //         }
-    //       }
-    //     }
-  
+
+  setOnline(user: IUser) {
+    user = { ...user, online: true };
+    return this.userService.updateUserInSupabase(user);
+  }
+  setOffline(user: IUser) {
+    user = { ...user, online: false };
+    return this.userService.updateUserInSupabase(user);
+  }
+
+  // supabase.auth.onAuthStateChange((event, session) => {
+  //   if (event === 'SIGNED_IN')
+  //     if (session?.user.email) {
+  //       const user = { ...session?.user };
+  //       if (user && user.email) {
+  //         const iuser: IUser = {
+  //           ...nullUser,
+  //           email: user.email,
+  //         };
+  //         const loginUser = this.loginUser({ ...iuser });
+  //         if (loginUser && loginUser.email === user.email) {
+  //           this.currentUserSubject.next(loginUser);
+  //         } else {
+  //           this.currentUserSubject.next({ ...nullUser });
+  //         }
+  //       }
+  //     }
 
   async passwordReset(email: string, users: IUser[]) {
     const resetUser = {
@@ -76,23 +79,27 @@ export class AuthService {
     }
   }
   loadCurrentUserData() {
-    this.userService.users$.subscribe(() => {
+    this.userService.users$.subscribe((users) => {
+            this.users = users;
+
       supabase.auth.onAuthStateChange((event, session) => {
         if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
           this.handleAuthStateChange(session);
         }
+       
       });
     });
   }
 
-  handleAuthStateChange(session:Session|null) {
+  handleAuthStateChange(session: Session | null) {
     const user = { ...session?.user };
     if (user && user.email) {
-      this.loadUserFromSupabaseByEmail(user.email,true)
+      this.loadUserFromSupabaseByEmail(user.email, true)
         .then((loadedUser) => {
           if (loadedUser) {
             const user = this.userService.translateUser(loadedUser);
             this.currentUserSubject.next(user);
+
           } else {
             this.currentUserSubject.next({ ...nullUser });
           }
@@ -214,24 +221,26 @@ export class AuthService {
       : null;
   }
 
-  async loadUserFromSupabaseByEmail(email: string,full?:boolean): Promise<number | null> {
+  async loadUserFromSupabaseByEmail(
+    email: string,
+    full?: boolean,
+  ): Promise<number | null> {
     return supabase
       .from('profiles')
-      .select(full?'*':'id')
+      .select(full ? '*' : 'id')
       .eq('email', email)
       .then((response) => {
         if (response.data) {
           const res = response.data[0];
-          if(!full)
-          if (res.id) {
-            return res.id;
-          } else {
-            return null;
+          if (!full)
+            if (res.id) {
+              return res.id;
+            } else {
+              return null;
             }
           else {
-            if (res)
-              return res;
-            else return null
+            if (res) return res;
+            else return null;
           }
         } else {
           return null;

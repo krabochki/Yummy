@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  AfterContentChecked,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
+  Input,
   OnDestroy,
   OnInit,
   Output,
@@ -12,40 +13,70 @@ import {
   ViewChild,
 } from '@angular/core';
 import { trigger } from '@angular/animations';
-import {  modal } from 'src/tools/animations';
+import { modal } from 'src/tools/animations';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ISection, nullSection } from '../../../models/categories';
+import {
+  ICategory,
+  ISection,
+  nullCategory,
+  nullSection,
+} from '../../../models/categories';
 import { Subject, takeUntil } from 'rxjs';
 import { SectionService } from '../../../services/section.service';
 import { supabase } from 'src/app/modules/controls/image/supabase-data';
 import { trimmedMinLengthValidator } from 'src/tools/validators';
+import { CategoryService } from '../../../services/category.service';
+import {
+  addModalStyle,
+  baseComparator,
+  removeModalStyle,
+} from 'src/tools/common';
 
 @Component({
   selector: 'app-section-creating',
   templateUrl: './section-creating.component.html',
-  styleUrls: ['./section-creating.component.scss'],
+  styleUrls: ['../../../../styles/forms.scss'],
   animations: [trigger('modal', modal())],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SectionCreatingComponent
-  implements OnInit, AfterContentChecked, OnDestroy
-{
+export class SectionCreatingComponent implements OnInit, OnDestroy {
   @Output() closeEmitter = new EventEmitter<boolean>();
+  @Output() editEmitter = new EventEmitter();
+  @ViewChild('scrollContainer', { static: false }) scrollContainer?: ElementRef;
 
+  protected destroyed$: Subject<void> = new Subject<void>();
+
+  //modals
   saveModal: boolean = false;
   closeModal: boolean = false;
   successModal: boolean = false;
+  loading: boolean = false;
+
   newSection: ISection = { ...nullSection };
-  loading = false;
-  myImage: string = '';
+
+  selectedCategories: ICategory[] = [];
+
+  //image
+  sectionImage: string = '';
   defaultImage: string = '/assets/images/add-section.png';
+  supabaseFilepath: string = '';
+
+  //form
   form: FormGroup;
-  allSections: ISection[] = [];
   beginningData: any;
+
+  //initData
+  @Input() editedSection: ISection = nullSection;
+  categoriesWithoutSection: ICategory[] = [];
+  categories: ICategory[] = [];
+  categoriesNames: string[] = [];
+  sections: ISection[] = [];
+  beginningCategories:ICategory[]=[]
+
   maxId = 0;
 
-  ngAfterContentChecked(): void {
-    this.cdr.detectChanges();
+  get edit() {
+    return this.editedSection.id > 0;
   }
 
   constructor(
@@ -53,11 +84,13 @@ export class SectionCreatingComponent
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private sectionService: SectionService,
+    private categoryService: CategoryService,
   ) {
     this.sectionService.getMaxCategoryId().then((maxId) => {
       this.maxId = maxId;
     });
     this.form = this.fb.group({
+      form: [],
       name: [
         '',
         [
@@ -69,93 +102,168 @@ export class SectionCreatingComponent
       ],
       image: [null],
     });
-    this.myImage = this.defaultImage;
+    this.sectionImage = this.defaultImage;
   }
 
-  @ViewChild('scrollContainer', { static: false }) scrollContainer?: ElementRef;
+  private initCategories() {
+    this.categoryService.categories$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedCategories: ICategory[]) => {
+        const categories = receivedCategories.filter(
+          (category) => category.status === 'public',
+        );
+        this.categories = categories;
+        categories.forEach((category) => {
+          let categoryHaveSection = false;
 
-  protected destroyed$: Subject<void> = new Subject<void>();
-
-  ngOnInit() {
-    this.renderer.addClass(document.body, 'hide-overflow');
-    (<HTMLElement>document.querySelector('.header')).style.width =
-      'calc(100% - 16px)';
-    this.renderer.addClass(document.body, 'hide-overflow');
-
+          this.sections.forEach((section) => {
+            if (section.categories.includes(category.id)) {
+              categoryHaveSection = true;
+            }
+          });
+          if (!categoryHaveSection) {
+            this.categoriesWithoutSection.push(category);
+          }
+        });
+      });
+    this.updateCategoriesWithoutSection();
+  }
+  private initEditedSection() {
+    if (this.edit) {
+      this.form.get('name')?.setValue(this.editedSection.name);
+      const sectionImage = this.editedSection.photo;
+      if (sectionImage) {
+        this.sectionImage = this.downloadSectionImageFromSupabase(sectionImage);
+        this.supabaseFilepath = sectionImage;
+        this.form.get('image')?.setValue('url');
+      }
+      this.editedSection.categories.forEach((categoryId) => {
+        const findedCategory = this.categories.find(
+          (category) => category.id === categoryId,
+        );
+        if (findedCategory) this.selectedCategories.push(findedCategory);
+      });
+      this.beginningData = this.form.getRawValue();
+    }
+    this.beginningCategories = this.selectedCategories;
+  }
+  private initSections() {
     this.sectionService.sections$
       .pipe(takeUntil(this.destroyed$))
-      .subscribe((data: ISection[]) => {
-        this.allSections = data;
+      .subscribe((receivedSections: ISection[]) => {
+        this.sections = receivedSections;
       });
   }
 
-  onUserpicChange(event: Event) {
+  ngOnInit() {
+    addModalStyle(this.renderer);
+    this.initSections();
+    this.initCategories();
+    this.initEditedSection();
+  }
+
+  addCategory(event: string) {
+    if (!this.selectedCategories.find((category) => category.name === event)) {
+      const findedCategory: ICategory =
+        this.categoriesWithoutSection.find(
+          (category) => category.name === event,
+        ) || nullCategory;
+
+      this.selectedCategories.push(findedCategory);
+    }
+  }
+
+  removeCategory(event: string) {
+    this.selectedCategories = this.selectedCategories.filter(
+      (category) => category.name !== event,
+    );
+    const findedCategory = this.categories.find(
+      (category) => category.name === event,
+    );
+    if (findedCategory) {
+      const findedCategoryInCategoriesWithoutSection =
+        this.categoriesWithoutSection.find(
+          (category) => category.name === event,
+        );
+      if (!findedCategoryInCategoriesWithoutSection) {
+        this.categoriesWithoutSection.push(findedCategory);
+        this.updateCategoriesWithoutSection();
+      }
+    }
+  }
+
+  updateCategoriesWithoutSection() {
+    this.categoriesNames = this.categoriesWithoutSection
+      .map((category) => category.name)
+      .sort((a, b) => baseComparator(a, b));
+  }
+  onSectionImageChange(event: Event) {
     const input = event.target as HTMLInputElement;
     const userpicFile: File | undefined = input.files?.[0];
 
     if (userpicFile) {
       this.form.get('image')?.setValue(userpicFile);
       const objectURL = URL.createObjectURL(userpicFile);
-      this.myImage = objectURL;
-      this.supabaseFilepath = this.setUserpicFilenameForSupabase();
+      this.sectionImage = objectURL;
+      this.supabaseFilepath = this.setSectionImageFilenameForSupabase();
     }
   }
 
-  areObjectsEqual(): boolean {
-    return (
-      JSON.stringify(this.beginningData) !==
-      JSON.stringify(this.form.getRawValue())
-    );
+  private setSectionImageFilenameForSupabase(): string {
+    const file = this.form.get('image')?.value;
+    const fileExt = file.name.split('.').pop();
+    return `${Math.random()}.${fileExt}`;
+  }
+
+  unsetImage() {
+    this.form.get('image')?.setValue(null);
+    this.sectionImage = this.defaultImage;
+    this.supabaseFilepath = '';
+  }
+
+  downloadSectionImageFromSupabase(path: string) {
+    return supabase.storage.from('sections').getPublicUrl(path).data.publicUrl;
+  }
+
+  async loadSectionImageToSupabase() {
+    const file = this.form.get('image')?.value;
+    const filePath = this.supabaseFilepath;
+    await this.sectionService.loadSectionImageToSupabase(filePath, file);
   }
 
   async createSection() {
-   
     this.loading = true;
     this.cdr.markForCheck();
 
-    await this.sectionService.addSectionToSupabase(this.newSection);
-    this.loading = false;
-    this.successModal = true;
-
-    this.cdr.markForCheck();
-  }
-
-  handleSaveModal(answer: boolean) {
-     this.newSection = {
-       ...nullSection,
-       photo: this.form.value.image ? this.supabaseFilepath : undefined,
-       name: this.form.value.name,
-       id: this.maxId + 1,
-     };
-    if (answer) {
-      if (this.form.value.image) {
-        this.loadCategorypicToSupabase();
-      } else {
-        this.createSection();
+    if (this.edit) {
+      if (this.editedSection.photo === null) {
+        this.editedSection.photo = '';
       }
-    }
-    setTimeout(() => {
-      this.renderer.addClass(document.body, 'hide-overflow');
-      (<HTMLElement>document.querySelector('.header')).style.width =
-        'calc(100% - 16px)';
-    }, 0);
-    this.saveModal = false;
-  }
-  handleSuccessModal(answer: boolean) {
-    this.closeEmitter.emit(true);
-    this.successModal = false;
-  }
-  handleCloseModal(answer: boolean) {
-    if (answer) {
+      if (this.editedSection.photo !== this.newSection.photo) {
+        if (this.newSection.photo) {
+          await this.loadSectionImageToSupabase();
+        }
+        if (this.editedSection.photo) {
+          await this.sectionService.removeSectionImageFromSupabase(
+            this.editedSection.photo,
+          );
+        }
+      } else {
+        await this.loadSectionImageToSupabase();
+      }
+      await this.sectionService.updateSectionInSupabase(this.newSection);
+      this.editEmitter.emit();
       this.closeEmitter.emit(true);
     } else {
-      setTimeout(() => {
-        this.renderer.addClass(document.body, 'hide-overflow');
-        (<HTMLElement>document.querySelector('.header')).style.width =
-          'calc(100% - 16px)';
-      }, 0);
+      if (this.form.get('image')?.value) {
+        this.loadSectionImageToSupabase();
+      }
+
+      await this.sectionService.addSectionToSupabase(this.newSection);
     }
-    this.closeModal = false;
+    this.loading = false;
+    this.successModal = true;
+    this.cdr.markForCheck();
   }
 
   closeEditModal() {
@@ -169,41 +277,46 @@ export class SectionCreatingComponent
     this.closeEditModal();
   }
 
-  private setUserpicFilenameForSupabase(): string {
-    const file = this.form.get('image')?.value;
-    const fileExt = file.name.split('.').pop();
-    return `${Math.random()}.${fileExt}`;
+  areObjectsEqual(): boolean {
+    if (JSON.stringify(this.beginningCategories) !== JSON.stringify(this.selectedCategories))
+      return true;
+    return (
+      JSON.stringify(this.beginningData) !==
+      JSON.stringify(this.form.getRawValue())
+    );
   }
 
-  unsetImage() {
-    this.form.get('image')?.setValue(null);
-    this.myImage = this.defaultImage;
-    this.supabaseFilepath = '';
-  }
-
-  supabaseFilepath = '';
-  async loadCategorypicToSupabase() {
-    this.loading = true;
-    this.cdr.markForCheck();
-    try {
-      const file = this.form.get('image')?.value;
-      const filePath = this.supabaseFilepath;
-      await supabase.storage.from('sections').upload(filePath, file);
-      await this.sectionService.addSectionToSupabase(this.newSection);
-      this.successModal = true;
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error(error.message);
-      }
-    } finally {
-      this.loading = false;
-
-      this.cdr.markForCheck();
+  handleSaveModal(answer: boolean) {
+    const categoriesOfSection = this.selectedCategories.map(
+      (category) => category.id,
+    );
+    this.newSection = {
+      ...nullSection,
+      categories: [...categoriesOfSection],
+      photo: this.form.value.image ? this.supabaseFilepath : undefined,
+      name: this.form.value.name,
+      id: this.edit ? this.editedSection.id : this.maxId + 1,
+    };
+    if (answer) {
+      this.createSection();
     }
+    addModalStyle(this.renderer);
+    this.saveModal = false;
+  }
+  handleSuccessModal() {
+    this.closeEmitter.emit(true);
+    this.successModal = false;
+  }
+  handleCloseModal(answer: boolean) {
+    if (answer) {
+      this.closeEmitter.emit(true);
+    } else {
+      addModalStyle(this.renderer);
+    }
+    this.closeModal = false;
   }
 
   ngOnDestroy(): void {
-    this.renderer.removeClass(document.body, 'hide-overflow');
-    (<HTMLElement>document.querySelector('.header')).style.width = '100%';
+    removeModalStyle(this.renderer);
   }
 }

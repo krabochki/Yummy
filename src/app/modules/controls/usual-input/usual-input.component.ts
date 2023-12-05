@@ -8,6 +8,7 @@ import {
   OnChanges,
   OnInit,
   Output,
+  Renderer2,
   ViewChild,
   forwardRef,
 } from '@angular/core';
@@ -44,6 +45,8 @@ export class UsualInputComponent implements OnInit, OnChanges {
   @Output() focusEmitter = new EventEmitter<boolean>();
   @Output() enterEmitter = new EventEmitter();
 
+  
+
   showPassword = true; //показывается ли пароль
 
   isSleep: boolean = false; //подсвечивается ли плейсхолдер
@@ -54,9 +57,12 @@ export class UsualInputComponent implements OnInit, OnChanges {
     if (this.inputRequired === true) {
       this.placeholder = this.placeholder + '*';
     }
+
   }
 
-  ngOnChanges() {
+  
+  ngOnChanges() {   
+
     if (this.value !== '' && !this.getNotEmptyValue && !this.isFocused) {
       this.focus();
       this.blur();

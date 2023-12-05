@@ -2,9 +2,11 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
+  Output,
 } from '@angular/core';
 
 import { RecipeService } from '../../../services/recipe.service';
@@ -38,7 +40,7 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
   @Input() category: any = null;
   @Input() showRecipesNumber: boolean = false;
   @Input() context: 'section' | 'category' = 'category';
-
+  @Output() editEmitter = new EventEmitter();
 
   protected currentUser: IUser = { ...nullUser };
 
@@ -46,12 +48,13 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
 
   private categories: ICategory[] = [];
   private sections: ISection[] = [];
-  loadingText = ''
+  loadingText = '';
   private recipes: IRecipe[] = [];
+  editMode = false;
   loading = false;
   recipesNumber = 0;
   picture = '';
-  placeholder = 'assets/images/category.png';
+  placeholder = 'assets/images/category-placeholder.png';
 
   get title(): string {
     return this.category.categories
@@ -84,16 +87,15 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
 
   downloadUserpicFromSupabase(path: string) {
     if (this.category.categories) {
-              this.picture = supabase.storage
-          .from('sections')
-          .getPublicUrl(path).data.publicUrl;
-
+      this.picture = supabase.storage
+        .from('sections')
+        .getPublicUrl(path).data.publicUrl;
     } else {
-        this.picture = supabase.storage
-          .from('categories')
-          .getPublicUrl(path).data.publicUrl;
+      this.picture = supabase.storage
+        .from('categories')
+        .getPublicUrl(path).data.publicUrl;
     }
-  
+
     this.cd.markForCheck();
   }
 
@@ -155,14 +157,18 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
     $event.stopPropagation();
     this.deleteModalShow = true;
   }
-
+  clickEditButton($event: any) {
+    $event.preventDefault();
+    $event.stopPropagation();
+    
+    this.editMode = true;
+  }
   protected handleDeleteModal(answer: boolean) {
     if (answer) this.deleteCategory();
     this.deleteModalShow = false;
   }
 
   async deleteSectionFromSupabase(section: ISection) {
-
     this.loadingText = 'Удаляем раздел... Подождите немного...';
     this.loading = true;
     this.cd.markForCheck();
@@ -172,7 +178,7 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
   }
 
   async deleteCategoryFromSupabase(category: ICategory) {
-        this.loadingText = 'Удаляем категорию... Подождите немного...';
+    this.loadingText = 'Удаляем категорию... Подождите немного...';
 
     this.loading = true;
     this.cd.markForCheck();
@@ -227,8 +233,15 @@ export class CategoryListItemComponent implements OnInit, OnDestroy {
     return this.userService.getPermission(permissionName, this.currentUser);
   }
 
+  get showEditButton() {
+     const permissionName: PermissionContext =
+       this.context === 'category'
+         ? 'show-category-edit'
+         : 'show-section-edit';
+     return this.userService.getPermission(permissionName, this.currentUser);
+  }
   async deleteOldCategoryPic(path: string) {
-    await supabase.storage.from('categories').remove([path]);
+    await this.categoryService.removeCategoryImageFromSupabase(path);
   }
 
   async deleteOldSectionPic(path: string) {

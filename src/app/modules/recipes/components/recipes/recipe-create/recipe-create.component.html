@@ -753,33 +753,38 @@
     </div>
 
     <div class="footer">
-      <app-button
-        [iconSize]="'min'"
-        [color]="'sec'"
-        [iconPosition]="'before'"
-        [rounded]="true"
-        [icon]="'arrow-previous'"
-        [iconStyle]="'as-text'"
-        [style]="'outlined'"
-        [text]="'Назад'"
-        (click)="goToPreviousStep()"
-        [disabled]="!(currentStep === 0)"
-      ></app-button>
-      <app-button
-        [title]="
-          validNextSteps() !== 0 ? noValidStepDescription(currentStep) : ''
-        "
-        [iconSize]="'min'"
-        [icon]="'arrow-next'"
-        [color]="'sec'"
-        [rounded]="true"
-        [style]="'filled'"
-        [text]="'Вперед'"
-        (click)="validNextSteps() === 0 ? goToNextStep() : null"
-        [disabled]="
-          !(currentStep === steps.length - 1) && validNextSteps() === 0
-        "
-      ></app-button>
+     <div>
+        <app-button
+          [iconSize]="'min'"
+          [color]="'sec'"
+          [iconPosition]="'before'"
+          [rounded]="true"
+          [icon]="'arrow-previous'"
+          [iconStyle]="'as-text'"
+          [style]="'outlined'"
+          [text]="'Назад'"
+          *ngIf="!(currentStep === 0)"
+          (click)="goToPreviousStep()"
+        ></app-button>
+     </div>
+     <div>
+        <app-button
+        *ngIf="!(currentStep === steps.length - 1)"
+          [title]="
+            validNextSteps() !== 0 ? noValidStepDescription(currentStep) : ''
+          "
+          [iconSize]="'min'"
+          [icon]="'arrow-next'"
+          [color]="'sec'"
+          [rounded]="true"
+          [style]="'filled'"
+          [text]="'Вперед'"
+          (click)="validNextSteps() === 0 ? goToNextStep() : null"
+          [disabled]="
+            !(currentStep === steps.length - 1) && validNextSteps() === 0
+          "
+        ></app-button>
+     </div>
     </div>
   </div>
 </div>

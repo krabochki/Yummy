@@ -7,7 +7,10 @@
     <div
       class="image"
       [style.background-image]="'url(' + (image ? image : placeholder) + ')'"
-    ></div>
+    >
+<p class="caption" *ngIf="!image">Ингредиент<br>«{{ingredient.name}}»</p>
+  
+  </div>
 
     <div class="section-group center">
       <p class="reading-time">

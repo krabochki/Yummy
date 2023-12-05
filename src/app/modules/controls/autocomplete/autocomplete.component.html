@@ -1,20 +1,26 @@
 <div class="container">
-  <input
-    [(ngModel)]="value"
-    [disabled]="disabled"
-    (blur)="blur()"
-    autocomplete="off"
-    
-    (keyup)="change()"
-    (ngModelChange)="search()"
-    (focus)="focus()"
-     [ngClass]="{
-      uncorrect: error !== ''
-    }"
-    type="text"
-     [maxlength]="max ? max : null"
-    [placeholder]="placeholder"
-  /> 
+ <form autocomplete="false">
+      <input type="text" style="display:none" />
+
+    <input
+    name="input"
+      [(ngModel)]="value"
+      [disabled]="disabled"
+      (blur)="blur()"
+      readonly onfocus="this.removeAttribute('readonly');"
+      autocomplete="false"
+      
+      (keyup)="change()"
+      (ngModelChange)="search()"
+      (focus)="focus()"
+       [ngClass]="{
+        uncorrect: error !== ''
+      }"
+      type="text"
+       [maxlength]="max ? max : null"
+      [placeholder]="placeholder"
+    />
+ </form> 
     <p class="howmuch noselect" *ngIf="(max!==undefined)">{{value? value.length:0 }}/{{ max }}</p>
 
 

@@ -34,8 +34,14 @@
 
 
 @media (max-width: 480px) {
+  .recipe-list.mobile2x{
+    grid-template-rows: repeat(2,1fr);
+  }
+     .recipe-list.mobile3x {
+       grid-template-rows: repeat(3,1fr);
+     }
+
  
-  @media (max-width: 480px) {
   .recipe-list {
   &::-webkit-scrollbar {
       display: none;
@@ -50,7 +56,7 @@ justify-content: start;
   display: grid;
 
   }
-}
+
 
 }
 

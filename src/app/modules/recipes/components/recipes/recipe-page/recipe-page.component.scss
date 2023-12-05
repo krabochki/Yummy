@@ -22,7 +22,7 @@
   overflow: visible;
 }
 
-app-modal {
+app-modal,app-image-viewer {
   z-index: 10;
   position: fixed;
 }
@@ -339,6 +339,8 @@ h2 {
   align-items: center;
   justify-content: center;
 }
+
+
 
 
 

@@ -218,6 +218,7 @@
     <div class="row center">
       <div
         class="main-photo noselect"
+        (click)="picture?viewMainImage():null"
         [ngClass]="{'placeholder':!picture}"
         [style.background-image]="'url('+(picture||'/assets/images/recipe-full-placeholder.png')+')'"
       ></div>
@@ -294,6 +295,7 @@
     </div>
   </div>
 
+              <app-image-viewer @modal [currentImage]="startImageToView" (closeEmitter)="showedImages =[];startImageToView=0" *ngIf="showedImages.length>0" [images]="showedImages"></app-image-viewer>
   <div class="row all" style="overflow: visible">
     <div style="overflow: visible">
       <div class="instructions" *ngIf="this.recipe.instructions.length > 0">
@@ -307,8 +309,8 @@
             <p>{{ instruction.name }}</p>
          </div>
           <div  class="images" *ngIf="instruction.images" >
-          <ng-container *ngFor="let item of instruction.images">
-          <div class="i-image" [style.background-image]="'url('+downloadInstructionPicFromSupabase(item.file)+')'" *ngIf="item.file" ></div>
+          <ng-container *ngFor="let item of instruction.images;let j = index">
+          <div class="i-image" (click)="chooseImagesForViewer(instruction,j)" [style.background-image]="'url('+downloadInstructionPicFromSupabase(item.file)+')'" *ngIf="item.file" ></div>
           </ng-container>
           </div>
         </div>
@@ -578,3 +580,4 @@
     
 <app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
   [description]=" 'Вносим изменения... Подождите немного...'" />
+

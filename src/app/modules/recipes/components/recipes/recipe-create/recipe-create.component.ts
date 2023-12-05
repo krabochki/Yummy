@@ -411,6 +411,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
   }
 
   loadPictureToSupabase(path: string, file: string) {
+    console.log(file)
     return supabase.storage.from('recipes').upload(path, file);
   }
 
@@ -524,6 +525,8 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     const userpicFile: File | undefined = input.files?.[0];
 
     if (userpicFile) {
+
+      
       this.form.get('image')?.setValue(userpicFile);
       const objectURL = URL.createObjectURL(userpicFile);
       this.mainImage = objectURL;
@@ -1051,6 +1054,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       JSON.stringify(this.form.getRawValue())
     );
   }
+
   clickBackgroundNotContent(elem: Event) {
     if (elem.target !== elem.currentTarget) return;
     this.areObjectsEqual()

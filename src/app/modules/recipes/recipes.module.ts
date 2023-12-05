@@ -38,6 +38,8 @@ import { IngredientsHorizontalListComponent } from './components/ingredients/ing
 import { IngredientListItemComponent } from './components/ingredients/ingredient-list-item/ingredient-list-item.component';
 import { IngredientCreateComponent } from './components/ingredients/ingredient-create/ingredient-create.component';
 import { GroupCreatingComponent } from './components/ingredients/group-creating/group-creating.component';
+import { CommonPagesModule } from '../common-pages/common-pages.module';
+import { NgxImageCompressService } from 'ngx-image-compress';
 
 @NgModule({
   declarations: [
@@ -65,8 +67,7 @@ import { GroupCreatingComponent } from './components/ingredients/group-creating/
     IngredientsHorizontalListComponent,
     IngredientListItemComponent,
     GroupCreatingComponent,
-    IngredientCreateComponent
-    
+    IngredientCreateComponent,
   ],
   imports: [
     CommonModule,
@@ -74,9 +75,12 @@ import { GroupCreatingComponent } from './components/ingredients/group-creating/
     DragScrollModule,
     NgFor,
     PlanningModule,
+    
     ControlsModule,
     RecipesRoutingModule,
+    CommonPagesModule,
     ScrollingModule,
+    
     SvgIconComponent,
     CommonModule,
     AsyncPipe,
@@ -91,6 +95,8 @@ import { GroupCreatingComponent } from './components/ingredients/group-creating/
     ReactiveFormsModule,
   ],
   providers: [
+    NgxImageCompressService,
+
     AuthGuard,
     { provide: CUSTOM_TIME_DIFF_GENERATOR, useValue: timeDiffGenerator },
     provideAngularSvgIcon(),

@@ -40,6 +40,7 @@
     "ng-disable-scroll": "^0.1.1",
     "ng-time-past-pipe": "^3.1.0",
     "ngx-drag-scroll": "^16.0.0",
+    "ngx-image-compress": "^15.1.6",
     "ngx-sharebuttons": "^13.0.0",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "rxjs": "~7.8.1",

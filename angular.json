@@ -54,10 +54,12 @@
             "styles": [
               "src/styles.scss",
               "src/calendar.styles.css",
+
               "src/emojis.scss"
 
             ],
-            "scripts": []
+            "scripts": [
+            ]
           },
           "configurations": {
             "production": {

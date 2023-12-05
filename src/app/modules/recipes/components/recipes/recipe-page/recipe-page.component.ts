@@ -6,7 +6,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { ActivatedRoute, Data, Router } from '@angular/router';
-import { IRecipe, Ingredient, nullRecipe } from '../../../models/recipes';
+import { IRecipe, Ingredient, Instruction, nullRecipe } from '../../../models/recipes';
 import { Title } from '@angular/platform-browser';
 import { RecipeService } from '../../../services/recipe.service';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
@@ -93,7 +93,6 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   statisticPercent = 0;
 
   ingredients: IIngredient[] = [];
-
   voteModalShow: boolean = false;
   successVoteModalShow: boolean = false;
   commentsToShow: IComment[] = [];
@@ -510,6 +509,26 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   downloadInstructionPicFromSupabase(path: string) {
     return supabase.storage.from('recipes').getPublicUrl(path).data.publicUrl;
   }
+
+  showedImages:string[] =[];
+  startImageToView = 0;
+
+  viewMainImage() {
+    this.startImageToView = 0;
+    this.showedImages = [this.picture]
+  }
+
+  chooseImagesForViewer(instruction: Instruction,instructionNum:number) {
+    const images: string[] = [];
+    instruction.images.forEach((image: any) => {
+      if (image.file) {
+        images.push(this.downloadInstructionPicFromSupabase(image.file));
+      }
+    });
+    this.startImageToView = instructionNum;
+      this.showedImages = images;
+
+      }
 
   async removeFromBasket(i: number, ingredient: Ingredient) {
     const groceryList = this.myPlan.shoppingList;

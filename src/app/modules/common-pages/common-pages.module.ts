@@ -15,6 +15,7 @@ import { RouterModule } from '@angular/router';
 import { ShareButtonsModule } from 'ngx-sharebuttons/buttons';
 import { ShareIconsModule } from 'ngx-sharebuttons/icons';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { ImageViewerComponent } from './image-viewer/image-viewer.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
     UpdatesComponent,
     PageNotFoundComponent,
     AddUpdateComponent,
+    ImageViewerComponent,
     UserPolicyComponent,
   ],
   imports: [
@@ -41,6 +43,6 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
     { provide: CUSTOM_TIME_DIFF_GENERATOR, useValue: timeDiffGenerator },
     provideAngularSvgIcon(),
   ],
+  exports: [ImageViewerComponent],
 })
-export class CommonPagesModule {
-}
+export class CommonPagesModule {}

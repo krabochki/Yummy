@@ -340,28 +340,33 @@
     </div>
 
     <div class="footer">
-      <app-button
-        [iconSize]="'min'"
-        [color]="'sec'"
-        [iconPosition]="'before'"
-        [rounded]="true"
-        [icon]="'arrow-previous'"
-        [iconStyle]="'as-text'"
-        [style]="'outlined'"
-        [text]="'Назад'"
-        (click)="goToPreviousStep()"
-        [disabled]="!(currentStep === 0)"
-      ></app-button>
-      <app-button
-        [iconSize]="'min'"
-        [icon]="'arrow-next'"
-        [color]="'sec'"
-        [rounded]="true"
-        [style]="'filled'"
-        [text]="'Вперед'"
-        (click)="!buttonDisabled() ? goToNextStep() : null"
-        [disabled]="!buttonDisabled()"
-      ></app-button>
+     <div>
+        <app-button
+          [iconSize]="'min'"
+          [color]="'sec'"
+          [iconPosition]="'before'"
+          [rounded]="true"
+          [icon]="'arrow-previous'"
+          [iconStyle]="'as-text'"
+          [style]="'outlined'"
+          [text]="'Назад'"
+          (click)="goToPreviousStep()"
+          *ngIf="!(currentStep === 0)"
+        ></app-button>
+     </div>
+    <div>
+        <app-button
+          [iconSize]="'min'"
+          [icon]="'arrow-next'"
+          [color]="'sec'"
+          [rounded]="true"
+          [style]="'filled'"
+          *ngIf="!(this.currentStep === steps.length - 1)"
+          [text]="'Вперед'"
+          (click)="!buttonDisabled() ? goToNextStep() : null"
+          [disabled]="!buttonDisabled()"
+        ></app-button>
+    </div>
     </div>
   </div>
 </div>

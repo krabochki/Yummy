@@ -1,5 +1,17 @@
 @import "../../../../../tools/UI/UI.scss";
 
+.caption {
+  
+  width: 90%;
+
+  font-weight: 300;
+  font-size: 0.85em;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 5.75em;
+  color: #808080;
+}
 .content-wrap {
   display: flex;
   flex-direction: column;
@@ -51,8 +63,17 @@
 
 .category-image,
 .recipe-image {
+        display: flex;
+        align-items: center;
+        font-size: 1em;
+        margin: 0 auto;
+        text-align: center;
+        line-height: 1;
+        flex-direction: column;
+        justify-content: flex-end;
   width: 8em;
   height: 8em;
+    position: relative;
   border-radius: 100%;
   background-position: center;
   background-size: cover;
@@ -197,8 +218,9 @@ h2 {
   .report-buttons {
     margin-top: 1em;
     display: flex;
-    zoom: 0.8;
-    flex-direction: column;
+    zoom: 0.75;
+
+    flex-direction: row;
     row-gap: 0.5em;
     justify-content: center;
   }
@@ -247,7 +269,6 @@ h2 {
 
       &.active {
         opacity: 1;
-        font-weight: 600;
       }
       border-left: 4px solid;
       padding: 0.5em 1em;
@@ -311,8 +332,8 @@ h2 {
       font-size: 0.9em;
       line-height: 1;
       text-align: center;
-      width: 60%;
-      margin-bottom: 3em;
+      width: 50%;
+      margin-bottom: 3.5em;
       color: var(--color-foreground-unactive);
     }
   }
@@ -528,6 +549,19 @@ h4 {
     }
   }
 }
+@media(max-width:1250px){
+  .reports .report{
+    .report-buttons {
+        margin-top: 1em;
+        display: flex;
+        zoom: 0.75;
+    
+        flex-direction: column;
+        row-gap: 0.5em;
+        justify-content: center;
+      }
+  }
+}
 
 @media (max-width: 1080px) {
   .reports {
@@ -588,6 +622,7 @@ h4 {
 }
 
 @media (max-width: 480px) {
+ 
   .common {
     margin-left: 6%;
   }
@@ -626,6 +661,8 @@ h4 {
     overflow: hidden;
   }
 
+  
+
   .about-page {
     margin: 0 6%;
   }
@@ -633,10 +670,13 @@ h4 {
     margin: 0 6%;
     margin-top: 2em;
     grid-template-columns: 1fr;
-    .nothing {
-      height: 10em;
-    }
+  
 
+    .nothing p{
+      font-size: 0.85em;
+      width: 90%;
+        margin-bottom: 5em;
+    }
     .content {
       border-radius: 10px;
       border-top-left-radius: 0;

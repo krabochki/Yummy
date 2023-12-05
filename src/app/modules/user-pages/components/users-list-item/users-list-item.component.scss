@@ -9,11 +9,16 @@ p {
 
 }
 
-.online{
+.indicator{
   border-radius: 100%;
   width: 0.5em;
   height: 0.5em;
+  background-color: var(--scroll-thumb);
+  &.online{
+
+  
   background-color: rgb(113, 255, 113);
+  }
 }
 
 .geo {

@@ -47,7 +47,7 @@ h2{
   &.horizontal::after {
     margin: 0 calc(14.4vw + 0 * (100vw - 768px) / 760);
 
-    height: calc(100% - 0.8em);
+    height: calc(100% - 0.5em);
     width: 15%;
     background: linear-gradient(to right, transparent 0%,var(--color-background));
 

@@ -21,10 +21,10 @@
                     <h2>{{'@'+user.username}}</h2>
                 </div>
             </a>
-            <p class="location" *ngIf="user.online">
-                                    <span class="online"></span>
-Сейчас на сайте
-            </p>
+            <!-- <p class="location">
+                                    <span class="indicator" [ngClass]="{'online':user.online}"></span>
+{{user.online?'Онлайн':'Оффлайн'}}
+            </p> -->
             <p class="location" *ngIf="user.location!==''">
                 <svg-icon class="geo" [applyClass]="true" [src]="'/assets/images/svg/geo.svg'"></svg-icon>
                 <span [title]="user.location"> {{user.location}}</span>

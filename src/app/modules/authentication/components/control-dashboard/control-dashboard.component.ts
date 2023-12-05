@@ -112,7 +112,7 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   protected sectionCreatingMode: boolean = false;
   groupCreatingMode = false;
 
-  categoryPlaceholder = '/assets/images/category.png';
+  categoryPlaceholder = '/assets/images/category-placeholder.png';
 
   protected reportCommentDismissModalShow: boolean = false;
   protected successReportCommentDismissModalShow: boolean = false;
@@ -130,11 +130,12 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
 
   openGroup:'moders'|'groups'|'sections'|'hide'='hide'
   currentView:
+    | 'no-view'
     | 'reports'
     | 'recipes'
     | 'categories'
     | 'ingredients'
-    | 'updates' = 'recipes';
+    | 'updates' = 'no-view';
 
   recipeArVariants = ['рецепт', 'рецепта', 'рецептов'];
   updateArVariants = ['обновление', 'обнволения', 'обновлений'];
@@ -220,9 +221,13 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   getRecipeImageSupabaseLink(path?: string) {
     if (path)
       return supabase.storage.from('recipes').getPublicUrl(path).data.publicUrl;
-    else return 'assets/images/svg/pancakes.png';
+    else return 'assets/images/recipe-placeholder.png';
   }
-
+ getIngredientImageSupabaseLink(path?: string) {
+    if (path)
+      return supabase.storage.from('ingredients').getPublicUrl(path).data.publicUrl;
+    else return 'assets/images/ingredient-placeholder.png';
+  }
   private ingredientsInit(): void {
     this.ingredientService.ingredients$
       .pipe(takeUntil(this.destroyed$))
@@ -230,10 +235,12 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
         this.allAwaitingIngredients = receivedIngredients.filter(
           (ingredient) => ingredient.status === 'awaits',
         );
+        
         this.showedAwaitingIngredients = this.allAwaitingIngredients.slice(
           0,
           this.START_INGREDIENTS_DISPLAY_SIZE,
         );
+        this.cd.markForCheck();
       });
     this.ingredientService.ingredientsGroups$
       .pipe(takeUntil(this.destroyed$))
@@ -245,6 +252,15 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
         );
         this.cd.markForCheck();
       });
+  }
+
+  setView(view: 'no-view'|'ingredients'|'recipes'|'categories'|'reports'|'updates') {
+    if (this.currentView === view) {
+      this.currentView =  'no-view'
+    }
+    else {
+      this.currentView = view;
+    }
   }
 
   private recipesInit(): void {

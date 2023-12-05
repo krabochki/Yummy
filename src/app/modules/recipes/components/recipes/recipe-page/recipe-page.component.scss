@@ -349,6 +349,10 @@ h2 {
   background-position: center;
   background-repeat: no-repeat;
   background-color: white;
+  &.placeholder{
+    background-size:60%;
+    background-color: #f4f4f4;
+  }
   
   border-radius: 0 4em 0 4em;
   width: 18em;

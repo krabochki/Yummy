@@ -28,9 +28,7 @@ export class AuthService {
     private userService: UserService,
     private router: Router,
     private ngZone: NgZone,
-   
-  ) {
-  }
+  ) {}
 
   setOnline(user: IUser) {
     user = { ...user, online: true };
@@ -80,13 +78,11 @@ export class AuthService {
   }
   loadCurrentUserData() {
     this.userService.users$.subscribe((users) => {
-            this.users = users;
-
+      this.users = users;
       supabase.auth.onAuthStateChange((event, session) => {
-        if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+        if (event ==='INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'USER_UPDATED') {
           this.handleAuthStateChange(session);
         }
-       
       });
     });
   }
@@ -99,7 +95,6 @@ export class AuthService {
           if (loadedUser) {
             const user = this.userService.translateUser(loadedUser);
             this.currentUserSubject.next(user);
-
           } else {
             this.currentUserSubject.next({ ...nullUser });
           }

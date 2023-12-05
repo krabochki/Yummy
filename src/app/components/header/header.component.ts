@@ -584,6 +584,9 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
         ) {
           this.popupLifecycle(notification);
         }
+        else if (this.popups.length >= this.maxNumberOfPopupsInSameTime) {
+          this.popupHistory.push(notification.id)
+        }
       });
 
       this.notifies = [...this.currentUser.notifications].reverse();

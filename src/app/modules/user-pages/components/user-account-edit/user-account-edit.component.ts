@@ -132,10 +132,6 @@ export class UserAccountEditComponent
   }
   birthDate: Date | null = null;
 
-  alert() {
-    console.log(new Date(this.editableUser.birthday))
-    console.log(this.birthDate)
-  }
   ngAfterContentChecked(): void {
     this.cdr.detectChanges();
   }

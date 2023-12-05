@@ -229,27 +229,10 @@ export class AppComponent implements OnInit {
       this.loaded = true;
   }
 
-  async setOnline() {
-               await this.authService.setOnline(this.currentUser);
 
-  }
   async ngOnInit() {
     const favicon = document.querySelector('#favicon');
-
-     supabase.auth.onAuthStateChange((event, session) => {
-       if (event === 'SIGNED_OUT') {
-         if (this.currentUser.id > 0) {
-           if (session) this.authService.setOffline(this.currentUser);
-         }
-       }
-     });
-    this.authService.currentUser$.subscribe(
-      (receivedUser: IUser) => {
-        this.currentUser = receivedUser;
-        if (this.currentUser.id > 0 && !this.currentUser.online)
-          this.setOnline();
-      }
-    )
+    
     if (localStorage.getItem('theme') === 'dark') {
       this.gif = 'preloader-dark.gif';
       document.body.classList.add('dark-mode');

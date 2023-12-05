@@ -93,32 +93,34 @@ export class MainPageComponent implements OnInit, OnDestroy {
             this.groups = receivedGroups.filter(
               (g) => g.ingredients.length > 0,
             );
-            this.groups = this.groups.sort((a, b) =>
-              baseComparator(
-                this.ingredientService.getRecipesNumberOfGroup(
-                  b,
-                  receivedIngredients,
-                  this.recipeService.getPublicAndAllMyRecipes(
-                    this.allRecipes,
-                    this.currentUser.id,
+            this.groups = this.groups
+              .sort((a, b) =>
+                baseComparator(
+                  this.ingredientService.getRecipesNumberOfGroup(
+                    b,
+                    receivedIngredients,
+                    this.recipeService.getPublicAndAllMyRecipes(
+                      this.allRecipes,
+                      this.currentUser.id,
+                    ),
+                  ),
+                  this.ingredientService.getRecipesNumberOfGroup(
+                    a,
+                    receivedIngredients,
+                    this.recipeService.getPublicAndAllMyRecipes(
+                      this.allRecipes,
+                      this.currentUser.id,
+                    ),
                   ),
                 ),
-                this.ingredientService.getRecipesNumberOfGroup(
-                  a,
-                  receivedIngredients,
-                  this.recipeService.getPublicAndAllMyRecipes(
-                    this.allRecipes,
-                    this.currentUser.id,
-                  ),
-                ),
-              ),
-            ).slice(0,this.MAX_DISPLAY_SIZE);
+              )
+              .slice(0, this.MAX_DISPLAY_SIZE);
           });
       });
   }
 
   clickBannerButton() {
-    return this.currentUser.id === 0 ? this.noAccessModalShow = true : null;
+    return this.currentUser.id === 0 ? (this.noAccessModalShow = true) : null;
   }
 
   recipesInit() {
@@ -126,31 +128,23 @@ export class MainPageComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe((recipes: IRecipe[]) => {
         {
-          this.allRecipes = recipes;
-          const publicRecipes = this.recipeService.getPublicRecipes(
-            this.allRecipes,
-          );
 
-          if (this.currentUser.id !== 0) {
-            this.userRecipes = this.recipeService
-              .getRecipesByUser(this.allRecipes, this.currentUser.id)
-              .slice(0, this.MAX_DISPLAY_SIZE);
+          const meaningfulRecipes = this.recipeService.getRecipesByUser(recipes, this.currentUser.id) ;
+          const availableRecipes = this.recipeService.getPublicAndAllMyRecipes(
+            recipes,
+            this.currentUser.id,
+          );
+          this.allRecipes = availableRecipes;
+
+          if (this.currentUser.id === 0 && this.lastRecipesLength === 0) {
+            this.sortRecipes();
+            this.lastRecipesLength = 1;
           }
-          if (!this.popularRecipesLoaded && this.allRecipes.length > 0) {
-            this.popularRecipes = this.recipeService
-              .getPopularRecipes(publicRecipes)
-              .slice(0, this.MAX_DISPLAY_SIZE);
-            this.popularRecipesLoaded = true;
+          else
+          if (this.lastRecipesLength !== meaningfulRecipes.length) {
+            this.sortRecipes();
           }
-          this.favoriteRecipes = this.recipeService
-            .getMostFavoriteRecipes(publicRecipes)
-            .slice(0, this.MAX_DISPLAY_SIZE);
-          this.cookedRecipes = this.recipeService
-            .getMostCookedRecipes(publicRecipes)
-            .slice(0, this.MAX_DISPLAY_SIZE);
-          this.recentRecipes = this.recipeService
-            .getRecentRecipes(publicRecipes)
-            .slice(0, this.MAX_DISPLAY_SIZE);
+          this.lastRecipesLength = meaningfulRecipes.length;
         }
 
         this.ingredientsInit();
@@ -159,11 +153,36 @@ export class MainPageComponent implements OnInit, OnDestroy {
       });
   }
 
-  getRecipesOfSection(section:ISection) {
+  lastRecipesLength = 0;
+  sortRecipes() {
+    const publicRecipes = this.recipeService.getPublicRecipes(this.allRecipes);
+    if (this.currentUser.id !== 0) {
+      this.userRecipes = this.recipeService
+        .getRecipesByUser(this.allRecipes, this.currentUser.id)
+        .slice(0, this.MAX_DISPLAY_SIZE);
+    }
+    if (!this.popularRecipesLoaded && this.allRecipes.length > 0) {
+      this.popularRecipes = this.recipeService
+        .getPopularRecipes(publicRecipes)
+        .slice(0, this.MAX_DISPLAY_SIZE);
+      this.popularRecipesLoaded = true;
+    }
+    this.favoriteRecipes = this.recipeService
+      .getMostFavoriteRecipes(publicRecipes)
+      .slice(0, this.MAX_DISPLAY_SIZE);
+    this.cookedRecipes = this.recipeService
+      .getMostCookedRecipes(publicRecipes)
+      .slice(0, this.MAX_DISPLAY_SIZE);
+    this.recentRecipes = this.recipeService
+      .getRecentRecipes(publicRecipes)
+      .slice(0, this.MAX_DISPLAY_SIZE);
+  }
+  getRecipesOfSection(section: ISection) {
     return this.sectionService.getNumberRecipesOfSection(
-            section,
-            this.allRecipes,
-            this.categories)
+      section,
+      this.allRecipes,
+      this.categories,
+    );
   }
 
   sectionInit() {
@@ -172,14 +191,15 @@ export class MainPageComponent implements OnInit, OnDestroy {
       .subscribe((data: ISection[]) => {
         this.allSections = data;
         this.allSections = this.allSections.sort((a, b) => {
-          if (this.getRecipesOfSection(b) > this.getRecipesOfSection(a)) return 1
-          else if (this.getRecipesOfSection(a) === this.getRecipesOfSection(b)) {
-            if (a.name > b.name) return 1; else return -1;
-          }
-          else return -1;
-          
-        }
-        );
+          if (this.getRecipesOfSection(b) > this.getRecipesOfSection(a))
+            return 1;
+          else if (
+            this.getRecipesOfSection(a) === this.getRecipesOfSection(b)
+          ) {
+            if (a.name > b.name) return 1;
+            else return -1;
+          } else return -1;
+        });
         this.allSections = this.sectionService
           .getNotEmptySections(this.allSections)
           .slice(0, this.MAX_DISPLAY_SIZE);

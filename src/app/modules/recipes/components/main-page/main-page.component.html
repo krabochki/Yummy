@@ -121,7 +121,7 @@
         </div>
     </a>
 
-    <div *ngIf="userRecipes.length >= 4; else vertical">
+    <div *ngIf="userRecipes.length >= 5; else vertical">
         <div class="recipes horizontal">
             <app-horizontal-recipe-list [recipes]="userRecipes"></app-horizontal-recipe-list>
         </div>

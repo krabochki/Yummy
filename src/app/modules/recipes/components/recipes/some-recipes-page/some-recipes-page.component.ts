@@ -317,6 +317,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
   private sliceAllRecipes(): void {
     this.popularRecipes = this.popularRecipes.slice(0, 8);
     this.plannedRecipes = this.plannedRecipes.slice(0, 8);
+    this.recentRecipes = this.recentRecipes.slice(0,8)
     this.discussedRecipes = this.discussedRecipes.slice(0, 8);
     this.mostCooked = this.mostCooked.slice(0, 8);
     this.commentedRecipes = this.commentedRecipes.slice(0, 8);

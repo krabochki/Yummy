@@ -218,7 +218,8 @@
     <div class="row center">
       <div
         class="main-photo noselect"
-        [style.background-image]="'url('+(picture||'/assets/images/no-recipe-photo.png')+')'"
+        [ngClass]="{'placeholder':!picture}"
+        [style.background-image]="'url('+(picture||'/assets/images/recipe-full-placeholder.png')+')'"
       ></div>
 
       <div class="ingredients" *ngIf="recipe.ingredients.length > 0">

@@ -62,10 +62,7 @@
 - настройки интерфейса и уведомлений;
 - обмен рецептами и страницами кулинаров в социальных сетях.
 <br>
-<div align="center">
 
-<img src="src/assets/images/readme-community.png" alt="community"  width="350">
-</div>
 <p align="right">(<a href="#readme-top">наверх</a>)</p>
 
 <a name="stack"></a>

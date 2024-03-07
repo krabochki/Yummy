@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ThemeService, themeUI } from '../../common-pages/services/theme.service';
 
 @Component({
   selector: 'app-toogle-switch',
@@ -9,9 +10,12 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output
 export class ToogleSwitchComponent implements OnInit {
   ngOnInit(): void {
     if (this.nightMode) {
-      if (localStorage.getItem('theme') === 'dark') {
-        this.checked = false;
-      } else this.checked = true;
+      this.themeService.theme$.subscribe(
+        (theme: themeUI) => {
+          this.checked = !(theme === 'dark');
+          this.cd.markForCheck();
+        }
+      )
     }
   }
   @Input() checked = false;
@@ -21,6 +25,10 @@ export class ToogleSwitchComponent implements OnInit {
   @Input() toogleOff = 'var(--color-background)';
   @Input() backgroundOff = 'var(--scroll-thumb)';
   @Output() checkedEmit: EventEmitter<boolean> = new EventEmitter();
+
+  constructor(private themeService:ThemeService,private cd:ChangeDetectorRef){}
+
+
 
   check() {
     this.checked = !this.checked;

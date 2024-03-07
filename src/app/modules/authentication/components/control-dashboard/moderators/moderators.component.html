@@ -1,0 +1,113 @@
+<div class="main" [ngClass]="{
+    admin: this.currentUser.role === 'admin',
+    moderator: this.currentUser.role === 'moderator'
+  }">
+    <h1>Модераторы</h1>
+    <div class="wrap">
+
+        <div class="reports-block new">
+            <button [disabled]="!loaded" (click)="loaded ? checkActualModerators() : null" class="update-button">
+                <svg-icon class="icon" [applyClass]="true" [src]="'/assets/images/svg/update.svg'" />
+                <span>{{ loaded ? "Обновить" : "Обновить..." }}</span>
+            </button>
+            <div class="reports" [ngClass]="{ blink: !loaded && moderators.length > 0 }">
+
+                <div [ngClass]="{ blinked: !loaded }" class="report" *ngFor="let moderator of moderators">
+                    <div class="report-header">
+                        <a class="report-recipe link" [routerLink]="'/cooks/list/' + moderator.id">
+                            Модератор {{'@'}}{{ moderator.username }}
+                        </a>
+                        <div style="margin-top:0.2em">
+                            <p class="report-date" *ngIf="moderator.fullName">
+                                Полное имя: {{ moderator.fullName}}
+                            </p>
+                            <p class="report-date" [title]="getDate(moderator.registrationDate)" *ngIf="moderator.registrationDate">
+                                Дата регистрации:
+                                {{
+                               moderator.registrationDate.toString()
+                            | timePast
+                            | lowercase
+    
+                                }}
+                            </p>
+
+                            <p class="report-date" [title]="getDate(moderator.appointmentDate)" *ngIf="moderator.appointmentDate">
+                                Дата назначения:
+                                {{
+                                moderator.appointmentDate.toString()
+                                | timePast
+                                | lowercase
+                            
+                                }}
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <div class="category-image" [style.background-image]="
+                                              'url(' +
+                                              (moderator.image && moderator.avatarUrl
+                                                ? moderator.avatarUrl
+                                                : placeholder) +
+                                              ')'
+                                            ">
+                    </div>
+
+
+                    <div class="report-buttons">
+                        <app-button [text]="'Разжаловать'" (click)="actionModerator = moderator; confirmModal=true"
+                            [color]="currentUser.role !== 'user' ? currentUser.role : 'prim'" [style]="'filled'"
+                            [rounded]="true"></app-button>
+                    </div>
+                </div>
+                <ng-container *ngIf="!loaded && moderators.length === 0">
+                    <div class="report loading" *ngFor="let ingredient of [0, 1, 2]">
+                        <div class="report-header">
+                            <p class="report-recipe link">0000000000000000</p>
+                        </div>
+                        <div class="report-buttons">
+                            <div class="load-button">
+                                <app-button [text]="'Разжаловать'" [color]="'prim'" [disabled]="false"
+                                    [style]="'filled'" [rounded]="true"></app-button>
+                            </div>
+
+                        </div>
+                    </div>
+                </ng-container>
+
+            </div>
+
+            <app-button class="more-reports-button" [text]="'Загрузить еще...'" (click)="loadMoreModerators()"
+                *ngIf="!everythingLoaded && moderators.length > 0" [disabled]="loaded" [rounded]="true"
+                [style]="'outlined'" [color]="'prim'"></app-button>
+
+            <div class="allloaded" *ngIf="!moderators.length && loaded && everythingLoaded">
+                <div class="not-found-icon">
+                    <svg-icon class="not-found-svg" [applyClass]="true" [src]="'/assets/images/svg/not-found.svg'" />
+                </div>
+
+                Модераторов пока нет
+            </div>
+
+            <p class="allloaded" *ngIf="!loaded">Загружаем модераторов...</p>
+            <p *ngIf="everythingLoaded && loaded && moderators.length" class="allloaded">
+                Все модераторы уже загружены
+            </p>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+<app-modal @modal *ngIf="successModal" [style]="'sec'" [title]="'Модератор успешно разжалован'" [type]="'Ok'"
+    (resultEmit)="handleSuccessModal()" [buttonsText]="['Хорошо']" [description]="
+    'Вы успешно разжаловали этого модератора. Теперь он не имеет доступа к функциям для модераторов.'
+  "></app-modal>
+
+<app-modal [style]="'await'" *ngIf="loadingModal"  @modal />
+
+<app-modal @modal *ngIf="confirmModal" [style]="'prim'" [title]="'Разжалование модератора'" [type]="'yesOrNo'"
+    (resultEmit)="handleConfirmModal($event)" [buttonsText]="['Да', 'Нет']" [description]="'Вы уверены, что хотите разжаловать этого модератора?'
+  "></app-modal>

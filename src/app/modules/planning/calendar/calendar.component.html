@@ -113,10 +113,9 @@
   <h3 class="edit-plan noselect">Все запланированные рецепты</h3>
 
   <app-add-calendar-event
-    [currentUser]="currentUser"
     [event]="findRecipeEvent(targetEvent.id)"
-    [plan]="currentUserPlan"
     @modal
+    (editEmitter)="changeEvents($event)"
     style="position: fixed; z-index: 10"
     *ngIf="createMode"
     (closeEmitter)="closeCreateModal()"
@@ -356,5 +355,4 @@
 
 <app-modal @modal *ngIf="deleteModalShow" (resultEmit)="handleDeleteModal($event)" [buttonsText]="['Да','Отмена']" [description]="'Вы уверены, что хотите удалить запланированный рецепт из «Календаря рецептов»?'" [title]="'Подтвердите удаление рецепта'" [style]="'prim'" [type]="'yesOrNo'" />
 
-  <app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
-    [description]=" 'Вносим изменения... Подождите немного...'" />
+  <app-modal  [style]="'await'" *ngIf="loading"  @modal />

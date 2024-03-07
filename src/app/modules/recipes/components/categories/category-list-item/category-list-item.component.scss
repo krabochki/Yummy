@@ -177,8 +177,40 @@ h1 {
   }
 }
 
+.image-loading{
+    animation: loading 0.75s infinite linear;
+      background-color: var(--loading);
+      background-repeat: no-repeat;
+}
+
 .svg {
   height: 100%;
   opacity: 0.65;
   fill: var(--color-foreground-unactive);
+}
+
+.loading.category.null, .name.loading {
+    animation: loading 0.75s infinite linear;
+    background-color: var(--loading) ;
+}
+.category-cont.loading{
+  cursor: wait;
+}
+.name.loading{
+  border-radius: 0.75em;
+      width: min-content;
+      color: transparent;
+}
+@keyframes loading {
+    0% {
+        background-position: var(--loading);
+      }
+
+  50% {
+    background-color: var(--loading-accent);
+  }
+
+  100% {
+    background-position:var(--loading);
+  }
 }

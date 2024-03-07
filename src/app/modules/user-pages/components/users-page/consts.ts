@@ -2,7 +2,6 @@ export enum UsersType {
   Popular = 'popular',
   MostViewed = 'most-viewed',
   Managers = 'managers',
-  Followers = 'followers',
   Following = 'following',
   Productive = 'productive',
   Nearby = 'nearby',
@@ -14,7 +13,6 @@ export const userTitles = {
   [UsersType.MostViewed]: 'Самые просматриваемые кулинары',
   [UsersType.Popular]: 'Популярные кулинары',
   [UsersType.Managers]: 'Управляющие',
-  [UsersType.Followers]: 'Ваши подписчики',
   [UsersType.Following]: 'Ваши подписки',
   [UsersType.Productive]: 'Самые продуктивные кулинары',
   [UsersType.All]: 'Все кулинары',
@@ -27,13 +25,23 @@ export const userTitles = {
 export const noUsersText = {
   [UsersType.MostViewed]: '',
   [UsersType.Popular]: '',
-  [UsersType.Nearby]: 'Пока еще нет ни одного кулинара с похожей указанной локацией',
+  [UsersType.Nearby]: 'Пока еще нет ни одного кулинара с похожей указанной локацией!',
   [UsersType.Managers]: '',
-  [UsersType.Followers]:
-    'У тебя пока нет подписчиков. Попробуй повысить популярность, создав пару рецептов и проявляя активность, и зайди сюда снова!',
   [UsersType.Following]:
-    'У тебя пока нет подписчиков. Попробуй подписаться на парочку кулинаров и зайди сюда снова',
+    'У вас пока нет подписчиков. Попробуйте подписаться на парочку кулинаров и зайдите сюда снова!',
   [UsersType.Productive]: '',
   [UsersType.All]: '',
   [UsersType.New]:''
+};
+
+
+export const searchTypes = {
+  [UsersType.MostViewed]: 'most-viewed-users',
+  [UsersType.Popular]: 'popular-users',
+  [UsersType.Nearby]: 'nearby-users',
+  [UsersType.Managers]: 'managers-users',
+  [UsersType.Following]: 'following-users',
+  [UsersType.Productive]: 'productive-users',
+  [UsersType.All]: 'all-users',
+  [UsersType.New]: 'new-users',
 };

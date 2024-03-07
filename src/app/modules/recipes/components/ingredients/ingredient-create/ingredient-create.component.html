@@ -66,7 +66,7 @@
         </div>
         <div class="step-container" *ngIf="currentStep === 0">
           <div class="form-control">
-            <h3>Название ингредиента</h3>
+            <h3>Название ингредиента*</h3>
             <app-usual-input
               [value]="this.form.get('ingredientName')?.value"
               [inputRequired]="true"
@@ -79,21 +79,20 @@
                   ? 'Название ингредиента должно содержать от 3 символов'
                   : ''
               "
-              [placeholder]="'Введите название будущего ингредиента'"
+              [placeholder]="'Введите название ингредиента'"
             ></app-usual-input>
           </div>
 
           <div class="form-control">
-            <h3>Группы ингредиентов</h3>
+            <h3>Группы ингредиентов*</h3>
 
             <app-autocomplete
-              [clearValueOnBlur]="true"
-              [disabled]="selectedIngredientsGroups.length === 5"
               (groupEmitter)="addGroup($event)"
-              [placeholder]="
-                'Выберите группы ингредиентов из списка (минимум одну)*'
-              "
-              [ingredientsGroups]="groups"
+              [startOnTyping]="true"
+              [disabled]="selectedIngredientsGroups.length === 5"
+              [clearValueOnBlur]="true"
+              [context]="'groups'"
+              [placeholder]="'Начните вводить название группы ингредиентов (нужна минимум одна)'"
             />
             <div class="tags">
               <div
@@ -123,6 +122,7 @@
               Вы пока не выбрали ни одну группу
             </div>
           </div>
+          <a class="more-info-link" routerLink="/groups">Просмотреть группы ингредиентов</a>
           <div class="form-control">
             <h3>Описание ингредиента</h3>
             <app-usual-input
@@ -203,7 +203,7 @@
                   </div>
                   <li
                     *ngFor="let item of autocompleteTypes"
-                    (mousedown)="chooseRecipe(item)"
+                    (mousedown)="chooseType(item)"
                   >
                     <p class="text">
                       <svg-icon
@@ -801,10 +801,7 @@
 ></app-modal>
 
 <app-modal
-  [noButtons]="true"
   [style]="'await'"
   *ngIf="loading"
-  [title]="'Подождите...'"
   @modal
-  [description]="'Загружаем данные ингредиента... Подождите немного...'"
 />

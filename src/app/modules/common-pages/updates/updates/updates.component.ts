@@ -1,149 +1,306 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { AuthService } from '../../../authentication/services/auth.service';
-import { IUser, nullUser } from '../../../user-pages/models/users';
+import { IUser, nullUser, role } from '../../../user-pages/models/users';
 import { UpdatesService } from '../../services/updates.service';
-import { IUpdate } from './const';
+import { IUpdate, nullUpdate } from './const';
 import { UserService } from '../../../user-pages/services/user.service';
 import { trigger } from '@angular/animations';
-import { modal } from 'src/tools/animations';
-import { baseComparator } from 'src/tools/common';
+import { heightAnim, modal } from 'src/tools/animations';
+import { finalize, tap } from 'rxjs';
+import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
+import { getFormattedDate } from 'src/tools/common';
+import { ActivatedRoute } from '@angular/router';
+import { updateStatuses } from '../add-update/const';
+import { Permission } from 'src/app/modules/user-pages/components/settings/conts';
 
 @Component({
   selector: 'app-updates',
   templateUrl: './updates.component.html',
   styleUrls: ['../../styles/common.scss', './updates.component.scss'],
 
-  animations: [trigger('modal', modal())],
+  animations: [trigger('modal', modal()), trigger('height', heightAnim())],
 })
 export class UpdatesComponent implements OnInit {
   updates: IUpdate[] = [];
-  showedUpdates: IUpdate[] = [];
-  START_UPDATES_TO_SHOW = 2;
-  UPDATES_TO_LOAD_MORE = 2;
-  filtered: 'state' | 'tag' | 'no' = 'no';
+  filtered?: 'state' | 'tag' = undefined;
   filterContext = '';
+  confirmModal = false;
   currentUser: IUser = nullUser;
-  users: IUser[] = [];
   addUpdateMode = false;
+  isLoaded = true;
+  private currentPage = 0;
+  allUpdatesLoaded = false;
+  private updatesPerPage = 3;
+  private currentUserRole: role = 'user';
+  successModal = false;
+  awaitModal = false;
+  targetUpdateId: number = 0;
+  deleteModal = false;
 
   constructor(
     titleService: Title,
     private userService: UserService,
+    private route: ActivatedRoute,
     private cd: ChangeDetectorRef,
     private authService: AuthService,
     private updateService: UpdatesService,
+    private notifyService: NotificationService,
   ) {
-    titleService.setTitle('Обновления');
+    titleService.setTitle('Свежие новости и изменения');
   }
+  updateStatuses = updateStatuses;
 
   ngOnInit() {
-    this.userService.users$.subscribe((receivedUsers: IUser[]) => {
-      this.users = receivedUsers;
-    });
-    this.authService.currentUser$.subscribe((receivedUser: IUser) => {
-      this.currentUser = receivedUser;
-    });
-    this.updateService.updates$.subscribe((receivedUpdates: IUpdate[]) => {
-      this.updates = receivedUpdates.filter((u) => u.status === 'public');
-      if (this.currentUser.role === 'user') {
-        this.updates = this.updates.filter((u) => u.whoCanView === 'all');
-      }
-      this.updates = this.updates.sort((a,b)=>baseComparator(new Date(b.date),new Date(a.date)))
-      this.showedUpdates = this.updates.slice(0, this.START_UPDATES_TO_SHOW);
+    this.isLoaded = false;
+    this.route.data.subscribe(() => {
+      this.authService.getTokenUser().subscribe((user) => {
+        this.currentUserRole = user.role;
+        this.startUpdatesLoad();
+      });
+
+      this.authService.currentUser$.subscribe((user: IUser) => {
+        this.currentUser = user;
+        this.cd.markForCheck();
+      });
+
+      this.updateService.updates$.subscribe((updates: IUpdate[]) => {
+        this.updates = updates;
+      });
     });
   }
 
+  startUpdatesLoad() {
+    this.currentPage = 0;
+    this.updateService.setUpdates([]);
+    this.updates = [];
+    this.allUpdatesLoaded = false;
+    this.isLoaded = true;
+
+    this.loadMoreUpdates();
+  }
+
+  addStatus(status: string) {}
   loadMoreUpdates() {
-    const current = this.showedUpdates;
-    const currentLength = this.showedUpdates.length;
-    const next = this.updates.slice(
-      currentLength,
-      currentLength + this.UPDATES_TO_LOAD_MORE,
-    );
-    this.showedUpdates = [...current, ...next];
+    if (this.isLoaded) {
+      this.isLoaded = false;
+      this.updateService
+        .getPublicUpdates(
+          this.updatesPerPage,
+          this.currentPage,
+          this.currentUserRole,
+          this.filtered,
+          this.filterContext,
+        )
+        .pipe(
+          tap((response: any) => {
+            const newUpdates: IUpdate[] = response.results;
+            const count = response.count;
+
+            setTimeout(() => {
+              const actualUpdates = newUpdates.filter(
+                (newUpdate) =>
+                  !this.updates.some(
+                    (existingUpdate) => existingUpdate.id === newUpdate.id,
+                  ),
+              );
+              if (actualUpdates.length > 0) {
+                this.updates = [...this.updates, ...actualUpdates];
+                this.currentPage++;
+              } else {
+                this.allUpdatesLoaded = true;
+              }
+              if (count <= this.updates.length) {
+                this.allUpdatesLoaded = true;
+              }
+              this.isLoaded = true;
+
+              actualUpdates.forEach((update) => {
+                if (update.authorId) {
+                  this.userService
+                    .getUserShortInfoForUpdate(update.authorId)
+                    .pipe(
+                      tap((updateAuthor: IUser) => {
+                        update.author = updateAuthor;
+                        this.cd.markForCheck();
+                      }),
+                    )
+                    .subscribe();
+                }
+              });
+
+              this.cd.markForCheck();
+            }, 500);
+          }),
+        )
+        .subscribe();
+    }
+  }
+
+  addParagraphs(text: string) {
+    return text.replace(/\n/g, '<br>');
+  }
+
+  loadingModal = false;
+  filteredStates(state: string) {
+    return updateStatuses.filter((s) => s !== state);
+  }
+
+  successEditModal = false;
+
+  changeState(update: IUpdate) {
+    if (update.newState) {
+      this.loadingModal = true;
+      this.updateService
+        .changeUpdateState(update.id, update.newState)
+        .pipe(
+          tap(() => {
+            if (update.newState) update.state = update.newState;
+            update.newState = '';
+            update.open = false;
+            this.updateService.updateUpdateInUpdates(update);
+
+            if (
+              this.userService.getPermission(
+                this.currentUser.limitations || [],
+                Permission.NewsEdited,
+              )
+            ) {
+              const notify = this.notifyService.buildNotification(
+                'Статус новости изменен',
+                'Вы успешно изменили статус новости',
+                'success',
+                'update',
+                '',
+              );
+              this.notifyService
+                .sendNotification(notify, this.currentUser.id, true)
+                .subscribe();
+            }
+            this.successEditModal = true;
+          }),
+          finalize(() => {
+            this.loadingModal = false;
+            this.cd.markForCheck();
+          }),
+        )
+        .subscribe();
+    }
   }
 
   filterByTag(tag: string) {
     this.filtered = 'tag';
     this.filterContext = tag;
-    this.showedUpdates = this.updates.filter((u) => u.tags.includes(tag));
+    this.scrollToTop();
+    this.startUpdatesLoad();
   }
   filterByState(state: string) {
     this.filtered = 'state';
     this.filterContext = state;
-    this.showedUpdates = this.updates.filter((u) => u.state === state);
+    this.scrollToTop();
+    this.startUpdatesLoad();
   }
 
   clearFilter() {
-    this.filtered = 'no';
+    this.filtered = undefined;
     this.filterContext = '';
-    this.showedUpdates = this.updates.slice(0, this.START_UPDATES_TO_SHOW);
+    this.scrollToTop();
+    this.startUpdatesLoad();
   }
 
-  showDeleteButton() {
+  actionUpdate? = nullUpdate;
+
+  handleConfirmModal(response: boolean) {
+    if (response && this.actionUpdate) {
+      this.changeState(this.actionUpdate);
+    } else {
+      this.actionUpdate = undefined;
+    }
+    this.confirmModal = false;
+  }
+
+  showUpdateButtons() {
     return this.userService.getPermission(
-      'show-delete-update',
-      this.currentUser,
+      this.currentUser.limitations || [],
+      Permission.NewsManagingButtons,
     );
   }
 
-  showAuthor(update: IUpdate): boolean {
-    if (update.author > 0) {
-      if (update.showAuthor === true || update.showAuthor === null)
-        if (this.findUser(update.author).id !== 0) {
-          if (
-            this.userService.getPermission(
-              'show-status',
-              this.findUser(update.author),
-            )
-          ) {
-            return true;
-          }
-        }
-    }
-    return false;
-  }
-  awaitModalShow = false;
-  targetUpdateId: number = 0;
-  deleteModalShow = false;
   handleDeleteModal(answer: boolean) {
-    this.deleteModalShow = false;
+    this.deleteModal = false;
 
     if (answer) {
       this.deleteUpdate(this.targetUpdateId);
     }
   }
 
-  async deleteUpdate(id: number) {
-    this.awaitModalShow = true;
-    await this.updateService.deleteUpdateFromSupabase(id);
-    this.awaitModalShow = false;
-    this.cd.markForCheck();
-    this.targetUpdateId = 0;
-  }
-
-  updateAuthorRole(id: number): string {
-    const user: IUser = this.findUser(id);
-    if (user.id > 0) {
-      if (user.role === 'admin') return 'администратор';
-      if (user.role === 'moderator') return 'модератор';
+  get descriptionAboutFilter() {
+    if (this.isLoaded) {
+      const context = this.filtered === 'state' ? 'состоянию' : 'тегу';
+      const content = this.filterContext;
+      return `Новости отфильтрованы по ${context} «${content}»`;
+    } else {
+      return `Загружаем отфильтрованные новости...`;
     }
-    return '';
   }
 
-  updateAuthor(id: number): string {
-    const user: IUser = this.findUser(id);
-    if (user.id > 0) {
-      if (this.userService.getPermission('show-status', user)) {
-        const name = user.fullName ? user.fullName : '@' + user.username;
-        return name;
-      }
-    }
-    return '';
+  scrollToTop() {
+    const startTag = document.getElementById('start');
+    if (startTag) {
+      const headerHeight =
+        document.getElementsByClassName('header')[0].clientHeight;
+      window.scrollTo({
+        top: startTag.offsetTop - headerHeight,
+        behavior: 'smooth',
+      });
+    } else window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  findUser(id: number): IUser {
-    return this.users.find((u) => u.id === id) || nullUser;
+  deleteUpdate(id: number) {
+    this.awaitModal = true;
+    this.updateService
+      .deleteUpdate(id)
+      .pipe(
+        tap(() => {
+          if (
+            this.userService.getPermission(
+              this.currentUser.limitations || [],
+              Permission.NewsDeleted,
+            )
+          ) {
+            const notify = this.notifyService.buildNotification(
+              'Новость удалена',
+              'Вы успешно удалили новость',
+              'error',
+              'update',
+              '',
+            );
+            this.notifyService
+              .sendNotification(notify, this.currentUser.id)
+              .subscribe();
+          }
+          this.successModal = true;
+        }),
+        finalize(() => {
+          this.awaitModal = false;
+          this.cd.markForCheck();
+          this.targetUpdateId = 0;
+        }),
+      )
+      .subscribe();
+  }
+
+  updateAuthorRole(role: role): string {
+    if (role === 'admin') return 'администратор';
+    else return 'модератор';
+  }
+
+  getFormattedDate(date: string) {
+    return getFormattedDate(date);
+  }
+
+  updateAuthor(user: IUser): string {
+    const name = user.fullName ? user.fullName : '@' + user.username;
+    return name;
   }
 }

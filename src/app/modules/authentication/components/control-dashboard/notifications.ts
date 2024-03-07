@@ -98,7 +98,7 @@ export function notifyForAuthorOfApprovedUpdate(
     `Ваше обновление «${approvedUpdate.shortName}» одобрено администратором`,
     'success',
     'without',
-    '/updates',
+    '/news',
   );
 }
 export function notifyForFollowersOfApprovedRecipeAuthor(
@@ -191,16 +191,13 @@ export function notifyForAuthorOfApprovedCategory(
 }
 
 export function notifyForDemotedUser(
-  user: IUser,
   notifyService: NotificationService,
 ) {
   return notifyService.buildNotification(
     'Вас разжаловали',
-    `Вы теперь не являетесь модератором сайта Yummy. Вас разжаловал администратор ${getName(
-      user,
-    )}`,
+    `Вы теперь не являетесь модератором сайта Yummy`,
     'warning',
     'demote',
-    `/cooks/list/${user.id}`,
+    '',
   );
 }

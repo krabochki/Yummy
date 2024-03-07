@@ -1,71 +1,140 @@
 <div class="container">
- <form autocomplete="false">
-      <input type="text" style="display:none" />
+  <form autocomplete="false">
 
-    <input
-    name="input"
-      [(ngModel)]="value"
-      [disabled]="disabled"
-      (blur)="blur()"
-      readonly onfocus="this.removeAttribute('readonly');"
-      autocomplete="false"
+    <input name="input" [(ngModel)]="value" [disabled]="disabled" (blur)="blur()" readonly
+      onfocus="this.removeAttribute('readonly');" autocomplete="false"
       
-      (keyup)="change()"
-      (ngModelChange)="search()"
-      (focus)="focus()"
-       [ngClass]="{
+       autocomplete="off"
+      (keyup)="change()" (ngModelChange)="search()"
+      (focus)="focus()" [ngClass]="{
         uncorrect: error !== ''
-      }"
-      type="text"
-       [maxlength]="max ? max : null"
-      [placeholder]="placeholder"
-    />
- </form> 
-    <p class="howmuch noselect" *ngIf="(max!==undefined)">{{value? value.length:0 }}/{{ max }}</p>
-
+      }" type="text" [maxlength]="max ? max : 30" [placeholder]="placeholder" />
+  </form>
+  <p class="howmuch noselect" *ngIf="max !== undefined">
+    {{ value ? value.length : 0 }}/{{ max }}
+  </p>
 
   <div class="autocomplete" @height *ngIf="autocompleteShow">
-    <div class="section noone" *ngIf="noAnySearchMatches">
+    <div class="section noone" *ngIf="noAnySearchMatches && !loading">
       <p>
         {{ noSearchMatchDescription }}
       </p>
     </div>
 
     <div *ngIf="context === 'categories'">
+      <ng-container *ngIf="loading">
+        <ng-container *ngIf="loading">
+          <ol class="one-layer">
+            <li class="load" *ngFor="
+                let item of [
+                  'ddsвавававddfdfd',
+                  'sddfffdsdsddd',
+                  'sdsdddsfdfdfdfddsdsdsd',
+                  'dssddfdfdfdssd',
+                  'sdsddfdddffdsddsdsssds'
+                ]
+              ">
+              <p class="loading">{{ item }}</p>
+            </li>
+          </ol>
+        </ng-container>
+      </ng-container>
       <div class="section" *ngFor="let item of group">
         <h2>{{ item.section.name }}</h2>
 
         <ol>
-          <li
-            (mousedown)="
-              addCategory(category); this.value = ''; copyOfFullGroup()
-            "
-            *ngFor="let category of item.categories; let i = index"
-          >
+          <li (mousedown)="addCategory(category); this.value = ''"
+            *ngFor="let category of item.categories; let i = index">
             <div class="num">{{ i + 1 }}</div>
             <p class="content">{{ category.name }}</p>
           </li>
         </ol>
       </div>
     </div>
-    
-    <ng-container  *ngIf="context === 'groups'">
+
+
+
+    <ng-container *ngIf="context === 'groups'">
       <ol class="one-layer">
-        <li
-          (mousedown)="addIngredientGroup(item); this.value = ''"
-          *ngFor="let item of filterIngredientsGroups; let i = index"
-        >
+        <ng-container *ngIf="loading">
+          <li class="load" *ngFor="
+                          let item of [
+                            'ddsвавававddfdfd',
+                            'sddfffdsdsddd',
+                            'sdsdddsfdfdfdfddsdsdsd',
+                            'dssddfdfdfdssd',
+                            'sdsddfdddffdsddsdsssds'
+                          ]
+                        ">
+            <p class="loading">{{ item }}</p>
+          </li>
+        </ng-container>
+        <li (mousedown)="addIngredientGroup(item); this.value = ''" *ngFor="let item of groups; let i = index">
           <div class="num">{{ i + 1 }}</div>
           <p class="content">{{ item.name }}</p>
         </li>
       </ol>
     </ng-container>
+
+    <ng-container *ngIf="context === 'tags'">
+      <ol class="one-layer">
+        <ng-container *ngIf="loading">
+          <li class="load" *ngFor="
+                              let item of [
+                                'ddsвавававddfdfd',
+                                'sddfffdsdsddd',
+                                'sdsdddsfdfdfdfddsdsdsd',
+                                'dssddfdfdfdssd',
+                                'sdsddfdddffdsddsdsssds'
+                              ]
+                            ">
+            <p class="loading">{{ item }}</p>
+          </li>
+        </ng-container>
+        <li (mousedown)="addTag(item)" *ngFor="let item of tags; let i = index">
+          <div class="num">{{ i + 1 }}</div>
+          <p class="content">{{ item }}</p>
+        </li>
+      </ol>
+    </ng-container>
     <ng-container *ngIf="context === 'sections'">
       <ol class="one-layer">
-        <li
-          (mousedown)="addSection(item); this.value = ''"
-          *ngFor="let item of mySections; let i = index"
-        >
+        <ng-container *ngIf="loading">
+          <li class="load" *ngFor="
+              let item of [
+                'ddsвавававddfdfd',
+                'sddfffdsdsddd',
+                'sdsdddsfdfdfdfddsdsdsd',
+                'dssddfdfdfdssd',
+                'sdsddfdddffdsddsdsssds'
+              ]
+            ">
+            <p class="loading">{{ item }}</p>
+          </li>
+        </ng-container>
+        <li (mousedown)="addSection(item); this.value = ''" *ngFor="let item of sections; let i = index">
+          <div class="num">{{ i + 1 }}</div>
+          <p class="content">{{ item.name }}</p>
+        </li>
+      </ol>
+    </ng-container>
+
+    <ng-container *ngIf="context === 'recipes'">
+      <ol class="one-layer">
+        <ng-container *ngIf="loading">
+          <li class="load" *ngFor="
+                  let item of [
+                    'ddsвавававddfdfd',
+                    'sddfffdsdsddd',
+                    'sdsdddsfdfdfdfddsdsdsd',
+                    'dssddfdfdfdssd',
+                    'sdsddfdddffdsddsdsssds'
+                  ]
+                ">
+            <p class="loading">{{ item }}</p>
+          </li>
+        </ng-container>
+        <li (mousedown)="addRecipe(item); this.value = ''" *ngFor="let item of recipes; let i = index">
           <div class="num">{{ i + 1 }}</div>
           <p class="content">{{ item.name }}</p>
         </li>
@@ -82,15 +151,25 @@
     </ng-container>
     <ng-container *ngIf="context === 'ingredients'">
       <ol class="one-layer">
-        <li
-          (mousedown)="addIngredient(ingredient);"
-          class="section"
-          *ngFor="let ingredient of filterIngredients; let i = index"
-        >
+        <ng-container *ngIf="loading">
+          <li class="load" *ngFor="
+                                  let item of [
+                                    'ddsвавававddfdfd',
+                                    'sddfffdsdsddd',
+                                    'sdsdddsfdfdfdfddsdsdsd',
+                                    'dssddfdfdfdssd',
+                                    'sdsddfdddffdsddsdsssds'
+                                  ]
+                                ">
+            <p class="loading">{{ item }}</p>
+          </li>
+        </ng-container>
+        <li (mousedown)="addIngredient(item); this.value = item.name" *ngFor="let item of ingredients; let i = index">
           <div class="num">{{ i + 1 }}</div>
-          <p class="content">{{ ingredient.name }}</p>
+          <p class="content">{{ item.name }}</p>
         </li>
       </ol>
     </ng-container>
+
   </div>
 </div>

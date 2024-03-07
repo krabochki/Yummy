@@ -1,0 +1,172 @@
+<div
+  class="main"
+  [ngClass]="{
+    admin: this.currentUser.role === 'admin',
+    moderator: this.currentUser.role === 'moderator'
+  }"
+>
+  <h1>Жалобы на комментарии</h1>
+
+  <div class="wrap">
+    <div class="reports-block new">
+      <button
+        [disabled]="!loaded"
+        (click)="loaded ? checkActualReports() : null"
+        class="update-button"
+      >
+        <svg-icon
+          class="icon"
+          [applyClass]="true"
+          [src]="'/assets/images/svg/update.svg'"
+        />
+        <span>{{ loaded ? "Обновить" : "Обновить..." }}</span>
+      </button>
+
+      <div class="reports" [ngClass]="{ blink: !loaded && reports.length > 0 }">
+        <div *ngFor="let report of reports" class="report">
+          <div class="report-header">
+            <a
+              *ngIf="report.recipeId"
+              class="link report-recipe"
+              [routerLink]="'/recipes/list/' + getRecipe(report.recipeId).id"
+            >
+              {{ getRecipe(report.recipeId).name }}
+            </a>
+            <p class="report-date" *ngIf="report.sendDate">
+              Жалоба подана {{ report.sendDate | timePast | lowercase }}
+            </p>
+          </div>
+          <div class="report-users">
+            <p class="reporter">
+              Пожаловался:
+              <a
+                class="report-user link"
+                [routerLink]="'/cooks/list/' + getUser(report.reporterId).id"
+                >{{ getName(getUser(report.reporterId)) }}</a
+              >
+            </p>
+            <p class="reporter">
+              Комментатор:
+              <a
+                class="report-user link"
+                [routerLink]="
+                  '/cooks/list/' +
+                  getUser(getComment(report.commentId).authorId).id
+                "
+              >
+                {{ getName(getUser(getComment(report.commentId).authorId)) }}</a
+              >
+            </p>
+          </div>
+          <p class="report-content">
+            Содержание комментария: «{{ getComment(report.commentId).text }}»
+          </p>
+          <div class="report-buttons" *ngIf="currentUser.role !== 'user'">
+            <app-button
+                              (click)="reportActionClick('approve',report)"
+
+              [text]="'Оставить'"
+              [style]="'filled'"
+              [rounded]="true"
+              [color]="currentUser.role"
+            ></app-button>
+            <app-button
+              [text]="'Удалить'"
+                                (click)="reportActionClick('dismiss',report)"
+
+              [style]="'filled-min'"
+              [rounded]="true"
+              [color]="currentUser.role"
+            ></app-button>
+          </div>
+        </div>
+
+        <ng-container *ngIf="!loaded && reports.length === 0">
+          <div class="report loading" *ngFor="let recipe of [0, 1, 2]">
+            <div class="report-header">
+              <p class="report-recipe link">0000000000000000</p>
+            </div>
+            <div class="report-users">
+              <p class="reporter">000000000000</p>
+              <p class="reporter">00000000000000000</p>
+            </div>
+              <p class="report-content">
+                Содержание комментария
+              </p>
+            <div class="report-buttons">
+              <div class="load-button">
+                <app-button
+                  [text]="'Принять'"
+                  [color]="'prim'"
+                  [disabled]="false"
+                  [style]="'filled'"
+                  [rounded]="true"
+                ></app-button>
+              </div>
+              <div class="load-button">
+                <app-button
+                  [text]="'Отклонить'"
+                  [disabled]="false"
+                  [color]="'prim'"
+                  [style]="'filled-min'"
+
+                  [rounded]="true"
+                ></app-button>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+      <app-button
+        class="more-reports-button"
+        [text]="'Загрузить еще...'"
+        (click)="loadMoreReports()"
+        *ngIf="!everythingLoaded && reports.length > 0"
+        [disabled]="loaded"
+        [rounded]="true"
+        [style]="'outlined'"
+        [color]="'prim'"
+      ></app-button>
+
+      <p class="allloaded" *ngIf="!loaded">Загружаем жалобы...</p>
+      <p *ngIf="everythingLoaded && loaded && reports.length" class="allloaded">
+        Все жалобы на комментарии уже загружены
+      </p>
+
+      <div
+        class="allloaded"
+        *ngIf="!reports.length && loaded && everythingLoaded"
+      >
+        <div class="not-found-icon">
+          <svg-icon
+            class="not-found-svg"
+            [applyClass]="true"
+            [src]="'/assets/images/svg/not-found.svg'"
+          />
+        </div>
+
+        Жалоб на комментарии пока нет
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<app-modal @modal *ngIf="actionModal" [style]="'sec'" [title]="
+    'Жалоба успешно ' +
+    (action === 'approve' ? 'одобрена' : 'отклонена')
+  " [type]="'Ok'" (resultEmit)="handleActionModal()" [buttonsText]="['Хорошо']" [description]="
+    'Вы успешно ' +
+    (action === 'approve' ? 'одобрили' : 'отклонили') +
+    ' эту жалобу'
+  "></app-modal>
+
+<app-modal [style]="'await'" *ngIf="loadingModal" @modal/>
+
+<app-modal @modal *ngIf="confirmModal" [style]="action === 'dismiss' ? 'prim' : 'sec'"
+  [title]="action === 'dismiss' ? 'Отклонение жалобы' : 'Одобрение жалобы'" [type]="'yesOrNo'"
+  (resultEmit)="handleConfirmModal($event)" [buttonsText]="['Да', 'Нет']"
+  [description]="action === 'dismiss' ? 'Вы уверены, что хотите отклонить жалобу?' : 'Вы уверены, что хотите одобрить жалобу?'"></app-modal>

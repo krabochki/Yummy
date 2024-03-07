@@ -11,6 +11,14 @@ import { ModeratorGuard } from './guards/moderator.guard';
 import { PasswordResetComponent } from './components/password-reset/password-reset.component';
 import { WelcomeComponent } from './components/welcome/welcome.component';
 import { AuthGuard } from './guards/auth.guard';
+import { ControlUpdatesComponent } from './components/control-dashboard/updates/control-updates.component';
+import { AdminGuard } from './guards/admin.guard';
+import { ControlCategoriesComponent } from './components/control-dashboard/categories/control-categories.component';
+import { ControlRecipesComponent } from './components/control-dashboard/recipes/control-recipes.component';
+import { ControlReportsComponent } from './components/control-dashboard/reports/control-reports.component';
+import { ControlModeratorsComponent } from './components/control-dashboard/moderators/moderators.component';
+import { ControlIngredientsComponent } from './components/control-dashboard/ingredients/control-ingredients.component';
+import { DeleteAccountComponent } from './components/delete-account/delete-account.component';
 
 const routes: Routes = [
   {
@@ -40,6 +48,11 @@ const routes: Routes = [
         path: 'password-reset',
         component: PasswordResetComponent,
       },
+
+      {
+        path: 'delete-account',
+        component: DeleteAccountComponent,
+      },
       {
         path: 'greetings',
         component: GreetingsComponent,
@@ -51,12 +64,45 @@ const routes: Routes = [
         component: ControlDashboardComponent,
         canActivate: [ModeratorGuard],
       },
+
+      {
+        path: 'control-dashboard/updates',
+        component: ControlUpdatesComponent,
+        canActivate: [AdminGuard],
+      },
+
+      {
+        path: 'control-dashboard/recipes',
+        component: ControlRecipesComponent,
+        canActivate: [ModeratorGuard],
+      },
+      {
+        path: 'control-dashboard/reports',
+        component: ControlReportsComponent,
+        canActivate: [ModeratorGuard],
+      },
+      {
+        path: 'control-dashboard/categories',
+        component: ControlCategoriesComponent,
+        canActivate: [ModeratorGuard],
+      },
+      {
+        path: 'control-dashboard/moderators',
+        component: ControlModeratorsComponent,
+        canActivate: [AdminGuard],
+      },
+
+      {
+        path: 'control-dashboard/ingredients',
+        component: ControlIngredientsComponent,
+        canActivate: [ModeratorGuard],
+      },
     ],
   },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AuthenticationRoutingModule { }
+export class AuthenticationRoutingModule {}

@@ -9,7 +9,8 @@ import { IRecipe } from "./recipes";
     authorId: number; // Уникальный идентификатор автора комментария
     date: string; // Дата и время комментария
     likesId: number[],
-    dislikesId: number[]
+    dislikesId: number[],
+    recipeId?:number
 }
 export const nullComment:IComment={
   id:0,

@@ -1,18 +1,28 @@
+import { IUser } from "../../user-pages/models/users";
+
 export interface ICategory {
   id: number; // Уникальный идентификатор категории
   name: string; // Название категории
-  photo?: string;
+  image?: string;
+  sectionId?: number;
   authorId: number;
-
+  recipeCount?: number;
+  imageLoading?: boolean;
+  imageURL?: string;
+  section?: ISection;
+  author?: IUser;
   status: 'awaits' | 'public';
   sendDate: string;
 }
 
-  export interface ISection {
+export interface ISection {
+  imageLoading?: boolean;
     id: number; // Уникальный идентификатор раздела
     name: string; // Название раздела
-    categories: number[];
-    photo?: string;
+    categoriesIds: number[];
+    image?: string;
+    imageURL?: string,
+    //categories?:ICategory[],
     authorId:number,
     status: 'awaits' | 'public';
     sendDate: string;
@@ -22,7 +32,7 @@ export interface ICategory {
 export const nullSection: ISection = {
   id: 0, // Уникальный идентификатор раздела
   name: '', // Название раздела
-  categories: [],
+  categoriesIds: [],
   status: 'public',
   authorId: 0,
 

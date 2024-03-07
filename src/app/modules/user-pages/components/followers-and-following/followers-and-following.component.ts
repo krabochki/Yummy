@@ -20,11 +20,11 @@ import {
   state,
 } from '@angular/animations';
 import { widthAnim } from 'src/tools/animations';
-import { Subject, takeUntil } from 'rxjs';
+import { Observable, Subject, finalize, forkJoin, takeUntil, tap } from 'rxjs';
 import { NotificationService } from '../../services/notification.service';
 import { INotification } from '../../models/notifications';
-import { supabase } from 'src/app/modules/controls/image/supabase-data';
 import { modal } from 'src/tools/animations';
+import { addModalStyle } from 'src/tools/common';
 
 @Component({
   selector: 'app-followers-and-following',
@@ -74,96 +74,140 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
     public userService: UserService,
   ) {}
 
+  users: IUser[] = [];
   ngOnInit(): void {
-    this.renderer.addClass(document.body, 'hide-overflow');
-    (<HTMLElement>document.querySelector('.header')).style.width =
-      'calc(100% - 16px)';
-    this.userService.users$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((data) => {
-        this.following = this.userService.getFollowing(data, this.user.id);
-        this.followers = this.userService.getFollowers(data, this.user.id);
-        this.followingDisplay = this.following;
-        this.followersDisplay = this.followers;
-        if (this.currentUser.id !== 0) {
-          const currentUserFollowing = this.userService.getFollowing(
-            data,
-            this.currentUser?.id,
-          );
-          this.currentUserFollowingIds = [];
-          currentUserFollowing.forEach((currFollowing) => {
-            this.currentUserFollowingIds.push(currFollowing.id);
-          });
-          this.cd.detectChanges();
-        }
-      });
+    addModalStyle(this.renderer);
+
+    const subscribes$: Observable<any>[] = [];
+    subscribes$.push(this.getFollowers());
+
+    subscribes$.push(this.getFollowings());
+    if (this.currentUser.id !== 0) {
+      this.userService
+        .getFollowingList(this.currentUser.id)
+        .subscribe((followings) => {
+          this.currentUserFollowingIds = followings.map((f) => f.id);
+        });
+    }
+    forkJoin(subscribes$).subscribe(() => {
+      this.cd.markForCheck();
+    });
   }
 
   noUserpic = '/assets/images/userpic.png';
 
-  getUserpic(user: IUser) {
-    if (user.avatarUrl) {
-      return supabase.storage.from('userpics').getPublicUrl(user.avatarUrl).data
-        .publicUrl;
-    } else return this.noUserpic;
-  }
+  getFollowers() {
+    return this.userService.getFollowersList(this.user.id).pipe(
+      tap((followers) => {
+        this.followers = followers;
+        this.followersDisplay = followers;
 
+
+        
+        this.followers.forEach((follower) => {
+            this.loadImage(follower)
+          
+        });
+      }),
+    );
+  }
+  loadImage(follower:IUser) {
+    if (follower.image) {
+      this.userService
+        .downloadUserpic(follower.image)
+        .pipe(
+          tap((blob) => {
+            follower.avatarUrl = URL.createObjectURL(blob);
+          }),
+          finalize(() => {
+            this.cd.markForCheck();
+          }),
+        )
+        .subscribe();
+    }
+  }
+  getFollowings() {
+    return this.userService.getFollowingList(this.user.id).pipe(
+      tap((following) => {
+        this.following = following;
+        this.followingDisplay = following;
+        this.following.forEach((follower) => {
+          this.loadImage(follower);
+        });
+      }),
+    );
+  }
   switchObject(object: 'following' | 'followers') {
     if (this.searchMode) this.searchOnOff();
     if (object === 'following') {
-      this.object = 'following';
+      this.getFollowings().subscribe(() => {
+        this.object = 'following';
+        this.cd.markForCheck();
+      });
     } else {
-      this.object = 'followers';
+      this.getFollowers().subscribe(() => {
+        this.object = 'followers';
+        
+        this.cd.markForCheck();
+      });
     }
     this.cd.markForCheck();
   }
 
-  async updateUser(user: IUser) {
-    await this.userService.updateUserInSupabase(user);
-  }
+  @Output() editEmitter = new EventEmitter<number>();
 
   //подписка текущего пользователя на людей в списке
-  async follow(user: IUser) {
-    if (!user.loading) {
-      if (this.currentUser.id > 0) {
-        user.loading = true;
-        this.cd.markForCheck();
-
-        user = this.userService.addFollower(user, this.currentUser?.id);
-        await this.updateUser(user);
-        if (this.userService.getPermission('new-follower', user)) {
-          const notify: INotification = this.notifyService.buildNotification(
-            'Новый подписчик',
-            `Кулинар ${this.currentUser.fullName
-              ? this.currentUser.fullName
-              : '@' + this.currentUser.username
-            } подписался на тебя`,
-            'info',
-            'user',
-            '/cooks/list/' + this.currentUser.id,
-          );
-          await this.notifyService.sendNotification(notify, user);
-                user.loading = false;
+  follow(user: IUser) {
+    if (this.currentUser.id > 0) {
+      this.userService.followUser(this.currentUser.id, user.id).subscribe({
+        next: () => {
+          this.currentUserFollowingIds.push(user.id);
+          if (this.user.id === this.currentUser.id) {
+            this.editEmitter.emit(this.currentUserFollowingIds.length);
+          }
           this.cd.markForCheck();
-        }
-      } else {
-        this.noAccessModalShow = true;
-      }
+        //  if (this.userService.getPermission('new-follower', user)) {
+            const findedCurrentUser =
+              this.users.find((u) => u.id === this.currentUser.id) || nullUser;
+            if (findedCurrentUser.id > 0) {
+              const notify: INotification =
+                this.notifyService.buildNotification(
+                  'Новый подписчик',
+                  `Кулинар ${
+                    findedCurrentUser.fullName
+                      ? findedCurrentUser.fullName
+                      : '@' + findedCurrentUser.username
+                  } подписался на тебя`,
+                  'info',
+                  'user',
+                  '/cooks/list/' + this.currentUser.id,
+                );
+              this.notifyService.sendNotification(notify, user.id).subscribe();
+            
+          }
+        },
+      });
+    } else {
+      this.noAccessModalShow = true;
     }
   }
 
   noAccessModalShow = false;
 
   //отписка текущего пользователя от людей в списке
-  async unfollow(user: IUser) {
-    if (!user.loading) {
-      if (this.currentUser.id > 0) {
-        user.loading = true;
-        user = this.userService.removeFollower(user, this.currentUser?.id);
-        await this.updateUser(user);
-        user.loading = false;
-        this.cd.markForCheck();
-      }
+  unfollow(user: IUser) {
+    if (this.currentUser.id > 0) {
+      this.userService.unfollowUser(this.currentUser.id, user.id).subscribe({
+        next: () => {
+          this.currentUserFollowingIds = this.currentUserFollowingIds.filter(
+            (f) => f != user.id,
+          );
+          if (this.user.id === this.currentUser.id) {
+            this.editEmitter.emit(this.currentUserFollowingIds.length);
+          }
+          this.cd.markForCheck();
+        },
+      });
     }
   }
 
@@ -183,31 +227,36 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
   filter() {
     if (this.object === 'followers') {
       if (this.searchQuery) {
-        this.followersDisplay = this.followers.filter(
-          (follower: IUser) =>
+        this.followersDisplay = this.followers.filter((follower: IUser) => {
+          follower.fullName = follower.fullName || '';
+          return (
             follower.fullName
               .toLowerCase()
               .includes(this.searchQuery.toLowerCase()) ||
             follower.username
               .toLowerCase()
-              .includes(this.searchQuery.toLowerCase()),
-        );
+              .includes(this.searchQuery.toLowerCase())
+          );
+        });
       } else {
         this.followersDisplay = this.followers; // Если поле поиска пустое, показать всех подписчиков
       }
     } else {
       if (this.searchQuery) {
-        this.followingDisplay = this.following.filter(
-          (follower: IUser) =>
+        this.followingDisplay = this.following.filter((follower: IUser) => {
+          follower.fullName = follower.fullName || '';
+          return (
             follower.fullName
               .toLowerCase()
               .includes(this.searchQuery.toLowerCase()) ||
-            follower.username.toLowerCase().includes(this.searchQuery),
-        );
+            follower.username.toLowerCase().includes(this.searchQuery)
+          );
+        });
       } else {
         this.followingDisplay = this.following; // Если поле поиска пустое, показать всех подписчиков
       }
     }
+    this.cd.markForCheck();
   }
 
   clickBackgroundNotContent(elem: Event) {

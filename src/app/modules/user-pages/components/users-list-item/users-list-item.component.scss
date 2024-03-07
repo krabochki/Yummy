@@ -9,15 +9,39 @@ p {
 
 }
 
-.indicator{
+.main-wrap.loading {
+  animation: loading 0.75s infinite linear;
+  background-color: var(--loading);
+  pointer-events: none;
+
+
+}
+
+@keyframes loading {
+  0% {
+    background-position: var(--loading);
+  }
+
+  50% {
+    background-color: var(--loading-accent);
+  }
+
+  100% {
+    background-position: var(--loading);
+  }
+}
+
+
+.indicator {
   border-radius: 100%;
   width: 0.5em;
   height: 0.5em;
   background-color: var(--scroll-thumb);
-  &.online{
 
-  
-  background-color: rgb(113, 255, 113);
+  &.online {
+
+
+    background-color: rgb(113, 255, 113);
   }
 }
 
@@ -26,16 +50,6 @@ p {
   height: 1em;
 }
 
-.star {
-  width: 0.75em;
-  height: 0.75em;
-
-  .star-svg {
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-  }
-}
 
 * {
   -webkit-touch-callout: none;
@@ -44,9 +58,7 @@ p {
 }
 
 .admin {
-  .star-svg {
-    fill: var(--color-admin);
-  }
+  
 
   .userpic {
     border: 3px solid var(--color-admin);
@@ -58,9 +70,6 @@ p {
 }
 
 .moder {
-  .star-svg {
-    fill: var(--color-moderator);
-  }
 
   .userpic {
     border: 3px solid var(--color-moderator);
@@ -78,6 +87,7 @@ p {
   height: 100%;
   justify-content: center;
   padding: 1em;
+  position: relative;
   row-gap: 0.5em;
   border-radius: 0.5em;
   transition: 0.2s ease-in-out;
@@ -150,10 +160,11 @@ p {
 }
 
 
-app-modal{
+app-modal {
   position: fixed;
   z-index: 10;
 }
+
 .wrap {
   display: flex;
   align-items: center;
@@ -295,7 +306,7 @@ app-modal{
 }
 
 @media (max-width: 480px) {
-.star-h1 {
+  .star-h1 {
     display: flex;
     margin: 0.25em 0;
     flex-direction: column;
@@ -303,6 +314,7 @@ app-modal{
     align-items: center;
 
   }
+
   .wrap .userpic .emoji {
     right: -0.6em;
     bottom: -0.5em;

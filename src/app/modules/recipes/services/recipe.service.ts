@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { IRecipe, IRecipeStatistics } from '../models/recipes';
-import { BehaviorSubject } from 'rxjs';
+import { IRecipe, IRecipeStatistics, Instruction } from '../models/recipes';
+import { BehaviorSubject, EMPTY, Observable, finalize, of, tap } from 'rxjs';
 import { getCurrentDate } from 'src/tools/common';
-import { IPlan } from '../../planning/models/plan';
 import { IUser } from '../../user-pages/models/users';
 import { UserService } from '../../user-pages/services/user.service';
 import { IIngredient } from '../models/ingredients';
-import { supabase } from '../../controls/image/supabase-data';
+import { recipesSource } from 'src/tools/sourses';
+import { CategoryService } from './category.service';
+import { ICategory } from '../models/categories';
 
 @Injectable({
   providedIn: 'root',
@@ -18,258 +19,146 @@ export class RecipeService {
 
   constructor(
     private http: HttpClient,
+    private categoryService: CategoryService,
     private userService: UserService,
   ) {}
 
-  loadRecipeData() {
-    return this.getRecipesFromSupabase();
+  getRecipeForEditing(recipeId: number): Observable<IRecipe> {
+    const url = `${this.recipesUrl}/edit-recipe/${recipeId}`;
+    return this.http.get<IRecipe>(url);
   }
 
-  getRecipesWhithIsEditedWhenUserDeleting(
-    recipes: IRecipe[],
-    user: IUser,
-  ): IRecipe[] {
-    const editedRecipes: IRecipe[] = [];
-    recipes.forEach((recipe) => {
-      let anyChanges: boolean = false;
-
-      if (recipe.authorId !== user.id || recipe.status === 'public') {
-        if (recipe.likesId.includes(user.id)) {
-          anyChanges = true;
-          recipe.likesId = recipe.likesId.filter(
-            (element) => element !== user.id,
-          );
-        }
-        if (recipe.favoritesId.includes(user.id)) {
-          anyChanges = true;
-          recipe.favoritesId = recipe.favoritesId.filter(
-            (element) => element !== user.id,
-          );
-        }
-        if (recipe.cooksId.includes(user.id)) {
-          anyChanges = true;
-          recipe.cooksId = recipe.cooksId.filter(
-            (element) => element !== user.id,
-          );
-        }
-        if (recipe.comments) {
-          const beginLength = recipe.comments.length
-            ? recipe.comments.length
-            : 0;
-
-          recipe.comments.forEach((com) => {
-            if (
-              com.dislikesId.includes(user.id) ||
-              com.likesId.includes(user.id)
-            ) {
-              anyChanges = true;
-              com.dislikesId = com.dislikesId.filter((d) => d !== user.id);
-              com.likesId = com.likesId.filter((l) => l !== user.id);
-            }
-          });
-          recipe.comments = recipe.comments.filter(
-            (element) => element.authorId !== user.id,
-          );
-          const endLength = recipe.comments.length ? recipe.comments.length : 0;
-          if (endLength < beginLength) anyChanges = true;
-        }
-
-        if (recipe.reports) {
-          const beginLength = recipe.reports.length ? recipe.reports.length : 0;
-          recipe.reports = recipe.reports.filter(
-            (element) => element.reporter !== user.id,
-          );
-          const endLength = recipe.reports.length ? recipe.reports.length : 0;
-          if (endLength < beginLength) anyChanges = true;
-        }
-        if (recipe.statistics) {
-          const beginLength = recipe.statistics.length
-            ? recipe.statistics.length
-            : 0;
-          recipe.statistics = recipe.statistics.filter(
-            (element) => element.user !== user.id,
-          );
-          const endLength = recipe.statistics.length
-            ? recipe.statistics.length
-            : 0;
-          if (endLength < beginLength) anyChanges = true;
-        }
-
-        if (recipe.authorId === user.id && recipe.status === 'public') {
-          anyChanges = true;
-          recipe.authorId = -1;
-        }
-      }
-
-      if (anyChanges) {
-        editedRecipes.push(recipe);
-      }
-    });
-    return editedRecipes;
+  getPublicRecipesBySearch(searchText: string): Observable<any> {
+    const url = `${this.recipesUrl}/search/public?search=${searchText}`;
+    return this.http.get(url);
   }
 
-  getRecipesThatWillBeDeletedAfterUserDeleting(
-    recipes: IRecipe[],
-    user: IUser,
-  ): IRecipe[] {
-    const recipesForDeleting: IRecipe[] = [];
-    recipes.forEach((recipe) => {
-      if (recipe.authorId === user.id && recipe.status !== 'public')
-        recipesForDeleting.push(recipe);
-    });
-    return recipesForDeleting;
+  getMyRecipesBySearch(searchText: string, id: number): Observable<any> {
+    const url = `${this.recipesUrl}/search/my/${id}?search=${searchText}`;
+    return this.http.get(url);
   }
 
-
-  getRecipesFromSupabase() {
-    
-    return supabase
-      .from('recipes')
-      .select('*')
-      .then((response) => {
-        const supRecipes = response.data;
-        const recipes = supRecipes?.map((recipe) => {
-          return this.translateRecipe(recipe);
-        });
-        if (recipes) this.recipesSubject.next(recipes);
-      });
+  getFavoriteRecipesBySearch(searchText: string, id: number): Observable<any> {
+    const url = `${this.recipesUrl}/search/favorite/${id}?search=${searchText}`;
+    return this.http.get(url);
   }
 
-  translateRecipe(recipe: any) {
-    return {
-      // Добавьте все нужные поля с правильными именами сюда
-      id: recipe.id || 0,
-      mainImage: recipe.mainimage || '',
-      name: recipe.name || '',
-      description: recipe.description || '',
-      preparationTime: recipe.preparationtime || '',
-      cookingTime: recipe.cookingtime || '',
-      servings: recipe.servings || 0,
-      origin: recipe.origin || '',
-      ingredients: recipe.ingredients || [],
-      nutritions: recipe.nutritions || [],
-      instructions: recipe.instructions || [],
-      categories: recipe.categories || [],
-      authorId: recipe.authorid || 0,
-      likesId: recipe.likesid || [],
-      cooksId: recipe.cooksid || [],
-      history: recipe.history || '',
-      comments: recipe.comments || [],
-      publicationDate: recipe.publicationdate || '',
-      favoritesId: recipe.favoritesid || [], // Указывайте поля с правильными именами
-      status: recipe.status || 'public',
-      reports: recipe.reports || [],
-      statistics: recipe.statistics || [],
-    } as IRecipe;
+  getLikedRecipesBySearch(searchText: string, id: number): Observable<any> {
+    const url = `${this.recipesUrl}/search/liked/${id}?search=${searchText}`;
+    return this.http.get(url);
   }
 
-  deleteExistingRecipe(payload: any) {
-    this.recipesSubject.next(
-      this.recipesSubject.value.filter((recipe) => recipe.id !== this.translateRecipe(payload).id),
-    );
+  getRecipesOfCategoryBySearch(
+    searchText: string,
+    categoryId: number,
+    userId: number,
+  ): Observable<any> {
+    const url = `${this.recipesUrl}/search/by-category/${categoryId}/${userId}?search=${searchText}`;
+    return this.http.get(url);
   }
 
-  getMaxRecipeId() {
-    return supabase
-      .from('recipes')
-      .select('id')
-      .order('id', { ascending: false })
-      .limit(1)
-      .then((response) => {
-        if (response.data && response.data.length > 0) {
-          return response.data[0].id;
-        } else {
-          return 0;
-        }
-      });
+  getCookedRecipesBySearch(searchText: string, id: number): Observable<any> {
+    const url = `${this.recipesUrl}/search/cooked/${id}?search=${searchText}`;
+    return this.http.get(url);
+  }
+  getFollowingRecipesBySearch(searchText: string, id: number): Observable<any> {
+    const url = `${this.recipesUrl}/search/following/${id}?search=${searchText}`;
+    return this.http.get(url);
   }
 
-  addNewRecipe(payload: any) {
+  approveRecipe(recipeId: number) {
+    return this.http.put(`${this.recipesUrl}/approve/${recipeId}`, {});
+  }
+  makeRecipeAwaits(recipeId: number) {
+    return this.http.put(`${this.recipesUrl}/make-awaits/${recipeId}`, {});
+  }
+  dismissRecipe(recipeId: number) {
+    return this.http.put(`${this.recipesUrl}/dismiss/${recipeId}`, {});
+  }
+
+  getPublicAndMyRecipesBySearch(
+    searchText: string,
+    id: number,
+  ): Observable<any> {
+    const url = `${this.recipesUrl}/search/public-and-my/${id}?search=${searchText}`;
+    return this.http.get(url);
+  }
+
+  getDiscussedRecipesBySearch(searchText: string): Observable<any> {
+    const url = `${this.recipesUrl}/search/discussed?search=${searchText}`;
+    return this.http.get(url);
+  }
+
+  getCommentedRecipesBySearch(searchText: string, id: number): Observable<any> {
+    const url = `${this.recipesUrl}/search/commented/${id}?search=${searchText}`;
+    return this.http.get(url);
+  }
+  getRecipesByIngredientBySearch(
+    searchText: string,
+    userId: number,
+    ingredientId: number,
+  ): Observable<any> {
+    const url = `${this.recipesUrl}/search/by-ingredient/${userId}/${ingredientId}?search=${searchText}`;
+    return this.http.get(url);
+  }
+  getPlannedRecipesBySearch(searchText: string, id: number): Observable<any> {
+    const url = `${this.recipesUrl}/search/planned/${id}?search=${searchText}`;
+    return this.http.get(url);
+  }
+
+  recipesUrl = recipesSource;
+
+  setCategoryToRecipe(categoryId: number, recipeId: number) {
+    const url = `${this.recipesUrl}/set-category/${recipeId}`;
+    return this.http.put(url, { id: categoryId });
+  }
+
+  unsetCategoryToRecipe(categoryId: number, recipeId: number) {
+    const url = `${this.recipesUrl}/unset-category/${recipeId}`;
+    return this.http.put(url, { id: categoryId });
+  }
+
+  postIngredientToRecipe(
+    recipeId: number,
+    quantity: string,
+    name: string,
+    unit: string,
+  ) {
+    const url = `${this.recipesUrl}/ingredient/${recipeId}`;
+    return this.http.post(url, { name: name, quantity: quantity, unit: unit });
+  }
+
+  postRecipe(recipe: IRecipe) {
+    return this.http.post(this.recipesUrl, recipe);
+  }
+
+  addNewRecipe(recipe: IRecipe) {
     const currentRecipes = this.recipesSubject.value;
-    const updatedRecipes = [...currentRecipes, this.translateRecipe(payload)];
+    let updatedRecipes: IRecipe[] = [];
+    const index = currentRecipes.findIndex((r) => r.id === recipe.id);
+
+    if (index !== -1) {
+      updatedRecipes = [...currentRecipes];
+      updatedRecipes[index] = recipe;
+    } else {
+      updatedRecipes = [...currentRecipes, recipe];
+    }
     this.recipesSubject.next(updatedRecipes);
   }
 
-  approveRecipe(recipe: IRecipe): IRecipe {
-    recipe.status = 'public';
-    recipe.publicationDate = getCurrentDate();
-    return recipe;
+  getAwaitingRecipesCount() {
+    return this.http.get(`${this.recipesUrl}/awaits-count`);
   }
 
-  dismissRecipe(recipe: IRecipe): IRecipe {
-    recipe.status = 'private';
-    return recipe;
-  }
-
-  uploadExistingRecipe(payload: any) {
+  updateRecipeInRecipes(recipe: IRecipe) {
     const currentRecipes = this.recipesSubject.value;
-    const index = currentRecipes.findIndex(
-      (r) => r.id === this.translateRecipe(payload).id,
-    );
+    const index = currentRecipes.findIndex((r) => r.id === recipe.id);
     if (index !== -1) {
       const updatedRecipes = [...currentRecipes];
-      updatedRecipes[index] = this.translateRecipe(payload);
+      updatedRecipes[index] = recipe;
 
       this.recipesSubject.next(updatedRecipes);
     }
-  }
-
-  removeRecipeFunction(recipeId: number) {
-    return supabase.from('recipes').delete().eq('id', recipeId);
-  }
-
-  updateRecipeFunction(recipe: IRecipe) {
-    const { id, ...updateData } = recipe;
-
-    return supabase
-      .from('recipes')
-      .update({
-        mainimage: recipe.mainImage,
-        name: recipe.name,
-        description: recipe.description,
-        preparationtime: recipe.preparationTime,
-        cookingtime: recipe.cookingTime,
-        servings: recipe.servings,
-        origin: recipe.origin,
-        ingredients: recipe.ingredients,
-        nutritions: recipe.nutritions,
-        instructions: recipe.instructions,
-        categories: recipe.categories,
-        authorid: recipe.authorId,
-        likesid: recipe.likesId,
-        cooksid: recipe.cooksId,
-        history: recipe.history,
-        comments: recipe.comments,
-        publicationdate: recipe.publicationDate,
-        favoritesid: recipe.favoritesId,
-        status: recipe.status,
-        reports: recipe.reports,
-        statistics: recipe.statistics,
-      })
-      .eq('id', id);
-  }
-  
-  getFavoriteRecipesByUser(recipes: IRecipe[], user: number) {
-    return recipes.filter((recipe) => recipe.favoritesId.includes(user));
-  }
-  getLikedRecipesByUser(recipes: IRecipe[], user: number) {
-    return recipes.filter((recipe) => recipe.likesId.includes(user));
-  }
-  getCommentedRecipesByUser(recipes: IRecipe[], userId: number) {
-    recipes = recipes.filter((recipe) => recipe.comments.length > 0);
-    const userCommentedRecipes: IRecipe[] = [];
-    const addedRecipeIds = new Set<number>();
-
-    recipes.forEach((element) => {
-      element.comments.forEach((comment) => {
-        if (comment.authorId === userId && !addedRecipeIds.has(element.id)) {
-          userCommentedRecipes.push(element);
-          addedRecipeIds.add(element.id);
-        }
-      });
-    });
-
-    return userCommentedRecipes;
   }
 
   voteForRecipe(recipe: IRecipe, userId: number, userChoice: boolean): IRecipe {
@@ -281,6 +170,7 @@ export class RecipeService {
     recipe.statistics.push(statistic);
     return recipe;
   }
+
   removeVote(recipe: IRecipe, userId: number): IRecipe {
     if (!recipe.statistics) recipe.statistics = [];
 
@@ -288,107 +178,6 @@ export class RecipeService {
       (stat) => stat.user !== userId,
     );
     return recipe;
-  }
-  getCookedRecipesByUser(recipes: IRecipe[], user: number) {
-    return recipes.filter((recipe) => recipe.cooksId.includes(user));
-  }
-  getPopularRecipes(recipes: IRecipe[]) {
-    return recipes.sort((a, b) => b.likesId.length - a.likesId.length);
-  }
-  getMostCookedRecipes(recipes: IRecipe[]) {
-    return recipes.sort((a, b) => b.cooksId.length - a.cooksId.length);
-  }
-  getMostFavoriteRecipes(recipes: IRecipe[]) {
-    return recipes.sort((a, b) => b.favoritesId.length - a.favoritesId.length);
-  }
-  getMostDiscussedRecipes(recipes: IRecipe[]): IRecipe[] {
-    recipes = recipes.filter((recipe) => recipe.comments.length > 0);
-    return recipes.sort((a, b) => b.comments.length - a.comments.length);
-  }
-  getPlannedRecipes(recipes: IRecipe[], plan: IPlan) {
-    const plannedRecipeIds: number[] = [];
-
-    for (const calendarEvent of plan.calendarEvents) {
-      plannedRecipeIds.push(calendarEvent.recipe);
-    }
-
-    const plannedRecipes: IRecipe[] = [];
-
-    recipes.forEach((element) => {
-      if (plannedRecipeIds.includes(element.id)) plannedRecipes.push(element);
-    });
-
-    return plannedRecipes;
-  }
-  getPublicRecipes(recipes: IRecipe[]) {
-    return recipes.filter((recipe) => recipe.status === 'public');
-  }
-  getPublicAndAllMyRecipes(recipes: IRecipe[], userId: number) {
-    return recipes.filter(
-      (recipe) => recipe.status === 'public' || recipe.authorId === userId,
-    );
-  }
-  getAwaitingRecipes(recipes: IRecipe[]) {
-    return recipes.filter((recipe) => recipe.status === 'awaits');
-  }
-  getNotPrivateRecipes(recipes: IRecipe[]) {
-    return recipes.filter((recipe) => recipe.status !== 'private');
-  }
-  getRecentRecipes(recipes: IRecipe[]) {
-    return recipes.sort((a, b) => {
-      const date1 = new Date(a.publicationDate);
-      const date2 = new Date(b.publicationDate);
-
-      if (date1 > date2) {
-        return -1; // Если дата публикации первого рецепта позже, он будет первым в отсортированном массиве.
-      } else if (date1 < date2) {
-        return 1; // Если дата публикации второго рецепта позже, он будет первым в отсортированном массиве.
-      } else {
-        return 0; // Если даты равны, порядок не важен.
-      }
-    });
-  }
-
-  getRecipesByIngredient(
-    recipes: IRecipe[],
-    ingredient: IIngredient,
-  ): IRecipe[] {
-    const recipesWithIngredient: IRecipe[] = [];
-    const ingredientName = ingredient.name.toLowerCase().trim();
-    recipes.forEach((recipe) => {
-      recipe.ingredients.forEach((rIngredient) => {
-        const formattedRecipeIngredientName = rIngredient.name
-          .toLowerCase()
-          .trim();
-        const variationsMatch =
-          ingredient.variations.length > 0 &&
-          ingredient.variations.some((variation) => {
-            const formattedVariation = variation.toLowerCase().trim();
-            return (
-              formattedRecipeIngredientName.includes(formattedVariation) ||
-              formattedVariation.includes(formattedRecipeIngredientName)
-            );
-          });
-
-        if (
-          formattedRecipeIngredientName.includes(ingredientName) ||
-          variationsMatch
-        ) {
-          recipesWithIngredient.push(recipe);
-        }
-      });
-    });
-    const uniqueRecipesWithIngredient = recipesWithIngredient.filter(
-      (recipe, index, self) =>
-        index === self.findIndex((r) => r.id === recipe.id),
-    );
-    return uniqueRecipesWithIngredient;
-  }
-  getRecipesByCategory(recipes: IRecipe[], categoryId: number) {
-    return recipes.filter((recipe) => recipe.categories.includes(categoryId));
-  }
-  getRecipesByUser(recipes: IRecipe[], userId: number): IRecipe[] {
-    return recipes.filter((recipe) => recipe.authorId === userId);
   }
 
   addRecipeToFavorites(userId: number, recipe: IRecipe): IRecipe {
@@ -398,13 +187,6 @@ export class RecipeService {
     return recipe;
   }
 
-  hideAuthor(currentUser: IUser, author: IUser): boolean {
-    return (
-      currentUser.id === author.id ||
-      (author.role !== 'admin' && currentUser.role !== 'user') ||
-      this.userService.getPermission('hide-author', author)
-    );
-  }
   removeRecipeFromFavorites(userId: number, recipe: IRecipe): IRecipe {
     if (recipe.favoritesId.includes(userId)) {
       recipe.favoritesId = recipe.favoritesId.filter(
@@ -413,6 +195,451 @@ export class RecipeService {
     }
 
     return recipe;
+  }
+
+  cookRecipe(userId: number, recipe: IRecipe): IRecipe {
+    if (!recipe.cooksId.includes(userId)) {
+      recipe.cooksId.push(userId);
+    }
+    return recipe;
+  }
+  uncookRecipe(userId: number, recipe: IRecipe): IRecipe {
+    if (recipe.cooksId.includes(userId)) {
+      recipe.cooksId = recipe.cooksId.filter((cooked) => cooked !== userId);
+    }
+    return recipe;
+  }
+
+  getRecipeInfo(recipe: IRecipe, avatar?: boolean, fullMode?: boolean) {
+    const subscribes: Observable<any>[] = [];
+    recipe.reports = recipe.reports || [];
+    recipe.comments = recipe.comments || [];
+    recipe.ingredients = recipe.ingredients || [];
+    if (recipe.authorId && recipe.loadAuthor != 'no')
+      subscribes.push(
+        this.getAuthorInfo(recipe.authorId).pipe(
+          tap((author: IUser) => {
+            this.userService.addUserToUsers(author);
+            if (avatar) {
+              this.userService.getAvatar(author);
+            }
+          }),
+        ),
+      );
+    else if (!recipe.loadAuthor) recipe.authorId = -1;
+
+    subscribes.push(
+      this.getLikes(recipe.id).pipe(
+        tap((response) => {
+          recipe.likesId = response.likesIds;
+        }),
+      ),
+    );
+    if (fullMode) {
+      subscribes.push(
+        this.categoryService.getShortCategoriesByRecipe(recipe.id).pipe(
+          tap((receivedCategories: ICategory[]) => {
+            this.categoryService.setCategories(receivedCategories);
+            const categoriesIDs = receivedCategories.map(
+              (category) => category.id,
+            );
+            recipe.categories = categoriesIDs;
+          }),
+        ),
+      );
+    }
+
+    if (fullMode)
+      subscribes.push(
+        this.getVotes(recipe.id).pipe(
+          tap((response) => {
+            recipe.statistics = this.translateStatistics(response);
+          }),
+        ),
+      );
+
+    subscribes.push(
+      this.getCooks(recipe.id).pipe(
+        tap((response) => {
+          recipe.cooksId = response.cooksIds;
+        }),
+      ),
+    );
+    subscribes.push(
+      this.getFavorites(recipe.id).pipe(
+        tap((response) => {
+          recipe.favoritesId = response.favoritesIds;
+          this.updateRecipeInRecipes(recipe);
+        }),
+      ),
+    );
+
+    return subscribes;
+  }
+
+  getRecipesInfo(recipes: IRecipe[], image?: boolean, fullMode?: boolean) {
+    let subscribes: Observable<any>[] = [];
+    recipes.forEach((recipe) => {
+      subscribes = [...subscribes, ...this.getRecipeInfo(recipe, fullMode)];
+
+      if (image) {
+        this.getRecipeImage(recipe);
+      }
+    });
+
+    return subscribes;
+  }
+
+  setImageToRecipe(recipeId: number, imageURL: string) {
+    const currentRecipes = this.recipesSubject.value;
+    const index = currentRecipes.findIndex((r) => r.id === recipeId);
+    if (index !== -1) {
+      const updatedRecipes = [...currentRecipes];
+      updatedRecipes[index] = { ...updatedRecipes[index], imageURL: imageURL };
+      this.recipesSubject.next(updatedRecipes);
+    }
+  }
+
+  setLoadingToRecipe(recipeId: number, state: boolean) {
+    const currentRecipes = this.recipesSubject.value;
+    const index = currentRecipes.findIndex((r) => r.id === recipeId);
+    if (index !== -1) {
+      const updatedRecipes = [...currentRecipes];
+      updatedRecipes[index] = { ...updatedRecipes[index], imageLoading: state };
+      this.recipesSubject.next(updatedRecipes);
+    }
+  }
+
+  getRecipeImage(recipe: IRecipe) {
+    if (recipe.mainImage) {
+      recipe.imageLoading = true;
+      this.updateRecipeInRecipes(recipe);
+
+      setTimeout(() => {
+        if (recipe.mainImage)
+          this.downloadImage(recipe.mainImage)
+            .pipe(
+              finalize(() => {
+                this.setLoadingToRecipe(recipe.id, false);
+              }),
+              tap((blob) => {
+                this.setImageToRecipe(recipe.id, URL.createObjectURL(blob));
+              }),
+            )
+            .subscribe();
+      }, 300);
+    }
+  }
+
+  translateRecipe(recipe: any): IRecipe {
+    return {
+      ...recipe,
+      publicationDate: recipe.sendDate || '',
+      instructions: recipe.instructions || [],
+      ingredients: recipe.ingredients || [],
+      reports: recipe.reports || [],
+      comments: recipe.comments || [],
+      nutritions: recipe.nutritions || [],
+      categories: recipe.categories || [],
+      likesId: recipe.likesId || [],
+      cooksId: recipe.cooksId || [],
+      favoritesId: recipe.favoritesId || [],
+      statistics: recipe.statistics || [],
+    };
+  }
+
+  getRecipe(recipeId: number) {
+    return this.http.get<IRecipe>(`${this.recipesUrl}/recipe/${recipeId}`);
+  }
+
+  deleteRecipe(recipeId: number) {
+    return this.http.delete<IRecipe>(`${this.recipesUrl}/${recipeId}`);
+  }
+
+  getIngredients(recipeId: number) {
+    const url = `${this.recipesUrl}/ingredients/${recipeId}`;
+    return this.http.get(url);
+  }
+  getInstructions(recipeId: number) {
+    const url = `${this.recipesUrl}/instructions/${recipeId}`;
+    return this.http.get<Instruction[]>(url);
+  }
+  getInstructionsImages(recipeId: number) {
+    const url = `${this.recipesUrl}/instructions-images/${recipeId}`;
+    return this.http.get<{ instructionId: number; image: string }[]>(url);
+  }
+  getInstructionImages(instructionId: number) {
+    const url = `${this.recipesUrl}/instruction-images/${instructionId}`;
+    return this.http.get<string[]>(url);
+  }
+
+  deleteInstruction(instructionId: number) {
+    const url = `${this.recipesUrl}/instruction/${instructionId}`;
+    return this.http.delete(url);
+  }
+  postInstruction(recipeId: number, instruction: string) {
+    const url = `${this.recipesUrl}/instruction`;
+    return this.http.post(url, {
+      recipeId: recipeId,
+      instruction: instruction,
+    });
+  }
+  postInstructionImage(instructionId: number, filename: string) {
+    const url = `${this.recipesUrl}/instruction-image`;
+    return this.http.post(url, {
+      instructionId: instructionId,
+      filename: filename,
+    });
+  }
+
+  uploadInstructionImage(file: File) {
+    const formData: FormData = new FormData();
+    formData.append('image', file, file.name);
+    return this.http.post(`${this.recipesUrl}/image`, formData);
+  }
+
+  deleteAllIngredients(recipeId: number) {
+    const url = `${this.recipesUrl}/ingredients/${recipeId}`;
+    return this.http.delete(url);
+  }
+  getRelatedIngredients(recipeId: number) {
+    const url = `${this.recipesUrl}/related-ingredients/${recipeId}`;
+    return this.http.get<{ name: string; id: number; groupId: number }[]>(url);
+  }
+
+  deleteImage(imagePath: string) {
+    const url = `${this.recipesUrl}/files/${imagePath}`;
+    return this.http.delete(url);
+  }
+
+  getSomePublicRecipesByUser(
+    limit: number,
+    page: number,
+    userId: number,
+    recipeId: number,
+  ) {
+    const url = `${this.recipesUrl}/public-by-user/${userId}/${recipeId}?limit=${limit}&page=${page}`;
+    return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
+  }
+
+  getSomeRecipesByUser(
+    limit: number,
+    page: number,
+    userId: number,
+    full?: boolean,
+  ) {
+    const url = `${
+      this.recipesUrl
+    }/by-user/${userId}?limit=${limit}&page=${page}${full ? '&mode=full' : ''}`;
+    return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
+  }
+
+  getSomePopularRecipes(limit: number, page: number) {
+    const url = `${this.recipesUrl}/popular?limit=${limit}&page=${page}`;
+    return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
+  }
+
+  getSomeAwaitingRecipes(limit: number, page: number) {
+    const url = `${this.recipesUrl}/awaiting?limit=${limit}&page=${page}`;
+    return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
+  }
+  getMostCommentedRecipes(limit: number, page: number) {
+    const url = `${this.recipesUrl}/most-commented?limit=${limit}&page=${page}`;
+    return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
+  }
+
+  getSomeRecipesByIngredient(
+    limit: number,
+    page: number,
+    categoryId: number,
+    userId: number,
+  ) {
+    const url = `${this.recipesUrl}/by-ingredient/${categoryId}/${userId}?limit=${limit}&page=${page}`;
+    return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
+  }
+
+  getSomeRecipesByCategory(
+    limit: number,
+    page: number,
+    categoryId: number,
+    userId: number,
+  ) {
+    const url = `${this.recipesUrl}/by-category/${categoryId}/${userId}?limit=${limit}&page=${page}`;
+    return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
+  }
+
+  downloadImage(filename: string) {
+    const fileUrl = `${this.recipesUrl}/files/${filename}`;
+    return this.http.get(fileUrl, { responseType: 'blob' });
+  }
+
+  uploadRecipeImage(file: File) {
+    const formData: FormData = new FormData();
+    formData.append('image', file, file.name);
+    return this.http.post(`${this.recipesUrl}/image`, formData);
+  }
+
+  getSomeUserFavoriteRecipes(limit: number, page: number, userId: number) {
+    const url = `${this.recipesUrl}/user-favorites?limit=${limit}&page=${page}&userId=${userId}`;
+    return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
+  }
+
+  getSomeUserPlannedRecipes(limit: number, page: number, userId: number) {
+    const url = `${this.recipesUrl}/user-planned?limit=${limit}&page=${page}&userId=${userId}`;
+    return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
+  }
+
+  getSomeUserFollowedRecipes(limit: number, page: number, userId: number) {
+    const url = `${this.recipesUrl}/followed?limit=${limit}&page=${page}&userId=${userId}`;
+    return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
+  }
+
+  getSomeUserCommentedRecipes(limit: number, page: number, userId: number) {
+    const url = `${this.recipesUrl}/user-comments?limit=${limit}&page=${page}&userId=${userId}`;
+    return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
+  }
+  getSomeUserLikedRecipes(limit: number, page: number, userId: number) {
+    const url = `${this.recipesUrl}/user-liked?limit=${limit}&page=${page}&userId=${userId}`;
+    return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
+  }
+  getSomeUserCookedRecipes(limit: number, page: number, userId: number) {
+    const url = `${this.recipesUrl}/user-cooked?limit=${limit}&page=${page}&userId=${userId}`;
+    return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
+  }
+
+  getSomeMostCookedRecipes(limit: number, page: number) {
+    const url = `${this.recipesUrl}/most-cooked?limit=${limit}&page=${page}`;
+    return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
+  }
+
+  getSomeMostFavoriteRecipes(limit: number, page: number) {
+    const url = `${this.recipesUrl}/most-favorite?limit=${limit}&page=${page}`;
+    return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
+  }
+
+  getSomeRecipesForUserpage(
+    limit: number,
+    page: number,
+    authorId: number,
+    currentUserId: number,
+  ) {
+    const url = `${this.recipesUrl}/userpage/${authorId}/${currentUserId}?limit=${limit}&page=${page}`;
+    return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
+  }
+
+  getSomeMostRecentRecipes(
+    limit: number,
+    page: number,
+    except?: number,
+    authorId?: number,
+  ) {
+    const url =
+      `${this.recipesUrl}/most-recent?limit=${limit}&page=${page}` +
+      (except ? `&except=${except}&authorId=${authorId}` : '');
+    return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
+  }
+  getSomeSimilarRecipes(
+    limit: number,
+    page: number,
+    except?: number,
+    authorId?: number,
+  ) {
+    const url =
+      `${this.recipesUrl}/similar?limit=${limit}&page=${page}` +
+      (except ? `&except=${except}&authorId=${authorId}` : '');
+    return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
+  }
+
+  getLikes(recipeId: number) {
+    return this.http.get<{ likesIds: number[] }>(
+      `${this.recipesUrl}/likes/${recipeId}`,
+    );
+  }
+
+  getVotes(recipeId: number) {
+    return this.http.get<IRecipeStatistics[]>(
+      `${this.recipesUrl}/votes/${recipeId}`,
+    );
+  }
+
+  getCategories(recipeId: number) {
+    return this.http.get<{ categoriesIds: number[] }>(
+      `${this.recipesUrl}/categories/${recipeId}`,
+    );
+  }
+
+  getCooks(recipeId: number) {
+    return this.http.get<{ cooksIds: number[] }>(
+      `${this.recipesUrl}/cooks/${recipeId}`,
+    );
+  }
+
+  pushToFavorites(recipeId: number, userId: number) {
+    return this.http.post(
+      `${this.recipesUrl}/favorites/${recipeId}/${userId}`,
+      {},
+    );
+  }
+
+  removeFromFavorites(recipeId: number, userId: number) {
+    return this.http.delete(
+      `${this.recipesUrl}/favorites/${recipeId}/${userId}`,
+    );
+  }
+
+  deleteRecipeFromRecipes(recipeId: number) {
+    this.recipesSubject.next(
+      this.recipesSubject.value.filter((recipe) => recipe.id !== recipeId),
+    );
+  }
+
+  translateStatistics(statistics: any) {
+    const translatedStatistics: IRecipeStatistics[] = [];
+    statistics.forEach((s: any) => {
+      const translated: IRecipeStatistics = {
+        user: s.user,
+        answer: s.answer == 'true' ? true : false,
+      };
+      translatedStatistics.push(translated);
+    });
+    return translatedStatistics;
+  }
+  setLike(recipeId: number, userId: number) {
+    return this.http.post(`${this.recipesUrl}/likes/${recipeId}/${userId}`, {});
+  }
+  setRecipes(recipes: IRecipe[]) {
+    this.recipesSubject.next(recipes);
+  }
+
+  unsetLike(recipeId: number, userId: number) {
+    return this.http.delete(`${this.recipesUrl}/likes/${recipeId}/${userId}`);
+  }
+
+  setCook(recipeId: number, userId: number) {
+    return this.http.post(`${this.recipesUrl}/cooks/${recipeId}/${userId}`, {});
+  }
+
+  unsetCook(recipeId: number, userId: number) {
+    return this.http.delete(`${this.recipesUrl}/cooks/${recipeId}/${userId}`);
+  }
+
+  removeVoteForRecipe(recipeId: number, userId: number) {
+    return this.http.delete(`${this.recipesUrl}/votes/${recipeId}/${userId}`);
+  }
+
+  pushVoteForRecipe(recipeId: number, userId: number, vote: boolean) {
+    return this.http.post(
+      `${this.recipesUrl}/votes/${recipeId}/${userId}/${vote ? 1 : 0}`,
+      {},
+    );
+  }
+
+  getAuthorInfo(authorId: number) {
+    return this.http.get<IUser>(`${this.recipesUrl}/author/${authorId}`);
+  }
+
+  getShortRecipeById(id: number) {
+    return this.http.get<IRecipe>(`${this.recipesUrl}/short-recipe/${id}`);
   }
 
   likeRecipe(userId: number, recipe: IRecipe): IRecipe {
@@ -428,16 +655,13 @@ export class RecipeService {
     return recipe;
   }
 
-  cookRecipe(userId: number, recipe: IRecipe): IRecipe {
-    if (!recipe.cooksId.includes(userId)) {
-      recipe.cooksId.push(userId);
-    }
-    return recipe;
+  getFavorites(recipeId: number) {
+    return this.http.get<{ favoritesIds: number[] }>(
+      `${this.recipesUrl}/favorites/${recipeId}`,
+    );
   }
-  uncookRecipe(userId: number, recipe: IRecipe): IRecipe {
-    if (recipe.cooksId.includes(userId)) {
-      recipe.cooksId = recipe.cooksId.filter((cooked) => cooked !== userId);
-    }
-    return recipe;
+
+  updateRecipe(recipe: IRecipe) {
+    return this.http.put(`${this.recipesUrl}/${recipe.id}`, recipe);
   }
 }

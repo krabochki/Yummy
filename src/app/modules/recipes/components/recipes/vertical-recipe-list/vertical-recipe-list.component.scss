@@ -2,35 +2,37 @@
   display: grid;
   width: 100%;
   grid-template-columns: repeat(4, 1fr); // Изначально 4 колонки
-  gap: 1rem; // Отступы между блоками
-}
-.container.three-cols{
-      grid-template-columns: repeat(3, 1fr); // Изначально 4 колонки
-
-      .inner{
-  max-width:13em;
-
-}
+row-gap: 1em;
 }
 
-.inner{
-  height:15em;
+.container.three-cols {
+  grid-template-columns: repeat(3, 1fr); // Изначально 4 колонки
+
+  .inner {
+    max-width: 13em;
+
+  }
+}
+
+
+
+.inner {
+  height: 15em;
   width: 100%;
-
+  margin: 0 0.5rem
 }
 
 
 .block {
   /* Стили для блоков */
-  height:15em;
+  height: 15em;
   display: flex;
   align-items: center;
   justify-content: center;
   /* Добавьте стили для блоков */
 }
 
-.block.null-block{
-}
+.block.null-block {}
 
 
 /* Добавьте стили для различных разрешений экрана и макетов */
@@ -39,18 +41,18 @@
     grid-template-columns: repeat(3, 1fr); // 3 колонки при ширине < 1000px
   }
 
-  .container.three-cols{
-          grid-template-columns: repeat(3, 1fr); // Изначально 4 колонки
+  .container.three-cols {
+    grid-template-columns: repeat(3, 1fr); // Изначально 4 колонки
 
   }
 
 }
 
 @media (max-width: 900px) {
- 
 
-  .container.three-cols{
-          grid-template-columns: repeat(2, 1fr); // Изначально 4 колонки
+
+  .container.three-cols {
+    grid-template-columns: repeat(2, 1fr); // Изначально 4 колонки
 
   }
 
@@ -70,24 +72,23 @@
 
     padding-right: 6%;
 
-    grid-template-rows: 1fr;
-    grid-auto-flow: column;
-  overflow-x: scroll;
-  overflow-y: hidden;
-  display: grid;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    display: grid;
 
-  &::-webkit-scrollbar{
-    display: none;
-  }
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
   }
-  .block{
-    width:    13em;
-;
+
+  .block {
+    width: 13em;
+    ;
   }
-  .multirows-mobile.container{
+
+  .multirows-mobile.container {
     grid-template-rows: 1fr 1fr;
 
   }
 }
-

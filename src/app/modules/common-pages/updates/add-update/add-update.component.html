@@ -10,7 +10,7 @@
       ></svg-icon>
     </div>
     <div class="header">
-      <h1>Создание обновления</h1>
+      <h1>Создание новости</h1>
       <div class="navigation">
         <div class="nav-step-circles-block">
           <div class="nav-step-block" *ngFor="let step of steps; let i = index">
@@ -70,56 +70,56 @@
         </div>
         <div class="step-container" *ngIf="currentStep === 0">
           <div class="form-control">
-            <h3>Полное название обновления</h3>
+            <h3>Полное название новости*</h3>
             <app-usual-input
               [inputRequired]="true"
               [max]="200"
               id="name"
               formControlName="name"
-              [placeholder]="'Придумайте полное название обновления'"
+              [placeholder]="'Придумайте полное название новости'"
               required
               [value]="form.get('name')?.value"
               [error]="
                 form.get('name')?.invalid &&
                 (form.get('name')?.dirty || form.get('name')?.touched)
-                  ? 'Полное название обновления должно содержать от 4 до 200 символов'
+                  ? 'Полное название новости должно содержать от 4 до 200 символов'
                   : ''
               "
             ></app-usual-input>
           </div>
           <div class="form-control">
-            <h3>Сокращенное название обновления</h3>
+            <h3>Сокращенное название новости*</h3>
             <app-usual-input
               [inputRequired]="true"
               [max]="50"
               formControlName="shortName"
               [placeholder]="
-                'Придумайте сокращенное название обновления для уведомления кулинаров'
+                'Придумайте сокращенное название новости для уведомления кулинаров'
               "
               required
               [value]="form.get('shortName')?.value"
               [error]="
                 form.get('shortName')?.invalid &&
                 (form.get('shortName')?.dirty || form.get('shortName')?.touched)
-                  ? 'Сокращенное название обновления должно содержать от 4 до 50 символов'
+                  ? 'Сокращенное название новости должно содержать от 4 до 50 символов'
                   : ''
               "
             ></app-usual-input>
           </div>
           <div class="form-control">
-            <h3>Описание обновления</h3>
+            <h3>Описание новости</h3>
             <app-usual-input
               [inputType]="'textarea'"
               [max]="1000"
               formControlName="description"
-              [placeholder]="'Опишите обновление'"
+              [placeholder]="'Опишите новости'"
               [value]="form.get('description')?.value"
             ></app-usual-input>
           </div>
         </div>
         <div class="step-container" *ngIf="currentStep === 1">
           <div class="form-control">
-            <h3>Статус обновления</h3>
+            <h3>Статус новости*</h3>
 
             <div>
               <app-autocomplete
@@ -127,9 +127,7 @@
                 [clearValueOnBlur]="true"
                 (anyEmitter)="addStatus($event)"
                 [anyData]="updateStatuses"
-                [placeholder]="
-                  'Выберите соответствующий статус для обновления*'
-                "
+                [placeholder]="'Выберите соответствующий статус для новости'"
               ></app-autocomplete>
             </div>
 
@@ -143,6 +141,71 @@
                     [src]="'/assets/images/svg/close.svg'"
                   ></svg-icon
                 ></span>
+              </div>
+            </div>
+
+            <div class="form-control">
+              <h3>Уведомления*</h3>
+
+              <div>
+                <app-autocomplete
+                  [disabled]="this.form.get('context')?.value !== null"
+                  [clearValueOnBlur]="true"
+                  (anyEmitter)="addContext($event)"
+                  [anyData]="context"
+                  [placeholder]="
+                    'Выберите, кого нужно уведомить о нововведениях'
+                  "
+                ></app-autocomplete>
+              </div>
+
+              <div class="tags" *ngIf="this.form.get('context')?.value">
+                <div class="tag">
+                  {{ showContext }}
+                  <span (click)="removeContext()" class="remove-tag"
+                    ><svg-icon
+                      [applyClass]="true"
+                      class="remove-tag-svg"
+                      [src]="'/assets/images/svg/close.svg'"
+                    ></svg-icon
+                  ></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-control">
+              <h3>Теги</h3>
+
+              <div class="tag-form">
+                <app-autocomplete
+                  [value]="form.value.tag"
+                  (tagEmitter)="form.get('tag')?.setValue($event)"
+                  [context]="'tags'"
+                  [startOnTyping]="true"
+                  formControlName="tag"
+                  [placeholder]="'Тег (найдите по поиску или придумайте новый)'"
+                ></app-autocomplete>
+                <app-button
+                  [text]="'Добавить тег'"
+                  (click)="this.form.value.tag ? addTag() : null"
+                  [disabled]="form.get('tag')?.value"
+                  [style]="'filled'"
+                  [color]="'prim'"
+                  [rounded]="true"
+                />
+              </div>
+
+              <div class="tags">
+                <div class="tag" *ngFor="let tag of tags">
+                  {{ tag }}
+                  <span (click)="removeTag(tag)" class="remove-tag"
+                    ><svg-icon
+                      [applyClass]="true"
+                      class="remove-tag-svg"
+                      [src]="'/assets/images/svg/close.svg'"
+                    ></svg-icon
+                  ></span>
+                </div>
               </div>
             </div>
 
@@ -166,54 +229,8 @@
           </div>
 
           <div class="form-control">
-            <h3>Уведомления</h3>
-
-            <div>
-              <app-autocomplete
-                [disabled]="this.form.get('context')?.value !== null"
-                [clearValueOnBlur]="true"
-                (anyEmitter)="addContext($event)"
-                [anyData]="context"
-                [placeholder]="'Выберите, кого нужно уведомить об обновлении*'"
-              ></app-autocomplete>
-            </div>
-
-            <div class="tags" *ngIf="this.form.get('context')?.value">
-              <div class="tag">
-                {{ this.form.get("context")?.value }}
-                <span (click)="removeContext()" class="remove-tag"
-                  ><svg-icon
-                    [applyClass]="true"
-                    class="remove-tag-svg"
-                    [src]="'/assets/images/svg/close.svg'"
-                  ></svg-icon
-                ></span>
-              </div>
-            </div>
-          </div>
-          <div class="form-control">
             <h3>Доступ</h3>
 
-            <div class="сheckblock">
-              <button
-                class="checkbox"
-                (click)="
-                  this.form
-                    .get('global')
-                    ?.setValue(!this.form.get('global')?.value)
-                "
-              >
-                <svg-icon
-                  *ngIf="this.form.get('global')?.value === true"
-                  class="checkbox-icon"
-                  [applyClass]="true"
-                  [src]="'/assets/images/svg/checkbox.svg'"
-                ></svg-icon>
-              </button>
-              <p>
-                Глобальное обновление (не показывать автора записи обновления)
-              </p>
-            </div>
             <div class="сheckblock">
               <button
                 class="checkbox"
@@ -235,43 +252,9 @@
                 ></svg-icon>
               </button>
               <p>
-                Показывать обновление только модераторам и администраторам на
-                странице обновлений
+                Показывать новость только модераторам и администраторам на
+                странице новостей
               </p>
-            </div>
-          </div>
-          <div class="form-control">
-            <h3>Теги</h3>
-
-            <div class="tag-form">
-              <app-usual-input
-                (enterEmitter)="addTag()"
-                [max]="30"
-                [value]="this.form.value.tag || ''"
-                formControlName="tag"
-                [placeholder]="'Название тега'"
-              />
-              <app-button
-                [text]="'Добавить тег'"
-                (click)="addTag()"
-                [disabled]="form.get('tag')?.value"
-                [style]="'filled'"
-                [color]="'prim'"
-                [rounded]="true"
-              />
-            </div>
-
-            <div class="tags">
-              <div class="tag" *ngFor="let tag of tags">
-                {{ tag }}
-                <span (click)="removeTag(tag)" class="remove-tag"
-                  ><svg-icon
-                    [applyClass]="true"
-                    class="remove-tag-svg"
-                    [src]="'/assets/images/svg/close.svg'"
-                  ></svg-icon
-                ></span>
-              </div>
             </div>
           </div>
         </div>
@@ -280,11 +263,11 @@
           <div class="buttons">
             <div class="button">
               <p>
-                Если вы хотите, чтобы обновление увидели все кулинары,
+                Если вы хотите, чтобы новость увидели все кулинары,
                 {{
                   currentUser.role === "moderator"
-                    ? "отправьте его на одобрение"
-                    : "опубликуйте его"
+                    ? "отправьте ее на одобрение"
+                    : "опубликуйте ее"
                 }}.
               </p>
               <app-button
@@ -299,9 +282,9 @@
 
             <div class="button">
               <p>
-                Если вы передумали создавать обновление, просто отмените его
+                Если вы передумали создавать новость, просто отмените ее
                 создание. Все данные придется вводить повторно, если вы захотите
-                создать его снова.
+                создать ее снова.
               </p>
 
               <app-button
@@ -358,7 +341,7 @@
   [type]="'yesOrNo'"
   (resultEmit)="handleCloseModal($event)"
   [buttonsText]="['Да', 'Нет']"
-  [description]="'Вы уверены, что не хотите сохранить обновление?'"
+  [description]="'Вы уверены, что не хотите сохранить новость?'"
 >
 </app-modal>
 
@@ -366,14 +349,14 @@
   @modal
   *ngIf="saveModal"
   [style]="'prim'"
-  [title]="'Создание обновления'"
+  [title]="'Создание новости'"
   [type]="'yesOrNo'"
   (resultEmit)="handleSaveModal($event)"
   [buttonsText]="['Да', 'Нет']"
   [description]="
-    'Вы уверены, что хотите создать обновление' +
+    'Вы уверены, что хотите создать новость' +
     (currentUser.role === 'moderator'
-      ? ' и отправить его на рассмотрение администратору'
+      ? ' и отправить ее на рассмотрение администратору'
       : '') +
     '?'
   "
@@ -383,27 +366,15 @@
   @modal
   *ngIf="successModal"
   [style]="'sec'"
-  [title]="'Обновление успешно создано'"
+  [title]="'Новость успешно создана'"
   [type]="'Ok'"
   (resultEmit)="handleSuccessModal()"
   [buttonsText]="['Хорошо']"
   [description]="
-    'Обновление успешно создано' +
+    'Новость успешно создана' +
     (currentUser.role === 'moderator'
-      ? ' и отправлено администратору на рассмотрение'
+      ? ' и отправлена администратору на рассмотрение'
       : '')
   "
 ></app-modal>
-<app-modal
-  @modal
-  [style]="'await'"
-  [type]="'Ok'"
-  [noButtons]="true"
-  [style]="'sec'"
-  [title]="'Подождите...'"
-  [type]="'Ok'"
-  [description]="
-    'Загружаем данные о новом обновлении... Совсем скоро оно будет готово...'
-  "
-  *ngIf="awaitModalShow"
-></app-modal>
+<app-modal @modal [style]="'await'" *ngIf="awaitModalShow"></app-modal>

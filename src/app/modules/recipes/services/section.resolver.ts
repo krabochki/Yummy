@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
 import { EMPTY, Observable, of } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { SectionService } from './section.service';
 import { ISection } from '../models/categories';
 
@@ -20,22 +20,19 @@ export class SectionResolver implements Resolve<ISection> {
       return EMPTY;
     }
 
-    return this.sectionService.sections$.pipe(
-      switchMap((sections: ISection[]) => {
-        const foundSection: ISection | undefined = sections.find(
-          (section) => section.id === sectionId,
-        );
-        if (foundSection) {
-          return of(foundSection);
-        } else {
+      return this.sectionService.getSection(sectionId).pipe(
+        map((section: ISection) => {
+          if (section) {
+            return section;
+          } else {
+            throw new Error('Секция не найдена');
+          }
+        }),
+        catchError(() => {
           this.router.navigate(['/sections']);
-          throw new Error('Секция не найдена');
-        }
-      }),
-      catchError(() => {
-        this.router.navigate(['/sections']);
-        return EMPTY;
-      }),
-    );
+          return EMPTY;
+        }),
+      );
+
   }
 }

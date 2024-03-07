@@ -15,9 +15,10 @@
     <div class="blocks">
       <div class="block green" *ngIf="currentUser.role === 'admin'">
         <div class="content">
-          <span>{{ updatesToReview.length }} </span>
+          <span>{{ updatesLength === -1 ? '?' : updatesLength }} </span>
           <p>
-            <span appPluralRu="" [value]="updatesToReview.length" [arVariants]="updateArVariants"></span>
+            <span appPluralRu="" [value]="updatesLength === -1 ? 3 : updatesLength"
+              [arVariants]="updateArVariants"></span>
             на проверку
           </p>
         </div>
@@ -26,9 +27,10 @@
       </div>
       <div class="block purple">
         <div class="content">
-          <span>{{ awaitingRecipes.length }} </span>
+          <span>{{ recipesLength === -1 ? '?' : recipesLength }} </span>
           <p>
-            <span appPluralRu="" [value]="awaitingRecipes.length" [arVariants]="recipeArVariants"></span>
+            <span appPluralRu="" [value]="recipesLength === -1 ? 5 : recipesLength"
+              [arVariants]="recipeArVariants"></span>
             на проверку
           </p>
         </div>
@@ -37,9 +39,10 @@
       </div>
       <div class="block orange">
         <div class="content">
-          <span>{{ reports.length }}</span>
+          <span>{{ reportsLength === -1 ? '?' : reportsLength }}</span>
           <p>
-            <span appPluralRu="" [value]="reports.length" [arVariants]="reportsArVariants"></span>
+            <span appPluralRu="" [value]="reportsLength === -1 ? 3 : reportsLength"
+              [arVariants]="reportsArVariants"></span>
             на комментарии
           </p>
         </div>
@@ -48,9 +51,10 @@
       </div>
       <div class="block blue">
         <div class="content">
-          <span>{{ categoriesForCheck.length }}</span>
+          <span>{{ categoriesLength === -1 ? '?' : categoriesLength }}</span>
           <p>
-            <span appPluralRu="" [value]="categoriesForCheck.length" [arVariants]="categoriesArVariants"></span>
+            <span appPluralRu="" [value]="categoriesLength === -1 ? 3 : categoriesLength"
+              [arVariants]="categoriesArVariants"></span>
             на проверку
           </p>
         </div>
@@ -59,13 +63,27 @@
       </div>
       <div class="block red">
         <div class="content">
-          <span>{{ allAwaitingIngredients.length }}</span>
+          <span>{{ ingredientsLength === -1 ? '?' : ingredientsLength }}</span>
           <p>
-            <span appPluralRu="" [value]="allAwaitingIngredients.length" [arVariants]="ingredientsArVariants"></span>
+            <span appPluralRu="" [value]="ingredientsLength === -1 ? 3 : ingredientsLength"
+              [arVariants]="ingredientsArVariants"></span>
             на проверку
           </p>
         </div>
         <svg-icon [applyClass]="true" class="icon" [src]="'/assets/images/svg/admin-panel/ingredient.svg'">
+        </svg-icon>
+      </div>
+
+      <div class="block yellow">
+        <div class="content">
+          <span>{{ modetatorsLength === -1 ? '?' : modetatorsLength }}</span>
+          <p>
+            <span appPluralRu="" [value]="modetatorsLength === -1 ? 3 : modetatorsLength"
+              [arVariants]="moderatorsArVariants"></span>
+
+          </p>
+        </div>
+        <svg-icon [applyClass]="true" class="icon" [src]="'/assets/images/svg/moder.svg'">
         </svg-icon>
       </div>
     </div>
@@ -73,349 +91,45 @@
     <div class="view">
       <div class="about">
         <ul>
-          <li [ngClass]="{ active: currentView === 'recipes' }" class="purple" (click)="setView('recipes')">
-            Рецепты ({{ awaitingRecipes.length }})
+          <li class="purple" routerLink="/control-dashboard/recipes">
+            Рецепты ({{ recipesLength === -1 ? "..." : recipesLength }})
           </li>
-          <li [ngClass]="{ active: currentView === 'categories' }" class="blue" (click)="setView('categories')">
-            Категории ({{ categoriesForCheck.length }})
+          <li class="blue" routerLink="/control-dashboard/categories">
+            Категории ({{ categoriesLength === -1 ? "..." : categoriesLength }})
           </li>
 
-          <li [ngClass]="{ active: currentView === 'reports' }" class="orange" (click)="setView('reports')">
-            Жалобы ({{ allReports.length }})
+          <li routerLink="/control-dashboard/reports" class="orange">
+            Жалобы ({{ reportsLength === -1 ? "..." : reportsLength }})
           </li>
-          <li [ngClass]="{ active: currentView === 'ingredients' }" class="red" (click)="setView('ingredients')">
-            Ингредиенты ({{ allAwaitingIngredients.length }})
+          <li class="red" routerLink="/control-dashboard/ingredients" >
+            Ингредиенты ({{ ingredientsLength === -1 ? "..." : ingredientsLength }})
           </li>
-          <li [ngClass]="{ active: currentView === 'updates' }" class="green" *ngIf="currentUser.role === 'admin'"
-            (click)="setView('updates')">
-            Обновления ({{ updatesToReview.length }})
+          <li class="green" *ngIf="currentUser.role === 'admin'" routerLink="/control-dashboard/updates">
+            Новости ({{ updatesLength === -1 ? "..." : updatesLength }})
+          </li>
+
+          <li class="yellow" *ngIf="currentUser.role === 'admin'" routerLink="/control-dashboard/moderators">
+            Модераторы ({{ modetatorsLength === -1 ? "..." : modetatorsLength }})
           </li>
         </ul>
       </div>
       <div class="content">
         <div class="nothing">
-          <p>Пожалуйста, не забывайте о правилах <a routerLink="/user-policy">пользовательского соглашения</a> при
-            работе в панели управления</p>
+          <p>
+            Помните о правилах
+            <a routerLink="/user-policy">пользовательского соглашения</a> при
+            работе в панели управления
+          </p>
           <div class="cook-icon">
             <svg-icon [src]="'/assets/images/svg/look-cook.svg'" [applyClass]="true" class="look-cook" />
           </div>
         </div>
       </div>
 
-      <div class="reports-block">
-        <ng-container *ngIf="!nothing">
-          <ng-container [ngSwitch]="currentView">
-            <ng-container *ngSwitchCase="'reports'">
-              <div class="reports">
-                <div class="report" *ngFor="let report of reports">
-                  <div class="report-header">
-                    <a class="link report-recipe" [routerLink]="
-                      '/recipes/list/' + getRecipe(report.recipe).id
-                    ">
-                      {{ getRecipe(report.recipe).name }}
-                    </a>
-                    <p class="report-date">
-                      Жалоба подана {{ report.date | timePast | lowercase }}
-                    </p>
-                  </div>
-                  <div class="report-users">
-                    <p class="reporter">
-                      Пожаловался:
-                      <a class="report-user link" [routerLink]="
-                        '/cooks/list/' + getUser(report.reporter).id
-                      ">{{
-                        getUser(report.reporter).fullName !== ""
-                        ? getUser(report.reporter).fullName
-                        : getUser(report.reporter).username
-                        }}</a>
-                    </p>
-                    <p class="reporter">
-                      Комментатор:
-                      <a class="report-user link" [routerLink]="
-                        '/cooks/list/' + getAuthorOfReportedComment(report).id
-                      ">
-                        {{
-                        getAuthorOfReportedComment(report).fullName !== ""
-                        ? getAuthorOfReportedComment(report).fullName
-                        : "@" + getAuthorOfReportedComment(report).username
-                        }}</a>
-                    </p>
-                  </div>
-                  <p class="report-content">
-                    Содержание комментария: «{{
-                    getComment(report.comment, getRecipe(report.recipe)).text
-                    }}»
-                  </p>
-                  <div class="report-buttons">
-                    <app-button [text]="'Оставить'" (click)="reportActionClick('dismiss', report)"
-                      [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
-                    <app-button [text]="'Удалить'" (click)="reportActionClick('approve', report)"
-                      [color]="currentUser.role" [style]="'filled-min'" [rounded]="true"></app-button>
-                  </div>
-                </div>
-              </div>
-            </ng-container>
-            <ng-container *ngSwitchCase="'updates'">
-              <div class="reports">
-                <div class="report" *ngFor="let update of showedUpdatesToReview">
-                  <div class="report-header">
-                    <a class="report-recipe" [class.link]="update.link" [routerLink]="update.link || null"
-                      [style]="update.link ? null : 'cursor:default'">
-                      {{ update.fullName }}
-                    </a>
-                    <p class="report-date">
-                      Обновление отправлено
-                      {{ getDate(update.date).toString() | timePast | lowercase }}
-                    </p>
-                  </div>
-                  <div class="description">
-                    <p>Статус: {{ update.state }}</p>
 
-                    <p>Описание: {{ update.description }}</p>
-
-                    <div class="tags">
-                      <div class="tag" *ngFor="let tag of update.tags">
-                        {{ tag }}
-                      </div>
-                    </div>
-
-                    <p class="toNotify">*{{ update.context }}</p>
-                  </div>
-                  <div class="report-users" *ngIf="update.author">
-                    <p class="reporter">
-                      Автор:
-                      <a class="report-user link" [routerLink]="'/cooks/list/' + update.author">{{
-                        getName(getUser(update.author)) }}</a>
-                    </p>
-                  </div>
-
-                  <div class="report-buttons">
-                    <app-button [text]="'Принять'" (click)="updateToReviewActionClick('approve', update)"
-                      [color]="'admin'" [style]="'filled'" [rounded]="true"></app-button>
-                    <app-button [text]="'Отклонить'" (click)="updateToReviewActionClick('dismiss', update)"
-                      [color]="'admin'" [style]="'filled-min'" [rounded]="true"></app-button>
-                  </div>
-                </div>
-              </div>
-              <app-button class="more-reports-button" [text]="'Загрузить еще...'" (click)="loadMoreUpdates()"
-                *ngIf="updatesToReview.length > showedUpdatesToReview.length" [rounded]="true" [style]="'outlined'"
-                [color]="'prim'"></app-button>
-            </ng-container>
-            <ng-container *ngSwitchCase="'recipes'">
-              <div class="reports">
-                <div class="report" *ngFor="let recipe of awaitingRecipesToShow">
-                  <div class="report-header">
-                    <a class="report-recipe link" [routerLink]="'/recipes/list/' + recipe.id">
-                      {{ recipe.name }}
-                    </a>
-                    <p class="report-date">
-                      Рецепт отправлен
-                      {{
-                      getDate(recipe.publicationDate).toString()
-                      | timePast
-                      | lowercase
-                      }}
-                    </p>
-                  </div>
-                  <div class="report-users">
-                    <p class="reporter">
-                      Автор:
-                      <a class="report-user link" [routerLink]="'/cooks/list/' + recipe.authorId">{{
-                        getName(getUser(recipe.authorId)) }}</a>
-                    </p>
-                  </div>
-                  <div class="recipe-image" [style.background-image]="
-                    'url(' + getRecipeImageSupabaseLink(recipe.mainImage) + ')'
-                  ">
-
-                  </div>
-
-                  <div class="report-buttons">
-                    <app-button [text]="'Принять'" (click)="awaitingRecipeActionClick('approve', recipe)"
-                      [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
-                    <app-button [text]="'Отклонить'" (click)="awaitingRecipeActionClick('dismiss', recipe)"
-                      (click)="dismissRecipeModalShow = true" [color]="currentUser.role" [style]="'filled-min'"
-                      [rounded]="true"></app-button>
-                  </div>
-                </div>
-              </div>
-              <app-button class="more-reports-button" [text]="'Загрузить еще...'" (click)="loadMoreAwaitingRecipes()"
-                *ngIf="awaitingRecipes.length > awaitingRecipesToShow.length" [rounded]="true" [style]="'outlined'"
-                [color]="'prim'"></app-button>
-            </ng-container>
-            <ng-container *ngSwitchCase="'ingredients'">
-              <div class="reports">
-                <div class="report" *ngFor="let ingredient of showedAwaitingIngredients">
-                  <div class="report-header">
-                    <a class="report-recipe link" [routerLink]="'/ingredients/list/' + ingredient.id">
-                      {{ ingredient.name }}
-                    </a>
-                    <p class="report-date" *ngIf="ingredient.sendDate">
-                      Ингредиент отправлен
-                      {{ ingredient.sendDate | timePast | lowercase }}
-                    </p>
-                  </div>
-                  <div class="report-users" *ngIf="ingredient.author">
-                    <p class="reporter ">
-                      Автор:
-                      <a class="report-user link" [routerLink]="
-                        '/cooks/list/' + getUser(ingredient.author).id
-                      ">{{ getName(getUser(ingredient.author)) }}</a>
-                    </p>
-                  </div>
-
-                  <div class="recipe-image" [style.background-image]="
-                                      'url(' + getIngredientImageSupabaseLink(ingredient.image) + ')'
-                                    ">
-
-                    <p class="caption" *ngIf="!ingredient.image">Ингредиент<br>«{{ingredient.name}}»</p>
-
-                  </div>
-
-                  <div class="report-buttons">
-                    <app-button (click)="
-                      awaitingIngredientActionClick('approve', ingredient)
-                    " [text]="'Принять'" [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
-                    <app-button (click)="
-                      awaitingIngredientActionClick('dismiss', ingredient)
-                    " [text]="'Отклонить'" [color]="currentUser.role" [style]="'filled-min'"
-                      [rounded]="true"></app-button>
-                  </div>
-                </div>
-              </div>
-              <app-button class="more-reports-button" [text]="'Загрузить еще...'"
-                (click)="loadMoreAwaitingIngredients()" *ngIf="
-                allAwaitingIngredients.length > showedAwaitingIngredients.length
-              " [rounded]="true" [style]="'outlined'" [color]="'prim'"></app-button>
-            </ng-container>
-            <ng-container *ngSwitchCase="'categories'">
-              <div class="reports">
-                <div class="report" *ngFor="let category of categoriesForCheckToShow">
-                  <div class="report-header">
-                    <a class="report-recipe not-link">
-                      {{ category.name }}
-                    </a>
-                    <p class="report-date">
-                      Категория отправлена
-                      {{ category.sendDate | timePast | lowercase }}
-                    </p>
-                  </div>
-                  <div class="report-users">
-                    <p class="reporter">
-                      Создатель:
-                      <a class="report-user link" [routerLink]="
-                        '/cooks/list/' + getUser(category.authorId).id
-                      ">{{
-                        getUser(category.authorId).fullName !== ""
-                        ? getUser(category.authorId).fullName
-                        : getUser(category.authorId).username
-                        }}</a>
-                    </p>
-                    <p>
-                      Секция:
-                      <a [routerLink]="
-                        '/sections/list/' + getSection(category.id).id
-                      " class="report-user link">{{ getSection(category.id).name }}
-                      </a>
-                    </p>
-                  </div>
-                  <div class="category-image" [style.background-image]="
-                    'url(' +
-                    (this.category.photo
-                      ? downloadCategoryPicFromSupabase(this.category.photo)
-                      : categoryPlaceholder) +
-                    ')'
-                  ">
-                    <p class="caption" *ngIf="!this.category.photo">Категория<br>«{{category.name}}»</p>
-
-                  </div>
-                  <div class="report-buttons">
-                    <app-button [text]="'Принять'" (click)="categoryActionClick('approve', category)"
-                      [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
-                    <app-button [text]="'Отклонить'" (click)="categoryActionClick('dismiss', category)"
-                      [color]="currentUser.role" [style]="'filled-min'" [rounded]="true"></app-button>
-                  </div>
-                </div>
-              </div>
-              <app-button class="more-reports-button" [text]="'Загрузить еще...'" (click)="loadMoreCategories()" *ngIf="
-                categoriesForCheck.length > categoriesForCheckToShow.length
-              " [rounded]="true" [style]="'outlined'" [color]="'prim'"></app-button>
-            </ng-container>
-          </ng-container>
-        </ng-container>
-      </div>
     </div>
 
-    <div class="common">
-      <div class="head margin" [ngClass]="{ triple: currentUser.role === 'admin' }">
-        <section *ngIf="currentUser.role === 'admin'">
-          <button class="head-btn" (click)="
-              openGroup === 'moders'
-                ? (openGroup = 'hide')
-                : (openGroup = 'moders')
-            " [ngClass]="{ active: openGroup === 'moders' }">
-            <svg-icon [applyClass]="true" class="icon" [src]="'/assets/images/svg/moder.svg'" />
 
-            Модераторы
-          </button>
-        </section>
-        <section>
-          <button class="head-btn" (click)="
-              openGroup === 'groups'
-                ? (openGroup = 'hide')
-                : (openGroup = 'groups')
-            " [ngClass]="{ active: openGroup === 'groups' }">
-            <svg-icon [applyClass]="true" class="icon" [src]="'/assets/images/svg/grocery.svg'" />
-            Группы ингредиентов
-          </button>
-        </section>
-        <section>
-          <button class="head-btn" (click)="
-              openGroup === 'sections'
-                ? (openGroup = 'hide')
-                : (openGroup = 'sections')
-            " [ngClass]="{ active: openGroup === 'sections' }">
-            <svg-icon [applyClass]="true" class="icon" [src]="'/assets/images/svg/sections.svg'" />Разделы категорий
-          </button>
-        </section>
-      </div>
-
-      <ng-container *ngIf="openGroup !== 'hide'">
-        <div [ngSwitch]="openGroup" @height>
-          <div *ngSwitchCase="'moders'">
-            <div class="users margin">
-              <app-users-list [adminpanel]="true" (demoteClick)="demoteActionClick($event)"
-                [users]="managers"></app-users-list>
-            </div>
-          </div>
-          <div *ngSwitchCase="'sections'">
-            <div *ngIf="openGroup === 'sections'" class="users">
-              <app-button class="button" [text]="'Создать раздел'" [icon]="'sections'"
-                (click)="sectionCreatingMode = true" [color]="currentUser.role" [style]="'filled'"
-                [rounded]="true"></app-button>
-              <app-vertical-category-list [moreRowsForMobile]="2" [showRecipesNumber]="true" [context]="'section'"
-                [categories]="sectionsToShow"></app-vertical-category-list>
-
-              <app-button class="more-reports-button" [text]="'Загрузить еще...'" (click)="loadMoreSections()"
-                *ngIf="sections.length > sectionsToShow.length" [rounded]="true" [style]="'outlined'"
-                [color]="'prim'"></app-button>
-            </div>
-          </div>
-          <div *ngSwitchCase="'groups'">
-            <div class="users">
-              <app-button class="button" [icon]="'grocery'" [text]="'Создать группу'" (click)="groupCreatingMode = true"
-                [color]="currentUser.role" [style]="'filled'" [rounded]="true"></app-button>
-              <app-ingredients-vertical-list [context]="'group'"
-                [ingredients]="showedGroups"></app-ingredients-vertical-list>
-
-              <app-button class="more-reports-button" [text]="'Загрузить еще...'" (click)="loadMoreGroups()"
-                *ngIf="groups.length > showedGroups.length" [rounded]="true" [style]="'outlined'"
-                [color]="'prim'"></app-button>
-            </div>
-          </div>
-        </div>
-      </ng-container>
-    </div>
 
     <div class="about-page">
       <h3>Подробнее о панели управления</h3>
@@ -452,103 +166,3 @@
           <svg-icon [applyClass]="true" class="about-icon" [src]="'/assets/images/svg/admin-panel/about.svg'" />
         </div> -->
       </div>
-
-      <app-modal @modal *ngIf="reportCommentDismissModalShow" [style]="'sec'" [title]="'Оставить комментарий'"
-        [type]="'yesOrNo'" (resultEmit)="handleReportCommentDismissModal($event)" [buttonsText]="['Да', 'Отмена']"
-        [description]="'Ты действительно хочешь оставить этот комментарий?'"></app-modal>
-
-      <app-modal @modal *ngIf="successReportCommentDismissModalShow" [style]="'sec'" [title]="'Жалоба отклонена'"
-        [type]="'Ok'" (resultEmit)="handleSuccessReportCommentDismissModal()" [buttonsText]="['Хорошо']"
-        [description]="'Жалоба на комментарий отклонена'"></app-modal>
-
-      <app-modal @modal *ngIf="reportCommentApproveModalShow" [style]="'prim'" [title]="'Удалить комментарий'"
-        [type]="'yesOrNo'" (resultEmit)="handleReportCommentApproveModal($event)" [buttonsText]="['Да', 'Отмена']"
-        [description]="'Ты действительно хочешь удалить этот комментарий?'"></app-modal>
-
-      <app-modal @modal *ngIf="successReportCommentApproveModalShow" [style]="'sec'" [title]="'Жалоба принята'"
-        [type]="'Ok'" (resultEmit)="handleSuccessReportCommentApproveModal()" [buttonsText]="['Хорошо']"
-        [description]="'Жалоба на комментарий принята и комментарий удален'"></app-modal>
-
-      <app-modal @modal *ngIf="approveCategoryActionModalShow" [style]="'sec'" [title]="'Одобрение категории'"
-        [type]="'yesOrNo'" (resultEmit)="handleApproveCategoryModal($event)" [buttonsText]="['Да', 'Отмена']"
-        [description]="'Ты действительно хочешь одобрить эту категорию?'"></app-modal>
-
-      <app-modal @modal *ngIf="dismissCategoryActionModalShow" [style]="'prim'" [title]="'Отклонение категории'"
-        [type]="'yesOrNo'" (resultEmit)="handleDismissCategoryModal($event)" [buttonsText]="['Да', 'Отмена']"
-        [description]="'Ты действительно хочешь отклонить эту категорию?'"></app-modal>
-
-      <app-modal @modal *ngIf="successApproveCategoryModalShow" [style]="'sec'" [title]="'Категория одобрена'"
-        [type]="'Ok'" (resultEmit)="handleSuccessApproveCategoryModal()" [buttonsText]="['Хорошо']"
-        [description]="'Категория успешно одобрена и опубликована'"></app-modal>
-
-      <app-modal @modal *ngIf="successDismissCategoryModalShow" [style]="'sec'" [title]="'Категория одобрена'"
-        [type]="'Ok'" (resultEmit)="handleSuccessDismissCategoryModal()" [buttonsText]="['Хорошо']"
-        [description]="'Категория успешно отклонена'"></app-modal>
-
-      <app-modal @modal *ngIf="dismissRecipeModalShow" [style]="'prim'" [title]="'Отклонение рецепта'"
-        [type]="'yesOrNo'" (resultEmit)="handleDismissRecipeModal($event)" [buttonsText]="['Да', 'Нет']"
-        [description]="'Вы уверены, что хотите отклонить рецепт?'"></app-modal>
-
-      <app-modal @modal *ngIf="approveRecipeModalShow" [style]="'sec'" [title]="'Одобрение рецепта'" [type]="'yesOrNo'"
-        (resultEmit)="handleApproveRecipeModal($event)" [buttonsText]="['Да', 'Нет']"
-        [description]="'Вы уверены, что хотите одобрить рецепт?'"></app-modal>
-
-      <app-modal @modal *ngIf="dismissUpdateModalShow" [style]="'prim'" [title]="'Отклонение обновления'"
-        [type]="'yesOrNo'" (resultEmit)="handleDismissUpdateModal($event)" [buttonsText]="['Да', 'Нет']"
-        [description]="'Вы уверены, что хотите отклонить обновление?'"></app-modal>
-
-      <app-modal @modal *ngIf="approveUpdateModalShow" [style]="'sec'" [title]="'Одобрение обновления'"
-        [type]="'yesOrNo'" (resultEmit)="handleApproveUpdateModal($event)" [buttonsText]="['Да', 'Нет']"
-        [description]="'Вы уверены, что хотите одобрить обновление?'"></app-modal>
-
-      <app-modal @modal *ngIf="successRecipeActionModalShow" [style]="'sec'" [title]="
-          'Рецепт успешно ' +
-          (adminAction === 'approve' ? 'одобрен' : 'отклонен')
-        " [type]="'Ok'" (resultEmit)="handleSuccessRecipeActionModal()" [buttonsText]="['Хорошо']" [description]="
-          'Вы успешно ' +
-          (adminAction === 'approve' ? 'одобрили' : 'отклонили') +
-          ' этот рецепт'
-        "></app-modal>
-
-      <app-section-creating @modal (closeEmitter)="sectionCreatingMode = false" *ngIf="sectionCreatingMode"
-        style="z-index: 10; position: fixed"></app-section-creating>
-
-      <app-modal (resultEmit)="handleDemoteModal($event)" @modal *ngIf="demoteModalShow"
-        [title]="'Подтвердите действие'" [style]="'prim'" [type]="'yesOrNo'" [buttonsText]="['Да', 'Отмена']"
-        [description]="
-          'Вы уверены, что хотите разжаловать модератора ' +
-          getName(targetDemotedUser) +
-          '?'
-        "></app-modal>
-
-      <app-modal (resultEmit)="handleSuccessDemoteModal()" @modal *ngIf="demoteSuccessModalShow"
-        [title]="'Успешное разжалование'" [style]="'sec'" [type]="'Ok'" [buttonsText]="['Хорошо']" [description]="
-          'Вы успешно разжаловали модератора ' +
-          getName(targetDemotedUser) +
-          '. Теперь он является простым пользователем'
-        "></app-modal>
-
-      <app-modal (resultEmit)="handleIngredientModal($event)" @modal *ngIf="ingredientModalShow"
-        [title]="'Подтвердите действие'" [style]="'prim'" [type]="'yesOrNo'" [buttonsText]="['Да', 'Отмена']"
-        [description]="getIngredientModalDescription()" />
-
-      <app-modal (resultEmit)="handleSuccessIngredientModal()" @modal *ngIf="successIngredientModalShow"
-        [title]="'Успешное действие'" [style]="'sec'" [type]="'Ok'" [buttonsText]="['Хорошо']"
-        [description]="getSuccessIngredientModalDescription()" />
-
-      <app-group-creating @modal (closeEmitter)="groupCreatingMode = false" *ngIf="groupCreatingMode" />
-
-      <app-modal @modal *ngIf="successUpdateActionModalShow" [style]="'sec'" [title]="
-          'Обновление успешно ' +
-          (adminAction === 'approve' ? 'одобрено' : 'отклонено')
-        " [type]="'Ok'" (resultEmit)="handleSuccessUpdateActionModal()" [buttonsText]="['Хорошо']" [description]="
-          'Вы успешно ' +
-          (adminAction === 'approve' ? 'одобрили' : 'отклонили') +
-          ' это обновление'
-        "></app-modal>
-
-      <app-modal [noButtons]="true" [style]="'await'" *ngIf="loadingModal" [title]="'Подождите...'" @modal
-        [description]="'Выполняем операцию... Подождите немного...'" />
-    </div>
-  </div>
-</div>

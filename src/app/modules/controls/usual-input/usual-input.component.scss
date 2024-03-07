@@ -67,7 +67,7 @@ textarea {
 
   overflow-x: hidden;
   overflow-y: scroll;
-  border-top-right-radius: 0;border-bottom-right-radius: 0;  transition:  background-color 0.2s, height 0s ;
+    transition:  background-color 0.2s, height 0s ;
 
 
   &::-webkit-scrollbar-corner {
@@ -75,21 +75,14 @@ textarea {
       border: none;
         
     }
+
+
 &::-webkit-resizer {
-  background: var(--scroll-thumb);
+  background: transparent;
 }
   &::-webkit-scrollbar {
     width: 12px;
 
-  }
-  &::-webkit-scrollbar-track {
-    border-radius: 20px;border-radius: 0;
-    background: var(--scroll-body);
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: var(--scroll-thumb);
-    border-radius: 20px;
-    border: 3px solid var(--scroll-body);
   }
 
 
@@ -100,7 +93,7 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  bottom:0.3em;right:0.05em;
+  bottom:0.2em;right:0em;
   pointer-events: none;
   .resizer-icon{
       display: flex;

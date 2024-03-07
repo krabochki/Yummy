@@ -23,7 +23,15 @@ import {
   planRoutes,
 } from './consts';
 import { NavigationEnd, Router } from '@angular/router';
-import { Subject, combineLatest, filter, takeUntil } from 'rxjs';
+import {
+  Observable,
+  Subject,
+  filter,
+  finalize,
+  forkJoin,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
@@ -35,18 +43,13 @@ import {
   notifies,
   popup,
 } from 'src/tools/animations';
-import { IPlan, nullPlan } from 'src/app/modules/planning/models/plan';
-import { PlanService } from 'src/app/modules/planning/services/plan-service';
-import { CalendarService } from 'src/app/modules/planning/services/calendar.service';
+import { PlanService } from 'src/app/modules/planning/services/plan.service';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { TimePastService } from 'ng-time-past-pipe';
-import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
-import { IngredientService } from 'src/app/modules/recipes/services/ingredient.service';
-import { CategoryService } from 'src/app/modules/recipes/services/category.service';
-import { supabase } from 'src/app/modules/controls/image/supabase-data';
-import { UpdatesService } from 'src/app/modules/common-pages/services/updates.service';
 import { addModalStyle, removeModalStyle } from 'src/tools/common';
-import { IRecipe, nullRecipe } from 'src/app/modules/recipes/models/recipes';
+import { ThemeService } from 'src/app/modules/common-pages/services/theme.service';
+import { ICalendarDbEvent } from 'src/app/modules/planning/models/calendar';
+import { Permission } from 'src/app/modules/user-pages/components/settings/conts';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -92,7 +95,6 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   creatingMode = false;
 
   currentUser: IUser = { ...nullUser };
-  users: IUser[] = [];
 
   exitModalShow = false;
   notifiesOpen: boolean = false;
@@ -101,8 +103,6 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   mobile: boolean = false;
 
   avatar: string = '';
-
-  private currentUserPlan: IPlan = nullPlan;
 
   noAccessModalShow: boolean = false;
 
@@ -140,45 +140,33 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     this.mobileMenuOpen = false;
   }
 
-  protected nightModeEmit(nightModeDisabled: boolean) {
-    if (!nightModeDisabled) {
-      document.body.classList.add('dark-mode');
-      localStorage.setItem('theme', 'dark');
-      const favicon = document.querySelector('#favicon');
-      favicon?.setAttribute('href', '/assets/images/chef-day.png');
-    } else {
-      document.body.classList.remove('dark-mode');
-      localStorage.setItem('theme', 'light');
-      const favicon = document.querySelector('#favicon');
-      favicon?.setAttribute('href', '/assets/images/chef-night.png');
-    }
+  protected nightModeEmit() {
+    this.themeService.changeTheme();
   } //переключ темной темы
 
   get notificationCount() {
     if (this.currentUser.notifications)
-      return this.currentUser.notifications.filter((n) => n.read === false)
+      return this.currentUser.notifications.filter((n) => !!n.read === false)
         .length;
     else return 0;
   }
 
   get showAdminpanel() {
-    return this.userService.getPermission('show-adminpanel', this.currentUser);
+    return this.userService.getPermission(
+      this.currentUser.limitations || [],
+      Permission.AdminPanelButton,
+    );
   }
 
-  private remindedAlready = false;
   constructor(
     public authService: AuthService,
-    private updateService: UpdatesService,
     public userService: UserService,
     private renderer: Renderer2,
+    private themeService: ThemeService,
     public cd: ChangeDetectorRef,
     private notifyService: NotificationService,
     private router: Router,
     private timePastService: TimePastService,
-    private recipeService: RecipeService,
-    private categoryService: CategoryService,
-    private ingredientService: IngredientService,
-    private calendarService: CalendarService,
     private planService: PlanService,
   ) {
     //узнаем на какой странице сейчас пользователь для навигации на мобильной версии
@@ -211,71 +199,36 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     } else {
       this.mobile = false;
     }
-    this.usersInit();
-    this.recipesInit();
+    this.currentUserInit();
+
+    this.sendDarkModeNotify();
+    this.remindersInit();
   }
 
-  getUser(userId: number) {
-    return this.users.find((u) => u.id === userId) || nullUser;
-  }
-  getComment(commentId: number, recipe: IRecipe) {
-    return recipe.comments.find((c) => c.id === commentId);
-  }
-  getRecipe(recipeId: number, recipes: IRecipe[]) {
-    return recipes.find((r) => r.id === recipeId) || nullRecipe;
-  }
+  private sendDarkModeNotify() {
+    if (
+      localStorage.getItem('theme') === (undefined || 'light') &&
+      (new Date().getHours() > 20 || new Date().getHours() < 6)
+    ) {
+      const todayDate = new Date();
+      const dd = String(todayDate.getDate()).padStart(2, '0');
+      const mm = String(todayDate.getMonth() + 1).padStart(2, '0'); //January is 0!
+      const yyyy = todayDate.getFullYear();
+      const today: string = mm + '/' + dd + '/' + yyyy;
+      if (today !== localStorage.getItem('last-darkmode-notify')) {
+        localStorage.setItem('last-darkmode-notify', today);
 
-  downloadUserpicFromSupabase(path: string) {
-    this.avatar = supabase.storage
-      .from('userpics')
-      .getPublicUrl(path).data.publicUrl;
-    this.cd.markForCheck();
-  }
-
-  recipesInit() {
-    combineLatest([
-      this.recipeService.recipes$,
-      this.ingredientService.ingredients$,
-      this.categoryService.categories$,
-      this.updateService.updates$,
-    ])
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe(([recipes, ingredients, categories, updates]) => {
-        if (this.currentUser.id > 0 && this.currentUser.role !== 'user') {
-          const awaitingRecipes = recipes.filter(
-            (r) => r.status === 'awaits',
-          ).length;
-          const reports = recipes.reduce((totalReports, recipe) => {
-                  
-            const availableReports = recipe.reports.filter(
-              (r) => {
-                r.reporter !== this.currentUser.id && this.getComment(r.comment,recipe)?.authorId!==this.currentUser.id
-              },
-            );
-            return (
-              totalReports + (availableReports ? availableReports.length : 0)
-            );
-          }, 0);
-
-          const awaitingIngredients = ingredients.filter(
-            (i) => i.status === 'awaits',
-          ).length;
-          const awaitingUpdates =
-            this.currentUser.role === 'admin'
-              ? updates.filter((i) => i.status === 'awaits').length
-              : 0;
-          const awaitingCategories = categories.filter(
-            (c) => c.status === 'awaits',
-          ).length;
-
-          this.adminActionsCount =
-            reports +
-            awaitingRecipes +
-            awaitingCategories +
-            awaitingIngredients +
-            awaitingUpdates;
-        }
-      });
+        const notification = this.notifyService.buildNotification(
+          'А в Yummy есть тёмная тема!',
+          'Если вам не комфортно смотреть на яркие и светлые цвета, то нажмите на это уведомление, чтобы включить темный режим. ',
+          'night-mode',
+          'without',
+          '',
+        );
+        notification.id = -100;
+        this.nightModePopupLifecycle(notification);
+      }
+    }
   }
 
   ngDoCheck(): void {
@@ -295,285 +248,266 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     this.headerHeightChange();
   }
 
-  planRemindersInit(plan: IPlan) {
-    let editUser = false;
-
-    const today = new Date();
-    const todayDay = today.getDate();
-
-    const result = new Date();
-    result.setDate(todayDay + 3); //текущая дата + следующие три дня
-    const eventsInFuture = plan.calendarEvents.filter((event) => {
-      return this.calendarService.eventInFuture(event);
-    }); //получаем все события в будущем
-    const eventsIn3Days = eventsInFuture.filter(
-      (e) => new Date(e.start) < result,
-    ); //получаем события в будущем только в следующие 3 дня
-
-    const currentEvents = plan.calendarEvents.filter((event) => {
-      return this.calendarService.eventIsNow(event); //события которые прошли
+  notifyForUpcomingEvents(events: ICalendarDbEvent[]) {
+    let counter = 0;
+    const eventTitles: string[] = events.map((event) => {
+      counter++;
+      const when = ` (начало ${this.timePastService
+        .timePast(event.start)
+        .toLowerCase()})`;
+      return (
+        'ㅤ' +
+        (events.length > 1 ? counter + ') ' : '') +
+        event.title.trim() +
+        when
+      );
     });
+    const eventString = eventTitles.join(', <br>');
+    const reminderText = `Хотим вас предупредить, что у вас запланирован${
+      events.length > 1 ? 'ы' : ''
+    } рецепт${
+      events.length > 1 ? 'ы' : ''
+    } на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению ${
+      events.length > 1 ? 'этих вкусных блюд' : 'этого вкусного блюда'
+    }.<br>Запланированны${events.length > 1 ? 'е' : 'й'} рецепт${
+      events.length > 1 ? 'ы' : ''
+    }:<br>${eventString}`;
+    const reminder: INotification = {
+      ...this.notifyService.buildNotification(
+        'Начало запланированного рецепта уже скоро!',
+        reminderText,
+        'warning',
+        'plan-reminder',
+        '/plan/calendar',
+      ),
+      notificationDate: this.shortTodayDate,
+    };
 
-    const currentUserNotifications = this.currentUser.notifications;
+    return reminder;
+  }
 
-    if (
-      this.userService.getPermission(
-        'start-of-planned-recipe',
-        this.currentUser,
-      )
-    ) {
-      if (currentEvents.length > 0) {
-        const shortTodayDate = today.toDateString(); //сегодняшняя дата без часов
+  shortTodayDate = new Date().toDateString();
 
-        currentEvents.forEach((event) => {
-          let alreadySentReminder = false; //прислано ли уже уведомление
+  notifyForStartedEvents(event: ICalendarDbEvent) {
+    return {
+      ...this.notifyService.buildNotification(
+        'Время начала запланированного рецепта настало!',
+        'Время начала запланированного вами рецепта «' +
+          event.title +
+          '» уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!',
+        'warning',
+        'plan-reminder-start',
+        '/plan/calendar',
+      ),
+      relatedId: Number(event.id),
+      notificationDate: this.shortTodayDate,
+    };
+  }
 
-          currentUserNotifications.forEach((notify) => {
-            if (
-              notify.context === 'plan-reminder-start' &&
-              notify.relatedId === event.id
-            )
-              alreadySentReminder = true; //если уже есть уведомление с типом напоминалка и прислано оно сегодня
-          });
-          if (!alreadySentReminder) {
-            const reminder: INotification = {
-              ...this.notifyService.buildNotification(
-                'Время начала запланированного рецепта настало!',
-                'Время начала запланированного вами рецепта «' +
-                  event.title +
-                  '» уже настало! Не забудьте проверить список ингредиентов и начните готовить это вкусное блюдо. Удачи!',
-                'warning',
-                'plan-reminder-start',
-                '/plan/calendar',
-              ),
-              relatedId: Number(event.id),
-              notificationDate: shortTodayDate,
-            };
-            this.notifyService.sendNotification(reminder, this.currentUser);
-          }
-        });
-      }
-    }
-
-    //если че то есть :
-    const shortTodayDate = today.toDateString(); //сегодняшняя дата без часов
-    let alreadySentReminder = false; //прислано ли уже уведомление
-    alreadySentReminder =
-      currentUserNotifications.find(
-        (n) =>
-          n.context === 'plan-reminder' &&
-          n.notificationDate === shortTodayDate,
-      ) !== undefined;
-
-    const old3DaysReminders = currentUserNotifications.filter(
-      (n) =>
-        n.context === 'plan-reminder' && n.notificationDate < shortTodayDate,
-    );
-    if (old3DaysReminders.length > 0) {
-      this.currentUser = {
-        ...{ ...this.currentUser },
-        notifications: this.currentUser.notifications.filter(
-          (n) =>
-            !(
-              n.context === 'plan-reminder' &&
-              n.notificationDate < shortTodayDate
-            ),
-        ),
-      };
-      editUser = true;
-    }
-
-    if (!alreadySentReminder && eventsIn3Days.length > 0) {
-      //если сегодня не напоминали
-
-      let counter = 0;
-      const eventTitles = eventsIn3Days.map((event) => {
-        counter++;
-        const when = ` (начало ${this.timePastService
-          .timePast(event.start)
-          .toLowerCase()})`;
-        return (
-          'ㅤ' +
-          (eventsIn3Days.length > 1 ? counter + ') ' : '') +
-          event.title.trim() +
-          when
-        );
-      });
-      const eventString = eventTitles.join(', <br>');
-      const reminderText = `Хотим вас предупредить, что у вас запланирован${
-        eventsIn3Days.length > 1 ? 'ы' : ''
-      } рецепт${
-        eventsIn3Days.length > 1 ? 'ы' : ''
-      } на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению ${
-        eventsIn3Days.length > 1 ? 'этих вкусных блюд' : 'этого вкусного блюда'
-      }.<br>Запланированны${eventsIn3Days.length > 1 ? 'е' : 'й'} рецепт${
-        eventsIn3Days.length > 1 ? 'ы' : ''
-      }:<br>${eventString}`;
-
-      const reminder = {
-        ...this.notifyService.buildNotification(
-          'Начало запланированного рецепта уже скоро!',
-          reminderText,
-          'warning',
-          'plan-reminder',
-          '/plan/calendar',
-        ),
-        notificationDate: shortTodayDate,
-      };
-
-      if (
-        this.userService.getPermission(
-          'planned-recipes-in-3-days',
-          this.currentUser,
-        )
-      ) {
-        //присылаем увед
-        this.notifyService.sendNotification(reminder, this.currentUser);
-      }
-    }
-
-    //очищаем напоминания о начале событий которые уже прошли
-    this.currentUser.notifications.forEach((n) => {
-      if (n.context === 'plan-reminder-start') {
-        const findedEvent = this.currentUserPlan.calendarEvents.find(
-          (e) => e.id === n.relatedId,
-        );
-        if (findedEvent) {
-          if (
-            (findedEvent.end && today > new Date(findedEvent.end)) ||
-            (!findedEvent.end &&
-              today.getDate() !== findedEvent.start.getDate())
-          ) {
-            editUser = true;
-            this.currentUser.notifications =
-              this.currentUser.notifications.filter(
-                (n) =>
-                  n.context !== 'plan-reminder-start' &&
-                  n.relatedId !== findedEvent.recipe,
-              );
-          }
-        } else {
-          editUser = true;
-          this.currentUser = {
-            ...this.currentUser,
-            notifications: this.currentUser.notifications.filter(
-              (notify) =>
-                !(
-                  notify.context === 'plan-reminder-start' && notify.id === n.id
+  startedEventsHandling(userId: number) {
+    this.planService
+      .getStartedEventsByUserId(userId)
+      .pipe(
+        tap((startedEvents: ICalendarDbEvent[]) => {
+          if (startedEvents.length) {
+            const reminders$: Observable<any>[] = [];
+            startedEvents.forEach((event) => {
+              reminders$.push(
+                this.notifyService.sendNotification(
+                  this.notifyForStartedEvents(event),
+                  userId,
+                  true,
                 ),
-            ),
-          };
-        }
-      }
-    });
-
-    if (editUser) this.updateUser(this.currentUser);
+              );
+            });
+            forkJoin(reminders$).subscribe();
+            // this.userService.getPermission 'start-of-planned-recipe',
+          }
+        }),
+      )
+      .subscribe();
   }
 
-  trackByFn(index: number, element: INotification) {
-    return element?.id;
+  upcomingEventsHandling(userId: number) {
+    this.planService
+      .getUpcomingEventsByUserId(userId)
+      .pipe(
+        tap((upcomingEvents: ICalendarDbEvent[]) => {
+          if (upcomingEvents.length) {
+            const reminder = this.notifyForUpcomingEvents(upcomingEvents);
+            //this.userService.getPermission 'planned-recipes-in-3-days',
+            this.notifyService
+              .sendNotification(reminder, userId, true)
+              .subscribe();
+          }
+        }),
+      )
+      .subscribe();
   }
+
+  deleteNotify(notifyId: number) {
+    return this.notifyService.deleteNotification(notifyId);
+  }
+
   loading = false;
+
   openNotifies() {
     if (!this.currentUser.id) {
       this.noAccessModalShow = true;
     } else this.notifiesOpen = true;
   }
 
-  async handleExitModal(answer: boolean) {
+  handleExitModal(answer: boolean) {
     this.exitModalShow = false;
 
     if (answer) {
       this.loading = true;
-      await this.authService.logout();
-      this.authService.setOffline(this.currentUser);
-      this.authService.logoutUser();
+      this.authService.logout().subscribe(() => {
+        this.authService.setCurrentUser(nullUser);
+      });
       this.router.navigateByUrl('/');
       this.mobileMenuOpen = false;
       this.loading = false;
     }
   }
 
+  popupsInit(user: IUser) {
+    if (user.id !== this.currentUser.id && this.currentUser.id > 0) {
+      this.popups = [];
+      this.popupHistory = [];
+    }
+
+    if (this.currentUser.notifications) {
+      const noChangesInNotifies =
+        this.currentUser.notifications.length === this.notifies.length &&
+        this.currentUser.notifications.every(
+          (element, index) => element === this.notifies[index],
+        );
+      if (this.currentUser.id !== 0 && !noChangesInNotifies) {
+        this.updateNotifies();
+      }
+      this.cd.markForCheck();
+    }
+  }
+
   currentUserInit() {
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
-      .subscribe((receivedUser) => {
-        if (receivedUser.avatarUrl) {
-          this.downloadUserpicFromSupabase(receivedUser.avatarUrl);
-        } else this.avatar = 'assets/images/userpic.png';
-        if (
-          receivedUser.id !== this.currentUser.id &&
-          this.currentUser.id > 0
-        ) {
-          this.popups = [];
-          this.popupHistory = [];
-        }
-        if (receivedUser.id !== 0) {
-          const findUser = this.users.find((u) => u.id === receivedUser.id);
-          if (findUser) {
-            this.currentUser = findUser;
-          }
-        } else this.currentUser = receivedUser;
+      .subscribe((user) => {
+        this.currentUser = user;
 
-        if (this.currentUser.notifications) {
-          const noChangesInNotifies =
-            this.currentUser.notifications.length === this.notifies.length &&
-            this.currentUser.notifications.every(
-              (element, index) => element === this.notifies[index],
-            );
-          if (this.currentUser.id !== 0 && !noChangesInNotifies) {
-            this.updateNotifies();
-          }
-          this.cd.markForCheck();
-        }
+        const avatar = user.image;
 
-        if (this.currentUser.id > 0)
-          this.planService.plans$
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe((receivedPlans: IPlan[]) => {
-              this.currentUserPlan = this.planService.getPlanByUser(
-                this.currentUser.id,
-                receivedPlans,
-              );
-
-              if (!this.remindedAlready)
-                if (this.currentUserPlan.id > 0) {
-                  this.planRemindersInit(this.currentUserPlan);
-                  this.remindedAlready = true;
+        if (user.id !== this.currentUser.id) {
+          if (avatar) {
+            this.userService
+              .downloadUserpic(avatar)
+              .pipe(
+                tap((blob) => {
+                  this.avatar = URL.createObjectURL(blob);
+                }),
+                finalize(() => {
                   this.cd.markForCheck();
-                }
-            });
+                }),
+              )
+              .subscribe();
+            // get userpic
+          }
+        } else {
+          this.avatar = '';
+        }
+        this.popupsInit(this.currentUser);
+        this.cd.markForCheck();
       });
   }
 
-  usersInit() {
-    this.userService.users$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((users) => {
-        this.users = users;
-        this.currentUserInit();
-      });
+  remindersInit() {
+    this.authService.getTokenUser().subscribe((user) => {
+      if (user.id) {
+        forkJoin([
+          this.planService.deleteOldStartedReminders(user.id),
+          this.planService.deleteOldUpcomingReminders(user.id),
+        ]).subscribe(() => {
+          const reminders$: Observable<any>[] = [];
+          reminders$.push(this.planService.deleteOldUpcomingReminders(user.id));
+
+          forkJoin(reminders$).subscribe(() => {
+            this.authService
+              .getNotificationsByUser(user.id)
+              .subscribe((notifications: INotification[]) => {
+                this.userService
+                  .getLimitations(user.id)
+                  .subscribe((limitations) => {
+                    user.notifications = notifications;
+                    user.limitations = limitations;
+
+                    this.planService.hasUpcomingReminder(user.id).pipe(
+                      tap((res) => {
+                        this.userService
+                          .getLimitation(
+                            user.id,
+                            Permission.PlannedRecipesInThreeDays,
+                          )
+                          .subscribe((limit) => {
+                            if (!limit && !res.hasRows) {
+                              this.upcomingEventsHandling(user.id);
+                            }
+                          });
+                        
+                        this.userService
+                          .getLimitation(
+                            user.id,
+                            Permission.StartOfPlannedRecipeNotify,
+                          )
+                          .subscribe((limit) => {
+
+                            if (!limit) {
+                                                      this.startedEventsHandling(
+                                                        user.id,
+                                                      );
+
+                            }
+                          })
+
+                      }),
+                    ),
+                      this.authService.loadCurrentUser(user);
+                  });
+              });
+          });
+        });
+      } else {
+        this.authService.loadCurrentUser(nullUser);
+      }
+    });
   }
 
   makeAllNotifiesReaded() {
     let haveNotRead: boolean = false;
     this.notifies.forEach((notification) => {
-      if (notification.read === false) {
+      if (notification.read === 0) {
         haveNotRead = true;
       }
-      notification.read = true;
     });
 
-    if (haveNotRead) this.updateUser(this.currentUser);
-  }
-
-  async updateUser(user: IUser) {
-    await this.userService.updateUserInSupabase(user);
+    if (haveNotRead) {
+      this.notifyService
+        .markNotificationsAsRead(this.currentUser.id)
+        .subscribe({
+          next: () => {
+            this.currentUser.notifications.forEach((notify: INotification) => {
+              notify.read = 1;
+            });
+            this.authService.setCurrentUser(this.currentUser);
+          },
+        });
+    }
   }
 
   updateNotifies() {
     if (this.currentUser.notifications) {
       const userNotifies = [...this.currentUser.notifications];
+
       userNotifies.reverse().forEach((notification) => {
         if (
           //максимум 3 одновременно
@@ -583,9 +517,8 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
           !this.popups.find((p) => p.id === notification.id)
         ) {
           this.popupLifecycle(notification);
-        }
-        else if (this.popups.length >= this.maxNumberOfPopupsInSameTime) {
-          this.popupHistory.push(notification.id)
+        } else if (this.popups.length >= this.maxNumberOfPopupsInSameTime) {
+          this.popupHistory.push(notification.id);
         }
       });
 
@@ -594,12 +527,14 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
       this.cd.markForCheck();
     }
   }
+
   removePopup(popup: INotification) {
     const index = this.popups.indexOf(popup);
     if (index !== -1) {
       this.popups.splice(index, 1);
     }
   }
+
   //удаление уведомления
   autoRemovePopup(popup: INotification): void {
     if (this.hovered !== popup.id) {
@@ -612,6 +547,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   popupHover(popup: INotification) {
     this.hovered = popup.id;
   }
+
   popupBlur(popup: INotification) {
     this.hovered = 0;
     setTimeout(() => {
@@ -627,6 +563,16 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
       this.autoRemovePopup(popup);
       this.cd.markForCheck();
     }, this.popupLifetime * 1000);
+  }
+
+  nightModePopupLifecycle(popup: INotification): void {
+    this.popups.unshift(popup);
+    setTimeout(() => {
+      if (this.hovered !== popup.id) {
+        this.removePopup(popup);
+      }
+      this.cd.markForCheck();
+    }, this.popupLifetime * 3000);
   }
 
   headerHeightChange(): void {
@@ -646,6 +592,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   svgPath(svg: string) {
     return this.baseSvgPath + svg + '.svg';
   }
+
   isActiveSvgPath(svg: string, activePage: string) {
     return (
       this.baseSvgPath +
@@ -655,6 +602,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
       '.svg'
     );
   }
+
   svgActiveClass(activePage: string) {
     return this.activePage === activePage ? 'header-svg active' : 'header-svg';
   }

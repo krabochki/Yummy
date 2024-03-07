@@ -1,13 +1,10 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { INotification, nullNotification } from '../../../models/notifications';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { NotificationService } from '../../../services/notification.service';
 import { IUser, nullUser } from '../../../models/users';
+import { AuthService } from 'src/app/modules/authentication/services/auth.service';
+import { ThemeService } from 'src/app/modules/common-pages/services/theme.service';
 
 @Component({
   selector: 'app-notify',
@@ -15,27 +12,73 @@ import { IUser, nullUser } from '../../../models/users';
   styleUrls: ['./notify.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NotifyComponent {
+export class NotifyComponent implements OnInit {
   @Input() notify: INotification = nullNotification;
-  @Input() user: IUser = nullUser;
   @Output() notifyDeleteClick = new EventEmitter();
+  @Output() clickEmitter = new EventEmitter();
   @Output() hover = new EventEmitter<INotification>();
   @Output() blurEmitter = new EventEmitter();
   @Input() popup: boolean = false;
 
-  constructor(private notificationService: NotificationService) {}
+  currentUser: IUser = { ...nullUser };
+
+  constructor(
+    private notificationService: NotificationService,
+    private authService: AuthService,
+    private themeService: ThemeService,
+  ) {}
+
+  ngOnInit() {
+    this.authService.currentUser$.subscribe((receivedUser: IUser) => {
+      this.currentUser = receivedUser;
+    });
+  }
+
   protected deleteNotify() {
-    if (this.popup) {
-      this.notificationService.makeNotifyReaded(this.notify, this.user);
-      this.notifyDeleteClick.emit();
+    if (this.notify.type !== 'night-mode') {
+      if (this.popup) {
+        this.notificationService
+          .markNotificationAsRead(this.notify.id)
+          .subscribe({
+            next: () => {
+              const editedNotification =
+                this.currentUser.notifications.find(
+                  (notify) => notify.id === this.notify.id,
+                ) || nullNotification;
+              if (editedNotification.id > 0) {
+                editedNotification.read = 1;
+              }
+              this.authService.setCurrentUser(this.currentUser);
+            },
+          });
+        this.notifyDeleteClick.emit();
+      } else {
+        this.notificationService.deleteNotification(this.notify.id).subscribe({
+          next: () => {
+            this.currentUser.notifications =
+              this.currentUser.notifications.filter(
+                (notify) => notify.id !== this.notify.id,
+              );
+            this.authService.setCurrentUser(this.currentUser);
+          },
+        });
+      }
     } else {
-      this.notificationService.removeNotification(this.notify, this.user);
+      this.notifyDeleteClick.emit();
+    }
+  }
+
+  clickNotify() {
+    if (this.notify.type === 'night-mode') {
+      this.clickEmitter.emit();
+      this.themeService.changeTheme();
     }
   }
 
   getClass() {
     const styles: string[] = [];
     if (!this.notify.read) styles.push('not-readed');
+    
     if (this.popup) styles.push('popup');
     switch (this.notify.context) {
       case 'plan-reminder':
@@ -64,6 +107,9 @@ export class NotifyComponent {
       case 'info':
         styles.push('info');
         break;
+      case 'night-mode':
+        styles.push('night-mode');
+        break;
       case 'warning':
         styles.push('warning');
         break;
@@ -80,8 +126,10 @@ export class NotifyComponent {
   get icon() {
     const basePath = '/assets/images/svg/';
     if (this.notify.context === 'hire') return basePath + 'case.svg';
+    if (this.notify.type === 'night-mode') return basePath + 'moon.svg';
     if (this.notify.context === 'update') return basePath + 'update.svg';
     if (this.notify.context === 'born') return basePath + 'champagne.svg';
+    if (this.notify.context === 'manager') return basePath + 'work.svg';
     if (this.notify.context === 'demote') return basePath + 'demote.svg';
     if (this.notify.context === 'plan-reminder') return basePath + 'pot.svg';
     if (this.notify.context === 'calendar-recipe')

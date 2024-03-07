@@ -40,7 +40,16 @@ import {
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { NotificationService } from '../../services/notification.service';
 import { INotification } from '../../models/notifications';
-import { supabase } from 'src/app/modules/controls/image/supabase-data';
+import { addModalStyle, removeModalStyle } from 'src/tools/common';
+import {
+  EMPTY,
+  Observable,
+  catchError,
+  finalize,
+  forkJoin,
+  of,
+  tap,
+} from 'rxjs';
 @Component({
   selector: 'app-user-account-edit',
   templateUrl: './user-account-edit.component.html',
@@ -51,11 +60,11 @@ import { supabase } from 'src/app/modules/controls/image/supabase-data';
 export class UserAccountEditComponent
   implements OnInit, AfterContentChecked, OnDestroy
 {
-  @Input() editableUser: IUser = { ...nullUser };
+  editableUser: IUser = { ...nullUser };
   @Output() closeEmitter = new EventEmitter<boolean>();
+  @Output() editEmitter = new EventEmitter<boolean>();
+  @Input() userId: number = 0;
   @ViewChild('scrollContainer', { static: false }) scrollContainer?: ElementRef;
-
-  private supabaseFilepath: string = '';
 
   viewedSteps: number[] = [];
 
@@ -66,7 +75,6 @@ export class UserAccountEditComponent
   successModal: boolean = false;
 
   private newUser: IUser = { ...nullUser };
-  private users: IUser[] = [];
 
   currentStep: number = 0;
 
@@ -95,7 +103,6 @@ export class UserAccountEditComponent
           Validators.minLength(4),
           Validators.maxLength(20),
           customPatternValidator(usernameMask),
-          this.usernameExistsValidator(),
         ],
       ],
       fullname: [this.newUser.fullName, [Validators.maxLength(30)]],
@@ -230,50 +237,77 @@ export class UserAccountEditComponent
     }
   }
 
+  currentUser: IUser = nullUser;
   ngOnInit() {
-    this.renderer.addClass(document.body, 'hide-overflow');
-    (<HTMLElement>document.querySelector('.header')).style.width =
-      'calc(100% - 16px)';
-    this.renderer.addClass(document.body, 'hide-overflow');
-    this.newUser = { ...this.editableUser };
-    this.form.get('username')?.setValue(this.newUser.username);
-    this.form.get('quote')?.setValue(this.newUser.quote);
-    this.form.get('fullname')?.setValue(this.newUser.fullName);
-    this.form.get('description')?.setValue(this.newUser.description);
-    this.birthDate = this.newUser.birthday ? new Date(this.newUser.birthday) : null;
-    this.form.get('location')?.setValue(this.newUser.location);
-    this.form.get('userpic')?.setValue(this.newUser.avatarUrl);
-    this.form.get('website')?.setValue(this.newUser.personalWebsite);
-    for (const network of this.newUser.socialNetworks) {
-      switch (network.name) {
-        case 'pinterest':
-          this.form.get('pinterest')?.setValue(network.link);
-          break;
-        case 'facebook':
-          this.form.get('facebook')?.setValue(network.link);
-          break;
-        case 'twitter':
-          this.form.get('twitter')?.setValue(network.link);
-          break;
-        case 'ВКонтакте':
-          this.form.get('vk')?.setValue(network.link);
-          break;
-      }
-    }
-
-    this.userService.users$.subscribe((data: IUser[]) => {
-      this.users = data;
+    addModalStyle(this.renderer);
+    this.authService.currentUser$.subscribe((currentUser) => {
+      this.currentUser = currentUser;
     });
+    this.loading = true;
+    this.userService.getUserForEdit(this.userId).subscribe((user) => {
+      this.editableUser = user;
 
-    if (this.editableUser.avatarUrl) {
-      this.downloadUserpicFromSupabase(this.editableUser.avatarUrl);
-      this.supabaseFilepath = this.editableUser.avatarUrl;
-    } else {
-      this.showedUserpicImage = this.noUserpicImage;
-    }
+      user.quote = user.quote || '';
+      user.fullName = user.fullName || '';
+      user.description = user.description || '';
+      user.location = user.location || '';
+      user.quote = user.quote || '';
+      user.personalWebsite = user.personalWebsite || '';
 
-    this.beginningData = this.form.getRawValue();
-    this.cdr.markForCheck();
+      this.form.get('username')?.setValue(user.username);
+      this.form.get('quote')?.setValue(user.quote);
+      this.form.get('fullname')?.setValue(user.fullName);
+      this.form.get('website')?.setValue(user.personalWebsite);
+      this.form.get('description')?.setValue(user.description);
+      this.birthDate = user.birthday ? new Date(user.birthday) : null;
+      this.form.get('location')?.setValue(user.location);
+      user.socialNetworks = user.socialNetworks || [];
+      for (const network of user.socialNetworks) {
+        switch (network.name) {
+          case 'pinterest':
+            this.form.get('pinterest')?.setValue(network.link);
+            break;
+          case 'facebook':
+            this.form.get('facebook')?.setValue(network.link);
+            break;
+          case 'twitter':
+            this.form.get('twitter')?.setValue(network.link);
+            break;
+          case 'ВКонтакте':
+            this.form.get('vk')?.setValue(network.link);
+            break;
+        }
+      }
+
+      if (user.image) {
+        this.userService
+          .downloadUserpic(user.image)
+          .pipe(
+            tap((blob) => {
+              user.avatarUrl = URL.createObjectURL(blob);
+              this.showedUserpicImage = user.avatarUrl;
+              this.form.get('userpic')?.setValue('userpic');
+            }),
+            catchError(() => {
+              this.showedUserpicImage = this.noUserpicImage;
+              return EMPTY;
+            }),
+
+            finalize(() => {
+              this.loading = false;
+              addModalStyle(this.renderer);
+              this.cdr.markForCheck();
+              this.beginningData = this.form.getRawValue();
+            }),
+          )
+          .subscribe();
+      } else {
+        this.loading = false;
+        this.showedUserpicImage = this.noUserpicImage;
+        this.beginningData = this.form.getRawValue();
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   onUserpicChange(event: Event) {
@@ -284,45 +318,21 @@ export class UserAccountEditComponent
       this.form.get('userpic')?.setValue(userpicFile);
       const objectURL = URL.createObjectURL(userpicFile);
       this.showedUserpicImage = objectURL;
-      this.supabaseFilepath = this.setUserpicFilenameForSupabase();
     }
   }
 
   unsetImage() {
     this.form.get('userpic')?.setValue(null);
     this.showedUserpicImage = this.noUserpicImage;
-    this.supabaseFilepath = '';
-  }
-
-  usernameExistsValidator() {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const username = control.value;
-
-      if (username !== this.editableUser.username) {
-        if (username === undefined || username === '') {
-          return null; // Пустое значение считается допустимым
-        }
-
-        const usernameExists = this.users.find((u) => u.username === username);
-
-        if (usernameExists !== undefined) {
-          return { usernameExists: true }; // Устанавливаем ошибку с именем 'usernameExists'
-        }
-      }
-
-      return null; // Имя пользователя допустимо
-    };
   }
 
   //проверяем равны ли все поля в обьектах
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   areObjectsEqual(): boolean {
-   
     if (
-      this.birthDate&&(
+      this.birthDate &&
       this.birthDate.toString() !=
         new Date(this.editableUser.birthday).toString()
-      )
     )
       return true;
     return (
@@ -331,7 +341,7 @@ export class UserAccountEditComponent
     );
   }
 
-  async updateUser() {
+  updateUser() {
     const socialNetworks: SocialNetwork[] = [];
 
     const socialNetworksData: SocialNetwork[] = [
@@ -350,9 +360,8 @@ export class UserAccountEditComponent
     this.newUser = {
       ...this.editableUser,
       username: this.form.value.username,
-      birthday:this.birthDate ? this.birthDate.toJSON() : '',
+      birthday: this.birthDate ? this.birthDate.toJSON() : '',
       fullName: this.form.value.fullname,
-      avatarUrl: this.form.value.userpic ? this.supabaseFilepath : undefined,
       quote: this.form.value.quote,
       personalWebsite: this.form.value.website,
       description: this.form.value.description,
@@ -360,54 +369,132 @@ export class UserAccountEditComponent
       socialNetworks: socialNetworks,
     };
 
-    await this.updateUserInSupabase();
+    this.putUser();
+  }
 
-    if (this.editableUser.avatarUrl && this.newUser.avatarUrl !== this.editableUser.avatarUrl) {
-      await this.deleteOldUserpic(this.editableUser.avatarUrl);
+  image: string = '';
+
+  putImages(): {
+    loadImage: Observable<any>;
+    deleteImage: Observable<any>;
+  } {
+    const loadImage =
+      this.form.get('userpic')?.value &&
+      this.form.get('userpic')?.value !== 'userpic';
+    const deleteImage =
+      this.editableUser.image && this.form.get('userpic')?.value !== 'userpic';
+
+    let loadImage$: Observable<any> = of(null);
+    let deleteImage$: Observable<any> = of(null);
+    if (loadImage) {
+      loadImage$ = this.userService
+        .uploadUserpic(this.form.get('userpic')?.value)
+        .pipe(
+          tap((file: any) => {
+            this.image = file.filename;
+          }),
+        );
     }
+    if (deleteImage) {
+      deleteImage$ = this.userService.deleteUserpic(this.editableUser.image!);
+    }
+
+    return {
+      loadImage: loadImage$,
+      deleteImage: deleteImage$,
+    };
   }
 
-  async updateSupabaseUser(user: IUser) {
-    await this.userService.updateUserInSupabase(user);
+  putUser() {
+    const putUser$ = this.userService
+      .updatePublicUser(this.newUser.id, this.newUser)
+      .pipe(
+        tap(() => {
+          if (this.editableUser.username !== this.newUser.username) {
+            this.authService.logout().subscribe(() => {
+              this.authService.changeToken(this.newUser.username).subscribe(
+                (res) => {
+                  console.log(res)
+                }
+              );
+            });
+          }
+          const images$ = this.putImages();
+          forkJoin(images$)
+            .pipe(
+              finalize(() => {
+                if (
+                  this.form.get('userpic')?.value &&
+                  this.form.get('userpic')?.value !== 'userpic'
+                ) {
+                  this.userService
+                    .updateUserpic(this.userId, this.image)
+                    .pipe(
+                      finalize(() => {
+                        this.successModal = true;
+                        this.cdr.markForCheck();
+                      }),
+                    )
+                    .subscribe();
+                } else {
+                  this.successModal = true;
+
+                  this.cdr.markForCheck();
+                }
+              }),
+            )
+            .subscribe();
+        }),
+        catchError((response) => {
+          this.error = response.error || this.error;
+          this.errorModal = true;
+          this.cdr.markForCheck();
+          return EMPTY;
+        }),
+      );
+
+    putUser$.subscribe();
   }
 
+  handleErrorModal() {
+    this.errorModal = false;
+    addModalStyle(this.renderer);
+  }
+
+  error: string =
+    'Произошла неизвестная ошибка при попытке обновить данные пользователя';
+  errorModal: boolean = false;
   handleSaveModal(answer: boolean) {
     if (answer) {
       this.updateUser();
     }
-    setTimeout(() => {
-      this.renderer.addClass(document.body, 'hide-overflow');
-      (<HTMLElement>document.querySelector('.header')).style.width =
-        'calc(100% - 16px)';
-    }, 0);
+    addModalStyle(this.renderer);
     this.saveModal = false;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async handleSuccessModal(answer: boolean) {
     this.closeEmitter.emit(true);
-
+    this.editEmitter.emit(true);
     this.successModal = false;
 
-    if (this.userService.getPermission('you-edit-your-account', this.newUser)) {
+   // if (this.userService.getPermission('you-edit-your-account', this.newUser)) {
       const notify: INotification = this.notifyService.buildNotification(
         'Профиль изменен',
-        'Твой профиль успешно изменен',
+        'Вы успешно изменили свой профиль',
         'success',
         'user',
         '/cooks/list/' + this.newUser.id,
       );
-      await this.notifyService.sendNotification(notify, this.newUser);
-    }
+      this.notifyService
+        .sendNotification(notify, this.newUser.id, true)
+        .subscribe();
+    
   }
   handleCloseModal(answer: boolean) {
     if (answer) {
       this.closeEmitter.emit(true);
     } else {
-      setTimeout(() => {
-        this.renderer.addClass(document.body, 'hide-overflow');
-        (<HTMLElement>document.querySelector('.header')).style.width =
-          'calc(100% - 16px)';
-      }, 0);
+      addModalStyle(this.renderer);
     }
     this.closeModal = false;
   }
@@ -426,46 +513,6 @@ export class UserAccountEditComponent
   }
 
   ngOnDestroy(): void {
-    this.renderer.removeClass(document.body, 'hide-overflow');
-    (<HTMLElement>document.querySelector('.header')).style.width = '100%';
-  }
-
-  //работа с данными supabase
-
-  private setUserpicFilenameForSupabase(): string {
-    const file = this.form.get('userpic')?.value;
-    const fileExt = file.name.split('.').pop();
-    return `${Math.random()}.${fileExt}`;
-  }
-
-  downloadUserpicFromSupabase(path: string) {
-    this.showedUserpicImage = supabase.storage
-      .from('userpics')
-      .getPublicUrl(path).data.publicUrl;
-  }
-
-  async updateUserInSupabase() {
-    this.loading = true;
-    this.cdr.markForCheck();
-    try {
-      const file = this.form.get('userpic')?.value;
-      if (file) {
-        const filePath = this.supabaseFilepath;
-        await supabase.storage.from('userpics').upload(filePath, file);
-      }
-      await this.updateSupabaseUser(this.newUser);
-
-      this.successModal = true;
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error(error.message);
-      }
-    } finally {
-      this.loading = false;
-      this.cdr.markForCheck();
-    }
-  }
-  async deleteOldUserpic(path: string) {
-    await supabase.storage.from('userpics').remove([path]);
+    removeModalStyle(this.renderer);
   }
 }

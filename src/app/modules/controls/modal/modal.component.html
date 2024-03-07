@@ -1,41 +1,93 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<div class="modal-dialog" (click)="!noButtons ? !noBackgroundClose ? clickBackgroundNotContent($event):null:null">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h4 [ngStyle]="{'color':this.style==='prim'?'var(--color-primary)':this.style==='sec'?'var(--color-secondary)':this.style==='vote'?'rgb(255, 31, 113)':'var(--color-sky)'}">{{ title }}</h4>
+
+<div
+  class="modal-dialog noselect"
+  (click)="!loading ? clickBackgroundNotContent($event) : null"
+>
+  <div
+    [ngStyle]="{
+      'background-image': loading
+        ? theme === 'light'
+          ? 'url(/assets/images/hat-day.svg)'
+          : 'url(/assets/images/hat-night.svg)'
+        : null
+    }"
+    class="modal-content"
+    [ngClass]="{ hat: this.loading }"
+  >
+    <div class="modal-header" *ngIf="!loading">
+      <h4
+        [ngStyle]="{
+          color:
+            this.style === 'prim'
+              ? 'var(--color-primary)'
+              : this.style === 'sec'
+                ? 'var(--color-secondary)'
+                : this.style === 'vote'
+                  ? 'rgb(255, 31, 113)'
+                  : 'var(--color-sky)'
+        }"
+      >
+        {{ title }}
+      </h4>
     </div>
     <div class="modal-body">
-      <p>{{ description }}</p>
-      <div *ngIf="this.style==='vote'">
-        
-        <svg-icon [applyClass]="true" class="interview" [src]="'assets/images/svg/interview.svg'"></svg-icon>
+      <p
+        [innerHTML]="
+          loading ? 'Идет загрузка... <br> Пожалуйста, подождите.' : description
+        "
+      ></p>
+      <div *ngIf="this.style === 'vote'">
+        <svg-icon
+          [applyClass]="true"
+          class="interview"
+          [src]="'assets/images/svg/interview.svg'"
+        ></svg-icon>
       </div>
-      <div class="lds-ring" *ngIf="noButtons">
+      <div class="lds-ring" *ngIf="loading">
+        <section class="square">
+          <img *ngIf="theme==='dark'; else light" class="image" src="/assets/gifs/preloader-dark.gif" alt="" />
+          <ng-template #light>
+                                  <img class="image" src="/assets/gifs/preloader-light.gif" alt="" />
+
+          </ng-template>
+        </section>
         <div></div>
         <div></div>
         <div></div>
         <div></div>
       </div>
     </div>
-    
-          <ng-template #okButtons >
-                <app-button [style]="'filled'" [color]="style" [text]="buttonsText[0]"  [rounded]="true" (click)="onOkClick()"></app-button>
 
-      </ng-template>
+    <ng-template #okButtons>
+      <app-button
+        [style]="'filled'"
+        [color]="style"
+        [text]="buttonsText[0]"
+        [rounded]="true"
+        (click)="onOkClick()"
+      ></app-button>
+    </ng-template>
 
-      <hr *ngIf="!noButtons">
-    <div class="modal-footer" *ngIf="!noButtons">
-      <ng-container *ngIf="type === 'yesOrNo' ; else okButtons">
-        <app-button [style]="'filled'" [color]="style" [text]="buttonsText[0]"  [rounded]="true" (click)="onOkClick()"></app-button>
-        <app-button [style]="'filled-min'"  [color]="style" [text]="buttonsText[1]" [rounded]="true" (click)="onNoClick()"></app-button>
+    <hr *ngIf="!loading" />
+    <div class="modal-footer" *ngIf="!loading">
+      <ng-container *ngIf="type === 'yesOrNo'; else okButtons">
+        <app-button
+          [style]="'filled'"
+          [color]="style"
+          [text]="buttonsText[0]"
+          [rounded]="true"
+          (click)="onOkClick()"
+        ></app-button>
+        <app-button
+          [style]="'filled-min'"
+          [color]="style"
+          [text]="buttonsText[1]"
+          [rounded]="true"
+          (click)="onNoClick()"
+        ></app-button>
       </ng-container>
-
     </div>
   </div>
 </div>
-
-
-
-
-

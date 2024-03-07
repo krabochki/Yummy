@@ -2,8 +2,8 @@
   <div class="content">
     <h1 class="label">Регистрация</h1>
     <p class="tagline">
-      Введите вашу почту, а также придумайте имя пользователя и пароль. Если вы
-      забудете пароль, вы всегда сможете восстановить его.
+      Введите электронную почту, а также придумайте имя пользователя и пароль.
+      На указанную вами электронную почту будет выслано письмо для подтверждения регистрации.
     </p>
 
     <form [formGroup]="form">
@@ -11,115 +11,60 @@
         <div class="control">
           <app-usual-input [pad]="true" [inputRequired]="true" type="text" [max]="64" formControlName="email"
             [placeholder]="'Электронная почта'" required [error]="emailNotValidError">
-          
-            
+
+
           </app-usual-input>
           <svg-icon [src]="'/assets/images/svg/email.svg'" class="icon" [applyClass]="true"></svg-icon>
         </div>
-        <div class="error" *ngIf="form.get('email')?.hasError('emailExists')">
-          Пользователь с такой электронной почтой уже существует
-        </div>
+
       </div>
       <div>
         <div class="control">
-          <app-usual-input
-            [inputRequired]="true"
-            [max]="20"
-            formControlName="username"
-            [placeholder]="'Имя пользователя'"
-            required
-            [error]="usernameNotValidError"
-          ></app-usual-input>
-                    <svg-icon [src]="'/assets/images/svg/badge.svg'" class="icon" [applyClass]="true"></svg-icon>
+          <app-usual-input [inputRequired]="true" [max]="20" formControlName="username"
+            [placeholder]="'Имя пользователя'" required [error]="usernameNotValidError"></app-usual-input>
+          <svg-icon [src]="'/assets/images/svg/badge.svg'" class="icon" [applyClass]="true"></svg-icon>
 
         </div>
-        <div
-          class="error"
-          *ngIf="form.get('username')?.hasError('usernameExists')"
-        >
-          Это имя пользователя уже занято
-        </div>
+
       </div>
-      
-      <app-usual-input
-        [inputType]="'password'"
-        [inputRequired]="true"
-        formControlName="password"
-        [placeholder]="'Пароль'"
-        [max]="20"
-        required
-        [error]="passwordNotValidError"
-      ></app-usual-input>
-      <div class="user-policy" >
+
+      <app-usual-input [inputType]="'password'" [inputRequired]="true" formControlName="password"
+        [placeholder]="'Пароль'" [max]="20" required [error]="passwordNotValidError"></app-usual-input>
+      <div class="user-policy">
         <button class="checkbox" (click)="this.form.get('policy')?.setValue(!this.form.get('policy')?.value)">
-            <svg-icon *ngIf="this.form.get('policy')?.value===true" class="checkbox-icon" [applyClass]="true"
-              [src]="'/assets/images/svg/checkbox.svg'"></svg-icon>
+          <svg-icon *ngIf="this.form.get('policy')?.value===true" class="checkbox-icon" [applyClass]="true"
+            [src]="'/assets/images/svg/checkbox.svg'"></svg-icon>
         </button>
         <p>
-          Я согласен с правилами
+          Я согласен(-на) с правилами
           <a routerLink="/user-policy">пользовательского соглашения</a>
         </p>
       </div>
     </form>
 
     <hr />
+    <a class="good" [routerLink]="'/registration-benefits'">Преимущества регистрации</a>
 
     <div class="buttons">
-      <app-button
-        (click)="form.valid ? (confirmModal = true) : false"
-        [disabled]="form.valid"
-        [rounded]="true"
-        [color]="'prim'"
-        [text]="'Регистрация'"
-      ></app-button>
+      <app-button (click)="form.valid ? (confirmModal = true) : false" [disabled]="form.valid" [rounded]="true"
+        [color]="'sec'" [text]="'Регистрация'"></app-button>
     </div>
   </div>
 </div>
 
-<app-modal
-  @modal
-  [style]="'prim'"
-  *ngIf="confirmModal"
-  [title]="'Подтвердите регистрацию'"
-  [type]="'yesOrNo'"
-  (resultEmit)="handleConfirmModal($event)"
-  [buttonsText]="['Да', 'Нет']"
-  [description]="
-    'Вы уверены, что хотите зарегистрироваться с введенными данными?'
-  "
-></app-modal>
+<app-modal @modal [style]="'prim'" *ngIf="confirmModal" [title]="'Подтвердите регистрацию'" [type]="'yesOrNo'"
+  (resultEmit)="handleConfirmModal($event)" [buttonsText]="['Да', 'Нет']" [description]="
+    'Вы уверены, что хотите зарегистрироваться с введенными данными и получить письмо подтверждения регистрации на электронную почту?'
+  "></app-modal>
 
-<app-modal
-  [style]="'sec'"
-  @modal
-  *ngIf="successModal"
-  [title]="'Успешная регистрация!'"
-  [type]="'Ok'"
-  (resultEmit)="handleSuccessModal()"
-  [buttonsText]="['На главную']"
-  [description]="
-    'Регистрация прошла успешно. Подтвердите электронную почту и после этого ваш аккаунт будет активирован!'
-  "
-></app-modal>
+<app-modal [style]="'sec'" @modal [title]="'Успешная регистрация!'" [type]="'Ok'" *ngIf="successModal"
+  (resultEmit)="handleSuccessModal()" [buttonsText]="['На главную']" [description]="
+    'Письмо для подтверждения регистрации успешно отправлено на вашу электронную почту! Ждём вас!'
+  "></app-modal>
 
-<app-modal
-  [style]="'prim'"
-  @modal
-  *ngIf="errorModal"
-  [title]="'Ошибка регистрации'"
-  [type]="'Ok'"
-  (resultEmit)="errorModal = false; failText = ''"
-  [buttonsText]="['Хорошо']"
-  [description]="
+<app-modal [style]="'prim'" @modal *ngIf="errorModal" [title]="'Ошибка регистрации'" [type]="'Ok'"
+  (resultEmit)="errorModal = false; failText = ''" [buttonsText]="['Хорошо']" [description]="
     failText || 'Произошла неизвестная ошибка при попытке регистрации'
-  "
-></app-modal>
+  "></app-modal>
 
-<app-modal
-  [noButtons]="true"
-  [style]="'await'"
-  *ngIf="loadingModal"
-  [title]="'Подождите...'"
-  @modal
-  [description]="'Проверяем данные, которые вы ввели... Подождите немного...'"
-/>
+<app-modal [style]="'await'" *ngIf="loadingModal" @modal />

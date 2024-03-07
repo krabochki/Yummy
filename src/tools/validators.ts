@@ -56,26 +56,6 @@ export const policyValidator: ValidatorFn = (
 }
   
 
-export async function emailExistsValidator(users: IUser[],authService:AuthService) {
-
-
-  return async (control: AbstractControl): Promise<ValidationErrors | null> => {
-    const email = control.value;
-
-    if (email === undefined || email === '') {
-      return null; // Пустое значение считается допустимым
-    }
-
-    // Асинхронно загружаем пользователей из базы данных
-    const userInDatabase = await authService.loadUserFromSupabaseByEmail(email);
-
-    if (userInDatabase !== null) {
-      return { emailExists: true }; // Устанавливаем ошибку с именем 'emailExists'
-    } else {
-      return null;
-    }
-  };
-}
 
 
   

@@ -1,29 +1,31 @@
 export interface ShoppingListItem {
   id: number;
   name: string;
-  howMuch: string;
-  isBought: boolean;
-  relatedRecipe: number;
-  type: number;
+  amount: string;
+  bought: 0 | 1;
+  recipeId: number;
+  userId?: number;
+  typeId: number;
   note: string;
+  ingredientId?: number;
 }
 
-export interface typeGroup{
-  type: ProductType,
-  items:ShoppingListItem[]
+export interface typeGroup {
+  type: ProductType;
+  items: ShoppingListItem[];
 }
 
 export interface ProductType {
-  id: number, 
-  color:string,
-  name: string,
-  image?:string,
+  id: number;
+  color: string;
+  name: string;
+  image?: string;
 }
 export const productTypes: ProductType[] = [
   {
     id: 0,
     name: 'Без категории',
-    image:'empty',
+    image: 'empty',
     color: '#808080',
   },
   {
@@ -192,19 +194,49 @@ export const productTypes: ProductType[] = [
     name: 'Для питомцев',
     color: '#ff0004', // Ярко-коралловый
   },
+  {
+    id: 26,
+    image: 'bacalea',
+
+    name: 'Бакалея',
+    color: '#ffec5c', // Ярко-коралловый
+  },
+  {
+    id: 27,
+    image: 'exotic',
+
+    name: 'Экзотика',
+    color: '#8010ef', // Ярко-коралловый
+  },
+  {
+    id: 28,
+    image: 'himia',
+
+    name: 'Бытовая химия',
+    color: '#68ec13', // Ярко-коралловый
+  },
+  {
+    id: 29,
+    image: 'vit',
+
+    name: 'Витамины и добавки',
+    color: '#bd16e9', // Ярко-коралловый
+  },
+  {
+    id: 30,
+    image: 'pill',
+
+    name: 'Медицинские принадлежности и лекарства',
+    color: '#2e81d1', // Ярко-коралловый
+  },
 ];
-
-
-
 
 export const nullProduct: ShoppingListItem = {
   id: 0,
   name: '',
-  note:'',
-  howMuch: '',
-  isBought: false,
-  relatedRecipe: 0,
-  type: 0,
+  note: '',
+  amount: '',
+  bought: 0,
+  recipeId: 0,
+  typeId: 0,
 };
-
-

@@ -5,6 +5,8 @@ import {
   Input,
   Output,
 } from '@angular/core';
+import { addModalStyle, removeModalStyle } from 'src/tools/common';
+import { ThemeService, themeUI } from '../../common-pages/services/theme.service';
 
 @Component({
   selector: 'app-modal',
@@ -16,34 +18,39 @@ export class ModalComponent implements OnInit, OnDestroy {
   @Input() type?: 'yesOrNo' | 'Ok';
   @Input() title?: string;
   @Input() description?: string;
-  @Input() noButtons: boolean = false;
   @Input() buttonsText: string[] = ['Да', 'Нет'];
   @Input() style: 'prim' | 'sec' | 'await' | 'vote' = 'prim';
-
-  @Input() noBackgroundClose = false;
 
   @Output() resultEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() closeEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  constructor(private renderer: Renderer2) {}
+  get loading() {
+    return this.style==='await'
+  }
+
+  theme: themeUI = 'light';
+  constructor(private renderer: Renderer2,
+  private themeService:ThemeService
+  ) { }
 
   ngOnInit(): void {
-    this.renderer.addClass(document.body, 'hide-overflow');
-    (<HTMLElement>document.querySelector('.header')).style.width =
-      'calc(100% - 16px)';
-    this.renderer.addClass(document.body, 'hide-overflow');
+    this.themeService.theme$.subscribe(
+      (theme) => {
+        this.theme = theme;
+      }
+    )
+    addModalStyle(this.renderer);
   }
   ngOnDestroy(): void {
-    this.renderer.removeClass(document.body, 'hide-overflow');
-    (<HTMLElement>document.querySelector('.header')).style.width = '100%';
+    removeModalStyle(this.renderer);
   }
 
   onOkClick() {
-    this.resultEmit.emit(true); // Отправляем значение true в родительский компонент
+    this.resultEmit.emit(true); 
   }
 
   onNoClick() {
-    this.resultEmit.emit(false); // Отправляем значение false в родительский компонент
+    this.resultEmit.emit(false); 
   }
 
   clickBackgroundNotContent(elem: Event) {
@@ -53,7 +60,6 @@ export class ModalComponent implements OnInit, OnDestroy {
       this.closeEmit.emit(true);
       return;
     }
-
     if (this.type === 'Ok') this.resultEmit.emit(true);
       if (this.type === 'yesOrNo') this.resultEmit.emit(false);
   }

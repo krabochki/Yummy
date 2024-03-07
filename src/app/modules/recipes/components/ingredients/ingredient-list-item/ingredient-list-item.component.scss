@@ -14,6 +14,36 @@ app-modal{
     cursor: default
 }
 
+.ingredient-cont.loading {
+    cursor: wait;
+}
+
+.name.loading {
+    border-radius: 0.75em;
+    margin-left: auto;margin-right: auto;    width: min-content;
+    color: transparent;
+}
+
+.loading.ingredient.null,
+.name.loading {
+    animation: loading 0.75s infinite linear;
+    background-color: var(--loading);
+}
+
+
+@keyframes loading {
+    0% {
+        background-position: var(--loading);
+    }
+
+    50% {
+        background-color: var(--loading-accent);
+    }
+
+    100% {
+        background-position: var(--loading);
+    }
+}
 
 
 .delete{
@@ -175,8 +205,20 @@ h1 {
     }
 }
 
+  
+
+  .image-loading {
+      animation: loading 0.75s infinite linear;
+      background-color: var(--loading);
+      background-repeat: no-repeat;
+  }
+
 .ingredient.null {
     padding: 1.5em;
+    pointer-events: none;
+    *{
+        pointer-events: none;
+    }
     background-image: none;
     justify-content: center;
 

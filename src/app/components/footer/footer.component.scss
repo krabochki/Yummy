@@ -1,5 +1,36 @@
 @import "../../../tools/UI/UI.scss";
 
+.label{
+        column-gap: 0.5em;
+  div{
+display: flex;
+
+align-items: center
+;justify-content: center;
+  }
+}
+
+.main-info div div.night-mode{
+  display: grid;
+  align-items: center;
+column-gap: 1em;
+margin-bottom: 0.5em;
+  p:not(.quote,.label){
+    font-weight: 300;
+  
+    font-size: 1.02em;
+    line-height: 1;
+  }
+
+  grid-template-columns: min-content  1fr;
+  app-toogle-switch{
+  height: 1.6em;
+    zoom: 0.9;
+    display: flex;
+    justify-self: flex-end;
+    width: 2.9em;
+  }
+}
 .footer {
   display: grid;
   background-color: var(--color-background-deeper-unactive);
@@ -64,7 +95,6 @@
         display: flex;
         flex-direction: column;
         row-gap: var(--space-xs);
-        max-width: 8em;
 
         a {
           line-height: 1;
@@ -80,7 +110,6 @@
     }
 
     div {
-      margin: 0 auto;
       display: flex;
       flex-direction: column;
       row-gap: var(--space-xs);
@@ -105,6 +134,8 @@
     .label {
       cursor: pointer;
       font-weight: 500;
+
+  
     }
   }
 
@@ -127,7 +158,41 @@ svg {
   text-decoration: underline;
 }
 
+
+.switch{
+  display:none !important;
+}
 @media (max-width: 900px) {
+  .switch{
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 2em;
+    height: 2em;
+  }
+
+  .ico{
+    fill: var(--color-foreground);
+  }
+
+  .main-info div div.night-mode {
+      flex-direction: row-reverse ;
+      display: flex;
+
+      margin: 0 auto;
+      column-gap: 0.5em;
+      align-items: center;
+      justify-content: center;
+      
+      p:not(.title,.label){
+        margin-bottom: 0;
+        width: max-content;
+      }
+      app-toogle-switch{
+        display: none;
+      }
+      margin-bottom: 0.5em;}
+
   .top-link {
     text-align: center;
     margin: 0 auto;
@@ -175,7 +240,7 @@ svg {
 
       .sections {
         display: grid;
-        align-items: end;
+        align-items: start;
 
         grid-template-columns: 1fr 1fr 1fr;
         flex-direction: row;
@@ -192,6 +257,12 @@ svg {
           text-align: center;
           justify-content: center;
           margin: auto;
+          margin-bottom: var(--space-xs);
+        }
+        ul{
+          a{
+            margin-bottom: 0 !important;
+          }
         }
         .right p,
         .right a {
@@ -233,12 +304,9 @@ app-modal {
 
 a {
   width: fit-content;
-  transition: color 0.2s ease-in-out;
   display: flex;
 
-  svg {
-    transition: fill 0.2s ease-in-out;
-  }
+
 
   &:hover {
     svg {

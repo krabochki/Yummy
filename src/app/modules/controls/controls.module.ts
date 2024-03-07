@@ -18,6 +18,7 @@ import { UsualInputComponent } from './usual-input/usual-input.component';
 import { AutocompleteComponent } from './autocomplete/autocomplete.component';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { TimePastPipe } from 'ng-time-past-pipe';
+import { SearchComponent } from './search/search.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { TimePastPipe } from 'ng-time-past-pipe';
     BannerComponent,
     CountInputComponent,
     UsualInputComponent,
+    SearchComponent,
     AutocompleteComponent,
   ],
   imports: [
@@ -47,6 +49,7 @@ import { TimePastPipe } from 'ng-time-past-pipe';
   exports: [
     ButtonComponent,
     SelectComponent,
+    SearchComponent,
     ModalComponent,
     ToogleSwitchComponent,
     PluralRuDirective,

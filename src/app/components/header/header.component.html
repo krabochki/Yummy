@@ -5,9 +5,9 @@
   <div class="popup" @popup *ngFor="let item of popups">
     <app-notify
       (hover)="popupHover($event)"
+      (clickEmitter)="removePopup(item)"
       (blurEmitter)="popupBlur($event)"
       [popup]="true"
-      [user]="currentUser"
       (notifyDeleteClick)="removePopup(item)"
       [notify]="item"
     ></app-notify>
@@ -86,7 +86,7 @@
         <div *ngIf="currentUser.id > 0" class="card">
           <div class="user-info" (click)="clickMobileMenuLink('/cooks/list/'+currentUser.id)">
             <div
-              [style.background-image]="'url(' + avatar + ')'"
+              [style.background-image]="'url(' + avatar||'assets/images/userpic.png' + ')'"
               class="userpic"
             ></div>
             <div>
@@ -247,6 +247,14 @@
                   <p>Узнать больше о Yummy</p>
                 </h2>
               </li>
+
+              <li (click)="clickMobileMenuLink('/news')">
+                <h2>
+                  <svg-icon [applyClass]="true" class="menu-svg" [src]="'/assets/images/svg/updates.svg'" />
+              
+                  <p>Свежие новости и изменения</p>
+                </h2>
+              </li>
             <li (click)="clickMobileMenuLink('/user-policy')">
               <h2>
                 <svg-icon
@@ -258,14 +266,25 @@
                 <p>Пользовательское соглашение</p>
               </h2>
             </li>
-          
-            <li (click)="clickMobileMenuLink('/updates')">
+            <li *ngIf="currentUser.id === 0" (click)="clickMobileMenuLink('/registration-benefits')">
               <h2>
-                <svg-icon [applyClass]="true" class="menu-svg" [src]="'/assets/images/svg/updates.svg'" />
+                <svg-icon [applyClass]="true" class="menu-svg" [src]="'/assets/images/svg/class.svg'" />
             
-                <p>Обновления в Yummy</p>
+                <p>Преимущества регистрации</p>
               </h2>
             </li>
+          
+            
+
+              <a href="mailto:yummort@mail.ru">
+                <li >
+                  <h2>
+                    <svg-icon [applyClass]="true" class="menu-svg" [src]="'/assets/images/svg/mail-mobile.svg'" />
+                
+                    <p>Обратная связь</p>
+                  </h2>
+                </li>
+              </a>
           </div>
 
           <li>
@@ -277,7 +296,7 @@
                 [backgroundOn]="'var(--color-foreground)'"
                 [toogleOff]="'var(--color-background)'"
                 [toogleOn]="'var(--color-secondary)'"
-                (checkedEmit)="nightModeEmit($event)"
+                (checkedEmit)="nightModeEmit()"
                 [nightMode]="true"
               ></app-toogle-switch>
             </h2>
@@ -462,7 +481,6 @@
 <app-notifications-list
   (closeEmitter)="notifiesOpen = false; makeAllNotifiesReaded()"
   @notifies
-  [user]="currentUser"
   *ngIf="notifiesOpen"
   [notifies]="notifies"
 ></app-notifications-list>
@@ -470,5 +488,5 @@
     (resultEmit)="handleExitModal($event)" [buttonsText]="['Выйти', 'Остаться']"
     [description]="'Вы действительно хотите выйти из текущего аккаунта?'"></app-modal>
 
-    <app-modal @modal [style]="'await'" [type]="'Ok'" [noButtons]="true" [title]="'Подождите...'" [type]="'Ok'"
-      [description]="'Выполняется выход из аккаунта... Подождите немного...'" *ngIf="loading"></app-modal>
+    <app-modal @modal [style]="'await'" 
+     *ngIf="loading"></app-modal>

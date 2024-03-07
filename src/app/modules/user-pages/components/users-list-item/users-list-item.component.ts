@@ -10,17 +10,13 @@ import {
 } from '@angular/core';
 import { IUser, nullUser } from '../../models/users';
 import { UserService } from '../../services/user.service';
-import { Subject, takeUntil } from 'rxjs';
-import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
-import { IRecipe } from 'src/app/modules/recipes/models/recipes';
+import { Subject, takeUntil, tap } from 'rxjs';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { NotificationService } from '../../services/notification.service';
 import { INotification } from '../../models/notifications';
-import { EmojiData } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { Router } from '@angular/router';
 import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
-import { supabase } from 'src/app/modules/controls/image/supabase-data';
 
 @Component({
   selector: 'app-users-list-item',
@@ -30,77 +26,42 @@ import { supabase } from 'src/app/modules/controls/image/supabase-data';
   animations: [trigger('modal', modal())],
 })
 export class UsersListItemComponent implements OnInit, OnDestroy {
-  @Input() public userId: number = 0;
-  user: IUser = { ...nullUser };
-  @Output() demoteClick = new EventEmitter<IUser>();
-  emoji: EmojiData | null = null;
+  @Input() user: IUser = { ...nullUser };
   noAvatar = '/assets/images/userpic.png';
-  avatar: string = '';
-  noAccessModalShow = false;
-
-  private destroyed$: Subject<void> = new Subject<void>();
-  followingLength: number = 0;
-  followersLength: number = 0;
-  @Input() adminpanel = false;
-  userRecipesLength: number = 0;
-  isFollower: boolean = false;
   currentUser: IUser = { ...nullUser };
-  allRecipes:IRecipe[] =[]
+  noAccessModalShow = false;
+  private destroyed$: Subject<void> = new Subject<void>();
+
+  @Output() followStateChanges = new EventEmitter();
+  @Input() loading = 0;
+
+  users: IUser[] = [];
+  // currentUser: null
+
   constructor(
     private userService: UserService,
-    private recipeService: RecipeService,
-    private authService: AuthService,
     private notifyService: NotificationService,
     private cd: ChangeDetectorRef,
+    private authService: AuthService,
     private router: Router,
   ) {}
 
   public ngOnInit(): void {
-    this.recipeService.recipes$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((data: IRecipe[]) => {
-        this.allRecipes = data;
-        
-      });
-
+    if (this.loading) return;
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
-      .subscribe((data: IUser) => {
-        this.currentUser = data;
-        this.userService.users$
-          .pipe(takeUntil(this.destroyed$))
-          .subscribe((data: IUser[]) => {
-            const users: IUser[] = data;
-            this.user = users.find((u) => u.id === this.userId) || nullUser;
-            this.followingLength = this.userService.getFollowing(
-              users,
-              this.user.id,
-            ).length;
-            this.followersLength = this.userService
-              .getFollowers(users, this.user.id)
-              .filter((f) => f.id !== 0).length;
-            this.emoji = this.user.emojiStatus ? this.user.emojiStatus : null;
-
-            const currentUserInFollowers = this.user.followersIds.find(
-              (followerId: number) => followerId === this.currentUser.id,
-            );
-            currentUserInFollowers
-              ? (this.isFollower = true)
-              : (this.isFollower = false);
-            if (this.user.avatarUrl) {
-              this.downloadUserpicFromSupabase(this.user.avatarUrl);
-            }
-            this.userRecipesLength = this.recipeService.getRecipesByUser(
-              this.allRecipes,
-              this.user.id,
-            ).length;
-            this.cd.markForCheck();
-          });
+      .subscribe((user) => {
+        this.currentUser = user;
       });
-  }
 
-  protected demote() {
-    this.demoteClick.emit(this.user);
+    this.userService.users$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((data: IUser[]) => {
+        const users: IUser[] = data;
+        const user = users.find((u) => u.id === this.user.id) || this.user;
+        this.user = user;
+        this.cd.markForCheck();
+      });
   }
 
   handleNoAccessModal(event: boolean) {
@@ -108,12 +69,6 @@ export class UsersListItemComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl('/greetings');
     }
     this.noAccessModalShow = false;
-  }
-
-  downloadUserpicFromSupabase(path: string) {
-    this.avatar = supabase.storage
-      .from('userpics')
-      .getPublicUrl(path).data.publicUrl;
   }
 
   clickFollowButton() {
@@ -124,45 +79,67 @@ export class UsersListItemComponent implements OnInit, OnDestroy {
     }
   }
 
-  showStatus(user: IUser) {
-    if (this.currentUser.id === this.user.id) return true;
-    if (this.currentUser.role === 'admin') return true;
-    return this.userService.getPermission('show-status', user);
-  }
-
-  async updateUser(user:IUser) {
-   await this.userService.updateUserInSupabase(user); 
-  }
-
-  async follow() {
+  follow() {
     if (this.currentUser.id > 0) {
-      this.user = this.userService.addFollower(this.user, this.currentUser.id);
-       this.updateUser(this.user);
-       if (this.userService.getPermission('new-follower', this.user)) {
-        const notify: INotification = this.notifyService.buildNotification(
-          'Новый подписчик',
-          `Кулинар ${
-            this.currentUser.fullName
-              ? this.currentUser.fullName
-              : '@' + this.currentUser.username
-          } подписался на тебя`,
-          'info',
-          'user',
-          '/cooks/list/' + this.currentUser.id,
-        );
-        this.notifyService.sendNotification(notify, this.user)
-      }
+      this.userService
+        .followUser(this.currentUser.id, this.user.id)
+        .pipe(
+          tap(() => {
+            this.followStateChanges.emit();
+          }),
+        )
+        .subscribe({
+          next: () => {
+            if (!this.user.followersCount) {
+              this.user.followersCount = 0;
+            }
+
+            this.user.followersCount++;
+            this.user.isFollower = 1;
+            this.userService.updateUserInUsers(this.user);
+
+            // this.userService.getPermission('new-follower', this.user)
+
+            if (this.currentUser.id > 0) {
+              const notify: INotification =
+                this.notifyService.buildNotification(
+                  'Новый подписчик',
+                  `Кулинар ${
+                    this.currentUser.fullName
+                      ? this.currentUser.fullName
+                      : '@' + this.currentUser.username
+                  } подписался на тебя`,
+                  'info',
+                  'user',
+                  '/cooks/list/' + this.currentUser.id,
+                );
+              this.notifyService
+                .sendNotification(notify, this.user.id)
+                .subscribe();
+            }
+          },
+        });
     }
   }
 
-  async unfollow() {
+  unfollow() {
     if (this.currentUser.id > 0) {
-      this.user = this.userService.removeFollower(
-        this.user,
-        this.currentUser.id,
-      );
-       this.updateUser(this.user);
+      this.userService
+        .unfollowUser(this.currentUser.id, this.user.id)
+        .subscribe({
+          next: () => {
+            if (this.user.followersCount) {
+              this.user.followersCount--;
+              this.user.isFollower = 0;
+            }
+            this.userService.updateUserInUsers(this.user);
+          },
+        });
     }
+  }
+
+  get isFollower() {
+    return this.user.isFollower;
   }
 
   public ngOnDestroy(): void {

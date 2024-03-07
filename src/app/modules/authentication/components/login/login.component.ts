@@ -15,7 +15,7 @@ import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { EMPTY, Subject, catchError, finalize, takeUntil, tap } from 'rxjs';
 import { customPatternValidator } from 'src/tools/validators';
 @Component({
   selector: 'app-login',
@@ -44,7 +44,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     return !this.form.get('login')?.hasError('loginExists')
       ? this.form.get('login')?.invalid &&
         (this.form.get('login')?.dirty || this.form.get('login')?.touched)
-        ? 'Введите корректную электронную почту'
+        ? 'Введите корректную электронную почту или имя пользователя'
         : ''
       : ' ';
   }
@@ -54,7 +54,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     private titleService: Title,
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
-    private usersService: UserService,
     private router: Router,
   ) {
     this.titleService.setTitle('Вход');
@@ -63,15 +62,13 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.usersInit();
-
     this.form = this.fb.group({
       login: [
         '',
         [
           Validators.required,
           Validators.maxLength(64),
-          customPatternValidator(loginMask),
+          customPatternValidator(emailOrUsernameMask),
         ],
       ],
       password: [
@@ -86,66 +83,63 @@ export class LoginComponent implements OnInit, OnDestroy {
     });
   }
 
-  async loginUser() {
+  loginUser() {
     if (this.form.valid) {
-      const user: IUser = {
+      const loginUser: IUser = {
         ...nullUser,
-        email: this.form.value.login,
+        username: this.form.value.login,
         password: this.form.value.password,
       };
 
-      try {
-        this.loadingModal = true;
-        const loadedUserId = await this.authService.loadUserFromSupabaseByEmail(
-          user.email,
-        );
+      this.loadingModal = true;
 
-        if (loadedUserId) {
-          const { error } = await this.authService.signIn(
-            user.email,
-            user.password,
-          );
-
-          if (error) {
-            switch (error.message) {
-              case 'Email not confirmed':
-                this.failInfo =
-                  'Вы пока не подтвердили аккаунт после регистрации. Проверьте письмо в вашей электронной почте';
-                break;
-              case 'Invalid login credentials':
-                this.failInfo =
-                  'Скорее всего, вы где-то ошиблись. Такого пользователя не найдено. Перепроверьте данные и попробуйте снова';
-                break;
-              default:
-                this.failInfo =
-                  'Произошла неизвестная ошибка при регистрации. Попробуйте снова';
-            }
-
+      this.authService
+        .loginUser(loginUser)
+        .pipe(
+          tap(() => {
+            this.authService
+              .getTokenUser()
+              .pipe(
+                tap((user:IUser) => {
+                  this.authService.getNotificationsByUser(user.id).subscribe(
+                    (notifies) => {
+                      user.notifications = notifies;
+                      this.successModal = true;
+                      user.init = true;
+                      this.authService.setCurrentUser(user);
+                      this.cd.markForCheck();
+                    }
+                  )
+                }),
+                catchError((e) => {
+                  console.log(e);
+                  this.failInfo =
+                    e.error.content || 'Произошла неизвестная ошибка';
+                  this.errorModal = true;
+                  return EMPTY;
+                }),
+                finalize(() => {
+                  this.loadingModal = false;
+                  this.cd.markForCheck();
+                }),
+              )
+              .subscribe();
+          }),
+          catchError((e) => {
+            this.failInfo = e.error.content || 'Произошла неизвестная ошибка';
             this.errorModal = true;
-          } else {
-            this.authService.setCurrentUser(this.users.find(u=>u.id===loadedUserId)||nullUser);
-            this.router.navigateByUrl('/');
-          }
-        }
-      } catch (error) {
-        this.failInfo =
-          'Скорее всего, вы где-то ошиблись. Такого пользователя не найдено. Перепроверьте данные и попробуйте снова';
-        this.errorModal = true;
-      }
+                        this.loadingModal = false;
+                        this.cd.markForCheck();
 
-      this.loadingModal = false;
-              this.cd.markForCheck();
-
+            return EMPTY;
+          })
+        )
+        .subscribe();
     }
-  
   }
 
-  private usersInit(): void {
-    this.usersService.users$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((receivedUsers: IUser[]) => {
-        this.users = receivedUsers;
-      });
+  handleSuccessModal() {
+    this.router.navigateByUrl('/');
   }
 
   ngOnDestroy(): void {

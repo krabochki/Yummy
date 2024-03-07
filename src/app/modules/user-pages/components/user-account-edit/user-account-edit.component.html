@@ -149,6 +149,8 @@
                     type="text"
                     [(ngModel)]="birthDate"
                     mwlFlatpickr
+                    [dateFormat]="'F, j'"
+                    [altFormat]="'F, j'"
                     [altInput]="true"
                     [convertModelValue]="true"
                 
@@ -310,7 +312,7 @@
               </p>
               <app-button
                 [disabled]="areObjectsEqual() && form.valid"
-                (click)="form.valid ? (saveModal = true) : null"
+                (click)="form.valid && areObjectsEqual() ? (saveModal = true) : null"
                 [text]="'Изменить'"
                 [color]="'sec'"
                 [style]="'filled'"
@@ -400,23 +402,22 @@
 
 <app-modal
   @modal
-  *ngIf="successModal"
-  [style]="'sec'"
-  [title]="'Аккаунт успешно изменен'"
+  *ngIf="errorModal"
+  [style]="'prim'"
+  [title]="'Произошла ошибка'"
   [type]="'Ok'"
-  (resultEmit)="handleSuccessModal($event)"
+  (resultEmit)="handleErrorModal()"
   [buttonsText]="['Хорошо']"
-  [description]="'Изменения вашего аккаунта успешно сохранены!'"
+  [description]="error"
 ></app-modal>
+
+<app-modal @modal *ngIf="successModal" [style]="'sec'" [title]="'Аккаунт успешно изменен'" [type]="'Ok'"
+  (resultEmit)="handleSuccessModal($event)" [buttonsText]="['Хорошо']"
+  [description]="'Изменения вашего аккаунта успешно сохранены!'"></app-modal>
 
 <app-modal
   @modal
   [style]="'await'"
   [type]="'Ok'"
-  [noButtons]="true"
-  [style]="'sec'"
-  [title]="'Подождите...'"
-  [type]="'Ok'"
-  [description]="'Применяются настройки...'"
   *ngIf="loading"
 ></app-modal>

@@ -8,8 +8,11 @@ export const cooksSelectItems: string[] = [
 export const recipeRouterLinks: string[] = [
   '/recipes/yours',
   '/recipes',
+  '/groups',
   '/recipes/favorite',
   '/ingredients',
+  '/categories',
+
   '/match',
   '/sections',
 ];
@@ -18,10 +21,12 @@ export const recipeSelectItems: string[] = [
   'Рецепты',
   'Ваши рецепты',
   'Все рецепты',
+  'Группы ингредиентов',
   'Закладки',
+  'Категории',
   'Ингредиенты',
   'Подбор рецептов',
-  'Разделы',
+  'Разделы категорий',
 ];
 
 export const planSelectItems: string[] = [
@@ -34,7 +39,7 @@ export const planSelectItems: string[] = [
 export const cookRouterLinks: string[] = [
   '/cooks/following/',
   '/cooks',
-  '/cooks/updates',
+  '/recipes/updates',
 ];
 
 export const planRouterLinks: string[] = [
@@ -87,19 +92,27 @@ export function recipeRoutes(id: number) {
     },
     {
       routeLink: recipeRouterLinks[2],
-      disabled: !id,
+      disabled: false,
     },
     {
       routeLink: recipeRouterLinks[3],
-      disabled: false,
+      disabled: !id,
     },
-
     {
       routeLink: recipeRouterLinks[4],
       disabled: false,
     },
     {
       routeLink: recipeRouterLinks[5],
+      disabled: false,
+    },
+
+    {
+      routeLink: recipeRouterLinks[6],
+      disabled: false,
+    },
+    {
+      routeLink: recipeRouterLinks[7],
       disabled: false,
     },
   ];

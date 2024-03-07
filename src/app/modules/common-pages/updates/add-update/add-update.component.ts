@@ -17,17 +17,17 @@ import { heightAnim, modal } from 'src/tools/animations';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { Subject } from 'rxjs';
-import { getCurrentDate } from 'src/tools/common';
+import { Observable, Subject, finalize, forkJoin, tap } from 'rxjs';
+import { addModalStyle, getCurrentDate, removeModalStyle } from 'src/tools/common';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
-import { supabase } from 'src/app/modules/controls/image/supabase-data';
 import { trimmedMinLengthValidator } from 'src/tools/validators';
 import { IUpdate, nullUpdate } from '../updates/const';
 import { UpdatesService } from '../../services/updates.service';
+import { Permission } from 'src/app/modules/user-pages/components/settings/conts';
 
 @Component({
   selector: 'app-add-update',
@@ -41,6 +41,7 @@ export class AddUpdateComponent
 {
   @ViewChild('scrollContainer', { static: false }) scrollContainer?: ElementRef;
   @Output() closeEmitter = new EventEmitter<boolean>();
+  @Output() createEmitter = new EventEmitter();
 
   tags: string[] = [];
 
@@ -54,13 +55,11 @@ export class AddUpdateComponent
   context = context;
 
   currentStep: number = 0;
-  allUsers: IUser[] = [];
   showInfo = false;
   steps: Step[] = steps;
 
   form: FormGroup;
   beginningData: any;
-  maxId = 0;
   awaitModalShow = false;
 
   viewedSteps: number[] = [];
@@ -78,12 +77,6 @@ export class AddUpdateComponent
     private authService: AuthService,
     private updateService: UpdatesService,
   ) {
-    this.updateService.getMaxUpdateId().then((maxId) => {
-      this.maxId = maxId;
-    });
-    this.userService.users$.subscribe(
-      (receivedUsers: IUser[]) => (this.allUsers = receivedUsers),
-    );
     this.authService.currentUser$.subscribe((receivedUser: IUser) => {
       this.currentUser = receivedUser;
     });
@@ -141,7 +134,7 @@ export class AddUpdateComponent
     if (this.form.get('tag')?.valid) {
       const tag = this.form.value.tag;
       this.tags.push(tag);
-      this.form.get('tag')!.setValue('');
+      this.form.get('tag')?.setValue('');
       this.cdr.markForCheck();
     }
   }
@@ -215,10 +208,7 @@ export class AddUpdateComponent
 
   currentUser: IUser = { ...nullUser };
   ngOnInit() {
-    this.renderer.addClass(document.body, 'hide-overflow');
-    (<HTMLElement>document.querySelector('.header')).style.width =
-      'calc(100% - 16px)';
-    this.renderer.addClass(document.body, 'hide-overflow');
+    addModalStyle(this.renderer);
   }
 
   areObjectsEqual(): boolean {
@@ -235,86 +225,168 @@ export class AddUpdateComponent
   addStatus(event: string) {
     this.form.get('status')!.setValue(event);
   }
-  addContext(event: string) {
-    this.form.get('context')!.setValue(event);
+
+  get showContext() {
+    switch (this.form.get('context')?.value) {
+      case 'all':
+        return 'Уведомить всех кулинаров';
+      case 'managers':
+        return 'Уведомить модераторов и администратора';
+      case 'nobody':
+        return 'Никого не уведомлять';
+    }
+    return '';
   }
 
-  async addUpdateToSupabase() {
+  addContext(event: string) {
+    switch (event) {
+      case 'Уведомить всех кулинаров':
+        this.form.get('context')!.setValue('all');
+        break;
+      case 'Уведомить модераторов и администратора':
+        this.form.get('context')!.setValue('managers');
+        break;
+      case 'Никого не уведомлять':
+        this.form.get('context')?.setValue('nobody');
+        break;
+    }
+  }
+
+  postUpdate() {
     const update: IUpdate = {
-      showAuthor: this.form.get('global')?.value,
-      id: this.maxId + 1,
+      id: 0,
+      open:false,
       shortName: this.form.value.shortName || '',
       fullName: this.form.value.name || '',
       tags: this.tags || [],
       description: this.form.value.description || '',
-      whoCanView:
-        this.form.get('allowAccessOnlyForManagers')?.value === true
-          ? 'managers'
-          : 'all',
-      context: this.form.value.context,
+      context: this.form.get('allowAccessOnlyForManagers')?.value
+        ? 'managers'
+        : 'all',
       link: this.form.value.link || '',
-      author: this.currentUser.id,
-      date: getCurrentDate(),
+      authorId: this.currentUser.id,
+      sendDate: getCurrentDate(),
+      notify: this.form.value.context,
       state: this.form.value.status || '',
       status: this.currentUser.role === 'admin' ? 'public' : 'awaits',
     };
     this.newUpdate = update;
     this.awaitModalShow = true;
     this.cdr.markForCheck();
-    const { error } = await this.updateService.addUpdateToSupabase(update);
-    if (!error) {
-      const updateNotification = this.notifyService.buildNotification(
-        this.form.value.shortName,
-        'Вышло новое обновление! Вы можете ознакомиться с ним на странице всех обновлений',
-        'success',
-        'update',
-        '/updates',
-      );
-      if (update.status === 'public')
-        await this.addNotificationToUsers(updateNotification);
-      this.successModal = true;
-    } else {
-      console.log(error);
-    }
-    this.awaitModalShow = false;
-    this.cdr.markForCheck();
+    this.updateService
+      .postUpdate(update)
+      .pipe(
+        tap((response: any) => {
+          update.id = response.id;
+          this.updateService.addUpdateToUpdates(update);
+          this.successModal = true;
+
+          this.sendNotifyForUpdateAuthor();
+          if (update.status === 'public') {
+            this.updateUpdates = true;
+            this.sendNotificationAboutUpdate(update);
+          }
+        }),
+        finalize(() => {
+          this.awaitModalShow = false;
+          this.cdr.markForCheck();
+        }),
+      )
+      .subscribe();
   }
 
   handleSaveModal(answer: boolean) {
     this.saveModal = false;
-    this.removeModalStyle();
+    addModalStyle(this.renderer);
 
     if (answer) {
-      this.addUpdateToSupabase();
+      this.postUpdate();
     }
   }
-  handleSuccessModal() {
-    this.closeEmitter.emit(true);
-    this.successModal = false;
 
-    if (this.userService.getPermission('you-create-update', this.currentUser)) {
-      const admin = this.currentUser.role === 'admin';
+  updateUpdates = false;
+
+  sendNotificationAboutUpdate(update: IUpdate) {
+    if (update.notify !== 'nobody') {
+      const updateNotification = this.notifyService.buildNotification(
+        update.shortName,
+        'А у нас новости! Вы можете ознакомиться с нововведениями, нажав на уведомление.',
+        'success',
+        'update',
+        '/news',
+      );
+
+      let getUsers$: Observable<any> = this.userService.getAllShort();
+      if (update.notify === 'managers') {
+        getUsers$ = this.userService.getManagersShort();
+      }
+      getUsers$
+        .pipe(
+          tap((users: IUser[]) => {
+            if (users.length) {
+              const sendNotifications$: Observable<any>[] = [];
+              users.map((u) => {
+                const sendNotification$ = this.notifyService.sendNotification(
+                  updateNotification,
+                  u.id,
+                );
+                sendNotifications$.push(sendNotification$);
+              });
+              forkJoin(sendNotifications$)
+                .pipe(
+                  tap(() => {
+                    this.currentUser.notifications.push(updateNotification);
+                    this.authService.setCurrentUser(this.currentUser);
+                  }),
+                )
+                .subscribe();
+            }
+          }),
+        )
+        .subscribe();
+    }
+  }
+
+  sendNotifyForUpdateAuthor() {
+    const permission = this.userService.getPermission(
+  this.currentUser.limitations || [],
+  this.currentUser.role === 'admin' ? Permission.NewsCreated : Permission.NewsSent,
+    );
+    //  this.userService.getPermission('you-create-update', this.currentUser)
+    const admin = this.currentUser.role === 'admin';
+    if (permission) {
       const notify: INotification = this.notifyService.buildNotification(
         !admin
-          ? 'Обновление отправлено на проверку'
-          : 'Обновление успешно опубликовано',
-        `Созданное вами обновление «${this.newUpdate.shortName}»  ${
+          ? 'Новость отправлено на проверку'
+          : 'Новость успешно опубликована',
+        `Созданная вами новость «${this.newUpdate.shortName}»  ${
           !admin
-            ? 'отправлено на проверку администратору'
-            : 'успешно опубликовано на странице обновлений'
+            ? 'отправлена на проверку администратору'
+            : 'успешно опубликована на странице новостей'
         }`,
         'success',
         'update',
-        !admin ? '' : '/updates',
+        !admin ? '' : '/news',
       );
-      this.notifyService.sendNotification(notify, this.currentUser);
+      this.notifyService
+        .sendNotification(notify, this.currentUser.id, true)
+
+        .subscribe();
     }
+  }
+
+  handleSuccessModal() {
+    this.closeEmitter.emit(true);
+    if (this.updateUpdates) {
+      this.createEmitter.emit()
+    }
+    this.successModal = false;
   }
   handleCloseModal(answer: boolean) {
     if (answer) {
       this.closeEmitter.emit(true);
     } else {
-      this.removeModalStyle();
+      addModalStyle(this.renderer);
     }
     this.closeModal = false;
   }
@@ -332,24 +404,7 @@ export class AddUpdateComponent
       : this.closeEmitter.emit(true);
   }
 
-  removeModalStyle() {
-    setTimeout(() => {
-      this.renderer.addClass(document.body, 'hide-overflow');
-      (<HTMLElement>document.querySelector('.header')).style.width =
-        'calc(100% - 16px)';
-    }, 0);
-  }
-
-  async addNotificationToUsers(newNotification: INotification) {
-    await this.updateService.addNotificationToUsers(
-      newNotification,
-      this.allUsers,
-      this.form.value.context,
-    );
-  }
-
   ngOnDestroy(): void {
-    this.renderer.removeClass(document.body, 'hide-overflow');
-    (<HTMLElement>document.querySelector('.header')).style.width = '100%';
+    removeModalStyle(this.renderer);
   }
 }

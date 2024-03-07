@@ -1,7 +1,7 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <div class="outer" (click)="clickBackgroundNotContent($event)">
-  <div class="inner">
+  <div class="inner min-width">
     <div class="close-button" (click)="closeEditModal()">
       <svg-icon
         [src]="'/assets/images/svg/close.svg'"
@@ -11,46 +11,32 @@
     </div>
     <div class="cont">
       <div class="header">
-        <h1>Создание группы ингредиентов</h1>
+        <h1>{{!editedGroup.id ? 'Создание' :'Изменение'}} группы ингредиентов</h1>
       </div>
       <div class="unique-content min">
         <form [formGroup]="form" #scrollContainer>
           <div class="step-container">
-            <div class="main-info-control-with-image">
-              <div class="form-control circle img">
-                <div class="image">
-                  <div
-                    class="delete"
-                    *ngIf="groupImage !== defaultImage"
-                    (click)="unsetImage()"
-                  >
-                    <svg-icon
-                      [applyClass]="true"
-                      class="svgTrash"
-                      [src]="'/assets/images/svg/trash.svg'"
-                    ></svg-icon>
-                  </div>
-                  <div
-                    class="photo"
-                    [ngClass]="{
-                      'have-image': this.form.get('image')?.value !== null
-                    }"
-                    [ngStyle]="{ 'background-image': 'url(' + groupImage + ')' }"
-                    alt="Изображение группы ингредиентов"
-                  >
-                    <input
-                                    class="input-image"
 
-                      type="file"
-                      (change)="onIngredientImageChange($event)"
-                      accept="image/*"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div class="main-info-controls">
+
+                      <div class="main-info-control-with-image">
+<div class="form-control circle img">
+  <div class="image">
+    <div class="delete" *ngIf="groupImage !== defaultImage" (click)="unsetImage()">
+      <svg-icon [applyClass]="true" class="svgTrash" [src]="'/assets/images/svg/trash.svg'"></svg-icon>
+    </div>
+    <div class="photo" [ngClass]="{
+                                    'have-image': this.form.get('image')?.value !== null
+                                  }" [ngStyle]="{ 'background-image': 'url(' + groupImage + ')' }"
+      alt="Изображение группы ингредиентов">
+      <input class="input-image" type="file" (change)="onIngredientImageChange($event)" accept="image/*" />
+    </div>
+  </div>
+</div>
+             
+            <div class="main-info-controls">
+
                 <div class="form-control">
-                  <h3>Название группы</h3>
+                  <h3>Название группы*</h3>
                   <app-usual-input
                     [inputRequired]="true"
                     [max]="30"
@@ -67,14 +53,15 @@
                     "
                   ></app-usual-input>
                 </div>
-                <div class="form-control">
+                <div class="form-control" *ngIf="!editedGroup.id">
                   <h3>Начальные ингредиенты</h3>
 
                   <app-autocomplete
+                  [startOnTyping]="true"
+                  [context]="'ingredients'"
                     [clearValueOnBlur]="true"
                     (ingredientEmitter)="addIngredient($event)"
-                    [placeholder]="'Выберите ингредиенты в списке ниже'"
-                    [ingredients]="ingredients"
+                    [placeholder]="'Начните вводить название ингредиента'"
                   />
                   <div class="tags">
                     <div
@@ -98,9 +85,13 @@
                     class="no-categories"
                   >
                     Вы пока не выбрали ни один ингредиент
-                  </div>
                 </div>
               </div>
+
+                        <a *ngIf="!edit" class="more-info-link" routerLink="/ingredients">Просмотреть ингредиенты</a>
+</div>
+
+             
             </div>
 
             <div class="buttons row">
@@ -111,8 +102,8 @@
                     : ''
                 "
                 [disabled]="areObjectsEqual() && form.valid"
-                (click)="form.valid ? (saveModal = true) : null"
-                [text]="'Опубликовать'"
+                (click)="form.valid && areObjectsEqual() ? (saveModal = true) : null"
+                [text]="edit? 'Изменить' :'Опубликовать'"
                 [color]="'sec'"
                 [style]="'filled'"
                 [rounded]="true"
@@ -150,7 +141,7 @@
   @modal
   *ngIf="saveModal"
   [style]="'sec'"
-  [title]="(edit?'Изменение':'сохранение')+' группы'"
+  [title]="(edit?'Изменение':'Сохранение')+' группы'"
   [type]="'yesOrNo'"
   (resultEmit)="handleSaveModal($event)"
   [buttonsText]="['Да', 'Нет']"
@@ -161,19 +152,22 @@
   @modal
   *ngIf="successModal"
   [style]="'sec'"
-  [title]="'Группа успешно сохранена'"
+  [title]="'Группа успешно ' +(edit?'изменена':'сохранена')"
   [type]="'Ok'"
   (resultEmit)="handleSuccessModal()"
   [buttonsText]="['Хорошо']"
   [description]="
-    'Группа «' + newGroup.name + '» успешно создана и опубликована'
+    'Группа «' + newGroup.name + '» успешно ' +(edit?'изменена':'сохранена')
   "
 ></app-modal>
 <app-modal
-  [noButtons]="true"
   [style]="'await'"
-  *ngIf="loading"
-  [title]="'Подождите...'"
+  *ngIf="loading || !editedGroupDataLoaded"
   @modal
-  [description]="'Вносим изменения... Подождите немного...'"
 />
+<app-modal @modal *ngIf="errorModal" [style]="'prim'" [title]="
+    'Произошла ошибка'
+  " [type]="'Ok'" (resultEmit)="errorModal=false" [buttonsText]="['Хорошо']" [description]="
+    error||'Произошла неизвестная ошибка'
+  "></app-modal>
+

@@ -1,104 +1,38 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<div class="wrap" >
-  <h1 *ngIf="getPublicCategories(section).length>0 || filter==='popular' || filter==='sections'">{{ title }}</h1>
+<div class="wrap">
+  <h1>
+    {{ title }}
+  </h1>
 
   <app-button
     class="add-category"
     [icon]="'add-category'"
-    *ngIf="filter === 'sections'"
     [color]="'prim'"
+    [disabled]="!(categories.length === 0 && !loaded)"
     [text]="'Создать категорию'"
-            (click)="createCategoryButtonClick()"
-
+    (click)="createCategoryButtonClick()"
     [rounded]="true"
   ></app-button>
 
-  <div *ngIf="getPublicCategories(section).length>0 || filter==='popular' || filter==='sections'" class="search-block">
-    <div class="search">
-      <input
-        (focus)="focusSearch()"
-        (blur)="blurSearch()"
-        [(ngModel)]="searchQuery"
-        (ngModelChange)="turnOnSearch()"
-        type="text"
-        placeholder="Введите запрос"
-      />
-      <div class="magnifier">
-        <svg-icon
-          [applyClass]="true"
-          class="search-svg"
-          [src]="'/assets/images/svg/search.svg'"
-        ></svg-icon>
-      </div>
-    </div>
+  <app-search
+    [disabled]="categories.length <= 0 && !loaded"
+    [context]="'sections & categories'"
+  ></app-search>
 
-    <div class="autocomplete-list">
-      <ul @auto-complete *ngIf="autocompleteShow">
-        <div *ngIf="autocomplete.length === 0">
-          <div class="no-found-recipes">
-            <div class="image">
-              <svg-icon
-                [applyClass]="true"
-                class="sad-cook"
-                [src]="'/assets/images/svg/sad-cook.svg'"
-              ></svg-icon>
-            </div>
-            <p>
-              По вашему запросу нет никаких категорий или секций. Попробуйте
-              изменить параметры поиска или попробовать наш специальный раздел!
-            </p>
-            <app-button
-              [text]="'Подбор рецептов'"
-                  (mousedown)="navigateTo('/recipes/match')"
-              [style]="'filled'"
-              [color]="'prim'"
-              [rounded]="true"
-            ></app-button>
-          </div>
-        </div>
-        <li
-          *ngFor="let item of autocomplete"
-           (mousedown)="navigateTo(
-              getSectionOfCategory(item).id === 0
-                ? '/sections/list/' + item.id
-                : '/categories/list/' + item.id
-            )"
-        >
-        
-            {{ item.name }}
-        
-       
-        </li>
-      </ul>
-    </div>
-  </div>
 
-    <div *ngIf="getPublicCategories(section).length===0 && filter!=='sections' && filter!=='popular'" class="container one-column not-found">
-      <div class="image">
-        <svg-icon
-          [applyClass]="true"
-          class="fridge"
-          [src]="'/assets/images/svg/fridge.svg'"
-        ></svg-icon>
-      </div>
-      <div class="content">
-        <h1 class="label">Категорий пока <span class="title">нет</span></h1>
-        <p class="tagline">В секции «{{this.title}}» пока нет категорий. Можете попробовать создать категорию сами!</p>
-
-        <hr />
-        <div class="buttons">
-          <app-button
-          (click)="creatingMode=true"
-            [rounded]="true"
-            [color]="'prim'"
-            [text]="'Создать категорию'"
-          ></app-button>
-        </div>
-      </div>
-    </div>
   <div>
-    <div class="sections" *ngIf="filter === 'sections'">
+        <ng-container>
+          <div class="sections" *ngIf="popularCategories.length ===0 ">
+            <div class="head">
+              <h2 class="load">Загрузкаааааааа</h2>
+            </div>
+        
+            <app-horizontal-category-list [preloader]="true"></app-horizontal-category-list>
+          </div>
+        </ng-container>
+
+    <div class="sections" *ngIf="popularCategories.length > 0">
       <a [routerLink]="'/categories/popular'" class="head">
         <h2>Популярные категории</h2>
 
@@ -110,14 +44,16 @@
       </a>
 
       <app-horizontal-category-list
-      (editEmitter)="successEditModal=true"
-
+        (editEmitter)="successEditModal = true"
         [showRecipesNumber]="true"
-        [categories]="popularCategories.slice(0, 8)"
+        [categories]="popularCategories"
       ></app-horizontal-category-list>
     </div>
+
     <div *ngFor="let section of sections" class="sections">
-      <div  *ngIf="section.categories.length > 0 && (getPublicCategories(section).length>0 || filter==='popular')" class="sections">
+      <div
+        class="sections"
+      >
         <a
           [routerLink]="'/sections/list/' + section.id"
           *ngIf="section.name !== ''"
@@ -132,49 +68,66 @@
           ></svg-icon>
         </a>
 
-        <app-horizontal-category-list   (editEmitter)="successEditModal=true"
-          *ngIf="filter === 'sections'; else oneSection"
+        <app-horizontal-category-list
+          (editEmitter)="successEditModal = true"
           [showRecipesNumber]="true"
-          [categories]="getCategoriesOfSection(section).slice(0, 8)"
+          [categories]="getCategoriesOfSection(section)"
         ></app-horizontal-category-list>
-        
-        <ng-template #oneSection> 
-          <app-vertical-category-list  [moreRowsForMobile]="this.getCategoriesOfSection(this.section).length>4?2:this.getCategoriesOfSection(this.section).length>9 ?3:0"  (editEmitter)="successEditModal=true"
-            [showRecipesNumber]="true"
-            [categories]="categoriesToShow"
-          ></app-vertical-category-list>
-        </ng-template>
-        <app-button
-          [text]="'Загрузить еще...'"
-          (click)="loadMoreCategories()"
-          *ngIf="
-            filter !== 'sections' &&
-            getCategoriesOfSection(section).length > categoriesToShow.length
-          "
-          [rounded]="true"
-          [style]="'outlined'"
-          [color]="'prim'"
-        ></app-button>
       </div>
     </div>
+    <ng-container *ngFor="let preloader of skeleton">
+      <div class="sections" *ngIf="!loaded">
+        <div class="head">
+          <h2 class="load">Загрузкаааааааа</h2>
+        </div>
+
+        <app-horizontal-category-list
+          [preloader]="true"
+        ></app-horizontal-category-list>
+      </div>
+    </ng-container>
   </div>
+  <app-button
+    [class.disabled]="!loaded ? true : false"
+    class="more-reports-button"
+    [text]="'Загрузить еще...'"
+    (click)="loadMoreSections()"
+    *ngIf="!everythingLoaded"
+    [disabled]="loaded"
+    [rounded]="true"
+    [style]="'outlined'"
+    [color]="'prim'"
+  ></app-button>
 </div>
 
-
-
-<app-category-creating style="position: fixed;z-index: 3;"
+<app-category-creating
+  style="position: fixed; z-index: 3"
   (closeEmitter)="creatingMode = false"
+  (editEmitter)="updateAfterChanges()"
   @modal
   *ngIf="creatingMode"
 ></app-category-creating>
 
-
-<app-modal @modal *ngIf="noAccessModalShow" [style]="'prim'" [title]="'Доступ к разделу ограничен'" [type]="'yesOrNo'"
-  (resultEmit)="handleNoAccessModal($event)" [buttonsText]="['Давайте', 'Не сейчас']" [description]="
+<app-modal
+  @modal
+  *ngIf="noAccessModalShow"
+  [style]="'prim'"
+  [title]="'Доступ к разделу ограничен'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleNoAccessModal($event)"
+  [buttonsText]="['Давайте', 'Не сейчас']"
+  [description]="
     'Доступ к этой функции имеют только зарегистрированные пользователи. Хотите зарегистрироваться или войти в существующий аккаунт?'
-  "></app-modal>
+  "
+></app-modal>
 
-    <app-modal @modal *ngIf="successEditModal" [style]="'sec'" [title]="'Категория изменена'" [type]="'Ok'"
-      (resultEmit)="successEditModal=false" [buttonsText]="['Хорошо']" [description]="
-            'Категория успешно изменена'
-          "></app-modal>
+<app-modal
+  @modal
+  *ngIf="successEditModal"
+  [style]="'sec'"
+  [title]="'Категория изменена'"
+  [type]="'Ok'"
+  (resultEmit)="successEditModal = false"
+  [buttonsText]="['Хорошо']"
+  [description]="'Категория успешно изменена'"
+></app-modal>

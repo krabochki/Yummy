@@ -12,9 +12,16 @@ import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subject } from 'rxjs';
+import {
+  EMPTY,
+  Subject,
+  catchError,
+  finalize,
+  forkJoin,
+  pipe,
+  tap,
+} from 'rxjs';
 import { customPatternValidator } from 'src/tools/validators';
-import { supabase } from 'src/app/modules/controls/image/supabase-data';
 @Component({
   templateUrl: './password-reset.component.html',
   styleUrls: ['../../common-styles.scss'],
@@ -24,9 +31,10 @@ import { supabase } from 'src/app/modules/controls/image/supabase-data';
 export class PasswordResetComponent implements OnInit {
   successModal: boolean = false;
   loadingModal = false;
-  infoError = '';
+  error = '';
   users: IUser[] = [];
   form: FormGroup;
+
   errorModal = false;
   protected destroyed$: Subject<void> = new Subject<void>();
 
@@ -48,14 +56,24 @@ export class PasswordResetComponent implements OnInit {
   }
   async handleSuccessModalResult() {
     this.successModal = false;
-    if (!this.goHereFromUrl) {
+    this.authService.logout().subscribe(() => {
+      this.authService.setCurrentUser(nullUser);
       this.router.navigateByUrl('/login');
-    } else this.router.navigateByUrl('/');
+    });
   }
   currentUser: IUser = nullUser;
 
-  async ngOnInit() {
+  ngOnInit() {
     this.form = this.fb.group({
+      old_password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.maxLength(20),
+          customPatternValidator(passMask),
+        ],
+      ],
       password: [
         '',
         [
@@ -71,22 +89,72 @@ export class PasswordResetComponent implements OnInit {
       this.currentUser = user;
     });
 
-    const hashParams = window.location.hash
-      .substring(1)
-      .replace('/password-reset#', '');
-
-    if (this.currentUser.id === 0) {
-      const result = this.authService.loginUserWithToken(hashParams);
-      if (result !== false) {
+    this.authService.getTokenUser().subscribe((user) => {
+      if (user.id) {
+        this.goHereFromUrl = false;
+      } else {
         this.goHereFromUrl = true;
-        const { error } = await result;
-        if (error) {
-          this.router.navigateByUrl('/');
-        }
+
+            this.form = this.fb.group({
+              
+              password: [
+                '',
+                [
+                  Validators.required,
+                  Validators.minLength(8),
+                  Validators.maxLength(20),
+                  customPatternValidator(passMask),
+                ],
+              ],
+            });
+
+        this.routeInit();
+      }
+    });
+  }
+
+  routeInit() {
+    this.route.queryParams.subscribe((queryParam) => {
+      const token = queryParam['token'];
+
+      if (token) {
+        this.authService
+          .findUserByResetToken(token)
+          .pipe(
+            tap((resetTokenUser) => {
+              forkJoin([
+                this.authService.removeResetTokenFromUser(resetTokenUser.id),
+                this.authService.autologinUser(resetTokenUser),
+              ]).subscribe(() => {
+                this.authService
+                  .getTokenUser()
+                  .pipe(
+                    tap((tokenUser) => {
+
+                      this.authService
+                        .getNotificationsByUser(tokenUser.id)
+                        .subscribe((notifies) => {
+                          tokenUser.notifications = notifies;
+                          tokenUser.init = true;
+                          this.authService.setCurrentUser(tokenUser);
+                          this.cd.markForCheck();
+                        });
+                      
+                    }),
+                  )
+                  .subscribe();
+              });
+            }),
+            catchError(() => {
+              this.router.navigateByUrl('/');
+              return EMPTY;
+            }),
+          )
+          .subscribe();
       } else {
         this.router.navigateByUrl('/');
       }
-    }
+    });
   }
 
   get passwordNotValidError() {
@@ -96,38 +164,43 @@ export class PasswordResetComponent implements OnInit {
       : '';
   }
 
-  async passwordReset(): Promise<void> {
+  get oldPasswordNotValidError() {
+    return this.form.get('old_password')?.invalid &&
+      (this.form.get('old_password')?.dirty ||
+        this.form.get('old_password')?.touched)
+      ? 'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква'
+      : '';
+  }
+
+  passwordReset() {
     if (this.form.valid) {
-      try {
-        this.loadingModal = true;
-        this.cd.markForCheck();
-        const { error } = await supabase.auth.updateUser({
-          password: this.form.get('password')?.value,
-        });
-        if (error) {
-          if (
-            error.message ===
-            'New password should be different from the old password.'
-          )
-            this.infoError = 'Новый пароль должен отличаться от старого';
-          else {
-            this.infoError =
-              'Произошла неизвестная ошибка при попытке сброса пароля';
-          }
-          this.errorModal = true;
-        } else {
-          this.successModal = true;
-          if (!this.goHereFromUrl) {
-            this.authService.logoutUser();
-            await this.authService.logout();
-          }
-        }
-      } catch {
-        this.errorModal = true;
-      } finally {
-        this.loadingModal = false;
-        this.cd.markForCheck();
-      }
+      const newPassword = this.form.value.password;
+      const oldPassword = this.form.value.old_password;
+
+      const changePassword$ = this.goHereFromUrl
+        ? this.authService.changePassword(this.currentUser.id, newPassword)
+        : this.authService.secureChangePassword(
+            this.currentUser.id,
+            newPassword,
+            oldPassword,
+          );
+      changePassword$
+        .pipe(
+          tap(() => {
+            this.successModal = true;
+          }),
+          catchError((response) => {
+            const error = response.error.error;
+            this.error = error || '';
+            this.errorModal = true;
+            return EMPTY;
+          }),
+          finalize(() => {
+            this.loadingModal = false;
+            this.cd.markForCheck();
+          }),
+        )
+        .subscribe();
     }
   }
 }

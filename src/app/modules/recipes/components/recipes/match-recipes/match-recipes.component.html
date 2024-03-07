@@ -9,27 +9,26 @@
 
       <div class="categories">
         <div *ngFor="let item of group; let i = index" class="section">
-          <a [routerLink]="'/sections/list/'+item.section.id" class="section-name" [ngClass]="{ 'active-section-name': sectionStates[i] }"
-            >
-           <p (click)="toggleSection(i,$event)"> {{ item.section.name }}</p>
+          <a [routerLink]="'/sections/list/'+item.section.id" class="section-name"
+            [ngClass]="{ 'active-section-name': sectionStates[i] }">
+            <p (click)="toggleSection(i,$event)"> {{ item.section.name }}</p>
           </a>
           <div @height class="categories-list" *ngIf="sectionStates[i]">
-           <a  [routerLink]="'/categories/list/'+category.id"  *ngFor="let category of item.categories; let j = index">
-              <button class="category" (click)="toggleCategory(i, j, $event)"
-               >
+            <a [routerLink]="'/categories/list/'+category.id" *ngFor="let category of item.categories; let j = index">
+              <button class="category" (click)="toggleCategory(i, j, $event)">
                 <div class="toogle">
                   <svg-icon @modal [applyClass]="true" [class]="'checkbox'" *ngIf="categoryStates[i][j]"
                     [src]="baseSvgPath + 'checkbox.svg'"></svg-icon>
                 </div>
-  
+
                 <div class="category-box">
                   <div class="category-name">{{ category.name }}</div>
-  
-                  <span class="count noselect">
-                    {{ getCategoryRecipesNumber(category.id) }}</span>
+
+                  <!-- <span class="count noselect">
+                    {{ getCategoryRecipesNumber(category.id) }}</span> -->
                 </div>
               </button>
-           </a>
+            </a>
           </div>
         </div>
       </div>
@@ -53,30 +52,10 @@
     </div>
 
     <div class="ingredients-search">
-      <div>
-        <div #autocompleteBlock class="search-block noselect">
-          <div class="input-block">
-            <input [(ngModel)]="searchQuery" (ngModelChange)="search()" placeholder="Введите ингредиент"
-              (focus)="focusIngredientSearch()" type="text" />
-            <div class="magnifier">
-              <svg-icon [src]="'/assets/images/svg/search.svg'" class="search-svg" [applyClass]="true" />
-            </div>
-          </div>
-          <ul @height *ngIf="showIngredientsAutocomplete" class="autocomplete">
-            <div class="no-ingredients-founded" *ngIf="autoIngredients.length === 0">
-              Ингредиентов не найдено
 
-              <svg-icon [applyClass]="true" class="svg-no-ingredients" [src]="'/assets/images/svg/no-ingredients.svg'" />
-            </div>
-            <a *ngFor="let ingredient of autoIngredients" [routerLink]="findIngredientByName(ingredient).id
-                          ? ('/ingredients/list/'+findIngredientByName(ingredient).id)
-                          :null">
-              <li (click)="autocompleteClick(ingredient, $event)" class="a-ingredient">{{ingredient.trim()}}</li>
-            </a>
-          </ul>
-        </div>
+      <app-search [context]="'match-ingredients'" (ClickEmitter)="selectIngredientFromSearch($event)"></app-search>
 
-      </div>
+      <button (click)="findRecipes()">Find Recipes</button>
 
 
 
@@ -85,19 +64,15 @@
           <svg-icon [applyClass]="true" class="ingredients-svg" [src]="baseSvgPath + 'all-ingredients.svg'"></svg-icon>
           Самые популярные ингредиенты
         </h2>
-        <div class="ingredients" *ngIf="getIngredientNames().length > 0; else noIngredients">
-          <ng-container *ngFor="let ingredient of getIngredientNames().slice(0,MAX_NUM_OF_SHOWED_INGREDIENTS)">
-            <a [routerLink]="findIngredientByName(ingredient).id
-                          ? ('/ingredients/list/'+findIngredientByName(ingredient).id)
-                          :null">
-              <button (click)="ingredientClick(ingredient,$event)"
-                [ngClass]="{'ingredient-link':findIngredientByName(ingredient).id>0}"
-                [ngStyle]="{ zoom: getZoom(uniqueIngredientsArray[ingredient]) }" class="ingredient">
+        <div class="ingredients" *ngIf="popularIngredients.length; else noIngredients">
+          <ng-container *ngFor="let ingredient of popularIngredients">
+            <a>
+              <button (click)="ingredientClick(ingredient.name,$event)" [ngClass]="{'ingredient-link':findIngredientByName(ingredient.name).id>0}
+              " class="ingredient"
+                [ngStyle]="{opacity: containIngredient(ingredient.name) ? '0.5' : '', zoom: getZoom(ingredient.count) }">
 
-                <p> + <span class="name">{{ ingredient }}</span></p>
-                <span class="count noselect">{{
-                  uniqueIngredientsArray[ingredient]
-                  }}</span>
+                <p> + <span class="name">{{ ingredient.name }}</span></p>
+                <span class="count noselect">{{ingredient.count}}</span>
               </button>
             </a>
           </ng-container>
@@ -123,14 +98,14 @@
           Включаемые ингредиенты
         </h2>
 
-        <div cdkDropList #selected="cdkDropList" [cdkDropListData]="selectedIngredientsCopyForDragAndDrop"
-          [cdkDropListConnectedTo]="[excluded]" class="ingredients vertical" cdkDropListOrientation="vertical"
-          (cdkDropListDropped)="drop($event)">
-          <a [routerLink]="findIngredientByName(item).id
-                          ? ('/ingredients/list/'+findIngredientByName(item).id)
-                          :null" *ngFor="let item of selectedIngredients; let i = index">
-            <div (click)="$event.stopPropagation(); $event.preventDefault() " (cdkDragStarted)="dragStart(); "
-              class="ingredient selected" cdkDrag>{{ item }}</div>
+        <div class="ingredients vertical" cdkDropList #selected="cdkDropList" [cdkDropListData]="selectedIngredientsCopyForDragAndDrop" cdkDropListOrientation="vertical"
+          (cdkDropListDropped)="drop($event)"
+          [cdkDropListConnectedTo]="[excluded]" >
+          <a (cdkDragStarted)="dragStart(); " cdkDrag
+                          
+                          *ngFor="let item of selectedIngredients; let i = index">
+            <div  class="ingredient selected">{{ item }}
+            </div>
           </a>
           <span class="placeholder noone" *ngIf="selectedIngredients.length === 0">Вы пока не включили ни одного
             ингредиента</span>
@@ -143,35 +118,34 @@
 
       <p class="how-to-use">Перетаскивайте элементы из включаемых ингредиентов в исключаемые, и наоборот!</p>
 
-      <div class="select">
-        <h2>
+<div class="select">
+  <h2>
 
-          <svg-icon [applyClass]="true" class="ingredients-svg" [src]="baseSvgPath + 'no-food.svg'"></svg-icon>
-          Исключаемые ингредиенты
-        </h2>
+    <svg-icon [applyClass]="true" class="ingredients-svg" [src]="baseSvgPath + 'no-food.svg'"></svg-icon>
+    Исключаемые ингредиенты
+  </h2>
 
-        <div cdkDropList #excluded="cdkDropList" [cdkDropListData]="excludedIngredientsCopyForDragAndDrop"
-          [cdkDropListConnectedTo]="[selected]" class="ingredients  vertical" cdkDropListOrientation="vertical"
-          (cdkDropListDropped)="drop($event)">
-          <a [routerLink]="findIngredientByName(item).id
-                          ? ('/ingredients/list/'+findIngredientByName(item).id)
-                          :null" *ngFor="let item of excludedIngredients; let i = index">
-            <div (click)="$event.stopPropagation(); $event.preventDefault() " (cdkDragStarted)="dragStart()"
-              cdkDragLockAxis="y" class="ingredient selected" cdkDrag>{{ item }}</div>
-          </a>
+  <div cdkDropList #excluded="cdkDropList" [cdkDropListData]="excludedIngredientsCopyForDragAndDrop"
+    [cdkDropListConnectedTo]="[selected]" class="ingredients  vertical" cdkDropListOrientation="vertical"
+    (cdkDropListDropped)="drop($event)">
+    <a 
+                         
+                       *ngFor="let item of excludedIngredients; let i = index">
+      <div  (cdkDragStarted)="dragStart()"
+        cdkDragLockAxis="y" class="ingredient selected" cdkDrag>{{ item }}</div>
+    </a>
 
-          <span class="placeholder noone" *ngIf="excludedIngredients.length === 0">Вы пока не исключили ни одного
-            ингредиента</span>
-        </div>
+    <span class="placeholder noone" *ngIf="excludedIngredients.length === 0">Вы пока не исключили ни одного
+      ингредиента</span>
+  </div>
 
-        <app-button (click)="
+  <app-button (click)="
                 excludedIngredients.length > 0
                   ? clearAllExcludedIngredients()
                   : null
               " [disabled]="excludedIngredients.length > 0" [style]="'filled-min'" [color]="'prim'"
-          [text]="'Очистить все'" [rounded]="true"></app-button>
-      </div>
-
+    [text]="'Очистить все'" [rounded]="true"></app-button>
+</div>
       <div class="select">
         <h2>
           <svg-icon [applyClass]="true" class="ingredients-svg" [src]="baseSvgPath + 'categories.svg'"></svg-icon>

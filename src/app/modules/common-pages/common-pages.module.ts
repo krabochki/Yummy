@@ -16,11 +16,15 @@ import { ShareButtonsModule } from 'ngx-sharebuttons/buttons';
 import { ShareIconsModule } from 'ngx-sharebuttons/icons';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { ImageViewerComponent } from './image-viewer/image-viewer.component';
+import { RegBenefitsComponent } from './reg-benefits/reg-benefits.component';
+import { AngularImageViewerModule } from '@hreimer/angular-image-viewer';
+import { AppModule } from 'src/app/app.module';
 
 @NgModule({
   declarations: [
     AnonimPageComponent,
     AboutComponent,
+    RegBenefitsComponent,
     UpdatesComponent,
     PageNotFoundComponent,
     AddUpdateComponent,

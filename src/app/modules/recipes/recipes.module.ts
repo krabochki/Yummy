@@ -40,6 +40,10 @@ import { IngredientCreateComponent } from './components/ingredients/ingredient-c
 import { GroupCreatingComponent } from './components/ingredients/group-creating/group-creating.component';
 import { CommonPagesModule } from '../common-pages/common-pages.module';
 import { NgxImageCompressService } from 'ngx-image-compress';
+import { SectionPageComponent } from './components/categories/section-page/section-page.component';
+import { GroupsPageComponent } from './components/ingredients/groups-page/groups-page.component';
+import { GroupPageComponent } from './components/ingredients/group-page/group-page.component';
+import { SectionsPageComponent } from './components/categories/sections-page/sections-page.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +51,7 @@ import { NgxImageCompressService } from 'ngx-image-compress';
     CommentComponent,
     CommentsListComponent,
     RecipePageComponent,
-
+    SectionPageComponent,
     MatchRecipesComponent,
     CategoryCreatingComponent,
     SomeRecipesPageComponent,
@@ -56,8 +60,10 @@ import { NgxImageCompressService } from 'ngx-image-compress';
     CategoryListItemComponent,
     RecipeListItemComponent,
     RecipeCreateComponent,
+    GroupsPageComponent,
     HorizontalRecipeListComponent,
     VerticalRecipeListComponent,
+    GroupPageComponent,
     VerticalCategoryListComponent,
     HorizontalCategoryListComponent,
     SectionCreatingComponent,
@@ -67,6 +73,8 @@ import { NgxImageCompressService } from 'ngx-image-compress';
     IngredientsHorizontalListComponent,
     IngredientListItemComponent,
     GroupCreatingComponent,
+    SectionsPageComponent,
+
     IngredientCreateComponent,
   ],
   imports: [
@@ -75,12 +83,10 @@ import { NgxImageCompressService } from 'ngx-image-compress';
     DragScrollModule,
     NgFor,
     PlanningModule,
-    
     ControlsModule,
     RecipesRoutingModule,
     CommonPagesModule,
     ScrollingModule,
-    
     SvgIconComponent,
     CommonModule,
     AsyncPipe,
@@ -89,8 +95,6 @@ import { NgxImageCompressService } from 'ngx-image-compress';
     CdkDropList,
     CdkDrag,
     CdkDragHandle,
-    NgFor,
-    CdkDrag,
     FormsModule,
     ReactiveFormsModule,
   ],

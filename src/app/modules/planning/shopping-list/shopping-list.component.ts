@@ -1,6 +1,5 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { PlanService } from '../services/plan-service';
-import { IPlan, nullPlan } from '../models/plan';
+import { PlanService } from '../services/plan.service';
 import { AuthService } from '../../authentication/services/auth.service';
 import { IUser, nullUser } from '../../user-pages/models/users';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -11,7 +10,7 @@ import {
   productTypes,
   typeGroup,
 } from '../models/shopping-list';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, finalize, forkJoin, takeUntil, tap } from 'rxjs';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
 import { Title } from '@angular/platform-browser';
@@ -23,6 +22,7 @@ import {
 import { baseComparator, dragStart } from 'src/tools/common';
 import { IngredientService } from '../../recipes/services/ingredient.service';
 import { IIngredient } from '../../recipes/models/ingredients';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-shopping-list',
@@ -31,35 +31,53 @@ import { IIngredient } from '../../recipes/models/ingredients';
   animations: [trigger('height', heightAnim()), trigger('modal', modal())],
 })
 export class ShoppingListComponent implements OnInit, OnDestroy {
-  protected shoppingList: ShoppingListItem[] = [];
+printRecipe() {
+  window.print();
+}
+  initalLoading = false;
+  private currentUserId: number = 0;
+  shoppingList: ShoppingListItem[] = [];
+   relatedIngredients: { ingredientId: number; productId: number }[] =
+    [];
+  productTypes = productTypes;
 
-  protected baseSvgPath: string = '/assets/images/svg/grocery/';
+  deleteModal = false;
+  loadingModal = false;
+  createMode: boolean = false;
 
-  private currentUser: IUser = { ...nullUser };
-  private currentUserPlan: IPlan = nullPlan;
+  searchQuery: string = '';
+  autocompleteShow: boolean = false;
+  autocompleteTypes: ProductType[] = [];
+  focused: boolean = false;
 
-  protected productTypes = productTypes;
+  selectedType: ProductType = productTypes[0];
+  note: string = '';
 
-  protected form: FormGroup;
+  actualShoppingList: ShoppingListItem[] = [];
+  groupedProducts: { [key: string]: ShoppingListItem[] } = {};
 
-  protected deletingAllProductsModalShow = false;
-  protected searchQuery: string = '';
-  protected autocompleteShow: boolean = false;
-  protected autocompleteTypes: ProductType[] = [];
-  protected focused: boolean = false;
-  protected selectedType: ProductType = productTypes[0];
+  destroyed$: Subject<void> = new Subject<void>();
 
-  ingredients: IIngredient[] = [];
-  protected newProductCreatingMode: boolean = false;
-  protected note: string = '';
-
-  protected actualShoppingList: ShoppingListItem[] = [];
-  protected groupedProducts: { [key: string]: ShoppingListItem[] } = {};
-
-  protected destroyed$: Subject<void> = new Subject<void>();
-
-  protected data: any[] = [];
+  data: any[] = [];
   bodyElement: HTMLElement = document.body;
+  baseSvgPath: string = '/assets/images/svg/grocery/';
+  form: FormGroup;
+
+  constructor(
+    private cd: ChangeDetectorRef,
+    private planService: PlanService,
+    private authService: AuthService,
+    private router: Router,
+    private fb: FormBuilder,
+    private title: Title,
+  ) {
+    this.title.setTitle('Список покупок');
+    this.productTypes.sort((t1, t2) => {
+      return baseComparator(t1.name, t2.name);
+    });
+
+    this.form = this.initNewShoppingListItemForm();
+  }
 
   //изменение курсора когда зажат элемент
   dragStart() {
@@ -70,23 +88,17 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
     return item.id;
   }
 
-  constructor(
-    private cd: ChangeDetectorRef,
-    private planService: PlanService,
-    private authService: AuthService,
-    private fb: FormBuilder,
-    private title: Title,
-    private ingredientService: IngredientService,
-  ) {
-    this.title.setTitle('Список покупок');
-    this.productTypes.sort((t1, t2) => {
-      return baseComparator(t1.name, t2.name);
-    });
-
-    this.form = this.initNewShoppingListItemForm();
+  private getRelatedIngredients() {
+    return this.planService
+      .getRelatedIngredientsForProducts(this.currentUserId)
+      .pipe(
+        tap((relatedIngredients) => {
+          this.relatedIngredients = relatedIngredients;
+        }),
+      );
   }
 
-  async drop(events: CdkDragDrop<string[]>) {
+  drop(events: CdkDragDrop<string[]>) {
     this.bodyElement.classList.remove('inheritCursors');
     this.bodyElement.style.cursor = 'unset';
 
@@ -109,16 +121,28 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
       const currentType: typeGroup = this.data.find(
         (g) => g.items === events.container.data,
       );
-      if (currentType.type.id !== droppedProduct.type) {
-        const findedProduct = this.currentUserPlan.shoppingList.find(
+      if (currentType.type.id !== droppedProduct.typeId) {
+        const findedProduct = this.actualShoppingList.find(
           (i) => i.id === droppedProduct.id,
         );
-        if (findedProduct) findedProduct.type = currentType.type.id;
-          this.loading = true;
+        if (findedProduct) {
+          findedProduct.typeId = currentType.type.id;
+          this.loadingModal = true;
           this.cd.markForCheck();
-        await this.planService.updatePlanInSupabase(this.currentUserPlan)
-          this.loading = false;
-          this.cd.markForCheck();
+
+          this.planService
+            .updateProductType(findedProduct.id, findedProduct.typeId)
+            .pipe(
+              tap(() => {
+                this.getListInfo();
+              }),
+              finalize(() => {
+                this.loadingModal = false;
+                this.resetFormProduct();
+              }),
+            )
+            .subscribe();
+        }
       }
     }
   }
@@ -139,98 +163,121 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    this.initCurrentUser();
-    this.initCurrentUserPlan();
-    this.initIngredients();
-  }
+    this.initalLoading = true;
+    this.relatedIngredients = [];
+    this.shoppingList = [];
+    this.actualShoppingList = [];
 
-  private initCurrentUser(): void {
-    this.authService.currentUser$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((data: IUser) => {
-        this.currentUser = data;
-      });
-  }
+    this.authService.getTokenUser().subscribe((user) => {
+      if (user.id) {
+        this.currentUserId = user.id;
+        const plans$ = this.getProducts();
+        const relatedIngredients$ = this.getRelatedIngredients();
+        forkJoin([plans$, relatedIngredients$]).subscribe(() => {
+          this.setRelatedIngredientsToProducts();
+          this.initalLoading = false;
 
-  initIngredients() {
-    this.ingredientService.ingredients$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((ingredients) => (this.ingredients = ingredients));
+          this.cd.markForCheck();
+        });
+      } else {
+        this.router.navigateByUrl('/');
+      }
+    });
   }
 
   findType(name: string) {
     return this.productTypes.find((t) => t.name === name);
   }
 
-  findIngredientByName(name: string) {
-    return this.ingredientService.findIngredientByName(name, this.ingredients);
+  private findRelatedIngredientByProductId(id: number) {
+    return (
+      this.relatedIngredients.find((ri) => ri.productId === id) || {
+        productId: 0,
+        ingredientId: 0,
+      }
+    );
   }
 
   realLink(item: ShoppingListItem) {
-    return item.relatedRecipe || this.findIngredientByName(item.name).id !== 0;
+    const recipeId = item.recipeId;
+    const ingredientId = item.ingredientId;
+    if (recipeId) return recipeId;
+    if (ingredientId) return ingredientId;
+    return 0;
   }
+
   getLink(item: ShoppingListItem) {
-    //связанный рецепт приоритетнее чем найденный ингредиент
-    if (item.relatedRecipe) return '/recipes/list/' + item.relatedRecipe;
-    if (this.findIngredientByName(item.name).id !== 0)
-      return '/ingredients/list/' + this.findIngredientByName(item.name).id;
+    // Связанный рецепт приоритетнее чем найденный ингредиент
+    const recipeId = item.recipeId;
+    const ingredientId = item.ingredientId;
+    if (recipeId) return `/recipes/list/${recipeId}`;
+    if (ingredientId) return `/ingredients/list/${ingredientId}`;
     return null;
   }
 
-  private initCurrentUserPlan(): void {
-    this.planService.plans$.subscribe((data: IPlan[]) => {
-      this.currentUserPlan = this.planService.getPlanByUser(
-        this.currentUser.id,
-        data,
-      );
-      this.actualShoppingList = [...this.currentUserPlan.shoppingList];
-      if (this.actualShoppingList.length !== this.shoppingList.length) {
-        this.groupedProducts = this.divideShoppingListByTypes(
-          this.sortByBought(this.actualShoppingList),
-        );
+  getProducts() {
+    return this.planService.getProductsByUserId(this.currentUserId).pipe(
+      tap((receivedList) => {
+        this.actualShoppingList = receivedList;
+        this.getListInfo();
+      }),
+    );
+  }
 
-        const shoppingList: ShoppingListItem[] = this.actualShoppingList;
-        const productTypes: ProductType[] = this.productTypes;
-        let itemsByCategory: typeGroup[] = [];
-        productTypes.forEach((type) => {
-          itemsByCategory.push({ type: type, items: [] });
-        });
-        shoppingList.forEach((item) => {
-          const findedTypeGroup = itemsByCategory.find(
-            (i) => i.type.id === item.type,
-          );
-          if (findedTypeGroup) findedTypeGroup.items.push(item);
-        });
-        itemsByCategory = itemsByCategory.filter((i) => i.items.length !== 0);
-        this.data = itemsByCategory;
-
-        this.shoppingList = [...this.sortByBought(this.actualShoppingList)];
+  setRelatedIngredientsToProducts() {
+    this.actualShoppingList.forEach((product) => {
+      if (this.findRelatedIngredientByProductId(product.id).ingredientId) {
+        product.ingredientId = this.findRelatedIngredientByProductId(
+          product.id,
+        ).ingredientId;
       }
-      this.cd.markForCheck();
-      //если добавили или удалили что-то то обновляю список, если просто отметили купленным то нет(чтобы анимация работала)
     });
+    this.cd.markForCheck();
+  }
+  getListInfo() {
+    this.groupedProducts = this.divideShoppingListByTypes(
+      this.sortByBought(this.actualShoppingList),
+    );
+    const shoppingList: ShoppingListItem[] = this.actualShoppingList;
+    const productTypes: ProductType[] = this.productTypes;
+    let itemsByCategory: typeGroup[] = [];
+    productTypes.forEach((type) => {
+      itemsByCategory.push({ type: type, items: [] });
+    });
+    shoppingList.forEach((item) => {
+      const findedTypeGroup = itemsByCategory.find(
+        (i) => i.type.id === item.typeId,
+      );
+      if (findedTypeGroup) findedTypeGroup.items.push(item);
+    });
+    itemsByCategory = itemsByCategory.filter((i) => i.items.length !== 0);
+    this.data = itemsByCategory;
+
+    this.shoppingList = [...this.sortByBought(this.actualShoppingList)];
+
+    this.cd.markForCheck();
   }
 
-  navigateToAddProduct() { 
- const sectionTag = document.getElementById('add-product');
+  navigateToAddProduct() {
+    const sectionTag = document.getElementById('add-product');
     if (sectionTag) {
-   console.log(sectionTag)
-   const headerHeight =
-     document.getElementsByClassName('header')[0].clientHeight;
-   window.scrollTo({
-     top: sectionTag.offsetTop - headerHeight,
-     behavior: 'smooth',
-   });
- }
-
+      const headerHeight =
+        document.getElementsByClassName('header')[0].clientHeight;
+      window.scrollTo({
+        top: sectionTag.offsetTop - headerHeight,
+        behavior: 'smooth',
+      });
+    }
   }
-  
+
   private divideShoppingListByTypes(list: ShoppingListItem[]): {
     [key: string]: ShoppingListItem[];
   } {
     const groupedProducts: { [key: string]: ShoppingListItem[] } = {};
     list.forEach((product) => {
-      const productType = productTypes.find((type) => type.id === product.type);
+      const productType = productTypes.find(
+        (type) => type.id === product.typeId,
+      );
       if (productType) {
         const typeName = productType.name;
         if (!groupedProducts[typeName]) {
@@ -242,30 +289,54 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
     return groupedProducts;
   }
 
-  async addShoppingListItem() {
+  addShoppingListItem() {
     if (this.form.valid) {
-      let maxId = 0;
-      if (this.shoppingList.length > 0)
-        maxId = Math.max(...this.shoppingList.map((g) => g.id));
       const newProduct: ShoppingListItem = {
         ...nullProduct,
         name: this.form.value.name,
-        howMuch: this.form.value.howMuch,
-        id: maxId + 1,
-        type: this.selectedType.id,
+        amount: this.form.value.howMuch,
+        userId: this.currentUserId,
+        typeId: this.selectedType.id,
         note: this.form.value.note,
       };
-      this.currentUserPlan.shoppingList.unshift(newProduct);
-      this.loading = true;
+      this.loadingModal = true;
       this.cd.markForCheck();
-      await this.planService.updatePlanInSupabase(this.currentUserPlan);
-      this.resetFormProduct();
-      this.loading = false;
+      this.planService
+        .postProduct(newProduct)
+        .pipe(
+          tap((res: any) => {
+            this.planService
+              .getRelatedIngredientsForProduct(res.id)
+              .pipe(
+                tap((relatedIngredients) => {
+                  if (relatedIngredients.length) {
+                    this.relatedIngredients = [
+                      ...this.relatedIngredients,
+                      ...relatedIngredients,
+                    ];
+                  }
+                  newProduct.id = res.id;
+                  this.actualShoppingList.push(newProduct);
+                   this.setRelatedIngredientsToProducts();
+
+                  this.getListInfo();
+                  this.cd.markForCheck();
+                }),
+                finalize(() => {
+                  this.loadingModal = false;
+                  this.resetFormProduct();
+                  this.cd.markForCheck();
+                }),
+              )
+              .subscribe();
+          }),
+        )
+        .subscribe();
       this.cd.markForCheck();
     }
   }
 
-  protected resetFormProduct() {
+  resetFormProduct() {
     this.form.get('name')?.setValue('');
     this.selectedType = this.productTypes[0];
     this.searchQuery = '';
@@ -281,50 +352,82 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
       return baseComparator(b.name, a.name);
     });
     return filter.sort((a, b) => {
-      return baseComparator(a.isBought, b.isBought);
+      return baseComparator(a.bought, b.bought);
     });
   }
 
-  async markProductAsBought(productId: number) {
+  markProductAsBought(productId: number) {
     const findedProductIndex = this.shoppingList.findIndex(
       (g) => g.id === productId,
     );
     if (findedProductIndex !== -1) {
       const purchasedProduct = this.shoppingList[findedProductIndex];
-      purchasedProduct.isBought = !purchasedProduct.isBought;
-      this.loading = true;
+      purchasedProduct.bought = purchasedProduct.bought === 1 ? 0 : 1;
+      this.loadingModal = true;
       this.cd.markForCheck();
-      await this.planService.updatePlanInSupabase(this.currentUserPlan);
-      this.loading = false;
+      this.planService
+        .markProductAsBought(purchasedProduct)
+        .pipe(
+          tap(() => {
+            const findedProduct = this.actualShoppingList.find(
+              (product) => product.id === purchasedProduct.id,
+            );
+            if (findedProduct) {
+              findedProduct.bought = purchasedProduct.bought;
+              this.getListInfo();
+            }
+          }),
+          finalize(() => {
+            this.loadingModal = false;
+            this.resetFormProduct();
+          }),
+        )
+        .subscribe();
       this.cd.markForCheck();
     }
   }
-  async removeProduct(productId: number) {
+
+  removeProduct(productId: number) {
     const findedProduct = this.shoppingList.find((g) => g.id === productId);
+    this.loadingModal = true;
+    this.cd.markForCheck();
 
     if (findedProduct) {
-      this.currentUserPlan.shoppingList =
-        this.currentUserPlan.shoppingList.filter((g) => g.id !== productId);
+      this.actualShoppingList = this.actualShoppingList.filter(
+        (g) => g.id !== productId,
+      );
 
-      this.loading = true;
-      this.cd.markForCheck();
-      await this.planService.updatePlanInSupabase(this.currentUserPlan);
-      this.loading = false;
-      this.cd.markForCheck();
+      this.planService
+        .deleteProduct(findedProduct.id)
+        .pipe(
+          tap(() => {
+            this.getListInfo();
+          }),
+          finalize(() => {
+            this.loadingModal = false;
+            this.resetFormProduct();
+          }),
+        )
+        .subscribe();
     }
   }
 
-  loading = false;
-  async removeAllProducts() {
-    this.loading = true;
+  removeAllProducts() {
+    this.loadingModal = true;
     this.cd.markForCheck();
-    this.currentUserPlan.shoppingList = [];
-    this.shoppingList = [];
-      this.loading = true;
-      this.cd.markForCheck();
-    await this.planService.updatePlanInSupabase(this.currentUserPlan);
-      this.loading = false;
-      this.cd.markForCheck();
+    this.actualShoppingList = [];
+    this.planService
+      .deleteAllProductsForUser(this.currentUserId)
+      .pipe(
+        tap(() => {
+          this.getListInfo();
+        }),
+        finalize(() => {
+          this.loadingModal = false;
+          this.resetFormProduct();
+        }),
+      )
+      .subscribe();
   }
 
   public ngOnDestroy(): void {
@@ -333,7 +436,7 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
   }
 
   //поиск рецептов
-  protected blur(): void {
+  blur(): void {
     if (this.searchQuery !== '' && this.searchQuery !== this.selectedType.name)
       this.searchQuery = '';
 
@@ -341,15 +444,15 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
     this.focused = false;
   }
 
-  protected focus(): void {
+  focus(): void {
     this.autocompleteShow = true;
-    this.recipeSearching();
+    this.searchTypes();
   }
-  protected chooseRecipe(type: ProductType): void {
+  chooseRecipe(type: ProductType): void {
     this.searchQuery = type.name;
     this.selectedType = type;
   }
-  protected recipeSearching(): void {
+  searchTypes(): void {
     this.autocompleteShow = true;
     this.focused = true;
     if (this.searchQuery) {
@@ -375,6 +478,6 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
 
   handleDeletingAllProductsModal(answer: boolean) {
     if (answer) this.removeAllProducts();
-    this.deletingAllProductsModalShow = false;
+    this.deleteModal = false;
   }
 }

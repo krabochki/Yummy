@@ -31,13 +31,7 @@ const routes: Routes = [
 
         component: UsersPageComponent,
       },
-      {
-        path: 'cooks/followers',
-        data: { filter: 'followers' },
-        canActivate: [AuthGuard],
-
-        component: UsersPageComponent,
-      },
+   
       {
         path: 'cooks/following',
         data: { filter: 'following' },
@@ -74,14 +68,8 @@ const routes: Routes = [
         path: 'cooks/list/:id',
         component: UserPageComponent,
         resolve: { user: UserResolver },
-      },
+      }
 
-      {
-        path: 'cooks/updates',
-        canActivate: [AuthGuard],
-        data: { filter: 'updates' },
-        component: SomeRecipesPageComponent,
-      },
     ],
   },
 ];

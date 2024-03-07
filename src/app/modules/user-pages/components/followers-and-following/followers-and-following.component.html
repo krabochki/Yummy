@@ -61,7 +61,7 @@
           </div>
           <div class="row" *ngFor="let follower of followingDisplay">
             <div class="column">
-              <div class="userpic" [style.background-image]="'url('+getUserpic(follower)+')'"></div>
+              <div class="userpic" [style.background-image]="'url('+(follower.avatarUrl||noUserpic)+')'"></div>
             </div>
             <div class="column" (click)="goToFollowerAccount('/cooks/list/' + follower.id)">
               <h2>{{ follower.fullName }}</h2>
@@ -117,7 +117,7 @@
           </div>
           <div class="row" *ngFor="let follower of followersDisplay">
             <div class="column">
-              <div class="userpic" [style.background-image]="'url('+getUserpic(follower)+')'"></div>
+              <div class="userpic" [style.background-image]="'url('+(follower.avatarUrl||noUserpic)+')'"></div>
             </div>
             <div class="column" (click)="goToFollowerAccount('/cooks/list/' + follower.id)">
               <h2>{{ follower.fullName }}</h2>

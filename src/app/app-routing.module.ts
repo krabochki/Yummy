@@ -6,6 +6,7 @@ import { AnonimPageComponent } from './modules/common-pages/anonim/anonim.compon
 import { AboutComponent } from './modules/common-pages/about/about.component';
 import { UserPolicyComponent } from './modules/common-pages/user-policy/user-policy.component';
 import { UpdatesComponent } from './modules/common-pages/updates/updates/updates.component';
+import { RegBenefitsComponent } from './modules/common-pages/reg-benefits/reg-benefits.component';
 
 const routes: Routes = [
   { path: '', component: MainPageComponent },
@@ -44,7 +45,11 @@ const routes: Routes = [
     component: UserPolicyComponent,
   },
   {
-    path: 'updates',
+    path: 'registration-benefits',
+    component: RegBenefitsComponent,
+  },
+  {
+    path: 'news',
     component: UpdatesComponent,
   },
   {

@@ -15,19 +15,21 @@ import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
 import { fadeIn, heightAnim, modal } from 'src/tools/animations';
 import { trigger } from '@angular/animations';
-import {
-  Title,
-} from '@angular/platform-browser';
+import { Title } from '@angular/platform-browser';
 import { Location, registerLocaleData } from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
 import { ChangeDetectionStrategy } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import { Observable, Subject, finalize, forkJoin, takeUntil, tap } from 'rxjs';
 import { NotificationService } from '../../services/notification.service';
 import { INotification } from '../../models/notifications';
-import { formatRussianDate, getFormattedDate, getZodiacSign } from 'src/tools/common';
+import {
+  formatRussianDate,
+  getFormattedDate,
+  getZodiacSign,
+} from 'src/tools/common';
 import { customEmojis, emojisRuLocale, zodiacIcons } from './emoji-picker-data';
-import { EmojiData } from '@ctrl/ngx-emoji-mart/ngx-emoji';
-import { supabase } from 'src/app/modules/controls/image/supabase-data';
+import { Emoji, EmojiData } from '@ctrl/ngx-emoji-mart/ngx-emoji';
+import { Permission } from '../settings/conts';
 
 @Component({
   selector: 'app-user-page',
@@ -41,42 +43,47 @@ import { supabase } from 'src/app/modules/controls/image/supabase-data';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserPageComponent implements OnInit, OnDestroy {
-  avatar: string = '';
-
   emojisRuLocale = emojisRuLocale;
   customEmojis = customEmojis;
-  selectedEmoji: EmojiData | null = null; //эмодзи статус текущего пользователя
-  showEmojiPicker: boolean = false; //показывается ли окно выбор смайликов
-
   hireModalShow = false;
   hireSuccessModalShow = false;
   editModalShow: boolean = false;
   noAccessModalShow: boolean = false;
-
-  linkForSocials: string = '';
-
   settingsShow = false;
-  dataLoaded = false;
-  userpicLoaded = true;
+  linkForSocials: string = '';
   showFollows = false;
   recipesEnabled: boolean = true;
   moreInfoEnabled: boolean = false;
   obj: 'following' | 'followers' = 'followers';
+  showEmojiPicker: boolean = false; //показывается ли окно выбор смайликов
+  ///
 
-  userFollowers: IUser[] = [];
-  userFollowing: IUser[] = [];
+  avatar: string = '';
+  selectedEmoji: EmojiData | null = null; //эмодзи статус текущего пользователя
 
+  dataLoaded = false;
   myPage: boolean = false;
 
-  likes: number = 0;
-  cooks: number = 0;
-  comments: number = 0;
+  recipesStatistics: { likes: number; cooks: number; comments: number } = {
+    likes: 0,
+    cooks: 0,
+    comments: 0,
+  };
+  userStatistics: {
+    followers: number;
+    followings: number;
+    recipes: number;
+    follower: number;
+  } = {
+    followers: 0,
+    followings: 0,
+    recipes: 0,
+    follower: 0,
+  };
   users: IUser[] = [];
   currentUser: IUser = { ...nullUser };
   user: IUser = { ...nullUser };
-  allRecipes: IRecipe[] = [];
   userRecipes: IRecipe[] = [];
-  userPublicRecipes: IRecipe[] = [];
 
   protected destroyed$: Subject<void> = new Subject<void>();
 
@@ -86,8 +93,15 @@ export class UserPageComponent implements OnInit, OnDestroy {
     return window.history.length <= 1;
   }
 
+  get publicRecipesLength() {
+    return this.userRecipes.filter((r) => r.status === 'public').length;
+  }
+
   get showHireButton() {
-    return this.userService.getPermission('new-moder-button', this.currentUser);
+return this.userService.getPermission(
+  this.currentUser.limitations || [],
+  Permission.HiringButton,
+    );
   }
 
   protected get validRegistrationDate(): string {
@@ -98,11 +112,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
     return this.currentUser.id === this.user.id;
   }
 
-  get showRole(): boolean {
-    if (this.myPage) return true;
-    if (this.currentUser.role === 'admin') return true;
-    return this.userService.getPermission('show-status', this.user);
-  }
+  
 
   constructor(
     private authService: AuthService,
@@ -116,8 +126,13 @@ export class UserPageComponent implements OnInit, OnDestroy {
     private location: Location,
     private renderer: Renderer2,
   ) {
+
+    const screenWidth = window.innerWidth;
+
+      if (screenWidth <= 900) {
+       this.recipesPerStep = 2;
+     }
     registerLocaleData(localeRu);
-    this.linkForSocials = window.location.href;
 
     this.renderer.listen('window', 'click', (e: Event) => {
       if (this.emojiPicker) {
@@ -129,139 +144,222 @@ export class UserPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() {
+  currentUserId = 0;
+
+  updateUserInfo() {
+    this.route.data.subscribe((data: Data) => {
+      this.avatar = '';
+      this.userService.setUsers([]);
+      this.recipeService.setRecipes([]);
+      this.userRecipes = [];
+      this.currentStep = 0;
+      this.recipesLoaded = true;
+      this.allRecipesLoaded = false;
+      this.recipesEnabled = true;
+      this.moreInfoEnabled = false;
+
+      this.authService.getTokenUser().subscribe((user) => {
+        this.currentUserId = user.id;
+        this.user = data['user'];
+
+        if (this.user.id === this.currentUserId) {
+          this.myPage = true;
+        } else {
+          this.myPage = false;
+        }
+
+        this.addProfileView();
+
+        this.userService.getInfoForUserpage(this.user.id).subscribe((user) => {
+          this.user = user;
+          this.linkForSocials = window.location.href;
+          this.selectedEmoji = user.emoji;
+          this.cd.markForCheck();
+          this.titleService.setTitle(user.fullName || `@${user.username}`);
+
+          const subscribes$: Observable<any>[] = [];
+
+          subscribes$.push(
+            this.userService
+              .getUserStatistics(this.user.id, this.currentUserId)
+              .pipe(
+                tap((statistics) => {
+                  this.userStatistics = statistics;
+                  if (this.userStatistics.follower) {
+                    this.user.followersIds = this.user.followersIds || [];
+                    this.user.followersIds.push(this.currentUser.id);
+                  }
+                  if (statistics.recipes === 0) {
+                    this.moreInfoEnabled = true;
+                    this.recipesEnabled = false;
+                  }
+                }),
+              ),
+          );
+          subscribes$.push(
+            this.userService.getUserRecipesStatistics(this.user.id).pipe(
+              tap((statistics) => {
+                this.recipesStatistics = statistics;
+              }),
+            ),
+          );
+
+          forkJoin(subscribes$).subscribe(() => {
+            this.dataLoaded = true;
+
+            this.cd.markForCheck();
+
+            if (this.user.image) {
+              this.user.loadingImage = true;
+              this.userService
+                .downloadUserpic(this.user.image)
+                .pipe(
+                  tap((blob) => {
+                    this.user.avatarUrl = URL.createObjectURL(blob);
+                    this.avatar = this.user.avatarUrl;
+                    this.cd.markForCheck();
+                  }),
+                  finalize(() => {
+                    this.user.loadingImage = false;
+                  }),
+                )
+                .subscribe();
+            }
+          });
+
+          this.startRecipesLoad();
+        });
+
+        if (!this.moreInfoEnabled) {
+          this.recipesEnabled = true;
+          this.moreInfoEnabled = false;
+        }
+      });
+
+      this.cd.markForCheck();
+    });
+  }
+
+  currentStep = 0;
+  recipesPerStep = 3;
+  allRecipesLoaded = false;
+  recipesLoaded = true;
+
+  startRecipesLoad() {
+    this.currentStep = 0;
+    this.allRecipesLoaded = false;
+    this.userRecipes = [];
+    this.recipeService.setRecipes([]);
+    this.loadMoreRecipes();
+  }
+
+  loadMoreRecipes() {
+    if (this.recipesLoaded) {
+      this.recipesLoaded = false;
+
+      setTimeout(() => {
+        this.recipeService
+          .getSomeRecipesForUserpage(
+            this.recipesPerStep,
+            this.currentStep,
+            this.user.id,
+            this.currentUserId,
+          )
+          .subscribe((res) => {
+            const count = res.count;
+            const newRecipes = res.recipes;
+
+            const actualRecipes = newRecipes.filter(
+              (newRecipe) =>
+                !this.userRecipes.some(
+                  (existingRecipe) => existingRecipe.id === newRecipe.id,
+                ),
+            );
+            const subscribes = this.recipeService.getRecipesInfo(
+              actualRecipes,
+              true,
+            );
+
+            if (!actualRecipes.length) {
+              this.recipesLoaded = true;
+              this.allRecipesLoaded = true;
+            }
+
+            forkJoin(subscribes)
+              .pipe(
+                finalize(() => {
+                  this.recipesLoaded = true;
+                  this.cd.markForCheck();
+                }),
+
+                tap(() => {
+                  actualRecipes.forEach((recipe) => {
+                    recipe = this.recipeService.translateRecipe(recipe);
+                    this.recipeService.addNewRecipe(recipe);
+                  });
+                  this.userRecipes = [...this.userRecipes, ...actualRecipes];
+                  if (count <= this.userRecipes.length) {
+                    this.allRecipesLoaded = true;
+                  } else {
+                    this.currentStep++;
+                  }
+
+                  this.cd.markForCheck();
+                }),
+              )
+              .subscribe();
+          });
+      }, 300);
+    }
+  }
+
+  initRecipes() {
+    this.recipeService.recipes$.subscribe((recipes) => {
+      this.userRecipes.forEach((recipe) => {
+        const findedRecipe = recipes.find((r) => r.id === recipe.id);
+        recipe = findedRecipe || recipe;
+      });
+      this.cd.markForCheck();
+    });
+  }
+
+  changeFollowings($event: any) {
+    if ($event) {
+      this.userStatistics.followings = $event;
+    }
+  }
+  initCurrentUser() {
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((data) => {
         this.currentUser = { ...data };
-        this.cd.markForCheck()
-
-        this.route.data.subscribe((data: Data) => {
-          if (!this.moreInfoEnabled) {
-            this.recipesEnabled = true;
-            this.moreInfoEnabled = false;
-          }
-          this.user = data['user'];
-
-          if (this.currentUser.id === this.user.id) {
-            this.myPage = true;
-          } else {
-            this.myPage = false;
-          }
-
-          this.userService.users$
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe((data) => {
-              this.users = data;
-              const findedUser = data.find((user) => user.id === this.user.id);
-
-              if (findedUser) {
-                this.user = findedUser;
-              }
-              else {
-                this.router.navigateByUrl('/cooks')
-              }
-              this.selectedEmoji = this.user.emojiStatus
-                ? this.user.emojiStatus
-                : null;
-
-              this.titleService.setTitle(
-                this.user.fullName
-                  ? this.user.fullName
-                  : '@' + this.user.username,
-              );
-
-              if (this.currentUser.id === this.user.id) {
-                //this.currentUser = this.user;
-                this.myPage = true;
-              }
-
-              this.userFollowers = this.userService.getFollowers(
-                data,
-                this.user.id,
-              );
-
-              this.userFollowing = this.userService.getFollowing(
-                data,
-                this.user.id,
-              );
-
-              this.recipeService.recipes$
-                .pipe(takeUntil(this.destroyed$))
-                .subscribe((data) => {
-                  this.allRecipes = this.recipeService.getPopularRecipes(data);
-
-                  if (this.user.avatarUrl) {
-                    this.downloadUserpicFromSupabase(this.user.avatarUrl);
-                  } else {
-                    this.avatar = '';
-                  }
-
-                  if (
-                    this.userService.getPermission('hide-author', this.user) ||
-                    this.currentUser.id === this.user.id ||
-                    (this.currentUser.role === 'moderator' &&
-                      this.user.role !== 'admin') ||
-                    this.currentUser.role === 'admin'
-                  ) {
-                    this.userRecipes = this.recipeService.getRecipesByUser(
-                      this.allRecipes,
-                      this.user.id,
-                    );
-                    this.userPublicRecipes =
-                      this.recipeService.getPublicRecipes(this.userRecipes);
-                  } else {
-                    this.userRecipes = [];
-                    this.userPublicRecipes = [];
-                  }
-
-                  if (
-                    !this.myPage &&
-                    (this.currentUser.role === 'admin' ||
-                      this.currentUser.role === 'moderator')
-                  ) {
-                    this.userRecipes = this.recipeService.getNotPrivateRecipes(
-                      this.userRecipes,
-                    );
-                  } else if (
-                    !this.myPage &&
-                    this.currentUser.role !== 'admin' &&
-                    this.currentUser.role !== 'moderator'
-                  ) {
-                    this.userRecipes = this.recipeService.getPublicRecipes(
-                      this.userRecipes,
-                    );
-                  }
-
-                  if (this.userRecipes.length === 0 ) {
-                    this.moreInfoEnabled = true;
-                    this.recipesEnabled = false;
-                  }
-                  this.cooks = 0;
-                  this.likes = 0;
-                  this.comments = 0;
-                  this.userRecipes.forEach((recipe) => {
-                    this.cooks += recipe.cooksId?.length;
-                    this.likes += recipe.likesId?.length;
-                    this.comments += recipe.comments?.length;
-                    if (!this.cooks) this.cooks = 0;
-                    if (!this.likes) this.likes = 0;
-                    if (!this.comments) this.comments = 0;
-                  });
-
-                  this.cd.markForCheck();
-
-                  this.dataLoaded = true;
-                });
-            });
-          this.cd.markForCheck();
-        });
+        this.cd.markForCheck();
       });
-
+  }
+  addProfileView() {
     if (!this.myPage) {
-      this.user.profileViews++;
-      this.updateUser(this.user);
+      this.userService
+        .incrementProfileViews(this.user.id)
+        .pipe(
+          tap(() => {
+            const updatedUser: IUser = {
+              ...this.user,
+              profileViews: this.user.profileViews++,
+            };
+            this.userService.updateUserInUsers(updatedUser);
+          }),
+          finalize(() => {}),
+        )
+        .subscribe();
     }
+  }
+
+  ngOnInit() {
+    this.initRecipes();
+    this.initCurrentUser();
+
+    this.updateUserInfo();
+    
   }
 
   goBack() {
@@ -270,7 +368,7 @@ export class UserPageComponent implements OnInit, OnDestroy {
 
   get zodiacIcon() {
     const zodiac = this.zodiacSign;
-    return zodiacIcons.find(i => i.zodiac === zodiac)?.icon || '';
+    return zodiacIcons.find((i) => i.zodiac === zodiac)?.icon || '';
   }
 
   get birthday() {
@@ -284,60 +382,56 @@ export class UserPageComponent implements OnInit, OnDestroy {
     this.showFollows = false;
   }
 
-  downloadUserpicFromSupabase(path: string) {
-    this.avatar = supabase.storage
-      .from('userpics')
-      .getPublicUrl(path).data.publicUrl;
-    this.cd.markForCheck();
-  }
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   settingsClose(event: boolean) {
     this.settingsShow = false;
   }
 
   //подписка текущего пользователя на людей в списке
-  async follow() {
-    
-    if (!this.loading) {
-      this.loading = true;
+  follow() {
+    if (this.currentUser.id > 0) {
+      this.userService.followUser(this.currentUser.id, this.user.id).subscribe({
+        next: () => {
+          this.user.followersIds = this.user.followersIds || [];
+          this.user.followersIds.push(this.currentUser.id);
+          this.userStatistics.followers++;
+          this.cd.markForCheck();
+        },
+      });
 
-      if (this.currentUser.id > 0) {
-        const followedUser = this.userService.addFollower({ ...this.user }, this.currentUser.id);
-        await this.updateUser({ ...followedUser });
-        if (this.userService.getPermission('new-follower', followedUser)) {
-          const notify: INotification = this.notifyService.buildNotification(
-            'Новый подписчик',
-            `Кулинар ${this.currentUser.fullName
+     // if (this.userService.getPermission('new-follower', this.user)) {
+        const notify: INotification = this.notifyService.buildNotification(
+          'Новый подписчик',
+          `Кулинар ${
+            this.currentUser.fullName
               ? this.currentUser.fullName
               : '@' + this.currentUser.username
-            } подписался на тебя`,
-            'info',
-            'user',
-            '/cooks/list/' + this.currentUser.id,
-          );
-          await this.notifyService.sendNotification(notify, followedUser);
-        }
-      } this.loading = false;
-      this.cd.markForCheck();
+          } подписался на тебя`,
+          'info',
+          'user',
+          '/cooks/list/' + this.currentUser.id,
+        );
+        this.notifyService.sendNotification(notify, this.user.id).subscribe();
+      
     }
-
+    this.cd.markForCheck();
   }
 
-  loading = false;
-
   async unfollow() {
-    if (!this.loading) {
-      this.loading = true;
-      if (this.currentUser.id > 0) {
-        const unfollowedUser = this.userService.removeFollower(
-          { ...this.user },
-          this.currentUser.id,
-        );
-        await this.updateUser({...unfollowedUser});
-      }
-      this.loading = false;
-      this.cd.markForCheck();
+    if (this.currentUser.id > 0) {
+      this.userService
+        .unfollowUser(this.currentUser.id, this.user.id)
+        .subscribe({
+          next: () => {
+            this.user.followersIds = this.user.followersIds || [];
+
+            this.user.followersIds = this.user.followersIds.filter(
+              (fId) => fId !== this.currentUser.id,
+            );
+            this.userStatistics.followers--;
+            this.cd.markForCheck();
+          },
+        });
     }
   }
 
@@ -367,18 +461,49 @@ export class UserPageComponent implements OnInit, OnDestroy {
 
   protected handleHireModal(answer: boolean) {
     if (answer) {
-      this.user.role = 'moderator';
-      const notify: INotification = this.notifyService.buildNotification(
-        'Вас назначили модератором',
-        `Вы теперь являетесь модератором сайта Yummy. Вас назначил администратор ${this.getName(
-          this.currentUser,
-        )}`,
-        'info',
-        'hire',
-        `/cooks/list/${this.currentUser.id}`,
-      );
-      this.updateUser(this.currentUser);
-      this.notifyService.sendNotification(notify, this.user);
+      this.userService
+        .updateUserProperty(this.user.id, 'role', 'moderator')
+        .pipe(
+          tap(() => {
+            const updatedUser: IUser = {
+              ...this.user,
+              role: 'moderator',
+            };
+            this.userService.updateUserInUsers(updatedUser);
+            const notify: INotification = this.notifyService.buildNotification(
+              'Вас назначили модератором',
+              `Вы теперь являетесь модератором сайта Yummy. Ознакомиться с функциями модераторов можно в панели модератора.`,
+              'info',
+              'hire',
+              `/cooks/list/${this.currentUser.id}`,
+            );
+
+            const notifyForAdmin: INotification =
+              this.notifyService.buildNotification(
+                'Вы назначили модератора',
+                `Вы успешно назначили нового модератора сайта Yummy @${
+                  this.user.username
+                }${this.user.fullName ? ` (${this.user.fullName})` : ''}`,
+                'success',
+                'manager',
+                `/cooks/list/${this.user.id}`,
+              );
+
+            this.user.role = 'moderator';
+
+            this.cd.markForCheck();
+
+            this.notifyService
+              .sendNotification(notify, this.user.id)
+              .subscribe();
+            this.notifyService
+              .sendNotification(notifyForAdmin, this.currentUser.id, true)
+              .subscribe();
+          }),
+          finalize(() => {}),
+        )
+        .subscribe();
+
       this.hireSuccessModalShow = true;
     }
     this.hireModalShow = false;
@@ -392,48 +517,59 @@ export class UserPageComponent implements OnInit, OnDestroy {
   protected setEmoji(event: any): void {
     const emoji = event.emoji;
     if (emoji.id !== this.selectedEmoji?.id) {
-      this.selectedEmoji = emoji;
-      this.currentUser.emojiStatus = emoji;
-      this.updateUser(this.currentUser);
+      if (this.currentUser.id > 0) {
+        this.userService
+          .updateUserProperty(
+            this.currentUserId,
+            'emoji',
+            JSON.stringify(emoji),
+          )
+          .subscribe(() => {
+            this.user.emoji = emoji;
+            this.selectedEmoji = emoji;
+            this.cd.markForCheck();
+          });
+      }
     }
     this.showEmojiPicker = false;
   }
 
-  async updateUser(user: IUser) {
-    await this.userService.updateUserInSupabase({...user});
-  }
   protected unsetEmoji($event: any): void {
     $event.stopPropagation();
     $event.preventDefault();
     if (this.selectedEmoji) {
-      this.currentUser.emojiStatus = undefined;
-      this.updateUser(this.currentUser);
-      this.selectedEmoji = null;
-      this.showEmojiPicker = false;
+      this.currentUser.emoji = undefined;
+
+      const findedCurrentUser: IUser =
+        this.users.find((user) => user.id === this.currentUser.id) || nullUser;
+      if (this.currentUser.id > 0) {
+        const updatedUser: IUser = {
+          ...findedCurrentUser,
+          emoji: null,
+        };
+
+        this.userService
+          .updateUserProperty(this.currentUser.id, 'emoji', null)
+          .subscribe(() => this.userService.updateUserInUsers(updatedUser));
+        this.selectedEmoji = null;
+        this.showEmojiPicker = false;
+      }
     }
   }
 
   userButtonClick() {
-
-    if (!this.loading) {
-      if (this.currentUser.id === 0) {
-        this.noAccessModalShow = true;
-      }
-      else {
-        if (this.myPage) {
-          this.edit();
-        }
-        else {
-          if (this.userService.isUserSubscriber(this.user, this.currentUser.id)) {
-            this.unfollow();
-          }
-          else {
-            this.follow();
-          }
+    if (this.currentUser.id === 0) {
+      this.noAccessModalShow = true;
+    } else {
+      if (this.myPage) {
+        this.edit();
+      } else {
+        if (this.userService.isUserSubscriber(this.user, this.currentUser.id)) {
+          this.unfollow();
+        } else {
+          this.follow();
         }
       }
-       
-    
     }
   }
 

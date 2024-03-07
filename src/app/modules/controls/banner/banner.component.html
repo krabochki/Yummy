@@ -6,8 +6,17 @@
         <div class="wrap">
             <p class="label" [innerHTML]="formattedLabel"></p>
             <p class="info" *ngIf="info">{{info}}</p>
+          
+
+            <a href="mailto:yummort@mail.ru" *ngIf="mail">
+<app-button (click)="this.clickButton.emit(true)" [routerLink]="!mail?link?link:null:null" [text]="buttonText"
+    [rounded]="false" [style]="'banner'"></app-button>
+            </a>
+
+            <app-button *ngIf="!mail" (click)="this.clickButton.emit(true)" [routerLink]="!mail?link?link:null:null" [text]="buttonText"
+                [rounded]="false" [style]="'banner'"></app-button>
+
             
-            <app-button (click)="this.clickButton.emit(true)" [routerLink]="link?link:null" [text]="buttonText" [rounded]="false" [style]="'banner'"></app-button>
         </div>
    </div>
 </div>

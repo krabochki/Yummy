@@ -34,6 +34,7 @@ h1 {text-align: center;
 .mission-section,
 .features-section,
 .find-section,
+.part,
 .join-section {
     transition: 0.2s ease-in-out;
     padding: 1.5em;
@@ -60,6 +61,10 @@ a {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     column-gap: 1.5em;
+
+    ul{
+        font-size: 0.9em;
+    }
 
     p {
         font-size: 0.9em;
@@ -338,8 +343,7 @@ ul {
         flex-direction: column;
 
         .img {
-            width: 3em;
-            fill: var(--color-foreground);
+            max-width: 3em;min-width: 3em;            fill: var(--color-foreground);
             display: flex;
             align-items: center;
 
@@ -383,14 +387,20 @@ ul {
             background: none;
             border-left: 0px solid transparent;
         }
+
     }
+
+          
+}
+
+@media(max-width:650px){
+    .parts {
+            grid-template-columns: repeat(1, 1fr);
+        }
 }
 
 @media (max-width: 480px) {
-    .parts {
-        grid-template-columns: repeat(1, 1fr);
-    }
-
+  
     .wrap {
         padding: 2.5em 6%;
     }

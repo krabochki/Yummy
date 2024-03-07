@@ -1,166 +1,174 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <div class="wrap">
   <div class="header">
-    <h1>Обновления в <span>Yummy</span>!</h1>
-    <p>Узнайте больше о выпущенных обновлениях</p>
-    <p class="note">
-      *Обновления в Yummy стали документироваться {{ "12.02.2023" | timePast |lowercase }}
-    </p>
+    <h1>Свежие новости и <span>изменения</span>!</h1>
+    <p>Будьте вкурсе новостей сайта и узнайте больше об изменениях</p>
+    <!-- <p class="note">
+      *Обновления в Yummy стали документироваться
+      {{ "12.02.2023" | timePast | lowercase }}
+    </p> -->
 
     <div class="community more">
-      <svg-icon
-        [applyClass]="true"
-        class="community-svg"
-        [src]="'/assets/images/svg/comp.svg'"
-      />
+      <svg-icon [applyClass]="true" class="community-svg" [src]="'/assets/images/svg/comp.svg'" />
     </div>
   </div>
 
-  <app-button
-    class="action-button"
-    *ngIf="currentUser.role !== 'user'"
-    [text]="'Добавить обновление'"
-    [icon]="'update'"
-    [style]="'filled'"
-    [color]="'prim'"
-    (click)="addUpdateMode = true"
-    [rounded]="true"
-  ></app-button>
+  <app-button class="action-button" *ngIf="currentUser.role !== 'user'" [text]="'Добавить новость'" [icon]="'update'"
+    [style]="'filled'" [color]="'prim'" (click)="addUpdateMode = true" [rounded]="true"></app-button>
 
-  <p *ngIf="updates.length === 0; else updatesTemplate" class="no-updates">
-    Обновлений пока нет
+  <p *ngIf="isLoaded && updates.length === 0" class="no-updates">
+    Новостей пока нет
   </p>
 
-  <ng-template #updatesTemplate>
-    <div class="updates">
-      <p *ngIf="filtered !== 'no'" class="filter">
-        <svg-icon
-          [src]="'/assets/images/svg/filter.svg'"
-          [applyClass]="true"
-          class="icon"
-        />
-       <span>
-          Обновления отфильтрованы по {{ filtered === "state" ? "состоянию" : "тегу" }}
-          «{{ filterContext }}» (найдено {{showedUpdates.length}} <span
-            appPluralRu=""
-            [arVariants]="['обновление', 'обновления', 'обновлений']"
-            [value]="showedUpdates.length"
-          ></span
-          >)
-       </span>
+  <div>
+    <div class="updates" id="start">
+      <p *ngIf="filtered" class="filter">
+        <svg-icon [src]="'/assets/images/svg/filter.svg'" [applyClass]="true" class="icon" />
+        <span>
+          {{ descriptionAboutFilter }}
+        </span>
       </p>
-      <div *ngFor="let update of showedUpdates">
+      <div *ngFor="let update of updates">
         <section class="update">
-          <button
-            class="delete-button"
-            (click)="targetUpdateId = update.id; deleteModalShow = true"
-            *ngIf="currentUser.role === 'admin' && showDeleteButton()"
-          >
-            <svg-icon
-              [applyClass]="true"
-              class="svg-trash"
-              [src]="'/assets/images/svg/trash.svg'"
-            ></svg-icon>
+          <button class="delete-button" (click)="targetUpdateId = update.id; deleteModal = true"
+            *ngIf="currentUser.role === 'admin' && showUpdateButtons()">
+            <svg-icon [applyClass]="true" class="svg-trash" [src]="'/assets/images/svg/trash.svg'"></svg-icon>
           </button>
           <div class="main">
             <div class="head">
               <h2>{{ update.fullName }}</h2>
-              <p class="date">{{ update.date | timePast }}</p>
+              <p class="date" [title]="getFormattedDate(update.sendDate)">
+                {{ update.sendDate | timePast }}
+              </p>
             </div>
 
-            <p class="user" *ngIf="showAuthor(update)">
-              <svg-icon
-                [applyClass]="true"
-                class="icon"
-                [src]="'assets/images/svg/update-account.svg'"
-              />
-              <a [routerLink]="'/cooks/list/' + update.author"
-                >{{ updateAuthorRole(update.author) | titlecase }}
-                {{ updateAuthor(update.author) }}</a
-              >
-            </p>
+            <div class="user" *ngIf="update.author">
+              <svg-icon [applyClass]="true" class="icon" [src]="'assets/images/svg/update-account.svg'" />
+              <p class="username">
+                {{ updateAuthorRole(update.author.role) | titlecase }}
+                <a class="user-link" [routerLink]="'/cooks/list/' + update.authorId">
+                  {{ updateAuthor(update.author) }}</a>
+              </p>
+            </div>
           </div>
-          <button
-            (click)="filterByState(update.state)"
-            class="status"
-            *ngIf="update.state"
-          >
-            <svg-icon
-              [applyClass]="true"
-              class="icon"
-              [src]="'assets/images/svg/lightbulb.svg'"
-            />
+          <div style="
+              display: flex;
+              align-items: center;
+              column-gap: 1em;
+              margin-bottom: 0.5em;
+            ">
+            <button (click)="
+                filtered === 'state' ? null : filterByState(update.state)
+              " class="status" *ngIf="update.state">
+              <div>
+                <svg-icon [applyClass]="true" class="icon bulb" [src]="'assets/images/svg/lightbulb.svg'" />
+              </div>
 
-            {{ update.state }}
-          </button>
-          <p *ngIf="update.description">{{ update.description }}</p>
-
-          <a class="link" *ngIf="update.link" [routerLink]="update.link"
-            >
+              {{ update.state }}
+            </button>
+          </div>
+          <p class="description" [innerHTML]="addParagraphs(update.description)" *ngIf="update.description">
+          </p>
+          <div style="margin-top:0.5em" class="user" *ngIf="update.link">
             <svg-icon [src]="'/assets/images/svg/link.svg'" [applyClass]="true" class="icon" />
-            Просмотреть изменения...</a
-          >
-
+            <a [routerLink]="update.link" class="username link">Просмотреть изменения...</a>
+          </div>
           <ul *ngIf="update.tags.length > 0" class="tags">
-            <li
-              (click)="filterByTag(tag)"
-              class="tag"
-              *ngFor="let tag of update.tags"
-            >
+            <li [ngClass]="{
+                selected: filtered === 'tag' && filterContext === tag
+              }" (click)="
+                filtered === 'tag' && filterContext === tag
+                  ? null
+                  : filterByTag(tag)
+              " class="tag" *ngFor="let tag of update.tags">
               {{ tag }}
             </li>
           </ul>
-          <p class="note" *ngIf="update.whoCanView !== 'all'">
-            *Запись об этом обновлении видят только администраторы и модераторы
+          <p class="note" *ngIf="update.context !== 'all'">
+            *Запись об этой новости видят только администраторы и модераторы
           </p>
+
+          <div @height *ngIf="update.open" >
+            <hr  />
+  
+            <form class="edit-form" >
+              <app-autocomplete [(ngModel)]="update.newState" name="state" (anyEmitter)="update.newState = $event"
+                [anyData]="filteredStates(update.state)" [placeholder]="'Выберите новый статус'" />
+  
+              <app-button [text]="'Изменить'" [disabled]="update.newState !== undefined"
+                (click)="actionUpdate = update; confirmModal = true" [color]="'prim'" [rounded]="true"
+                [style]="'filled-min'"></app-button>
+            </form>
+          </div>
+
+          <button class="edit-button" *ngIf="currentUser.role === 'admin' && showUpdateButtons()" (click)="update.open = !update.open" >
+            <svg-icon [applyClass]="true" class="svg-trash" [src]="'/assets/images/svg/pen.svg'"></svg-icon>
+          </button>
         </section>
       </div>
+      <ng-container *ngIf="!isLoaded">
+        <ng-container *ngFor="let i of [1, 2, 3]">
+          <div>
+            <section class="update loading noselect">
+              <div class="main">
+                <div class="head">
+                  <h2>ЗагрузкаЗагрузкаЗагруз</h2>
+                  <p class="date">Загрузка</p>
+                </div>
+                <div class="user">
+                  <svg-icon [applyClass]="true" class="icon" />
+                  <p>Загрузка Загрузка</p>
+                </div>
+                <div>
+                  <p class="description">
+                    ЗагрузкаЗагрузкаЗагрузка ЗагрузкаЗагрузкаЗагрузка
+                    ЗагрузкаЗагрузкаЗагрузка ЗагрузкаЗагрузкаЗагрузка
+                    ЗагрузкаЗагрузкаЗагрузка ЗагрузкаЗагрузкаЗагрузка
+                    ЗагрузкаЗагрузка
+                  </p>
+                </div>
+              </div>
+            </section>
+          </div>
+        </ng-container>
+      </ng-container>
     </div>
-    <app-button
-      class="more-button"
-      [text]="'Загрузить еще...'"
-      (click)="loadMoreUpdates()"
-      *ngIf="updates.length > showedUpdates.length && filtered === 'no'"
-      [rounded]="true"
-      [style]="'outlined'"
-      [color]="'prim'"
-    ></app-button>
-    <app-button
-      class="more-button"
-      [text]="'Сбросить фильтр...'"
-      (click)="clearFilter()"
-      *ngIf="filtered !== 'no'"
-      [rounded]="true"
-      [style]="'outlined'"
-      [color]="'prim'"
-    ></app-button>
-  </ng-template>
+
+    <p *ngIf="allUpdatesLoaded && updates.length > 0" class="no-updates">
+      Все новости
+      <ng-container *ngIf="filtered">с таким фильтром</ng-container> уже
+      загружены
+    </p>
+
+    <div class="buttons">
+      <app-button class="more-button" [text]="'Загрузить еще...'" [disabled]="isLoaded" (click)="loadMoreUpdates()"
+        *ngIf="!allUpdatesLoaded" [rounded]="true" [style]="'outlined'" [color]="'prim'"></app-button>
+      <app-button class="more-button" [text]="'Сбросить фильтр'" (click)="clearFilter()" *ngIf="filtered"
+        [rounded]="true" [style]="'filled'" [color]="'prim'"></app-button>
+    </div>
+  </div>
 </div>
 
-<app-add-update
-  (closeEmitter)="addUpdateMode = false"
-  @modal
-  *ngIf="addUpdateMode"
-></app-add-update>
+<app-add-update (createEmitter)="startUpdatesLoad(); scrollToTop()" (closeEmitter)="addUpdateMode = false" @modal
+  *ngIf="addUpdateMode"></app-add-update>
 
-<app-modal
-  @modal
-  [style]="'await'"
-  [type]="'Ok'"
-  [noButtons]="true"
-  [style]="'await'"
-  [title]="'Подождите...'"
-  [type]="'Ok'"
-  [description]="'Удаляем обновление... Подождите немного...'"
-  *ngIf="awaitModalShow"
-></app-modal>
+<app-modal @modal [style]="'await'" *ngIf="awaitModal"></app-modal>
 
-<app-modal
-  @modal
-  *ngIf="deleteModalShow"
-  [style]="'prim'"
-  [title]="'Удаление обновления'"
-  [type]="'yesOrNo'"
-  (resultEmit)="handleDeleteModal($event)"
-  [buttonsText]="['Да', 'Нет']"
-  [description]="'Вы уверены, что хотите удалить это обновление?'"
-></app-modal>
+<app-modal @modal *ngIf="deleteModal" [style]="'prim'" [title]="'Удаление новости'" [type]="'yesOrNo'"
+  (resultEmit)="handleDeleteModal($event)" [buttonsText]="['Да', 'Нет']"
+  [description]="'Вы уверены, что хотите удалить эту новость?'"></app-modal>
+
+<app-modal (resultEmit)="successModal = false; startUpdatesLoad()" [style]="'sec'" [title]="'Новость удалена'"
+  [type]="'Ok'" [buttonsText]="['Хорошо']" *ngIf="successModal" @modal
+  [description]="'Вы успешно удалили заметку о новости'"></app-modal>
+
+<app-modal [style]="'await'" @modal *ngIf="loadingModal"> </app-modal>
+
+<app-modal (resultEmit)="successEditModal = false" [style]="'sec'" [title]="'Статус изменен'" [type]="'Ok'"
+  [buttonsText]="['Хорошо']" *ngIf="successEditModal" @modal
+  [description]="'Вы успешно изменили статус новости'"></app-modal>
+
+<app-modal *ngIf="confirmModal" (resultEmit)="handleConfirmModal($event)" @modal [style]="'prim'" [type]="'yesOrNo'"
+  [buttonsText]="['Да', 'Отмена']" [title]="'Подтвердите изменение'"
+  [description]="'Вы уверены, что хотите изменить статус новости?'"></app-modal>

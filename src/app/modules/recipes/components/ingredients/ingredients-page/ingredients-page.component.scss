@@ -282,3 +282,39 @@ app-ingredient-create {
   position: fixed;
   z-index: 10;
 }
+
+
+.load {
+  cursor: wait;
+  color: transparent;
+  animation: loading 0.75s infinite linear;
+  background-color: var(--loading);
+  border-radius: 0.75em;
+}
+
+
+@keyframes loading {
+  0% {
+    background-position: var(--loading);
+  }
+
+  50% {
+    background-color: var(--loading-accent);
+  }
+
+  100% {
+    background-position: var(--loading);
+  }
+}
+
+
+.image-loading {
+  animation: loading 0.75s infinite linear;
+  background-color: var(--loading);
+  background-repeat: no-repeat;
+}
+
+.disabled {
+  pointer-events: none !important;
+
+}

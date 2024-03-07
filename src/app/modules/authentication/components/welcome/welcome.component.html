@@ -1,7 +1,7 @@
 <div class="wrap">
     <div class="header">
         <h1>Добро пожаловать в <span>Yummy</span></h1>
-        <p class="info">Вы успешно подтвердили электронную почту!</p>
+            <p>Это будет захватывающее приключение...</p>
 
        <div class="row">
         <div class="community">
@@ -15,10 +15,13 @@
             </div>
            
        </div>
-            <p>Это будет захватывающее приключение...</p>
 
     </div>
 
 
 
 </div>
+
+<app-modal [ngStyle]="{ 'z-index': 100 }" @modal *ngIf="errorModal" [style]="'prim'" [title]="'Произошла ошибка'"
+    [type]="'Ok'" (resultEmit)="handleDeleteModal()" [buttonsText]="['На главную']"
+    [description]="errorText||'Произошла неизвестная ошибка'"></app-modal>

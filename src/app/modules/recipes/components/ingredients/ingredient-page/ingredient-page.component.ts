@@ -7,21 +7,27 @@ import {
 } from '@angular/core';
 import {
   IIngredient,
-  IIngredientsGroup,
+  IGroup,
   nullIngredient,
 } from '../../../models/ingredients';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { IngredientService } from '../../../services/ingredient.service';
-import { RecipeService } from '../../../services/recipe.service';
 import { IRecipe, Nutrition } from '../../../models/recipes';
 import { ICategory } from '../../../models/categories';
-import { CategoryService } from '../../../services/category.service';
 import { Title } from '@angular/platform-browser';
-import { Subject, takeUntil } from 'rxjs';
+import {
+  EMPTY,
+  Observable,
+  Subject,
+  catchError,
+  finalize,
+  forkJoin,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
 import { setReadingTimeInMinutes } from 'src/tools/common';
-import { supabase } from 'src/app/modules/controls/image/supabase-data';
 import {
   ProductType,
   ShoppingListItem,
@@ -29,8 +35,10 @@ import {
   productTypes,
 } from 'src/app/modules/planning/models/shopping-list';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
-import { PlanService } from 'src/app/modules/planning/services/plan-service';
-import { IPlan, nullPlan } from 'src/app/modules/planning/models/plan';
+import { PlanService } from 'src/app/modules/planning/services/plan.service';
+import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
+import { Permission } from 'src/app/modules/user-pages/components/settings/conts';
+import { UserService } from 'src/app/modules/user-pages/services/user.service';
 
 @Component({
   selector: 'app-ingredient-page',
@@ -40,24 +48,27 @@ import { IPlan, nullPlan } from 'src/app/modules/planning/models/plan';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IngredientPageComponent implements OnInit, OnDestroy {
+  resolverIngredient = nullIngredient;
   ingredient: IIngredient = nullIngredient;
   shoppingGroups = productTypes;
-  recipes: IRecipe[] = [];
   auth = false;
-  showedCategories: ICategory[] = [];
   loading = false;
-  plan: IPlan = nullPlan;
+
+  preloader = [
+    'AaaaaaaAaaaaaaAaaaaaaAaaaaaaAaaaaaaAaaaaaaAaaaaaaAaaaaaaAaaaaa',
+    'AaaaaaaAaaaaaaAaaaaaaAaaaaaaAaaaaaaAaaaaaa',
+    'AaaaaaaAaaaaaaAaaaaaaAaaaaaaAaaaaaaAaaaaaaAaaaaaaaa',
+  ];
+  recipesLength = 0;
+
+  initialLoading = true;
+  currentUser: IUser = { ...nullUser };
   relatedCategories: ICategory[] = [];
-  groups: IIngredientsGroup[] = [];
   relatedIngredients: IIngredient[] = [];
   showHistory = false;
   protected destroyed$: Subject<void> = new Subject<void>();
-
-  get ingredientGroups() {
-    return this.ingredientService
-      .getGroupOfIngredient(this.groups, this.ingredient)
-      .filter((g) => g.id !== 0);
-  }
+  groups: IGroup[] = [];
+  addedAlready: boolean = false;
 
   get shoppingGroup(): ProductType {
     return (
@@ -108,6 +119,7 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
       this.ingredient.externalLinks?.length
     );
   }
+
   get showMainSection() {
     return (
       this.ingredient.description ||
@@ -144,102 +156,146 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    private categoryService: CategoryService,
     private route: ActivatedRoute,
-    private router: Router,
     private ingredientService: IngredientService,
-    private recipeService: RecipeService,
     private titleService: Title,
+    private userService:UserService,
     private planService: PlanService,
     private authService: AuthService,
+
     private cd: ChangeDetectorRef,
   ) {}
 
+  currentUserId = 0;
   placeholder = '/assets/images/ingredient-placeholder.png';
   ngOnInit() {
+    this.ingredientService.setIngredients([]);
+    this.ingredientService.ingredients$.subscribe((ingredients) => {
+      const ingredient: IIngredient =
+        ingredients.find(
+          (ingredient) => ingredient.id === this.ingredient.id,
+        ) || nullIngredient;
+      this.ingredient = ingredient;
+    });
+    this.authService.currentUser$
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((receivedUser) => {
+        this.auth = receivedUser.id > 0;
+        this.currentUser = receivedUser;
+      });
+
     this.route.data.subscribe((data) => {
-      this.ingredient = { ...data['IngredientResolver'] };
-      this.downloadImageFromSupabase();
+      this.authService.getTokenUser().subscribe((receivedUser) => {
+        this.currentUserId = receivedUser.id;
 
-      this.titleService.setTitle(this.ingredient.name);
+        this.ingredientService.setIngredients([]);
+        this.ingredient = nullIngredient;
 
-      this.authService.currentUser$
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe((receivedUser) => {
-          this.auth = receivedUser.id > 0;
-          this.planService.plans$
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe((receivedPlans) => {
-              this.plan =
-                receivedPlans.find((p) => p.user === receivedUser.id) ||
-                nullPlan;
+        this.recipesLength = 0;
+        this.relatedCategories = [];
+        this.relatedIngredients = [];
+        this.showHistory = false;
+        this.groups = [];
+        this.addedAlready = false;
 
-              this.cd.markForCheck();
-            });
-        });
+        this.initialLoading = true;
+        const id = data['IngredientResolver'].id;
+        this.ingredient = data['IngredientResolver'];
+        this.resolverIngredient = this.ingredient;
+        this.titleService.setTitle(this.ingredient.name);
+        this.cd.markForCheck();
 
-      this.ingredientService.ingredients$
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe((data) => {
-          const findedIngredient = data.find(
-            (i) => i.id === this.ingredient.id,
-          );
-          if (findedIngredient) {
-            this.ingredient = findedIngredient;
-          } else {
-            this.router.navigateByUrl('/');
-          }
-          this.relatedIngredients =
-            this.ingredientService.getRelatedIngredients(this.ingredient, data);
-          this.groupsInit();
-          this.recipesInit();
-          this.cd.markForCheck();
-        });
-
-      this.cd.markForCheck();
+        this.getIngredient(id);
+      });
     });
   }
 
-  image = '';
+  editModal = false;
+  deleteModal = false;
 
-  groupsInit() {
-    this.ingredientService.ingredientsGroups$.subscribe(
-      (data) => (this.groups = data),
-    );
+  changeIngredientAfterEditing() {
+    this.ingredientService.setIngredients([]);
+    this.ingredient = nullIngredient;
+    this.loading = false;
+    this.recipesLength = 0;
+    this.initialLoading = true;
+    this.relatedCategories = [];
+    this.relatedIngredients = [];
+    this.showHistory = false;
+    this.groups = [];
+    this.addedAlready = false;
+
+    this.titleService.setTitle(this.ingredient.name);
+    setTimeout(() => {
+      this.ingredient = this.resolverIngredient;
+
+      this.getIngredient(this.ingredient.id);
+    }, 500);
   }
 
-  recipesInit() {
-    this.recipeService.recipes$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((data) => {
-        this.recipes = this.recipeService.getRecipesByIngredient(
-          data,
-          this.ingredient,
-        );
-        this.categoryService.categories$
-          .pipe(takeUntil(this.destroyed$))
-          .subscribe((data) => {
-            this.relatedCategories = this.categoryService.getRelatedCategories(
-              this.recipes,
-              data,
+  getIngredient(id: number) {
+    this.ingredientService
+      .getFullIngredient(id, this.currentUserId)
+      .pipe(
+        tap((ingredient: IIngredient) => {
+          this.ingredientService.addIngredientToIngredients(ingredient);
+          const subscribes$: Observable<any>[] = [];
+          subscribes$.push(
+            this.ingredientService.getGroupsOfIngredient(ingredient.id).pipe(
+              tap((groups) => {
+                this.groups = groups;
+              }),
+            ),
+          );
+          subscribes$.push(
+            this.ingredientService.getRelatedIngredients(ingredient.id).pipe(
+              tap((relatedIngredients) => {
+                this.relatedIngredients = relatedIngredients;
+              }),
+            ),
+          );
+          subscribes$.push(
+            this.ingredientService.getVariations(ingredient.id).pipe(
+              tap((variations) => {
+                this.ingredient.variations = variations || [];
+              }),
+            ),
+          );
+          subscribes$.push(
+            this.ingredientService.getRelatedCategories(ingredient.id).pipe(
+              tap((relatedCategories: ICategory[]) => {
+                this.relatedCategories = relatedCategories;
+              }),
+            ),
+          );
+          if (this.currentUser.id > 0)
+            subscribes$.push(
+              this.ingredientService
+                .getInfoAboutIngredientInShoppingList(
+                  ingredient.id,
+                  this.currentUser.id,
+                )
+                .pipe(
+                  tap((res: any) => {
+                    const isInShoppingList = res.hasRows;
+                    this.addedAlready = isInShoppingList;
+                  }),
+                ),
             );
-            this.relatedCategories = this.categoryService.getPopularCategories(
-              this.relatedCategories,
-              this.recipes,
-            );
-            this.showedCategories = this.relatedCategories.slice(0, 3);
+
+          forkJoin(subscribes$).subscribe(() => {
+            this.initialLoading = false;          
+
+            this.cd.markForCheck();
           });
-      });
-  }
 
-  downloadImageFromSupabase() {
-    if (this.ingredient.image) {
-      this.image = supabase.storage
-        .from('ingredients')
-        .getPublicUrl(this.ingredient.image).data.publicUrl;
-    }
+                    this.downloadImage();
 
-    this.cd.markForCheck();
+
+          this.recipesLength = ingredient.recipesCount || 0;
+        }),
+      )
+      .subscribe();
   }
 
   goToSection(section: string) {
@@ -289,6 +345,13 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
     }
   }
 
+  showIngredientButtons() {
+    return this.userService.getPermission(
+      this.currentUser.limitations || [],
+      Permission.IngredientsManagingButtons,
+    );
+  }
+  
   addParagraphs(text: string) {
     return text.replace(/\n/g, '<br>');
   }
@@ -297,38 +360,88 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
     return { 'list-style-type': list.length > 1 ? 'default' : 'none' };
   }
 
-  showAllCategories() {
-    this.showedCategories = this.relatedCategories;
+  downloadImage() {
+    if (this.ingredient.image) {
+                this.ingredient.imageLoading = true;
+                this.ingredientService.updateIngredientInIngredients(
+                  this.ingredient,
+                );
+      this.cd.markForCheck();
+        this.ingredientService
+          .downloadImage(this.ingredient.image!)
+          .pipe(
+            finalize(() => {
+              this.ingredientService.setImageLoading(this.ingredient.id, false);
+              this.ingredient.imageLoading = false;
+              this.ingredientService.updateIngredientInIngredients(
+                this.ingredient,
+              );
+
+              this.cd.markForCheck();
+            }),
+            tap((blob) => {
+              if (blob) {
+                this.ingredient.imageURL = URL.createObjectURL(blob);
+                this.ingredientService.updateIngredientInIngredients(
+                  this.ingredient,
+                );
+                this.cd.markForCheck();
+              }
+            }),
+            catchError(() => {
+              return EMPTY;
+            }),
+          )
+          .subscribe();
+
+    }
   }
 
-  get addedAlready() {
-    return this.plan.shoppingList.find((p) => p.name === this.ingredient.name);
-  }
-
-  async addToBasket() {
+  addToBasket() {
     this.loading = true;
     this.cd.markForCheck();
-    let groceryList = this.plan.shoppingList;
     if (!this.addedAlready) {
-      let maxId = 0;
-      if (groceryList.length > 0)
-        maxId = Math.max(...groceryList.map((g) => g.id));
       const product: ShoppingListItem = {
         ...nullProduct,
-        id: maxId + 1,
+        userId: this.currentUser.id,
         name: this.ingredient.name,
-        type: this.ingredient.shoppingListGroup || 0,
+        typeId: this.ingredient.shoppingListGroup || 0,
       };
-      groceryList.push(product);
+      this.planService
+        .postProduct(product)
+        .pipe(
+          tap(() => {
+            this.addedAlready = true;
+          }),
+          finalize(() => {
+            this.loading = false;
+            this.cd.markForCheck();
+          }),
+        )
+        .subscribe();
     } else {
-      groceryList = groceryList.filter((p) => p.name !== this.ingredient.name);
+      this.ingredientService
+        .deleteProductsByIngredientName(this.ingredient.id, this.currentUser.id)
+        .pipe(
+          tap(() => {
+            this.addedAlready = false;
+          }),
+          finalize(() => {
+            this.loading = false;
+            this.cd.markForCheck();
+          }),
+        )
+        .subscribe();
     }
-    this.plan.shoppingList = groceryList;
+  }
 
-    await this.planService.updatePlanInSupabase(this.plan);
-
-    this.loading = false;
-    this.cd.markForCheck();
+  showCapture() {
+    return (
+      !this.ingredient.image ||
+      (this.ingredient.image &&
+        !this.ingredient.imageLoading &&
+        !this.ingredient.imageURL)
+    );
   }
 
   ngOnDestroy(): void {

@@ -3,11 +3,7 @@
 <div class="background" (click)="clickBackgroundNotContent($event)">
   <div class="container">
     <button (click)="closeEmitter.emit(true)" class="close">
-      <svg-icon
-        class="close-svg"
-        [applyClass]="true"
-        [src]="'/assets/images/svg/close.svg'"
-      ></svg-icon>
+      <svg-icon class="close-svg" [applyClass]="true" [src]="'/assets/images/svg/close.svg'"></svg-icon>
     </button>
 
     <div class="zero">
@@ -17,34 +13,21 @@
           <hr />
           <div class="switches">
             <ng-container *ngFor="let item of steps; let i = index">
-              <button
-                *ngIf="showBlock(i)"
-                class="switch"
-                [ngClass]="{ selected: step === i }"
-                (click)="step = i"
-              >
+              <button *ngIf="showBlock(i)" class="switch" [ngClass]="{ selected: step === i }" (click)="step = i">
                 {{ item }}
               </button>
             </ng-container>
           </div>
           <div class="mobile-switches">
             <ng-container *ngFor="let item of steps; let i = index">
-              <button
-                *ngIf="showBlock(i)"
-                class="header-button"
-                [ngClass]="{ selected: step === i }"
-                (click)="step = i"
-              >
-                <svg-icon
-                  class="svg-trash"
-                  [applyClass]="true"
-                  [src]="
+              <button *ngIf="showBlock(i)" class="header-button" [ngClass]="{ selected: step === i }"
+                (click)="step = i">
+                <svg-icon class="svg-trash" [applyClass]="true" [src]="
                     '/assets/images/svg/settings/' +
                     stepsIcons[i] +
                     (step === i ? '-fill' : '') +
                     '.svg'
-                  "
-                />
+                  " />
               </button>
             </ng-container>
           </div>
@@ -55,31 +38,43 @@
             <div class="blocks">
               <div>
                 <h3>
-                  <svg-icon
-                    [applyClass]="true"
-                    class="icon"
-                    [src]="'/assets/images/svg/settings/mail.svg'"
-                  />
+                  <svg-icon [applyClass]="true" class="icon" [src]="'/assets/images/svg/settings/mail.svg'" />
                   Электронная почта
                 </h3>
-                <p>{{ email }}</p>
+                <p>{{ currentUser.email }}</p>
               </div>
               <div>
                 <h3>
-                  <svg-icon
-                    [applyClass]="true"
-                    class="icon"
-                    [src]="'/assets/images/svg/settings/username.svg'"
-                  />
+                  <svg-icon [applyClass]="true" class="icon" [src]="'/assets/images/svg/settings/username.svg'" />
 
                   Имя пользователя
                 </h3>
                 <p>{{ "@" + user.username }}</p>
               </div>
               <button class="action "><a routerLink="/password-reset">Поменять пароль</a></button>
-              <button class="action red" (click)="deleteModalShow = true">
+              <button class="action red del" (click)="deleteMode = !deleteMode">
                 Удалить аккаунт
               </button>
+
+              <form [formGroup]="form" *ngIf="deleteMode" @height>
+
+                <div style="zoom:0.9">Для удаления аккаунта в целях безопасности необходимо:
+
+                  <ul>
+                    <li>• Подтвердить пароль;</li>
+                    <li>• Получить письмо на электронную почту;</li>
+                    <li>• Перейти по ссылке из письма;</li>
+                    <li>• Подтвердить удаление еще раз на открывшейся странице.</li>
+                  </ul>
+
+                </div>
+                <div class="password-box"> <app-usual-input formControlName="password" [error]="passwordNotValidError"
+                    required style="zoom:0.9;" [placeholder]="'Введите пароль'" [inputRequired]="true"
+                    [inputType]="'password'" [max]="20"></app-usual-input></div>
+                <div style="zoom:0.9; margin:auto"><app-button (click)="form.valid?deleteModalShow= true:null"
+                    [color]="'prim'" [rounded]="true" [style]="'filled'" [text]="'Прислать письмо'"
+                    [disabled]="form.valid"></app-button></div>
+              </form>
             </div>
           </div>
           <div *ngIf="step === 2">
@@ -87,111 +82,45 @@
             <div class="blocks third">
               <div *ngFor="let section of permissionNotificationSections">
                 <h3>
-                  <svg-icon
-                    [applyClass]="true"
-                    class="icon"
-                    [src]="
+                  <svg-icon [applyClass]="true" class="icon" [src]="
                       '/assets/images/svg/settings/' + section.icon + '.svg'
-                    "
-                  />
+                    " />
                   {{ section.title }}
                 </h3>
                 <div>
                   <div class="toogle" *ngFor="let item of section.items">
                     <p>{{ item.description }}</p>
-                    <app-toogle-switch
-                      [checked]="userPermissionEnabled(item.area)"
-                      (checkedEmit)="
+                    <app-toogle-switch [checked]="userPermissionEnabled(item.area)" (checkedEmit)="
                         tooglePermission(
-                          item.area,
-                          !userPermissionEnabled(item.area)
+                          item.area
                         )
-                      "
-                    ></app-toogle-switch>
+                      "></app-toogle-switch>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div *ngIf="step === 5">
-            <h2>Анонимность</h2>
-
-            <div class="blocks third">
-              <ng-container *ngIf="user.role !== 'admin'">
-                <p *ngIf="user.role === 'user'; else forModerators">
-                  Внимание: все примененные ограничения не распространятся на
-                  модераторов и администраторов Yummy
-                </p>
-                <ng-template #forModerators>
-                  <p>
-                    Внимание: все примененные ограничения не распространятся на
-                    администратора Yummy
-                  </p>
-                </ng-template>
-              </ng-container>
-
-              <ng-container *ngFor="let section of condifencialitySettings">
-                <div
-                  *ngIf="section.role ? section.role.includes(user.role) : true"
-                >
-                  <h3>
-                    <svg-icon
-                      [applyClass]="true"
-                      class="icon"
-                      [src]="
-                        '/assets/images/svg/settings/' + section.icon + '.svg'
-                      "
-                    />
-                    {{ section.title }}
-                  </h3>
-                  <div>
-                    <div class="toogle" *ngFor="let item of section.items">
-                      <p>{{ item.description }}</p>
-                      <app-toogle-switch
-                        [checked]="userPermissionEnabled(item.area)"
-                        (checkedEmit)="
-                          tooglePermission(
-                            item.area,
-                            !userPermissionEnabled(item.area)
-                          )
-                        "
-                      ></app-toogle-switch>
-                    </div>
-                  </div>
-                </div>
-              </ng-container>
-            </div>
-          </div>
-          <div *ngIf="step === MANAGERS_SETTINGS_BLOCK_NUM">
+          
+          <div *ngIf="step === 4">
             <h2>Управление</h2>
             <div class="blocks third">
               <ng-container *ngFor="let section of managersPreferences">
-                <div
-                  *ngIf="section.role ? section.role.includes(user.role) : true"
-                >
+                <div *ngIf="section.role ? section.role.includes(user.role) : true">
                   <h3>
-                    <svg-icon
-                      [applyClass]="true"
-                      class="icon"
-                      [src]="
+                    <svg-icon [applyClass]="true" class="icon" [src]="
                         '/assets/images/svg/settings/' + section.icon + '.svg'
-                      "
-                    />
+                      " />
                     {{ section.title }}
                   </h3>
                   <div>
                     <div class="toogle" *ngFor="let item of section.items">
                       <p>{{ item.description }}</p>
-                      <app-toogle-switch
-                        [checked]="userPermissionEnabled(item.area)"
-                        (checkedEmit)="
+                      <app-toogle-switch [checked]="userPermissionEnabled(item.area)" (checkedEmit)="
                           tooglePermission(
-                            item.area,
-                            !userPermissionEnabled(item.area)
+                            item.area
                           )
-                        "
-                      ></app-toogle-switch>
+                        "></app-toogle-switch>
                     </div>
                   </div>
                 </div>
@@ -203,11 +132,7 @@
             <div class="blocks">
               <div>
                 <h3>
-                  <svg-icon
-                    [applyClass]="true"
-                    class="icon"
-                    [src]="'/assets/images/svg/permanent.svg'"
-                  />
+                  <svg-icon [applyClass]="true" class="icon" [src]="'/assets/images/svg/permanent.svg'" />
                   Ваши постоянные продукты
                 </h3>
                 <p class="description">
@@ -219,67 +144,36 @@
               </div>
 
               <div class="form">
-                <app-usual-input
-                  (ngModelChange)="
+                <app-usual-input (ngModelChange)="
                     !permanentIngredientTouched
                       ? (permanentIngredientTouched = true)
                       : null
-                  "
-                  [error]="
+                  " [error]="
                     permanentIngredientTouched && permanentIngredient.length < 2
                       ? ' '
                       : ''
-                  "
-                  [(ngModel)]="permanentIngredient"
-                  [max]="50"
-                  [placeholder]="'Название ингредиента'"
-                  type="text"
-                />
-                <app-button
-                  [color]="'prim'"
-                  [text]="'Добавить'"
-                  [style]="'filled'"
-                  [rounded]="true"
-                  [disabled]="
+                  " [(ngModel)]="permanentIngredient" [max]="50" [placeholder]="'Название ингредиента'" type="text" />
+                <app-button [color]="'prim'" [text]="'Добавить'" [style]="'filled'" [rounded]="true" [disabled]="
                     !permanentIngredientExist && permanentIngredient.length > 2
-                  "
-                  (click)="addPermanentIngredient()"
-                ></app-button>
-                <p
-                  class="error"
-                  *ngIf="
+                  " (click)="addPermanentIngredient()"></app-button>
+                <p class="error" *ngIf="
                     permanentIngredient.length < 2 && permanentIngredientTouched
-                  "
-                >
+                  ">
                   Название ингредиента должно содержать минимум 2 символа
                 </p>
               </div>
               <div class="ingredients">
-                <div
-                  class="ingredient"
-                  *ngFor="let item of permanentIngredients"
-                >
+                <div class="ingredient" *ngFor="let item of permanentIngredients">
                   {{ item }}
-                  <button
-                    (click)="deleteIngredient('permanent', item)"
-                    class="delete-button"
-                  >
-                    <svg-icon
-                      [applyClass]="true"
-                      class="delete-svg"
-                      [src]="'/assets/images/svg/close.svg'"
-                    />
+                  <button (click)="deleteIngredient('permanent', item)" class="delete-button">
+                    <svg-icon [applyClass]="true" class="delete-svg" [src]="'/assets/images/svg/close.svg'" />
                   </button>
                 </div>
               </div>
 
               <div>
                 <h3>
-                  <svg-icon
-                    [applyClass]="true"
-                    class="icon"
-                    [src]="'/assets/images/svg/gluten.svg'"
-                  />
+                  <svg-icon [applyClass]="true" class="icon" [src]="'/assets/images/svg/gluten.svg'" />
                   Исключения для поиска
                 </h3>
                 <p class="description">
@@ -291,56 +185,29 @@
               </div>
 
               <div class="form">
-                <app-usual-input
-                  (ngModelChange)="
+                <app-usual-input (ngModelChange)="
                     !excludedIngredientTouched
                       ? (excludedIngredientTouched = true)
                       : null
-                  "
-                  [error]="
+                  " [error]="
                     excludedIngredientTouched && excludedIngredient.length < 2
                       ? ' '
                       : ''
-                  "
-                  [(ngModel)]="excludedIngredient"
-                  [max]="50"
-                  [placeholder]="'Название ингредиента'"
-                  type="text"
-                />
-                <app-button
-                  [color]="'prim'"
-                  [text]="'Исключить'"
-                  [style]="'filled'"
-                  [rounded]="true"
-                  [disabled]="
+                  " [(ngModel)]="excludedIngredient" [max]="50" [placeholder]="'Название ингредиента'" type="text" />
+                <app-button [color]="'prim'" [text]="'Исключить'" [style]="'filled'" [rounded]="true" [disabled]="
                     !excludedIngredientExist && excludedIngredient.length > 2
-                  "
-                  (click)="addExcludedIngredient()"
-                ></app-button>
-                <p
-                  class="error"
-                  *ngIf="
+                  " (click)="addExcludedIngredient()"></app-button>
+                <p class="error" *ngIf="
                     excludedIngredient.length < 2 && excludedIngredientTouched
-                  "
-                >
+                  ">
                   Название ингредиента должно содержать минимум 2 символа
                 </p>
               </div>
               <div class="ingredients">
-                <div
-                  class="ingredient"
-                  *ngFor="let item of excludingIngredients"
-                >
+                <div class="ingredient" *ngFor="let item of excludingIngredients">
                   {{ item }}
-                  <button
-                    (click)="deleteIngredient('excluding', item)"
-                    class="delete-button"
-                  >
-                    <svg-icon
-                      [applyClass]="true"
-                      class="delete-svg"
-                      [src]="'/assets/images/svg/close.svg'"
-                    />
+                  <button (click)="deleteIngredient('excluding', item)" class="delete-button">
+                    <svg-icon [applyClass]="true" class="delete-svg" [src]="'/assets/images/svg/close.svg'" />
                   </button>
                 </div>
               </div>
@@ -351,35 +218,30 @@
             <div class="blocks">
               <div class="toogle">
                 <p class="not-link">Темная тема</p>
-                <app-toogle-switch
-                  [backgroundOff]="'var(--color-secondary)'"
-                  [backgroundOn]="'var(--color-foreground)'"
-                  [toogleOff]="'var(--color-background)'"
-                  [toogleOn]="'var(--color-secondary)'"
-                  (checkedEmit)="nightModeEmit($event)"
-                  [nightMode]="true"
-                ></app-toogle-switch>
+                <app-toogle-switch [backgroundOff]="'var(--color-secondary)'" [backgroundOn]="'var(--color-foreground)'"
+                  [toogleOff]="'var(--color-background)'" [toogleOn]="'var(--color-secondary)'"
+                  (checkedEmit)="nightModeEmit()" [nightMode]="true"></app-toogle-switch>
               </div>
               <div>
-                <p   ><a routerLink="/about">Узнать больше о Yummy...</a></p>
-                <p  >
-                  <a routerLink="/user-policy"
-                    >Пользовательское соглашение...</a
-                  >
+                <p><a routerLink="/about">Узнать больше о Yummy...</a></p>
+                <p>
+                  <a routerLink="/news">Свежие новости и изменения...</a>
                 </p>
                 <p>
-                  <a routerLink="/updates">Обновления в Yummy...</a>
+                  <a routerLink="/user-policy">Пользовательское соглашение...</a>
                 </p>
+                
+              </div>
+              <div>
+                <p style="margin:0">Вопросы, жалобы, предложения, пожелания?</p>
+                <p style="margin:0">Пишите на почту: <a href="mailto:yummort@mail.ru">{{'yummort@mail.ru'}}</a></p>
               </div>
               <div>
                 <p>Пригласите друзей</p>
                 <div class="socials">
                   <app-social-button [url]="location"></app-social-button>
-                  <app-social-button
-                    [url]="location"
-                    [social]="social"
-                    *ngFor="let social of socials"
-                  ></app-social-button>
+                  <app-social-button [url]="location" [social]="social"
+                    *ngFor="let social of socials"></app-social-button>
                 </div>
               </div>
               <button class="action red" (click)="exitModalShow = true">
@@ -392,29 +254,26 @@
     </div>
   </div>
 
-  <app-modal
-    @modal
-    *ngIf="exitModalShow"
-    [style]="'prim'"
-    [title]="'Подтвердите выход'"
-    [type]="'yesOrNo'"
-    (resultEmit)="handleExitModal($event)"
-    [buttonsText]="['Выйти', 'Остаться']"
-    [description]="'Вы действительно хотите выйти из текущего аккаунта?'"
-  ></app-modal>
+  <app-modal @modal *ngIf="exitModalShow" [style]="'prim'" [title]="'Подтвердите выход'" [type]="'yesOrNo'"
+    (resultEmit)="handleExitModal($event)" [buttonsText]="['Выйти', 'Остаться']"
+    [description]="'Вы действительно хотите выйти из текущего аккаунта?'"></app-modal>
 
-  <app-modal
-    @modal
-    *ngIf="deleteModalShow"
-    [style]="'prim'"
-    [title]="'Подтвердите удаление'"
-    [type]="'yesOrNo'"
-    (resultEmit)="handleDeleteModal($event)"
-    [buttonsText]="['Удалить', 'Не удалять']"
-    [description]="
-      'Вы действительно хотите удалить свой аккаунт? Это действие нельзя будет отменить!'
-    "
-  ></app-modal>
+  <app-modal @modal *ngIf="deleteModalShow" [style]="'prim'" [title]="'Подтвердите удаление'" [type]="'yesOrNo'"
+    (resultEmit)="handleDeleteModal($event)" [buttonsText]="['Удалить', 'Не удалять']" [description]="
+      'Вы действительно хотите получить письмо на вашу электронную почту для подтверждения удаления аккаунта?'
+    "></app-modal>
 </div>
-<app-modal  @modal [style]="'await'" [type]="'Ok'"  [noButtons]="true" [title]="'Подождите...'"
-  [type]="'Ok'" [description]="'Применяются внесенные изменения... Подождите немного...'" *ngIf="loading"></app-modal>
+<app-modal @modal [style]="'await'"  *ngIf="loading"></app-modal>
+
+
+
+<app-modal [style]="'sec'" @modal [title]="'Письмо успешно выслано'" [type]="'Ok'" *ngIf="successDeleteModal"
+  (resultEmit)="successDeleteModal=false" [buttonsText]="['Хорошо']" [description]="
+      'Письмо для подтверждения удаления аккаунта выслано на вашу электронную почту'
+    "></app-modal>
+
+
+<app-modal [ngStyle]="{ 'z-index': 100 }" @modal *ngIf="errorModal" [style]="'prim'" [title]="'Неудачная попытка'"
+  [type]="'Ok'" (resultEmit)="errorModal = false" [buttonsText]="['Хорошо']" [description]="
+    errorText || 'Произошла неизвестная ошибка при попытке прислать письмо для подтверждения удаления аккаунта'
+  "></app-modal>

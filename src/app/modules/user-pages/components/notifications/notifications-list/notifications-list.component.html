@@ -19,7 +19,6 @@
   <div class="notifies" *ngIf="notifies.length > 0; else noAnyNotifies">
     <app-notify 
     (hover)="hover.emit(notify)"
-      [user]="user"
       *ngFor="let notify of notifies"
       [notify]="notify"
     ></app-notify>

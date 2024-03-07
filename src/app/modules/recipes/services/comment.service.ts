@@ -8,12 +8,16 @@ import { IRecipe } from '../models/recipes';
 import { RecipeService } from './recipe.service';
 import { IUser } from '../../user-pages/models/users';
 import { UserService } from '../../user-pages/services/user.service';
+import { commentsSource } from 'src/tools/sourses';
+import { HttpClient } from '@angular/common/http';
+import { getCurrentDate } from 'src/tools/common';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CommentService {
   constructor(
+    private http: HttpClient,
     private recipeService: RecipeService,
     private userService: UserService,
   ) {}
@@ -28,10 +32,14 @@ export class CommentService {
     return comment;
   }
 
- async deleteComment(comment: IComment, recipe: IRecipe) {
-    recipe.comments = recipe.comments.filter((item) => item.id !== comment.id);
-    await this.recipeService.updateRecipeFunction(recipe);
+  removeCommentFromRecipe(commentId: number, recipe: IRecipe) {
+    const newComments = recipe.comments.filter(
+      (comment) => comment.id !== commentId,
+    );
+    const newRecipe = { ...recipe, comments: newComments };
+    return newRecipe;
   }
+
   sortComments(comments: IComment[]): IComment[] {
     return comments.sort((commentA, commentB) => {
       if (commentA.date < commentB.date) return 1;
@@ -39,38 +47,25 @@ export class CommentService {
       else return 0;
     });
   }
-  async reportComment(comment: IComment, recipe: IRecipe, reporter: IUser) {
-    let maxId: number = 0;
-    if (recipe.reports) {
-      maxId = recipe.reports.reduce((max, c) => (c.id > max ? c.id : max), 0);
-    }
 
-    const report: ICommentReport = {
-      id: maxId + 1,
-      date: new Date().toJSON(),
-      reporter: reporter.id,
-      comment: comment.id,
-    };
-    if (!recipe.reports) recipe.reports = [];
-    recipe.reports.push(report);
-    await this.recipeService.updateRecipeFunction(recipe);
+  dislikeComment(user: IUser, comment: IComment, recipe: IRecipe) {
+    recipe.comments.map((item) => {
+      if (comment.id === item.id) {
+        if (!comment.dislikesId.includes(user.id)) {
+          comment.dislikesId.push(user.id);
+        }
+        if (comment.likesId.includes(user.id)) {
+          comment.likesId = comment.likesId.filter((id) => id !== user.id);
+        }
+      }
+    });
   }
 
-  showAuthor(author: IUser, currentUser: IUser): boolean {
-    return (
-      currentUser.id === author.id ||
-      (author.role !== 'admin' && currentUser.role !== 'user') ||
-      this.userService.getPermission('comment-author', author)
-    );
-  }
-
-  async likeComment(user: IUser, comment: IComment, recipe: IRecipe) {
+  likeComment(user: IUser, comment: IComment, recipe: IRecipe) {
     recipe.comments.map((item) => {
       if (comment.id === item.id) {
         if (!comment.likesId.includes(user.id)) {
           comment.likesId.push(user.id);
-        } else {
-          comment.likesId = comment.likesId.filter((id) => id !== user.id);
         }
         if (comment.dislikesId.includes(user.id)) {
           comment.dislikesId = comment.dislikesId.filter(
@@ -79,48 +74,86 @@ export class CommentService {
         }
       }
     });
-    await this.recipeService.updateRecipeFunction(recipe);
   }
 
-  async dislikeComment(user: IUser, comment: IComment, recipe: IRecipe) {
-     recipe.comments.map((item) => {
+  deleteLikeFromComment(user: IUser, comment: IComment, recipe: IRecipe) {
+    recipe.comments.map((item) => {
       if (comment.id === item.id) {
-        if (!comment.dislikesId.includes(user.id)) {
-          comment.dislikesId.push(user.id);
-        } else {
-          comment.dislikesId = comment.dislikesId.filter(
-            (id) => id !== user.id,
-          );
-        }
-        if (comment.likesId.includes(user.id)) {
-          comment.likesId = comment.likesId.filter((id) => id !== user.id);
-        }
+        comment.likesId = comment.likesId.filter(
+          (userId) => userId !== user.id,
+        );
       }
     });
-    await this.recipeService.updateRecipeFunction(recipe);
   }
 
-  async addCommentToRecipe(recipe: IRecipe, comment: IComment) {
-    const maxId = recipe.comments.reduce(
-      (max, c) => (c.id > max ? c.id : max),
-      0,
+  deleteDislikeFromComment(user: IUser, comment: IComment, recipe: IRecipe) {
+    recipe.comments.map((item) => {
+      if (comment.id === item.id) {
+        comment.dislikesId = comment.dislikesId.filter(
+          (userId) => userId !== user.id,
+        );
+      }
+    });
+  }
+
+  postLike(userId: number, commentId: number) {
+    return this.http.post(`${this.commentsUrl}/like`, {
+      userId: userId,
+      commentId: commentId,
+    });
+  }
+
+  deleteLike(userId: number, commentId: number) {
+    return this.http.delete(`${this.commentsUrl}/like/${userId}/${commentId}`);
+  }
+
+  getComment(commentId:number) {
+    return this.http.get<IComment>(`${this.commentsUrl}/short-comment/${commentId}`);
+  }
+
+  getLikes(commentId: number) {
+    return this.http.get<number[]>(`${this.commentsUrl}/like/${commentId}`);
+  }
+
+  getDislikes(commentId: number) {
+    return this.http.get<number[]>(`${this.commentsUrl}/dislike/${commentId}`);
+  }
+
+  postDislike(userId: number, commentId: number) {
+    return this.http.post(`${this.commentsUrl}/dislike`, {
+      userId: userId,
+      commentId: commentId,
+    });
+  }
+
+  deleteDislike(userId: number, commentId: number) {
+    return this.http.delete(
+      `${this.commentsUrl}/dislike/${userId}/${commentId}`,
     );
-    comment.id = maxId + 1;
-
-    if (recipe.comments) {
-      recipe.comments.push(comment);
-    } else {
-      recipe.comments = [comment];
-    }
-    await this.recipeService.updateRecipeFunction(recipe);
   }
 
-  async removeCommentFromRecipe(recipe: IRecipe, commentId: number) {
-    if (recipe.comments) {
-      recipe.comments = recipe.comments.filter(
-        (comment) => comment.id !== commentId,
-      );
-    }
-    await this.recipeService.updateRecipeFunction(recipe);
+  deleteComment(commentId: number) {
+    return this.http.delete(`${this.commentsUrl}/comment/${commentId}`);
+  }
+
+  commentsUrl: string = commentsSource;
+
+  getComments(recipeId: number, limit: number, page: number) {
+    return this.http.get<{ comments: IComment[]; count: number }>(
+      `${this.commentsUrl}/${recipeId}?limit=${limit}&page=${page}`,
+    );
+  }
+
+  postComment(comment: IComment, recipe: IRecipe) {
+    comment.recipeId = recipe.id;
+    return this.http.post(this.commentsUrl, comment);
+  }
+
+  translateComments(comments: IComment[]): IComment[] {
+    comments.forEach((comment) => {
+      comment.dislikesId = comment.dislikesId || [];
+      comment.likesId = comment.likesId || [];
+    });
+    return comments;
   }
 }

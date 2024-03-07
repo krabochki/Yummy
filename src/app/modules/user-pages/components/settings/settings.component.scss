@@ -9,6 +9,10 @@ button.action{
     color: var(--color-secondary);
   }
 }
+.password-box{
+  margin:1em 0;
+  width: 70%;
+}
 .background {
   top: 0;
   left: 0;
@@ -17,6 +21,7 @@ button.action{
   z-index: 3;
   width: 100vw;
   height: 100%;
+  backdrop-filter: blur(1px);
   @include flex;
 }
 
@@ -282,9 +287,15 @@ button.action{
     &:focus {
       color: var(--color-secondary-focus);
       transform: translateX(0.2em);
+
+      
       &.red {
         color: var(--color-primary-focus);
       }
+            &.del {
+              transform: none;
+              
+            }
     }
   }
 }

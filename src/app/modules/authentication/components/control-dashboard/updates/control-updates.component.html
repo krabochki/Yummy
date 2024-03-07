@@ -1,0 +1,204 @@
+<div
+  class="main"
+  [ngClass]="{
+    admin: this.currentUser.role === 'admin',
+    moderator: this.currentUser.role === 'moderator'
+  }"
+>
+  <h1>
+   Рассмотрение новостей
+  </h1>
+  <div class="wrap">
+  <div class="reports-block new">
+
+
+        <button
+          [disabled]="!loaded"
+          (click)="loaded ? checkActualUpdates() : null"
+          class="update-button"
+        >
+          <svg-icon
+            class="icon"
+            [applyClass]="true"
+            [src]="'/assets/images/svg/update.svg'"
+          />
+          <span>{{ loaded ? "Обновить" : "Обновить..." }}</span>
+        </button>
+       
+        
+          
+        <div class="reports" [ngClass]="{ blink: !loaded && updates.length > 0 }">
+          <div
+            [ngClass]="{ blinked: !loaded }"
+            class="report"
+            *ngFor="let update of updates"
+          >
+            <div class="report-header">
+              <a
+                class="report-recipe"
+                [class.link]="update.link"
+                [routerLink]="update.link || null"
+                [style]="update.link ? null : 'cursor:default'"
+              >
+                {{ update.fullName }}
+              </a>
+              <p class="report-date">
+                Новость отправлена
+                {{ getDate(update.sendDate).toString() | timePast | lowercase }}
+              </p>
+            </div>
+            <div class="description">
+              <p>Статус: {{ update.state }}</p>
+    
+              <p *ngIf="update.description">Описание: {{ update.description }}</p>
+    
+              <div class="tags">
+                <div class="tag" *ngFor="let tag of update.tags">
+                  {{ tag }}
+                </div>
+              </div>
+    
+              <p class="toNotify">*{{ showContext(update.notify) }}</p>
+            </div>
+            <div class="report-users" *ngIf="update.author">
+              <p class="reporter">
+                Автор:
+                <a
+                  class="report-user link"
+                  [routerLink]="'/cooks/list/' + update.authorId"
+                  >{{ getName(update.author) }}</a
+                >
+              </p>
+            </div>
+    
+            <div class="report-buttons">
+              <app-button
+                [text]="'Принять'"
+                (click)="updateToReviewActionClick('approve', update)"
+                [color]="'admin'"
+                [style]="'filled'"
+                [rounded]="true"
+              ></app-button>
+              <app-button
+                [text]="'Отклонить'"
+                (click)="updateToReviewActionClick('dismiss', update)"
+                [color]="'admin'"
+                [style]="'filled-min'"
+                [rounded]="true"
+              ></app-button>
+            </div>
+          </div>
+<ng-container *ngIf="!loaded && updates.length === 0">
+                    <div class="report loading" *ngFor="let update of [0,1,2]">
+                      <div class="report-header">
+                        <a class="report-recipe">
+                          Загрузказагр
+                        </a>
+                        <p class="report-date">
+                          Новость отправлена
+                          ЗагрузказагрЗагру
+                        </p>
+                      </div>
+                      <div class="description">
+                        <p>Статус: Загрузказагр</p>
+                    
+                        <p>Описание: Загрузказагр</p>
+                    
+                        <div class="tags">
+                          <div class="tag" *ngFor="let tag of [0,1,2,4]">
+                            Загруз
+                          </div>
+                        </div>
+                    
+                        <p class="toNotify">*Загрузказагр</p>
+                      </div>
+                      <div class="report-users">
+                        <p class="reporter">
+                          Автор:
+                          Загрузказагр
+                        </p>
+                      </div>
+                    
+                      <div class="report-buttons">
+                        <div class="load-button">
+                          <app-button [text]="'Принять'" [color]="'prim'" [disabled]="false" [style]="'filled'"
+                            [rounded]="true"></app-button>
+                        </div>
+                        <div class="load-button">
+                          <app-button [text]="'Отклонить'" [disabled]="false" [color]="'prim'" [style]="'filled-min'"
+                            [rounded]="true"></app-button>
+                        </div>
+                      </div>
+                    </div>
+</ng-container>
+        </div>
+        <app-button
+          class="more-reports-button"
+          [text]="'Загрузить еще...'"
+          (click)="loadMoreUpdates()"
+          *ngIf="!everythingLoaded && updates.length > 0"
+          [disabled]="loaded"
+          [rounded]="true"
+          [style]="'outlined'"
+          [color]="'prim'"
+        ></app-button>
+    
+
+       <div
+          class="allloaded"
+          *ngIf="!updates.length && loaded && everythingLoaded"
+        >
+        <div class="not-found-icon">
+          <svg-icon class="not-found-svg" [applyClass]="true" [src]="'/assets/images/svg/not-found.svg'" />
+        
+        </div>
+        
+          Новостей на проверку пока нет
+
+        </div>
+    
+        <p class="allloaded" *ngIf="!loaded">Загружаем новости...</p>
+        <p
+          *ngIf="everythingLoaded && loaded && updates.length"
+          class="allloaded"
+        >
+          Все новости для проверки уже загружены
+        </p>
+      </div>
+  </div>
+</div>
+
+<app-modal
+  @modal
+  *ngIf="actionModal"
+  [style]="'sec'"
+  [title]="
+    'Новость успешно ' +
+    (action === 'approve' ? 'одобрена' : 'отклонена')
+  "
+  [type]="'Ok'"
+  (resultEmit)="actionModal=false"
+  [buttonsText]="['Хорошо']"
+  [description]="
+    'Вы успешно ' +
+    (action === 'approve' ? 'одобрили' : 'отклонили') +
+    ' эту новость'
+  "
+></app-modal>
+
+<app-modal
+  [style]="'await'"
+  *ngIf="loadingModal"
+  @modal
+/>
+
+<app-modal
+  @modal
+  *ngIf="confirmModal"
+  [style]="action === 'dismiss' ? 'prim' : 'sec'"  
+  [title]="action === 'dismiss' ? 'Отклонение новости' : 'Одобрение новости'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleConfirmModal($event)"
+  [buttonsText]="['Да', 'Нет']"
+  [description]="action === 'dismiss' ? 'Вы уверены, что хотите отклонить новость?' : 'Вы уверены, что хотите одобрить новость?'"
+></app-modal>

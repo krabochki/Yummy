@@ -2,26 +2,39 @@ import { Injectable } from '@angular/core';
 import { UserService } from './user.service';
 import { INotification, nullNotification } from '../models/notifications';
 import { getCurrentDate } from 'src/tools/common';
-import { IUser } from '../models/users';
+import { IUser, nullUser } from '../models/users';
+import { HttpClient } from '@angular/common/http';
+import { tap } from 'rxjs';
+import { AuthService } from '../../authentication/services/auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NotificationService {
-  constructor(private userService: UserService) {
+  notifyUrl: string = 'http://localhost:3000/notifications';
+  constructor(
+    private userService: UserService,
+    private authService: AuthService,
+    private http: HttpClient,
+  ) {
     this.userService.users$.subscribe((data) => (this.users = data));
+    this.authService.currentUser$.subscribe((user) => {
+      this.currentUser = user;
+    });
   }
 
   users: IUser[] = [];
+  currentUser: IUser = nullUser;
 
   buildNotification(
     title: string,
     text: string,
-    type: 'info' | 'warning' | 'error' | 'success',
+    type: 'info' | 'warning' | 'error' | 'success' | 'night-mode',
     context:
       | 'category'
       | 'recipe'
-      |'update'
+      | 'manager'
+      | 'update'
       | 'without'
       | 'comment'
       | 'hire'
@@ -29,7 +42,7 @@ export class NotificationService {
       | 'user'
       | 'calendar-recipe'
       | 'ingredient'
-      |'update'
+      | 'update'
       | 'demote'
       | 'plan-reminder'
       | 'plan-reminder-start',
@@ -38,45 +51,32 @@ export class NotificationService {
     const notification: INotification = {
       ...nullNotification,
       title: title,
-      relatedLink: link,
+      link: link,
       context: context,
       message: text,
       type: type,
-      timestamp: getCurrentDate(),
+      sendDate: getCurrentDate(),
     };
     return notification;
   }
 
-  async updateUser(user: IUser) {
-    await this.userService.updateUserInSupabase(user);
-  }
-
- async removeNotification(notification: INotification, user: IUser) {
-    const actualUser = this.users.find((u) => u.id === user.id);
-
-    if (actualUser) {
-      actualUser.notifications = actualUser?.notifications.filter(
-        (n) => n.id !== notification.id,
-      );
-      await this.updateUser(actualUser);
-    }
-  }
-
   clearAll(user: IUser) {
-    user.notifications = user.notifications.filter(
-      (n) =>
-        n.context === 'plan-reminder-start' || n.context === 'plan-reminder',
-    );
-    return this.updateUser(user);
+    const url = `${this.notifyUrl}/${user.id}`;
+    return this.http.delete(url);
+  }
+  markNotificationsAsRead(userId: number) {
+    const url = `${this.notifyUrl}/${userId}/mark-read`;
+    return this.http.put(url, {});
   }
 
-  makeNotifyReaded(notify:INotification,user:IUser) {
-    
-    const findedNotification = user.notifications.find(n => n.id === notify.id);
-    if (findedNotification) {
-      findedNotification.read = true;
-    }
-    return this.updateUser(user);
+  markNotificationAsRead(notificationId: number) {
+    const url = `${this.notifyUrl}/notifications/${notificationId}/mark-read`;
+    return this.http.put(url, {});
+  }
+
+  deleteNotification(notificationId: number) {
+    const url = `${this.notifyUrl}/notifications/${notificationId}`;
+    return this.http.delete(url);
   }
 
   addNotificationToUser(notify: INotification, user: IUser) {
@@ -94,20 +94,23 @@ export class NotificationService {
     }
     return user;
   }
-  async sendNotification(notification: INotification, user: IUser) {
-    const actualUser = this.users.find((u) => u.id === user.id);
-
-    if (actualUser) {
-      if (!actualUser.notifications) {
-        actualUser.notifications = [];
-      }
-      let maxId = 0;
-      if (actualUser.notifications.length > 0)
-        maxId = Math.max(...actualUser.notifications.map((n) => n.id));
-      notification.id = maxId + 1;
-      actualUser.notifications.push(notification);
-    }
-    if (actualUser)
-      await this.updateUser(actualUser)
+  sendNotification(
+    notification: INotification,
+    userId: number,
+    forMe?: boolean,
+  ) {
+    const sendNotification: INotification = {
+      ...notification,
+      userId: userId,
+    };
+    return this.http.post<INotification>(this.notifyUrl, sendNotification).pipe(
+      tap((response) => {
+        sendNotification.id = response.id;
+        if (forMe) {
+          this.currentUser.notifications.push(sendNotification);
+          this.authService.setCurrentUser(this.currentUser);
+        }
+      }),
+    );
   }
 }

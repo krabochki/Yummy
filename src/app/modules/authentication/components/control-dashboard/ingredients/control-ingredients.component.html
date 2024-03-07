@@ -1,0 +1,121 @@
+<div class="main" [ngClass]="{
+    admin: this.currentUser.role === 'admin',
+    moderator: this.currentUser.role === 'moderator'
+  }">
+    <h1>Рассмотрение ингредиентов</h1>
+    <div class="wrap">
+        <div class="reports-block new">
+            <button [disabled]="!loaded" (click)="loaded ? checkActualIngredients() : null" class="update-button">
+                <svg-icon class="icon" [applyClass]="true" [src]="'/assets/images/svg/update.svg'" />
+                <span>{{ loaded ? "Обновить" : "Обновить..." }}</span>
+            </button>
+
+            <div class="reports" [ngClass]="{ blink: !loaded && ingredients.length > 0 }">
+                <div [ngClass]="{ blinked: !loaded }" class="report" *ngFor="let ingredient of ingredients">
+                    <div class="report-header">
+                        <a class="report-ingredient link" [routerLink]="'/ingredients/list/' + ingredient.id">
+                            {{ ingredient.name }}
+                        </a>
+                        <p class="report-date">
+                            Ингредиент отправлен
+                            {{
+                            getDate(ingredient.sendDate||'').toString()
+                            | timePast
+                            | lowercase
+                            }}
+                        </p>
+                    </div>
+                    <div class="report-users"
+                        *ngIf="ingredient.author&& ingredient.author > 0 && getUser(ingredient.author).id > 0">
+                        <p class="reporter">
+                            Автор:
+                            <a class="report-user link" [routerLink]="'/cooks/list/' + ingredient.author">{{
+                                getName(getUser(ingredient.author)) }}</a>
+                        </p>
+                    </div>
+                    <div class="ingredient-image" [ngClass]="{ 'image-loading': ingredient.imageLoading }"
+                        [style.background-image]="
+              'url(' + (ingredient.imageURL || placeholder) + ')'
+            "></div>
+
+                    <div class="category-image" [style.background-image]="
+                          'url(' +
+                          (ingredient.image && ingredient.imageURL
+                            ? ingredient.imageURL
+                            : placeholder) +
+                          ')'
+                        ">
+                    </div>
+
+                    <div class="report-buttons">
+                        <app-button [text]="'Принять'" (click)="updateToReviewActionClick('approve', ingredient)"
+                            [color]="currentUser.role !== 'user' ? currentUser.role : 'prim'" [style]="'filled'"
+                            [rounded]="true"></app-button>
+                        <app-button [text]="'Отклонить'" (click)="updateToReviewActionClick('dismiss', ingredient)"
+                            [color]="currentUser.role !== 'user' ? currentUser.role : 'prim'" [style]="'filled-min'"
+                            [rounded]="true"></app-button>
+                    </div>
+                </div>
+                <ng-container *ngIf="!loaded && ingredients.length === 0">
+                    <div class="report loading" *ngFor="let ingredient of [0, 1, 2]">
+                        <div class="report-header">
+                            <p class="report-recipe link" >0000000000000000</p>
+                            <p class="report-date">00000000000000000000000000</p>
+                        </div>
+                        <div class="report-users">
+                            <p class="reporter">000000000000</p>
+                        </div>
+                    <div class="category-image
+                                ">
+                    
+                    </div>
+                        <div class="report-buttons">
+                            <div class="load-button">
+                                <app-button [text]="'Принять'" [color]="'prim'" [disabled]="false" [style]="'filled'"
+                                    [rounded]="true"></app-button>
+                            </div>
+                            <div class="load-button">
+                                <app-button [text]="'Отклонить'" [disabled]="false" [color]="'prim'"
+                                    [style]="'filled-min'" [rounded]="true"></app-button>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+            <app-button class="more-reports-button" [text]="'Загрузить еще...'" (click)="loadMoreIngredients()"
+                *ngIf="!everythingLoaded && ingredients.length > 0" [disabled]="loaded" [rounded]="true"
+                [style]="'outlined'" [color]="'prim'"></app-button>
+
+            <div class="allloaded" *ngIf="!ingredients.length && loaded && everythingLoaded">
+                <div class="not-found-icon">
+                    <svg-icon class="not-found-svg" [applyClass]="true" [src]="'/assets/images/svg/not-found.svg'" />
+                </div>
+
+                Ингредиентов на проверку пока нет
+            </div>
+
+            <p class="allloaded" *ngIf="!loaded">Загружаем ингредиенты...</p>
+            <p *ngIf="everythingLoaded && loaded && ingredients.length" class="allloaded">
+                Все ингредиенты для проверки уже загружены
+            </p>
+        </div>
+    </div>
+</div>
+
+<app-modal @modal *ngIf="actionModal" [style]="'sec'"
+    [title]="'Ингредиент успешно ' + (action === 'approve' ? 'одобрен' : 'отклонен')" [type]="'Ok'"
+    (resultEmit)="handleSuccessUpdateActionModal()" [buttonsText]="['Хорошо']" [description]="
+    'Вы успешно ' +
+    (action === 'approve' ? 'одобрили' : 'отклонили') +
+    ' этот ингредиент'
+  "></app-modal>
+
+<app-modal [style]="'await'" *ngIf="loadingModal" @modal/>
+
+<app-modal @modal *ngIf="confirmModal" [style]="action === 'dismiss' ? 'prim' : 'sec'"
+    [title]="action === 'dismiss' ? 'Отклонение ингредиента' : 'Одобрение ингредиента'" [type]="'yesOrNo'"
+    (resultEmit)="handleConfirmModal($event)" [buttonsText]="['Да', 'Нет']" [description]="
+    action === 'dismiss'
+      ? 'Вы уверены, что хотите отклонить ингредиент?'
+      : 'Вы уверены, что хотите одобрить ингредиент?'
+  "></app-modal>

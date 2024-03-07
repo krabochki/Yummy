@@ -1,0 +1,90 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="wrap">
+  <h1 [ngClass]="{'loading':!loaded && categories.length ===0}"
+    *ngIf="(!loaded && categories.length === 0) || categories.length > 0">
+    {{ title }}
+  </h1>
+
+<div style="margin-top:2em" *ngIf="!loaded || categories.length> 0">
+    <app-button  class="add-category" [icon]="'add-category'" [color]="'prim'"
+      [disabled]="!(categories.length === 0 && !loaded)" [text]="'Создать категорию'" (click)="createCategoryButtonClick()"
+      [rounded]="true"></app-button>
+</div>
+
+    <app-search *ngIf="!(categories.length<=0 && loaded)" [disabled]="!loaded"
+      [context]="!popular?'section-categories':'popular-categories'" [section]="section"></app-search>
+
+  <div *ngIf="loaded && categories.length === 0 && !popular" class="container one-column not-found">
+    <div class="image">
+      <svg-icon [applyClass]="true" class="fridge" [src]="'/assets/images/svg/fridge.svg'"></svg-icon>
+    </div>
+    <div class="content">
+      <h1 class="label">Категорий пока <span class="title">нет</span></h1>
+      <p class="tagline">
+        <ng-container *ngIf="this.currentUser.id;else noAuth">В разделе «{{ this.title }}» пока нет категорий. Но вы
+          можете попробовать создать категорию сами!</ng-container>
+        <ng-template #noAuth>В разделе «{{ this.title }}» пока нет категорий. Вы можете поискать рецепты на специальной
+          странице подбора рецептов!</ng-template>
+      </p>
+
+      <hr />
+      <div class="buttons">
+        <app-button (click)="currentUser.id ? createModal = true : navigateToMatchRecipes()" [rounded]="true"
+          [color]="'prim'" [text]="currentUser.id ? 'Создать категорию' : 'Подбор рецептов'"></app-button>
+      </div>
+    </div>
+  </div>
+
+    <div style="margin-bottom: 1.5em" *ngIf="!loaded && categories.length === 0">
+      <app-vertical-category-list 
+        [preloader]="true"></app-vertical-category-list>
+    </div>
+
+  <div>
+    <div class="sections">
+      <div *ngIf="categories && categories.length" class="sections">
+        <app-vertical-category-list  (editEmitter)="successEditModal = true" [showRecipesNumber]="true"
+          [categories]="categories"></app-vertical-category-list>
+        <div style="margin: 1.3em 0 !important" *ngIf="!loaded && categories.length > 0">
+          <app-vertical-category-list [preloader]="true"></app-vertical-category-list>
+        </div>
+      </div>
+      <div class="button">
+        <app-button [disabled]="loaded" *ngIf="!everythingLoaded" (click)="loadMoreCategories()"
+          [text]="'Загрузить еще...'" [rounded]="true" [style]="'outlined'" [color]="'prim'"></app-button>
+      </div>
+    </div>
+  </div>
+  <section class="action-buttons" *ngIf="currentUser.role !== 'user' && !popular && showSectionButtons() ">
+    <button class="action-button edit" (click)="editModal = true">
+      <div class="action-icon"><svg-icon class="action-svg" [applyClass]="true" [src]="'/assets/images/svg/pen.svg'" />
+      </div>
+      <p>Изменить раздел</p>
+    </button>
+    <button class="action-button delete" (click)="deleteModal = true">
+      <div class="action-icon"><svg-icon class="action-svg" [applyClass]="true"
+          [src]="'/assets/images/svg/trash.svg'" /></div>
+      <p>Удалить раздел</p>
+    </button>
+  </section>
+</div>
+
+<app-section-creating [editedSection]="section" (editEmitter)="getStartCategories()" (closeEmitter)="editModal = false"
+  *ngIf="editModal" @modal/>
+
+
+<app-category-creating (editEmitter)="getStartCategories()" @modal (closeEmitter)="createModal=false"
+  *ngIf="createModal" />
+
+<app-modal @modal (resultEmit)="handleDeleteModal($event)" [type]="'yesOrNo'" [buttonsText]="['Да', 'Отмена']"
+  [style]="'prim'"
+  [description]="'Вы уверены, что хотите удалить этот раздел? Все категории в этом разделе также будут удалены.'"
+  [title]="'Удаление раздела'" *ngIf="deleteModal"></app-modal>
+
+<app-modal [style]="'await'" *ngIf="loadingModal" @modal />
+
+  <app-modal @modal *ngIf="accessModal" [style]="'prim'" [title]="'Доступ к разделу ограничен'" [type]="'yesOrNo'"
+    (resultEmit)="handleNoAccessModal($event)" [buttonsText]="['Давайте', 'Не сейчас']" [description]="
+      'Доступ к этой функции имеют только зарегистрированные пользователи. Хотите зарегистрироваться или войти в существующий аккаунт?'
+    "></app-modal> 

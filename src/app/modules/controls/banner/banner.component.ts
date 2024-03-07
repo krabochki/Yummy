@@ -21,6 +21,12 @@ export class BannerComponent {
 
   creatingMode = false;
 
+  get mail() {
+    return this.link === 'mail';
+  }
+
+
+
   get formattedLabel(): string {
     // Разбиваем текст на строки и вставляем <br> между ними
     const lines = this.label.split('\n');

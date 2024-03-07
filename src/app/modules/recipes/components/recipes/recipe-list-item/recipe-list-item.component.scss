@@ -2,21 +2,42 @@
 
 @keyframes loading {
   0% {
-    background-position: -100px;
+    background-position: var(--loading);
+  }
+
+  50% {
+    background-color: var(--loading-accent);
   }
 
   100% {
-    background-position: 200px;
+    background-position: var(--loading);
   }
 }
 
+
 .recipe.placeholder{
   background-size: 45%;
-  background-position-x: -0.5em;
-  box-shadow: none;
+  background-position-x: -0.5em;background-position-y: 0.3em;  box-shadow: none;
   background-repeat: no-repeat;
-  background-color: #c9c9c9;
+  background-color: #f4f4f4;
 
+  .rate-panel .like-icon{
+        fill: #808080;
+  }
+        .rate-panel .cook-icon {
+          fill: #808080;
+        }
+  *{
+    color: #808080;
+  }
+
+}
+
+.recipe.imageLoading{                  animation: loading 0.75s infinite linear;
+                  background-color: var(--loading);
+                  background-image: none;
+
+  box-shadow: none;
 }
 
 .recipe .fav.disabled {
@@ -49,7 +70,6 @@
 
 .recipe {
   position: relative;
-  background-image: url("/assets/images/svg/pancakes.png");
 
   box-shadow: inset 0 -7em 4em rgba($color: #000000, $alpha: 0.7);
   scroll-snap-align: start;
@@ -67,6 +87,8 @@
   width: 100%; /* 4 колонки внутри грида */
 
   &.sceleton {
+
+
     display: flex;
     align-items: center;
     justify-content: center;
@@ -99,7 +121,6 @@
     }
     box-shadow: none;
 
-    animation: loading 1.7s infinite linear;
     background: var(--color-background-deeper);
     background-image: -webkit-linear-gradient(
       to right,
@@ -118,6 +139,12 @@
     background-repeat: no-repeat;
 
     color: transparent !important;
+
+                &.loading {
+                  animation: loading 0.75s infinite linear;
+                  background-color: var(--loading);
+                  background-image: none;
+                }
   }
 
   * {
@@ -275,12 +302,12 @@
       cursor: pointer;
       display: flex;
 
+
       column-gap: 0.5em;
       justify-content: center;
       border-radius: 100%;
 
-      align-items: flex-end;
-      line-height: 1;
+      align-items: center;
     }
     .like-icon {
       fill: white;

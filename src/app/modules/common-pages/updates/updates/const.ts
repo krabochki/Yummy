@@ -1,28 +1,32 @@
+import { IUser } from "src/app/modules/user-pages/models/users";
+
 export interface IUpdate {
   id: number;
   shortName: string;
   fullName: string;
-  whoCanView: string;
   link: string;
-  showAuthor: boolean;
   description: string;
-  author: number;
-  date: string;
+  open: boolean;
+  authorId: number;
+  author?: IUser;
+  sendDate: string;
   state: string;
   tags: string[];
+  notify: 'all' | 'managers' | 'nobody';
   status: 'awaits' | 'public';
+  newState?: string;
   context: 'managers' | 'all';
 }
 export const nullUpdate: IUpdate = {
   id: 0,
-  showAuthor: true,
+  notify: 'nobody',
   shortName: '',
+  open: false,
   fullName: '',
   link: '',
-  whoCanView: '',
   description: '',
-  author: 0,
-  date: '',
+  authorId: 0,
+  sendDate: '',
   tags: [],
   status: 'public',
   state: '',

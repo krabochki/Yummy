@@ -4,54 +4,48 @@
     <p>Ваш надежный помощник в мире кулинарии</p>
 
     <div class="community">
-      <svg-icon
-        [applyClass]="true"
-        class="community-svg"
-        [src]="'/assets/images/svg/about-community.svg'"
-      />
+      <svg-icon [applyClass]="true" class="community-svg" [src]="'/assets/images/svg/about-community.svg'" />
     </div>
   </div>
   <div class="sections">
     <section class="about-section">
       <h2>Наша история</h2>
       <p>
-        В Yummy наше путешествие началось с общей страсти к созданию и обмену
-        вкусными рецептами. Вдохновленные радостью, которую приносит вкусная
-        еда, мы решили создать платформу, где любители готовки могли бы
-        объединиться, исследовать и обучаться друг у друга.
+        Идея создания появилась из-за интереса к созданию и обмену
+        вкусными рецептами. Вдохновившись радостью, которую приносит вкусная
+        еда, решено было создать платформу, где любители готовки могли бы
+        объединиться, исследовать новое и обучаться друг у друга.
       </p>
     </section>
     <section class="about-section">
-      <h2>Наша команда</h2>
+      <h2>Что нас отличает</h2>
 
       <div class="dream-team">
         <div class="item">
           <div class="head">
-            <svg-icon [src]="'/assets/images/svg/about/1.svg'" class="img" [applyClass]="true"  />
+            <svg-icon [src]="'/assets/images/svg/about/1.svg'" class="img" [applyClass]="true" />
 
             <div>
-              <h3>Фрэнк Дельфино</h3>
-              <p>Главный креативный директор</p>
+              <h3>Современный интерфейс</h3>
+              <p>Ключ к вдохновению и комфортному путешествию по миру кулинарии</p>
             </div>
           </div>
           <p>
-            Фрэнк – волшебник кулинарного искусства и наш вдохновитель. Его
-            талант в создании неповторимых кулинарных визуалов превращает каждый
-            рецепт в настоящее произведение искусства.
+            Сайт следует последним трендам в веб-дизайне. Наш интерфейс разработан с учетом максимального удобства пользователей. И, конечно же, наш дизайн адаптируется под различные устройства и экраны.
+
           </p>
         </div>
         <div class="item">
           <div class="head">
             <svg-icon [src]="'/assets/images/svg/about/2.svg'" class="img" [applyClass]="true" />
             <div>
-              <h3>Лорел Кастильо</h3>
-              <p>Эксперт по вкусовым сенсациям</p>
+              <h3>Поиск рецептов</h3>
+              <p>На вкус и цвет товарищей нет, а рецепты — вполне есть!</p>
             </div>
           </div>
           <p>
-            Лорел – наша звезда, сотканная из вкусовых сенсаций. Ее утонченный
-            вкус и талант в оценке блюд приносят нам невероятные кулинарные
-            переживания.
+            Вы можете найти рецепты множеством способов — на странице групп рецептов, с помощью страницы подбора
+            рецептов, по ингредиентам и категориям, по конкретным авторам, и конечно же, по названию.
           </p>
         </div>
         <div class="item">
@@ -59,14 +53,13 @@
             <svg-icon [src]="'/assets/images/svg/about/3.svg'" class="img" [applyClass]="true" />
 
             <div>
-              <h3>Реббека Саттер</h3>
-              <p>Мастер-Шеф cообщества</p>
+              <h3>Планирование</h3>
+              <p>Основа для здоровых привычек и улучшения качества жизни</p>
             </div>
           </div>
           <p>
-            Реббека – сердце и душа нашего кулинарного сообщества. В роли
-            Мастера-Шефа Сообщества, он объединяет нас своим теплым и
-            приветливым подходом.
+          Календарь рецептов позволяет пользователям организовать свой рацион, а виртуальный структурированный список покупок помогает избежать ненужных походов в магазин.
+
           </p>
         </div>
       </div>
@@ -76,51 +69,19 @@
       <p>
         Наша миссия - предоставить пространство для общения людей всех уровней
         кулинарии. Будь вы опытным шеф-поваром или кулинарным новичком, Yummy
-        здесь, чтобы вас вдохновить и создать сообщество, где каждый найдет
-        что-то новенькое и увлекательное.
+        станет вашим другом, чтобы вдохновлять и создавать сообщество, где каждый найдет
+        что-то новое и увлекательное.
       </p>
     </section>
 
-    <section class="features-section">
-      <h2>Что нас отличает</h2>
-      <ul>
-        <li>
-          <svg-icon
-            class="cook"
-            [applyClass]="true"
-            [src]="'/assets/images/svg/cook-fill.svg'"
-          />
-          Тщательно отобранные рецепты от страстных кулинаров
-        </li>
-        <li>
-          <svg-icon
-            class="cook"
-            [applyClass]="true"
-            [src]="'/assets/images/svg/cook-fill.svg'"
-          />
-          Подбор рецептов по категориям и ингредиентам
-        </li>
-        <li>
-          <svg-icon
-            class="cook"
-            [applyClass]="true"
-            [src]="'/assets/images/svg/cook-fill.svg'"
-          />
-          Возможность планировать приготовление рецептов
-        </li>
-      </ul>
-    </section>
+   
     <section class="find-section">
       <h2>Что вы можете найти</h2>
       <section class="parts">
         <a routerLink="/recipes" [class]="!auth ? 'fake' : ''">
           <div>
             <div class="icon">
-              <svg-icon
-                [applyClass]="true"
-                class="svg"
-                [src]="'/assets/images/svg/about/receipt.svg'"
-              />
+              <svg-icon [applyClass]="true" class="svg" [src]="'/assets/images/svg/about/receipt.svg'" />
             </div>
             <h3>Рецепты</h3>
             <p>
@@ -132,14 +93,10 @@
           </div>
         </a>
 
-        <a routerLink="/sections">
+        <a routerLink="/categories">
           <div>
             <div class="icon">
-              <svg-icon
-                [applyClass]="true"
-                class="svg"
-                [src]="'/assets/images/svg/about/category.svg'"
-              />
+              <svg-icon [applyClass]="true" class="svg" [src]="'/assets/images/svg/about/category.svg'" />
             </div>
             <h3>Категории</h3>
             <p>
@@ -153,11 +110,7 @@
         <a routerLink="/sections">
           <div>
             <div class="icon">
-              <svg-icon
-                [applyClass]="true"
-                class="svg"
-                [src]="'/assets/images/svg/about/segment.svg'"
-              />
+              <svg-icon [applyClass]="true" class="svg" [src]="'/assets/images/svg/about/segment.svg'" />
             </div>
             <h3>Разделы</h3>
             <p>
@@ -171,11 +124,7 @@
         <a routerLink="/ingredients">
           <div>
             <div class="icon">
-              <svg-icon
-                [applyClass]="true"
-                class="svg"
-                [src]="'/assets/images/svg/about/ingredient.svg'"
-              />
+              <svg-icon [applyClass]="true" class="svg" [src]="'/assets/images/svg/about/ingredient.svg'" />
             </div>
             <h3>Ингредиенты</h3>
             <p>
@@ -187,14 +136,10 @@
           </div>
         </a>
 
-        <a routerLink="/ingredients">
+        <a routerLink="/groups">
           <div>
             <div class="icon">
-              <svg-icon
-                [applyClass]="true"
-                class="svg"
-                [src]="'/assets/images/svg/about/grocery.svg'"
-              />
+              <svg-icon [applyClass]="true" class="svg" [src]="'/assets/images/svg/about/grocery.svg'" />
             </div>
             <h3>Группы ингредиентов</h3>
             <p>
@@ -209,11 +154,7 @@
         <a routerLink="/cooks">
           <div>
             <div class="icon">
-              <svg-icon
-                [applyClass]="true"
-                class="svg"
-                [src]="'/assets/images/svg/about/community.svg'"
-              />
+              <svg-icon [applyClass]="true" class="svg" [src]="'/assets/images/svg/about/community.svg'" />
             </div>
             <h3>Сообщество кулинаров</h3>
             <p>
@@ -227,33 +168,21 @@
         <a routerLink="/match">
           <div>
             <div class="icon">
-              <svg-icon
-                [applyClass]="true"
-                class="svg"
-                [src]="'/assets/images/svg/about/find.svg'"
-              />
+              <svg-icon [applyClass]="true" class="svg" [src]="'/assets/images/svg/about/find.svg'" />
             </div>
             <h3>Подбор рецептов</h3>
             <p>
-              Используйте интеллектуальную систему подбора рецептов, чтобы найти
-              идеальные блюда, соответствующие вашим предпочтениям и диетическим
-              ограничениям. Всегда будьте в курсе новых, увлекательных вариантов
+              Используйте систему подбора рецептов, чтобы найти
+              идеальные блюда, соответствующие вашим запросам. Всегда будьте в курсе новых, увлекательных вариантов
               приготовления ваших любимых блюд.
             </p>
           </div>
         </a>
 
-        <a
-          [class]="!auth ? 'fake' : ''"
-          [routerLink]="auth ? '/plan/calendar' : null"
-        >
+        <a [class]="!auth ? 'fake' : ''" [routerLink]="auth ? '/plan/calendar' : null">
           <div>
             <div class="icon">
-              <svg-icon
-                [applyClass]="true"
-                class="svg"
-                [src]="'/assets/images/svg/about/flag.svg'"
-              />
+              <svg-icon [applyClass]="true" class="svg" [src]="'/assets/images/svg/about/flag.svg'" />
             </div>
             <h3>Планирование рецептов</h3>
             <p>
@@ -274,90 +203,65 @@
         чтобы делиться своими любимыми рецептами, общаться с единомышленниками и
         стать частью нашего развивающегося сообщества.
       </p>
-      <app-button
-        routerLink="/register"
-        [text]="'Регистрация'"
-        [color]="'prim'"
-        [rounded]="true"
-      ></app-button>
+      <app-button routerLink="/register" [text]="'Регистрация'" [color]="'prim'" [rounded]="true"></app-button>
     </section>
   </div>
 
   <div class="footer">
-    
 
-   <div>
+
+    <div>
       <p class="info">
         Следите за нами в социальных сетях для получения последних обновлений:
       </p>
-<div class="links">
+      <div class="links">
         <p>
           <a href="https://facebook.com">
-            <svg-icon
-              class="footer-icon"
-              [applyClass]="true"
-              [src]="'/assets/images/svg/non-fill-facebook.svg'"
-            ></svg-icon>
-    
+            <svg-icon class="footer-icon" [applyClass]="true"
+              [src]="'/assets/images/svg/non-fill-facebook.svg'"></svg-icon>
+
             <p>Facebook</p>
           </a>
         </p>
         <p>
           <a href="https://pinterest.com">
-            <svg-icon
-              class="footer-icon"
-              [applyClass]="true"
-              [src]="'/assets/images/svg/non-fill-pinterest.svg'"
-            ></svg-icon>
+            <svg-icon class="footer-icon" [applyClass]="true"
+              [src]="'/assets/images/svg/non-fill-pinterest.svg'"></svg-icon>
             <p>Pinterest</p>
           </a>
         </p>
         <p>
           <a href="https://vk.com">
-            <svg-icon
-              class="footer-icon"
-              [applyClass]="true"
-              [src]="'/assets/images/svg/non-fill-vkontakte.svg'"
-            ></svg-icon>
+            <svg-icon class="footer-icon" [applyClass]="true"
+              [src]="'/assets/images/svg/non-fill-vkontakte.svg'"></svg-icon>
             <p>ВКонтакте</p>
           </a>
         </p>
         <p>
           <a href="https://twitter.com">
-            <svg-icon
-              class="footer-icon"
-              [applyClass]="true"
-              [src]="'/assets/images/svg/non-fill-twitter.svg'"
-            ></svg-icon>
+            <svg-icon class="footer-icon" [applyClass]="true"
+              [src]="'/assets/images/svg/non-fill-twitter.svg'"></svg-icon>
             <p>Twitter</p>
           </a>
         </p>
-</div>
-   </div>
-   <div>
+      </div>
+    </div>
+    <div>
       <p class="info">Мы ценим ваше мнение — оставьте отзыв и пожелания проекту:</p>
       <div class="links">
         <p>
-          <a href="mailto:feedback@yummy.com">
-            <svg-icon
-              class="footer-icon"
-              [applyClass]="true"
-              [src]="'/assets/images/svg/mail.svg'"
-            ></svg-icon>
+          <a href="mailto:yummort@mail.ru">
+            <svg-icon class="footer-icon" [applyClass]="true" [src]="'/assets/images/svg/mail.svg'"></svg-icon>
             <p>Электронная почта</p>
           </a>
         </p>
         <p>
           <a href="tel:+375291510475">
-            <svg-icon
-              class="footer-icon"
-              [applyClass]="true"
-              [src]="'/assets/images/svg/phone.svg'"
-            ></svg-icon>
+            <svg-icon class="footer-icon" [applyClass]="true" [src]="'/assets/images/svg/phone.svg'"></svg-icon>
             <p>Телефон</p>
           </a>
         </p>
       </div>
-   </div>
+    </div>
   </div>
 </div>

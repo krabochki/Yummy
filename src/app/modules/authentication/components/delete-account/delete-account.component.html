@@ -1,0 +1,63 @@
+<div class="container one-column">
+  <div class="content">
+    <h1 class="label" style="text-align: center">{{ title }}</h1>
+    <p class="tagline" style="text-align: center">
+      Вы находитесь на этой странице, потому что перешли по ссылке из письма для
+      подтверждения удаления аккаунта на сайте. Теперь вы можете окончательно
+      решить, будете ли вы удалять аккаунт или нет.
+    </p>
+
+    <p class="note important" style="text-align: left">
+      <span class="accent">!</span>
+      <span>
+        Если вы удаляете аккаунт в связи с возникшими проблемами при
+        использовании сайта, пожалуйста, напишите нам на почту
+        <a class="usual" href="mailto:yummort@mail.ru">yummort&#64;mail.ru</a> и
+        не удаляйте аккаунт. Мы попытаемся решить вашу проблему.
+      </span>
+    </p>
+    <hr />
+    <div class="buttons" style="justify-content: center">
+      <app-button
+        (click)="deleteModal=true"
+        [rounded]="true"
+        [color]="'prim'"
+        [text]="'Удалить'"
+      ></app-button>
+      <app-button
+        (click)="cancelModal = true"
+        [rounded]="true"
+        [color]="'prim'"
+        [style]="'filled-min'"
+        [text]="'Отмена'"
+      ></app-button>
+    </div>
+
+    <p class="note" style="text-align: center">
+      Удаляя аккаунт, вы соглашаетесь с тем, что ваши приватные и ожидающие
+      одобрения рецепты будут удалены навсегда, а уже опубликованные останутся
+      на сайте без упоминания вашего авторства.
+    </p>
+  </div>
+</div>
+
+<app-modal
+  @modal
+  *ngIf="successModal"
+  (resultEmit)="handleSuccessModal()"
+  [title]="successModalTitle"
+  [description]="successModalDescription"
+  [style]="'sec'"
+  [buttonsText]="['На главную']"
+></app-modal>
+
+
+<app-modal @modal *ngIf="deleteModal"  [type]="'yesOrNo'" (resultEmit)="handleDeleteModal($event)" [title]="'Удаление аккаунта'"
+    [description]="'Вы действительно хотите удалить свой аккаунт в социальной сети Yummy навсегда?'" [style]="'prim'" [buttonsText]="['Да','Отмена']"></app-modal>
+
+    <app-modal @modal *ngIf="cancelModal" [type]="'yesOrNo'" (resultEmit)="handleCancelModal($event)"
+        [title]="'Отмена удаления аккаунта'"
+        [description]="'Вы действительно хотите отменить удаление своего аккаунта в социальной сети Yummy?'" [style]="'sec'"
+        [buttonsText]="['Да','Отмена']"></app-modal>
+
+        <app-modal [style]="'await'" *ngIf="loadingModal" @modal />

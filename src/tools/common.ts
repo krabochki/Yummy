@@ -1,72 +1,80 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Renderer2 } from "@angular/core";
+import { Renderer2 } from '@angular/core';
+import { themeUI } from 'src/app/modules/common-pages/services/theme.service';
 
-export function getCurrentDate():string{
-     return new Date().toJSON()
+export function getCurrentDate(): string {
+  return new Date().toJSON();
 }
 
-  export function getFormattedDate(dateString: string): string {
-    const date = new Date(dateString);
-    let day = date.getDate().toString();
-    let month = (date.getMonth() + 1).toString();
-    const year = date.getFullYear().toString();
-    let hours = date.getHours().toString();
-    let minutes = date.getMinutes().toString();
-    if (Number(minutes) < 10) minutes = '0' + minutes;
-    if (Number(day) < 10) day = '0' + day;
-    if (Number(month) < 10) month = '0' + month;
-    if (Number(hours) < 10) hours = '0' + hours;
+export function getFormattedDate(dateString: string, noTime?:boolean): string {
+  const date = new Date(dateString);
+  let day = date.getDate().toString();
+  let month = (date.getMonth() + 1).toString();
+  const year = date.getFullYear().toString();
+  let hours = date.getHours().toString();
+  let minutes = date.getMinutes().toString();
+  if (Number(minutes) < 10) minutes = '0' + minutes;
+  if (Number(day) < 10) day = '0' + day;
+  if (Number(month) < 10) month = '0' + month;
+  if (Number(hours) < 10) hours = '0' + hours;
 
-    return `${day}.${month}.${year} ${hours}:${minutes}`;
+  if (noTime) {
+    return `${day}.${month}.${year}`
+  }
+  else {
+        return `${day}.${month}.${year} ${hours}:${minutes}`;
+
+  }
 }
-  
 
-export function dateComparator(dateA:Date, dateB:Date) {
-return (dateA > dateB) ? 1 :-1;
-}   
+
+
+export function dateComparator(dateA: Date, dateB: Date) {
+  return dateA > dateB ? 1 : -1;
+}
 
 export function baseComparator(a: any, b: any) {
   if (a > b) return 1;
   else return -1;
 }
 
-
-
 export function dragStart() {
-   const bodyElement: HTMLElement = document.body;
-   bodyElement.classList.add('inheritCursors');
-   bodyElement.style.cursor = 'grabbing';
+  const bodyElement: HTMLElement = document.body;
+  bodyElement.classList.add('inheritCursors');
+  bodyElement.style.cursor = 'grabbing';
 }
-  
+
 export function dragEnd() {
-     const bodyElement: HTMLElement = document.body;
+  const bodyElement: HTMLElement = document.body;
 
   bodyElement.classList.remove('inheritCursors');
   bodyElement.style.cursor = 'unset';
 }
 
-
-export function getZoom(count: number, diff:number, maxZoom?:number, baseZoom?: number): number {
+export function getZoom(
+  count: number,
+  diff: number,
+  maxZoom?: number,
+  baseZoom?: number,
+): number {
   if (!baseZoom) baseZoom = 1;
-    if (count > 1) {
-      if (maxZoom && count > maxZoom) count = maxZoom;
-      const zoomValue = baseZoom + (count - 1) * diff;
-      return zoomValue;
-    } else {
-      return baseZoom;
-    }
+  if (count > 1) {
+    if (maxZoom && count > maxZoom) count = maxZoom;
+    const zoomValue = baseZoom + (count - 1) * diff;
+    return zoomValue;
+  } else {
+    return baseZoom;
   }
-
-  export function setReadingTimeInMinutes(text:string): number {
- 
-    const wordsPerMinute = 200;
-    const recipeText = text;
-    const words = recipeText.split(/\s+/);
-    const wordCount = words.length;
-    return Math.ceil(wordCount / wordsPerMinute);
 }
 
+export function setReadingTimeInMinutes(text: string): number {
+  const wordsPerMinute = 200;
+  const recipeText = text;
+  const words = recipeText.split(/\s+/);
+  const wordCount = words.length;
+  return Math.ceil(wordCount / wordsPerMinute);
+}
 
 export function formatRussianDate(date: Date): string {
   const options: Intl.DateTimeFormatOptions = {
@@ -109,14 +117,29 @@ export function getZodiacSign(date: Date): string {
   }
 }
 
-
-export function addModalStyle(renderer:Renderer2) {
+export function addModalStyle(renderer: Renderer2) {
+  setTimeout(() => {
     renderer.addClass(document.body, 'hide-overflow');
     (<HTMLElement>document.querySelector('.header')).style.width =
       'calc(100% - 16px)';
     renderer.addClass(document.body, 'hide-overflow');
+  }, 0);
 }
 export function removeModalStyle(renderer: Renderer2) {
-   renderer.removeClass(document.body, 'hide-overflow');
-   (<HTMLElement>document.querySelector('.header')).style.width = '100%';
+  renderer.removeClass(document.body, 'hide-overflow');
+  (<HTMLElement>document.querySelector('.header')).style.width = '100%';
+}
+
+export function changeTheme(theme: themeUI) {
+  if (theme === 'dark') {
+    document.body.classList.add('dark-mode');
+    localStorage.setItem('theme', 'dark');
+    const favicon = document.querySelector('#favicon');
+    favicon?.setAttribute('href', '/assets/images/chef-day.png');
+  } else {
+    document.body.classList.remove('dark-mode');
+    localStorage.setItem('theme', 'light');
+    const favicon = document.querySelector('#favicon');
+    favicon?.setAttribute('href', '/assets/images/chef-night.png');
+  }
 }

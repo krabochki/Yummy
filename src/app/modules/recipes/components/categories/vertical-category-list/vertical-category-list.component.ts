@@ -1,22 +1,52 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, OnChanges, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { ICategory, nullCategory } from '../../../models/categories';
 
 @Component({
   selector: 'app-vertical-category-list',
   templateUrl: './vertical-category-list.component.html',
   styleUrls: ['./vertical-category-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VerticalCategoryListComponent implements OnChanges {
+export class VerticalCategoryListComponent implements OnChanges, OnInit {
   @Input() categories: ICategory[] = [];
   @Input() showRecipesNumber: boolean = false;
-  @Input() moreRowsForMobile: number = 0;
   @Input() context: 'category' | 'section' = 'category';
   @Input() moderMode = false;
   @Output() editEmitter = new EventEmitter();
 
+  @Input() preloader: boolean = false;
+
   ngOnChanges() {
     this.onResize();
+  }
+
+  ngOnInit() {
+
+
+    if (this.preloader) {
+      const width = window.innerWidth;
+      let blocks = 0;
+        switch (true) {
+          case  width <= 700:
+            blocks = 2;
+            break;
+          case width > 700 && width <= 960:
+            blocks = 3;
+            break;
+          case width > 960 && width <= 1400:
+            blocks = 4;
+            break;
+          case width > 1400:
+            blocks = 5;
+            break;
+      }
+      blocks *= 2;
+      const loadingCategory = { ...nullCategory, id: -1 };
+      for (let index = 0; index < blocks; index++) {
+        this.categories.push(loadingCategory)
+        
+      }
+      
+    }
   }
 
   filterNullBlocks() {
@@ -36,16 +66,10 @@ export class VerticalCategoryListComponent implements OnChanges {
   onResize() {
     const event = window.innerWidth;
     switch (true) {
-      case event < 480:
-        this.filterNullBlocks();
-        if (this.categories.length <= 2)
-          while (this.categories.length !== 3)
-            this.categories.push(nullCategory);
-        break;
-      case event > 480 && event <= 610:
+      case  event <= 700:
         this.blockScheme(2);
         break;
-      case event > 610 && event <= 960:
+      case event > 700 && event <= 960:
         this.blockScheme(3);
         break;
       case event > 960 && event <= 1400:

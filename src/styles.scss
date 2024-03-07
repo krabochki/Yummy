@@ -57,6 +57,9 @@ body {
 
   --scroll-thumb: #cccccc;
   --scroll-body: #e1e0e0;
+    --sun: #ffab2c;
+      --moon: #212121;
+      
   --scroll-body-modal: #8b8b8b;
 
   --color-admin: #d659f6;
@@ -76,6 +79,9 @@ body {
   --facebook: #4994f7;
   --vk: #7094bd;
   --pinterest: #c73d4d;
+
+    --loading-accent: rgb(233, 233, 233);
+      --loading: rgb(220, 220, 220);
 }
 
 .dark-mode {
@@ -84,11 +90,17 @@ body {
   --vk: #4a76a8;
   --pinterest: #bd081c;
 
+
+  --loading-accent: #7d7d7d;
+  --loading:#5b5b5b;
+
   --color-primary: #fe6668;
   --scroll-body-modal: #191919;
   --color-secondary: #ffb446;
 
   --color-foreground: #e3e3e3;
+      --sun: #e3e3e3;
+        --moon: #ffb446;
   --color-background: #272727;
   --color-background-deeper: #363636;
   --not-read: #494949;
@@ -149,6 +161,11 @@ body {
   --font-family-main: "URW Geometric";
   --font-family-accent: "Appetite new";
 }
+
+@media (max-width:480px){
+  :root{
+--font-xxl:1.75em;
+}}
 
 $maxWidth: 1280;
 
@@ -521,4 +538,15 @@ input.calendar-event {
     url(assets/fonts/APPETITENEW.woff2) format('woff2');
   font-weight: 400;
   font-style: normal;
+}
+
+
+
+@media print{
+  app-footer,app-header,.header-margin{
+    display: none !important
+  }
+  body{
+    background-color: white;
+  }
 }

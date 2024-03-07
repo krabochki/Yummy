@@ -13,30 +13,26 @@ export class RecipeResolver {
 
   resolve(route: ActivatedRouteSnapshot): Observable<IRecipe> {
  
+        const recipeId = Number(route.params['id']);
 
-    const recipeId = Number(route.params['id']);
-
-    if (recipeId <= 0) {
-      this.router.navigate(['/recipes']);
-      return EMPTY;
-    }
-
-    return this.recipeService.recipes$.pipe(
-      map((recipes: IRecipe[]) => {
-        const foundRecipe = recipes.find((recipe) => {
-          if (recipe.id === recipeId) return true;
-          else return false;
-        });
-        if (foundRecipe) {
-          return foundRecipe;
-        } else {
-          throw new Error('Рецепт не найден');
+        if (recipeId <= 0) {
+          this.router.navigate(['/recipes']);
+          return EMPTY;
         }
-      }),
-      catchError(() => {
-        this.router.navigate(['/recipes']);
-        return EMPTY;
-      }),
-    );
+
+        return this.recipeService.getRecipe(recipeId).pipe(
+          map((recipe: IRecipe) => {
+            if (recipe) {
+              return recipe;
+            } else {
+              throw new Error('Рецепт не найден');
+            }
+          }),
+          catchError(() => {
+            this.router.navigate(['/recipes']);
+            return EMPTY;
+          }),
+        );
+
   }
 }

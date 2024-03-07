@@ -1,7 +1,5 @@
 @import "../../../../../../tools/UI/UI.scss";
 
-
-
 .recipe-list {
     display: grid;
     row-gap: 1.25rem;
@@ -9,49 +7,33 @@
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     justify-content: space-between;
     column-gap: 1em;
-
 }
 
-@media (max-width:1400px) {
+@media (max-width: 1400px) {
     .recipe-list {
-
         grid-template-columns: 1fr 1fr 1fr 1fr;
     }
 }
 
-@media (max-width:960px) {
+@media (max-width: 960px) {
     .recipe-list {
-
         grid-template-columns: 1fr 1fr 1fr;
     }
 }
 
-@media (max-width:610px) {
+@media (max-width: 740px) {
     .recipe-list {
-
-        grid-template-columns: max-content max-content;
+        grid-template-columns: 1fr 1fr;
         justify-content: center;
     }
 }
 
-
 @media (max-width: 480px) {
-
-    @media (max-width: 480px) {
-        .recipe-list {
-&::-webkit-scrollbar {
-        display: none;
-    }
-            padding-right: 6%;
-            justify-content: start;
-            grid-auto-flow: column;
-            grid-template-rows: 1fr;
-            grid-template-columns: unset;
-            overflow-x: scroll;
-            overflow-y: hidden;
-            display: grid;
-
+    .recipe-list {
+        &::-webkit-scrollbar {
+            display: none;
         }
-    }
 
+        padding-right: 6%;
+    }
 }

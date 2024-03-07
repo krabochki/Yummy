@@ -8,23 +8,10 @@
   h1,
   img,
   .social-btn {
-    animation: loading 1.7s infinite linear;
-    background: #dedfe1;
-    background-image: -webkit-linear-gradient(
-      to right,
-      #f4f4f4 0%,
-        #ffffff 20%,
-        #f0f0f0 40%,
-      #dedfe1 100%
-    );
-    background-image: linear-gradient(
-      to right,
-      #f4f4f4 0%,
-      #ffffff 20%,
-      #f0f0f0 40%,
-      #dedfe1 100%
-    );
+    animation: loading 0.75s infinite linear;
     background-repeat: no-repeat;
+
+    border-radius: 0.75em;
 
     color: transparent !important;
   }
@@ -39,17 +26,26 @@
   h1 {
     width: fit-content;
   }
-  img {
-    object-position: -99999px 99999px;
+  .userpic {
+
+    border: none;
+    background-color: red;
+      animation: loading 0.75s infinite linear;
   }
 }
 
+
 @keyframes loading {
   0% {
-    background-position: -100px;
+    background-color: var(--loading);
+
+  }
+
+  50% {
+    background-color: var(--loading-accent);
   }
 
   100% {
-    background-position: 200px;
+    background-color: var(--loading);
   }
 }

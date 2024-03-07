@@ -103,3 +103,9 @@ export function getNameOfControlGroup(controlGroup: string): string {
   }
   return '';
 }
+
+export const stepControlGroups = [
+  ['advantages', 'disadvantages', 'recommendations', 'contraindicates'],
+  ['cookingMethods', 'compatibleDishes', 'precautions'],
+  ['tips', 'storageMethods'],
+];

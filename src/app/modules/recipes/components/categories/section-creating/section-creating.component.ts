@@ -18,17 +18,24 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   ICategory,
   ISection,
-  nullCategory,
   nullSection,
 } from '../../../models/categories';
-import { Subject, takeUntil } from 'rxjs';
+import {
+  EMPTY,
+  Observable,
+  Subject,
+  catchError,
+  finalize,
+  forkJoin,
+  map,
+  of,
+  tap,
+} from 'rxjs';
 import { SectionService } from '../../../services/section.service';
-import { supabase } from 'src/app/modules/controls/image/supabase-data';
 import { trimmedMinLengthValidator } from 'src/tools/validators';
 import { CategoryService } from '../../../services/category.service';
 import {
   addModalStyle,
-  baseComparator,
   removeModalStyle,
 } from 'src/tools/common';
 
@@ -41,7 +48,7 @@ import {
 })
 export class SectionCreatingComponent implements OnInit, OnDestroy {
   @Output() closeEmitter = new EventEmitter<boolean>();
-  @Output() editEmitter = new EventEmitter();
+  @Output() editEmitter = new EventEmitter<ISection>();
   @ViewChild('scrollContainer', { static: false }) scrollContainer?: ElementRef;
 
   protected destroyed$: Subject<void> = new Subject<void>();
@@ -54,12 +61,9 @@ export class SectionCreatingComponent implements OnInit, OnDestroy {
 
   newSection: ISection = { ...nullSection };
 
-  selectedCategories: ICategory[] = [];
-
   //image
   sectionImage: string = '';
   defaultImage: string = '/assets/images/add-section.png';
-  supabaseFilepath: string = '';
 
   //form
   form: FormGroup;
@@ -67,13 +71,11 @@ export class SectionCreatingComponent implements OnInit, OnDestroy {
 
   //initData
   @Input() editedSection: ISection = nullSection;
-  categoriesWithoutSection: ICategory[] = [];
   categories: ICategory[] = [];
   categoriesNames: string[] = [];
   sections: ISection[] = [];
-  beginningCategories:ICategory[]=[]
 
-  maxId = 0;
+  editedCategoryDataLoaded = false;
 
   get edit() {
     return this.editedSection.id > 0;
@@ -86,9 +88,6 @@ export class SectionCreatingComponent implements OnInit, OnDestroy {
     private sectionService: SectionService,
     private categoryService: CategoryService,
   ) {
-    this.sectionService.getMaxCategoryId().then((maxId) => {
-      this.maxId = maxId;
-    });
     this.form = this.fb.group({
       form: [],
       name: [
@@ -105,98 +104,52 @@ export class SectionCreatingComponent implements OnInit, OnDestroy {
     this.sectionImage = this.defaultImage;
   }
 
-  private initCategories() {
-    this.categoryService.categories$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((receivedCategories: ICategory[]) => {
-        const categories = receivedCategories.filter(
-          (category) => category.status === 'public',
-        );
-        this.categories = categories;
-        categories.forEach((category) => {
-          let categoryHaveSection = false;
-
-          this.sections.forEach((section) => {
-            if (section.categories.includes(category.id)) {
-              categoryHaveSection = true;
-            }
-          });
-          if (!categoryHaveSection) {
-            this.categoriesWithoutSection.push(category);
-          }
-        });
-      });
-    this.updateCategoriesWithoutSection();
-  }
   private initEditedSection() {
     if (this.edit) {
       this.form.get('name')?.setValue(this.editedSection.name);
-      const sectionImage = this.editedSection.photo;
-      if (sectionImage) {
-        this.sectionImage = this.downloadSectionImageFromSupabase(sectionImage);
-        this.supabaseFilepath = sectionImage;
-        this.form.get('image')?.setValue('url');
-      }
-      this.editedSection.categories.forEach((categoryId) => {
-        const findedCategory = this.categories.find(
-          (category) => category.id === categoryId,
-        );
-        if (findedCategory) this.selectedCategories.push(findedCategory);
-      });
-      this.beginningData = this.form.getRawValue();
-    }
-    this.beginningCategories = this.selectedCategories;
-  }
-  private initSections() {
-    this.sectionService.sections$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((receivedSections: ISection[]) => {
-        this.sections = receivedSections;
-      });
+
+        let loadImage$: Observable<any> = EMPTY;
+        if (this.editedSection.image) {
+          loadImage$ = this.sectionService
+            .downloadImage(this.editedSection.image)
+            .pipe(
+              tap((blob) => {
+                this.editedSection.imageURL = URL.createObjectURL(blob);
+                this.sectionImage = this.editedSection.imageURL || '';
+                this.form.get('image')?.setValue('url');
+                this.beginningData = this.form.getRawValue();
+              }),
+              finalize(() => {
+                this.editedCategoryDataLoaded = true;
+              addModalStyle(this.renderer);
+          
+                this.cdr.markForCheck();
+              }),
+              catchError(() => {
+                return EMPTY;
+              }),
+            );
+        }
+        loadImage$
+          .pipe(
+            finalize(() => {
+              this.editedCategoryDataLoaded = true;
+              this.cdr.markForCheck();
+            }),
+          )
+          .subscribe();
+     }
   }
 
   ngOnInit() {
+    if (!this.edit) {
+      this.editedCategoryDataLoaded = true;
+    }
+
     addModalStyle(this.renderer);
-    this.initSections();
-    this.initCategories();
     this.initEditedSection();
   }
 
-  addCategory(event: string) {
-    if (!this.selectedCategories.find((category) => category.name === event)) {
-      const findedCategory: ICategory =
-        this.categoriesWithoutSection.find(
-          (category) => category.name === event,
-        ) || nullCategory;
-
-      this.selectedCategories.push(findedCategory);
-    }
-  }
-
-  removeCategory(event: string) {
-    this.selectedCategories = this.selectedCategories.filter(
-      (category) => category.name !== event,
-    );
-    const findedCategory = this.categories.find(
-      (category) => category.name === event,
-    );
-    if (findedCategory) {
-      const findedCategoryInCategoriesWithoutSection =
-        this.categoriesWithoutSection.find(
-          (category) => category.name === event,
-        );
-      if (!findedCategoryInCategoriesWithoutSection) {
-        this.categoriesWithoutSection.push(findedCategory);
-        this.updateCategoriesWithoutSection();
-      }
-    }
-  }
-
-  updateCategoriesWithoutSection() {
-    this.categoriesNames = this.categoriesWithoutSection
-      .map((category) => category.name)
-      .sort((a, b) => baseComparator(a, b));
-  }
   onSectionImageChange(event: Event) {
     const input = event.target as HTMLInputElement;
     const userpicFile: File | undefined = input.files?.[0];
@@ -205,67 +158,169 @@ export class SectionCreatingComponent implements OnInit, OnDestroy {
       this.form.get('image')?.setValue(userpicFile);
       const objectURL = URL.createObjectURL(userpicFile);
       this.sectionImage = objectURL;
-      this.supabaseFilepath = this.setSectionImageFilenameForSupabase();
     }
-  }
-
-  private setSectionImageFilenameForSupabase(): string {
-    const file = this.form.get('image')?.value;
-    const fileExt = file.name.split('.').pop();
-    return `${Math.random()}.${fileExt}`;
   }
 
   unsetImage() {
     this.form.get('image')?.setValue(null);
     this.sectionImage = this.defaultImage;
-    this.supabaseFilepath = '';
   }
 
-  downloadSectionImageFromSupabase(path: string) {
-    return supabase.storage.from('sections').getPublicUrl(path).data.publicUrl;
-  }
-
-  async loadSectionImageToSupabase() {
-    const file = this.form.get('image')?.value;
-    const filePath = this.supabaseFilepath;
-    await this.sectionService.loadSectionImageToSupabase(filePath, file);
-  }
-
-  async createSection() {
+  createSection() {
     this.loading = true;
     this.cdr.markForCheck();
 
+    let loadImage = false;
+    let deleteImage = false;
     if (this.edit) {
-      if (this.editedSection.photo === null) {
-        this.editedSection.photo = '';
-      }
-      if (this.editedSection.photo !== this.newSection.photo) {
-        if (this.newSection.photo) {
-          await this.loadSectionImageToSupabase();
+      if (this.editedSection.image !== this.newSection.image) {
+        if (this.newSection.image) {
+          loadImage = true;
         }
-        if (this.editedSection.photo) {
-          await this.sectionService.removeSectionImageFromSupabase(
-            this.editedSection.photo,
-          );
+        if (this.editedSection.image) {
+          deleteImage = true;
         }
-      } else {
-        await this.loadSectionImageToSupabase();
       }
-      await this.sectionService.updateSectionInSupabase(this.newSection);
-      this.editEmitter.emit();
-      this.closeEmitter.emit(true);
+
+      let loadImage$: Observable<any> = of(null);
+
+      try {
+        loadImage$ = loadImage
+          ? this.sectionService
+              .uploadSectionImage(this.form.get('image')?.value)
+              .pipe(
+                map((response: any) => {
+                  const filename = response.filename;
+                  this.newSection.image = filename;
+                }),
+              )
+          : of(null);
+      } catch {
+        this.error = 'Произошла ошибка при попытке загрузки картинки категории';
+        this.errorModal = true;
+        this.loading = false;
+        this.cdr.markForCheck();
+      }
+
+      const deleteImage$ =
+        deleteImage && this.editedSection.image
+          ? this.sectionService.deleteImage(this.editedSection.image)
+          : of(null);
+      const putSection$ = this.sectionService.updateSection(this.newSection);
+
+      forkJoin([loadImage$, deleteImage$])
+        .pipe(
+          map(() => {
+            putSection$
+              .pipe(
+                tap(() => {
+                  
+                  
+                  this.successModal = true;
+                  this.cdr.markForCheck();
+
+                }),
+
+                catchError((response) => {
+                  if (loadImage && this.newSection.image) {
+                    this.sectionService
+                      .deleteImage(this.newSection.image)
+                      .pipe(
+                        catchError(() => {
+                          this.error =
+                            'Произошла ошибка при попытке удалить новую фотографию незагруженной категории';
+                          this.errorModal = true;
+                          return EMPTY;
+                        }),
+                      )
+                      .subscribe();
+                  }
+                  this.error = response.error.info || '';
+                  this.errorModal = true;
+                  this.cdr.markForCheck();
+                  return EMPTY;
+                }),
+
+                finalize(() => {
+                  this.loading = false;
+                  this.cdr.markForCheck();
+                }),
+              )
+              .subscribe();
+          }),
+        )
+        .subscribe();
     } else {
       if (this.form.get('image')?.value) {
-        this.loadSectionImageToSupabase();
+        this.sectionService
+          .uploadSectionImage(this.form.get('image')?.value)
+          .subscribe((res: any) => {
+            const filename = res.filename;
+            this.newSection.image = filename;
+            this.postSection();
+          });
+      } else {
+        this.postSection();
       }
-
-      await this.sectionService.addSectionToSupabase(this.newSection);
     }
-    this.loading = false;
-    this.successModal = true;
-    this.cdr.markForCheck();
   }
 
+  postSection() {
+    this.sectionService
+      .postSection(this.newSection)
+      .pipe(
+        tap((response: any) => {
+          const section: ISection = {
+            ...this.newSection,
+            id: response.id,
+          };
+
+          if (section.image) {
+            this.sectionService.downloadImage(section.image).subscribe({
+              next: (blob) => {
+                section.imageURL = URL.createObjectURL(blob);
+              },
+              error: () => {
+                section.imageURL = '';
+              },
+              complete: () => {
+              },
+            });
+          } 
+          this.successModal = true;
+          this.cdr.markForCheck();
+        }),
+
+        catchError((response) => {
+          if (this.newSection.image) {
+            this.sectionService
+              .deleteImage(this.newSection.image)
+              .pipe(
+                catchError(() => {
+                  this.error =
+                    'Произошла ошибка при попытке удалить новую фотографию незагруженной категории';
+                  this.errorModal = true;
+                  return EMPTY;
+                }),
+              )
+              .subscribe();
+          }
+          this.error = response.error.info || '';
+          this.errorModal = true;
+          this.cdr.markForCheck();
+
+          return EMPTY;
+        }),
+        finalize(() => {
+          this.loading = false;
+          this.cdr.markForCheck();
+        }),
+      )
+      .subscribe();
+  }
+
+  error = '';
+  errorModal = false;
   closeEditModal() {
     this.areObjectsEqual()
       ? (this.closeModal = true)
@@ -274,12 +329,12 @@ export class SectionCreatingComponent implements OnInit, OnDestroy {
 
   clickBackgroundNotContent(elem: Event) {
     if (elem.target !== elem.currentTarget) return;
-    this.closeEditModal();
+      this.closeEditModal()
+    
+
   }
 
   areObjectsEqual(): boolean {
-    if (JSON.stringify(this.beginningCategories) !== JSON.stringify(this.selectedCategories))
-      return true;
     return (
       JSON.stringify(this.beginningData) !==
       JSON.stringify(this.form.getRawValue())
@@ -287,15 +342,19 @@ export class SectionCreatingComponent implements OnInit, OnDestroy {
   }
 
   handleSaveModal(answer: boolean) {
-    const categoriesOfSection = this.selectedCategories.map(
-      (category) => category.id,
-    );
+    let image = '';
+    if (this.editedSection.image && this.form.get('image')?.value === 'url') {
+      image = this.editedSection.image;
+    } else {
+      if (this.form.get('image')?.value) {
+        image = 'image';
+      }
+    }
     this.newSection = {
       ...nullSection,
-      categories: [...categoriesOfSection],
-      photo: this.form.value.image ? this.supabaseFilepath : undefined,
+      image: image,
       name: this.form.value.name,
-      id: this.edit ? this.editedSection.id : this.maxId + 1,
+      id: this.edit ? this.editedSection.id : 0,
     };
     if (answer) {
       this.createSection();
@@ -305,6 +364,7 @@ export class SectionCreatingComponent implements OnInit, OnDestroy {
   }
   handleSuccessModal() {
     this.closeEmitter.emit(true);
+    this.editEmitter.emit();
     this.successModal = false;
   }
   handleCloseModal(answer: boolean) {

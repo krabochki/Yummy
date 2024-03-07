@@ -1,97 +1,210 @@
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+
 <div class="main-cont">
   <div class="grocery-list">
     <h1>Список покупок</h1>
 
-    <h2 class="main">Ваш список покупок <button (click)="navigateToAddProduct()">+</button></h2>
+    <h2 class="main">
+      Ваш список покупок
+      <button *ngIf="!initalLoading" (click)="navigateToAddProduct()">
+        <div class="plus">
+          <svg-icon
+            class="plus-icon"
+            [applyClass]="true"
+            [src]="'/assets/images/svg/plus.svg'"
+          />
+        </div>
+      </button>
+    </h2>
 
-    <p class="howMuch" *ngIf="actualShoppingList.length > 0">
+    <p class="howMuch" *ngIf="actualShoppingList.length > 0 && !initalLoading">
       {{ actualShoppingList.length }}
-      <span appPluralRu="" [value]="actualShoppingList.length"
-        [arVariants]="['продукт', 'продуктов', 'продуктов']"></span>
+      <span
+        appPluralRu=""
+        [value]="actualShoppingList.length"
+        [arVariants]="['продукт', 'продукта', 'продуктов']"
+      ></span>
     </p>
 
     <div class="img-cont">
       <div class="content">
         <ng-template #noProducts>
           <p class="no-products noselect">
-            В вашем списке покупок пока нет продуктов. Попробуйте создать
-            новый продукт сами или добавить его из ингредиентов на странице
+            В вашем списке покупок пока нет продуктов. Попробуйте создать новый
+            продукт сами или добавить его из ингредиентов на странице
             какого-нибудь рецепта
           </p>
           <div class="no-reps-icon">
-            <svg-icon class="no-recipes-svg" [applyClass]="true"
-              [src]="'/assets/images/svg/grocery/no-recipes.svg'"></svg-icon>
+            <svg-icon
+              class="no-recipes-svg"
+              [applyClass]="true"
+              [src]="'/assets/images/svg/grocery/no-recipes.svg'"
+            ></svg-icon>
           </div>
         </ng-template>
 
-        <div class="boundary" cdkDropListGroup *ngIf="actualShoppingList.length > 0; else noProducts">
-          <p *ngIf="data.length>1" class="advice">Вы можете перетаскивать продукты из одного списка в другой</p>
-          <div class="type" *ngFor="let d of data; trackBy: trackByItems">
-            <h4 class="type-name" [style]="{ color: d.type.color }">
-              <svg-icon [applyClass]="true" class="category-svg" [applyClass]="true" [ngStyle]="{ fill: d.type.color }"
-                [src]="d.type.image ? baseSvgPath + d.type.image + '.svg' : ''"></svg-icon>
+        <div
+          class="boundary"
+          cdkDropListGroup
+          *ngIf="
+            actualShoppingList.length > 0 || initalLoading;
+            else noProducts
+          "
+        >
+          <p *ngIf="data.length > 1 && !initalLoading" class="advice">
+            Вы можете перетаскивать продукты из одного списка в другой
+          </p>
 
-              {{ d.type.name }}
-            </h4>
-
-            <ul  class="product-list" cdkDropList [cdkDropListData]="d.items" (cdkDropListDropped)="drop($event)">
-              <div class="no-any-products" *ngIf="d.items.length === 0">
-                Вы перенесли все продукты в другой список
-              </div>
-              <li  class="product-info" [class.purchased]="item.isBought" (cdkDragStarted)="dragStart()"
-                [cdkDragData]="item" *ngFor="let item of d.items; trackBy: trackByItems" cdkDragBoundary=".boundary"
-                cdkDrag>
-                <div class="main-product-info">
-                  <button [ngStyle]="{ 'border-color': d.type.color }" (click)="markProductAsBought(item.id)"
-                    class="buy-button">
-                    <svg-icon [ngStyle]="{ fill: d.type.color }" *ngIf="item.isBought" [applyClass]="true"
-                      class="checkbox-svg" [src]="baseSvgPath + 'checkbox.svg'"></svg-icon>
-                  </button>
-                  <a tabindex="-1" [ngClass]="{ link: realLink(item) }" [routerLink]="
-                      getLink(item)
-                    " class="product-name">
-                    {{ item.name }}
-                  </a>
-                  <div class="product-quantity">
-                    {{ item.howMuch }}
+          <div *ngIf="initalLoading" style="margin-top: 1em">
+            <div class="type noselect loading" *ngFor="let item of [1, 2]">
+              <h4 class="type-name">Loading Loading</h4>
+              <ul class="product-list noselect">
+                <li class="product-info" *ngFor="let item of [1, 2, 3, 4]">
+                  <div class="main-product-info">
+                    <a tabindex="-1" class="product-name">
+                      <div class="product-name">Loading</div>
+                    </a>
                   </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <ng-container *ngIf="!initalLoading">
+            <div class="type" *ngFor="let d of data; trackBy: trackByItems">
+              <h4 class="type-name" [style]="{ color: d.type.color }">
+                <svg-icon
+                  [applyClass]="true"
+                  class="category-svg"
+                  [applyClass]="true"
+                  [ngStyle]="{ fill: d.type.color }"
+                  [src]="
+                    d.type.image ? baseSvgPath + d.type.image + '.svg' : ''
+                  "
+                ></svg-icon>
 
-                  <button (click)="removeProduct(item.id)" class="cross-button">
-                    <svg-icon [ngStyle]="{ fill: d.type.color }" [applyClass]="true" class="cross-icon"
-                      [src]="baseSvgPath + 'remove.svg'"></svg-icon>
-                  </button>
+                {{ d.type.name }}
+              </h4>
+
+              <ul
+                class="product-list"
+                cdkDropList
+                [cdkDropListData]="d.items"
+                (cdkDropListDropped)="drop($event)"
+              >
+                <div class="no-any-products" *ngIf="d.items.length === 0">
+                  Вы перенесли все продукты в другой список
                 </div>
-                <div *ngIf="item.note" class="note">
-                  <svg-icon class="note-svg" [applyClass]="true" [src]="baseSvgPath + 'note.svg'"></svg-icon>
-                  {{ item.note }}
-                </div>
-              </li>
-            </ul>
+                <li
+                  class="product-info"
+                  [class.purchased]="item.bought"
+                  (cdkDragStarted)="dragStart()"
+                  [cdkDragData]="item"
+                  *ngFor="let item of d.items; trackBy: trackByItems"
+                  cdkDragBoundary=".boundary"
+                  cdkDrag
+                >
+                  <div class="main-product-info">
+                    <button
+                      [ngStyle]="{ 'border-color': d.type.color }"
+                      (click)="markProductAsBought(item.id)"
+                      class="buy-button"
+                    >
+                      <svg-icon
+                        [ngStyle]="{ fill: d.type.color }"
+                        *ngIf="item.bought"
+                        [applyClass]="true"
+                        class="checkbox-svg"
+                        [src]="baseSvgPath + 'checkbox.svg'"
+                      ></svg-icon>
+                    </button>
+                    <a
+                      tabindex="-1"
+                      [ngClass]="{ link: realLink(item) }"
+                      [routerLink]="getLink(item)"
+                      class="product-name"
+                    >
+                      {{ item.name }}
+                    </a>
+                    <div class="product-quantity">
+                      {{ item.amount }}
+                    </div>
+
+                    <button
+                      (click)="removeProduct(item.id)"
+                      class="cross-button"
+                    >
+                      <svg-icon
+                        [ngStyle]="{ fill: d.type.color }"
+                        [applyClass]="true"
+                        class="cross-icon"
+                        [src]="baseSvgPath + 'remove.svg'"
+                      ></svg-icon>
+                    </button>
+                  </div>
+                  <div *ngIf="item.note" class="note">
+                    <svg-icon
+                      class="note-svg"
+                      [applyClass]="true"
+                      [src]="baseSvgPath + 'note.svg'"
+                    ></svg-icon>
+                    {{ item.note }}
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </ng-container>
+        </div>
+
+        <button
+          *ngIf="shoppingList.length > 0 && !initalLoading"
+          class="clear-all-button"
+          (click)="deleteModal = true"
+        >
+          Очистить весь список
+
+          <svg-icon
+            [applyClass]="true"
+            class="clear-all-icon"
+            [src]="baseSvgPath + 'delete-product.svg'"
+          ></svg-icon>
+        </button>
+
+        <div
+          class="print-button"
+          *ngIf="shoppingList.length > 0 && !initalLoading"
+          title="Версия для печати списка покупок"
+          (click)="printRecipe()"
+        >
+          
+
+          <p class="print-p">Распечатать список покупок</p>
+          <div class="print-bubble">
+            <svg-icon class="print-icon" [applyClass]="true" [src]="'/assets/images/svg/print.svg'"></svg-icon>
           </div>
         </div>
 
-        <button *ngIf="shoppingList.length > 0" class="clear-all-button" (click)="deletingAllProductsModalShow = true">
-          Очистить весь список
-
-          <svg-icon [applyClass]="true" class="clear-all-icon" [src]="baseSvgPath + 'delete-product.svg'"></svg-icon>
-        </button>
-
-        <div class="new-product" id="add-product">
-        
-
-          <div class="new-product-popup" >
+        <div class="new-product" id="add-product" *ngIf="!initalLoading">
+          <div class="new-product-popup">
             <h2>Новый продукт в списке покупок</h2>
             <div class="form">
-           
               <div class="main-inputs">
                 <div class="search-block">
                   <div class="search">
-                    <app-usual-input (focusEmitter)="focus()" [error]="
+                    <app-usual-input
+                      (focusEmitter)="focus()"
+                      [error]="
                         searchQuery && focused && selectedType.id === 0
                           ? ' '
                           : ''
-                      " (blurEmitter)="blur()" [(ngModel)]="searchQuery" [value]="searchQuery"
-                      (ngModelChange)="recipeSearching()" type="text" placeholder="Выберите тип из результатов поиска" />
+                      "
+                      (blurEmitter)="blur()"
+                      [(ngModel)]="searchQuery"
+                      [value]="searchQuery"
+                      (ngModelChange)="searchTypes()"
+                      type="text"
+                      placeholder="Выберите тип из результатов поиска"
+                    />
                   </div>
 
                   <div class="autocomplete-list" style="overflow: hidden">
@@ -99,16 +212,27 @@
                       <div *ngIf="autocompleteTypes.length === 0">
                         <div class="no-found-recipes">
                           <p>Ничего не найдено</p>
-                          <svg-icon [applyClass]="true" class="tomato" [src]="baseSvgPath+'shocked-tomato.svg'" />
+                          <svg-icon
+                            [applyClass]="true"
+                            class="tomato"
+                            [src]="baseSvgPath + 'shocked-tomato.svg'"
+                          />
                         </div>
                       </div>
-                      <li *ngFor="let item of autocompleteTypes" (mousedown)="chooseRecipe(item)">
+                      <li
+                        *ngFor="let item of autocompleteTypes"
+                        (mousedown)="chooseRecipe(item)"
+                      >
                         <p class="text">
-                          <svg-icon class="autocomplete-svg" [applyClass]="true" [src]="
+                          <svg-icon
+                            class="autocomplete-svg"
+                            [applyClass]="true"
+                            [src]="
                               item.image
                                 ? baseSvgPath + item?.image + '.svg'
                                 : ''
-                            "></svg-icon>
+                            "
+                          ></svg-icon>
                           {{ item.name }}
                         </p>
                       </li>
@@ -116,34 +240,60 @@
                   </div>
                 </div>
 
-                <form [formGroup]="form" class="col" >
+                <form [formGroup]="form" class="col">
                   <div class="row">
-                    <app-usual-input [inputRequired]="true" formControlName="name" required [value]="form.value.name"
+                    <app-usual-input
+                      [inputRequired]="true"
+                      formControlName="name"
+                      required
+                      [value]="form.value.name"
                       [error]="
                         form.get('name')?.invalid &&
                         (form.get('name')?.dirty || form.get('name')?.touched)
                           ? ' '
                           : ''
-                      " [max]="50" [placeholder]="'Название'"></app-usual-input>
+                      "
+                      [max]="50"
+                      [placeholder]="'Название'"
+                    ></app-usual-input>
 
-                    <app-usual-input [max]="17" formControlName="howMuch" [value]="form.value.howMuch"
-                      [placeholder]="'Количество и ед. измерения'"></app-usual-input>
+                    <app-usual-input
+                      [max]="17"
+                      formControlName="howMuch"
+                      [value]="form.value.howMuch"
+                      [placeholder]="'Количество и ед. измерения'"
+                    ></app-usual-input>
                   </div>
-                  <app-usual-input class="zoom" [value]="form.value.note" [max]="100" formControlName="note"
-                    [placeholder]="'Заметка'"></app-usual-input>
-                    
+                  <app-usual-input
+                    class="zoom"
+                    [value]="form.value.note"
+                    [max]="100"
+                    formControlName="note"
+                    [placeholder]="'Заметка'"
+                  ></app-usual-input>
                 </form>
-              
               </div>
-                <button class="form-btn eraser" (click)="resetFormProduct()">
-                  <svg-icon class="svg" [applyClass]="true" [src]="baseSvgPath + 'eraser.svg'"></svg-icon>
-                </button>
-                <app-button (click)="form.valid? addShoppingListItem() :null" [disabled]="!form.invalid" [text]="'Добавить продукт'"
-                  [rounded]="true" [color]="'sec'" [icon]="'/grocery/add-to-card'">
-                  <svg-icon class="svg" [applyClass]="true" [src]="baseSvgPath + 'add-to-card.svg'"></svg-icon>
-                </app-button>
-
-            
+              <button class="form-btn eraser" (click)="resetFormProduct()">
+                <svg-icon
+                  class="svg"
+                  [applyClass]="true"
+                  [src]="baseSvgPath + 'eraser.svg'"
+                ></svg-icon>
+              </button>
+              <app-button
+                (click)="form.valid ? addShoppingListItem() : null"
+                [disabled]="!form.invalid"
+                [text]="'Добавить продукт'"
+                [rounded]="true"
+                [color]="'sec'"
+                [icon]="'/grocery/add-to-card'"
+              >
+                <svg-icon
+                  class="svg"
+                  [applyClass]="true"
+                  [src]="baseSvgPath + 'add-to-card.svg'"
+                ></svg-icon>
+              </app-button>
 
               <div></div>
             </div>
@@ -151,8 +301,10 @@
         </div>
       </div>
 
-      <div class="cont noselect">
-        <h2 class="bottom"><p>Почему это <span>важно</span>?</p></h2>
+      <div class="cont">
+        <h2 class="bottom">
+          <p>Почему это <span>важно</span>?</p>
+        </h2>
 
         <p class="center">
           Раздел «Список продуктов» — это ваш надежный помощник в планировании и
@@ -179,11 +331,17 @@
                 закуски и сладости.
               </p>
             </div>
-            <svg-icon style="transform: scale(-1, 1)" class="infopic-svg noselect"
-              [src]="baseSvgPath + 'info2.svg'"></svg-icon>
+            <svg-icon
+              style="transform: scale(-1, 1)"
+              class="infopic-svg"
+              [src]="baseSvgPath + 'info2.svg'"
+            ></svg-icon>
           </div>
           <div class="row">
-            <svg-icon class="infopic-svg noselect" [src]="baseSvgPath + 'info3.svg'"></svg-icon>
+            <svg-icon
+              class="infopic-svg"
+              [src]="baseSvgPath + 'info3.svg'"
+            ></svg-icon>
             <div>
               <h3>Экономия времени и ресурсов</h3>
               <p>
@@ -209,11 +367,22 @@
   </div>
 </div>
 
-<app-modal @modal *ngIf="deletingAllProductsModalShow" class="modal" [style]="'prim'" [buttonsText]="['Да', 'Отмена']"
+<app-modal
+  @modal
+  *ngIf="deleteModal"
+  class="modal"
+  [style]="'prim'"
+  [buttonsText]="['Да', 'Отмена']"
   [description]="
     'Вы уверены, что хотите удалить все продукты из вашего списка покупок?'
-  " [type]="'yesOrNo'" [title]="'Подтвердите удаление всех продуктов'"
-  (resultEmit)="handleDeletingAllProductsModal($event)"></app-modal>
+  "
+  [type]="'yesOrNo'"
+  [title]="'Подтвердите удаление всех продуктов'"
+  (resultEmit)="handleDeletingAllProductsModal($event)"
+></app-modal>
 
-  <app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
-    [description]=" 'Вносим изменения... Подождите немного...'" />
+<app-modal
+  [style]="'await'"
+  *ngIf="loadingModal"
+  @modal
+/>

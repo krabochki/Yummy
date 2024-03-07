@@ -25,13 +25,14 @@ import {
   Step,
   getInputPlaceholderOfControlGroup,
   getNameOfControlGroup,
+  stepControlGroups,
 } from './consts';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Router } from '@angular/router';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { EMPTY, Observable, Subject, forkJoin, of } from 'rxjs';
+import { catchError, finalize, map, takeUntil, tap } from 'rxjs/operators';
 import {
   customLinkPatternValidator,
   trimmedMinLengthValidator,
@@ -45,8 +46,8 @@ import {
 import { IngredientService } from '../../../services/ingredient.service';
 import {
   ExternalLink,
+  IGroup,
   IIngredient,
-  IIngredientsGroup,
   nullIngredient,
 } from '../../../models/ingredients';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
@@ -57,8 +58,13 @@ import {
 } from 'src/app/modules/user-pages/models/notifications';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
-import { getCurrentDate } from 'src/tools/common';
-import { supabase } from 'src/app/modules/controls/image/supabase-data';
+import {
+  addModalStyle,
+  getCurrentDate,
+  removeModalStyle,
+} from 'src/tools/common';
+import { GroupService } from '../../../services/group.service';
+import { Permission } from 'src/app/modules/user-pages/components/settings/conts';
 
 @Component({
   selector: 'app-ingredient-create',
@@ -70,34 +76,28 @@ import { supabase } from 'src/app/modules/controls/image/supabase-data';
 export class IngredientCreateComponent implements OnInit, OnDestroy {
   @ViewChild('input', { static: false }) input: ElementRef | undefined;
   @ViewChild('scrollContainer', { static: false }) scrollContainer?: ElementRef;
+  @Input() editedIngredient: IIngredient = nullIngredient;
+  @Output() editEmitter = new EventEmitter();
   @Output() closeEmitter = new EventEmitter<boolean>();
 
   form: FormGroup;
 
   currentUser: IUser = nullUser;
-  groups: IIngredientsGroup[] = [];
   productTypes = productTypes;
 
   createdIngredient: IIngredient = nullIngredient;
+  oldGroupsIds: number[] = [];
 
   currentStep: number = 0;
   showInfo = false;
   steps: Step[] = steps;
-  stepControlGroups = [
-    ['advantages', 'disadvantages', 'recommendations', 'contraindicates'],
-    ['cookingMethods', 'compatibleDishes', 'precautions'],
-    ['tips', 'storageMethods'],
-  ];
-
-  @Input() editedIngredient: IIngredient = nullIngredient;
-  @Output() editEmitter = new EventEmitter();
-  selectedIngredientsGroups: IIngredientsGroup[] = [];
+  stepControlGroups = stepControlGroups;
+  selectedIngredientsGroups: IGroup[] = [];
 
   autocompleteTypes: ProductType[] = [];
   selectedType: ProductType = productTypes[0];
 
   loading = false;
-  supabaseFilepath = '';
   searchQuery: string = '';
   autocompleteShow: boolean = false;
   focused: boolean = false;
@@ -109,11 +109,9 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
   defaultImage: string = '/assets/images/add-ingredient.png';
   mainImage: string = '';
 
-  protected destroyed$: Subject<void> = new Subject<void>();
-  maxId = 0;
   beginningData: any;
 
-  startGroups: number[] = [];
+  protected destroyed$: Subject<void> = new Subject<void>();
 
   get edit() {
     return this.editedIngredient.id > 0;
@@ -142,9 +140,6 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
   ) {
     this.mainImage = this.defaultImage;
-    this.ingredientService.getMaxIngredientId().then((maxId) => {
-      this.maxId = maxId;
-    });
     this.form = this.fb.group({
       ingredientName: [
         '',
@@ -178,225 +173,166 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.addModalStyle();
     this.currentUserInit();
-    this.ingredientsGroupsInit();
     this.editedIngredientInit();
     this.beginningData = this.form.getRawValue();
   }
-  downloadMainpicFromSupabase(path: string) {
-    this.mainImage = supabase.storage
-      .from('ingredients')
-      .getPublicUrl(path).data.publicUrl;
-  }
 
   editedIngredientInit() {
-    if (this.editedIngredient.id !== 0) {
-      // sources: this.fb.array([]),
-      this.form.get('ingredientName')?.setValue(this.editedIngredient.name);
-      this.form.get('description')?.setValue(this.editedIngredient.description);
-      this.form.get('history')?.setValue(this.editedIngredient.history);
-      this.form.get('origin')?.setValue(this.editedIngredient.origin);
-      this.editedIngredient.contraindicatedTo?.forEach((element) => {
-        this.addBaseTextControl('contraindicates', element);
-      });
-      this.editedIngredient.precautions?.forEach((element) => {
-        this.addBaseTextControl('precautions', element);
-      });
-      this.editedIngredient.compatibleDishes?.forEach((element) => {
-        this.addBaseTextControl('compatibleDishes', element);
-      });
-      this.editedIngredient.cookingMethods?.forEach((element) => {
-        this.addBaseTextControl('cookingMethods', element);
-      });
-      this.editedIngredient.tips?.forEach((element) => {
-        this.addBaseTextControl('tips', element);
-      });
-      this.editedIngredient.storageMethods?.forEach((element) => {
-        this.addBaseTextControl('storageMethods', element);
-      });
-      this.editedIngredient.advantages?.forEach((element) => {
-        this.addBaseTextControl('advantages', element);
-      });
-      this.editedIngredient.disadvantages?.forEach((element) => {
-        this.addBaseTextControl('disadvantages', element);
-      });
-      this.editedIngredient.variations?.forEach((element) => {
-        this.addBaseTextControl('variations', element);
-      });
-      this.editedIngredient.recommendedTo?.forEach((element) => {
-        this.addBaseTextControl('recommendations', element);
-      });
-      if (this.editedIngredient.image) {
-        this.supabaseFilepath = this.editedIngredient.image;
-        this.form.get('image')?.setValue('url');
-        this.downloadMainpicFromSupabase(this.editedIngredient.image);
-      }
+    const id = this.editedIngredient.id;
+    if (id > 0) {
+          this.loading = true;
 
-      if (this.editedIngredient.nutritions) {
-        for (let i = 1; i <= this.editedIngredient.nutritions.length; i++) {
-          this.addNutrition();
-          const nutritionsArray = this.form.get('nutritions') as FormArray;
-          const nutritionGroup = nutritionsArray.at(i - 1) as FormGroup;
-          const nutritionName = nutritionGroup.get('name') as FormControl;
-          const nutritionQuantity = nutritionGroup.get(
-            'quantity',
-          ) as FormControl;
-          const nutritionUnit = nutritionGroup.get('unit') as FormControl;
-          nutritionName?.setValue(this.editedIngredient.nutritions[i - 1].name);
-          nutritionQuantity?.setValue(
-            this.editedIngredient.nutritions[i - 1].quantity,
-          );
-          nutritionUnit?.setValue(this.editedIngredient.nutritions[i - 1].unit);
-        }
-      }
+      const ingredient$ = this.ingredientService
+        .getIngredientForEditing(id)
+        .pipe(
+          tap((ingredient) => {
+            this.form.get('ingredientName')?.setValue(ingredient.name);
+            this.form.get('description')?.setValue(ingredient.description);
+            this.form.get('history')?.setValue(ingredient.history);
+            this.form.get('origin')?.setValue(ingredient.origin);
+            ingredient.contraindicatedTo?.forEach((element) => {
+              this.addBaseTextControl('contraindicates', element);
+            });
+            ingredient.precautions?.forEach((element) => {
+              this.addBaseTextControl('precautions', element);
+            });
+            ingredient.compatibleDishes?.forEach((element) => {
+              this.addBaseTextControl('compatibleDishes', element);
+            });
+            ingredient.cookingMethods?.forEach((element) => {
+              this.addBaseTextControl('cookingMethods', element);
+            });
+            ingredient.tips?.forEach((element) => {
+              this.addBaseTextControl('tips', element);
+            });
+            ingredient.storageMethods?.forEach((element) => {
+              this.addBaseTextControl('storageMethods', element);
+            });
 
-      this.groups.forEach((group) => {
-        if (group.ingredients.includes(this.editedIngredient.id)) {
-          this.startGroups.push(group.id);
-          this.selectedIngredientsGroups.push(group);
-        }
-      });
+            ingredient.advantages?.forEach((element) => {
+              this.addBaseTextControl('advantages', element);
+            });
+            ingredient.disadvantages?.forEach((element) => {
+              this.addBaseTextControl('disadvantages', element);
+            });
 
-      if (this.editedIngredient.shoppingListGroup) {
-        const findedGroup = this.productTypes.find(
-          (t) => t.id === this.editedIngredient.shoppingListGroup,
+            ingredient.recommendedTo?.forEach((element) => {
+              this.addBaseTextControl('recommendations', element);
+            });
+
+            if (ingredient.nutritions) {
+              for (let i = 1; i <= ingredient.nutritions.length; i++) {
+                this.addNutrition();
+                const nutritionsArray = this.form.get(
+                  'nutritions',
+                ) as FormArray;
+                const nutritionGroup = nutritionsArray.at(i - 1) as FormGroup;
+                const nutritionName = nutritionGroup.get('name') as FormControl;
+                const nutritionQuantity = nutritionGroup.get(
+                  'quantity',
+                ) as FormControl;
+                const nutritionUnit = nutritionGroup.get('unit') as FormControl;
+                nutritionName?.setValue(ingredient.nutritions[i - 1].name);
+                nutritionQuantity?.setValue(
+                  ingredient.nutritions[i - 1].quantity,
+                );
+                nutritionUnit?.setValue(ingredient.nutritions[i - 1].unit);
+              }
+            }
+
+            if (ingredient.shoppingListGroup) {
+              const findedGroup = this.productTypes.find(
+                (t) => t.id === ingredient.shoppingListGroup,
+              );
+              this.selectedType = findedGroup || this.productTypes[0];
+              this.searchQuery = this.selectedType.name;
+              this.form.get('search')?.setValue(this.selectedType.name);
+            }
+
+            if (ingredient.externalLinks) {
+              for (let i = 1; i <= ingredient.externalLinks.length; i++) {
+                this.addSource();
+                const sourcesArray = this.form.get('sources') as FormArray;
+                const sourcesGroup = sourcesArray.at(i - 1) as FormGroup;
+                const sourceName = sourcesGroup.get('name') as FormControl;
+                const sourceLink = sourcesGroup.get('link') as FormControl;
+                sourceName?.setValue(ingredient.externalLinks[i - 1].name);
+                sourceLink?.setValue(ingredient.externalLinks[i - 1].link);
+              }
+            }
+
+            this.editedIngredient = ingredient;
+          }),
         );
-        this.selectedType = findedGroup || this.productTypes[0];
-        this.searchQuery = this.selectedType.name;
-        this.form.get('search')?.setValue(this.selectedType.name);
-      }
-      if (this.editedIngredient.externalLinks) {
-        for (let i = 1; i <= this.editedIngredient.externalLinks.length; i++) {
-          this.addSource();
-          const sourcesArray = this.form.get('sources') as FormArray;
-          const sourcesGroup = sourcesArray.at(i - 1) as FormGroup;
-          const sourceName = sourcesGroup.get('name') as FormControl;
-          const sourceLink = sourcesGroup.get('link') as FormControl;
-          sourceName?.setValue(this.editedIngredient.externalLinks[i - 1].name);
-          sourceLink?.setValue(this.editedIngredient.externalLinks[i - 1].link);
-        }
-      }
+
+      const variations$ = this.ingredientService
+        .getVariations(this.editedIngredient.id)
+        .pipe(
+          tap((variations) => {
+            this.editedIngredient.variations = variations;
+            this.editedIngredient.variations?.forEach((element) => {
+              this.addBaseTextControl('variations', element);
+            });
+          }),
+        );
+
+      const groups$ = this.ingredientService
+        .getGroupsOfIngredient(this.editedIngredient.id)
+        .pipe(
+          tap((groups) => {
+            groups.forEach((group) => {
+              this.oldGroupsIds.push(group.id);
+              this.selectedIngredientsGroups.push(group);
+            });
+          }),
+        );
+
+      const image$ = this.editedIngredient.image
+        ? this.ingredientService
+            .downloadImage(this.editedIngredient.image)
+            .pipe(
+              finalize(() => {
+                this.editedIngredient.imageLoading = false;
+                this.cd.markForCheck();
+              }),
+              tap((blob) => {
+                if (blob) {
+                  this.form.get('image')?.setValue('url');
+
+                  this.editedIngredient.imageURL = URL.createObjectURL(blob);
+                  this.mainImage = this.editedIngredient.imageURL;
+                  this.cd.markForCheck();
+                }
+              }),
+              catchError(() => {
+                return EMPTY;
+              }),
+            )
+        : of(null);
+
+      forkJoin(ingredient$, variations$, groups$, image$).subscribe(() => {
+        this.loading = false;
+
+        this.autocompleteShow = false;
+        this.cd.markForCheck();
+        this.beginningData = this.form.getRawValue();
+      });
     }
   }
 
-  isControlValid(control: AbstractControl, field: string) {
-    return (
-      control.get(field)?.invalid &&
-      (control.get(field)?.dirty || control.get(field)?.touched)
-    );
-  }
+  private newIngredientInit(): IIngredient {
+    let image = '';
 
-  closeIngredientCreating(): void {
     if (
-      !this.areObjectsEqual() &&
-      this.selectedIngredientsGroups.length === 0
+      this.editedIngredient.image &&
+      this.form.get('image')?.value === 'url'
     ) {
-      this.closeEmitter.emit();
+      image = this.editedIngredient.image;
     } else {
-      this.exitModalShow = true;
-    }
-  }
-
-  f(field: string): FormArray {
-    return this.form.get(field) as FormArray;
-  }
-
-  addGroup(event: IIngredientsGroup) {
-    if (this.selectedIngredientsGroups.length < 5) {
-      const findedCategory: IIngredientsGroup | undefined =
-        this.selectedIngredientsGroups.find((group) => group.id === event.id);
-      if (findedCategory === undefined) {
-        this.selectedIngredientsGroups.push(event);
+      if (this.form.get('image')?.value) {
+        image = 'image';
       }
     }
-  }
-  removeGroup(event: IIngredientsGroup) {
-    this.selectedIngredientsGroups = this.selectedIngredientsGroups.filter(
-      (group) => group.id !== event.id,
-    );
-  }
-
-  mainPhotoChange(event: any) {
-    const input = event.target as HTMLInputElement;
-    const userpicFile: File | undefined = input.files?.[0];
-
-    if (userpicFile) {
-      this.form.get('image')?.setValue(userpicFile);
-      const objectURL = URL.createObjectURL(userpicFile);
-      this.mainImage = objectURL;
-      this.supabaseFilepath = this.setUserpicFilenameForSupabase();
-    }
-  }
-
-  addNutrition() {
-    this.f('nutritions').push(
-      this.fb.group({
-        name: [
-          '',
-          [
-            Validators.required,
-            trimmedMinLengthValidator(2),
-            Validators.minLength(2),
-            Validators.maxLength(20),
-          ],
-        ],
-        quantity: ['', [Validators.maxLength(6)]],
-        unit: ['', Validators.maxLength(10)],
-      }),
-    );
-  }
-  addSource() {
-    this.f('sources').push(
-      this.fb.group({
-        name: [
-          '',
-          [
-            Validators.required,
-            trimmedMinLengthValidator(2),
-            Validators.minLength(2),
-            Validators.maxLength(50),
-          ],
-        ],
-        link: [
-          '',
-          [
-            Validators.required,
-            Validators.minLength(5),
-            trimmedMinLengthValidator(5),
-            Validators.maxLength(1000),
-          ],
-          customLinkPatternValidator(anySiteMask),
-        ],
-      }),
-    );
-  }
-
-  addBaseTextControl(controlGroup: string, value?: string) {
-    let maxLength = 500;
-    if (controlGroup === 'variations') maxLength = 50;
-    this.f(controlGroup).push(
-      this.fb.group({
-        content: [
-          value || '',
-          [
-            Validators.required,
-            Validators.minLength(3),
-            trimmedMinLengthValidator(3),
-            Validators.maxLength(maxLength),
-          ],
-        ],
-      }),
-    );
-  }
-
-  removeBaseTextControl(index: number, controlGroup: string) {
-    this.f(controlGroup).removeAt(index);
-  }
-
-  submitForm(): void {
-    this.createModalShow = true;
-  }
-
-  createIngredient(): void {
     const externalLinks: ExternalLink[] = [];
     this.f('sources').controls.forEach((control) => {
       const externalLink: ExternalLink = {
@@ -406,81 +342,316 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
       externalLinks.push(externalLink);
     });
 
+    const ingredient: IIngredient = {
+      id: this.edit ? this.editedIngredient.id : 0,
+      name: this.form.value.ingredientName,
+      history: this.form.value.history,
+      description: this.form.value.description,
+      author: this.edit ? this.editedIngredient.author : this.currentUser.id,
+      sendDate: this.edit ? this.editedIngredient.sendDate : getCurrentDate(),
+      variations: this.form.value.variations.map(
+        (item: { content: string }) => item.content,
+      ),
+      status: this.edit ? 'public' : this.isManager ? 'public' : 'awaits',
+      image: image,
+      advantages: this.form.value.advantages.map(
+        (item: { content: string }) => item.content,
+      ),
+      disadvantages: this.form.value.disadvantages.map(
+        (item: { content: string }) => item.content,
+      ),
+      recommendedTo: this.form.value.recommendations.map(
+        (item: { content: string }) => item.content,
+      ),
+      contraindicatedTo: this.form.value.contraindicates.map(
+        (item: { content: string }) => item.content,
+      ),
+      origin: this.form.value.origin,
+      precautions: this.form.value.precautions.map(
+        (item: { content: string }) => item.content,
+      ),
+      compatibleDishes: this.form.value.compatibleDishes.map(
+        (item: { content: string }) => item.content,
+      ),
+      cookingMethods: this.form.value.cookingMethods.map(
+        (item: { content: string }) => item.content,
+      ),
+      tips: this.form.value.tips.map(
+        (item: { content: string }) => item.content,
+      ),
+      nutritions: this.form.value.nutritions,
+      storageMethods: this.form.value.storageMethods.map(
+        (item: { content: string }) => item.content,
+      ),
+      externalLinks: externalLinks,
+      shoppingListGroup: this.selectedType.id,
+    };
+
+    return ingredient;
+  }
+
+  ingredientAction(): void {
     if (this.form.valid && this.selectedIngredientsGroups.length > 0) {
-      this.createdIngredient = {
-        id: this.edit ? this.editedIngredient.id : this.maxId + 1,
-        name: this.form.value.ingredientName,
-        history: this.form.value.history,
-        description: this.form.value.description,
-        author: this.edit ? this.editedIngredient.author : this.currentUser.id,
-        sendDate: this.edit ? this.editedIngredient.sendDate : getCurrentDate(),
-        variations: this.form.value.variations.map(
-          (item: { content: string }) => item.content,
-        ),
-        status: this.edit ? 'public' : this.isManager ? 'public' : 'awaits',
-        image: this.form.value.image ? this.supabaseFilepath : '',
-        advantages: this.form.value.advantages.map(
-          (item: { content: string }) => item.content,
-        ),
-        disadvantages: this.form.value.disadvantages.map(
-          (item: { content: string }) => item.content,
-        ),
-        recommendedTo: this.form.value.recommendations.map(
-          (item: { content: string }) => item.content,
-        ),
-        contraindicatedTo: this.form.value.contraindicates.map(
-          (item: { content: string }) => item.content,
-        ),
-        origin: this.form.value.origin,
-        precautions: this.form.value.precautions.map(
-          (item: { content: string }) => item.content,
-        ),
-        compatibleDishes: this.form.value.compatibleDishes.map(
-          (item: { content: string }) => item.content,
-        ),
-        cookingMethods: this.form.value.cookingMethods.map(
-          (item: { content: string }) => item.content,
-        ),
-        tips: this.form.value.tips.map(
-          (item: { content: string }) => item.content,
-        ),
-        nutritions: this.form.value.nutritions,
-        storageMethods: this.form.value.storageMethods.map(
-          (item: { content: string }) => item.content,
-        ),
-        externalLinks: externalLinks,
-        shoppingListGroup: this.selectedType.id,
-      };
+      this.createdIngredient = this.newIngredientInit();
+
+      this.loading = true;
+      this.cd.markForCheck();
 
       if (this.edit) {
-        this.editIngredientInSupabase();
+        this.editIngredient();
       } else {
-        this.loadIngredientToSupabase();
+        this.createIngredient();
       }
-
-      this.selectedIngredientsGroups.forEach((group) => {
-        if (!group.ingredients.includes(this.editedIngredient.id)) {
-          group.ingredients.push(this.createdIngredient.id);
-          this.updateGroup(group);
-        }
-      });
-      if (this.edit)
-        this.groups.forEach((group) => {
-          if (
-            this.startGroups.includes(group.id) &&
-            !this.selectedIngredientsGroups.find((g) => g.id === group.id)
-          ) {
-            group.ingredients = group.ingredients.filter(
-              (i) => i !== this.editedIngredient.id,
-            );
-            this.updateGroup(group);
-          }
-        });
     }
   }
 
-  async updateGroup(group: IIngredientsGroup) {
-    await this.ingredientService.updateGroupInSupabase(group);
+  handleIngredientSuccessCreating() {
+    this.loading = false;
+    this.successModalShow = true;
+    this.cd.markForCheck();
+  }
+
+  postIngredient(ingredient: IIngredient) {
+    this.ingredientService
+      .postIngredient(ingredient)
+      .pipe(
+        tap((response: any) => {
+          const newId = response.id;
+          ingredient.id = newId;
+          const newGroupsIds: number[] = this.selectedIngredientsGroups.map(
+            (ingredient) => ingredient.id,
+          );
+          const groups$ = newGroupsIds.map((groupId) => {
+            return this.ingredientService.setGroupToIngredient(
+              groupId,
+              ingredient.id,
+            );
+          });
+
+          const variations: string[] = this.form.value.variations.map(
+            (item: { content: string }) => item.content,
+          );
+
+          const variations$ = variations.map((variation) => {
+            return this.ingredientService.postVariation(newId, variation);
+          });
+
+          const observables = [...variations$, ...groups$];
+
+          forkJoin(observables)
+            .pipe(
+              tap(() => {
+                if (ingredient.image && this.currentUser.role !== 'user') {
+                  this.ingredientService
+                    .downloadImage(ingredient.image)
+                    .subscribe({
+                      next: (blob) => {
+                        ingredient.imageURL = URL.createObjectURL(blob);
+                      },
+                      error: () => {
+                        ingredient.imageURL = '';
+                      },
+                      complete: () => {
+                        this.handleIngredientSuccessCreating();
+                      },
+                    });
+                } else {
+                  this.handleIngredientSuccessCreating();
+                }
+              }),
+            )
+            .subscribe();
+        }),
+        catchError((response) => {
+          if (ingredient.image) {
+            this.ingredientService
+              .deleteImage(ingredient.image)
+              .pipe(
+                catchError(() => {
+                  this.error =
+                    'Произошла ошибка при попытке удалить новую фотографию незагруженной категории';
+                  this.errorModal = true;
+                  return EMPTY;
+                }),
+              )
+              .subscribe();
+          }
+          this.error = response.error.info || '';
+          this.errorModal = true;
+          this.loading = false;
+          this.cd.markForCheck();
+          return EMPTY;
+        }),
+      )
+      .subscribe();
+  }
+
+  error = '';
+  errorModal: boolean = false;
+
+  createIngredient() {
+    if (this.form.value.image) {
+      this.ingredientService
+        .uploadIngredientImage(this.form.get('image')?.value)
+        .subscribe((res: any) => {
+          const filename = res.filename;
+          this.createdIngredient.image = filename;
+          this.postIngredient(this.createdIngredient);
+        });
+    } else {
+      this.postIngredient(this.createdIngredient);
+    }
+  }
+
+  checkVariationsOfEditedIngredient(): {
+    delete: Observable<any>;
+    insert: Observable<any>[];
+  } {
+    const variationsBefore = this.editedIngredient.variations;
+    const variationsAfter = this.createdIngredient.variations;
+    const variationsChanged =
+      JSON.stringify(variationsBefore) !== JSON.stringify(variationsAfter);
+
+    const insert$: Observable<any>[] = [];
+    let delete$: Observable<any> = of(null);
+
+    if (variationsChanged) {
+      if (variationsBefore.length > 0) {
+        delete$ = this.ingredientService.deleteAllVariations(
+          this.editedIngredient.id,
+        );
+      }
+      if (variationsAfter.length > 0) {
+        variationsAfter.forEach((variation) => {
+          insert$.push(
+            this.ingredientService.postVariation(
+              this.editedIngredient.id,
+              variation,
+            ),
+          );
+        });
+      }
+    }
+    return { delete: delete$, insert: insert$ };
+  }
+
+  checkImagesOfEditedIngredient() {
+    let loadImage = false;
+    let deleteImage = false;
+
+    if (this.editedIngredient.image !== this.createdIngredient.image) {
+      if (this.createdIngredient.image) {
+        loadImage = true;
+      }
+      if (this.editedIngredient.image) {
+        deleteImage = true;
+      }
+    }
+    const images$ = [];
+    if (loadImage) {
+      images$.push(
+        this.ingredientService
+          .uploadIngredientImage(this.form.get('image')?.value)
+          .pipe(
+            tap((response: any) => {
+              const filename = response.filename;
+              this.createdIngredient.image = filename;
+              console.log('load image');
+            }),
+            catchError((response) => {
+              this.error = response.error.info || '';
+              this.loading = false;
+              this.errorModal = true;
+              this.cd.markForCheck();
+              return EMPTY;
+            }),
+          ),
+      );
+    }
+
+    if (deleteImage && this.editedIngredient.image) {
+      images$.push(
+        this.ingredientService.deleteImage(this.editedIngredient.image),
+      );
+    }
+
+    return images$;
+  }
+
+  editIngredientAfterImageLoading() {
+    const variations$ = this.checkVariationsOfEditedIngredient();
+    if (this.createdIngredient.image === ('url' || 'image')) {
+      this.createdIngredient.image = '';
+    }
+    const putingredient$ = this.ingredientService.updateIngredient(
+      this.createdIngredient,
+    );
+    const groups$: Observable<any>[] = this.compareGroups(this.oldGroupsIds);
+
+    const subscribes$ = [putingredient$, variations$.delete, ...groups$];
+
+    forkJoin(subscribes$)
+      .pipe(
+        finalize(() => {
+          forkJoin(variations$.insert)
+            .pipe(
+              finalize(() => {
+                this.loading = false;
+                this.cd.markForCheck();
+                this.closeEmitter.emit();
+                this.editEmitter.emit();
+              }),
+            )
+            .subscribe();
+        }),
+        catchError((error) => {
+          console.error('Error occurred:', error);
+          this.error = '';
+          this.errorModal = true;
+          this.loading = false;
+          this.cd.markForCheck();
+          return EMPTY;
+        }),
+      )
+      .subscribe(() => {});
+  }
+
+  editIngredient() {
+    const images$ = this.checkImagesOfEditedIngredient();
+    if (images$.length) {
+      forkJoin(images$).subscribe(() => {
+        this.editIngredientAfterImageLoading();
+      });
+    } else {
+      this.editIngredientAfterImageLoading();
+    }
+  }
+
+  compareGroups(before: number[]) {
+    const after: number[] = this.selectedIngredientsGroups.map(
+      (ingredient) => ingredient.id,
+    );
+    const added = after.filter((num) => !before.includes(num));
+    const removed = before.filter((num) => !after.includes(num));
+    const subscribes: Observable<any>[] = [];
+
+    added.forEach((addedGroupId) => {
+      subscribes.push(
+        this.ingredientService.setGroupToIngredient(
+          addedGroupId,
+          this.createdIngredient.id,
+        ),
+      );
+    });
+    removed.forEach((removedGroupId) => {
+      subscribes.push(
+        this.ingredientService.unsetGroupInIngredient(
+          this.createdIngredient.id,
+          removedGroupId,
+        ),
+      );
+    });
+    return subscribes;
   }
 
   clickOnCircleStep(i: number) {
@@ -581,85 +752,23 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
   unsetImage() {
     this.form.get('image')?.setValue(null);
     this.mainImage = this.defaultImage;
-    this.supabaseFilepath = '';
   }
 
-
-  private setUserpicFilenameForSupabase(): string {
-    const file = this.form.get('image')?.value;
-    const fileExt = file.name.split('.').pop();
-    return `${Math.random()}.${fileExt}`;
-  }
-  async deleteOldIngredientPic(path: string) {
-    await supabase.storage.from('ingredients').remove([path]);
-  }
-  async editIngredientInSupabase() {
-    this.loading = true;
-    try {
-
-      
-
-      if (this.editedIngredient.image !== this.createdIngredient.image) {
-        if (this.createdIngredient.image) {
-           await this.loadIngredientToSupabase();
-        }
-        if (this.editedIngredient.image)
-          await this.deleteOldIngredientPic(this.editedIngredient.image);
-      }
-
-      await this.ingredientService.updateIngredientInSupabase(
-        this.createdIngredient,
-      );
-            this.editEmitter.emit();
-
-            this.closeEmitter.emit();
-
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error(error.message);
-      }
-    } finally {
-      this.loading = false;
-      this.cd.markForCheck();
-    
-    }
-  }
-
-  async loadIngredientToSupabase() {
-    this.loading = true;
-    try {
-      if (this.form.get('image')?.value) {
-        const file = this.form.get('image')?.value;
-        const filePath = this.supabaseFilepath;
-        await supabase.storage.from('ingredients').upload(filePath, file);
-      }
-      
-      await this.ingredientService.addIngredientToSupabase(
-        this.createdIngredient,
-      );
-      this.successModalShow = true;
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error(error.message);
-      }
-    } finally {
-      this.loading = false;
-      this.cd.markForCheck();
-    }
-  }
-
-  async sendNotifyAfterCreatingIngredient() {
+  sendNotifyAfterCreatingIngredient() {
     let notification: INotification = nullNotification;
 
     if (this.isManager) {
       const createdIngredientLink =
         '/ingredients/list/' + this.createdIngredient.id;
-      if (
-        this.userService.getPermission(
-          'your-ingredient-published',
-          this.currentUser,
-        )
-      ) {
+      // if (
+      //   this.userService.getPermission(
+      //     'your-ingredient-published',
+      //     this.currentUser,
+      //   )
+      // ) {
+      
+      if (this.userService.getPermission(this.currentUser.limitations || [], Permission.IngredientSend)) {
+
         notification = this.notificationService.buildNotification(
           'Ингредиент опубликован',
           `Созданный вами ингредиент «${this.createdIngredient.name}» успешно опубликован`,
@@ -668,19 +777,17 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
           createdIngredientLink,
         );
 
-        await this.notificationService.sendNotification(
-          notification,
-          this.currentUser,
+        this.notificationService
+          .sendNotification(notification, this.currentUser.id, true)
+          .subscribe(
         );
-        this.router.navigateByUrl(createdIngredientLink);
       }
+        this.router.navigateByUrl(createdIngredientLink);
+              //}
+              
     } else {
-      if (
-        this.userService.getPermission(
-          'you-create-ingredient',
-          this.currentUser,
-        )
-      ) {
+      if (this.userService.getPermission(this.currentUser.limitations || [], Permission.IngredientSend)) {
+
         notification = this.notificationService.buildNotification(
           'Ингредиент создан',
           `Созданный вами ингредиент «${this.createdIngredient.name}» успешно создан и отправлен на проверку`,
@@ -688,10 +795,10 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
           'ingredient',
           '',
         );
-        await this.notificationService.sendNotification(
-          notification,
-          this.currentUser,
-        );
+        this.notificationService
+          .sendNotification(notification, this.currentUser.id, true)
+          .subscribe();
+        //}
       }
     }
   }
@@ -705,11 +812,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
   }
 
   addModalStyle() {
-    setTimeout(() => {
-      this.renderer.addClass(document.body, 'hide-overflow');
-      (<HTMLElement>document.querySelector('.header')).style.width =
-        'calc(100% - 16px)';
-    }, 0);
+    addModalStyle(this.renderer);
   }
 
   //модальные окна
@@ -725,7 +828,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
   }
   handleCreateModal(answer: boolean) {
     if (answer) {
-      this.createIngredient();
+      this.ingredientAction();
     } else {
       this.addModalStyle();
     }
@@ -734,6 +837,9 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
   handleSuccessModal() {
     this.successModalShow = false;
     this.closeEmitter.emit();
+    if (this.edit) {
+      this.editEmitter.emit();
+    }
     this.sendNotifyAfterCreatingIngredient();
   }
 
@@ -749,7 +855,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
     this.autocompleteShow = true;
     this.search();
   }
-  protected chooseRecipe(type: ProductType): void {
+  protected chooseType(type: ProductType): void {
     this.searchQuery = type.name;
     this.selectedType = type;
   }
@@ -807,8 +913,9 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
 
   areObjectsEqual(): boolean {
     if (this.edit)
-      if (this.editedIngredient.shoppingListGroup !== this.selectedType.id) return true;
-      if(this.editedIngredient.image)
+      if (this.editedIngredient.shoppingListGroup !== this.selectedType.id)
+        return true;
+    if (this.editedIngredient.image)
       if (this.form.get('image')?.value !== 'url') return true;
     return (
       JSON.stringify(this.beginningData) !==
@@ -822,8 +929,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
       : this.closeEmitter.emit(true);
   }
   ngOnDestroy(): void {
-    this.renderer.removeClass(document.body, 'hide-overflow');
-    (<HTMLElement>document.querySelector('.header')).style.width = '100%';
+    removeModalStyle(this.renderer);
     this.destroyed$.next();
     this.destroyed$.complete();
   }
@@ -833,13 +939,120 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedUser: IUser) => (this.currentUser = receivedUser));
   }
+  isControlValid(control: AbstractControl, field: string) {
+    return (
+      control.get(field)?.invalid &&
+      (control.get(field)?.dirty || control.get(field)?.touched)
+    );
+  }
 
-  ingredientsGroupsInit(): void {
-    this.ingredientService.ingredientsGroups$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe(
-        (receivedIngredientsGroups: IIngredientsGroup[]) =>
-          (this.groups = receivedIngredientsGroups.filter((g) => g.id !== 0)),
-      );
+  closeIngredientCreating(): void {
+    if (
+      !this.areObjectsEqual() &&
+      this.selectedIngredientsGroups.length === 0
+    ) {
+      this.closeEmitter.emit();
+    } else {
+      this.exitModalShow = true;
+    }
+  }
+
+  f(field: string): FormArray {
+    return this.form.get(field) as FormArray;
+  }
+
+  addGroup(event: IGroup) {
+    if (this.selectedIngredientsGroups.length < 5) {
+      const findedingredient: IGroup | undefined =
+        this.selectedIngredientsGroups.find((group) => group.id === event.id);
+      if (findedingredient === undefined) {
+        this.selectedIngredientsGroups.push(event);
+      }
+    }
+  }
+  removeGroup(event: IGroup) {
+    this.selectedIngredientsGroups = this.selectedIngredientsGroups.filter(
+      (group) => group.id !== event.id,
+    );
+  }
+
+  mainPhotoChange(event: any) {
+    const input = event.target as HTMLInputElement;
+    const userpicFile: File | undefined = input.files?.[0];
+
+    if (userpicFile) {
+      this.form.get('image')?.setValue(userpicFile);
+      const objectURL = URL.createObjectURL(userpicFile);
+      this.mainImage = objectURL;
+    }
+  }
+
+  addNutrition() {
+    this.f('nutritions').push(
+      this.fb.group({
+        name: [
+          '',
+          [
+            Validators.required,
+            trimmedMinLengthValidator(2),
+            Validators.minLength(2),
+            Validators.maxLength(20),
+          ],
+        ],
+        quantity: ['', [Validators.maxLength(6)]],
+        unit: ['', Validators.maxLength(10)],
+      }),
+    );
+  }
+  addSource() {
+    this.f('sources').push(
+      this.fb.group({
+        name: [
+          '',
+          [
+            Validators.required,
+            trimmedMinLengthValidator(2),
+            Validators.minLength(2),
+            Validators.maxLength(50),
+          ],
+        ],
+        link: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(5),
+            trimmedMinLengthValidator(5),
+            Validators.maxLength(1000),
+          ],
+          customLinkPatternValidator(anySiteMask),
+        ],
+      }),
+    );
+  }
+
+  addBaseTextControl(controlGroup: string, value?: string) {
+    let maxLength = 500;
+    if (controlGroup === 'variations') maxLength = 50;
+    this.f(controlGroup).push(
+      this.fb.group({
+        content: [
+          value || '',
+          [
+            Validators.required,
+            Validators.minLength(3),
+            trimmedMinLengthValidator(3),
+            Validators.maxLength(maxLength),
+          ],
+        ],
+      }),
+    );
+  }
+
+  removeBaseTextControl(index: number, controlGroup: string) {
+    this.f(controlGroup).removeAt(index);
+  }
+
+  submitForm(): void {
+    this.createModalShow = true;
   }
 }

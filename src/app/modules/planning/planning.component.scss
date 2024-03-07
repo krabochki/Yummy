@@ -29,3 +29,9 @@ h1{
    padding:2.5em 6%
   }
 }
+
+@media print{
+  .wrap {
+      padding: 2em !important;
+    }
+}

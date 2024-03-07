@@ -14,17 +14,11 @@ import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { loginMask, passMask, usernameMask } from 'src/tools/regex';
 import { AuthService } from '../../services/auth.service';
 import { modal } from 'src/tools/animations';
-import {
-  customPatternValidator,
-  policyValidator,
-} from 'src/tools/validators';
+import { customPatternValidator, policyValidator } from 'src/tools/validators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
-import { usernameExistsValidator } from 'src/tools/validators';
+import { EMPTY, Subject, catchError, finalize, takeUntil, tap } from 'rxjs';
 import { getCurrentDate } from 'src/tools/common';
-import { PlanService } from 'src/app/modules/planning/services/plan-service';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
-import { IPlan } from 'src/app/modules/planning/models/plan';
 
 @Component({
   selector: 'app-register',
@@ -44,9 +38,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
   private users: IUser[] = [];
 
   destroyed$: Subject<void> = new Subject<void>();
-
-  private createUser: IUser = { ...nullUser };
-  usernameValidator = usernameExistsValidator;
 
   get passwordNotValidError(): string {
     return this.form.get('password')?.invalid &&
@@ -74,12 +65,11 @@ export class RegisterComponent implements OnInit, OnDestroy {
   constructor(
     private cd: ChangeDetectorRef,
     private authService: AuthService,
+    private notifyService:NotificationService,
     private titleService: Title,
-    private notifyService: NotificationService,
     private router: Router,
     private usersService: UserService,
     private fb: FormBuilder,
-    private planService: PlanService,
   ) {
     this.titleService.setTitle('Регистрация');
     this.form = this.fb.group({});
@@ -87,7 +77,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.usersInit();
-    this.plansInit();
 
     this.form = this.fb.group({
       policy: [false, [policyValidator]],
@@ -107,7 +96,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
           Validators.minLength(4),
           Validators.maxLength(20),
           customPatternValidator(usernameMask),
-          usernameExistsValidator(this.users, { ...nullUser }),
         ],
       ],
       password: [
@@ -122,94 +110,39 @@ export class RegisterComponent implements OnInit, OnDestroy {
     });
   }
 
-  async registration() {
+   registration() {
     if (this.form.valid) {
-      try {
-        this.loadingModal = true;
-        this.cd.markForCheck();
+      this.loadingModal = true;
+      this.cd.markForCheck();
 
-        const userInDatabase =
-          await this.authService.loadUserFromSupabaseByEmail(
-            this.form.value.email,
-          );
+      const newUser: IUser = {
+        ...nullUser,
+        username: this.form.value.username.toLowerCase(),
+        email: this.form.value.email,
+        password: this.form.value.password,
+        registrationDate: getCurrentDate(),
+      };
 
-        if (userInDatabase !== null) {
-          this.loadingModal = false;
-
-          this.failText =
-            'Почта, которую вы ввели, уже занята. Пожалуйста, измените данные и попробуйте ещё раз.';
-          this.errorModal = true;
-          this.cd.markForCheck();
-        } else {
-          const maxId = Math.max(...this.users.map((u) => u.id));
-          const newUser: IUser = {
-            ...{ ...nullUser },
-            username: this.form.value.username,
-            email: this.form.value.email,
-            password: this.form.value.password,
-            registrationDate: getCurrentDate(),
-            id: maxId + 1,
-          };
-          this.createUser = newUser;
-          const isUsernameTaken = this.users.some(
-            (searchingUser) => searchingUser.username === newUser.username,
-          );
-          if (isUsernameTaken) {
-            this.loadingModal = false;
-            this.errorModal = true;
-            this.failText =
-              'Имя пользователя, которое вы ввели, уже занято. Пожалуйста, измените данные и попробуйте ещё раз.';
-            this.cd.markForCheck();
-            return;
-          }
-          const { error } = await this.authService.register(newUser);
-
-          if (error) {
-            this.errorModal = true;
-          } else {
-            await this.addUserToUsers(
-              maxId + 1,
-              newUser.username,
-              newUser.email,
-            );
-
-
-            await this.addPlanToPlans(maxId + 1);
-            await this.authService.logout();
-
-            const notify = this.notifyService.buildNotification(
-              'Добро пожаловать',
-              `Добро пожаловать в Yummy, @${this.createUser.username} 🍾! Надеемся, вам понравится. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!`,
-              'success',
-              'born',
-              '',
-            );
-            await this.notifyService.sendNotification(notify, this.createUser);
+      this.authService
+        .postUser(newUser)
+        .pipe(
+          tap((res) => {
             this.successModal = true;
-          }
-          this.cd.markForCheck();
-        }
-      } catch (error) {
-        console.log(error);
-        this.errorModal = true;
-      } finally {
-        this.loadingModal = false;
-        this.cd.markForCheck();
-      }
+            this.sendNotifyToBornedUser(newUser.username, res.id);
+            
+          }),
+          catchError((e) => {
+            this.failText = e.error.content || 'Произошла неизвестная ошибка';
+            this.errorModal = true;
+            return EMPTY;
+          }),
+          finalize(() => {
+            this.loadingModal = false;
+            this.cd.markForCheck();
+          }),
+        )
+        .subscribe();
     }
-  }
-  async addPlanToPlans(userId: number) {
-              const maxId = Math.max(...this.plans.map((u) => u.id));
-
-    await this.planService.addPlanToSupabase({
-      id: maxId + 1,
-      user: userId,
-      calendarEvents: [],
-      shoppingList: [],
-    });
-  }
-  async addUserToUsers(id: number, username: string, email: string) {
-    await this.usersService.addUserToSupabase(id, username, email);
   }
 
   handleConfirmModal(result: boolean): void {
@@ -218,10 +151,24 @@ export class RegisterComponent implements OnInit, OnDestroy {
     }
     this.confirmModal = false;
   }
-  async handleSuccessModal() {
+  handleSuccessModal() {
     this.successModal = false;
     this.router.navigate(['/']);
   }
+
+
+  sendNotifyToBornedUser(username:string, userId:number) {
+    const notify = this.notifyService.buildNotification(
+      'Добро пожаловать',
+      `Добро пожаловать в Yummy, @${username} 🍾! Надеемся, вам понравятся возможности нашей социальной сети. Теперь вы имеете доступ ко всем функциям зарегистрированных кулинаров. Удачи!`,
+      'success',
+      'born',
+      '',
+    );
+    this.notifyService.sendNotification(notify, userId).subscribe();
+  }
+
+
 
   private usersInit(): void {
     this.usersService.users$
@@ -231,14 +178,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
       });
   }
 
-  plans: IPlan[] = [];
-  private plansInit(): void {
-    this.planService.plans$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((receivedPlans: IPlan[]) => {
-        this.plans = receivedPlans;
-      });
-  }
   ngOnDestroy(): void {
     this.destroyed$.next();
     this.destroyed$.complete();

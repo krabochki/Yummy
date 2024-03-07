@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { EventColor } from 'calendar-utils';
-import { RecipeCalendarEvent } from '../models/calendar';
+import { ICalendarDbEvent, RecipeCalendarEvent } from '../models/calendar';
+import { nullCalendarEvent } from '../models/plan';
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +29,27 @@ export class CalendarService {
         afterEnd: true,
       },
     };
+  }
+  translateEvents(dbEvents:any) {
+
+    const userCalendarEvents:RecipeCalendarEvent[] = [];
+    dbEvents.forEach((dbEvent:any) => {
+      const calendarEvent: RecipeCalendarEvent = {
+        ...nullCalendarEvent,
+        title: dbEvent.title,
+        id: dbEvent.id,
+        end: new Date(dbEvent.end),
+        color: {
+          primary: dbEvent.color,
+          secondary: dbEvent.color,
+        },
+        recipe: dbEvent.recipeId || 0,
+        start: new Date(dbEvent.start),
+        allDay: dbEvent.wholeDay === 1 ? true : false,
+      };
+      userCalendarEvents.push(calendarEvent);
+    }); 
+    return userCalendarEvents;
   }
 
   eventIsNow(event: RecipeCalendarEvent): boolean {

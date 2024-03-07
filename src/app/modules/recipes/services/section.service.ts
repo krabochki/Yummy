@@ -1,18 +1,93 @@
 import { Injectable } from '@angular/core';
 import { ICategory, ISection, nullSection } from '../models/categories';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { IRecipe } from '../models/recipes';
-import { supabase } from '../../controls/image/supabase-data';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SectionService {
+  sectionsUrl = 'http://localhost:3000/sections';
   sectionsSubject = new BehaviorSubject<ISection[]>([]);
   sections$ = this.sectionsSubject.asObservable();
 
-  loadSectionData() {
-    return this.loadSectionsFromSupabase();
+  constructor(private http: HttpClient) {}
+
+  updateSection(updatedSection: ISection) {
+    return this.http.put(
+      `${this.sectionsUrl}/${updatedSection.id}`,
+      updatedSection,
+    );
+  }
+
+  getSection(id: number): Observable<ISection> {
+    const url = `${this.sectionsUrl}/some/${id}`;
+    return this.http.get<ISection>(url);
+  }
+
+  getCategoriesAndSectionsBySearch(searchText: string) {
+    const url = `${this.sectionsUrl}/global/search/?search=${searchText}`;
+    return this.http.get(url);
+  }
+
+  getSectionsBySearch(searchText: string) {
+    const url = `${this.sectionsUrl}/search/?search=${searchText}`;
+    return this.http.get<ISection[]>(url);
+  }
+
+  getSomeSections(limit: number, page: number) {
+    const url = `${this.sectionsUrl}/some?limit=${limit}&page=${page}`;
+    return this.http.get(url);
+  }
+
+  getAllAboutSomeSections(limit: number, page: number) {
+    const url = `${this.sectionsUrl}/all?limit=${limit}&page=${page}`;
+    return this.http.get(url);
+  }
+
+  getImagesOfDeletedSectionCategories(sectionId: number): Observable<string[]> {
+    const url = `${this.sectionsUrl}/images/${sectionId}`;
+    return this.http.get<string[]>(url);
+  }
+
+  getAllAboutSomeNotEmptySections(limit: number, page: number,userId:number) {
+    const url = `${this.sectionsUrl}/all-not-empty/${userId}?limit=${limit}&page=${page}`;
+    return this.http.get(url);
+  }
+
+  uploadSectionImage(file: File) {
+    const formData: FormData = new FormData();
+    formData.append('image', file, file.name);
+
+    return this.http.post(`${this.sectionsUrl}/image`, formData);
+  }
+
+  getSectionShortInfoForAwaitingCategory(sectionId: number) {
+    return this.http.get<ISection[]>(`${this.sectionsUrl}/short/${sectionId}`);
+  }
+
+  deleteSection(sectionId: number) {
+    return this.http.delete(`${this.sectionsUrl}/${sectionId}`);
+  }
+
+  deleteImage(filename: string) {
+    const url = `${this.sectionsUrl}/files/${filename}`;
+    return this.http.delete(url);
+  }
+
+  downloadImage(filename: string) {
+    const fileUrl = `${this.sectionsUrl}/files/${filename}`;
+    return this.http.get(fileUrl, { responseType: 'blob' });
+  }
+
+  setSections(sections: ISection[]) {
+    this.sectionsSubject.next(sections);
+  }
+
+  public getSectionCategories(sectionId: number) {
+    const url = `${this.sectionsUrl}/categories/${sectionId}`;
+    return this.http.get<number[]>(url);
   }
 
   getSectionsWithCategories(
@@ -22,7 +97,7 @@ export class SectionService {
     const sectionWithCategories: ISection[] = [];
     sections.forEach((section) => {
       const categoriesOfSection: ICategory[] = [];
-      section.categories.forEach((element) => {
+      section.categoriesIds.forEach((element) => {
         const findCategory = categories.find(
           (elem) => elem.id === element && elem.status === 'public',
         );
@@ -37,17 +112,14 @@ export class SectionService {
     return sectionWithCategories;
   }
 
-  removeSectionImageFromSupabase(path: string) {
-    return supabase.storage.from('sections').remove([path]);
-  }
-
-  loadSectionImageToSupabase(path: string, file: File) {
-    return supabase.storage.from('sections').upload(path, file);
+  postSection(newSection: ISection) {
+    const url = `${this.sectionsUrl}`;
+    return this.http.post(url, newSection);
   }
 
   getNotEmptySections(sections: ISection[]): ISection[] {
     return (sections = sections.filter(
-      (section) => section.categories.length > 0,
+      (section) => section.categoriesIds.length > 0,
     ));
   }
 
@@ -57,119 +129,59 @@ export class SectionService {
     categories: ICategory[],
   ): number {
     let sectionRecipesIds: number[] = [];
-    section.categories.forEach((categoryId) => {
-      const currentCategory = categories.find(
-        (category) => (category.id = categoryId),
-      );
-      if (currentCategory) {
-        const categoryRecipesIds: number[] = [];
-        recipes.forEach((recipe) => {
-          if (recipe.categories.includes(currentCategory.id))
-            categoryRecipesIds.push(recipe.id);
-        });
-        sectionRecipesIds = [...sectionRecipesIds, ...categoryRecipesIds];
-      }
-    });
-    sectionRecipesIds = sectionRecipesIds.filter((recipeId, index, self) => {
-      return self.indexOf(recipeId) === index;
-    });
+    if (section.categoriesIds && section.categoriesIds.length) {
+      section.categoriesIds.forEach((categoryId) => {
+        const currentCategory = categories.find(
+          (category) => (category.id = categoryId),
+        );
+        if (currentCategory) {
+          const categoryRecipesIds: number[] = [];
+          recipes.forEach((recipe) => {
+            if (recipe.categories.includes(currentCategory.id))
+              categoryRecipesIds.push(recipe.id);
+          });
+          sectionRecipesIds = [...sectionRecipesIds, ...categoryRecipesIds];
+        }
+      });
+      sectionRecipesIds = sectionRecipesIds.filter((recipeId, index, self) => {
+        return self.indexOf(recipeId) === index;
+      });
+    }
     return sectionRecipesIds.length;
+  }
+
+  getSomeFullSections(limit: number, page: number, userId: number) {
+    const url = `${this.sectionsUrl}/some-full/${userId}?limit=${limit}&page=${page}`;
+    return this.http.get(url);
   }
 
   getSectionOfCategory(sections: ISection[], category: ICategory): ISection {
     return (
-      sections.find((section) => section.categories.includes(category.id)) ||
+      sections.find((section) => section.categoriesIds.includes(category.id)) ||
       nullSection
     );
   }
 
-  getMaxCategoryId() {
-    return supabase
-      .from('sections')
-      .select('id')
-      .order('id', { ascending: false })
-      .limit(1)
-      .then((response) => {
-        if (response.data && response.data.length > 0) {
-          return response.data[0].id;
-        } else {
-          return 0;
-        }
-      });
-  }
-
-  loadSectionsFromSupabase() {
-    return supabase
-      .from('sections')
-      .select('*')
-      .then((response) => {
-        const sSections = response.data;
-        const sections = sSections?.map((sSections) => {
-          return this.translateSection(sSections);
-        });
-        if (sections) this.sectionsSubject.next(sections);
-      });
-  }
-
-  private translateSection(section: any): ISection {
-    return {
-      id: section.id,
-      name: section.name,
-      photo: section.photo,
-      categories: section.categories,
-    } as ISection;
-  }
-  addSectionToSupabase(section: ISection) {
-    return supabase.from('sections').upsert([
-      {
-        id: section.id,
-        name: section.name,
-        photo: section.photo,
-        categories: section.categories,
-      },
-    ]);
-  }
-  deleteSectionFromSupabase(id: number) {
-    return supabase.from('sections').delete().eq('id', id);
-  }
-  async updateSectionInSupabase(section: ISection) {
-    const { id } = section;
-    return supabase
-      .from('sections')
-      .update({
-        id: section.id,
-        name: section.name,
-        photo: section.photo,
-        categories: section.categories,
-      })
-      .eq('id', id);
-  }
-
-  updateSectionsAfterUPSERT(payload: any) {
+  updateSectionInSection(section: ISection) {
     const currentSections = this.sectionsSubject.value;
-    const index = currentSections.findIndex(
-      (r) => r.id === this.translateSection(payload).id,
-    );
+    const index = currentSections.findIndex((r) => r.id === section.id);
     if (index !== -1) {
       const updatedSections = [...currentSections];
-      updatedSections[index] = this.translateSection(payload);
+      updatedSections[index] = section;
 
       this.sectionsSubject.next(updatedSections);
     }
   }
 
-  updateCategoriesAfterINSERT(payload: any) {
+  addSectionToSections(section: ISection) {
     const currentSections = this.sectionsSubject.value;
-    const updatedSections = [
-      ...currentSections,
-      this.translateSection(payload),
-    ];
+    const updatedSections = [...currentSections, section];
     this.sectionsSubject.next(updatedSections);
   }
-  updateCategoriesAfterDELETE(payload: any) {
+  deleteSectionFromSections(section: ISection) {
     this.sectionsSubject.next(
       this.sectionsSubject.value.filter(
-        (categories) => categories.id !== this.translateSection(payload).id,
+        (categories) => categories.id !== section.id,
       ),
     );
   }

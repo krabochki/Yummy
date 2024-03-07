@@ -1,17 +1,17 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<div class="wrap" [ngClass]="{
+<div class="wrap" *ngIf="comment.id>0; else preloader" [ngClass]="{
     dislike:
       comment.dislikesId.length > comment.likesId.length &&
       comment.dislikesId.length > 5
   }">
-    <div class="userpic" [style.background-image]="'url('+(showCommentAuthor&&avatar?avatar:noAvatar)+')'"></div>
+    <div class="userpic" [style.background-image]="'url('+(avatar?avatar:noAvatar)+')'"></div>
     <div class="content">
-        <a class="header" [ngClass]="{'nolink':!showCommentAuthor}" [routerLink]="showCommentAuthor?'/cooks/list/' + author.id:null">
+        <a class="header"  [routerLink]="'/cooks/list/' + author.id">
             <h1>
-                {{ showCommentAuthor? author.fullName !== "" ? author.fullName : "@" + author.username :'Анонимный кулинар' }}
+                {{  author.fullName ? author.fullName : "@" + author.username  }}
 
-               <ng-template *ngIf="showRecipeAuthor && showCommentAuthor && comment.authorId === recipe.authorId">
+               <ng-template *ngIf="comment.authorId === recipe.authorId">
                     <span class="noselect">·</span>
                     <span>Автор рецепта</span>
                </ng-template>
@@ -64,18 +64,59 @@
         </div>
     </div>
 </div>
+<ng-template #preloader>
+      <div class="wrap " style="cursor: wait;">
+            <div class="userpic image-loading" ></div>
+            <div class="content" style="pointer-events: none;">
+                <a class="header">
+                    <h1 class="load">
+                       Fgfggfggfg
+            
+                    </h1>
+                    <p class="date load">dfffdfffddfdf</p>
+                </a>
+                <p class="text load">{{ comment.text }}</p>
+                <div class="footer noselect">
+                    <div class="likes">
+                        <button class="like" >
+                            <svg-icon class="like-svg load num"></svg-icon>
+                            <span class="load">арар</span>
+                        </button>
+                        <button class="like like-dislike"
+    > <svg-icon class="like-svg load num"></svg-icon>
 
+                            <span class="load">арар</span>
+                        </button>
+                    </div>
+                    <div class="actions">
+                        <button class="action" >
+                            <span class="load">Копировать</span>
+                        </button>
+                        <button  class="action red" >
+                            <span class="load">Жалоба</span>
+                        </button>
+                     
+                    </div>
+                </div>
+            </div>
+    
+        </div>
+</ng-template>
 <app-modal @modal *ngIf="deleteCommentModalShow" [style]="'prim'" [title]="'Удаление комментария'" [type]="'yesOrNo'"
     (resultEmit)="handleDeleteCommentModal($event)" [buttonsText]="['Да', 'Нет']"
-    [description]="'Ты действительно хочешь удалить этот комментарий?'"></app-modal>
+    [description]="'Вы действительно хотите удалить этот комментарий?'"></app-modal>
 
     <app-modal @modal *ngIf="reportCommentModalShow" [style]="'prim'" [title]="'Жалоба на комментарий'" [type]="'yesOrNo'"
     (resultEmit)="handleReportCommentModal($event)" [buttonsText]="['Да', 'Нет']"
-    [description]="'Ты действительно хочешь подать жалобу на этот комментарий?'"></app-modal>
+    [description]="'Вы действительно хотите подать жалобу на этот комментарий?'"></app-modal>
 
         <app-modal @modal *ngIf="successReportCommentModalShow" [style]="'sec'" [title]="'Жалоба успешно отправлена'" [type]="'Ok'"
     (resultEmit)="handleSuccessReportCommentModal()" [buttonsText]="['Хорошо']"
-    [description]="'Жалоба успешно отправлена модератору и будет обработана в ближайшее время'"></app-modal>
+    [description]="'Жалоба успешно отправлена на проверку и будет обработана в ближайшее время'"></app-modal>
+
+            <app-modal @modal *ngIf="reportExistModal" [style]="'prim'" [title]="'Жалоба уже отправлена'"
+                [type]="'Ok'" (resultEmit)="reportExistModal = false" [buttonsText]="['Хорошо']"
+                [description]="'Вы уже отправляли жалобу на этот комментарий. Дождитесь её рассмотрения.'"></app-modal>
 
 
     
@@ -90,5 +131,4 @@
   [description]="'Взаимодействовать с комментариями  могут только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'"
 ></app-modal>
 
-<app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
-    [description]=" 'Вносим изменения... Подождите немного...'" />
+<app-modal [style]="'await'" *ngIf="loading"  @modal />

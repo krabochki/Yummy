@@ -2,7 +2,7 @@
   <div class="content">
     <h1 class="label">Вход в аккаунт</h1>
     <p class="tagline">
-      Пожалуйста, введите вашу электронную почту и пароль, для того чтобы войти
+      Пожалуйста, введите ваш логин (электронная почта или имя пользователя) и пароль, для того чтобы войти
       в аккаунт.
     </p>
 
@@ -13,12 +13,12 @@
             [inputRequired]="true"
             [max]="64"
             formControlName="login"
-            [placeholder]="'Электронная почта'"
+            [placeholder]="'Логин'"
             required
             [error]="loginNotValidError"
           ></app-usual-input>
           <svg-icon
-            [src]="'/assets/images/svg/email.svg'"
+            [src]="'/assets/images/svg/badge.svg'"
             class="icon"
             [applyClass]="true"
           ></svg-icon>
@@ -66,10 +66,13 @@
 ></app-modal>
 
 <app-modal
-  [noButtons]="true"
   [style]="'await'"
   *ngIf="loadingModal"
-  [title]="'Подождите...'"
   @modal
-  [description]="'Проверяем данные, которые вы ввели... Подождите немного...'"
 />
+
+
+<app-modal [style]="'sec'" @modal [title]="'Вход произведен успешно!'" [type]="'Ok'" *ngIf="successModal"
+  (resultEmit)="handleSuccessModal()" [buttonsText]="['На главную']" [description]="
+    'Вход в аккаунт пользователя с введенными данными произведен успешно!'
+  "></app-modal>

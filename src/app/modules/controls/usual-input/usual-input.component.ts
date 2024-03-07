@@ -27,7 +27,7 @@ import { NG_VALUE_ACCESSOR } from '@angular/forms';
     },
   ],
 })
-export class UsualInputComponent implements OnInit, OnChanges {
+export class UsualInputComponent implements OnChanges {
   disabled = false;
   @ViewChild('input') input?: ElementRef;
   @Input() placeholder: string = '';
@@ -45,20 +45,11 @@ export class UsualInputComponent implements OnInit, OnChanges {
   @Output() focusEmitter = new EventEmitter<boolean>();
   @Output() enterEmitter = new EventEmitter();
 
-  
-
   showPassword = true; //показывается ли пароль
-
   isSleep: boolean = false; //подсвечивается ли плейсхолдер
   isFocused = false; //есть ли фокус в инпуте (нужно ли подсвечивать плейсхолдер)
   getNotEmptyValue: boolean = false; //есть ли значение изначально и обработали ли мы его
 
-  ngOnInit() {
-    if (this.inputRequired === true) {
-      this.placeholder = this.placeholder + '*';
-    }
-
-  }
 
   
   ngOnChanges() {   

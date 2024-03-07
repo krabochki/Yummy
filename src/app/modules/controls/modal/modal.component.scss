@@ -1,12 +1,16 @@
 @import "../../../../tools/UI/UI.scss";
+
 .modal-dialog {
-  zoom:1 !important;
+  zoom: 1 !important;
   scale: 1 !important;
 
-  --color-sky:rgb(0, 157, 255);
+  --color-sky: var(--color-foreground);
   display: flex;
   justify-content: center;
   align-items: center;
+
+
+  backdrop-filter: blur(1px);
   position: fixed;
   top: 0;
   left: 0;
@@ -16,7 +20,26 @@
   z-index: 9999;
 }
 
-.interview{
+.square {
+  width: calc(var(--size) * 8);
+  height: calc(var(--size) * 8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  position: absolute;
+  margin-top: 1em;
+
+  .image {
+    width: 3em;
+    zoom:1.2;
+    height: 3em;
+  }
+
+}
+
+.interview {
   margin-top: 1em;
   height: 10em;
   fill: var(--color-foreground);
@@ -24,21 +47,23 @@
 
 
 .lds-ring {
-  --size:0.75em;
+  --size: 0.75em;
   display: inline-block;
   position: relative;
   margin-top: 1em;
-  width: calc(var(--size) * 5);
-  height: calc(var(--size) * 5);
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--size) * 8);
+  height: calc(var(--size) * 8);
 }
 
 .lds-ring div {
   box-sizing: border-box;
   display: block;
   position: absolute;
-  width: calc(var(--size) * 4);
-  height: calc(var(--size) * 4);
-  border: 8px solid var(--color-foreground);
+  width: calc(var(--size) * 8);
+  height: calc(var(--size) * 8);
+  border: 7px solid var(--color-foreground);
   margin-top: 1em;
   border-radius: 50%;
   animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
@@ -68,14 +93,18 @@
 }
 
 
-*{
+* {
   white-space: wrap;
 }
+
 hr {
   height: 1px;
   background-color: var(--modal);
   opacity: 0.2;
 }
+
+
+
 
 .modal-content {
   background: var(--color-background);
@@ -114,29 +143,56 @@ hr {
     max-width: 30em;
   }
 }
+
+.hat2{
+  width: 20em;
+  height: 20em;
+}
+
+.hat {
+  background-image: url('/assets/images/hat-night.svg');
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-position: center;
+  background-color: transparent;
+  box-shadow: none;
+  padding-top: calc(2em + var(--space-xxl));
+}
+
 @media (max-width: 480px) {
- 
-  .interview{
+
+  .hat {
+    background-image: none;
+    background-color: var(--color-background);
+    box-shadow: 0 3px 8px var(--modal-black);
+    padding-top: var(--space-xxl);
+  }
+
+  .interview {
     display: none
   }
+
   .modal-footer {
-    zoom:0.95;
+    zoom: 0.95;
     column-gap: var(--space-s);
   }
+
   .modal-dialog {
-   
+
     top: unset;
     left: 0;
     align-items: end;
-    bottom:0;
+    bottom: 0;
   }
 
   .modal-content {
     max-width: 100%;
     width: 100%;
-     h4{
-    font-size: 1.35em;
-  }
+
+    h4 {
+      font-size: 1.35em;
+    }
+
     padding:var(--space-xl) 3em;
     padding-top: var(--space-xxl);
 

@@ -24,39 +24,11 @@
   grid-template-columns: 1fr 1fr 1fr;
 }
 }
-@media (max-width:610px){
+@media (max-width:700px){
   .recipe-list {
   
-  grid-template-columns: max-content max-content;
+  grid-template-columns: 1fr 1fr;
   justify-content: center;
 }
-}
-
-
-@media (max-width: 480px) {
-  .recipe-list.mobile2x{
-    grid-template-rows: repeat(2,1fr);
-  }
-     .recipe-list.mobile3x {
-       grid-template-rows: repeat(3,1fr);
-     }
-
- 
-  .recipe-list {
-  &::-webkit-scrollbar {
-      display: none;
-    }
-    padding-right: 6%;
-justify-content: start;
-    grid-auto-flow: column;
-    grid-template-rows: 1fr;
-    grid-template-columns: unset;
-  overflow-x: scroll;
-  overflow-y: hidden;
-  display: grid;
-
-  }
-
-
 }
 

@@ -26,6 +26,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.5.0",
     "@fortawesome/free-brands-svg-icons": "^6.5.0",
     "@fortawesome/free-solid-svg-icons": "^6.5.0",
+    "@hreimer/angular-image-viewer": "^0.14.1",
     "@popperjs/core": "^2.11.8",
     "@supabase/supabase-js": "^2.39.0",
     "angular-calendar": "^0.31.0",
@@ -39,6 +40,7 @@
     "material": "^0.7.7",
     "ng-disable-scroll": "^0.1.1",
     "ng-time-past-pipe": "^3.1.0",
+    "ngx-cookie-service": "^17.0.1",
     "ngx-drag-scroll": "^16.0.0",
     "ngx-image-compress": "^15.1.6",
     "ngx-sharebuttons": "^13.0.0",
@@ -72,5 +74,8 @@
     "path-browserify": "^1.0.1",
     "prettier": "3.1.0",
     "typescript": "^5.2.2"
+  },
+  "browser": {
+    "crypto": false
   }
 }

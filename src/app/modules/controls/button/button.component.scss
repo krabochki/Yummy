@@ -31,10 +31,11 @@ button.admin{
         border-color: var(--color-admin-focus);
    }
      &.disabled {
-    background: var(--color-foreground-unactive);
-    border-color: var(--color-foreground-unactive);}
+    background: var(--color-foreground-unactive) !important;
+    border-color: var(--color-foreground-unactive) !important; }
 
 }
+
 
 
 button.moder{
@@ -49,8 +50,8 @@ button.moder{
         border-color: var(--color-moderator-focus);
    }
      &.disabled {
-    background: var(--color-foreground-unactive);
-    border-color: var(--color-foreground-unactive);}
+    background: var(--color-foreground-unactive) !important;
+    border-color: var(--color-foreground-unactive) !important;}
 
 }
 
@@ -68,8 +69,8 @@ button.prim {
 }
 
   &.disabled {
-    background: var(--color-foreground-unactive);
-    border-color: var(--color-foreground-unactive);
+    background: var(--color-foreground-unactive) !important;
+    border-color: var(--color-foreground-unactive) !important;
     .svg.as-text{
   fill: var(--color-background);
 }
@@ -117,8 +118,8 @@ button.sec {
 }
   border: 3px solid var(--color-secondary);
   &.disabled {
-    background: var(--color-foreground-unactive);
-    border-color: var(--color-foreground-unactive);
+    background: var(--color-foreground-unactive) !important;
+    border-color: var(--color-foreground-unactive) !important;
 
     .svg.as-text{
   fill:var(--color-foreground-unactive);
@@ -148,8 +149,8 @@ button.filled-min.vote {
   }
 
   &.disabled {
-    background: var(--color-foreground-unactive);
-    border-color: var(--color-foreground-unactive);
+    background: var(--color-foreground-unactive) !important;
+    border-color: var(--color-foreground-unactive) !important;
   }
 
 }
@@ -167,8 +168,8 @@ button.filled-min.moder{
   &.disabled {
     color: var(--color-background);
 
-    background: var(--color-foreground-unactive-lighter);
-    border-color: var(--color-foreground-unactive-lighter);
+    background: var(--color-foreground-unactive-lighter) !important;
+    border-color: var(--color-foreground-unactive-lighter) !important;
   }
 
   &:focus, &:hover {
@@ -189,8 +190,8 @@ button.filled-min.admin{
   &.disabled {
     color: var(--color-background);
 
-    background: var(--color-foreground-unactive-lighter);
-    border-color: var(--color-foreground-unactive-lighter);
+    background: var(--color-foreground-unactive-lighter) !important;
+    border-color: var(--color-foreground-unactive-lighter) !important;
   }
 
   &:focus, &:hover {
@@ -211,10 +212,10 @@ button.filled-min.prim {
     }
 
   &.disabled {
-    color: var(--color-background);
+    color: var(--color-background) !important;
 
-    background: var(--color-foreground-unactive-lighter);
-    border-color: var(--color-foreground-unactive-lighter);
+    background: var(--color-foreground-unactive-lighter) !important;
+    border-color: var(--color-foreground-unactive-lighter) !important;
   }
 
   &:focus, &:hover {
@@ -233,10 +234,10 @@ button.filled-min.sec {
   color: var(--color-secondary);
 
   &.disabled {
-    color: var(--color-background);
+    color: var(--color-background) !important;
 
-    background: var(--color-foreground-unactive-lighter);
-    border-color: var(--color-foreground-unactive-lighter);
+    background: var(--color-foreground-unactive-lighter) !important;
+    border-color: var(--color-foreground-unactive-lighter) !important;
   }
   &:focus,&:hover {
     border-color: var(--color-secondary-lighter-focus);
@@ -245,6 +246,10 @@ button.filled-min.sec {
 }
 button.before{
   flex-direction: row-reverse;
+}
+
+button.disabled{
+  cursor:default !important
 }
 
 button {
@@ -306,10 +311,10 @@ button.outlined {
   border: 3px solid var(--color-primary);
   color: var(--color-primary);
   &.disabled {
-    color: var(--color-foreground-unactive);
-    background: none;
+    color: var(--color-foreground-unactive) !important;
+    background: none !important;
 
-    border-color: var(--color-foreground-unactive);
+    border-color: var(--color-foreground-unactive) !important;
   }
 
   &:focus, &:hover {
@@ -324,9 +329,9 @@ button.outlined {
   color: var(--color-secondary);
 
   &.disabled {
-    color: var(--color-foreground-unactive);
-    background: none;
-    border-color: var(--color-foreground-unactive);
+    color: var(--color-foreground-unactive) !important;
+    background: none !important;
+    border-color: var(--color-foreground-unactive) !important;
   }
 
   &:focus, &:hover {

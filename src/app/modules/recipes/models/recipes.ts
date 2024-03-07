@@ -4,10 +4,13 @@ export interface IRecipe {
   id: number; // Уникальный идентификатор рецепта
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   mainImage?: string; // URL основного фото рецепта
+  imageLoading?: boolean;
+  imageURL?: string;
   name: string; // Название рецепта
   description: string; // Описание рецепта
   preparationTime: string; // Время приготовления
   cookingTime: string;
+  loadAuthor?: string;
   servings: number; // Количество порций
   origin: string; // Происхождение рецепта
   ingredients: Ingredient[]; // Список ингредиентов
@@ -64,6 +67,7 @@ export interface Instruction {
   name: string; // Название ингредиента
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   images: any; // Единица измерения
+  id: number;
 }
 export interface Nutrition {
   name: string; // Название пищевой ценности

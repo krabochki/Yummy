@@ -1,11 +1,25 @@
 import { EmojiData } from "@ctrl/ngx-emoji-mart/ngx-emoji";
 import { INotification } from "./notifications";
+import { RecipeCalendarEvent } from "../../planning/models/calendar";
+import { ShoppingListItem } from "../../planning/models/shopping-list";
 
 export interface IUser {
   loading?: boolean;
   online?: boolean;
   birthday: string;
+  loadingImage?: boolean;
+  appointmentDate?: any;
+
+  recipesCount?: number;
+  followersCount?: number;
+  followingsCount?: number;
+  isFollower?: number;
+
+  init?: boolean;
   id: number; // Уникальный идентификатор пользователя
+  image?: string;
+  calendarEvents: RecipeCalendarEvent[];
+  shoppingList: ShoppingListItem[];
   username: string; // Имя пользователя
   avatarUrl?: string; // URL аватара пользователя
   description: string; // Описание пользователя
@@ -21,88 +35,39 @@ export interface IUser {
   profileViews: number; // Количество просмотров профиля
   role: role;
   notifications: INotification[];
-  permissions?: IPermission[];
-  exclusions?: string[],
-  permanent?: string[],
-  emojiStatus?:EmojiData
+  exclusions?: string[];
+  limitations?: string[];
+  permanent?: string[];
+  emoji?: any;
 }
 
-export interface IPermission {
-  context: PermissionContext;
-  enabled: boolean;
-}
+
 
 export type role = 'admin' | 'moderator' | 'user';
-
-export type PermissionContext =
-  | 'like-on-your-recipe'
-  | 'show-adminpanel'
-  | 'show-edit-ingredient-button'
-  | 'show-category-edit'
-  | 'show-edit-group-button'
-  | 'you-create-update'
-  | 'show-delete-update'
-  | 'show-section-edit'
-  | 'cook-on-your-recipe'
-  | 'your-update-review'
-  | 'plan-on-your-recipe'
-  | 'show-category-deleting'
-  | 'show-section-deleting'
-  | 'fav-on-your-recipe'
-  | 'you-create-new-recipe'
-  | 'you-delete-your-comment'
-  | 'you-publish-recipe'
-  | 'show-ingredient-deleting'
-  | 'show-ingredient-group-deleting'
-  | 'you-create-ingredient'
-  | 'your-ingredient-published'
-  | 'you-edit-your-account'
-  | 'manager-review-your-recipe'
-  | 'you-delete-your-recipe'
-  | 'you-edit-your-recipe'
-  | 'new-follower'
-  | 'you-was-fired'
-  | 'new-moder-button'
-  | 'show-status'
-  | 'new-recipe-from-following'
-  | 'you-plan-recipe'
-  | 'start-of-planned-recipe'
-  | 'planned-recipes-in-3-days'
-  | 'you-create-category'
-  | 'your-recipe-commented'
-  | 'your-reports-publish'
-  | 'your-reports-reviewed-moderator'
-  | 'your-commented-liked'
-  | 'you-commented-recipe'
-  | 'show-me-on-userspage'
-  | 'search-me-on-userspage'
-  | 'show-my-page'
-  | 'hide-author'
-  | 'comment-author'
-  | 'manager-reviewed-your-category';
-
-
-
 
 
 
 export const nullUser: IUser = {
   id: 0,
   email: '',
-  birthday:'',
+  birthday: '',
+
   password: '',
   username: '',
+  calendarEvents: [],
+  shoppingList: [],
   role: 'user',
   description: '',
   quote: '',
   fullName: '',
   followersIds: [],
+  init:true,
   socialNetworks: [],
   personalWebsite: '',
   location: '',
   registrationDate: '',
   profileViews: 0,
-  notifications:[]
+  notifications: [],
 };
 
 export interface SocialNetwork {

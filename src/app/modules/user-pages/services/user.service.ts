@@ -1,43 +1,26 @@
 import { Injectable } from '@angular/core';
-import { IUser, PermissionContext } from '../models/users';
-import {
-  BehaviorSubject,
-} from 'rxjs';
-import { allPunctuationMarks, brackets } from 'src/tools/regex';
-import { supabase } from '../../controls/image/supabase-data';
-import { getCurrentDate } from 'src/tools/common';
+import { IUser } from '../models/users';
+import { BehaviorSubject, Observable, finalize, tap } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  private usersSubject = new BehaviorSubject<IUser[]>([]);
+  usersSubject = new BehaviorSubject<IUser[]>([]);
   users$ = this.usersSubject.asObservable();
-  
 
-  getMaxUserId() {
-    return supabase
-      .from('profiles')
-      .select('id')
-      .order('id', { ascending: false })
-      .limit(1)
-      .then((response) => {
-        if (response.data && response.data.length > 0) {
-          return response.data[0].id;
-        } else {
-          return 0;
-        }
-      });
-  }
+  constructor(private http: HttpClient) {}
 
-  loadUsersData() {
-    return this.loadUsersFromSupabase();
+  setUsers(users: IUser[]) {
+    this.usersSubject.next(users);
   }
 
   isUserSubscriber(user: IUser, userId: number) {
     if (!user) return false;
     return user?.followersIds?.includes(userId);
   }
+
   getFollowers(users: IUser[], userId: number): IUser[] {
     const user = users.find((user: IUser) => user.id === userId);
     const followersIds = user?.followersIds;
@@ -52,59 +35,87 @@ export class UserService {
     }
   }
 
-  getNearby(users: IUser[], user: IUser): IUser[] {
-    if (user.location.trim() !== '') {
-      const currentUserLocationWords = user.location
-        .toLowerCase()
-        .replace(brackets, ' ')
-        .split(allPunctuationMarks);
-
-      let matchingUsers = users.filter((item) => {
-        if (item.location.trim() !== '') {
-          const userLocationWords = item.location
-            .toLowerCase()
-            .replace(brackets, ' ')
-            .split(allPunctuationMarks);
-          //есть ли хотя бы одно совпадающее слово
-          return currentUserLocationWords.some((word) =>
-            userLocationWords.includes(word),
-          );
-        }
-        return null;
-      });
-
-      matchingUsers = matchingUsers.filter((item) => item.id !== user.id);
-
-      return matchingUsers;
-    } else return [];
+  public followUser(follower: number, following: number) {
+    const url = `${this.usersUrl}/subscribe`;
+    const body = { follower, following };
+    return this.http.post(url, body);
   }
 
-  getFollowing(users: IUser[], userId: number): IUser[] {
-    const following: IUser[] = [];
-    users.forEach((user: IUser) => {
-      user.followersIds?.forEach((follower: number) => {
-        if (follower === userId) {
-          following.push(user);
-        }
-      });
-    });
-
-    return following;
+  public unfollowUser(follower: number, following: number) {
+    const url = `${this.usersUrl}/unsubscribe`;
+    const body = { follower, following };
+    return this.http.post(url, body);
   }
 
-  deleteDataAboutDeletingUser(deletingId: number) {
-    let users: IUser[] = [];
-    this.users$.subscribe((data) => {
-      users = data;
-      users.forEach((user) => {
-        if (user.followersIds.includes(deletingId)) {
-          user.followersIds = user.followersIds?.filter(
-            (element) => element !== deletingId,
-          );
-          this.updateUser(user);
-        }
-      });
-    });
+  incrementProfileViews(userId: number) {
+    const url = `${this.usersUrl}/profile-views`;
+    return this.http.put(url, { userId });
+  }
+
+  getManagersShort() {
+    const url = `${this.usersUrl}/managers-short`;
+    return this.http.get(url);
+  }
+
+  getAllShort() {
+    const url = `${this.usersUrl}/all-short`;
+    return this.http.get(url);
+  }
+
+  getAllUsersBySearch(search: string) {
+    const url = `${this.usersUrl}/search/all?search=${search}`;
+    return this.http.get(url);
+  }
+
+  getManagersBySearch(search: string) {
+    const url = `${this.usersUrl}/search/managers?search=${search}`;
+    return this.http.get(url);
+  }
+
+  getMostViewedBySearch(search: string) {
+    const url = `${this.usersUrl}/search/most-viewed?search=${search}`;
+    return this.http.get(url);
+  }
+
+  getFollowingsBySearch(search: string, userId: number) {
+    const url = `${this.usersUrl}/search/followings/${userId}?search=${search}`;
+    return this.http.get(url);
+  }
+
+  getNearbyBySearch(search: string, userId: number) {
+    const url = `${this.usersUrl}/search/nearby/${userId}?search=${search}`;
+    return this.http.get(url);
+  }
+
+  getMostProductiveBySearch(search: string, userId: number) {
+    const url = `${this.usersUrl}/search/productive/${userId}?search=${search}`;
+    return this.http.get(url);
+  }
+  getPopularBySearch(search: string) {
+    const url = `${this.usersUrl}/search/popular?search=${search}`;
+    return this.http.get(url);
+  }
+
+  public getUserForEdit(userId: number): Observable<IUser> {
+    const url = `${this.usersUrl}/edit/${userId}`;
+    return this.http.get<IUser>(url);
+  }
+  updateUserpic(userId: number, filename: string) {
+    const url = `${this.usersUrl}/userpic/${userId}`;
+    return this.http.put(url, { image: filename });
+  }
+  public getUserFollowing(userId: number): Observable<number[]> {
+    const url = `${this.usersUrl}/following/${userId}`;
+    return this.http.get<number[]>(url);
+  }
+
+  public postLimitation(userId: number, context: string) {
+    const url = `${this.usersUrl}/limitations/${userId}`;
+    return this.http.post(url, { limitation: context });
+  }
+  public deleteLimitation(userId: number, context: string) {
+    const url = `${this.usersUrl}/limitations/${userId}?limitation=${context}`;
+    return this.http.delete(url);
   }
 
   addFollower(user: IUser, followerId: number): IUser {
@@ -115,6 +126,7 @@ export class UserService {
     }
     return user;
   }
+
   removeFollower(user: IUser, followerId: number) {
     if (user && user.followersIds) {
       const followerIndex = user.followersIds.indexOf(followerId);
@@ -125,141 +137,208 @@ export class UserService {
     return user;
   }
 
-  private async updateUser(user: IUser) {
-    await this.updateUserInSupabase(user);
+  usersUrl = 'http://localhost:3000/users';
+
+  updateUserProperty(
+    userId: number,
+    property:
+      | 'username'
+      | 'image'
+      | 'description'
+      | 'quote'
+      | 'fullName'
+      | 'socialNetworks'
+      | 'personalWebsite'
+      | 'locatiion'
+      | 'permissions'
+      | 'exclusions'
+      | 'permanent'
+      | 'emoji'
+      | 'role'
+      | 'birthday',
+    value: any,
+  ): Observable<any> {
+    const url = `${this.usersUrl}/${userId}/${property}`;
+    return this.http.put(url, { value });
   }
 
-  loadUsersFromSupabase() {
-
-    return supabase
-      .from('profiles')
-      .select(
-        'id, username,online, avatarurl, description, quote, fullname, followersids, socialnetworks, personalwebsite, location, profileviews, notifications, permissions, exclusions, permanent, emojistatus, role, registrationDate, birthday',
-      )
-      .then((response) => {
-        const supRecipes = response.data;
-        const users = supRecipes?.map((supUser) => {
-          return this.translateUser(supUser);
-        });
-        if (users) this.usersSubject.next(users);
-      });
+  updatePublicUser(userId: number, user: IUser) {
+    const url = `${this.usersUrl}/public/${userId}`;
+    return this.http.put<IUser>(url, user);
   }
 
-   translateUser(user: any): IUser {
-     return {
-      online:user.online,
-      id: user.id || 0, // Уникальный идентификатор пользователя
-      username: user.username || '', // Имя пользователя
-      avatarUrl: user.avatarurl || '', // URL аватара пользователя
-      description: user.description || '', // Описание пользователя
-      quote: user.quote || '', // Цитата пользователя
-      email: user.email,
-      fullName: user.fullname || '', // Полное имя пользователя
-      followersIds: user.followersids || [], // Список идентификаторов подписчиков
-      socialNetworks: user.socialnetworks || [], // Список социальных сетей пользователя
-      personalWebsite: user.personalwebsite || '', // Личный веб-сайт пользователя
-      location: user.location || '', // Локация пользователя
-      profileViews: user.profileviews || 0, // Количество просмотров профиля
-      role: user.role || 'user',
-      registrationDate: user.registrationDate,
-      birthday:user.birthday,
-      notifications: user.notifications || [],
-      permissions: user.permissions || [],
-      exclusions: user.exclusions || [],
-      permanent: user.permanent || [],
-      emojiStatus: user.emojistatus || null,
-    } as IUser;
-  }
-  async addUserToSupabase(id: number, username: string, email: string) {
-    return supabase.from('profiles').upsert([
-      {
-        id: id,
-        username: username,
-        email: email,
-        registrationDate: getCurrentDate(),
-        role: 'user',
-      },
-    ]);
-  }
-  deleteUserFromSupabase(id: number) {
-    return supabase.from('profiles').delete().eq('id', id);
-  }
-  updateUserInSupabase(user: IUser) {
-    const { id, ...updateData } = user;
-    return supabase
-      .from('profiles')
-      .update({
-        online: user.online,
-        username: user.username,
-        avatarurl: user.avatarUrl || '',
-        description: user.description || '', // Описание пользователя
-        quote: user.quote || '', // Цитата пользователя
-        fullname: user.fullName || '', // Полное имя пользователя
-        followersids: user.followersIds || [], // Список идентификаторов подписчиков
-        socialnetworks: user.socialNetworks || [], // Список социальных сетей пользователя
-        personalwebsite: user.personalWebsite || '', // Личный веб-сайт пользователя
-        location: user.location || '', // Локация пользователя
-        profileviews: user.profileViews || 0, // Количество просмотров профиля
-        role: user.role || 'user',
-        notifications: user.notifications || [],
-        birthday:user.birthday,
-        permissions: user.permissions || [],
-        exclusions: user.exclusions || [],
-        permanent: user.permanent || [],
-        emojistatus: user.emojiStatus || null,
-      })
-      .eq('id', id);
+  downloadUserpic(filename: string) {
+    const fileUrl = `${this.usersUrl}/files/${filename}`;
+    return this.http.get(fileUrl, { responseType: 'blob' });
   }
 
-  updateUsersAfterUPSERT(payload: any) {
+  deleteUserpic(filename: string): Observable<any> {
+    const url = `${this.usersUrl}/files/${filename}`;
+    return this.http.delete(url);
+  }
+
+  uploadUserpic(file: File): Observable<any> {
+    const formData: FormData = new FormData();
+    formData.append('avatar', file, file.name);
+
+    return this.http.post<any>(`${this.usersUrl}/userpic`, formData);
+  }
+
+  getAvatar(user: IUser) {
+    if (user.image) {
+      this.setLoadingToUser(user.id, true);
+      this.downloadUserpic(user.image)
+        .pipe(
+          tap((blob) => {
+            this.setImageToUser(user.id, URL.createObjectURL(blob));
+          }),
+          finalize(() => {
+            this.setLoadingToUser(user.id, false);
+          }),
+        )
+        .subscribe();
+    }
+  }
+
+  getPermission(limitations: string[], permission: string) {
+    return !limitations?.find((limitation) => limitation === permission);
+  }
+
+  getLimitation(userId: number, permission: string) {
+    const url = `${this.usersUrl}/limitation/${userId}?limitation=${permission}`;
+    return this.http.get<boolean>(url);
+  }
+
+  public getFollowersIds(userId: number): Observable<number[]> {
+    const url = `${this.usersUrl}/followersIds/${userId}`;
+    return this.http.get<number[]>(url);
+  }
+  public getLimitations(userId: number): Observable<string[]> {
+    const url = `${this.usersUrl}/limitations/${userId}`;
+    return this.http.get<string[]>(url);
+  }
+  setImageToUser(userId: number, imageURL: string) {
     const currentUsers = this.usersSubject.value;
-    const index = currentUsers.findIndex(
-      (r) => r.id === this.translateUser(payload).id,
-    );
+    const index = currentUsers.findIndex((r) => r.id === userId);
     if (index !== -1) {
       const updatedUsers = [...currentUsers];
-      updatedUsers[index] = this.translateUser(payload);
-
+      updatedUsers[index] = { ...updatedUsers[index], avatarUrl: imageURL };
       this.usersSubject.next(updatedUsers);
     }
   }
 
-  updateUsersAfterINSERT(payload: any) {
+  setLoadingToUser(userId: number, state: boolean) {
     const currentUsers = this.usersSubject.value;
-    const updatedUsers = [...currentUsers, this.translateUser(payload)];
+    const index = currentUsers.findIndex((r) => r.id === userId);
+    if (index !== -1) {
+      const updatedUsers = [...currentUsers];
+      updatedUsers[index] = { ...updatedUsers[index], loading: state };
+      this.usersSubject.next(updatedUsers);
+    }
+  }
+
+  updateUserInUsers(user: IUser) {
+    const currentUsers = this.usersSubject.value;
+    const index = currentUsers.findIndex((r) => r.id === user.id);
+    if (index !== -1) {
+      const updatedUsers = [...currentUsers];
+      updatedUsers[index] = user;
+      this.usersSubject.next(updatedUsers);
+    }
+  }
+
+  addUserToUsers(user: IUser) {
+    let updatedUsers: IUser[] = [];
+    const currentUsers = this.usersSubject.value;
+    const index = currentUsers.findIndex((r) => r.id === user.id);
+    if (index !== -1) {
+      updatedUsers = currentUsers;
+    } else {
+      updatedUsers = [...currentUsers, user];
+    }
     this.usersSubject.next(updatedUsers);
   }
-  updateUsersAfterDELETE(payload: any) {
+  deleteUserFromUsers(user: IUser) {
     this.usersSubject.next(
-      this.usersSubject.value.filter(
-        (users) => users.id !== this.translateUser(payload).id,
-      ),
+      this.usersSubject.value.filter((users) => users.id !== user.id),
     );
   }
 
-  getUsersWhichWillBeUpdatedWhenUserDeleting(
-    users: IUser[],
-    user: IUser,
-  ): IUser[] {
-    const usersToUpdate: IUser[] = [];
-    users.forEach((u) => {
-      if (u.followersIds.includes(user.id)) {
-        u.followersIds = u.followersIds.filter((f) => f !== user.id);
-        usersToUpdate.push(u);
-      }
-    });
-    return usersToUpdate;
+  getUsersShortInfoForUpdate() {
+    return this.http.get<IUser[]>(`${this.usersUrl}/updates`);
   }
 
-  getPermission(context: PermissionContext, user: IUser): boolean {
-    const permissions = user.permissions;
-    //возвращаем что уведомление включено true, только если оно конкретно не установлено false
+  getInfoForUserpage(userId: number) {
+    return this.http.get<IUser>(`${this.usersUrl}/userpage/${userId}`);
+  }
 
-    if (permissions && permissions.length) {
-      const permissionExist = permissions.find((p) => p.context === context);
-      if (permissionExist) return permissionExist.enabled;
-      else return true;
-    }
-    return true;
+  getUserRecipesStatistics(userId: number) {
+    return this.http.get<{ likes: number; cooks: number; comments: number }>(
+      `${this.usersUrl}/user-recipes-statistics/${userId}`,
+    );
+  }
+
+  getUserStatistics(userId: number, currentUserId: number) {
+    return this.http.get<{
+      followers: number;
+      followings: number;
+      recipes: number;
+      follower: number;
+    }>(`${this.usersUrl}/user-statistics/${userId}/${currentUserId}`);
+  }
+
+  getUser(userId: number) {
+    return this.http.get<IUser>(`${this.usersUrl}/${userId}`);
+  }
+
+  getProductiveUsers(limit: number, page: number, userId: number) {
+    return this.http.get<{ count: number; users: IUser[] }>(
+      `${this.usersUrl}/productive/${userId}?limit=${limit}&page=${page}`,
+    );
+  }
+
+  getPopularUsers(limit: number, page: number, userId: number) {
+    return this.http.get<{ count: number; users: IUser[] }>(
+      `${this.usersUrl}/popular/${userId}?limit=${limit}&page=${page}`,
+    );
+  }
+
+  getMostViewedUsers(limit: number, page: number, userId: number) {
+    return this.http.get<{ count: number; users: IUser[] }>(
+      `${this.usersUrl}/most-viewed/${userId}?limit=${limit}&page=${page}`,
+    );
+  }
+  getNewUsers(limit: number, page: number, userId: number) {
+    return this.http.get<{ count: number; users: IUser[] }>(
+      `${this.usersUrl}/new/${userId}?limit=${limit}&page=${page}`,
+    );
+  }
+
+  getManagers(limit: number, page: number, userId: number) {
+    return this.http.get<{ count: number; users: IUser[] }>(
+      `${this.usersUrl}/managers/${userId}?limit=${limit}&page=${page}`,
+    );
+  }
+
+  getUsersIFollow(limit: number, page: number, userId: number) {
+    return this.http.get<{ count: number; users: IUser[] }>(
+      `${this.usersUrl}/my-followers/${userId}?limit=${limit}&page=${page}`,
+    );
+  }
+
+  getNearbyUsers(limit: number, page: number, userId: number) {
+    return this.http.get<{ count: number; users: IUser[] }>(
+      `${this.usersUrl}/nearby/${userId}?limit=${limit}&page=${page}`,
+    );
+  }
+  getFollowersList(userId: number) {
+    return this.http.get<IUser[]>(`${this.usersUrl}/following/${userId}`);
+  }
+  getFollowingList(userId: number) {
+    return this.http.get<IUser[]>(`${this.usersUrl}/followers/${userId}`);
+  }
+
+  getUserShortInfoForUpdate(userId: number) {
+    return this.http.get<IUser>(`${this.usersUrl}/updates/${userId}`);
   }
 }

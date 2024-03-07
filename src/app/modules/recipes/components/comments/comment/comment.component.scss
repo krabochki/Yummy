@@ -6,6 +6,41 @@
   transition: 0.3s ease-in-out;
 }
 
+.date.load{
+  margin-top: 0.2em;
+}
+.load {
+  color: transparent !important;
+  border-radius: 0.75em;
+  width: max-content;
+  &.num{
+    width: 1em;
+    height: 1em;
+  }
+        background-color: var(--loading);
+        animation: loading 0.75s infinite linear;
+}
+
+@keyframes loading {
+  0% {
+    background-color: var(--loading);
+  }
+
+  50% {
+    background-color: var(--loading-accent);
+  }
+
+  100% {
+    background-color: var(--loading);
+  }
+}
+
+.image-loading {
+  background-color: var(--loading);
+  background-image: none !important;
+  animation: loading 0.75s infinite linear;
+}
+
 h1 {
   font-size: 1.1em;
   font-weight: 700;

@@ -19,19 +19,29 @@ import { TimePastPipe } from 'ng-time-past-pipe';
 import { UserPagesModule } from '../user-pages/user-pages.module';
 import { PasswordResetComponent } from './components/password-reset/password-reset.component';
 import { WelcomeComponent } from './components/welcome/welcome.component';
+import { ControlUpdatesComponent } from './components/control-dashboard/updates/control-updates.component';
+import { ControlCategoriesComponent } from './components/control-dashboard/categories/control-categories.component';
+import { ControlRecipesComponent } from './components/control-dashboard/recipes/control-recipes.component';
+import { ControlReportsComponent } from './components/control-dashboard/reports/control-reports.component';
+import { ControlModeratorsComponent } from './components/control-dashboard/moderators/moderators.component';
+import { ControlIngredientsComponent } from './components/control-dashboard/ingredients/control-ingredients.component';
+import { DeleteAccountComponent } from './components/delete-account/delete-account.component';
 @NgModule({
   declarations: [
-
     AuthenticationComponent,
     LoginComponent,
     RegisterComponent,
     PasswordRecoveryComponent,
+    ControlCategoriesComponent,
+    ControlUpdatesComponent,
     GreetingsComponent,
     ControlDashboardComponent,
-    PasswordResetComponent,
+    ControlRecipesComponent,
+    PasswordResetComponent,DeleteAccountComponent,
+    ControlReportsComponent,
+    ControlModeratorsComponent,
+    ControlIngredientsComponent,
     WelcomeComponent,
-    
-
   ],
   imports: [
     CommonModule,
@@ -41,9 +51,14 @@ import { WelcomeComponent } from './components/welcome/welcome.component';
     TimePastPipe,
     ReactiveFormsModule,
     RecipesModule,
-    UserPagesModule
+    UserPagesModule,
   ],
-  providers: [  provideAngularSvgIcon(),AuthGuard, AdminGuard, ModeratorGuard, OnlyNoAuthGuard]
-
+  providers: [
+    provideAngularSvgIcon(),
+    AuthGuard,
+    AdminGuard,
+    ModeratorGuard,
+    OnlyNoAuthGuard,
+  ],
 })
-export class AuthenticationModule { }
+export class AuthenticationModule {}

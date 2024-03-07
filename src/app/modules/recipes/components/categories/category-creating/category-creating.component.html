@@ -1,6 +1,6 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<div class="outer" (click)="clickBackgroundNotContent($event)">
+<div class="outer" *ngIf="!initialLoading" (click)="clickBackgroundNotContent($event)">
   <div class="inner">
     <div class="close-button" (click)="closeEditModal()">
       <svg-icon
@@ -88,7 +88,7 @@
                 <div
                   class="photo"
                   [ngClass]="{
-                    'have-image': this.form.get('image')?.value !== null
+                    'have-image': categoryImage !== defaultImage
                   }"
                   [ngStyle]="{
                     'background-image': 'url(' + categoryImage + ')'
@@ -127,19 +127,19 @@
 
             <div>
               <app-autocomplete
+                [startOnTyping]="true"
+                [context]="'sections'"
                 [disabled]="this.form.get('section')?.value !== null"
-                [sectionMode]="true"
+                [clearValueOnBlur]="true"
                 (sectionEmitter)="selectSection($event)"
                 [group]="group"
-                [allSections]="sections"
                 [placeholder]="
-                  'Выбери соответствующий раздел для твоей категории*'
+                  'Выберите соответствующий раздел для категории*'
                 "
               ></app-autocomplete>
             </div>
           </div>
           <div class="form-control">
-            <h3>Раздел твоей категории</h3>
             <div *ngIf="this.form.get('section')?.value" class="max-categories">
               Вы можете выбрать только 1 раздел для своей категории
             </div>
@@ -167,7 +167,7 @@
             <div class="button">
               <p>
                 Если вы хотите, чтобы
-                {{ editMode ? "обновленную" : "создание" }} категорию увидели
+                {{ editMode ? "обновленную" : "созданную" }} категорию увидели
                 все кулинары,
                 {{
                   currentUser.role === "user"
@@ -179,7 +179,7 @@
               </p>
               <app-button
                 [disabled]="areObjectsEqual() && form.valid"
-                (click)="form.valid ? (saveModal = true) : null"
+                (click)="areObjectsEqual() &&form.valid ? (saveModal = true) : null"
                 [text]="editMode ? 'Изменить' : 'Опубликовать'"
                 [color]="'sec'"
                 [style]="'filled'"
@@ -261,7 +261,7 @@
 <app-modal
   @modal
   *ngIf="saveModal"
-  [style]="'prim'"
+  [style]="'sec'"
   [title]="'Создание категории'"
   [type]="'yesOrNo'"
   (resultEmit)="handleSaveModal($event)"
@@ -289,8 +289,8 @@
   [buttonsText]="['Хорошо']"
   [description]="
     (this.editMode
-      ? 'Категория успешно создана'
-      : 'Категория успешно изменена') +
+      ? 'Категория успешно изменена'
+      : 'Категория успешно создана') +
     (currentUser.role === 'user'
       ? ' и отправлена модератору на рассмотрение'
       : '')
@@ -299,13 +299,21 @@
 <app-modal
   @modal
   [style]="'await'"
-  [type]="'Ok'"
-  [noButtons]="true"
-  [style]="'sec'"
-  [title]="'Подождите...'"
-  [type]="'Ok'"
-  [description]="
-    'Загружаем данные категории... Совсем скоро она будет готова...'
-  "
-  *ngIf="awaitModalShow"
+  *ngIf="awaitModalShow || initialLoading"
 ></app-modal>
+<app-modal
+  @modal
+  *ngIf="errorModal"
+  [style]="'prim'"
+  [title]="
+    'Произошла ошибка'
+  "
+  [type]="'Ok'"
+  (resultEmit)="errorModal=false"
+  [buttonsText]="['Хорошо']"
+  [description]="
+    error||'Произошла неизвестная ошибка'
+  "
+
+></app-modal>
+

@@ -6,6 +6,7 @@
   (mouseleave)="blurEmitter.emit(notify)"
   (mouseenter)="hover.emit(notify)"
   [ngClass]="getClass()"
+  *ngIf="notify.id ; else preloader"
 >
   <button
     *ngIf="!notify.context.includes('plan')"
@@ -33,3 +34,22 @@
     <p class="text time">{{ notify.sendDate | timePast }}</p>
   </a>
 </div>
+
+<ng-template #preloader>
+<div class="main" class="preloader">
+  <a class="body" >
+    <div class="head">
+      <div class="svg-notify" ></div>
+      <h1 class="title">Загрузка</h1>
+    </div>
+
+    <p class="text" [innerHTML]="'Идет загрузка уведомлений...'"></p>
+    <p class="text" [innerHTML]="'Подождите, пожалуйста...'"></p>
+
+
+    <div class="time-cont"><p class="text time">Загрузка...</p></div>
+  </a>
+</div>
+
+
+</ng-template>

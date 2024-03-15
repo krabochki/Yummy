@@ -43,7 +43,7 @@
       <svg-icon
         *ngIf="
           recipe.status === 'public'  &&
-          !isRecipeFavorite
+          !recipe.faved
         "
         [src]="'/assets/images/svg/fav.svg'"
         [applyClass]="true"
@@ -52,7 +52,7 @@
       <svg-icon
         *ngIf="
           recipe.status === 'public' &&
-          isRecipeFavorite
+          recipe.faved
         "
         [src]="'/assets/images/svg/fav-fill.svg'"
         [applyClass]="true"
@@ -69,6 +69,8 @@
       <a [routerLink]="'/recipes/list/' + recipe.id">{{ recipe.name }}</a>
     </h1>
     <div
+
+    (click)="innerClick($event);"
       [ngStyle]="{ 'pointer-events': recipe.authorId === 0 ? 'none' : 'all' }"
       *ngIf="showAuthor"
       [title]="author.fullName === '' ? '@' + author.username : author.fullName"
@@ -86,44 +88,52 @@
     <div class="rate-panel" *ngIf="!shortView && recipe.status === 'public'">
       <div class="rate-item likes" (click)="innerClick($event);likeThisRecipe()">
         <svg-icon
-          *ngIf="!isRecipeLiked"
+          *ngIf="!recipe.liked"
           [src]="'/assets/images/svg/like.svg'"
           [applyClass]="true"
           class="like-icon"
         ></svg-icon>
         <svg-icon
-          *ngIf="isRecipeLiked"
+          *ngIf="recipe.liked"
           [src]="'/assets/images/svg/like-fill.svg'"
           [applyClass]="true"
           class="like-icon liked"
         ></svg-icon>
-        <span class="likes-num" [ngClass]="{ liked: isRecipeLiked }">{{
-        recipe.likesId ? recipe.likesId.length : 0
+        <span class="likes-num" [ngClass]="{ liked: recipe.liked }">{{
+        recipe.likesLength
         }}</span>
       </div>
       <div
         class="rate-item cooks"
         (click)="innerClick($event);
-          !isRecipeCooked && currentUser.id > 0
+          !recipe.cooked && currentUser.id > 0
             ? (voteModalShow = true)
             : cookThisRecipe()
         "
       >
         <svg-icon
-          *ngIf="!isRecipeCooked"
+          *ngIf="!recipe.cooked"
           [src]="'/assets/images/svg/cook.svg'"
           [applyClass]="true"
           class="cook-icon"
         ></svg-icon>
         <svg-icon
-          *ngIf="isRecipeCooked"
+          *ngIf="recipe.cooked"
           [src]="'/assets/images/svg/cook-fill.svg'"
           [applyClass]="true"
           class="cook-icon cooked"
         ></svg-icon>
-        <span [ngClass]="{ cooked: isRecipeCooked }">{{
-         recipe.cooksId ?  recipe.cooksId.length : 0
+        <span [ngClass]="{ cooked: recipe.cooked }">{{
+         recipe.cooksLength
         }}</span>
+      </div>
+
+      <div class="rate-item">
+        <svg-icon [src]="'/assets/images/svg/chat.svg'" [applyClass]="true"
+          class="like-icon "></svg-icon>
+        <span >{{
+          recipe.commentsLength 
+          }}</span>
       </div>
     </div>
     <div class="rate-panel" *ngIf="!(recipe.status === 'public')">
@@ -172,7 +182,7 @@
   [type]="'yesOrNo'"
 
   (resultEmit)="handleVoteModal($event)"
-  [buttonsText]="['Приготовил бы', 'Не советую']"
+  [buttonsText]="['Советую', 'Не советую']"
   [description]="'Поделитесь впечатлением для статистики рецепта: вы бы приготовили этот рецепт снова?'"
 ></app-modal>
 

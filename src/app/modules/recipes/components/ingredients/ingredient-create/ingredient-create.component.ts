@@ -26,13 +26,20 @@ import {
   getInputPlaceholderOfControlGroup,
   getNameOfControlGroup,
   stepControlGroups,
+  getIngredientByForm,
 } from './consts';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Router } from '@angular/router';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
-import { EMPTY, Observable, Subject, forkJoin, of } from 'rxjs';
-import { catchError, finalize, map, takeUntil, tap } from 'rxjs/operators';
+import { EMPTY, Observable, Subject, concat, forkJoin, of } from 'rxjs';
+import {
+  catchError,
+  concatMap,
+  finalize,
+  takeUntil,
+  tap,
+} from 'rxjs/operators';
 import {
   customLinkPatternValidator,
   trimmedMinLengthValidator,
@@ -45,7 +52,6 @@ import {
 } from 'src/app/modules/planning/models/shopping-list';
 import { IngredientService } from '../../../services/ingredient.service';
 import {
-  ExternalLink,
   IGroup,
   IIngredient,
   nullIngredient,
@@ -58,13 +64,9 @@ import {
 } from 'src/app/modules/user-pages/models/notifications';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
-import {
-  addModalStyle,
-  getCurrentDate,
-  removeModalStyle,
-} from 'src/tools/common';
-import { GroupService } from '../../../services/group.service';
+import { addModalStyle, removeModalStyle } from 'src/tools/common';
 import { Permission } from 'src/app/modules/user-pages/components/settings/conts';
+import { checkFile } from 'src/tools/error.handler';
 
 @Component({
   selector: 'app-ingredient-create',
@@ -76,7 +78,7 @@ import { Permission } from 'src/app/modules/user-pages/components/settings/conts
 export class IngredientCreateComponent implements OnInit, OnDestroy {
   @ViewChild('input', { static: false }) input: ElementRef | undefined;
   @ViewChild('scrollContainer', { static: false }) scrollContainer?: ElementRef;
-  @Input() editedIngredient: IIngredient = nullIngredient;
+  @Input() editedIngredient: IIngredient = {...nullIngredient};
   @Output() editEmitter = new EventEmitter();
   @Output() closeEmitter = new EventEmitter<boolean>();
 
@@ -85,7 +87,6 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
   currentUser: IUser = nullUser;
   productTypes = productTypes;
 
-  createdIngredient: IIngredient = nullIngredient;
   oldGroupsIds: number[] = [];
 
   currentStep: number = 0;
@@ -97,7 +98,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
   autocompleteTypes: ProductType[] = [];
   selectedType: ProductType = productTypes[0];
 
-  loading = false;
+  awaitModal = false;
   searchQuery: string = '';
   autocompleteShow: boolean = false;
   focused: boolean = false;
@@ -180,7 +181,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
   editedIngredientInit() {
     const id = this.editedIngredient.id;
     if (id > 0) {
-          this.loading = true;
+      this.awaitModal = true;
 
       const ingredient$ = this.ingredientService
         .getIngredientForEditing(id)
@@ -287,7 +288,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
           }),
         );
 
-      const image$ = this.editedIngredient.image
+      const image$: Observable<any> = this.editedIngredient.image
         ? this.ingredientService
             .downloadImage(this.editedIngredient.image)
             .pipe(
@@ -297,7 +298,7 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
               }),
               tap((blob) => {
                 if (blob) {
-                  this.form.get('image')?.setValue('url');
+                  this.form.get('image')?.setValue('existing_photo');
 
                   this.editedIngredient.imageURL = URL.createObjectURL(blob);
                   this.mainImage = this.editedIngredient.imageURL;
@@ -310,205 +311,172 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
             )
         : of(null);
 
-      forkJoin(ingredient$, variations$, groups$, image$).subscribe(() => {
-        this.loading = false;
-
-        this.autocompleteShow = false;
-        this.cd.markForCheck();
-        this.beginningData = this.form.getRawValue();
+      forkJoin([ingredient$, variations$, groups$]).subscribe(() => {
+        image$
+          .pipe(
+            finalize(() => {
+              this.awaitModal = false;
+              this.autocompleteShow = false;
+              this.beginningData = this.form.getRawValue();
+              addModalStyle(this.renderer);
+              this.cd.markForCheck();
+            }),
+          )
+          .subscribe();
       });
     }
   }
 
-  private newIngredientInit(): IIngredient {
+  getImageOfSavedIngredient() {
     let image = '';
-
-    if (
-      this.editedIngredient.image &&
-      this.form.get('image')?.value === 'url'
-    ) {
+    const selectedImage = this.form.get('image')?.value;
+    if (this.editedIngredient.image && selectedImage === 'existing_photo') {
       image = this.editedIngredient.image;
     } else {
-      if (this.form.get('image')?.value) {
+      if (selectedImage) {
         image = 'image';
       }
     }
-    const externalLinks: ExternalLink[] = [];
-    this.f('sources').controls.forEach((control) => {
-      const externalLink: ExternalLink = {
-        link: control.get('link')?.value,
-        name: control.get('name')?.value,
-      };
-      externalLinks.push(externalLink);
-    });
-
-    const ingredient: IIngredient = {
-      id: this.edit ? this.editedIngredient.id : 0,
-      name: this.form.value.ingredientName,
-      history: this.form.value.history,
-      description: this.form.value.description,
-      author: this.edit ? this.editedIngredient.author : this.currentUser.id,
-      sendDate: this.edit ? this.editedIngredient.sendDate : getCurrentDate(),
-      variations: this.form.value.variations.map(
-        (item: { content: string }) => item.content,
-      ),
-      status: this.edit ? 'public' : this.isManager ? 'public' : 'awaits',
-      image: image,
-      advantages: this.form.value.advantages.map(
-        (item: { content: string }) => item.content,
-      ),
-      disadvantages: this.form.value.disadvantages.map(
-        (item: { content: string }) => item.content,
-      ),
-      recommendedTo: this.form.value.recommendations.map(
-        (item: { content: string }) => item.content,
-      ),
-      contraindicatedTo: this.form.value.contraindicates.map(
-        (item: { content: string }) => item.content,
-      ),
-      origin: this.form.value.origin,
-      precautions: this.form.value.precautions.map(
-        (item: { content: string }) => item.content,
-      ),
-      compatibleDishes: this.form.value.compatibleDishes.map(
-        (item: { content: string }) => item.content,
-      ),
-      cookingMethods: this.form.value.cookingMethods.map(
-        (item: { content: string }) => item.content,
-      ),
-      tips: this.form.value.tips.map(
-        (item: { content: string }) => item.content,
-      ),
-      nutritions: this.form.value.nutritions,
-      storageMethods: this.form.value.storageMethods.map(
-        (item: { content: string }) => item.content,
-      ),
-      externalLinks: externalLinks,
-      shoppingListGroup: this.selectedType.id,
-    };
-
-    return ingredient;
+    return image;
   }
 
-  ingredientAction(): void {
-    if (this.form.valid && this.selectedIngredientsGroups.length > 0) {
-      this.createdIngredient = this.newIngredientInit();
+  errorModal = false;
+  errorModalContent = '';
 
-      this.loading = true;
-      this.cd.markForCheck();
-
-      if (this.edit) {
-        this.editIngredient();
-      } else {
-        this.createIngredient();
-      }
-    }
+  private throwErrorModal(content: string) {
+    this.errorModalContent = content;
+    this.errorModal = true;
   }
 
-  handleIngredientSuccessCreating() {
-    this.loading = false;
-    this.successModalShow = true;
-    this.cd.markForCheck();
+  handleErrorModal() {
+    this.errorModal = false;
+    addModalStyle(this.renderer);
   }
 
-  postIngredient(ingredient: IIngredient) {
+  getStatusOfSavedIngredient() {
+    return this.currentUser.role === 'user' ? 'awaits' : 'public';
+  }
+
+  POSTIngredient(ingredient: IIngredient) {
+    const file: File = this.form.value.image;
+    this.awaitModal = true;
+    this.savedIngredient = ingredient;
+
     this.ingredientService
       .postIngredient(ingredient)
       .pipe(
-        tap((response: any) => {
-          const newId = response.id;
-          ingredient.id = newId;
-          const newGroupsIds: number[] = this.selectedIngredientsGroups.map(
-            (ingredient) => ingredient.id,
-          );
-          const groups$ = newGroupsIds.map((groupId) => {
-            return this.ingredientService.setGroupToIngredient(
-              groupId,
-              ingredient.id,
+        catchError((response: any) => {
+          if (response.error.info == 'NAME_EXISTS') {
+            this.throwErrorModal(
+              'Ингредиент с таким названием уже существует. Измените название и попробуйте снова.',
             );
-          });
-
-          const variations: string[] = this.form.value.variations.map(
-            (item: { content: string }) => item.content,
-          );
-
-          const variations$ = variations.map((variation) => {
-            return this.ingredientService.postVariation(newId, variation);
-          });
-
-          const observables = [...variations$, ...groups$];
-
-          forkJoin(observables)
-            .pipe(
-              tap(() => {
-                if (ingredient.image && this.currentUser.role !== 'user') {
-                  this.ingredientService
-                    .downloadImage(ingredient.image)
-                    .subscribe({
-                      next: (blob) => {
-                        ingredient.imageURL = URL.createObjectURL(blob);
-                      },
-                      error: () => {
-                        ingredient.imageURL = '';
-                      },
-                      complete: () => {
-                        this.handleIngredientSuccessCreating();
-                      },
-                    });
-                } else {
-                  this.handleIngredientSuccessCreating();
-                }
-              }),
-            )
-            .subscribe();
-        }),
-        catchError((response) => {
-          if (ingredient.image) {
-            this.ingredientService
-              .deleteImage(ingredient.image)
-              .pipe(
-                catchError(() => {
-                  this.error =
-                    'Произошла ошибка при попытке удалить новую фотографию незагруженной категории';
-                  this.errorModal = true;
-                  return EMPTY;
-                }),
-              )
-              .subscribe();
+          } else {
+            this.throwErrorModal(
+              'Произошла ошибка при попытке создать ингредиент.',
+            );
           }
-          this.error = response.error.info || '';
-          this.errorModal = true;
-          this.loading = false;
+          return of(null);
+        }),
+        concatMap((response: any) => {
+          const insertedId = response.id;
+          this.savedIngredient.id = insertedId;
+
+          const observables$ = this.getCreatedIngredientObservables(insertedId);
+          const groups$ = observables$.groups;
+          const variations$ = observables$.variations;
+
+          const observablesArray = [...groups$, ...variations$];
+
+          return concat(...observablesArray).pipe(
+            concatMap(() => {
+              if (file) {
+                return this.ingredientService.uploadIngredientImage(file).pipe(
+                  concatMap((uploadResponse: any) => {
+                    const filename = uploadResponse.filename;
+                    return this.ingredientService
+                      .setImageToIngredient(insertedId, filename)
+                      .pipe(
+                        catchError(() => {
+                          this.throwErrorModal(
+                            'Произошла ошибка при попытке связать загруженное изображение и ингредиент.',
+                          );
+                          return EMPTY;
+                        }),
+                      );
+                  }),
+                );
+              } else {
+                return of(null);
+              }
+            }),
+          );
+        }),
+
+        finalize(() => {
+          this.awaitModal = false;
           this.cd.markForCheck();
-          return EMPTY;
         }),
       )
-      .subscribe();
+      .subscribe({
+        next: () => {
+          this.successModalShow = true;
+        },
+      });
   }
 
-  error = '';
-  errorModal: boolean = false;
+  getCreatedIngredientObservables(id: number) {
+    const newGroupsIds: number[] = this.selectedIngredientsGroups.map(
+      (ingredient) => ingredient.id,
+    );
+    const groups$ = newGroupsIds.map((groupId) => {
+      return this.ingredientService.setGroupToIngredient(groupId, id).pipe(
+        catchError(() => {
+          this.throwErrorModal(
+            'Произошла ошибка при попытке связать группу ингредиентов с ингредиентом.',
+          );
+          return EMPTY;
+        }),
+      );
+    });
+
+    const variations: string[] = this.form.value.variations.map(
+      (item: { content: string }) => item.content,
+    );
+
+    const variations$ = variations.map((variation) => {
+      return this.ingredientService.postVariation(id, variation).pipe(
+        catchError(() => {
+          this.throwErrorModal(
+            'Произошла ошибка при попытке создать вариацию названия ингредиента.',
+          );
+          return EMPTY;
+        }),
+      );
+    });
+
+    return { variations: variations$, groups: groups$ };
+  }
 
   createIngredient() {
-    if (this.form.value.image) {
-      this.ingredientService
-        .uploadIngredientImage(this.form.get('image')?.value)
-        .subscribe((res: any) => {
-          const filename = res.filename;
-          this.createdIngredient.image = filename;
-          this.postIngredient(this.createdIngredient);
-        });
-    } else {
-      this.postIngredient(this.createdIngredient);
-    }
+    const ingredientByForm = getIngredientByForm(
+      this.form,
+      this.f('sources').controls,
+    );
+
+    const updatedIngredient: IIngredient = {
+      ...ingredientByForm,
+      author: this.currentUser.id,
+      status: this.getStatusOfSavedIngredient(),
+      shoppingListGroup: this.selectedType.id,
+    };
+
+    this.POSTIngredient(updatedIngredient);
   }
 
-  checkVariationsOfEditedIngredient(): {
-    delete: Observable<any>;
-    insert: Observable<any>[];
-  } {
+  checkVariationsOfEditedIngredient() {
     const variationsBefore = this.editedIngredient.variations;
-    const variationsAfter = this.createdIngredient.variations;
+    const variationsAfter = this.savedIngredient.variations;
+
     const variationsChanged =
       JSON.stringify(variationsBefore) !== JSON.stringify(variationsAfter);
 
@@ -517,114 +485,156 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
 
     if (variationsChanged) {
       if (variationsBefore.length > 0) {
-        delete$ = this.ingredientService.deleteAllVariations(
-          this.editedIngredient.id,
-        );
+        delete$ = this.ingredientService
+          .deleteAllVariations(this.editedIngredient.id)
+          .pipe(
+            catchError(() => {
+              this.throwErrorModal(
+                'Произошла ошибка при попытке удаления старых вариаций названия ингредиента.',
+              );
+              return EMPTY;
+            }),
+          );
       }
       if (variationsAfter.length > 0) {
         variationsAfter.forEach((variation) => {
           insert$.push(
-            this.ingredientService.postVariation(
-              this.editedIngredient.id,
-              variation,
-            ),
+            this.ingredientService
+              .postVariation(this.editedIngredient.id, variation)
+              .pipe(
+                catchError(() => {
+                  this.throwErrorModal(
+                    'Произошла ошибка при попытке добавления новой вариации названия ингредиента.',
+                  );
+                  return EMPTY;
+                }),
+              ),
           );
         });
       }
     }
-    return { delete: delete$, insert: insert$ };
+    const observables: Observable<any>[] = [];
+    
+    insert$.forEach((insertVariation$) => {
+      observables.push(insertVariation$);
+    });
+
+    return { delete:delete$, observables: observables};
   }
 
-  checkImagesOfEditedIngredient() {
-    let loadImage = false;
-    let deleteImage = false;
+  private PUTIngredient(ingredient: IIngredient) {
+    const newImage = ingredient.image;
+    const oldImage = this.editedIngredient.image;
+    const imageChanged = oldImage !== newImage;
+    const loadImage = imageChanged && !!newImage;
+    const deleteImage = imageChanged && !!oldImage;
 
-    if (this.editedIngredient.image !== this.createdIngredient.image) {
-      if (this.createdIngredient.image) {
-        loadImage = true;
-      }
-      if (this.editedIngredient.image) {
-        deleteImage = true;
-      }
-    }
-    const images$ = [];
-    if (loadImage) {
-      images$.push(
-        this.ingredientService
-          .uploadIngredientImage(this.form.get('image')?.value)
-          .pipe(
-            tap((response: any) => {
-              const filename = response.filename;
-              this.createdIngredient.image = filename;
-              console.log('load image');
-            }),
-            catchError((response) => {
-              this.error = response.error.info || '';
-              this.loading = false;
-              this.errorModal = true;
-              this.cd.markForCheck();
-              return EMPTY;
-            }),
-          ),
-      );
-    }
-
-    if (deleteImage && this.editedIngredient.image) {
-      images$.push(
-        this.ingredientService.deleteImage(this.editedIngredient.image),
-      );
-    }
-
-    return images$;
-  }
-
-  editIngredientAfterImageLoading() {
-    const variations$ = this.checkVariationsOfEditedIngredient();
-    if (this.createdIngredient.image === ('url' || 'image')) {
-      this.createdIngredient.image = '';
-    }
-    const putingredient$ = this.ingredientService.updateIngredient(
-      this.createdIngredient,
-    );
+    const file: File = this.form.value.image;
+    this.savedIngredient = ingredient;
+    const variations$ =
+      this.checkVariationsOfEditedIngredient();
+    const deleteVariations$ = variations$.delete;
     const groups$: Observable<any>[] = this.compareGroups(this.oldGroupsIds);
 
-    const subscribes$ = [putingredient$, variations$.delete, ...groups$];
+    const observables$ =[...variations$.observables, ...groups$].length? [...variations$.observables, ...groups$] : of(null);
 
-    forkJoin(subscribes$)
+    const putIngredient$ = this.ingredientService
+      .updateIngredient(ingredient,this.currentUser.id)
       .pipe(
-        finalize(() => {
-          forkJoin(variations$.insert)
-            .pipe(
-              finalize(() => {
-                this.loading = false;
-                this.cd.markForCheck();
-                this.closeEmitter.emit();
-                this.editEmitter.emit();
-              }),
-            )
-            .subscribe();
-        }),
-        catchError((error) => {
-          console.error('Error occurred:', error);
-          this.error = '';
-          this.errorModal = true;
-          this.loading = false;
-          this.cd.markForCheck();
+        catchError((response: any) => {
+          if (response.error.info == 'NAME_EXISTS') {
+            this.throwErrorModal(
+              'Ингредиент с таким названием уже существует. Измените название и попробуйте снова.',
+            );
+          } else {
+            this.throwErrorModal(
+              'Произошла ошибка при попытке обновить ингредиент.',
+            );
+          }
           return EMPTY;
         }),
+      );
+
+    const loadImage$ = loadImage
+      ? this.ingredientService.uploadIngredientImage(file).pipe(
+          catchError(() => {
+            this.throwErrorModal(
+              'Произошла ошибка при попытке загрузить файл нового изображения ингредиента.',
+            );
+            return EMPTY;
+          }),
+          concatMap((response: any) => {
+            const filename = response.filename;
+            return this.ingredientService
+              .setImageToIngredient(ingredient.id, filename)
+              .pipe(
+                catchError(() => {
+                  this.throwErrorModal(
+                    'Произошла ошибка при попытке связать новое загруженное изображение и ингредиент.',
+                  );
+                  return EMPTY;
+                }),
+              );
+          }),
+        )
+      : of(null);
+
+    const deleteImage$ = deleteImage
+      ? this.ingredientService.deleteImage(oldImage!).pipe(
+          catchError(() => {
+            this.throwErrorModal(
+              'Произошла ошибка при попытке удалить старое изображение ингредиента.',
+            );
+            return EMPTY;
+          }),
+          concatMap(() => {
+            return this.ingredientService
+              .setImageToIngredient(ingredient.id, '')
+              .pipe(
+                catchError(() => {
+                  this.throwErrorModal(
+                    'Произошла ошибка при попытке удаления связи старого изображения с ингредиентом.',
+                  );
+                  return EMPTY;
+                }),
+              );
+          }),
+        )
+      : of(null);
+
+    putIngredient$
+      .pipe(
+        concatMap(() => deleteVariations$),
+        concatMap(() => forkJoin(observables$)),
+        concatMap(() => deleteImage$),
+        concatMap(() => loadImage$),
+
+        finalize(() => {
+          this.awaitModal = false;
+          this.cd.markForCheck();
+        }),
       )
-      .subscribe(() => {});
+      .subscribe({
+        next: () => {
+          this.successModalShow = true;
+        },
+      });
   }
 
   editIngredient() {
-    const images$ = this.checkImagesOfEditedIngredient();
-    if (images$.length) {
-      forkJoin(images$).subscribe(() => {
-        this.editIngredientAfterImageLoading();
-      });
-    } else {
-      this.editIngredientAfterImageLoading();
-    }
+    const ingredientByForm = getIngredientByForm(
+      this.form,
+      this.f('sources').controls,
+    );
+
+    const updatedIngredient: IIngredient = {
+      ...ingredientByForm,
+      id: this.editedIngredient.id,
+      image: this.getImageOfSavedIngredient(),
+      shoppingListGroup: this.selectedType.id,
+    };
+
+    this.PUTIngredient(updatedIngredient);
   }
 
   compareGroups(before: number[]) {
@@ -639,14 +649,14 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
       subscribes.push(
         this.ingredientService.setGroupToIngredient(
           addedGroupId,
-          this.createdIngredient.id,
+          this.savedIngredient.id,
         ),
       );
     });
     removed.forEach((removedGroupId) => {
       subscribes.push(
         this.ingredientService.unsetGroupInIngredient(
-          this.createdIngredient.id,
+          this.savedIngredient.id,
           removedGroupId,
         ),
       );
@@ -757,40 +767,50 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
   sendNotifyAfterCreatingIngredient() {
     let notification: INotification = nullNotification;
 
+    if (!this.currentUser.id) return;
+
     if (this.isManager) {
       const createdIngredientLink =
-        '/ingredients/list/' + this.createdIngredient.id;
-      // if (
-      //   this.userService.getPermission(
-      //     'your-ingredient-published',
-      //     this.currentUser,
-      //   )
-      // ) {
-      
-      if (this.userService.getPermission(this.currentUser.limitations || [], Permission.IngredientSend)) {
+        '/ingredients/list/' + this.savedIngredient.id;
 
-        notification = this.notificationService.buildNotification(
-          'Ингредиент опубликован',
-          `Созданный вами ингредиент «${this.createdIngredient.name}» успешно опубликован`,
-          'success',
-          'ingredient',
-          createdIngredientLink,
-        );
+      if (
+        this.userService.getPermission(
+          this.currentUser.limitations || [],
+          Permission.IngredientSend,
+        )
+      ) {
+        if (this.edit) {
+          notification = this.notificationService.buildNotification(
+            'Ингредиент изменен',
+            `Вы успешно изменили ингредиент «${this.savedIngredient.name}»`,
+            'success',
+            'ingredient',
+            createdIngredientLink,
+          );
+        } else {
+          notification = this.notificationService.buildNotification(
+            'Ингредиент опубликован',
+            `Созданный вами ингредиент «${this.savedIngredient.name}» успешно опубликован`,
+            'success',
+            'ingredient',
+            createdIngredientLink,
+          );
+        }
 
         this.notificationService
           .sendNotification(notification, this.currentUser.id, true)
-          .subscribe(
-        );
+          .subscribe();
       }
-        this.router.navigateByUrl(createdIngredientLink);
-              //}
-              
     } else {
-      if (this.userService.getPermission(this.currentUser.limitations || [], Permission.IngredientSend)) {
-
+      if (
+        this.userService.getPermission(
+          this.currentUser.limitations || [],
+          Permission.IngredientSend,
+        )
+      ) {
         notification = this.notificationService.buildNotification(
           'Ингредиент создан',
-          `Созданный вами ингредиент «${this.createdIngredient.name}» успешно создан и отправлен на проверку`,
+          `Созданный вами ингредиент «${this.savedIngredient.name}» успешно создан и отправлен на проверку`,
           'success',
           'ingredient',
           '',
@@ -798,7 +818,6 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
         this.notificationService
           .sendNotification(notification, this.currentUser.id, true)
           .subscribe();
-        //}
       }
     }
   }
@@ -828,19 +847,33 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
   }
   handleCreateModal(answer: boolean) {
     if (answer) {
-      this.ingredientAction();
-    } else {
-      this.addModalStyle();
+      this.saveIngredient();
     }
     this.createModalShow = false;
+    this.addModalStyle();
   }
+
+  private saveIngredient() {
+    this.awaitModal = true;
+    if (this.edit) {
+      this.editIngredient();
+    } else {
+      this.createIngredient();
+    }
+  }
+
+  savedIngredient: IIngredient = { ...nullIngredient };
+
   handleSuccessModal() {
     this.successModalShow = false;
+    this.sendNotifyAfterCreatingIngredient();
     this.closeEmitter.emit();
+
     if (this.edit) {
       this.editEmitter.emit();
+    } else {
+      this.router.navigateByUrl(`/ingredients/list/${this.savedIngredient.id}`);
     }
-    this.sendNotifyAfterCreatingIngredient();
   }
 
   //поиск типа ингредиента
@@ -913,10 +946,15 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
 
   areObjectsEqual(): boolean {
     if (this.edit)
-      if (this.editedIngredient.shoppingListGroup !== this.selectedType.id)
+      if (
+        JSON.stringify(this.oldGroupsIds) !==
+        JSON.stringify(this.selectedIngredientsGroups.map((g) => g.id))
+      )
         return true;
+    if (this.editedIngredient.shoppingListGroup !== this.selectedType.id)
+      return true;
     if (this.editedIngredient.image)
-      if (this.form.get('image')?.value !== 'url') return true;
+      if (this.form.get('image')?.value !== 'existing_photo') return true;
     return (
       JSON.stringify(this.beginningData) !==
       JSON.stringify(this.form.getRawValue())
@@ -947,14 +985,10 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
   }
 
   closeIngredientCreating(): void {
-    if (
-      !this.areObjectsEqual() &&
-      this.selectedIngredientsGroups.length === 0
-    ) {
-      this.closeEmitter.emit();
-    } else {
-      this.exitModalShow = true;
-    }
+
+    this.areObjectsEqual()
+      ? (this.exitModalShow = true)
+      : this.closeEmitter.emit(true);
   }
 
   f(field: string): FormArray {
@@ -978,11 +1012,11 @@ export class IngredientCreateComponent implements OnInit, OnDestroy {
 
   mainPhotoChange(event: any) {
     const input = event.target as HTMLInputElement;
-    const userpicFile: File | undefined = input.files?.[0];
+    const file: File | undefined = input.files?.[0];
 
-    if (userpicFile) {
-      this.form.get('image')?.setValue(userpicFile);
-      const objectURL = URL.createObjectURL(userpicFile);
+    if (file && checkFile(file)) {
+      this.form.get('image')?.setValue(file);
+      const objectURL = URL.createObjectURL(file);
       this.mainImage = objectURL;
     }
   }

@@ -137,12 +137,22 @@ h1 {
   color: var(--color-foreground-unactive);
 
   font-size: 0.9em;
+  margin-top: 0.2em;
 }
 
+.licon{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .likes,
 .actions {
   display: flex;
   column-gap: 2em;
+}
+.likes{
+  display: grid;
+  grid-template-columns: 2.5em 2.5em;
 }
 .like,
 .action {

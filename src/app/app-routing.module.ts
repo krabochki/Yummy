@@ -1,12 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { MainPageComponent } from './modules/recipes/components/main-page/main-page.component';
-import { PageNotFoundComponent } from './modules/common-pages/page-not-found/page-not-found.component';
-import { AnonimPageComponent } from './modules/common-pages/anonim/anonim.component';
-import { AboutComponent } from './modules/common-pages/about/about.component';
-import { UserPolicyComponent } from './modules/common-pages/user-policy/user-policy.component';
-import { UpdatesComponent } from './modules/common-pages/updates/updates/updates.component';
-import { RegBenefitsComponent } from './modules/common-pages/reg-benefits/reg-benefits.component';
+import { PageNotFoundComponent } from './modules/common-pages/components/page-not-found/page-not-found.component';
+import { AboutComponent } from './modules/common-pages/components/about/about.component';
+import { UserPolicyComponent } from './modules/common-pages/components/user-policy/user-policy.component';
+import { UpdatesComponent } from './modules/common-pages/components/updates/updates/updates.component';
+import { RegBenefitsComponent } from './modules/common-pages/components/reg-benefits/reg-benefits.component';
 
 const routes: Routes = [
   { path: '', component: MainPageComponent },
@@ -51,10 +50,6 @@ const routes: Routes = [
   {
     path: 'news',
     component: UpdatesComponent,
-  },
-  {
-    path: 'access-denied',
-    component: AnonimPageComponent,
   },
 
   { path: '**', component: PageNotFoundComponent },

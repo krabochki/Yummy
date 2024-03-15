@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { IRecipe, IRecipeStatistics, Instruction } from '../models/recipes';
-import { BehaviorSubject, EMPTY, Observable, finalize, of, tap } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, catchError, finalize, of, tap } from 'rxjs';
 import { getCurrentDate } from 'src/tools/common';
 import { IUser } from '../../user-pages/models/users';
 import { UserService } from '../../user-pages/services/user.service';
@@ -180,33 +180,30 @@ export class RecipeService {
     return recipe;
   }
 
-  addRecipeToFavorites(userId: number, recipe: IRecipe): IRecipe {
-    if (!recipe.favoritesId.includes(userId)) {
-      recipe.favoritesId.push(userId);
-    }
+  addRecipeToFavorites(recipe: IRecipe): IRecipe {
+    recipe.faved = true;
+
     return recipe;
   }
 
-  removeRecipeFromFavorites(userId: number, recipe: IRecipe): IRecipe {
-    if (recipe.favoritesId.includes(userId)) {
-      recipe.favoritesId = recipe.favoritesId.filter(
-        (favorite) => favorite !== userId,
-      );
+  removeRecipeFromFavorites(recipe: IRecipe): IRecipe {
+    if (recipe.faved) {
+      recipe.faved = false;
     }
 
     return recipe;
   }
 
-  cookRecipe(userId: number, recipe: IRecipe): IRecipe {
-    if (!recipe.cooksId.includes(userId)) {
-      recipe.cooksId.push(userId);
-    }
+  cookRecipe(recipe: IRecipe): IRecipe {
+    recipe.cooksLength++;
+    recipe.cooked = true;
+
     return recipe;
   }
-  uncookRecipe(userId: number, recipe: IRecipe): IRecipe {
-    if (recipe.cooksId.includes(userId)) {
-      recipe.cooksId = recipe.cooksId.filter((cooked) => cooked !== userId);
-    }
+  uncookRecipe(recipe: IRecipe): IRecipe {
+    recipe.cooked = false;
+    recipe.cooksLength--;
+
     return recipe;
   }
 
@@ -228,13 +225,6 @@ export class RecipeService {
       );
     else if (!recipe.loadAuthor) recipe.authorId = -1;
 
-    subscribes.push(
-      this.getLikes(recipe.id).pipe(
-        tap((response) => {
-          recipe.likesId = response.likesIds;
-        }),
-      ),
-    );
     if (fullMode) {
       subscribes.push(
         this.categoryService.getShortCategoriesByRecipe(recipe.id).pipe(
@@ -247,9 +237,7 @@ export class RecipeService {
           }),
         ),
       );
-    }
 
-    if (fullMode)
       subscribes.push(
         this.getVotes(recipe.id).pipe(
           tap((response) => {
@@ -257,22 +245,7 @@ export class RecipeService {
           }),
         ),
       );
-
-    subscribes.push(
-      this.getCooks(recipe.id).pipe(
-        tap((response) => {
-          recipe.cooksId = response.cooksIds;
-        }),
-      ),
-    );
-    subscribes.push(
-      this.getFavorites(recipe.id).pipe(
-        tap((response) => {
-          recipe.favoritesId = response.favoritesIds;
-          this.updateRecipeInRecipes(recipe);
-        }),
-      ),
-    );
+    }
 
     return subscribes;
   }
@@ -319,6 +292,7 @@ export class RecipeService {
         if (recipe.mainImage)
           this.downloadImage(recipe.mainImage)
             .pipe(
+              catchError(() => { return EMPTY }),
               finalize(() => {
                 this.setLoadingToRecipe(recipe.id, false);
               }),
@@ -348,8 +322,16 @@ export class RecipeService {
     };
   }
 
-  getRecipe(recipeId: number) {
-    return this.http.get<IRecipe>(`${this.recipesUrl}/recipe/${recipeId}`);
+  getShortRecipe(recipeId: number) {
+    return this.http.get<IRecipe>(
+      `${this.recipesUrl}/short-recipe/${recipeId}`,
+    );
+  }
+
+  getRecipe(recipeId: number, userId: number) {
+    return this.http.get<IRecipe>(
+      `${this.recipesUrl}/recipe/${recipeId}/${userId}`,
+    );
   }
 
   deleteRecipe(recipeId: number) {
@@ -434,8 +416,8 @@ export class RecipeService {
     return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
   }
 
-  getSomePopularRecipes(limit: number, page: number) {
-    const url = `${this.recipesUrl}/popular?limit=${limit}&page=${page}`;
+  getSomePopularRecipes(limit: number, page: number, userId: number) {
+    const url = `${this.recipesUrl}/popular/${userId}?limit=${limit}&page=${page}`;
     return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
   }
 
@@ -443,8 +425,8 @@ export class RecipeService {
     const url = `${this.recipesUrl}/awaiting?limit=${limit}&page=${page}`;
     return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
   }
-  getMostCommentedRecipes(limit: number, page: number) {
-    const url = `${this.recipesUrl}/most-commented?limit=${limit}&page=${page}`;
+  getMostCommentedRecipes(limit: number, page: number, userId: number) {
+    const url = `${this.recipesUrl}/most-commented/${userId}?limit=${limit}&page=${page}`;
     return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
   }
 
@@ -507,13 +489,13 @@ export class RecipeService {
     return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
   }
 
-  getSomeMostCookedRecipes(limit: number, page: number) {
-    const url = `${this.recipesUrl}/most-cooked?limit=${limit}&page=${page}`;
+  getSomeMostCookedRecipes(limit: number, page: number, userId: number) {
+    const url = `${this.recipesUrl}/most-cooked/${userId}?limit=${limit}&page=${page}`;
     return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
   }
 
-  getSomeMostFavoriteRecipes(limit: number, page: number) {
-    const url = `${this.recipesUrl}/most-favorite?limit=${limit}&page=${page}`;
+  getSomeMostFavoriteRecipes(limit: number, page: number, userId: number) {
+    const url = `${this.recipesUrl}/most-favorite/${userId}?limit=${limit}&page=${page}`;
     return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
   }
 
@@ -530,11 +512,12 @@ export class RecipeService {
   getSomeMostRecentRecipes(
     limit: number,
     page: number,
+    currentUserId:number,
     except?: number,
     authorId?: number,
   ) {
     const url =
-      `${this.recipesUrl}/most-recent?limit=${limit}&page=${page}` +
+      `${this.recipesUrl}/most-recent?limit=${limit}&page=${page}&currentUserId=${currentUserId}` +
       (except ? `&except=${except}&authorId=${authorId}` : '');
     return this.http.get<{ recipes: IRecipe[]; count: number }>(url);
   }
@@ -638,20 +621,20 @@ export class RecipeService {
     return this.http.get<IUser>(`${this.recipesUrl}/author/${authorId}`);
   }
 
-  getShortRecipeById(id: number) {
-    return this.http.get<IRecipe>(`${this.recipesUrl}/short-recipe/${id}`);
+  getMostShortedRecipe(id: number) {
+    return this.http.get<IRecipe>(`${this.recipesUrl}/most-shorted-recipe/${id}`);
   }
 
-  likeRecipe(userId: number, recipe: IRecipe): IRecipe {
-    if (!recipe.likesId.includes(userId)) {
-      recipe.likesId.push(userId);
-    }
+  likeRecipe(recipe: IRecipe): IRecipe {
+    recipe.liked = true;
+    recipe.likesLength = recipe.likesLength + 1;
+
     return recipe;
   }
-  unlikeRecipe(userId: number, recipe: IRecipe): IRecipe {
-    if (recipe.likesId.includes(userId)) {
-      recipe.likesId = recipe.likesId.filter((liked) => liked !== userId);
-    }
+  unlikeRecipe(recipe: IRecipe): IRecipe {
+    recipe.liked = false;
+    recipe.likesLength = recipe.likesLength - 1;
+
     return recipe;
   }
 

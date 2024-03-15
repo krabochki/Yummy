@@ -66,6 +66,7 @@ import {
   compareIngredients,
   compareInstructions,
 } from './compare';
+import { checkFile } from 'src/tools/error.handler';
 
 @Component({
   selector: 'app-recipe-create',
@@ -280,6 +281,9 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
 
                     if (res.image) {
                       return this.recipeService.downloadImage(res.image).pipe(
+                        catchError(() => {
+                          return EMPTY;
+                        }),
                         tap((blob) => {
                           const imageFile = getFileFromBlob(blob);
                           const imageData = {
@@ -300,11 +304,8 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
                 }),
               );
 
-            const image$ = recipe.mainImage
+            const image$: Observable<any> = recipe.mainImage
               ? this.recipeService.downloadImage(recipe.mainImage).pipe(
-                  finalize(() => {
-                    this.cd.markForCheck();
-                  }),
                   tap((blob) => {
                     if (blob) {
                       this.form.get('image')?.setValue('url');
@@ -320,57 +321,79 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
                 )
               : of(null);
 
-            forkJoin([
-              categories$,
-              instructions$,
-              ingredients$,
-              instructionsImages$,
-              image$,
-            ]).subscribe(() => {
-              addModalStyle(this.renderer);
+            forkJoin([categories$, instructions$, ingredients$]).subscribe(
+              () => {
+                image$
+                  .pipe(
+                    finalize(() => {
+                      instructionsImages$
+                        .pipe(
+                          tap(() => {}),
+                          finalize(() => {
+                            this.loading = false;
+                            addModalStyle(this.renderer);
 
-              this.instructionImages.forEach((image) => {
-                const instructionsArray = this.f('instructions');
-                const instructionIndex = instructionsArray.controls.findIndex(
-                  (control: AbstractControl) => {
-                    const id = control.get('id')?.value;
-                    return id === image.instructionId;
-                  },
-                );
-                const instructionGroup = instructionsArray.controls.find(
-                  (control: AbstractControl) => {
-                    const instructionId = control.get('id')?.value;
-                    return instructionId === image.instructionId;
-                  },
-                );
-                const imagesArray = instructionGroup?.get(
-                  'images',
-                ) as FormArray;
+                            this.instructionImages.forEach((image) => {
+                              const instructionsArray = this.f('instructions');
+                              const instructionIndex =
+                                instructionsArray.controls.findIndex(
+                                  (control: AbstractControl) => {
+                                    const id = control.get('id')?.value;
+                                    return id === image.instructionId;
+                                  },
+                                );
+                              const instructionGroup =
+                                instructionsArray.controls.find(
+                                  (control: AbstractControl) => {
+                                    const instructionId =
+                                      control.get('id')?.value;
+                                    return (
+                                      instructionId === image.instructionId
+                                    );
+                                  },
+                                );
+                              const imagesArray = instructionGroup?.get(
+                                'images',
+                              ) as FormArray;
 
-                let indexToAdd: number;
-                const emptyControlIndex = imagesArray.controls.findIndex(
-                  (control: AbstractControl) => {
-                    const value = control.value.file;
-                    return value == null;
-                  },
-                );
+                              let indexToAdd: number;
+                              const emptyControlIndex =
+                                imagesArray.controls.findIndex(
+                                  (control: AbstractControl) => {
+                                    const value = control.value.file;
+                                    return value == null;
+                                  },
+                                );
 
-                if (emptyControlIndex !== -1) {
-                  // Если есть пустой контрол, добавляем файл в него
-                  indexToAdd = emptyControlIndex;
-                  imagesArray.at(indexToAdd).setValue({ file: image.url });
-                }
+                              if (emptyControlIndex !== -1) {
+                                // Если есть пустой контрол, добавляем файл в него
+                                indexToAdd = emptyControlIndex;
+                                imagesArray.at(indexToAdd).setValue({
+                                  file: image.url,
+                                });
+                              }
 
-                this.instructionImagesVisibility[instructionIndex] = true;
-                this.images[instructionIndex][emptyControlIndex] =
-                  URL.createObjectURL(image.url);
-              });
-              this.oldInstructions = this.form.value.instructions;
-              this.loading = false;
+                              this.instructionImagesVisibility[
+                                instructionIndex
+                              ] = true;
+                              this.images[instructionIndex][emptyControlIndex] =
+                                URL.createObjectURL(image.url);
+                            });
 
-              this.cd.markForCheck();
-              this.beginningData = this.form.getRawValue();
-            });
+                            this.oldInstructions = this.form.value.instructions;
+                            this.loading = false;
+
+                            this.beginningData = this.form.getRawValue();
+
+                            this.cd.markForCheck();
+                          }),
+                        )
+                        .subscribe();
+                    }),
+                  )
+                  .subscribe();
+              },
+            );
           }),
         )
         .subscribe();
@@ -387,6 +410,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
       });
 
       const recipeData: IRecipe = {
+        ...nullRecipe,
         name: this.form.value.recipeName,
         reports: [],
         statistics: [],
@@ -402,9 +426,6 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
         servings: this.form.value.portions,
         authorId: this.currentUser.id,
         categories: categoriesIds,
-        cooksId: [],
-        likesId: [],
-        favoritesId: [],
         id: 0,
         comments: [],
         publicationDate: getCurrentDate(),
@@ -480,7 +501,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
             this.editedRecipe.id,
           );
 
-          subscribes = [...subscribes, ...instructions$]
+          subscribes = [...subscribes, ...instructions$];
 
           forkJoin(subscribes)
             .pipe(
@@ -971,12 +992,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     const file = event.target.files[0];
 
     if (file) {
-      const allowedExtensions = ['.png', '.jpg', '.jpeg', '.svg']; // Разрешенные расширения файлов
-      const fileName = file.name.toLowerCase();
-      const extension = fileName.substring(fileName.lastIndexOf('.')); // Получаем расширение файла
-
-      // Проверяем, что расширение файла присутствует в списке разрешенных расширений
-      if (allowedExtensions.includes(extension)) {
+      if(checkFile(file)){
         const formData = new FormData();
         formData.append('instuctionPhoto', file);
 
@@ -1008,7 +1024,7 @@ export class RecipeCreateComponent implements OnInit, OnDestroy {
     const input = event.target as HTMLInputElement;
     const userpicFile: File | undefined = input.files?.[0];
 
-    if (userpicFile) {
+    if (userpicFile && checkFile(userpicFile)) {
       this.form.get('image')?.setValue(userpicFile);
       const objectURL = URL.createObjectURL(userpicFile);
       this.mainImage = objectURL;

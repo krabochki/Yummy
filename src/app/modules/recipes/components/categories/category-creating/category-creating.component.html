@@ -77,7 +77,7 @@
                 <div
                   class="delete"
                   *ngIf="categoryImage !== defaultImage"
-                  (click)="unsetCategoryImage()"
+                  (click)="unsetImage()"
                 >
                   <svg-icon
                     [applyClass]="true"
@@ -95,13 +95,13 @@
                   }"
                   alt="Изображение категории"
                 >
-              <input type="file"   class="input-image" (change)="onCategoryImageChange($event)" accept="image/*" />
+              <input type="file"   class="input-image" (change)="onImageChange($event)" accept="image/*" />
               </div>
               </div>
             </div>
             <div class="main-info-controls">
               <div class="form-control">
-                <h3>Название категории</h3>
+                <h3>Название категории*</h3>
                 <app-usual-input
                   [inputRequired]="true"
                   [max]="30"
@@ -123,7 +123,7 @@
         </div>
         <div class="step-container" *ngIf="currentStep === 1">
           <div class="form-control">
-            <h3>Раздел категории</h3>
+            <h3>Раздел категории*</h3>
 
             <div>
               <app-autocomplete
@@ -132,7 +132,6 @@
                 [disabled]="this.form.get('section')?.value !== null"
                 [clearValueOnBlur]="true"
                 (sectionEmitter)="selectSection($event)"
-                [group]="group"
                 [placeholder]="
                   'Выберите соответствующий раздел для категории*'
                 "
@@ -299,7 +298,7 @@
 <app-modal
   @modal
   [style]="'await'"
-  *ngIf="awaitModalShow || initialLoading"
+  *ngIf="awaitModal || initialLoading"
 ></app-modal>
 <app-modal
   @modal
@@ -309,10 +308,10 @@
     'Произошла ошибка'
   "
   [type]="'Ok'"
-  (resultEmit)="errorModal=false"
+  (resultEmit)="handleErrorModal()"
   [buttonsText]="['Хорошо']"
   [description]="
-    error||'Произошла неизвестная ошибка'
+    errorModalContent||'Произошла неизвестная ошибка'
   "
 
 ></app-modal>

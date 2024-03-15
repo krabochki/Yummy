@@ -67,9 +67,10 @@ export class IngredientService {
   getFullIngredient(
     ingredientId: number,
     userId: number,
+    role:string
   ): Observable<IIngredient> {
     return this.http.get<IIngredient>(
-      `${this.ingredientsUrl}/full-ingredient/${ingredientId}/${userId}`,
+      `${this.ingredientsUrl}/full-ingredient/${ingredientId}/${userId}?role=${role}`,
     );
   }
 
@@ -173,13 +174,6 @@ export class IngredientService {
 
   currentUser: IUser = { ...nullUser };
 
-  getPublicIngredients() {
-    return this.http.get<IIngredient[]>(this.ingredientsUrl);
-  }
-
-  getAwaitsIngredients() {
-    return this.http.get<IIngredient[]>(this.ingredientsUrl + '/public');
-  }
   getGroupsOfIngredient(id: number) {
     return this.http.get<IGroup[]>(`${this.ingredientsUrl}/groups/${id}`);
   }
@@ -214,7 +208,6 @@ export class IngredientService {
   }
   setImageLoading(ingredientId: number, state: boolean) {
     const currentIngredients = this.ingredientSubject.value;
-    console.log(this.ingredientSubject.value);
     const index = currentIngredients.findIndex((r) => r.id === ingredientId);
     if (index !== -1) {
       const updatedIngredients = [...currentIngredients];
@@ -255,24 +248,25 @@ export class IngredientService {
     );
   }
 
-  approveIngredient(ingredientId: number) {
-    return this.http.put(`${this.ingredientsUrl}/approve/${ingredientId}`, {});
+  approveIngredient(ingredientId: number, approvedId:number) {
+    return this.http.put(`${this.ingredientsUrl}/approve/${ingredientId}/${approvedId}`, {});
   }
 
   getSomeAwaitingIngredients(limit: number, page: number) {
     const url = `${this.ingredientsUrl}/awaiting?limit=${limit}&page=${page}`;
     return this.http.get<{ ingredients: IIngredient[]; count: number }>(url);
   }
-  publishIngredient(ingredientId: number) {
-    const url = `${this.ingredientsUrl}/${ingredientId}/publish`;
-    return this.http.put(url, {});
-  }
-
-  updateIngredient(updatedIngredient: IIngredient) {
+ 
+  updateIngredient(updatedIngredient: IIngredient, changerId:number) {
     return this.http.put(
-      `${this.ingredientsUrl}/${updatedIngredient.id}`,
+      `${this.ingredientsUrl}/${updatedIngredient.id}/${changerId}`,
       updatedIngredient,
     );
+  }
+  setImageToIngredient(id: number, filename: string) {
+    return this.http.put(`${this.ingredientsUrl}/image/${id}`, {
+      image: filename,
+    });
   }
 
   uploadIngredientImage(file: File) {

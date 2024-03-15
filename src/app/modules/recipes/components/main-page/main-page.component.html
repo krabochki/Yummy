@@ -52,7 +52,7 @@
 <div class="block" *ngIf="!loadingMostCookedRecipes; else loading">
     <a routerLink="/recipes/most-cooked">
         <div class="head">
-            <h2>Готовят чаще всего</h2>
+            <h2>Самые приготавливаемые рецепты</h2>
 
             <svg-icon class="arrow-svg" [applyClass]="true" [src]="'/assets/images/svg/go-back.svg'"></svg-icon>
         </div>
@@ -74,7 +74,7 @@
 <div class="block" *ngIf="!loadingMostFavoriteRecipes; else loading">
     <a routerLink="/recipes/most-favorite">
         <div class="head">
-            <h2>Сохраняют чаще всего</h2>
+            <h2>Самые сохраняемые рецепты</h2>
 
             <svg-icon class="arrow-svg" [applyClass]="true" [src]="'/assets/images/svg/go-back.svg'"></svg-icon>
         </div>
@@ -94,7 +94,7 @@
 <div class="block" *ngIf="!loadingRecentRecipes; else loading">
     <a routerLink="/recipes/recent">
         <div class="head">
-            <h2>Свежие рецепты</h2>
+            <h2>Самые свежие рецепты</h2>
 
             <svg-icon class="arrow-svg" [applyClass]="true" [src]="'/assets/images/svg/go-back.svg'"></svg-icon>
         </div>
@@ -142,7 +142,7 @@
         <div class="block" *ngIf="!loadingCurentUserRecipes; else loading">
             <a routerLink="/recipes/yours">
                 <div class="head">
-                    <h2>Твои рецепты</h2>
+                    <h2>Ваши рецепты</h2>
 
                     <svg-icon class="arrow-svg" [applyClass]="true" [src]="'/assets/images/svg/go-back.svg'"></svg-icon>
                 </div>
@@ -165,7 +165,7 @@
         <div class="block" *ngIf="!loadingPlannedRecipes; else loading">
             <a routerLink="/recipes/planned">
                 <div class="head">
-                    <h2>Запланированные рецепты</h2>
+                    <h2>Вы запланировали эти рецепты</h2>
 
                     <svg-icon class="arrow-svg" [applyClass]="true" [src]="'/assets/images/svg/go-back.svg'"></svg-icon>
                 </div>

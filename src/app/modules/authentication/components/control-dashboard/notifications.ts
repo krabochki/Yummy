@@ -1,4 +1,4 @@
-import { IUpdate } from 'src/app/modules/common-pages/updates/updates/const';
+import { IUpdate } from 'src/app/modules/common-pages/components/updates/updates/const';
 import { ICategory } from 'src/app/modules/recipes/models/categories';
 import { IComment } from 'src/app/modules/recipes/models/comments';
 import { IIngredient } from 'src/app/modules/recipes/models/ingredients';

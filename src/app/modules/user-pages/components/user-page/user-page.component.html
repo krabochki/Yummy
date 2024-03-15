@@ -89,7 +89,7 @@
           <svg-icon class="hire-svg" [applyClass]="true" [src]="'/assets/images/svg/case.svg'"></svg-icon>
         </button>
 
-        <div [ngClass]="{'loading':user.loadingImage}" class="userpic" [style.background-image]="
+        <div (click)="viewAvatar() " [ngClass]="{'loading':user.loadingImage}" class="userpic" [style.background-image]="
             'url(' + (this.avatar?this.avatar:user.loadingImage?'' :'/assets/images/userpic.png') + ')'
           "></div>
 
@@ -355,3 +355,6 @@
 <app-modal (resultEmit)="handleSuccessHireModal()" @modal *ngIf="hireSuccessModalShow" [title]="'Успешное назначение'"
   [style]="'sec'" [type]="'Ok'" [buttonsText]="['Хорошо']"
   [description]="'Вы успешно назначили модератора ' + getName(this.user) + ''"></app-modal>
+
+    <app-image-viewer style="z-index:10; position: fixed;" @modal [currentImage]="startImageToView" (closeEmitter)="showedImages = []; startImageToView = 0"
+      *ngIf="showedImages.length > 0" [images]="showedImages"></app-image-viewer>

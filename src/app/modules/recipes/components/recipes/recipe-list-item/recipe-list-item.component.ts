@@ -35,9 +35,6 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
 
   protected destroyed$: Subject<void> = new Subject<void>();
 
-  protected isRecipeFavorite: boolean = false;
-  protected isRecipeLiked: boolean = false;
-  protected isRecipeCooked: boolean = false;
   protected dataLoaded = false;
   protected currentUser: IUser = { ...nullUser };
   protected author: IUser = { ...nullUser };
@@ -86,21 +83,6 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
         if (findedRecipe) {
           this.recipe = findedRecipe;
 
-          if (this.currentUser.id !== 0) {
-            if (this.recipe.likesId)
-              this.isRecipeLiked = this.recipe.likesId.includes(
-                this.currentUser.id,
-              );
-
-            if (this.recipe.cooksId)
-              this.isRecipeCooked = this.recipe.cooksId.includes(
-                this.currentUser.id,
-              );
-            if (this.recipe.favoritesId)
-              this.isRecipeFavorite = this.recipe.favoritesId.includes(
-                this.currentUser.id,
-              );
-          }
           this.cd.markForCheck();
         }
       });
@@ -126,14 +108,13 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.isRecipeFavorite = !this.isRecipeFavorite;
-    if (this.isRecipeFavorite) {
+    this.recipe.faved = !this.recipe.faved;
+    if (this.recipe.faved) {
       this.recipeService
         .pushToFavorites(this.recipe.id, this.currentUser.id)
         .pipe(
           tap(() => {
             const recipe = this.recipeService.addRecipeToFavorites(
-              this.currentUser.id,
               this.recipe,
             );
             this.recipeService.updateRecipeInRecipes(recipe);
@@ -146,7 +127,6 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
         .pipe(
           tap(() => {
             const recipe = this.recipeService.removeRecipeFromFavorites(
-              this.currentUser.id,
               this.recipe,
             );
             this.recipeService.updateRecipeInRecipes(recipe);
@@ -157,7 +137,7 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
 
     const authorId = this.recipe.authorId;
     if (
-      this.isRecipeFavorite &&
+      this.recipe.faved &&
       authorId > 0 &&
       authorId !== this.currentUser.id
     ) {
@@ -188,15 +168,14 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.isRecipeLiked = !this.isRecipeLiked;
+    this.recipe.liked = !this.recipe.liked;
 
-    if (this.isRecipeLiked) {
+    if (this.recipe.liked) {
       this.recipeService
         .setLike(this.recipe.id, this.currentUser.id)
         .pipe(
           tap(() => {
             const recipe = this.recipeService.likeRecipe(
-              this.currentUser.id,
               this.recipe,
             );
             this.recipeService.updateRecipeInRecipes(recipe);
@@ -209,7 +188,6 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
         .pipe(
           tap(() => {
             const recipe = this.recipeService.unlikeRecipe(
-              this.currentUser.id,
               this.recipe,
             );
             this.recipeService.updateRecipeInRecipes(recipe);
@@ -219,20 +197,17 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
     }
     const authorId = this.recipe.authorId;
 
-    if (
-      this.isRecipeLiked &&
-      authorId > 0 &&
-      authorId !== this.currentUser.id
-    ) {
+    if (this.recipe.liked && authorId > 0 && authorId !== this.currentUser.id) {
       this.userService
         .getLimitation(authorId, Permission.YourRecipeLiked)
         .subscribe((limit) => {
           if (!limit) {
             const notify: INotification = this.notifyService.buildNotification(
               'Твой рецепт оценили',
-              `Твой рецепт «${this.recipe.name}» понравился кулинару ${this.currentUser.fullName
-                ? this.currentUser.fullName
-                : '@' + this.currentUser.username
+              `Твой рецепт «${this.recipe.name}» понравился кулинару ${
+                this.currentUser.fullName
+                  ? this.currentUser.fullName
+                  : '@' + this.currentUser.username
               }`,
               'info',
               'recipe',
@@ -250,9 +225,9 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.isRecipeCooked = !this.isRecipeCooked;
+    this.recipe.cooked = !this.recipe.cooked;
 
-    if (this.isRecipeCooked) {
+    if (this.recipe.cooked) {
       const subscribes: Observable<any>[] = [];
       subscribes.push(
         this.recipeService.setCook(this.recipe.id, this.currentUser.id),
@@ -267,10 +242,7 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
       forkJoin(subscribes)
         .pipe(
           tap(() => {
-            let recipe = this.recipeService.cookRecipe(
-              this.currentUser.id,
-              this.recipe,
-            );
+            let recipe = this.recipeService.cookRecipe(this.recipe);
             recipe = this.recipeService.voteForRecipe(
               this.recipe,
               this.currentUser.id,
@@ -294,17 +266,14 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
       forkJoin(subscribes)
         .pipe(
           tap(() => {
-            const recipe = this.recipeService.uncookRecipe(
-              this.currentUser.id,
-              this.recipe,
-            );
+            const recipe = this.recipeService.uncookRecipe(this.recipe);
             this.recipeService.updateRecipeInRecipes(recipe);
           }),
         )
         .subscribe();
     }
 
-    if (this.isRecipeCooked) this.successVoteModalShow = true;
+    if (this.recipe.cooked) this.successVoteModalShow = true;
   }
 
   handleNoAccessModal(result: boolean) {
@@ -331,33 +300,33 @@ export class RecipeListItemComponent implements OnInit, OnDestroy {
     const authorId = this.recipe.authorId;
     setTimeout(() => {
       if (
-        this.isRecipeCooked &&
+        this.recipe.cooked &&
         authorId > 0 &&
         authorId !== this.currentUser.id
       ) {
-
         this.userService
           .getLimitation(authorId, Permission.YourRecipeFaved)
           .subscribe((limit) => {
-            if (!limit) {const notify: INotification = this.notifyService.buildNotification(
-              'Твой рецепт приготовили',
-              `Твой рецепт «${this.recipe.name}» приготовил кулинар ${
-                this.currentUser.fullName
-                  ? this.currentUser.fullName
-                  : '@' + this.currentUser.username
-              }${
-                this.vote
-                  ? ' и оставил положительный отзыв'
-                  : ' и оставил негативный отзыв'
-              }`,
-              'info',
-              'recipe',
-              '/cooks/list/' + this.currentUser.id,
-            );
-            this.notifyService.sendNotification(notify, authorId);
+            if (!limit) {
+              const notify: INotification =
+                this.notifyService.buildNotification(
+                  'Твой рецепт приготовили',
+                  `Твой рецепт «${this.recipe.name}» приготовил кулинар ${
+                    this.currentUser.fullName
+                      ? this.currentUser.fullName
+                      : '@' + this.currentUser.username
+                  }${
+                    this.vote
+                      ? ' и оставил положительный отзыв'
+                      : ' и оставил негативный отзыв'
+                  }`,
+                  'info',
+                  'recipe',
+                  '/cooks/list/' + this.currentUser.id,
+                );
+              this.notifyService.sendNotification(notify, authorId);
             }
-          })
-        
+          });
       }
 
       this.vote = false;

@@ -22,7 +22,7 @@ export class RecipeAccessGuard implements CanActivate {
 
     return this.auth.getTokenUser().pipe(
       switchMap((user: IUser) => {
-        return this.recipeService.getRecipe(recipeId).pipe(
+        return this.recipeService.getShortRecipe(recipeId).pipe(
           map((recipe: IRecipe) => {
             if (recipe && this.auth.checkValidity(recipe, user)) {
               return true;

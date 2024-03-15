@@ -50,13 +50,12 @@
   <div class="info">
 
     <section class="section-group">
-      <h2 class="load">Основное</h2>
 
       <section>
         <h3 class="load">
           Описание
         </h3>
-        <p *ngFor="let item of preloader" class="margin-block load" style="line-height:1">{{item}}
+        <p *ngFor="let item of preloader" class=" load" style="line-height:1">{{item}}
         </p>
       </section>
 
@@ -69,7 +68,7 @@
   <h1>{{ ingredient.name }}</h1>
 
   <div class="container">
-    <div class="image" [ngClass]="{ 'loading': ingredient.imageLoading}"
+    <div (click)="viewImage()" class="image" [ngClass]="{ 'loading': ingredient.imageLoading}"
       [style.background-image]="'url(' + (ingredient.imageURL ||( showCapture() ? placeholder : '')) + ')'">
       <p class="caption" *ngIf="showCapture()">Ингредиент<br>«{{ingredient.name}}»</p>
 
@@ -147,7 +146,7 @@
         </p>
       </section>
 
-      <section>
+      <section class="recipes-with">
         <p *ngIf="recipesLength > 0; else noRelatedRecipes">
           На сайте есть {{ recipesLength }}
           <span appPluralRu="" [value]="recipesLength" [arVariants]="['рецепт', 'рецепта', 'рецептов']"></span>
@@ -162,7 +161,7 @@
     </div>
   </div>
 
-  <div>
+  <div *ngIf="showContentBlock">
     <div class="info">
       <section id="main" class="section-group" *ngIf="showMainSection">
         <h2>Основное</h2>
@@ -368,26 +367,86 @@
       </section>
     </div>
   </div>
-    <section class="action-buttons" *ngIf="currentUser.role !== 'user' && showIngredientButtons()&&  ingredient.id >0 && !loading && ingredient.status !== 'awaits'">
+  <div>
+    <section class="action-buttons"
+      *ngIf="currentUser.role !== 'user' && showIngredientButtons()&&  ingredient.id >0 && !loading && ingredient.status !== 'awaits'">
       <button class="action-button edit" (click)="editModal = true">
-        <div class="action-icon"><svg-icon class="action-svg" [applyClass]="true" [src]="'/assets/images/svg/pen.svg'" />
+        <div class="action-icon"><svg-icon class="action-svg" [applyClass]="true"
+            [src]="'/assets/images/svg/pen.svg'" />
         </div>
         <p>Изменить ингредиент</p>
       </button>
       <button class="action-button delete" (click)="deleteModal = true">
-        <div class="action-icon"><svg-icon class="action-svg" [applyClass]="true" [src]="'/assets/images/svg/trash.svg'" />
+        <div class="action-icon"><svg-icon class="action-svg" [applyClass]="true"
+            [src]="'/assets/images/svg/trash.svg'" />
         </div>
         <p>Удалить ингредиент</p>
+      </button><button *ngIf="ingredient.sendDate||ingredient.approvedDate||ingredient.modifiedDate" [class]="'action-button info-btn ' + currentUser.role" (click)="moreInfo = !moreInfo">
+        <div [class]="'action-icon'">
+          <svg-icon class="action-svg" [applyClass]="true" [src]="'/assets/images/svg/info.svg'" />
+        </div>
+        <p>Подробнее</p>
       </button>
     </section>
+    <div @height *ngIf="moreInfo">
+      <div class="more-info">
+        <p *ngIf="ingredient.sendDate" [title]="getDate(ingredient.sendDate)">
+          Дата создания: {{ (ingredient.sendDate | timePast).toLowerCase() }}
+        </p>
+        <p *ngIf="ingredient.author && ingredient.creatorName">
+          Создал(-а):
+          <a class="action-link" [routerLink]="'/cooks/list/' + ingredient.author">{{
+            ingredient.creatorName
+            }}</a>
+        </p>
+        <p *ngIf="ingredient.approvedDate" [title]="getDate(ingredient.approvedDate)">
+          Дата одобрения: {{ (ingredient.approvedDate|timePast).toLowerCase() }}
+        </p>
+        <p *ngIf="ingredient.approvedId && ingredient.approvedName">
+          Одобрил(-а):
+          <a class="action-link" [routerLink]="'/cooks/list/' + ingredient.approvedId">{{
+            ingredient.approvedName
+            }}</a>
+        </p>
+        <p *ngIf="ingredient.modifiedDate" [title]="getDate(ingredient.modifiedDate)">
+          Дата последнего изменения: {{ (ingredient.modifiedDate | timePast).toLowerCase() }}
+        </p>
+
+
+
+        <p *ngIf="ingredient.changerId && ingredient.changerName">
+          Изменил(-а):
+          <a class="action-link" [routerLink]="'/cooks/list/' + ingredient.changerId">{{
+            ingredient.changerName
+            }}</a>
+        </p>
+      </div>
+    </div>
+  </div>
 
 </div>
-<app-modal [style]="'await'" *ngIf="loading"  @modal />
+<app-modal [style]="'await'" *ngIf="loading" @modal />
 
 
-  <app-ingredient-create 
-  *ngIf="editModal"
-  [editedIngredient]="ingredient" 
-  (editEmitter)="changeIngredientAfterEditing()" 
-  (closeEmitter)="editModal=false" 
-  @modal/>
+<app-ingredient-create *ngIf="editModal" [editedIngredient]="ingredient" (editEmitter)="changeIngredientAfterEditing()"
+  (closeEmitter)="editModal=false" @modal />
+
+<app-image-viewer style="z-index:10; position: fixed;" @modal [currentImage]="startImageToView"
+  (closeEmitter)="showedImages = []; startImageToView = 0" *ngIf="showedImages.length > 0"
+  [images]="showedImages"></app-image-viewer>
+
+
+
+<app-modal @modal [title]="'Удаление ингредиента'" [type]="'yesOrNo'" [buttonsText]="['Да', 'Отмена']"
+  *ngIf="deleteModal" (resultEmit)="handleDeleteModal($event)"
+  [description]="'Вы уверены, что хотите удалить этот ингредиент?'" [style]="'prim'" />
+
+<app-modal @modal [title]="'Ингредиент удален'" [type]="'Ok'" [buttonsText]="['Хорошо']" *ngIf="successDeleteModal"
+  (resultEmit)="handleSuccessDeleteModal()" [description]="'Ингредиент успешно удален'" [style]="'sec'" />
+
+
+<app-modal @modal *ngIf="errorModal" [style]="'prim'" [title]="
+              'Произошла ошибка'
+            " [type]="'Ok'" (resultEmit)="handleErrorModal()" [buttonsText]="['Хорошо']" [description]="
+              errorModalContent||'Произошла неизвестная ошибка'
+            "></app-modal>

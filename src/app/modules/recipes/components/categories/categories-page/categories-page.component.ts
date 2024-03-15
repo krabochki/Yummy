@@ -133,11 +133,8 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
       this.sectionService
         .getSomeSections(this.sectionsPerStep, this.currentStep)
         .subscribe((response: any) => {
-          setTimeout(() => {
             const newSections: ISection[] = response.results;
             const count = response.count;
-
-            console.log(newSections);
 
             const actualSections = newSections.filter(
               (newSection) =>
@@ -192,7 +189,6 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
                         this.categoryService.updateCategoryInCategories(
                           category,
                         );
-                        setTimeout(() => {
                           if (category.image)
                             this.categoryService
                               .downloadImage(category.image)
@@ -214,7 +210,6 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
                                 }),
                               )
                               .subscribe();
-                        }, 1000);
                       }
                     });
 
@@ -237,7 +232,6 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
                           this.popularCategories.forEach((category) => {
                             if (category.image) {
                               category.imageLoading = true;
-                              setTimeout(() => {
                                 if (category.image)
                                   this.categoryService
                                     .downloadImage(category.image)
@@ -258,7 +252,6 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
                                       }),
                                     )
                                     .subscribe();
-                              }, 1000);
                             }
                           });
                         }),
@@ -271,7 +264,6 @@ export class CategoriesPageComponent implements OnInit, OnDestroy {
                 }),
               )
               .subscribe();
-          }, 1500);
         });
     }
   }

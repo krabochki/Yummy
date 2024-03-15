@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { IComment } from '../../../models/comments';
+import { IComment, nullComment } from '../../../models/comments';
 import { IRecipe, nullRecipe } from '../../../models/recipes';
 
 @Component({
@@ -15,28 +15,25 @@ export class CommentsListComponent {
 
   preloaderComments: IComment[] = [
     {
+      ...nullComment,
       id: -1,
       text: 'dfffffffffffffffffffffffffffffffffffffffffffffff',
       authorId: -1,
       date: 'fddfdfd',
-      likesId: [],
-      dislikesId: [],
     },
     {
+      ...nullComment,
       id: -1,
       text: 'dfffffffffffffffffffffffffffffffffffffffffffffff',
       authorId: -1,
       date: 'fddfdfd',
-      likesId: [],
-      dislikesId: [],
     },
     {
+      ...nullComment,
       id: -1,
       text: 'dfffffffffffffffffffffffffffffffffffffffffffffff',
       authorId: -1,
       date: 'fddfdfd',
-      likesId: [],
-      dislikesId: [],
-    }
+    },
   ];
 }

@@ -6,7 +6,17 @@ export interface IIngredient {
   history: string;
   description: string;
   imageLoading?: boolean;
+  approvedName?: string;
+  creatorName?: string;
+  changerName?: string;
   recipesCount?: number;
+  modifiedDate?: string;
+
+  changerId?: number;
+  approvedDate?: string;
+
+  approvedId?: number;
+
   variations: string[]; //варианты написания ингредиента
   //которые будут учитываться при поиске рецептов с ним.например картофель: картошка, бульба и тд
   advantages?: string[];

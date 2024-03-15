@@ -81,7 +81,9 @@ export class LoginComponent implements OnInit, OnDestroy {
         ],
       ],
     });
+
   }
+  user: IUser = { ...nullUser };
 
   loginUser() {
     if (this.form.valid) {
@@ -101,18 +103,15 @@ export class LoginComponent implements OnInit, OnDestroy {
               .getTokenUser()
               .pipe(
                 tap((user:IUser) => {
-                  this.authService.getNotificationsByUser(user.id).subscribe(
-                    (notifies) => {
-                      user.notifications = notifies;
-                      this.successModal = true;
                       user.init = true;
-                      this.authService.setCurrentUser(user);
+                  
+                  this.user = user;
+                      this.successModal = true;
                       this.cd.markForCheck();
-                    }
-                  )
+                    
+                  
                 }),
                 catchError((e) => {
-                  console.log(e);
                   this.failInfo =
                     e.error.content || 'Произошла неизвестная ошибка';
                   this.errorModal = true;
@@ -139,7 +138,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   handleSuccessModal() {
-    this.router.navigateByUrl('/');
+this.authService.setCurrentUser(this.user)
+this.router.navigateByUrl('/');
+    
   }
 
   ngOnDestroy(): void {

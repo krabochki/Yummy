@@ -39,6 +39,7 @@ import { trimmedMinLengthValidator } from 'src/tools/validators';
 import { addModalStyle, removeModalStyle } from 'src/tools/common';
 import { groupCreatingPlaceholder } from 'src/tools/images';
 import { GroupService } from '../../../services/group.service';
+import { checkFile } from 'src/tools/error.handler';
 
 @Component({
   selector: 'app-group-creating',
@@ -367,7 +368,7 @@ export class GroupCreatingComponent implements OnInit, OnDestroy {
   onIngredientImageChange(event: Event) {
     const input = event.target as HTMLInputElement;
     const file: File | undefined = input.files?.[0];
-    if (file) {
+    if (file && checkFile(file)) {
       this.form.get('image')?.setValue(file);
       const objectURL = URL.createObjectURL(file);
       this.groupImage = objectURL;

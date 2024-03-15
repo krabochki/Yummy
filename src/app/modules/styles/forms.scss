@@ -37,6 +37,7 @@
 h3 {
   display: -webkit-box;
   display: -ms-flexbox;
+  line-height: 1;
   display: flex;
   height: 1.3em;
   width: -webkit-fit-content;
@@ -1058,10 +1059,6 @@ svg-icon {
   justify-content: center;
 }
 
-.boundary {
-  margin-bottom: 1em;
-}
-
 .ingred {
   h3 {
     text-align: center;
@@ -1087,6 +1084,10 @@ svg-icon {
   .no-content {
     text-align: center;
   }
+}
+
+.boundary + app-button{
+  margin-top: 1em;
 }
 
 .cont {

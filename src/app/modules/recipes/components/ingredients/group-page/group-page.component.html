@@ -29,11 +29,11 @@
         </div>
     </div>
 
-    <div class="sections">
+    <div class="sections" *ngIf="ingredients.length">
         <app-ingredients-vertical-list [ingredients]="ingredients"></app-ingredients-vertical-list>
     </div>
     <ng-container *ngIf="!loaded">
-        <div class="sections" >
+        <div class="sections" style="margin-top:1.2em" >
             <app-ingredients-vertical-list [preloader]="true"></app-ingredients-vertical-list>
         </div>
     </ng-container>

@@ -69,21 +69,21 @@
         </div>
         <div class="short-info row noselect" (click)="goToSection('stat')" *ngIf="this.recipe.status === 'public'">
           <div class="row likes">
-            <svg-icon class="head-icon" [applyClass]="true" [src]="'/assets/images/svg/like.svg'"></svg-icon>
+            <svg-icon style="zoom:0.9" class="head-icon" [applyClass]="true" [src]="'/assets/images/svg/like.svg'"></svg-icon>
 
-            <p>{{ recipe.likesId.length }}</p>
+            <p>{{ recipe.likesLength }}</p>
           </div>
 
           <div class="row cooks" (click)="goToSection('stat')">
             <svg-icon class="head-icon" [applyClass]="true" [src]="'/assets/images/svg/cook.svg'"></svg-icon>
 
-            <p>{{ recipe.cooksId.length }}</p>
+            <p>{{ recipe.cooksLength }}</p>
           </div>
           <div class="row comments" (click)="goToSection('comments')">
-            <svg-icon class="head-icon" [applyClass]="true" [src]="'/assets/images/svg/comment.svg'"></svg-icon>
+            <svg-icon class="head-icon" style="zoom:0.9" [applyClass]="true" [src]="'/assets/images/svg/chat.svg'"></svg-icon>
 
             <p>
-              {{ commentsLoaded && !recipeLoading ? commentsLength : "..." }}
+              {{ commentsLoaded && !recipeLoading ? this.recipe.commentsLength : "..." }}
             </p>
           </div>
         </div>
@@ -166,8 +166,8 @@
 
   <div class="column main">
     <div class="row center" [ngClass]="{'placeholder-gap':!recipe.imageURL}">
-      <ng-template  #potCook><div class="photo-placeholder noselect"><svg-icon class="photo-placeholder" [applyClass]="true" [src]="'/assets/images/svg/pot-cook.svg'"></svg-icon></div></ng-template>
-      <div class="main-photo noselect" *ngIf="recipe.mainImage; else potCook" (click)="recipe.imageURL ? viewMainImage() : null" [ngClass]="{
+      <ng-template  #potCook><div *ngIf="recipe.ingredients" class="photo-placeholder noselect"><svg-icon class="photo-placeholder" [applyClass]="true" [src]="'/assets/images/svg/pot-cook.svg'"></svg-icon></div></ng-template>
+      <div class="main-photo noselect" *ngIf="recipe.imageURL || recipe.mainImage && recipe.imageLoading; else potCook" (click)="recipe.imageURL ? viewMainImage() : null" [ngClass]="{
           placeholder: !recipe.imageURL,
           'image-loading': recipe.imageLoading
         }" [style.background-image]="
@@ -241,7 +241,6 @@
       </div>
     </div>
   </div>
-  <!-- <angular-image-viewer [src]="showedImages" [(index)]="imageIndex"></angular-image-viewer> -->
 
 
   <app-image-viewer @modal [currentImage]="startImageToView"  (closeEmitter)="showedImages = []; startImageToView = 0"
@@ -267,7 +266,7 @@
 
       <div class="row buttons noselect" id="stat" *ngIf="this.recipe.status === 'public'">
         <div title="Добавить рецепт в избранное" class="fav-button" (click)="makeThisRecipeFavorite()">
-          <svg-icon *ngIf="isRecipeFavorite; else noFav" class="fav-icon" [applyClass]="true"
+          <svg-icon *ngIf="recipe.faved; else noFav" class="fav-icon" [applyClass]="true"
             [src]="'/assets/images/svg/fav-fill.svg'"></svg-icon>
           <ng-template #noFav>
             <svg-icon class="fav-icon" [applyClass]="true" [src]="'/assets/images/svg/fav.svg'" />
@@ -281,33 +280,33 @@
 
         <div class="row" title="Отметить рецепт, как понравившийся" (click)="likeThisRecipe()">
           <div class="row-icon">
-            <svg-icon *ngIf="isRecipeLiked; else noLike" class="like-icon liked" [applyClass]="true"
+            <svg-icon *ngIf="recipe.liked; else noLike" class="like-icon liked" [applyClass]="true"
               [src]="'/assets/images/svg/like-fill.svg'"></svg-icon>
             <ng-template #noLike>
               <svg-icon class="like-icon" [applyClass]="true" [src]="'/assets/images/svg/like.svg'"></svg-icon>
             </ng-template>
           </div>
 
-          <p [ngClass]="{ liked: isRecipeLiked }">
-            {{ recipe.likesId.length }}
+          <p [ngClass]="{ liked: recipe.liked }">
+            {{ recipe.likesLength }}
           </p>
         </div>
         <div class="row" title="Отметить рецепт, как приготовленный" (click)="
             currentUser.id > 0
-              ? !isRecipeCooked
+              ? !recipe.cooked
                 ? (voteModalShow = true)
                 : cookThisRecipe()
               : (noAccessModalShow = true)
           ">
           <div class="row-icon">
-            <svg-icon *ngIf="isRecipeCooked; else noCook" class="cook-icon cooked" [applyClass]="true"
+            <svg-icon *ngIf="recipe.cooked; else noCook" class="cook-icon cooked" [applyClass]="true"
               [src]="'/assets/images/svg/cook-fill.svg'"></svg-icon>
             <ng-template #noCook>
               <svg-icon class="cook-icon" [applyClass]="true" [src]="'/assets/images/svg/cook.svg'"></svg-icon>
             </ng-template>
           </div>
-          <p [ngClass]="{ cooked: isRecipeCooked }">
-            {{ recipe.cooksId.length }}
+          <p [ngClass]="{ cooked: recipe.cooked }">
+            {{ recipe.cooksLength }}
           </p>
         </div>
 
@@ -334,8 +333,8 @@
 
       <div id="comments" class="column" style="overflow: visible" *ngIf="this.recipe.status === 'public'">
         <div style="overflow: visible">
-          <h2>Комментарии ({{ commentsLoaded ? commentsLength : "..." }})</h2>
-          <div>
+          <h2>Комментарии ({{ commentsLoaded ? this.recipe.commentsLength : "..." }})</h2>
+          <div *ngIf="!commentsLoaded || recipe.comments.length > 0">
             <app-comments-list [recipe]="recipe" [comments]="recipe.comments"></app-comments-list>
 
             <hr *ngIf="!commentsLoaded && recipe.comments.length > 0" class="comment-divider">
@@ -443,7 +442,7 @@
   </div>
 
 
-  <section class="action-buttons" *ngIf="showRecipeDeleteButton() && currentUser.role === 'admin' || (currentUser.role !=='user'&& recipe.id<1)">
+  <section class="action-buttons" *ngIf="(showRecipeDeleteButton() && currentUser.role === 'admin' || (currentUser.role !=='user'&& recipe.authorId<1)) && recipe.authorId !==currentUserId">
 
     <button class="action-button delete" (click)="deleteRecipeModalShow = true">
       <div class="action-icon"><svg-icon class="action-svg" [applyClass]="true"
@@ -721,7 +720,7 @@
   [description]="'Вы уверены, что хотите опубликовать комментарий?'"></app-modal>
 
 <app-modal @modal *ngIf="voteModalShow" [style]="'vote'" [title]="'Оставьте отзыв'" [type]="'yesOrNo'"
-  (resultEmit)="handleVoteModal($event)" [buttonsText]="['Приготовил бы', 'Не советую']" [description]="
+  (resultEmit)="handleVoteModal($event)" [buttonsText]="['Советую', 'Не советую']" [description]="
     'Поделитесь впечатлением для статистики рецепта: вы бы приготовили этот рецепт снова?'
   " (closeEmit)="voteModalShow = false"></app-modal>
 

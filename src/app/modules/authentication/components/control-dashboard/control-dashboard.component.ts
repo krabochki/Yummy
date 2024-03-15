@@ -63,11 +63,12 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   ) {}
 
   public ngOnInit(): void {
-    this.initAllData();
+        this.currentUserInit();
+          this.titleService.setTitle('Панель управления');
+
   }
 
   private initAllData(): void {
-    this.currentUserInit();
     const count$: Observable<any>[] = [];
     count$.push(this.getAwaitingCategoriesCount());
     count$.push(this.getAwaitingRecipesCount());
@@ -138,44 +139,25 @@ export class ControlDashboardComponent implements OnInit, OnDestroy {
   }
 
   private currentUserInit(): void {
+    this.authService.getTokenUser().subscribe(
+      (user) => {
+      
+        this.currentUser = user;
+        this.initAllData();
+                  this.cd.markForCheck();
+
+
+      }
+    )
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedUser: IUser) => {
         {
           this.currentUser = receivedUser;
-          this.titleService.setTitle(
-            this.currentUser.role === 'moderator'
-              ? 'Панель модератора'
-              : 'Панель администратора',
-          );
+          this.cd.markForCheck();
         }
       });
   }
-
-  // private demoteUser() {
-  //   this.targetDemotedUser.role = 'user';
-  //   this.userService
-  //     .updateUserProperty(this.targetDemotedUser.id, 'role', 'moderator')
-  //     .pipe(
-  //       tap(() => {
-  //         this.userService.updateUserInUsers(this.targetDemotedUser);
-  //         if (
-  //           this.userService.getPermission(
-  //             'you-was-fired',
-  //             this.targetDemotedUser,
-  //           )
-  //         ) {
-  //           this.notifyService
-  //             .sendNotification(
-  //               notifyForDemotedUser(this.currentUser, this.notifyService),
-  //               this.targetDemotedUser.id,
-  //             )
-  //             .subscribe();
-  //         }
-  //       }),
-  //     )
-  //     .subscribe();
-  // }
 
   public ngOnDestroy(): void {
     this.destroyed$.next();

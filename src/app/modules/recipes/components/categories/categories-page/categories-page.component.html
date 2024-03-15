@@ -15,10 +15,12 @@
     [rounded]="true"
   ></app-button>
 
-  <app-search
-    [disabled]="categories.length <= 0 && !loaded"
-    [context]="'sections & categories'"
-  ></app-search>
+<div class="search">
+    <app-search
+      [disabled]="categories.length <= 0 && !loaded"
+      [context]="'sections & categories'"
+    ></app-search>
+</div>
 
 
   <div>

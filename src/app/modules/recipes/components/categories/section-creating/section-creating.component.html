@@ -67,7 +67,7 @@
                   type="file"
                   class="input-image"
                   (change)="onSectionImageChange($event)"
-                  accept="image/*"
+                  accept=".png, .jpg, .jpeg, .svg" 
                 />
               </div>
             </div>
@@ -146,16 +146,11 @@
 ></app-modal>
 <app-modal
   [style]="'await'"
-  *ngIf="loading || !editedCategoryDataLoaded"
+  *ngIf="awaitModal || !editedCategoryDataLoaded"
   @modal
 />
-<app-modal
-  @modal
-  *ngIf="errorModal"
-  [style]="'prim'"
-  [title]="'Произошла ошибка'"
-  [type]="'Ok'"
-  (resultEmit)="errorModal = false"
-  [buttonsText]="['Хорошо']"
-  [description]="error || 'Произошла неизвестная ошибка'"
-></app-modal>
+<app-modal @modal *ngIf="errorModal" [style]="'prim'" [title]="
+    'Произошла ошибка'
+  " [type]="'Ok'" (resultEmit)="handleErrorModal()" [buttonsText]="['Хорошо']" [description]="
+    errorModalContent||'Произошла неизвестная ошибка'
+  "></app-modal>

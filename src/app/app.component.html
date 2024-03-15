@@ -1,28 +1,58 @@
-<div [style.display]="!loading?'inline':'none'">
-  <app-header  class="unstyled" (headerHeight)="getHeaderHeight($event)"></app-header>
-  
-  <div class="container" >
+<div [style.display]="!loading?'inline':'none'" *ngIf="!error ">
+  <app-header class="unstyled" (headerHeight)="getHeaderHeight($event)"></app-header>
+
+  <div class="container" *ngIf="!loading">
     <div class="content">
       <div class="header-margin" [ngStyle]="{ height: spaceUnderHeaderHeight + 'px' }"></div>
       <router-outlet></router-outlet>
     </div>
-  
+
     <footer class="footer">
       <app-footer></app-footer>
     </footer>
   </div>
+
+</div>
+<div class="content loading" *ngIf="loading && !error">
+  <div class="lds-ring">
+    <img [src]="'/assets/gifs/'+gif" alt="preloader">
+
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+</div>
+
+
+<div *ngIf="error" class="main">
+
+  <div class="cat-block">
+    <svg-icon [applyClass]="true" class="internet-icon" [src]="'/assets/images/svg/internet.svg'" />
+
+    
+   <div class="error-content">
+      <h1 class="error-title">{{getErrorHeader(error.status)}}</h1>
+
+      <div class="main-text">
+        <p>{{getErrorDescription(error.status)}}</p>
+              <div>
+          <p>Попробуйте сделать следующее:</p>
+          <ul>
+            <li>проверьте подключение к сети Интернет;</li>
+            <li>проверьте сетевые кабели, модем и маршрутизатор;</li>
+            <li>напишите на почту <a href="mailto:yummort@mail.ru">{{'yummort@mail.ru.'}}</a> </li>
+          </ul>
+
+        </div>
+                 
+              <p class="status">{{errorInfo() | uppercase}}</p>
+
+      </div>
   
+   </div>
+  </div>
+
+  <app-button (click)="reloadPage()" [rounded]="true" [style]="'outlined'" [color]="'prim'" [text]="'Обновить'"></app-button>
+
 </div>
-    <div class="content loading" *ngIf="loading"> 
-<div class="lds-ring">
-        <img [src]="'/assets/gifs/'+gif" alt="preloader">
-
-  <div></div>
-  <div></div>
-  <div></div>
-  <div></div>
-</div>
-    </div>
-
-
-

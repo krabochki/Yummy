@@ -6,10 +6,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { tap, finalize, Subject, takeUntil, Observable, forkJoin } from 'rxjs';
-import {
-  IUpdate,
-  nullUpdate,
-} from 'src/app/modules/common-pages/updates/updates/const';
+import { nullUpdate, IUpdate } from 'src/app/modules/common-pages/components/updates/updates/const';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import {
   getName,

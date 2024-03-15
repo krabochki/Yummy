@@ -1,15 +1,11 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<div *ngIf="currentUser.role !== 'user'" class="main" [ngClass]="{
+<div class="main" [ngClass]="{
     admin: this.currentUser.role === 'admin',
     moderator: this.currentUser.role === 'moderator'
   }">
   <h1>
-    {{
-    currentUser.role === "admin"
-    ? "Панель администратора"
-    : "Панель модератора"
-    }}
+    Панель управления
   </h1>
   <div class="wrap">
     <div class="blocks">
@@ -74,7 +70,7 @@
         </svg-icon>
       </div>
 
-      <div class="block yellow">
+      <div class="block yellow" *ngIf="currentUser.role === 'admin'">
         <div class="content">
           <span>{{ modetatorsLength === -1 ? '?' : modetatorsLength }}</span>
           <p>
@@ -101,7 +97,7 @@
           <li routerLink="/control-dashboard/reports" class="orange">
             Жалобы ({{ reportsLength === -1 ? "..." : reportsLength }})
           </li>
-          <li class="red" routerLink="/control-dashboard/ingredients" >
+          <li class="red" routerLink="/control-dashboard/ingredients">
             Ингредиенты ({{ ingredientsLength === -1 ? "..." : ingredientsLength }})
           </li>
           <li class="green" *ngIf="currentUser.role === 'admin'" routerLink="/control-dashboard/updates">

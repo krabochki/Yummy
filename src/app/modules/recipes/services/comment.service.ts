@@ -51,37 +51,37 @@ export class CommentService {
   dislikeComment(user: IUser, comment: IComment, recipe: IRecipe) {
     recipe.comments.map((item) => {
       if (comment.id === item.id) {
-        if (!comment.dislikesId.includes(user.id)) {
-          comment.dislikesId.push(user.id);
+        if (!comment.disliked) {
+          comment.disliked = true;
+          comment.dislikesLength++;
         }
-        if (comment.likesId.includes(user.id)) {
-          comment.likesId = comment.likesId.filter((id) => id !== user.id);
-        }
-      }
-    });
-  }
-
-  likeComment(user: IUser, comment: IComment, recipe: IRecipe) {
-    recipe.comments.map((item) => {
-      if (comment.id === item.id) {
-        if (!comment.likesId.includes(user.id)) {
-          comment.likesId.push(user.id);
-        }
-        if (comment.dislikesId.includes(user.id)) {
-          comment.dislikesId = comment.dislikesId.filter(
-            (id) => id !== user.id,
-          );
+        if (comment.liked) {
+          comment.liked = false;
+          comment.likesLength--;
         }
       }
     });
   }
 
-  deleteLikeFromComment(user: IUser, comment: IComment, recipe: IRecipe) {
+  likeComment(comment: IComment, recipe: IRecipe) {
     recipe.comments.map((item) => {
       if (comment.id === item.id) {
-        comment.likesId = comment.likesId.filter(
-          (userId) => userId !== user.id,
-        );
+        if (!comment.liked) {
+          comment.liked = true;
+          comment.likesLength++;
+        }
+        if (comment.disliked) {
+          comment.disliked = false;
+          comment.dislikesLength--;
+        }
+      }
+    });
+  }
+
+  deleteLikeFromComment(comment: IComment, recipe: IRecipe) {
+    recipe.comments.map((item) => {
+      if (comment.id === item.id) {
+        comment.liked=false
       }
     });
   }
@@ -89,9 +89,7 @@ export class CommentService {
   deleteDislikeFromComment(user: IUser, comment: IComment, recipe: IRecipe) {
     recipe.comments.map((item) => {
       if (comment.id === item.id) {
-        comment.dislikesId = comment.dislikesId.filter(
-          (userId) => userId !== user.id,
-        );
+        comment.disliked = false
       }
     });
   }
@@ -138,9 +136,9 @@ export class CommentService {
 
   commentsUrl: string = commentsSource;
 
-  getComments(recipeId: number, limit: number, page: number) {
+  getComments(recipeId: number, userId:number, limit: number, page: number) {
     return this.http.get<{ comments: IComment[]; count: number }>(
-      `${this.commentsUrl}/${recipeId}?limit=${limit}&page=${page}`,
+      `${this.commentsUrl}/recipe-comments/${recipeId}/${userId}?limit=${limit}&page=${page}`,
     );
   }
 
@@ -149,11 +147,5 @@ export class CommentService {
     return this.http.post(this.commentsUrl, comment);
   }
 
-  translateComments(comments: IComment[]): IComment[] {
-    comments.forEach((comment) => {
-      comment.dislikesId = comment.dislikesId || [];
-      comment.likesId = comment.likesId || [];
-    });
-    return comments;
-  }
+  
 }

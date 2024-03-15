@@ -21,8 +21,8 @@ export class CategoryService {
 
   constructor(private http: HttpClient) {}
 
-  getCategory(id: number) {
-    return this.http.get(this.categoriesUrl + '/category/' + id);
+  getCategory(id: number, role:string) {
+    return this.http.get(`${this.categoriesUrl}/category/${id}?role=${role}`);
   }
 
   getShortCategoriesByRecipe(id: number): Observable<ICategory[]> {
@@ -36,9 +36,7 @@ export class CategoryService {
     const url = `${this.categoriesUrl}/section/search/${sectionId}?search=${searchText}`;
     return this.http.get(url);
   }
-  getCategoryForEditing(
-    id: number,
-  ): Observable<ICategory> {
+  getCategoryForEditing(id: number): Observable<ICategory> {
     const url = `${this.categoriesUrl}/editing/${id}`;
     return this.http.get<ICategory>(url);
   }
@@ -111,15 +109,6 @@ export class CategoryService {
     this.categoriesSubject.next(categories);
   }
 
-  setSectionToCategory(sectionId: number, categoryId: number) {
-    const url = `${this.categoriesUrl}/set-section/${categoryId}`;
-    return this.http.put(url, { id: sectionId });
-  }
-
-  unsetSectionInCategory(categoryId: number) {
-    const url = `${this.categoriesUrl}/unset-section/${categoryId}`;
-    return this.http.put(url, {});
-  }
 
   updateCategoryInCategories(category: ICategory) {
     const currentCategories = this.categoriesSubject.value;
@@ -183,8 +172,8 @@ export class CategoryService {
     return findedCategories;
   }
 
-  publishCategory(categoryId: number) {
-    const url = `${this.categoriesUrl}/${categoryId}/publish`;
+  publishCategory(categoryId: number, managerId:number) {
+    const url = `${this.categoriesUrl}/${categoryId}/publish/${managerId}`;
     return this.http.put(url, {});
   }
 
@@ -194,9 +183,16 @@ export class CategoryService {
     );
   }
 
-  updateCategory(updatedCategory: ICategory) {
+  setImageToCategory(categoryId: number, filename: string) {
     return this.http.put(
-      `${this.categoriesUrl}/${updatedCategory.id}`,
+      `${this.categoriesUrl}/image/${categoryId}`,
+      { image: filename },
+    );
+  }
+
+  putCategory(updatedCategory: ICategory, changerId:number) {
+    return this.http.put(
+      `${this.categoriesUrl}/${updatedCategory.id}/${changerId}`,
       updatedCategory,
     );
   }

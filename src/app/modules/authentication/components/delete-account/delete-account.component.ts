@@ -91,11 +91,10 @@ export class DeleteAccountComponent implements OnInit {
     ])
       .pipe(
         tap(() => {
-          this.authService.setCurrentUser({ ...nullUser });
           this.cd.markForCheck();
-          this.successModalTitle = 'Успешное удаление';
+          this.successModalTitle = 'Аккаунт удален';
           this.successModalDescription =
-            'Вы успешно удалили свой аккаунт в социальной сети Yummy. Будем всегда рады видеть вас снова!';
+            'Вы удалили свой аккаунт в социальной сети Yummy. Будем всегда рады видеть вас снова!';
           this.successModal = true;
         }),
         finalize(() => {
@@ -116,6 +115,8 @@ export class DeleteAccountComponent implements OnInit {
 
   handleSuccessModal() {
     this.router.navigateByUrl('/');
+        this.authService.setCurrentUser({ ...nullUser });
+
   }
 
   handleCancelModal(answer: boolean) {

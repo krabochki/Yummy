@@ -33,12 +33,9 @@
                                 getName(getUser(ingredient.author)) }}</a>
                         </p>
                     </div>
-                    <div class="ingredient-image" [ngClass]="{ 'image-loading': ingredient.imageLoading }"
-                        [style.background-image]="
-              'url(' + (ingredient.imageURL || placeholder) + ')'
-            "></div>
+                    
 
-                    <div class="category-image" [style.background-image]="
+                    <div class="category-image" [ngClass]="{'zoom-img':!ingredient.imageURL,'image-loading': ingredient.imageLoading }" [style.background-image]="
                           'url(' +
                           (ingredient.image && ingredient.imageURL
                             ? ingredient.imageURL

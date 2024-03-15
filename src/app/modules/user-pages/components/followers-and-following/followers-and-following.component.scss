@@ -23,6 +23,7 @@ app-modal{
 
 .container {
   position: fixed;
+  backdrop-filter: blur(1px);
   top: 0;
   z-index: 100;
   left: 0;

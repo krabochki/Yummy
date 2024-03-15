@@ -292,16 +292,16 @@ li {
 
 @keyframes loading {
   0% {
-    background-color: var(--loading) ;
-    
+    background-color: var(--loading);
+
   }
 
   50% {
-    background-color: var(--loading-accent) ;
+    background-color: var(--loading-accent);
   }
 
   100% {
-    background-color: var(--loading) ;
+    background-color: var(--loading);
   }
 }
 
@@ -572,6 +572,10 @@ svg {
 }
 
 @media (max-width: 540px) {
+        .container .info {
+            width: unset;
+          }
+
   .img-cont {
     display: flex;
     width: 100%;
@@ -602,13 +606,16 @@ svg {
   .block1 {
     .statistics {
       display: flex;
-      flex-direction: column;
-      row-gap: 1em;
+      column-gap: 1.25em;
+    }
+
+    .col {
+      flex: unset;
     }
 
     .main {
       flex-direction: column;
-      row-gap: 2em;
+      row-gap:1em;
 
       .info {
         * {

@@ -21,8 +21,8 @@ export class SectionService {
     );
   }
 
-  getSection(id: number): Observable<ISection> {
-    const url = `${this.sectionsUrl}/some/${id}`;
+  getSection(id: number, role:string): Observable<ISection> {
+    const url = `${this.sectionsUrl}/some/${id}?role=${role}`;
     return this.http.get<ISection>(url);
   }
 
@@ -51,9 +51,14 @@ export class SectionService {
     return this.http.get<string[]>(url);
   }
 
-  getAllAboutSomeNotEmptySections(limit: number, page: number,userId:number) {
+  getAllAboutSomeNotEmptySections(limit: number, page: number, userId: number) {
     const url = `${this.sectionsUrl}/all-not-empty/${userId}?limit=${limit}&page=${page}`;
     return this.http.get(url);
+  }
+  setImageToSection(sectionId: number, filename: string) {
+    return this.http.put(`${this.sectionsUrl}/image/${sectionId}`, {
+      image: filename,
+    });
   }
 
   uploadSectionImage(file: File) {
@@ -112,8 +117,8 @@ export class SectionService {
     return sectionWithCategories;
   }
 
-  postSection(newSection: ISection) {
-    const url = `${this.sectionsUrl}`;
+  postSection(newSection: ISection, userId:number) {
+    const url = `${this.sectionsUrl}/${userId}`;
     return this.http.post(url, newSection);
   }
 

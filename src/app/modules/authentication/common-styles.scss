@@ -308,6 +308,10 @@ div.container.not-found {
 }
 
 @media (max-width: 768px) {
+
+  div.container.not-found.one-column .tagline{
+    width: 100%;
+  }
   .container {
     margin-right: 3em;
     margin-left: 3em;

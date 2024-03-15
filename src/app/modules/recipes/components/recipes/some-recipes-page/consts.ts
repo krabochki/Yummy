@@ -18,20 +18,20 @@ export enum RecipeType {
 }
 
 export const recipeTitles = {
-  [RecipeType.Recent]: 'Свежие рецепты',
+  [RecipeType.Recent]: 'Самые свежие рецепты',
   [RecipeType.Popular]: 'Популярные рецепты',
   [RecipeType.My]: 'Ваши рецепты',
-  [RecipeType.Favorite]: 'Закладки',
+  [RecipeType.Favorite]: 'Ваши закладки',
   [RecipeType.Category]: '',
   [RecipeType.All]: 'Все рецепты',
-  [RecipeType.Liked]: 'Любимые рецепты',
-  [RecipeType.Cooked]: 'Приготовленные рецепты',
+  [RecipeType.Liked]: 'Вам понравились эти рецепты',
+  [RecipeType.Cooked]: 'Вы приготовили эти рецепты',
   [RecipeType.Updates]: 'Обновления любимых кулинаров',
   [RecipeType.Discussed]: 'Самые обсуждаемые рецепты',
   [RecipeType.Commented]: 'Вы комментировали эти рецепты',
-  [RecipeType.Planning]: 'Запланированные рецепты',
-  [RecipeType.MostFavorite]: 'Наиболее сохраняемые рецепты',
-  [RecipeType.MostCooked]: 'Готовят чаще всего',  
+  [RecipeType.Planning]: 'Предстоящие запланированные рецепты',
+  [RecipeType.MostFavorite]: 'Самые сохраняемые рецепты',
+  [RecipeType.MostCooked]: 'Самые приготавливаемые чаще всего',  
   [RecipeType.Match]: 'Подобранные рецепты',
   [RecipeType.ByIngredient]:''
 };

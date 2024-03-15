@@ -1,0 +1,35 @@
+
+.twitter{
+    background-color: var(--twitter);
+}
+.pinterest{
+    background-color: var(--pinterest);
+}
+.vk{
+    background-color: var(--vk);
+}
+.facebook{
+    background-color: var(--facebook);
+}
+
+
+
+
+share-buttons{
+
+            width: 2em;
+    height:2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    border-radius: 100%;
+    transition: scale 0.2s ease-in-out;
+
+    &:hover,&:focus{
+        scale:1.2;
+    }
+    
+}
+

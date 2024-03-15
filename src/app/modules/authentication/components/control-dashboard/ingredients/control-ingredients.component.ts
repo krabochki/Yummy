@@ -18,6 +18,7 @@ import {
   forkJoin,
   map,
   Observable,
+  concatMap,
 } from 'rxjs';
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
@@ -186,7 +187,7 @@ export class ControlIngredientsComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       if (this.actionIngredient) {
         this.ingredientService
-          .approveIngredient(this.actionIngredient.id)
+          .approveIngredient(this.actionIngredient.id,this.currentUser.id)
           .pipe(
             tap(() => {
               if (this.actionIngredient) {
@@ -239,52 +240,56 @@ export class ControlIngredientsComponent implements OnInit, OnDestroy {
 
   dismissIngredient() {
     if (this.actionIngredient) {
-      const deleteIngredient$ = this.ingredientService.deleteIngredient(
-        this.actionIngredient.id,
-      );
+      this.loadingModal = true;
 
-      const deleteImage$ = this.actionIngredient.image
+      const deleteIngredient$ = this.ingredientService
+        .deleteIngredient(this.actionIngredient.id)
+        .pipe(
+          catchError(() => {
+            this.error = 'Произошла ошибка при попытке удалить ингредиент';
+            this.errorModal = true;
+            return EMPTY;
+          }),
+        );
+
+      const deleteImage$: Observable<any> = this.actionIngredient.image
         ? this.ingredientService.deleteImage(this.actionIngredient.image).pipe(
             catchError(() => {
               this.error =
-                'Произошла ошибка при удалении изображения удаляемого ингредиента';
-              this.errorModal = true;
-              this.loadingModal = false;
-              this.cd.markForCheck();
+                'Произошла ошибка при попытке удалить файл изображения ингредиента'
+                this.errorModal = true;
               return EMPTY;
             }),
           )
         : of(null);
 
-      forkJoin([deleteImage$, deleteIngredient$])
+      deleteImage$
         .pipe(
-          map(() => {
-            if (this.actionIngredient)
-              this.ingredientService.deleteIngredientFromIngredients(
-                this.actionIngredient,
-              );
+          concatMap(() => deleteIngredient$),
+          finalize(() => {
+            this.loadingModal = false;
+            this.cd.markForCheck();
+          }),
+        )
+        .subscribe({
+          next: () => {
             this.ingredients = this.ingredients.filter(
               (u) => u.id !== this.actionIngredient?.id,
             );
-
-            
             this.sendDismissNotify();
-
-            if (this.userService.getPermission(this.currentUser.limitations || [], Permission.WorkNotifies) && this.actionIngredient) {
-
-
+            if (
+              this.userService.getPermission(
+                this.currentUser.limitations || [],
+                Permission.WorkNotifies,
+              ) &&
+              this.actionIngredient
+            ) {
               this.sendNotifyToManager(
                 false,
                 this.actionIngredient,
               ).subscribe();
             }
             this.actionModal = true;
-          }),
-        )
-        .subscribe({
-          next: () => {
-            this.loadingModal = false;
-            this.cd.markForCheck();
           },
         });
     }

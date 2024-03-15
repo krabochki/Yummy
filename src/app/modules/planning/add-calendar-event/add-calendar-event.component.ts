@@ -112,7 +112,7 @@ export class AddCalendarEventComponent implements OnInit, OnDestroy {
 
       if (this.event.recipe) {
         this.recipeService
-          .getShortRecipeById(this.event.recipe)
+          .getMostShortedRecipe(this.event.recipe)
           .pipe(
             tap((recipe) => {
               this.selectedRecipe = recipe;

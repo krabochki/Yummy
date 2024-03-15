@@ -10,7 +10,7 @@ import {
   IGroup,
   nullIngredient,
 } from '../../../models/ingredients';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IngredientService } from '../../../services/ingredient.service';
 import { IRecipe, Nutrition } from '../../../models/recipes';
 import { ICategory } from '../../../models/categories';
@@ -20,14 +20,16 @@ import {
   Observable,
   Subject,
   catchError,
+  concatMap,
   finalize,
   forkJoin,
+  of,
   takeUntil,
   tap,
 } from 'rxjs';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
-import { setReadingTimeInMinutes } from 'src/tools/common';
+import { getFormattedDate, setReadingTimeInMinutes } from 'src/tools/common';
 import {
   ProductType,
   ShoppingListItem,
@@ -69,6 +71,9 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
   protected destroyed$: Subject<void> = new Subject<void>();
   groups: IGroup[] = [];
   addedAlready: boolean = false;
+
+  showedImages: string[] = [];
+  startImageToView = 0;
 
   get shoppingGroup(): ProductType {
     return (
@@ -159,8 +164,9 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private ingredientService: IngredientService,
     private titleService: Title,
-    private userService:UserService,
+    private userService: UserService,
     private planService: PlanService,
+    private router: Router,
     private authService: AuthService,
 
     private cd: ChangeDetectorRef,
@@ -170,13 +176,6 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
   placeholder = '/assets/images/ingredient-placeholder.png';
   ngOnInit() {
     this.ingredientService.setIngredients([]);
-    this.ingredientService.ingredients$.subscribe((ingredients) => {
-      const ingredient: IIngredient =
-        ingredients.find(
-          (ingredient) => ingredient.id === this.ingredient.id,
-        ) || nullIngredient;
-      this.ingredient = ingredient;
-    });
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((receivedUser) => {
@@ -187,6 +186,7 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
     this.route.data.subscribe((data) => {
       this.authService.getTokenUser().subscribe((receivedUser) => {
         this.currentUserId = receivedUser.id;
+        this.currentUserRole = receivedUser.role;
 
         this.ingredientService.setIngredients([]);
         this.ingredient = nullIngredient;
@@ -210,6 +210,15 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
     });
   }
 
+  viewImage() {
+    if (this.ingredient.imageURL) {
+      this.startImageToView = 0;
+      this.showedImages = [this.ingredient.imageURL];
+    }
+  }
+  getDate(date: string) {
+    return getFormattedDate(date);
+  }
   editModal = false;
   deleteModal = false;
 
@@ -226,19 +235,19 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
     this.addedAlready = false;
 
     this.titleService.setTitle(this.ingredient.name);
-    setTimeout(() => {
-      this.ingredient = this.resolverIngredient;
+    this.ingredient = this.resolverIngredient;
 
-      this.getIngredient(this.ingredient.id);
-    }, 500);
+    this.getIngredient(this.ingredient.id);
   }
+
+  currentUserRole: string = 'user';
 
   getIngredient(id: number) {
     this.ingredientService
-      .getFullIngredient(id, this.currentUserId)
+      .getFullIngredient(id, this.currentUserId, this.currentUserRole)
       .pipe(
         tap((ingredient: IIngredient) => {
-          this.ingredientService.addIngredientToIngredients(ingredient);
+          this.ingredient = ingredient;
           const subscribes$: Observable<any>[] = [];
           subscribes$.push(
             this.ingredientService.getGroupsOfIngredient(ingredient.id).pipe(
@@ -284,13 +293,12 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
             );
 
           forkJoin(subscribes$).subscribe(() => {
-            this.initialLoading = false;          
+            this.initialLoading = false;
 
             this.cd.markForCheck();
           });
 
-                    this.downloadImage();
-
+          this.downloadImage();
 
           this.recipesLength = ingredient.recipesCount || 0;
         }),
@@ -351,7 +359,7 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
       Permission.IngredientsManagingButtons,
     );
   }
-  
+
   addParagraphs(text: string) {
     return text.replace(/\n/g, '<br>');
   }
@@ -362,38 +370,24 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
 
   downloadImage() {
     if (this.ingredient.image) {
-                this.ingredient.imageLoading = true;
-                this.ingredientService.updateIngredientInIngredients(
-                  this.ingredient,
-                );
-      this.cd.markForCheck();
-        this.ingredientService
-          .downloadImage(this.ingredient.image!)
-          .pipe(
-            finalize(() => {
-              this.ingredientService.setImageLoading(this.ingredient.id, false);
-              this.ingredient.imageLoading = false;
-              this.ingredientService.updateIngredientInIngredients(
-                this.ingredient,
-              );
-
-              this.cd.markForCheck();
-            }),
-            tap((blob) => {
-              if (blob) {
-                this.ingredient.imageURL = URL.createObjectURL(blob);
-                this.ingredientService.updateIngredientInIngredients(
-                  this.ingredient,
-                );
-                this.cd.markForCheck();
-              }
-            }),
-            catchError(() => {
-              return EMPTY;
-            }),
-          )
-          .subscribe();
-
+      this.ingredient.imageLoading = true;
+      this.ingredientService
+        .downloadImage(this.ingredient.image!)
+        .pipe(
+          finalize(() => {
+            this.ingredient.imageLoading = false;
+            this.cd.markForCheck();
+          }),
+          tap((blob) => {
+            if (blob) {
+              this.ingredient.imageURL = URL.createObjectURL(blob);
+            }
+          }),
+          catchError(() => {
+            return EMPTY;
+          }),
+        )
+        .subscribe();
     }
   }
 
@@ -447,5 +441,70 @@ export class IngredientPageComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroyed$.next();
     this.destroyed$.complete();
+  }
+
+  handleDeleteModal(answer: boolean) {
+    if (answer) {
+      this.deleteIngredient();
+    }
+    this.deleteModal = false;
+  }
+
+  deleteIngredient() {
+    this.loading = true;
+
+    const deleteIngredient$ = this.ingredientService
+      .deleteIngredient(this.ingredient.id)
+      .pipe(
+        catchError(() => {
+          this.throwErrorModal(
+            'Произошла ошибка при попытке удалить ингредиент',
+          );
+          return EMPTY;
+        }),
+      );
+
+    const deleteImage$: Observable<any> = this.ingredient.image
+      ? this.ingredientService.deleteImage(this.ingredient.image).pipe(
+          catchError(() => {
+            this.throwErrorModal(
+              'Произошла ошибка при попытке удалить файл изображения ингредиента',
+            );
+            return EMPTY;
+          }),
+        )
+      : of(null);
+
+    deleteImage$
+      .pipe(
+        concatMap(() => deleteIngredient$),
+        finalize(() => {
+          this.loading = false;
+          this.cd.markForCheck();
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.successDeleteModal = true;
+        },
+      });
+  }
+  moreInfo = false;
+  throwErrorModal(content: string) {
+    this.errorModalContent = content;
+    this.errorModal = true;
+  }
+
+  errorModalContent = '';
+  successDeleteModal = false;
+  errorModal = false;
+
+  handleErrorModal() {
+    this.errorModal = false;
+  }
+
+  handleSuccessDeleteModal() {
+    this.successDeleteModal = false;
+    this.router.navigateByUrl('/ingredients');
   }
 }

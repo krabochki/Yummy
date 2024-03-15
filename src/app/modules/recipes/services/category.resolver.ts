@@ -19,7 +19,7 @@ export class CategoryResolver {
       return EMPTY;
     }
 
-    return this.categoryService.getCategory(categoryId).pipe(
+    return this.categoryService.getCategory(categoryId, 'user').pipe(
       map((response: any) => {
         const category: ICategory = response[0];
         if (category) {

@@ -76,7 +76,8 @@
                 class="file"
                   type="file"
                   (change)="onUserpicChange($event)"
-                  accept="image/*"
+                    accept=".png, .jpg, .jpeg, .svg" 
+
                 />
 
                 <div
@@ -102,7 +103,7 @@
             </div>
             <div class="main-info-controls">
               <div class="form-control">
-                <h3>Имя пользователя</h3>
+                <h3>Имя пользователя*</h3>
                 <app-usual-input
                   [inputRequired]="true"
                   [max]="20"

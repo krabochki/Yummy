@@ -24,11 +24,15 @@ import {
 } from './consts';
 import { NavigationEnd, Router } from '@angular/router';
 import {
+  EMPTY,
   Observable,
   Subject,
+  catchError,
   filter,
   finalize,
   forkJoin,
+  of,
+  switchMap,
   takeUntil,
   tap,
 } from 'rxjs';
@@ -75,13 +79,15 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   recipeSelectItems = recipeSelectItems;
   cooksSelectItems = cooksSelectItems;
 
-  mobileRecipeSelectItems = recipeSelectItems.slice(1, 7);
+  mobileRecipeSelectItems = recipeSelectItems.slice(1, 9);
   mobileCooksSelectItems = cooksSelectItems.slice(1, 4);
   mobilePlanSelectItems = planSelectItems.slice(1, 4);
 
   cookRouterLinks = cookRouterLinks;
   planSelectItems = planSelectItems;
   planRouterLinks = planRouterLinks;
+
+  notReadedNotifies = 0;
 
   mobileMenuOpen = false;
 
@@ -98,7 +104,6 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
 
   exitModalShow = false;
   notifiesOpen: boolean = false;
-  notifies: INotification[] = [];
 
   mobile: boolean = false;
 
@@ -143,13 +148,6 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   protected nightModeEmit() {
     this.themeService.changeTheme();
   } //переключ темной темы
-
-  get notificationCount() {
-    if (this.currentUser.notifications)
-      return this.currentUser.notifications.filter((n) => !!n.read === false)
-        .length;
-    else return 0;
-  }
 
   get showAdminpanel() {
     return this.userService.getPermission(
@@ -200,9 +198,6 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
       this.mobile = false;
     }
     this.currentUserInit();
-
-    this.sendDarkModeNotify();
-    this.remindersInit();
   }
 
   private sendDarkModeNotify() {
@@ -305,10 +300,14 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   }
 
   startedEventsHandling(userId: number) {
-    this.planService
-      .getStartedEventsByUserId(userId)
-      .pipe(
-        tap((startedEvents: ICalendarDbEvent[]) => {
+    if (
+      this.userService.getPermission(
+        this.currentUser.limitations || [],
+        Permission.StartOfPlannedRecipeNotify,
+      )
+    ) {
+      return this.planService.getStartedEventsByUserId(userId).pipe(
+        switchMap((startedEvents: ICalendarDbEvent[]) => {
           if (startedEvents.length) {
             const reminders$: Observable<any>[] = [];
             startedEvents.forEach((event) => {
@@ -316,33 +315,40 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
                 this.notifyService.sendNotification(
                   this.notifyForStartedEvents(event),
                   userId,
-                  true,
                 ),
               );
             });
-            forkJoin(reminders$).subscribe();
-            // this.userService.getPermission 'start-of-planned-recipe',
+            return forkJoin(reminders$);
+          } else {
+            return of(null);
           }
         }),
-      )
-      .subscribe();
+      );
+    } else {
+      return of(null);
+    }
   }
 
   upcomingEventsHandling(userId: number) {
-    this.planService
-      .getUpcomingEventsByUserId(userId)
-      .pipe(
-        tap((upcomingEvents: ICalendarDbEvent[]) => {
+          console.log(this.currentUser.limitations);
+
+    if (
+      this.userService.getPermission(
+        this.currentUser.limitations || [],
+        Permission.PlannedRecipesInThreeDays,
+      )
+    ) {
+      return this.planService.getUpcomingEventsByUserId(userId).pipe(
+        switchMap((upcomingEvents: ICalendarDbEvent[]) => {
+          console.log(upcomingEvents)
           if (upcomingEvents.length) {
             const reminder = this.notifyForUpcomingEvents(upcomingEvents);
-            //this.userService.getPermission 'planned-recipes-in-3-days',
-            this.notifyService
-              .sendNotification(reminder, userId, true)
-              .subscribe();
+            return this.notifyService.sendNotification(reminder, userId);
           }
+          return of(null); // Возвращаем Observable, чтобы поддержать цепочку
         }),
-      )
-      .subscribe();
+      );
+    } else return of(null);
   }
 
   deleteNotify(notifyId: number) {
@@ -355,6 +361,8 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     if (!this.currentUser.id) {
       this.noAccessModalShow = true;
     } else this.notifiesOpen = true;
+    this.popups = [];
+    this.cd.markForCheck();
   }
 
   handleExitModal(answer: boolean) {
@@ -363,145 +371,173 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     if (answer) {
       this.loading = true;
       this.authService.logout().subscribe(() => {
+        this.router.navigateByUrl('/');
+        this.mobileMenuOpen = false;
+        this.loading = false;
+        this.router.navigateByUrl('/');
         this.authService.setCurrentUser(nullUser);
       });
-      this.router.navigateByUrl('/');
-      this.mobileMenuOpen = false;
-      this.loading = false;
     }
   }
 
-  popupsInit(user: IUser) {
-    if (user.id !== this.currentUser.id && this.currentUser.id > 0) {
-      this.popups = [];
-      this.popupHistory = [];
-    }
-
-    if (this.currentUser.notifications) {
-      const noChangesInNotifies =
-        this.currentUser.notifications.length === this.notifies.length &&
-        this.currentUser.notifications.every(
-          (element, index) => element === this.notifies[index],
+  popupsInit() {
+    if (this.currentUser.id) {
+      return this.notifyService
+        .getFirstUnreadedNotifications(this.currentUser.id)
+        .pipe(
+          tap((response) => {
+            const notifications:INotification[] = response.notifications;
+            this.notReadedNotifies = response.count;
+            this.notifiesHistory = [...this.notifiesHistory, ...notifications.map(n=>n.id)]
+            this.currentUser.notifications = notifications;
+            this.authService.setCurrentUser(this.currentUser);
+            this.updateNotifies();
+            this.sendDarkModeNotify();
+          }),
         );
-      if (this.currentUser.id !== 0 && !noChangesInNotifies) {
-        this.updateNotifies();
+    } else {
+      this.sendDarkModeNotify();
+
+      return of(null);
+    }
+
+    // if (this.currentUser.notifications.length) {
+    //   const noChangesInNotifies =
+    //     this.currentUser.notifications.length === this.notifies.length &&
+    //     this.currentUser.notifications.every(
+    //       (element, index) => element === this.notifies[index],
+    //     );
+    //   if (this.currentUser.id !== 0 && !noChangesInNotifies) {
+    //     this.updateNotifies();
+    //   }
+    //   this.cd.markForCheck();
+    // }
+  }
+
+  loadUserpic() {
+    if (this.currentUser.id) {
+      const avatar = this.currentUser.image;
+      if (avatar) {
+        return this.userService.downloadUserpic(avatar).pipe(
+          tap((blob) => {
+            this.avatar = URL.createObjectURL(blob);
+          }),
+          catchError(() => {
+            this.avatar = ''
+            return EMPTY
+          })
+        );
+      } else {            this.avatar = '';
+
+        return of(null);
       }
-      this.cd.markForCheck();
+    } else {            this.avatar = '';
+
+      return of(null);
     }
   }
+
+  init = false;
 
   currentUserInit() {
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((user) => {
-        this.currentUser = user;
-
-        const avatar = user.image;
-
-        if (user.id !== this.currentUser.id) {
-          if (avatar) {
-            this.userService
-              .downloadUserpic(avatar)
-              .pipe(
-                tap((blob) => {
-                  this.avatar = URL.createObjectURL(blob);
-                }),
-                finalize(() => {
-                  this.cd.markForCheck();
-                }),
-              )
-              .subscribe();
-            // get userpic
-          }
+        if (!this.init) {
+          this.authService.getTokenUser().subscribe((tokenUser) => {
+            this.currentUser = tokenUser;
+            this.authService.loadingSubject.next(true);
+            this.init = true;
+            this.remindersInit();
+          });
         } else {
-          this.avatar = '';
+                  this.currentUser = user;
+
+          if (user.id !== this.currentUser.id) {
+            this.popupHistory = [];
+            this.popups = [];
+            this.authService.loadingSubject.next(true);
+            this.remindersInit();
+          }
+          else {
+
+            this.currentUser.notifications.forEach(n => {
+              if (!n.read && !this.notifiesHistory.includes(n.id)) {
+                this.notReadedNotifies++;
+                this.notifiesHistory.push(n.id)
+              }
+            });
+            this.updateNotifies();
+          }
         }
-        this.popupsInit(this.currentUser);
+
+
         this.cd.markForCheck();
       });
   }
 
-  remindersInit() {
-    this.authService.getTokenUser().subscribe((user) => {
-      if (user.id) {
-        forkJoin([
-          this.planService.deleteOldStartedReminders(user.id),
-          this.planService.deleteOldUpcomingReminders(user.id),
-        ]).subscribe(() => {
-          const reminders$: Observable<any>[] = [];
-          reminders$.push(this.planService.deleteOldUpcomingReminders(user.id));
 
-          forkJoin(reminders$).subscribe(() => {
-            this.authService
-              .getNotificationsByUser(user.id)
-              .subscribe((notifications: INotification[]) => {
-                this.userService
-                  .getLimitations(user.id)
-                  .subscribe((limitations) => {
-                    user.notifications = notifications;
-                    user.limitations = limitations;
-
-                    this.planService.hasUpcomingReminder(user.id).pipe(
-                      tap((res) => {
-                        this.userService
-                          .getLimitation(
-                            user.id,
-                            Permission.PlannedRecipesInThreeDays,
-                          )
-                          .subscribe((limit) => {
-                            if (!limit && !res.hasRows) {
-                              this.upcomingEventsHandling(user.id);
-                            }
-                          });
-                        
-                        this.userService
-                          .getLimitation(
-                            user.id,
-                            Permission.StartOfPlannedRecipeNotify,
-                          )
-                          .subscribe((limit) => {
-
-                            if (!limit) {
-                                                      this.startedEventsHandling(
-                                                        user.id,
-                                                      );
-
-                            }
-                          })
-
-                      }),
-                    ),
-                      this.authService.loadCurrentUser(user);
-                  });
-              });
-          });
-        });
-      } else {
-        this.authService.loadCurrentUser(nullUser);
-      }
-    });
+  notifiesHistory: number[] = []; 
+  getUserLimitations() {
+    return this.userService.getLimitations(this.currentUser.id).pipe(
+      tap((limitations) => {
+        this.currentUser.limitations = limitations;
+      }),
+    );
   }
 
-  makeAllNotifiesReaded() {
-    let haveNotRead: boolean = false;
-    this.notifies.forEach((notification) => {
-      if (notification.read === 0) {
-        haveNotRead = true;
-      }
-    });
-
-    if (haveNotRead) {
-      this.notifyService
-        .markNotificationsAsRead(this.currentUser.id)
-        .subscribe({
-          next: () => {
-            this.currentUser.notifications.forEach((notify: INotification) => {
-              notify.read = 1;
-            });
-            this.authService.setCurrentUser(this.currentUser);
-          },
+  remindersInit() {
+    if (this.currentUser.id) {
+      this.planService
+        .deleteOldStartedReminders(this.currentUser.id)
+        .pipe(
+          switchMap(() =>
+            this.currentUser.id
+              ? this.planService.deleteOldUpcomingReminders(this.currentUser.id)
+              : of(null),
+          ),
+          
+          switchMap(() =>
+            this.currentUser.id ? this.getUserLimitations() : of(null),
+          ),
+          switchMap(() => this.loadUserpic()),
+          switchMap(() =>
+            this.currentUser.id
+              ? this.planService
+                  .hasUpcomingReminder(this.currentUser.id)
+                .pipe(
+                  tap((res) => {
+                      console.log(res)
+                    }),
+                    switchMap((res) =>
+                      !res.hasRows
+                        ? this.upcomingEventsHandling(this.currentUser.id)
+                        : of(null),
+                    ),
+                  )
+              : of(null),
+          ),
+          switchMap(() =>
+            this.currentUser.id
+              ? this.startedEventsHandling(this.currentUser.id)
+              : of(null),
+          ),
+          switchMap(() => this.popupsInit()),
+        )
+        .subscribe(() => {
+          this.authService.loadCurrentUser(this.currentUser);
+          this.cd.markForCheck();
         });
+    } else {
+      this.authService.loadCurrentUser(nullUser);
     }
+  }
+
+  markNotifiesAsReaded() {
+    this.currentUser.notifications.forEach((notify: INotification) => {
+      notify.read = 1;
+    });
+    this.authService.setCurrentUser(this.currentUser);
   }
 
   updateNotifies() {
@@ -510,7 +546,6 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
 
       userNotifies.reverse().forEach((notification) => {
         if (
-          //максимум 3 одновременно
           !notification.read &&
           this.popups.length < this.maxNumberOfPopupsInSameTime &&
           !this.popupHistory.includes(notification.id) &&
@@ -521,8 +556,6 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
           this.popupHistory.push(notification.id);
         }
       });
-
-      this.notifies = [...this.currentUser.notifications].reverse();
 
       this.cd.markForCheck();
     }
@@ -552,6 +585,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     this.hovered = 0;
     setTimeout(() => {
       this.autoRemovePopup(popup);
+      this.cd.markForCheck();
     }, this.popupLifetime * 1000);
   }
 

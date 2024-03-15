@@ -137,7 +137,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
   }
 
   private getMostFavoriteRecipes() {
-    return this.recipeService.getSomeMostFavoriteRecipes(8, 0).pipe(
+    return this.recipeService.getSomeMostFavoriteRecipes(8, 0, this.currentUserId).pipe(
       tap((response) => {
         const recipes: IRecipe[] = response.recipes;
         const newRecipes: IRecipe[] = recipes.filter((recipe) => {
@@ -166,7 +166,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
     );
   }
   private getMostRecentRecipes() {
-    return this.recipeService.getSomeMostRecentRecipes(8, 0).pipe(
+    return this.recipeService.getSomeMostRecentRecipes(8, 0, this.currentUserId).pipe(
       tap((response) => {
         const recipes: IRecipe[] = response.recipes;
         const subscribes = this.getMoreRecipesData(recipes);
@@ -183,7 +183,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
     );
   }
   private getMostCookedRecipes() {
-    return this.recipeService.getSomeMostCookedRecipes(8, 0).pipe(
+    return this.recipeService.getSomeMostCookedRecipes(8, 0,this.currentUserId).pipe(
       tap((response) => {
         const recipes: IRecipe[] = response.recipes;
         const subscribes = this.getMoreRecipesData(recipes);
@@ -201,7 +201,7 @@ export class MainPageComponent implements OnInit, OnDestroy {
     );
   }
   private getMostPopularRecipes() {
-    return this.recipeService.getSomePopularRecipes(8, 0).pipe(
+    return this.recipeService.getSomePopularRecipes(8, 0, this.currentUserId).pipe(
       tap((response) => {
         const recipes: IRecipe[] = response.recipes;
         const subscribes = this.getMoreRecipesData(recipes);

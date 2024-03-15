@@ -54,11 +54,11 @@ export class PasswordResetComponent implements OnInit {
 
     this.form = this.fb.group({});
   }
-  async handleSuccessModalResult() {
+   handleSuccessModalResult() {
     this.successModal = false;
-    this.authService.logout().subscribe(() => {
+    this.authService.logout().subscribe(() => {      this.router.navigateByUrl('/login');
+
       this.authService.setCurrentUser(nullUser);
-      this.router.navigateByUrl('/login');
     });
   }
   currentUser: IUser = nullUser;

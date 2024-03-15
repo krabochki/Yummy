@@ -16,13 +16,12 @@ import {
   forkJoin,
   map,
   of,
+  Observable,
+  concatMap,
 } from 'rxjs';
 
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
-import {
-  IUser,
-  nullUser,
-} from 'src/app/modules/user-pages/models/users';
+import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { AuthService } from '../../../services/auth.service';
@@ -184,26 +183,22 @@ export class ControlCategoriesComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       if (this.actionCategory) {
         this.categoryService
-          .publishCategory(this.actionCategory.id)
+          .publishCategory(this.actionCategory.id, this.currentUser.id)
           .pipe(
             tap(() => {
               this.categories = this.categories.filter(
                 (u) => u.id !== this.actionCategory.id,
               );
 
-               if (
-                 this.userService.getPermission(
-                   this.currentUser.limitations || [],
-                   Permission.WorkNotifies,
-                 )
-               ) {
-                 this.sendNotifyToManager(
-                   true,
-                   this.actionCategory,
-                 ).subscribe();
-               }
-      
-              
+              if (
+                this.userService.getPermission(
+                  this.currentUser.limitations || [],
+                  Permission.WorkNotifies,
+                )
+              ) {
+                this.sendNotifyToManager(true, this.actionCategory).subscribe();
+              }
+
               this.sendApproveNotify();
               this.actionModal = true;
             }),
@@ -221,44 +216,44 @@ export class ControlCategoriesComponent implements OnInit, OnDestroy {
   dismissCategory() {
     setTimeout(() => {
       if (this.actionCategory) {
-        const deleteCategory$ = this.categoryService.deleteCategory(
-          this.actionCategory.id,
-        );
+        this.loadingModal = true;
 
-        const deleteImage$ = this.actionCategory.image
+        const deleteCategory$ = this.categoryService
+          .deleteCategory(this.actionCategory.id)
+          .pipe(
+            catchError(() => {
+              (this.error = 'Произошла ошибка при попытке удалить категорию'),
+                (this.errorModal = true);
+              return EMPTY;
+            }),
+          );
+
+        const deleteImage$: Observable<any> = this.actionCategory.image
           ? this.categoryService.deleteImage(this.actionCategory.image).pipe(
               catchError(() => {
                 this.error =
-                  'Произошла ошибка при удалении изображения удаляемой категории';
-
+                  'Произошла ошибка при попытке удалить файл изображения категории';
                 this.errorModal = true;
-                this.loadingModal = false;
-
-                this.cd.markForCheck();
-
                 return EMPTY;
               }),
             )
           : of(null);
 
-        forkJoin([deleteImage$, deleteCategory$])
+        deleteImage$
           .pipe(
-            map(() => {
+            concatMap(() => deleteCategory$),
+            finalize(() => {
+              this.loadingModal = false;
+              this.cd.markForCheck();
+            }),
+          )
+          .subscribe({
+            next: () => {
               this.categories = this.categories.filter(
                 (u) => u.id !== this.actionCategory.id,
               );
               this.sendDismissNotify();
               this.actionModal = true;
-            }),
-          )
-          .subscribe({
-            next: () => {
-              this.loadingModal = false;
-
-              this.cd.markForCheck();
-            },
-            error: (error) => {
-              console.log(error);
             },
           });
       }
@@ -317,14 +312,12 @@ export class ControlCategoriesComponent implements OnInit, OnDestroy {
     this.destroyed$.complete();
   }
 
-  sendNotifyToManager(approve: boolean, category:ICategory) {
+  sendNotifyToManager(approve: boolean, category: ICategory) {
     const panel =
       this.currentUser.role === 'admin' ? 'администратора' : 'модератора';
     const message = `Вы успешно ${
       approve ? 'приняли' : 'отклонили'
-    } категорию «${
-      category.name
-    }» в панели ${panel}`;
+    } категорию «${category.name}» в панели ${panel}`;
     const notify = this.notifyService.buildNotification(
       `Панель ${panel}`,
       message,
@@ -347,29 +340,27 @@ export class ControlCategoriesComponent implements OnInit, OnDestroy {
         this.notifyService,
       );
 
-          if (
-            this.userService.getPermission(
-              this.currentUser.limitations || [],
-              Permission.WorkNotifies,
-            )
-          )
-      
-          {
-            this.sendNotifyToManager(false,this.actionCategory).subscribe()
+      if (
+        this.userService.getPermission(
+          this.currentUser.limitations || [],
+          Permission.WorkNotifies,
+        )
+      ) {
+        this.sendNotifyToManager(false, this.actionCategory).subscribe();
       }
-      
+
       this.userService
-              .getLimitation(
-                this.actionCategory.authorId,
-                Permission.CategoryReviewed,
-              )
-              .subscribe((limit) => {
-                if (!limit && this.actionCategory) {
-                  this.notifyService
-                    .sendNotification(notifyForAuthor, author.id)
-                    .subscribe();
-                }
-              });
+        .getLimitation(
+          this.actionCategory.authorId,
+          Permission.CategoryReviewed,
+        )
+        .subscribe((limit) => {
+          if (!limit && this.actionCategory) {
+            this.notifyService
+              .sendNotification(notifyForAuthor, author.id)
+              .subscribe();
+          }
+        });
     }
   }
 }

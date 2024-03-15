@@ -20,26 +20,30 @@
     background-color: var(--loading);
   }
 }
-            h2.loading {
-                border-radius: 0.75em;
-                      animation: loading 0.75s infinite linear;
-                      background-color: var(--loading);
-                      color: transparent;
-                      width: max-content;
-                    }
 
-app-modal, app-category-creating {
+h2.loading {
+  border-radius: 0.75em;
+  animation: loading 0.75s infinite linear;
+  background-color: var(--loading);
+  color: transparent;
+  width: max-content;
+}
+
+app-modal,
+app-category-creating {
   position: fixed;
   z-index: 10;
   cursor: default;
 }
-.main app-button.add-recipe{
+
+.main app-button.add-recipe {
   margin: 0 auto;
   margin-bottom: 1em;
   display: flex;
   width: fit-content;
   justify-content: center;
 }
+
 .head {
   display: flex;
   align-items: center;
@@ -54,8 +58,12 @@ h2 {
   font-size: 1.5em;
 }
 
+.container {
+  margin-bottom: 0 !important;
+}
+
 .block {
-  margin: 2.5em 0;
+  margin-top: 2.5em;
 }
 
 .recipes {
@@ -66,11 +74,9 @@ h2 {
   &.horizontal::after {
     height: calc(100% - 1.3em);
     width: 15%;
-    background: linear-gradient(
-      to right,
-      transparent 0%,
-      var(--color-background)
-    );
+    background: linear-gradient(to right,
+        transparent 0%,
+        var(--color-background));
 
     z-index: 1;
     right: 0;
@@ -90,8 +96,11 @@ h2 {
   fill: var(--color-foreground);
 }
 
-.main {
+.main-padding {
   padding: 0 calc(14.4vw + 0 * (100vw - 768px) / 760);
+}
+
+.main {
 
   width: 100%;
   margin: 0 auto;
@@ -175,40 +184,47 @@ div.container.not-found {
   }
 }
 
-app-recipe-creating{position: fixed;
+app-recipe-creating {
+  position: fixed;
   width: 100%;
   height: 100%;
-z-index: 10;}
-@media (max-width:900px){
-  div.container.not-found {
-      display: flex;
-      padding: 0 calc(14.4vw + 0 * (100vw - 768px) / 760);
-      margin: 2em 3em;}
+  z-index: 10;
 }
-@media (max-width: 480px) {
-    div.container.not-found {
-        display: flex;
-        padding: 0;
-        margin: 2em 6%;
 
-      .content  .buttons{
-          display: inline
-        }
-      }
-    
+@media (max-width:900px) {
+  div.container.not-found {
+    display: flex;
+    padding: 0 calc(14.4vw + 0 * (100vw - 768px) / 760);
+    margin: 2em 3em;
+  }
+}
+
+@media (max-width: 480px) {
+  div.container.not-found {
+    display: flex;
+    padding: 0;
+    margin: 2em 6%;
+
+    .content .buttons {
+      display: inline
+    }
+  }
+
 
   .fridge {
-  height: 10em;
-}
-.container.not-found {
-    margin: 2em 6%
-}
+    height: 10em;
+  }
 
-  h1, app-button {
+  .container.not-found {
+    margin: 2em 6%
+  }
+
+  h1,
+  .moreButton {
     padding-right: 6%;
   }
 
-  .main {
+  .main-padding {
     padding-left: 6%;
     padding-right: 0;
   }
@@ -217,7 +233,7 @@ z-index: 10;}
     margin-right: 6%;
   }
 
-  .search{
+  .search {
     margin-right: 6%;
   }
 
@@ -225,7 +241,7 @@ z-index: 10;}
     padding: 0;
   }
 
-  
+
 }
 
 @media (max-width: 768px) {
@@ -236,14 +252,52 @@ z-index: 10;}
   }
 }
 
-@mixin flex{
+@mixin flex {
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
+.admin{
+  *{
+  --color: var(--color-admin)
+  }
+}
+
+.moderator { 
+  *{
+  --color: var(--color-moderator)
+  }
+}
+.action-link{
+  font-weight: 600;
+  text-decoration: underline;
+}
+.more-info{
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  row-gap: 0.5em;
+  margin-top: 1em;
+
+  p{
+    text-align: center;
+    line-height: 1;
+  }
+
+}
+
 .action-buttons {
   display: flex;
   flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+
+  p,
+  a {
+    font-size: 1rem !important
+  }
+
   margin-top: 1em;
   justify-content: space-between;
 
@@ -264,6 +318,17 @@ z-index: 10;}
       .action-svg {
         fill: var(--color-secondary);
       }
+    }
+
+
+    &.info:hover{
+      p {
+          color: var(--color)
+        }
+      
+        .action-svg {
+          fill: var(--color)
+        }
     }
 
     &.delete:hover {
@@ -295,5 +360,21 @@ z-index: 10;}
     height: 1em;
     @include flex;
     fill: var(--color-foreground);
+  }
+}
+
+@media(max-width:700px) {
+  .action-buttons,.more-info{
+    flex-direction: column;
+    row-gap: 0.5em;
+    align-items: center;
+  }
+    .more-info p {
+      text-align: center;
+    }
+}
+@media(max-width:480px) {
+  .action-buttons {
+   margin-right: 6%;
   }
 }

@@ -45,6 +45,11 @@ import { Permission } from '../settings/conts';
 export class UserPageComponent implements OnInit, OnDestroy {
   emojisRuLocale = emojisRuLocale;
   customEmojis = customEmojis;
+
+  startImageToView = 0;
+
+  showedImages:string[] = [];
+
   hireModalShow = false;
   hireSuccessModalShow = false;
   editModalShow: boolean = false;
@@ -98,9 +103,9 @@ export class UserPageComponent implements OnInit, OnDestroy {
   }
 
   get showHireButton() {
-return this.userService.getPermission(
-  this.currentUser.limitations || [],
-  Permission.HiringButton,
+    return this.userService.getPermission(
+      this.currentUser.limitations || [],
+      Permission.HiringButton,
     );
   }
 
@@ -111,8 +116,6 @@ return this.userService.getPermission(
   get isSameUser(): boolean {
     return this.currentUser.id === this.user.id;
   }
-
-  
 
   constructor(
     private authService: AuthService,
@@ -126,12 +129,11 @@ return this.userService.getPermission(
     private location: Location,
     private renderer: Renderer2,
   ) {
-
     const screenWidth = window.innerWidth;
 
-      if (screenWidth <= 900) {
-       this.recipesPerStep = 2;
-     }
+    if (screenWidth <= 900) {
+      this.recipesPerStep = 2;
+    }
     registerLocaleData(localeRu);
 
     this.renderer.listen('window', 'click', (e: Event) => {
@@ -240,6 +242,13 @@ return this.userService.getPermission(
     });
   }
 
+  viewAvatar() {
+    if (this.user.avatarUrl) {
+      this.startImageToView = 0;
+      this.showedImages = [this.user.avatarUrl];
+    }
+  }
+
   currentStep = 0;
   recipesPerStep = 3;
   allRecipesLoaded = false;
@@ -275,39 +284,26 @@ return this.userService.getPermission(
                   (existingRecipe) => existingRecipe.id === newRecipe.id,
                 ),
             );
-            const subscribes = this.recipeService.getRecipesInfo(
-              actualRecipes,
-              true,
-            );
 
             if (!actualRecipes.length) {
               this.recipesLoaded = true;
               this.allRecipesLoaded = true;
             }
 
-            forkJoin(subscribes)
-              .pipe(
-                finalize(() => {
-                  this.recipesLoaded = true;
-                  this.cd.markForCheck();
-                }),
+            actualRecipes.forEach((recipe) => {
+              this.recipeService.getRecipeImage(recipe);
+              recipe = this.recipeService.translateRecipe(recipe);
+              this.recipeService.addNewRecipe(recipe);
+            });
+            this.userRecipes = [...this.userRecipes, ...actualRecipes];
+            if (count <= this.userRecipes.length) {
+              this.allRecipesLoaded = true;
+            } else {
+              this.currentStep++;
+            }
+            this.recipesLoaded = true;
 
-                tap(() => {
-                  actualRecipes.forEach((recipe) => {
-                    recipe = this.recipeService.translateRecipe(recipe);
-                    this.recipeService.addNewRecipe(recipe);
-                  });
-                  this.userRecipes = [...this.userRecipes, ...actualRecipes];
-                  if (count <= this.userRecipes.length) {
-                    this.allRecipesLoaded = true;
-                  } else {
-                    this.currentStep++;
-                  }
-
-                  this.cd.markForCheck();
-                }),
-              )
-              .subscribe();
+            this.cd.markForCheck();
           });
       }, 300);
     }
@@ -359,7 +355,6 @@ return this.userService.getPermission(
     this.initCurrentUser();
 
     this.updateUserInfo();
-    
   }
 
   goBack() {
@@ -399,20 +394,19 @@ return this.userService.getPermission(
         },
       });
 
-     // if (this.userService.getPermission('new-follower', this.user)) {
-        const notify: INotification = this.notifyService.buildNotification(
-          'Новый подписчик',
-          `Кулинар ${
-            this.currentUser.fullName
-              ? this.currentUser.fullName
-              : '@' + this.currentUser.username
-          } подписался на тебя`,
-          'info',
-          'user',
-          '/cooks/list/' + this.currentUser.id,
-        );
-        this.notifyService.sendNotification(notify, this.user.id).subscribe();
-      
+      // if (this.userService.getPermission('new-follower', this.user)) {
+      const notify: INotification = this.notifyService.buildNotification(
+        'Новый подписчик',
+        `Кулинар ${
+          this.currentUser.fullName
+            ? this.currentUser.fullName
+            : '@' + this.currentUser.username
+        } подписался на тебя`,
+        'info',
+        'user',
+        '/cooks/list/' + this.currentUser.id,
+      );
+      this.notifyService.sendNotification(notify, this.user.id).subscribe();
     }
     this.cd.markForCheck();
   }

@@ -257,21 +257,13 @@ div.container.not-found {
 }
 
 @media (max-width: 480px) {
-    .search-block {
-        width: 100%;
-
         .search {
-            display: grid;
-            width: 100%;
+            
+          
             padding-right: 6%;
-            grid-template-columns: 1fr max-content;
         }
 
-        input {
-            width: 100%;
-            text-overflow: ellipsis;
-        }
-    }
+      
 
     div.container.not-found {
         margin: 2em 0;

@@ -13,7 +13,12 @@
   color: #808080;
 }
 
-
+.reports
+.report
+.zoom-img{
+  background-size: 140%;
+  background-position: bottom;
+}
 
 .content-wrap {
   display: flex;
@@ -88,11 +93,10 @@
 
 h1 {
   font-size: var(--font-xxl);
-  text-overflow: ellipsis;
-  overflow: hidden;
+  line-height: 1;
   text-align: center;
   font-family: var(--font-family-accent);
-  margin-bottom: 1rem;
+  margin-bottom: 1em;
 }
 
 .more-reports-button {
@@ -566,6 +570,7 @@ h2 {
 
 h3 {
   font-size: 1.5em;
+  line-height: 1;
   font-weight: 700;
   text-align: center;
   margin-bottom: 1em;
@@ -867,12 +872,18 @@ h4 {
 
   .view {
     margin: 0 6%;
-    margin-top: 2em;
-    grid-template-columns: 1fr;
+
+    .about {
+      font-size: 0.95em;
+      width: 9.5em;
+    }
+
+    .about li {
+      padding: 0.5em 0em 0.5em 1em;
+    }
 
 
     .nothing p {
-      font-size: 0.85em;
       width: 90%;
       margin-bottom: 5em;
     }
@@ -924,15 +935,7 @@ h4 {
 
 @media (max-width: 360px) {
   .blocks {
-    .block {
-      .content {
-        p {
-          max-width: 4em;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-      }
-    }
+    display: none;
   }
 }
 

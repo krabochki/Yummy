@@ -71,9 +71,6 @@ app-button {
     justify-content: center;
 }
 
-.sections {
-    margin-bottom: 2em;
-}
 
 .action-buttons {
     display: flex;
@@ -134,12 +131,30 @@ app-button {
 
 @media (max-width: 480px) {
 
+    .container.one-column.not-found
+    {
+        margin-right:6% ;
+    }
+
+    .action-buttons{
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                row-gap: 0.5em;
+    }
+
     h1,
     .action-buttons,
-    app-button {
+    .more-reports-button {
         padding-right: 6vw;
         padding-left: 0vw;
     }
+
+          .search {
+    
+    
+              padding-right: 6%;
+          }
 
     .wrap {
         padding-right: 0;

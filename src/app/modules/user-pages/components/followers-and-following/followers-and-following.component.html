@@ -149,6 +149,6 @@
 
 
 <app-modal @modal *ngIf="noAccessModalShow" [style]="'prim'" [title]="'Доступ к функции ограничен'" [type]="'yesOrNo'"
-  (resultEmit)="noAccessModalShow=false" [buttonsText]="['Давайте', 'Не сейчас']" [description]="
+  (resultEmit)="handleAccessModal($event)" [buttonsText]="['Давайте', 'Не сейчас']" [description]="
     'Взаимодействовать с кулинарами могут только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'
   "></app-modal>

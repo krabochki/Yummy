@@ -28,7 +28,8 @@
                                     'have-image': this.form.get('image')?.value !== null
                                   }" [ngStyle]="{ 'background-image': 'url(' + groupImage + ')' }"
       alt="Изображение группы ингредиентов">
-      <input class="input-image" type="file" (change)="onIngredientImageChange($event)" accept="image/*" />
+      <input class="input-image" type="file" (change)="onIngredientImageChange($event)"   accept=".png, .jpg, .jpeg, .svg" 
+ />
     </div>
   </div>
 </div>

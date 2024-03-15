@@ -14,7 +14,7 @@ import { Subject, takeUntil, tap } from 'rxjs';
 import { IRecipe } from '../../../models/recipes';
 import { SectionService } from '../../../services/section.service';
 import { ICategory, ISection, nullSection } from '../../../models/categories';
-import { SectionGroup } from 'src/app/modules/controls/autocomplete/autocomplete.component';
+import { SectionGroup } from 'src/app/modules/controls/components/selects/autocomplete/autocomplete.component';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
 import { Title } from '@angular/platform-browser';
@@ -25,7 +25,11 @@ import { getZoom } from 'src/tools/common';
 import { IngredientService } from '../../../services/ingredient.service';
 import { IIngredient } from '../../../models/ingredients';
 import { MatchService } from './match.service';
-import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import {
+  CdkDragDrop,
+  moveItemInArray,
+  transferArrayItem,
+} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-match-recipes',
@@ -161,8 +165,7 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
   selectIngredient(name: string) {
     if (!this.selectedIngredients.find((si) => si === name)) {
       this.selectedIngredients.push(name);
-            this.selectedIngredientsCopyForDragAndDrop.push(name);
-
+      this.selectedIngredientsCopyForDragAndDrop.push(name);
     }
   }
 
@@ -243,7 +246,11 @@ export class MatchRecipesComponent implements OnInit, OnDestroy {
 
   findRecipes() {
     this.matchService
-      .getRecipes(this.selectedIngredients, this.excludedIngredients, this.currentUserId)
+      .getRecipes(
+        this.selectedIngredients,
+        this.excludedIngredients,
+        this.currentUserId,
+      )
       .subscribe((res) => {
         console.log(res);
       });

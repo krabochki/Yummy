@@ -11,10 +11,13 @@
   }
 
 }
-app-ingredient-create,app-modal{
-position: fixed;
-z-index: 10;
+
+app-ingredient-create,
+app-modal {
+  position: fixed;
+  z-index: 10;
 }
+
 @mixin flex {
   display: flex;
   align-items: center;
@@ -24,7 +27,6 @@ z-index: 10;
 .action-buttons {
   display: flex;
   flex-direction: row;
-  margin-top: 1em;
   justify-content: space-between;
 
   .action-button {
@@ -34,6 +36,16 @@ z-index: 10;
 
     .action-svg {
       transition: 0.1s ease-in-out;
+    }
+
+    &.info-btn:hover {
+      p {
+        color: var(--color)
+      }
+
+      .action-svg {
+        fill: var(--color)
+      }
     }
 
     &.edit:hover {
@@ -77,7 +89,13 @@ z-index: 10;
     fill: var(--color-foreground);
   }
 }
-
+@media(max-width:700px) {
+  .action-buttons {
+    flex-direction: column;
+    row-gap: 0.5em;
+    align-items: center;
+  }
+}
 .load-ul {
   list-style-type: none !important;
   list-style: none;
@@ -93,11 +111,13 @@ h1.load {
 }
 
 
+p {
+  overflow: hidden;
+}
 
 .load {
   cursor: wait;
   color: transparent;
-  width: max-content;
   animation: loading 0.75s infinite linear;
   background-color: var(--loading);
   border-radius: 0.75em;
@@ -119,7 +139,7 @@ h1.load {
 
 .loading {
   animation: loading 0.75s infinite linear;
-  background-color: var(--loading);
+  background-color: var(--loading) !important;
   background-repeat: no-repeat;
 }
 
@@ -132,11 +152,14 @@ h1.load {
 .shopping {
   display: flex;
   flex-direction: row;
+  align-items: center;
   column-gap: 1em;
 }
 
 .add-to-shopping-list {
   width: 2em;
+  min-width: 2em;
+
   height: 2em;
   display: flex;
   align-items: center;
@@ -201,6 +224,10 @@ app-modal {
   position: fixed;
 }
 
+.shopping-group {
+  line-height: 1;
+}
+
 .disabled {
   background-color: var(--color-primary);
 
@@ -215,7 +242,77 @@ app-modal {
   align-items: center;
   justify-content: center;
   width: 1.6em;
+  min-width: 1.6em;
   fill: var(--color-foreground);
+}
+
+.recipes-with {
+  p {
+    line-height: 1;
+    margin-bottom: 0.2em;
+  }
+}
+
+@media(max-width:480px) {
+  .recipes-with {
+    app-button {
+      margin: auto;
+    }
+
+    p {
+      text-align: center;
+    }
+  }
+
+  .shopping-group,
+  .shopping {
+    flex-direction: row-reverse;
+  }
+
+  .shopping {
+    justify-content: start;
+  }
+
+  .shopping-group {
+    column-gap: 0.5em;
+  }
+
+  .shopping-group-icon {
+    width: 1.8em;
+    min-width: 1.8em;
+  }
+}
+
+.admin {
+  * {
+    --color: var(--color-admin)
+  }
+}
+
+.moderator {
+  * {
+    --color: var(--color-moderator)
+  }
+}
+
+.action-link {
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.more-info {
+  display: flex;
+  flex-direction: column;
+  align-items: end;row-gap: 0.5em;
+  margin-top: 1em;
+  p {
+      text-align: center;
+      line-height: 1;
+    }
+}
+
+p {
+  word-wrap: break-word;
 }
 
 h1 {
@@ -560,6 +657,16 @@ h3 {
 }
 
 @media (max-width: 480px) {
+  .more-info {
+      justify-content: center;
+      align-items: center;
+    }
+  .action-buttons {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
   .wrap {
     padding: 2em 6%;
   }

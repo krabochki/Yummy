@@ -43,13 +43,14 @@
         </a>
       </button>
       <button
-        (click)="notifiesOpen = true"
+        (click)="notifiesOpen = true; popups = [];
+    cd.markForCheck();"
         *ngIf="this.currentUser.id !== 0"
         class="svg-button"
       >
         <svg-icon [src]="svgPath('bell')" [class]="'svg'" />
-        <div @count class="notifications" *ngIf="notificationCount > 0">
-          {{ notificationCount }}
+        <div @count class="notifications" *ngIf="notReadedNotifies">
+          {{ notReadedNotifies }}
         </div>
       </button>
 
@@ -86,7 +87,7 @@
         <div *ngIf="currentUser.id > 0" class="card">
           <div class="user-info" (click)="clickMobileMenuLink('/cooks/list/'+currentUser.id)">
             <div
-              [style.background-image]="'url(' + avatar||'assets/images/userpic.png' + ')'"
+              [style.background-image]="'url(' + (avatar ? avatar : 'assets/images/userpic.png') + ')'"
               class="userpic"
             ></div>
             <div>
@@ -138,7 +139,7 @@
               <div
                 class="routes"
                 @height
-                *ngIf="mobileSectionsOpen[0] === true"
+                *ngIf="mobileSectionsOpen[0]"
               >
                 <div
                   [ngClass]="{
@@ -155,7 +156,7 @@
                     let i = index
                   "
                 >
-                  {{ recipeSelectItem }}
+                  {{ recipeSelectItem }} 
                 </div>
               </div>
             </li>
@@ -368,10 +369,10 @@
 
         <a *ngIf="currentUser.id > 0" (click)="openNotifies()">
           <div
-            *ngIf="currentUser.id > 0 && notificationCount > 0"
+            *ngIf="currentUser.id && notReadedNotifies"
             class="count"
           >
-            {{ notificationCount }}
+            {{ notReadedNotifies }}
           </div>
           <svg-icon
             class="header-top-svg"
@@ -479,10 +480,9 @@
 ></app-recipe-create>
 
 <app-notifications-list
-  (closeEmitter)="notifiesOpen = false; makeAllNotifiesReaded()"
+  (closeEmitter)="notifiesOpen = false; markNotifiesAsReaded()"
   @notifies
   *ngIf="notifiesOpen"
-  [notifies]="notifies"
 ></app-notifications-list>
   <app-modal @modal *ngIf="exitModalShow" [style]="'prim'" [title]="'Подтвердите выход'" [type]="'yesOrNo'"
     (resultEmit)="handleExitModal($event)" [buttonsText]="['Выйти', 'Остаться']"
@@ -490,3 +490,5 @@
 
     <app-modal @modal [style]="'await'" 
      *ngIf="loading"></app-modal>
+
+    <div class="background" @modal *ngIf="notifiesOpen" (click)="notifiesOpen=false; notReadedNotifies = 0"></div>

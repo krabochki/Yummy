@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HeaderComponent } from './components/header/header.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AdminGuard } from './modules/authentication/guards/admin.guard';
 import { ModeratorGuard } from './modules/authentication/guards/moderator.guard';
 import { ControlsModule } from './modules/controls/controls.module';
@@ -17,6 +17,8 @@ import { UserPagesModule } from './modules/user-pages/user-pages.module';
 import { AuthService } from './modules/authentication/services/auth.service';
 import { CommonPagesModule } from './modules/common-pages/common-pages.module';
 import { AngularImageViewerModule } from '@hreimer/angular-image-viewer';
+import { InternetInterceptor } from './modules/interceptors/internet.interceptor';
+import { ErrorInterceptor } from './modules/interceptors/server.interceptor';
 
 @NgModule({
   declarations: [AppComponent, HeaderComponent, FooterComponent],
@@ -35,8 +37,22 @@ import { AngularImageViewerModule } from '@hreimer/angular-image-viewer';
   providers: [
     AdminGuard,
     ModeratorGuard,
-    
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: InternetInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true
+    }
+  
+
+  
+
   ],
+  
   bootstrap: [AppComponent],
   exports: [SvgIconComponent],
 })

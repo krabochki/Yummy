@@ -5,8 +5,10 @@
     [color]="'prim'" [disabled]="!(groups.length === 0 && !loaded)" [text]="'Создать группу'"
     (click)="createButtonClick()" [rounded]="true"></app-button>
 
-  <app-search [disabled]="groups.length <= 0 && !loaded" [context]="'groups'"></app-search>
-
+<div class="search">
+    <app-search [disabled]="groups.length <= 0 && !loaded" [context]="'groups'"></app-search>
+  
+</div>
   <div>
     <div class="sections">
       <div class="sections">

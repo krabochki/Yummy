@@ -21,7 +21,7 @@ import { CategoryService } from '../../../services/category.service';
 import { ICategory, nullCategory } from '../../../models/categories';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
-import { Observable, Subject, concat, concatMap, finalize, forkJoin, of, takeUntil, tap } from 'rxjs';
+import { EMPTY, Observable, Subject, catchError, concat, concatMap, finalize, forkJoin, of, takeUntil, tap } from 'rxjs';
 import { CommentService } from '../../../services/comment.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IComment } from '../../../models/comments';
@@ -67,7 +67,6 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   COMMENTS_STEP = 0;
   commentsLoaded = false;
   everythingLoaded = false;
-  commentsLength = 0;
 
   categories: ICategory[] = [];
   downRecipes: IRecipe[] = [];
@@ -79,10 +78,6 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   iHaveIndgredient: boolean[] = [];
   basket: boolean[] = [];
   basketMode = false;
-
-  isRecipeFavorite: boolean = false;
-  isRecipeLiked: boolean = false;
-  isRecipeCooked: boolean = false;
 
   noAccessModalShow: boolean = false;
   commentModalShow = false;
@@ -117,6 +112,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   loading = false;
   showedImages: string[] = [];
   startImageToView = 0;
+  currentUserId = 0;
   recipes: IRecipe[] = [];
   users: IUser[] = [];
   recipeLoading = true;
@@ -228,7 +224,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
 
   private getRecentRecipes() {
     this.recipeService
-      .getSomeMostRecentRecipes(3, 0, this.recipe.id, this.recipe.authorId)
+      .getSomeMostRecentRecipes(3, 0, this.currentUserId, this.recipe.id, this.recipe.authorId)
       .pipe(
         tap((response: any) => {
           const recipes: IRecipe[] = response.recipes;
@@ -306,7 +302,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   }
 
   private loadComments() {
-    this.commentsLength = 0;
+    this.recipe.commentsLength = 0;
     this.commentsLoaded = false;
     this.COMMENTS_STEP = 0;
     this.loadMoreComments();
@@ -392,7 +388,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     this.alsoFromThisCookLoading = true;
     this.similarRecipesLoading = true;
     this.commentsLoaded = false;
-    this.commentsLength = 0;
+    this.recipe.commentsLength = 0;
     this.author = nullUser;
     this.authorAvatar = '';
     this.everythingLoaded = false;
@@ -401,7 +397,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     this.statisticPercent = 0;
 
     this.recipeService
-      .getRecipe(recipeId)
+      .getRecipe(recipeId, this.currentUserId)
       .pipe(
         tap((recipe: IRecipe) => {
           forkJoin(
@@ -427,6 +423,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
 
                     if (res.image) {
                       return this.recipeService.downloadImage(res.image).pipe(
+                        catchError(()=>{return EMPTY}),
                         tap((blob) => {
                           const instruction = this.recipe.instructions.find(
                             (instruction) =>
@@ -568,9 +565,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
         });
 
         this.basketInit();
-
         this.setReadingTimeInMinutes();
-        this.setStatistics();
         this.iHaveIndgredient = Array.from(
           { length: this.recipe.ingredients.length },
           () => false,
@@ -591,7 +586,11 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     this.route.data.subscribe((data: Data) => {
       this.linkForSocials = window.location.href;
       const resolverRecipe: IRecipe = data['RecipeResolver'];
-      this.loadRecipe(resolverRecipe.id);
+
+      this.authService.getTokenUser().subscribe((user) => {
+        this.currentUserId = user.id;
+        this.loadRecipe(resolverRecipe.id);
+      });
     });
   }
 
@@ -599,9 +598,15 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     if (this.commentsLoaded || !this.recipe.comments.length) {
       this.commentsLoaded = false;
       this.commentService
-        .getComments(this.recipe.id, this.COMMENTS_PER_STEP, this.COMMENTS_STEP)
+        .getComments(
+          this.recipe.id,
+          this.currentUser.id,
+          this.COMMENTS_PER_STEP,
+          this.COMMENTS_STEP,
+        )
         .pipe(
           tap((response: any) => {
+            console.log(response.comments);
             const count = response.count;
             if (!count) {
               this.commentsLoaded = true;
@@ -609,42 +614,22 @@ export class RecipePageComponent implements OnInit, OnDestroy {
               return;
             }
             const comments: IComment[] = response.comments;
-            let comments$: Observable<any>[] = [];
+            const comments$: Observable<any>[] = [];
             comments.forEach((comment) => {
-              const comment$: Observable<any>[] = [];
-              comment$.push(
-                this.commentService.getLikes(comment.id).pipe(
-                  tap((likes: number[]) => {
-                    comment.likesId = likes;
-                  }),
-                ),
-              );
-              comment$.push(
-                this.commentService.getDislikes(comment.id).pipe(
-                  tap((dislikes: number[]) => {
-                    comment.dislikesId = dislikes;
-                  }),
-                ),
-              );
-              const haveUser = this.users.find(
-                (user) => user.id === comment.authorId,
-              );
-
-              if (!haveUser) {
-                comment$.push(
-                  this.recipeService.getAuthorInfo(comment.authorId).pipe(
-                    tap((user: IUser) => {
+              const comment$ = this.recipeService
+                .getAuthorInfo(comment.authorId)
+                .pipe(
+                  tap((user: IUser) => {
+                    const findedUser = this.users.find((u) => u.id === user.id);
+                    if (findedUser) {
+                      this.userService.updateUserInUsers(user);
+                    } else {
                       this.userService.addUserToUsers(user);
-                      this.userService.getAvatar(user);
-                    }),
-                  ),
+                    }
+                    this.userService.getAvatar(user);
+                  }),
                 );
-              } else {
-                if (haveUser.image && !haveUser.avatarUrl) {
-                  this.userService.getAvatar(haveUser);
-                }
-              }
-              comments$ = [...comments$, ...comment$];
+              comments$.push(comment$);
             });
             if (!comments$.length) {
               this.commentsLoaded = true;
@@ -657,11 +642,8 @@ export class RecipePageComponent implements OnInit, OnDestroy {
                 }),
 
                 tap(() => {
-                  this.commentsLength = count;
-                  this.recipe.comments = [
-                    ...this.recipe.comments,
-                    ...this.commentService.translateComments(comments),
-                  ];
+                  this.recipe.commentsLength = count;
+                  this.recipe.comments = [...this.recipe.comments, ...comments];
                   if (count <= this.recipe.comments.length) {
                     this.everythingLoaded = true;
                   }
@@ -677,7 +659,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
 
   handleSuccessVoteModal() {
     const authorId = this.recipe.authorId;
-    if (this.isRecipeCooked) {
+    if (this.recipe.cooked) {
       if (authorId !== this.currentUser.id && authorId > 0) {
         this.userService
           .getLimitation(authorId, Permission.YourRecipeCooked)
@@ -825,10 +807,14 @@ export class RecipePageComponent implements OnInit, OnDestroy {
           this.loading = false;
           this.cd.markForCheck();
         }),
-        tap(() => {
+        tap((res: any) => {
+          const commentId = res.id;
+          comment.id = commentId;
           this.recipe.comments = [comment, ...this.recipe.comments];
           this.recipeService.updateRecipeInRecipes(this.recipe);
-          this.commentsLength++;
+          this.recipe.commentsLength
+            ? this.recipe.commentsLength++
+            : (this.recipe.commentsLength = 1);
           this.commentNotifies(comment);
           this.successCommentModalShow = true;
         }),
@@ -837,40 +823,46 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   }
 
   commentNotifies(comment: IComment) {
-    // if ( this.userService.getPermission('you-commented-recipe', this.currentUser)) {
-    const notify: INotification = this.notifyService.buildNotification(
-      'Комментарий опубликован',
-      `Твой комментарий «${comment.text}» успешно опубликован под рецептом «${this.recipe.name}»`,
-      'success',
-      'comment',
-      '/recipes/list/' + this.recipe.id,
-    );
-    this.notifyService
-      .sendNotification(notify, this.currentUser.id, true)
-      .subscribe();
-    //}
-
     if (
-      this.currentUser.id !== this.author.id &&
-      this.recipe.authorId > 0 //&&
-
-      //this.userService.getPermission('your-recipe-commented', this.author)
+      this.userService.getPermission(
+        this.currentUser.limitations || [],
+        Permission.YouCommentRecipe,
+      )
     ) {
       const notify: INotification = this.notifyService.buildNotification(
-        'Ваш рецепт прокомментировали',
-        `Ваш рецепт «${this.recipe.name}» прокомментировал 
+        'Комментарий опубликован',
+        `Твой комментарий «${comment.text}» успешно опубликован под рецептом «${this.recipe.name}»`,
+        'success',
+        'comment',
+        '/recipes/list/' + this.recipe.id,
+      );
+      this.notifyService
+        .sendNotification(notify, this.currentUser.id, true)
+        .subscribe();
+    }
+
+    if (this.currentUser.id !== this.author.id && this.recipe.authorId > 0) {
+      this.userService
+        .getLimitation(this.recipe.authorId, Permission.YourRecipeCommented)
+        .subscribe((limit) => {
+          if (!limit) {
+            const notify: INotification = this.notifyService.buildNotification(
+              'Ваш рецепт прокомментировали',
+              `Ваш рецепт «${this.recipe.name}» прокомментировал 
           кулинар ${
             this.currentUser.fullName
               ? this.currentUser.fullName
               : '@' + this.currentUser.username
           }`,
-        'info',
-        'comment',
-        '/recipes/list/' + this.currentUser.id,
-      );
-      this.notifyService
-        .sendNotification(notify, this.recipe.authorId)
-        .subscribe();
+              'info',
+              'comment',
+              '/recipes/list/' + this.currentUser.id,
+            );
+            this.notifyService
+              .sendNotification(notify, this.recipe.authorId)
+              .subscribe();
+          }
+        });
     }
   }
 
@@ -969,16 +961,13 @@ export class RecipePageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.isRecipeFavorite = !this.isRecipeFavorite;
-    if (this.isRecipeFavorite) {
+    this.recipe.faved = !this.recipe.faved;
+    if (this.recipe.faved) {
       this.recipeService
         .pushToFavorites(this.recipe.id, this.currentUser.id)
         .pipe(
           tap(() => {
-            const recipe = this.recipeService.addRecipeToFavorites(
-              this.currentUser.id,
-              this.recipe,
-            );
+            const recipe = this.recipeService.addRecipeToFavorites(this.recipe);
             this.recipeService.updateRecipeInRecipes(recipe);
           }),
         )
@@ -989,7 +978,6 @@ export class RecipePageComponent implements OnInit, OnDestroy {
         .pipe(
           tap(() => {
             const recipe = this.recipeService.removeRecipeFromFavorites(
-              this.currentUser.id,
               this.recipe,
             );
             this.recipeService.updateRecipeInRecipes(recipe);
@@ -999,11 +987,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     }
 
     const authorId = this.recipe.authorId;
-    if (
-      this.isRecipeFavorite &&
-      authorId > 0 &&
-      authorId !== this.currentUser.id
-    ) {
+    if (this.recipe.faved && authorId > 0 && authorId !== this.currentUser.id) {
       this.userService
         .getLimitation(authorId, Permission.YourRecipeFaved)
         .subscribe((limit) => {
@@ -1032,17 +1016,14 @@ export class RecipePageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.isRecipeLiked = !this.isRecipeLiked;
+    this.recipe.liked = !this.recipe.liked;
 
-    if (this.isRecipeLiked) {
+    if (this.recipe.liked) {
       this.recipeService
         .setLike(this.recipe.id, this.currentUser.id)
         .pipe(
           tap(() => {
-            const recipe = this.recipeService.likeRecipe(
-              this.currentUser.id,
-              this.recipe,
-            );
+            const recipe = this.recipeService.likeRecipe(this.recipe);
             this.recipeService.updateRecipeInRecipes(recipe);
           }),
         )
@@ -1052,10 +1033,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
         .unsetLike(this.recipe.id, this.currentUser.id)
         .pipe(
           tap(() => {
-            const recipe = this.recipeService.unlikeRecipe(
-              this.currentUser.id,
-              this.recipe,
-            );
+            const recipe = this.recipeService.unlikeRecipe(this.recipe);
             this.recipeService.updateRecipeInRecipes(recipe);
           }),
         )
@@ -1064,7 +1042,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
 
     const authorId = this.recipe.authorId;
     if (
-      this.isRecipeLiked &&
+      this.recipe.liked &&
       this.recipe.authorId > 0 &&
       this.recipe.authorId !== this.currentUser.id
     ) {
@@ -1096,9 +1074,9 @@ export class RecipePageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.isRecipeCooked = !this.isRecipeCooked;
+    this.recipe.cooked = !this.recipe.cooked;
 
-    if (this.isRecipeCooked) {
+    if (this.recipe.cooked) {
       const subscribes: Observable<any>[] = [];
       subscribes.push(
         this.recipeService.setCook(this.recipe.id, this.currentUser.id),
@@ -1113,10 +1091,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
       forkJoin(subscribes)
         .pipe(
           tap(() => {
-            let recipe = this.recipeService.cookRecipe(
-              this.currentUser.id,
-              this.recipe,
-            );
+            let recipe = this.recipeService.cookRecipe(this.recipe);
             recipe = this.recipeService.voteForRecipe(
               this.recipe,
               this.currentUser.id,
@@ -1140,10 +1115,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
       forkJoin(subscribes)
         .pipe(
           tap(() => {
-            let recipe = this.recipeService.uncookRecipe(
-              this.currentUser.id,
-              this.recipe,
-            );
+            let recipe = this.recipeService.uncookRecipe(this.recipe);
             recipe = this.recipeService.removeVote(
               this.recipe,
               this.currentUser.id,
@@ -1154,7 +1126,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
         .subscribe();
     }
 
-    if (this.isRecipeCooked) this.successVoteModalShow = true;
+    if (this.recipe.cooked) this.successVoteModalShow = true;
   }
   printRecipe() {
     window.print();
@@ -1276,17 +1248,6 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     this.readingTimeInMinutes = setReadingTimeInMinutes(combinedText);
   }
 
-  setStatistics(): void {
-    if (this.currentUser.id !== 0) {
-      this.isRecipeLiked = this.recipe.likesId.includes(this.currentUser.id);
-
-      this.isRecipeCooked = this.recipe.cooksId.includes(this.currentUser.id);
-
-      this.isRecipeFavorite = this.recipe.favoritesId.includes(
-        this.currentUser.id,
-      );
-    }
-  }
   getStatictics(): number {
     if (this.recipe.statistics && this.recipe.statistics.length > 0) {
       const totalVotes = this.recipe.statistics.length;

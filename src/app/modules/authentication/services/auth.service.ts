@@ -6,7 +6,7 @@ import {
 } from 'rxjs';
 import { IRecipe } from '../../recipes/models/recipes';
 import { IIngredient } from '../../recipes/models/ingredients';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { INotification } from '../../user-pages/models/notifications';
 
@@ -22,9 +22,11 @@ export class AuthService {
 
   private currentUserSubject: BehaviorSubject<IUser> =
     new BehaviorSubject<IUser>({ ...nullUser, init: false });
-  private loadingSubject: BehaviorSubject<boolean> =
-    new BehaviorSubject<boolean>(true);
+  loadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+  errorSubject: BehaviorSubject<HttpErrorResponse | undefined> =
+    new BehaviorSubject<HttpErrorResponse | undefined>(undefined);
   currentUser$ = this.currentUserSubject.asObservable();
+  error$ = this.errorSubject.asObservable();
   loading$ = this.loadingSubject.asObservable();
 
   users: IUser[] = [];
@@ -39,8 +41,6 @@ export class AuthService {
     const cookieValue = this.cookieService.get('token'); // To Get Cookie
     return cookieValue;
   }
-
-
 
   notifyUrl: string = 'http://localhost:3000/notifications';
 
@@ -129,18 +129,12 @@ export class AuthService {
   loadCurrentUser(user: IUser) {
     user.init = true;
     if (user.id) {
-      this.getNotificationsByUser(user.id).subscribe(
-        (receivedNotifications: INotification[]) => {
-
-
-          user.notifications = receivedNotifications;
-          this.setCurrentUser(user);                  this.loadingSubject.next(false);
-
-        },
-      );
+          this.setCurrentUser(user);
+          this.loadingSubject.next(false);
+        
     } else {
-      this.setCurrentUser(user);                  this.loadingSubject.next(false);
-
+      this.setCurrentUser(user);
+      this.loadingSubject.next(false);
     }
   }
 

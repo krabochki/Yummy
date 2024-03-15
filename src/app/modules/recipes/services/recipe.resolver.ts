@@ -20,7 +20,7 @@ export class RecipeResolver {
           return EMPTY;
         }
 
-        return this.recipeService.getRecipe(recipeId).pipe(
+        return this.recipeService.getShortRecipe(recipeId).pipe(
           map((recipe: IRecipe) => {
             if (recipe) {
               return recipe;

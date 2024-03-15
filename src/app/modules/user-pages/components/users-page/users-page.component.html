@@ -58,6 +58,15 @@
       </div>
 
       <div class="block">
+        <div routerLink="/cooks/popular" class="head">
+          <h2>Самые популярные</h2>
+      
+          <svg-icon class="arrow-svg" [applyClass]="true" [src]="'/assets/images/svg/go-back.svg'"></svg-icon>
+        </div>
+        <app-users-list (followStateChanges)="followsChanges()" [users]="popularUsers"></app-users-list>
+      </div>
+
+      <div class="block">
         <div routerLink="/cooks/productive" class="head">
           <h2>Самые продуктивные</h2>
 
@@ -67,14 +76,7 @@
         <app-users-list (followStateChanges)="followsChanges()" [users]="mostProductiveUsers"></app-users-list>
       </div>
 
-      <div class="block">
-        <div routerLink="/cooks/popular" class="head">
-          <h2>Самые популярные</h2>
-
-          <svg-icon class="arrow-svg" [applyClass]="true" [src]="'/assets/images/svg/go-back.svg'"></svg-icon>
-        </div>
-        <app-users-list (followStateChanges)="followsChanges()" [users]="popularUsers"></app-users-list>
-      </div>
+      
       <div class="block">
         <div routerLink="/cooks/most-viewed" class="head">
           <h2>Самые просматриваемые</h2>

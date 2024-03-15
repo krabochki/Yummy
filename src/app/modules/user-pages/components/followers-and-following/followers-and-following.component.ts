@@ -24,7 +24,7 @@ import { Observable, Subject, finalize, forkJoin, takeUntil, tap } from 'rxjs';
 import { NotificationService } from '../../services/notification.service';
 import { INotification } from '../../models/notifications';
 import { modal } from 'src/tools/animations';
-import { addModalStyle } from 'src/tools/common';
+import { addModalStyle, removeModalStyle } from 'src/tools/common';
 
 @Component({
   selector: 'app-followers-and-following',
@@ -263,10 +263,20 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
     if (elem.target !== elem.currentTarget) return;
     this.closeEmitter.emit(true);
   }
+
+  handleAccessModal(response: boolean) {
+          this.noAccessModalShow = false;
+    if (response) {
+    this.router.navigateByUrl('/greetings')
+    }
+    else {
+      addModalStyle(this.renderer);
+    }
+  }
+
   ngOnDestroy(): void {
     this.destroyed$.next();
     this.destroyed$.complete();
-    this.renderer.removeClass(document.body, 'hide-overflow');
-    (<HTMLElement>document.querySelector('.header')).style.width = '100%';
+    removeModalStyle(this.renderer);
   }
 }

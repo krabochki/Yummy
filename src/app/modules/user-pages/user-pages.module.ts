@@ -21,7 +21,7 @@ import { TimePastPipe } from 'ng-time-past-pipe';
 import { PickerComponent } from '@ctrl/ngx-emoji-mart';
 import { EmojiComponent } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 import { FlatpickrModule } from 'angularx-flatpickr';
-import { ReplaceNewlinePipe } from '../common-pages/newline.pipe';
+import { ReplaceNewlinePipe } from '../controls/pipes/newline.pipe';
 
 @NgModule({
   declarations: [
@@ -55,7 +55,8 @@ import { ReplaceNewlinePipe } from '../common-pages/newline.pipe';
     { provide: LOCALE_ID, useValue: 'ru' },
 
     Location,
-    AuthGuard,
+    AuthGuard, 
+
     provideAngularSvgIcon(),
   ],
   exports: [NotificationsListComponent, UsersListComponent, NotifyComponent],

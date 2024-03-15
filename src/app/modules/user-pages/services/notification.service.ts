@@ -4,7 +4,7 @@ import { INotification, nullNotification } from '../models/notifications';
 import { getCurrentDate } from 'src/tools/common';
 import { IUser, nullUser } from '../models/users';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { AuthService } from '../../authentication/services/auth.service';
 
 @Injectable({
@@ -67,6 +67,24 @@ export class NotificationService {
   markNotificationsAsRead(userId: number) {
     const url = `${this.notifyUrl}/${userId}/mark-read`;
     return this.http.put(url, {});
+  }
+
+  getSomeNotifications(
+    userId: number,
+    offset: number,
+    limit: number,
+  ): Observable<any> {
+    return this.http.get<any>(
+      `${this.notifyUrl}/some/${userId}?offset=${offset}&limit=${limit}`,
+    );
+  }
+
+  getFirstUnreadedNotifications(
+    userId: number,
+  ): Observable<any> {
+    return this.http.get<any>(
+      `${this.notifyUrl}/unreaded/${userId}`,
+    );
   }
 
   markNotificationAsRead(notificationId: number) {

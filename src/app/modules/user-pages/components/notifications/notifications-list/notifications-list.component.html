@@ -1,12 +1,12 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<div class="list">
+<div class="list " >
     <div class="close"  (click)="closeEmitter.emit()">
      <svg-icon [applyClass]="true" class="close-svg" [src]="'/assets/images/svg/close.svg'"></svg-icon>
     </div> 
   <div class="main">
-    <h1>Уведомления ({{ notifies.length }})</h1>
-    <button (click)="clearAll()" class="clear-all" *ngIf="isSomethingForClear">
+    <h1>Уведомления ({{ totalNotifications }})</h1>
+    <button *ngIf="notifications.length" (click)="clearAll()" class="clear-all" >
       <svg-icon
         class="trash"
         [applyClass]="true"
@@ -16,15 +16,15 @@
     </button>
     <hr />
   </div>
-  <div class="notifies" *ngIf="notifies.length > 0; else noAnyNotifies">
+  <div class="notifies" (scroll)="onScroll($event)" *ngIf="notifications.length > 0; else noAnyNotifies">
     <app-notify 
     (hover)="hover.emit(notify)"
-      *ngFor="let notify of notifies"
+      *ngFor="let notify of notifications"
       [notify]="notify"
     ></app-notify>
   </div>
   <ng-template #noAnyNotifies>
-    <div class="no-notifies" *ngIf="!notifies.length">
+    <div class="no-notifies" *ngIf="!notifications.length">
       У вас пока нет уведомлений
       <svg-icon
         class="mail-cook"
@@ -35,4 +35,3 @@
   </ng-template>
 </div>
 
-<div class="background" (click)="closeEmitter.emit(false)"></div>

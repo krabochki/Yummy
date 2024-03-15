@@ -28,7 +28,7 @@ import { RecipeCreateComponent } from './components/recipes/recipe-create/recipe
 import { CommentComponent } from './components/comments/comment/comment.component';
 import { CommentsListComponent } from './components/comments/comments-list/comments-list.component';
 import { CUSTOM_TIME_DIFF_GENERATOR, TimePastPipe } from 'ng-time-past-pipe';
-import { timeDiffGenerator } from '../controls/time';
+import { timeDiffGenerator } from '../controls/services/time';
 import { SectionCreatingComponent } from './components/categories/section-creating/section-creating.component';
 import { PlanningModule } from '../planning/planning.module';
 import { IngredientPageComponent } from './components/ingredients/ingredient-page/ingredient-page.component';
@@ -85,7 +85,6 @@ import { SectionsPageComponent } from './components/categories/sections-page/sec
     PlanningModule,
     ControlsModule,
     RecipesRoutingModule,
-    CommonPagesModule,
     ScrollingModule,
     SvgIconComponent,
     CommonModule,

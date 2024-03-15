@@ -8,12 +8,10 @@ import { Title } from '@angular/platform-browser';
 import { IGroup, IIngredient, nullGroup } from '../../../models/ingredients';
 import { GroupService } from '../../../services/group.service';
 import { IngredientService } from '../../../services/ingredient.service';
-import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
-  Observable,
   tap,
   forkJoin,
-  count,
   finalize,
   catchError,
   EMPTY,
@@ -192,7 +190,7 @@ export class GroupPageComponent implements OnInit {
 
           this.loaded = true;
           this.cd.markForCheck();
-        });
+        },3000);
       });
     }
   }

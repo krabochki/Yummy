@@ -30,6 +30,8 @@ import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { Router } from '@angular/router';
 import { RecipeService } from '../../../services/recipe.service';
 import { ReportService } from '../../../services/report.service';
+import { Permission } from 'src/app/modules/user-pages/components/settings/conts';
+import { getName } from 'src/app/modules/authentication/components/control-dashboard/notifications';
 
 @Component({
   selector: 'app-comment',
@@ -56,7 +58,7 @@ export class CommentComponent implements OnInit, OnDestroy {
   reportExistModal = false;
 
   constructor(
-    private reportService:ReportService,
+    private reportService: ReportService,
     private userService: UserService,
     private router: Router,
     private cd: ChangeDetectorRef,
@@ -99,6 +101,7 @@ export class CommentComponent implements OnInit, OnDestroy {
             this.comment.id,
             this.recipe,
           );
+          if (this.recipe.commentsLength) this.recipe.commentsLength--;
           this.recipeService.updateRecipeInRecipes(this.recipe);
           this.sendNotifyAfterDeletingComment();
         }),
@@ -111,21 +114,62 @@ export class CommentComponent implements OnInit, OnDestroy {
   }
 
   sendNotifyAfterDeletingComment() {
-    // if (
-    //   this.userService.getPermission('you-delete-your-comment', this.author)
-    // ) {
-      const notify: INotification = this.notifyService.buildNotification(
-        'Комментарий удален',
-        `Ты успешно удалил свой комментарий «${this.comment.text}» под рецептом «${this.recipe.name}»`,
-        'success',
-        'comment',
-        '/recipes/list/' + this.recipe.id,
-      );
-      this.notifyService
-        .sendNotification(notify, this.author.id,true)
-      
-        .subscribe();
-   // }
+    if (this.currentUser.id === this.comment.authorId) {
+      if (
+        this.userService.getPermission(
+          this.currentUser.limitations || [],
+          Permission.YourCommentDeleted,
+        )
+      ) {
+        const notify: INotification = this.notifyService.buildNotification(
+          'Комментарий удален',
+          `Ты успешно удалил свой комментарий «${this.comment.text}» под рецептом «${this.recipe.name}»`,
+          'success',
+          'comment',
+          '/recipes/list/' + this.recipe.id,
+        );
+        this.notifyService
+          .sendNotification(notify, this.author.id, true)
+          .subscribe();
+      }
+    } else {
+      if (
+        this.userService.getPermission(
+          this.currentUser.limitations || [],
+          Permission.WorkNotifies,
+        )
+      ) {
+        const notify: INotification = this.notifyService.buildNotification(
+          'Вы удалили комментарий',
+          `Вы успешно удалили комментарий «${
+            this.comment.text
+          }» автора ${getName(this.author)} под рецептом «${this.recipe.name}»`,
+          'success',
+          'comment',
+          '/recipes/list/' + this.recipe.id,
+        );
+        this.notifyService
+          .sendNotification(notify, this.currentUser.id, true)
+          .subscribe();
+      }
+      if (
+        this.userService.getLimitation(
+          this.comment.authorId,
+          Permission.YourCommentReported,
+        )
+      ) {
+        const notify: INotification = this.notifyService.buildNotification(
+          'Ваш комментарий был удален',
+          `Ваш комментарий «${this.comment.text}» под рецептом «${this.recipe.name}» был удален из-за нарушения правил сайта`,
+          'error',
+          'comment',
+          '/recipes/list/' + this.recipe.id,
+        );
+        this.notifyService
+          .sendNotification(notify, this.comment.authorId)
+          .subscribe();
+      }
+    }
   }
 
   deleteLikeAfterDislike() {
@@ -147,7 +191,7 @@ export class CommentComponent implements OnInit, OnDestroy {
 
           if (
             this.comment.authorId !== this.currentUser.id //&&
-           // this.userService.getPermission('your-commented-liked', this.author)
+            // this.userService.getPermission('your-commented-liked', this.author)
           ) {
             const notify: INotification = this.notifyService.buildNotification(
               'Комментарий кому-то не понравился',
@@ -180,11 +224,7 @@ export class CommentComponent implements OnInit, OnDestroy {
           this.commentService
             .deleteDislike(this.currentUser.id, this.comment.id)
             .subscribe();
-          this.commentService.likeComment(
-            this.currentUser,
-            this.comment,
-            this.recipe,
-          );
+          this.commentService.likeComment(this.comment, this.recipe);
 
           this.recipeService.updateRecipeInRecipes(this.recipe);
           this.cd.markForCheck();
@@ -216,7 +256,7 @@ export class CommentComponent implements OnInit, OnDestroy {
   }
 
   likeComment() {
-    if (!this.comment.likesId.includes(this.currentUser.id)) {
+    if (!this.comment.liked) {
       this.commentService
         .postLike(this.currentUser.id, this.comment.id)
         .pipe(
@@ -240,7 +280,6 @@ export class CommentComponent implements OnInit, OnDestroy {
         .pipe(
           tap(() => {
             this.commentService.deleteLikeFromComment(
-              this.currentUser,
               this.comment,
               this.recipe,
             );
@@ -253,7 +292,7 @@ export class CommentComponent implements OnInit, OnDestroy {
   }
 
   dislikeComment() {
-    if (!this.comment.dislikesId.includes(this.currentUser.id)) {
+    if (!this.comment.disliked) {
       this.commentService
         .postDislike(this.currentUser.id, this.comment.id)
         .pipe(
@@ -296,46 +335,57 @@ export class CommentComponent implements OnInit, OnDestroy {
       .postReport(this.comment.id, this.currentUser.id)
       .pipe(
         catchError((res) => {
-          if (res.error.info === 'Запись уже существует')
-          {
+          if (res.error.info === 'Запись уже существует') {
             this.reportExistModal = true;
           }
-          return EMPTY; 
+          return EMPTY;
         }),
         finalize(() => {
           this.loading = false;
           this.cd.markForCheck();
         }),
-        tap(
-          () => {
-            this.successReportCommentModalShow = true;
+        tap(() => {
+          this.recipe.comments.map((c) => {
+            if (c.id === this.comment.id) {
+              c.reported = true;
+            }
+          });
+          this.recipeService.updateRecipeInRecipes(this.recipe);
+
+          this.cd.markForCheck();
+          this.successReportCommentModalShow = true;
+        }),
+      )
+      .subscribe();
+  }
+  sendNotifiesAfterReportingComment() {
+    this.userService
+      .getLimitation(this.comment.authorId, Permission.YourCommentReported)
+      .pipe(
+        tap((limit) => {
+          if (!limit) {
+            const notify: INotification = this.notifyService.buildNotification(
+              'Кто-то пожаловался на комментарий',
+              `Кто-то пожаловался на твой комментарий «${this.comment.text}» под рецептом «${this.recipe.name}». Жалоба ожидает рассмотрения модератора`,
+              'warning',
+              'comment',
+              '/recipes/list/' + this.recipe.id,
+            );
+            this.notifyService
+              .sendNotification(notify, this.author.id)
+              .subscribe();
           }
-        )
+        }),
       )
       .subscribe();
 
-  }
-  sendNotifiesAfterReportingComment() {
-    // if (
-    //   this.userService.getPermission(
-    //     'your-reports-reviewed-moderator',
-    //     this.author,
-    //   )
-    // ) {
-      let notify: INotification = this.notifyService.buildNotification(
-        'Кто-то пожаловался на комментарий',
-        `Кто-то пожаловался на твой комментарий «${this.comment.text}» под рецептом «${this.recipe.name}». Жалоба ожидает рассмотрения модератора`,
-        'warning',
-        'comment',
-        '/recipes/list/' + this.recipe.id,
-      );
-      this.notifyService.sendNotification(notify, this.author.id).subscribe();
-    //}
-
-    // if (
-    //   this.userService.getPermission('your-reports-publish', this.currentUser)
-    // ) {
-       notify = this.notifyService.buildNotification(
+    if (
+      this.userService.getPermission(
+        this.currentUser.limitations || [],
+        Permission.YouReportedComment,
+      )
+    ) {
+      const notify = this.notifyService.buildNotification(
         'Ты пожаловался на комментарий',
         `Ты отправил жалобу на комментарий ${
           'кулинара ' +
@@ -348,22 +398,13 @@ export class CommentComponent implements OnInit, OnDestroy {
         '/recipes/list/' + this.recipe.id,
       );
       this.notifyService
-        .sendNotification(notify, this.currentUser.id,true)
-      
+        .sendNotification(notify, this.currentUser.id, true)
         .subscribe();
-    //}
+    }
   }
 
   get date() {
     return new Date(this.comment.date);
-  }
-
-  get haveReport(): boolean {
-    return !!this.recipe?.reports?.find(
-      (item) =>
-        item.reporter === this.currentUser.id &&
-        item.comment === this.comment.id,
-    );
   }
 
   copy() {
@@ -380,9 +421,7 @@ export class CommentComponent implements OnInit, OnDestroy {
     this.deleteCommentModalShow = false;
 
     if (result) {
-      setTimeout(() => {
-        this.deleteComment();
-      }, 300);
+      this.deleteComment();
     }
   }
 

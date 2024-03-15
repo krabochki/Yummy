@@ -15,8 +15,10 @@
     [rounded]="true"
   ></app-button>
 
-  <app-search [context]="'groups & ingredients'" [disabled]="(ingredients.length <= 0 && !loaded) || !popularLoaded"></app-search>
-
+<div class="search">
+    <app-search [context]="'groups & ingredients'" [disabled]="(ingredients.length <= 0 && !loaded) || !popularLoaded"></app-search>
+  
+</div>
   <div>
       <div class="sections" *ngIf="!popularLoaded">
         <div class="head">

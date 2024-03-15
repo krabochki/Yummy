@@ -246,6 +246,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
         this.authService.setCurrentUser(nullUser);
         this.loading = false;
         this.router.navigateByUrl('/');
+        
       });
     } else {
       addModalStyle(this.renderer);

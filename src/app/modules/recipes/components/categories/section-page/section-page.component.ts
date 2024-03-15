@@ -1,9 +1,5 @@
 import { CategoryService } from '../../../services/category.service';
-import {
-  ICategory,
-  ISection,
-  nullSection,
-} from '../../../models/categories';
+import { ICategory, ISection, nullSection } from '../../../models/categories';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { SectionService } from '../../../services/section.service';
@@ -14,6 +10,7 @@ import {
   EMPTY,
   Observable,
   Subject,
+  catchError,
   concatMap,
   finalize,
   forkJoin,
@@ -33,6 +30,7 @@ import {
 } from '@angular/core';
 import { Permission } from 'src/app/modules/user-pages/components/settings/conts';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
+import { getFormattedDate } from 'src/tools/common';
 
 @Component({
   templateUrl: './section-page.component.html',
@@ -43,6 +41,7 @@ import { UserService } from 'src/app/modules/user-pages/services/user.service';
   animations: [
     trigger('auto-complete', heightAnim()),
     trigger('modal', modal()),
+    trigger('height', heightAnim()),
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -57,6 +56,7 @@ export class SectionPageComponent implements OnInit, OnDestroy {
   currentUser: IUser = { ...nullUser };
   section: ISection = { ...nullSection };
   currentUserId = 0;
+  currentUserRole = 'user';
 
   title: string = 'Please, wait...';
 
@@ -75,14 +75,14 @@ export class SectionPageComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private sectionService: SectionService,
     private router: Router,
-    private userService:UserService,
+    private userService: UserService,
     private cd: ChangeDetectorRef,
     private titleService: Title,
     private authService: AuthService,
   ) {}
 
   ngOnInit() {
-      const screenWidth = window.innerWidth;
+    const screenWidth = window.innerWidth;
 
     if (screenWidth <= 740) {
       this.CATEGORIES_PER_STEP = 4;
@@ -92,11 +92,10 @@ export class SectionPageComponent implements OnInit, OnDestroy {
       this.CATEGORIES_PER_STEP = 8;
     }
 
-
-    this.authService.getTokenUser().subscribe((receivedUser) => {
-      this.currentUserId = receivedUser.id;
-      this.sectionService.setSections([]);
-      this.route.data.subscribe((data) => {
+    this.route.data.subscribe((data) => {
+      this.authService.getTokenUser().subscribe((receivedUser) => {
+        this.currentUserId = receivedUser.id;
+        this.currentUserRole = receivedUser.role;
         this.getRouteData(data);
         this.getStartCategories();
       });
@@ -106,13 +105,12 @@ export class SectionPageComponent implements OnInit, OnDestroy {
   }
 
   showSectionButtons() {
-        return this.userService.getPermission(
-          this.currentUser.limitations || [],
-          Permission.SectionManagingButtons,
-        );
-
+    return this.userService.getPermission(
+      this.currentUser.limitations || [],
+      Permission.SectionManagingButtons,
+    );
   }
-  
+
   private getRouteData(data: any) {
     if (data['filter'] === 'popular') {
       this.popular = true;
@@ -120,7 +118,9 @@ export class SectionPageComponent implements OnInit, OnDestroy {
       this.section = data['SectionResolver'];
     }
   }
-
+  getDate(date: string) {
+    return getFormattedDate(date);
+  }
   private getCurrentUser() {
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
@@ -144,11 +144,13 @@ export class SectionPageComponent implements OnInit, OnDestroy {
     this.loaded = false;
     let getSection$: Observable<any> = EMPTY;
     if (!this.popular)
-      getSection$ = this.sectionService.getSection(this.section.id).pipe(
-        tap((receivedSection: ISection) => {
-          this.section = receivedSection;
-        }),
-      );
+      getSection$ = this.sectionService
+        .getSection(this.section.id, this.currentUserRole)
+        .pipe(
+          tap((receivedSection: ISection) => {
+            this.section = receivedSection;
+          }),
+        );
     getSection$
       .pipe(
         finalize(() => {
@@ -180,87 +182,139 @@ export class SectionPageComponent implements OnInit, OnDestroy {
   loadMoreCategories() {
     if (this.loaded || !this.categories.length) {
       this.loaded = false;
-      setTimeout(() => {
-        let context = this.categoryService.getSomeCategoriesOfSection(
+      let context = this.categoryService.getSomeCategoriesOfSection(
+        this.CATEGORIES_PER_STEP,
+        this.currentStep,
+        this.section.id,
+        this.currentUser.id,
+      );
+      if (this.popular) {
+        context = this.categoryService.getSomePopularCategories(
           this.CATEGORIES_PER_STEP,
           this.currentStep,
-          this.section.id,
-          this.currentUser.id,
+          this.currentUserId,
         );
-        if (this.popular) {
-          context = this.categoryService.getSomePopularCategories(
-            this.CATEGORIES_PER_STEP,
-            this.currentStep,
-            this.currentUserId,
-          );
-        }
+      }
 
-        context
-          .pipe(
-            tap((response: any) => {
-              const length: number = response.count;
-              const receivedCategories: ICategory[] = response.categories;
+      context
+        .pipe(
+          tap((response: any) => {
+            const length: number = response.count;
+            const receivedCategories: ICategory[] = response.categories;
 
-              this.categories = [...this.categories, ...receivedCategories];
+            this.categories = [...this.categories, ...receivedCategories];
 
-              receivedCategories.forEach((category) => {
-                if (category.image) {
-                  category.imageLoading = true;
-                  this.cd.markForCheck();
-                  setTimeout(() => {
-                    if (category.image)
-                      this.categoryService
-                        .downloadImage(category.image)
-                        .pipe(
-                          finalize(() => {
-                            category.imageLoading = false;
-                            this.cd.markForCheck();
-                          }),
-                        )
-                        .subscribe((blob) => {
-                          category.imageURL = URL.createObjectURL(blob);
-                        });
-                  }, 1000);
-                }
-              });
-
-              if (length <= this.categories.length) {
-                this.everythingLoaded = true;
+            receivedCategories.forEach((category) => {
+              if (category.image) {
+                category.imageLoading = true;
+                this.cd.markForCheck();
+                if (category.image)
+                  this.categoryService
+                    .downloadImage(category.image)
+                    .pipe(
+                      finalize(() => {
+                        category.imageLoading = false;
+                        this.cd.markForCheck();
+                      }),
+                    )
+                    .subscribe((blob) => {
+                      category.imageURL = URL.createObjectURL(blob);
+                    });
               }
-              this.currentStep++;
-              this.loaded = true;
-              this.cd.markForCheck();
-            }),
-          )
-          .subscribe();
-      }, 1000);
+            });
+
+            if (length <= this.categories.length) {
+              this.everythingLoaded = true;
+            }
+            this.currentStep++;
+            this.loaded = true;
+            this.cd.markForCheck();
+          }),
+        )
+        .subscribe();
     }
   }
 
   private deleteSection() {
     this.loadingModal = true;
 
-    const deleteSection$ = this.sectionService.deleteSection(this.section.id);
+    const deleteSection$ = this.sectionService
+      .deleteSection(this.section.id)
+      .pipe(
+        catchError(() => {
+          this.throwErrorModal('Произошла ошибка при попытке удалить раздел.');
+          return EMPTY;
+        }),
+      );
 
-    const deleteImage$ = this.section.image
-      ? this.sectionService.deleteImage(this.section.image)
+    const deleteImage$: Observable<any> = this.section.image
+      ? this.sectionService.deleteImage(this.section.image).pipe(
+          catchError(() => {
+            this.throwErrorModal(
+              'Произошла ошибка при попытке удалить файл изображения удаляемого раздела.',
+            );
+            return EMPTY;
+          }),
+        )
       : of(null);
 
     const deleteCategoriesImages$ = this.sectionService
       .getImagesOfDeletedSectionCategories(this.section.id)
       .pipe(
-        concatMap((images) => from(images)),
-        concatMap((image) => this.categoryService.deleteImage(image)),
+        catchError(() => {
+          this.throwErrorModal(
+            'Произошла ошибка при попытке получить список изображений категорий удаляемого раздела.',
+          );
+          return EMPTY;
+        }),
+        concatMap((images) => {
+          if (images && images.length > 0) {
+            return forkJoin(
+              images.map((image) => this.categoryService.deleteImage(image)),
+            ).pipe(
+              catchError(() => {
+                this.throwErrorModal(
+                  'Произошла ошибка при попытке удалить файлы изображений категорий удаляемого раздела.',
+                );
+                return EMPTY;
+              }),
+            );
+          } else {
+            return of(null); // Если нет изображений категорий, возвращаем пустой Observable
+          }
+        }),
       );
 
-    forkJoin([deleteImage$, deleteSection$, deleteCategoriesImages$])
+    deleteCategoriesImages$
       .pipe(
+        concatMap(() => deleteImage$),
+        concatMap(() => deleteSection$),
         finalize(() => {
-          this.router.navigateByUrl('/sections');
+          this.loadingModal = false;
+          this.cd.markForCheck();
         }),
       )
-      .subscribe();
+      .subscribe({
+        next: () => {
+          this.successDeleteModal = true;
+        },
+      });
   }
+  throwErrorModal(content: string) {
+    this.errorModalContent = content;
+    this.errorModal = true;
+  }
+  handleErrorModal() {
+    this.errorModal = false;
+  }
+
+  handleSuccessDeleteModal() {
+    this.successDeleteModal = false;
+    this.router.navigateByUrl('/sections');
+  }
+  errorModalContent = '';
+  successDeleteModal = false;
+  errorModal = false;
 
   navigateToMatchRecipes() {
     this.router.navigateByUrl('/match');
@@ -275,4 +329,6 @@ export class SectionPageComponent implements OnInit, OnDestroy {
     this.destroyed$.next();
     this.destroyed$.complete();
   }
+
+  moreInfo = false;
 }

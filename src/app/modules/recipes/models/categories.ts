@@ -9,7 +9,15 @@ export interface ICategory {
   recipeCount?: number;
   imageLoading?: boolean;
   imageURL?: string;
+  modifiedDate?: string;
+  changerId?: number;
+  approvedId?: number;
+  approvedDate?: string;
   section?: ISection;
+
+  approvedName?: string;
+  creatorName?: string;
+  changerName?: string;
   author?: IUser;
   status: 'awaits' | 'public';
   sendDate: string;
@@ -19,11 +27,14 @@ export interface ISection {
   imageLoading?: boolean;
     id: number; // Уникальный идентификатор раздела
     name: string; // Название раздела
-    categoriesIds: number[];
+  categoriesIds: number[];
+  changerName?: string;
+  creatorName?: string;
     image?: string;
     imageURL?: string,
-    //categories?:ICategory[],
     authorId:number,
+  modifiedDate?: string;
+  changerId?: number;
     status: 'awaits' | 'public';
     sendDate: string;
   }

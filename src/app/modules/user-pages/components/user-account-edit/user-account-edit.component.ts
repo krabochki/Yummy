@@ -31,10 +31,8 @@ import {
 } from 'src/tools/regex';
 import { UserService } from '../../services/user.service';
 import {
-  AbstractControl,
   FormBuilder,
   FormGroup,
-  ValidationErrors,
   Validators,
 } from '@angular/forms';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
@@ -50,6 +48,7 @@ import {
   of,
   tap,
 } from 'rxjs';
+import { checkFile } from 'src/tools/error.handler';
 @Component({
   selector: 'app-user-account-edit',
   templateUrl: './user-account-edit.component.html',
@@ -314,7 +313,7 @@ export class UserAccountEditComponent
     const input = event.target as HTMLInputElement;
     const userpicFile: File | undefined = input.files?.[0];
 
-    if (userpicFile) {
+    if (userpicFile && checkFile(userpicFile)) {
       this.form.get('userpic')?.setValue(userpicFile);
       const objectURL = URL.createObjectURL(userpicFile);
       this.showedUserpicImage = objectURL;
@@ -413,9 +412,6 @@ export class UserAccountEditComponent
           if (this.editableUser.username !== this.newUser.username) {
             this.authService.logout().subscribe(() => {
               this.authService.changeToken(this.newUser.username).subscribe(
-                (res) => {
-                  console.log(res)
-                }
               );
             });
           }

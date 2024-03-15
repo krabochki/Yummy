@@ -13,8 +13,8 @@ h1 {
   background-color: var(--loading);
   border-radius: 0.75em;
   margin: 0 auto;
-    width: max-content;
-    color: transparent;
+  width: max-content;
+  color: transparent;
 }
 
 
@@ -80,6 +80,7 @@ h1 {
   text-align: center;
   font-family: var(--font-family-accent);
 }
+
 .search {
   margin-top: 2em;
 }
@@ -98,23 +99,28 @@ h2 {
   font-weight: 600;
   font-size: 1.5em;
 }
+
 .button {
   margin-top: 2em;
 }
+
 @mixin flex {
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 h1 {
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .pen {
   cursor: pointer;
   width: 2em;
   @include flex;
+
   .pen-icon {
     height: 1em;
     @include flex;
@@ -123,7 +129,8 @@ h1 {
   }
 }
 
-app-section-creating,app-category-creating {
+app-section-creating,
+app-category-creating {
   z-index: 10;
   position: fixed;
 }
@@ -153,7 +160,120 @@ app-button {
   cursor: pointer;
 }
 
+.action-link {
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.more-info {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  row-gap: 0.5em;
+  margin-top: 1em;
+
+  p {
+    text-align: center;
+    line-height: 1;
+  }
+}
+
+.admin {
+  * {
+    --color: var(--color-admin)
+  }
+}
+
+.moderator {
+  * {
+    --color: var(--color-moderator)
+  }
+}
+.action-buttons {
+  display: flex;
+  flex-direction: row;
+  margin-top: 1em;
+  justify-content: space-between;
+
+  .action-button {
+    p {
+      transition: 0.2s ease-in-out;
+    }
+
+    .action-svg {
+      transition: 0.1s ease-in-out;
+    }
+ &.info-btn:hover {
+   p {
+     color: var(--color)
+   }
+
+   .action-svg {
+     fill: var(--color)
+   }
+ }
+    &.edit:hover {
+      p {
+        color: var(--color-secondary);
+      }
+
+      .action-svg {
+        fill: var(--color-secondary);
+      }
+    }
+
+    &.delete:hover {
+      p {
+        color: var(--color-primary);
+      }
+
+      .action-svg {
+        fill: var(--color-primary);
+      }
+    }
+
+    display: flex;
+    column-gap: 0.5em;
+    align-items: center;
+
+    p {
+      font-weight: 600;
+      text-decoration: underline;
+    }
+  }
+
+  .action-icon {
+    @include flex;
+  }
+
+  .action-svg {
+    width: 1em;
+    height: 1em;
+    @include flex;
+    fill: var(--color-foreground);
+  }
+}
+
+.disabled {
+  pointer-events: none !important;
+}
+
+@media(max-width:700px) {
+
+  .action-buttons,
+  .more-info {
+    flex-direction: column;
+    row-gap: 0.5em;
+    align-items: center;
+  }
+
+  .more-info p {
+    text-align: center;
+  }
+}
+
 @media (max-width: 480px) {
+
   div.container.not-found {
     margin: 2em 0;
 
@@ -167,58 +287,5 @@ app-button {
     padding-left: 6vw;
   }
 
- 
-}
 
-.action-buttons {
-  display: flex;
-  flex-direction: row;
-  margin-top: 1em;
-  justify-content: space-between;
-
-  .action-button {
-    p{
-        transition: 0.2s ease-in-out;
-    }
-    .action-svg{
-        transition: 0.1s ease-in-out;
-    }
-    &.edit:hover {
-      p {
-        color: var(--color-secondary);
-      }
-      .action-svg {
-        fill: var(--color-secondary);
-      }
-    }
-    &.delete:hover {
-      p {
-        color: var(--color-primary);
-      }
-
-      .action-svg {
-        fill: var(--color-primary);
-      }
-    }
-    display: flex;
-    column-gap: 0.5em;
-    align-items: center;
-    p {
-      font-weight: 600;
-      text-decoration: underline;
-    }
-  }
-  .action-icon {
-    @include flex;
-  }
-  .action-svg {
-    width: 1em;
-    height: 1em;
-    @include flex;
-    fill: var(--color-foreground);
-  }
-}
-
-.disabled {
-  pointer-events: none !important;
 }

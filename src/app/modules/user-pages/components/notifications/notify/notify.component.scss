@@ -3,6 +3,60 @@
     --main: #59aef3;
 }
 
+.preloader {
+    .body{
+        pointer-events: none;
+    }
+    cursor: wait;
+    --main: var(--color-foreground-unactive);
+
+    h1,p{
+        animation: loading 0.75s infinite linear;
+        background-color: var(--loading);
+        line-height: 1 !important;
+        padding: 0;
+        overflow: hidden;
+        width: max-content;
+        color: transparent;border-radius: 0.75em;
+
+        
+    }
+
+    .svg-notify{animation: loading 0.75s infinite linear;
+        background-color: var(--loading);
+        border-radius: 100%;
+    }
+    .time-cont{
+        display: flex;
+        align-items: end;
+        justify-content: end;
+        width: 100%;
+    }
+
+    .time{
+        font-size: 0.7em;
+        margin-top: 0.5em;
+    }
+
+    p:first-of-type{
+    margin-bottom: 0.2em;
+    }
+}
+
+@keyframes loading {
+    0% {
+        background-position: var(--loading);
+    }
+
+    50% {
+        background-color: var(--loading-accent);
+    }
+
+    100% {
+        background-position: var(--loading);
+    }
+}
+
 .warning{
     --main:#e0d900; 
 }

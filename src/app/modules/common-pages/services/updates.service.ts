@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { IUpdate } from '../updates/updates/const';
+import { IUpdate } from '../components/updates/updates/const';
 import { role } from '../../user-pages/models/users';
 import { updatesSource } from 'src/tools/sourses';
 import { HttpClient } from '@angular/common/http';

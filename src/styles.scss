@@ -57,9 +57,9 @@ body {
 
   --scroll-thumb: #cccccc;
   --scroll-body: #e1e0e0;
-    --sun: #ffab2c;
-      --moon: #212121;
-      
+  --sun: #ffab2c;
+  --moon: #212121;
+
   --scroll-body-modal: #8b8b8b;
 
   --color-admin: #d659f6;
@@ -80,8 +80,8 @@ body {
   --vk: #7094bd;
   --pinterest: #c73d4d;
 
-    --loading-accent: rgb(233, 233, 233);
-      --loading: rgb(220, 220, 220);
+  --loading-accent: rgb(233, 233, 233);
+  --loading: rgb(220, 220, 220);
 }
 
 .dark-mode {
@@ -92,15 +92,15 @@ body {
 
 
   --loading-accent: #7d7d7d;
-  --loading:#5b5b5b;
+  --loading: #5b5b5b;
 
   --color-primary: #fe6668;
   --scroll-body-modal: #191919;
   --color-secondary: #ffb446;
 
   --color-foreground: #e3e3e3;
-      --sun: #e3e3e3;
-        --moon: #ffb446;
+  --sun: #e3e3e3;
+  --moon: #ffb446;
   --color-background: #272727;
   --color-background-deeper: #363636;
   --not-read: #494949;
@@ -162,19 +162,18 @@ body {
   --font-family-accent: "Appetite new";
 }
 
-@media (max-width:480px){
-  :root{
---font-xxl:1.75em;
-}}
+@media (max-width:480px) {
+  :root {
+    --font-xxl: 1.75em;
+  }
+}
 
 $maxWidth: 1280;
 
 @mixin adaptive-font($pcSize, $mobSize) {
   $addSize: $pcSize - $mobSize;
   $maxWidth: $maxWidth - 320;
-  font-size: calc(
-    #{$mobSize + px} + #{$addSize} * ((100vw - 320px) / #{$maxWidth})
-  );
+  font-size: calc(#{$mobSize + px} + #{$addSize} * ((100vw - 320px) / #{$maxWidth}));
 }
 
 :root {
@@ -216,6 +215,7 @@ body.inheritCursors * {
   background-color: var(--color-secondary);
   color: var(--color-background);
 }
+
 *,
 *::before,
 *::after {
@@ -319,9 +319,10 @@ label {
 legend {
   display: block;
 }
+
 body,
-html {
-}
+html {}
+
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
@@ -331,9 +332,11 @@ body {
 body::-webkit-scrollbar {
   width: 16px;
 }
+
 body::-webkit-scrollbar-track {
   background: var(--scroll-body);
 }
+
 body::-webkit-scrollbar-thumb {
   background-color: var(--scroll-thumb);
   border-radius: 20px;
@@ -361,11 +364,12 @@ body {
   .drag-scroll-content {
     margin-right: 0;
     padding-right: 6%;
-    word-wrap: normal !important;
+    word-wrap: break-word !important;
 
     * {
-      word-wrap: normal !important;
+      word-wrap: break-word !important;
     }
+
     &::-webkit-scrollbar {
       display: none !important;
     }
@@ -376,10 +380,12 @@ body {
   &::-webkit-scrollbar {
     width: 12px;
   }
+
   &::-webkit-scrollbar-track {
     border-radius: 20px;
     background: var(--scroll-body);
   }
+
   &::-webkit-scrollbar-thumb {
     background-color: var(--scroll-thumb);
     border-radius: 20px;
@@ -411,6 +417,7 @@ input.calendar-event {
   transition: all 0.2s ease-in-out;
   line-height: 1.4;
   font-size: 0.9em;
+
   &::placeholder {
     font-weight: 300;
   }
@@ -422,11 +429,16 @@ input.calendar-event {
 }
 
 .noselect {
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-  -khtml-user-select: none; /* Konqueror HTML */
-  -moz-user-select: none; /* Old versions of Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Safari */
+  -khtml-user-select: none;
+  /* Konqueror HTML */
+  -moz-user-select: none;
+  /* Old versions of Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
   user-select: none;
 }
 
@@ -542,11 +554,15 @@ input.calendar-event {
 
 
 
-@media print{
-  app-footer,app-header,.header-margin{
+@media print {
+
+  app-footer,
+  app-header,
+  .header-margin {
     display: none !important
   }
-  body{
+
+  body {
     background-color: white;
   }
 }

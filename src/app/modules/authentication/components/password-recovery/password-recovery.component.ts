@@ -70,7 +70,7 @@ export class PasswordRecoveryComponent implements OnInit, OnDestroy {
       : ' ';
   }
 
-  async passwordRecovery(): Promise<void> {
+   passwordRecovery(){
     if (this.form.valid) {
       const email = this.form.get('email')?.value;
       this.loadingModal = true;

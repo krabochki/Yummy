@@ -20,7 +20,7 @@ export class SectionResolver implements Resolve<ISection> {
       return EMPTY;
     }
 
-      return this.sectionService.getSection(sectionId).pipe(
+      return this.sectionService.getSection(sectionId, 'user').pipe(
         map((section: ISection) => {
           if (section) {
             return section;

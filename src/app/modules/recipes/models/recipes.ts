@@ -5,6 +5,7 @@ export interface IRecipe {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   mainImage?: string; // URL основного фото рецепта
   imageLoading?: boolean;
+  commentsLength?: number;
   imageURL?: string;
   name: string; // Название рецепта
   description: string; // Описание рецепта
@@ -18,12 +19,14 @@ export interface IRecipe {
   instructions: Instruction[]; // Инструкции по приготовлению
   categories: number[]; // Список айди категорий рецепта
   authorId: number; // Информация об авторе рецепта
-  likesId: number[]; // Количество лайков
-  cooksId: number[]; // Количество приготовлений
+  likesLength: number;
+  liked: boolean;
+  cooksLength: number;
+  cooked: boolean;
+  faved: boolean;
   history: string;
   comments: IComment[]; // Список комментариев
   publicationDate: string; // Дата регистрации пользователя
-  favoritesId: number[];
   status: 'awaits' | 'private' | 'public';
   reports: ICommentReport[];
   statistics: IRecipeStatistics[];
@@ -51,10 +54,12 @@ export const nullRecipe: IRecipe = {
   statistics:[],
   history: '',
   authorId: 0,
-  likesId: [],
-  cooksId: [],
+  likesLength: 0,
+  cooksLength: 0,
+  cooked: false,
+  liked: false,
+  faved:false,
   comments: [],
-  favoritesId: [],
   publicationDate: '01-01-2000',
   status: 'private',
 };

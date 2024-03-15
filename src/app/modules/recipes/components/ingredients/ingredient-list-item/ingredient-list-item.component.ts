@@ -1,8 +1,5 @@
-import {
-  Component,
-  Input,
-} from '@angular/core';
-import { PluralizationService } from 'src/app/modules/controls/directives/plural.service';
+import { Component, Input } from '@angular/core';
+import { PluralizationService } from 'src/app/modules/controls/services/plural.service';
 
 @Component({
   selector: 'app-ingredient-list-item',

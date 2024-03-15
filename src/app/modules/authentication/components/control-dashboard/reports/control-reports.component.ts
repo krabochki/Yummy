@@ -74,13 +74,21 @@ export class ControlReportsComponent implements OnInit {
     if (this.loaded) {
       this.loaded = false;
 
+      this.cd.markForCheck();
+
       setTimeout(() => {
         this.reportService
-          .getReports(this.reportsPerStep, this.step, this.currentUser.id)
+          .getReports(this.reportsPerStep, this.step, this.currentUserId)
           .pipe(
             tap((res: any) => {
               const newReports: IReport[] = res.reports;
               const count = res.count;
+
+
+                            if (checkUpdates) {
+                              this.everythingLoaded = false;
+                              this.reports = [];
+                            }
 
               if (!newReports.length) {
                 this.everythingLoaded = true;
@@ -96,11 +104,6 @@ export class ControlReportsComponent implements OnInit {
                     (existingReport) => existingReport.id === newUpdate.id,
                   ),
               );
-
-              if (checkUpdates) {
-                this.everythingLoaded = false;
-                this.reports = [];
-              }
 
               let reports$: Observable<any>[] = [];
               actualReports.forEach((report) => {
@@ -141,7 +144,7 @@ export class ControlReportsComponent implements OnInit {
                         if (report.recipeId)
                           report$.push(
                             this.recipeService
-                              .getShortRecipeById(report.recipeId)
+                              .getMostShortedRecipe(report.recipeId)
                               .pipe(
                                 tap((recipe) => {
                                   this.recipeService.addNewRecipe(recipe);
@@ -252,18 +255,21 @@ export class ControlReportsComponent implements OnInit {
     });
   }
 
-  init: boolean = false;
+  currentUserId = 0;
 
   currentUserInit() {
+    this.authService.getTokenUser().subscribe(
+      (user) =>
+      {
+        this.currentUserId = user.id;
+        this.checkActualReports();
+
+        
+        }
+    )
     this.authService.currentUser$.subscribe((receivedUser: IUser) => {
-      if (receivedUser.id !== this.currentUser.id) {
         this.currentUser = receivedUser;
 
-        this.checkActualReports();
-        this.init = true;
-      } else {
-        this.currentUser = receivedUser;
-      }
     });
   }
 

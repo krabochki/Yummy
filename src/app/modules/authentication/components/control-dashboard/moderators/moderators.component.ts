@@ -75,7 +75,6 @@ export class ControlModeratorsComponent implements OnInit, OnDestroy {
           const newModerators: IUser[] = response.moderators;
           const count = response.count;
 
-          console.log(newModerators);
 
           if (check) {
             this.moderators = [];

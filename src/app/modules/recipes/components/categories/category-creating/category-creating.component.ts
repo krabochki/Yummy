@@ -25,23 +25,21 @@ import {
   nullCategory,
   nullSection,
 } from '../../../models/categories';
-import { SectionGroup } from 'src/app/modules/controls/autocomplete/autocomplete.component';
 import {
   EMPTY,
-  Observable,
   Subject,
   catchError,
+  concatMap,
   finalize,
   forkJoin,
-  map,
   of,
+  switchMap,
   takeUntil,
   tap,
 } from 'rxjs';
 import { SectionService } from '../../../services/section.service';
 import {
   addModalStyle,
-  getCurrentDate,
   removeModalStyle,
 } from 'src/tools/common';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
@@ -50,7 +48,6 @@ import { INotification } from 'src/app/modules/user-pages/models/notifications';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { trimmedMinLengthValidator } from 'src/tools/validators';
-import { hi } from 'date-fns/locale';
 import { Permission } from 'src/app/modules/user-pages/components/settings/conts';
 
 @Component({
@@ -72,18 +69,14 @@ export class CategoryCreatingComponent
   saveModal: boolean = false;
   closeModal: boolean = false;
   successModal: boolean = false;
-  awaitModalShow = false;
-
-  private newCategory: ICategory = { ...nullCategory };
+  awaitModal = false;
 
   //init data
-  sections: ISection[] = [];
-  group: SectionGroup[] = [];
   currentUser: IUser = { ...nullUser };
   startSection: ISection = nullSection;
 
   errorModal = false;
-  error = '';
+  errorModalContent = '';
   //images
   categoryImage: string = '';
   defaultImage: string = '/assets/images/add-category.png';
@@ -92,7 +85,8 @@ export class CategoryCreatingComponent
   form: FormGroup;
   beginningData: any;
 
-  editedCategory: ICategory = nullCategory;
+  editedCategory: ICategory = {...nullCategory};
+  savedCategory: ICategory = {...nullCategory};
 
   currentStep: number = 0;
   steps: Step[] = steps;
@@ -156,7 +150,7 @@ export class CategoryCreatingComponent
               ? this.categoryService.downloadImage(category.image).pipe(
                   tap((blob) => {
                     if (blob) {
-                      this.form.get('image')?.setValue('url');
+                      this.form.get('image')?.setValue('existing_photo');
                       this.editedCategory.image = category.image;
                       this.editedCategory.imageURL = URL.createObjectURL(blob);
                       this.categoryImage = this.editedCategory.imageURL;
@@ -164,41 +158,43 @@ export class CategoryCreatingComponent
                     }
                   }),
                   catchError(() => {
+                    this.errorModalContent =
+                      'Возникла ошибка при попытке загрузить файл с изображением редактируемой категории. Возможны сбои при попытке изменить категорию.';
+                    this.errorModal = true;
                     return EMPTY;
                   }),
                 )
               : of(null);
 
             this.form.get('name')?.setValue(category.name);
+            
+            this.editedCategory.sectionId = category.sectionId;
 
             const section$ = this.sectionService
               .getSectionShortInfoForAwaitingCategory(category.sectionId || 0)
               .pipe(
                 tap((sections: ISection[]) => {
                   const section = sections[0];
+                  
                   if (section) {
                     this.form.get('section')?.setValue(section);
                     this.startSection = section;
+                    this.cdr.markForCheck();
                   }
                 }),
               );
 
             forkJoin([section$, image$])
               .pipe(
-                finalize(
-                  () => {
-                                  this.initialLoading = false;
-                                  addModalStyle(this.renderer);
-                                  this.beginningData = this.form.getRawValue();
+                finalize(() => {
+                  this.initialLoading = false;
+                  addModalStyle(this.renderer);
+                  this.beginningData = this.form.getRawValue();
 
-                                  this.cdr.markForCheck();
-
-                  }
-                )
+                  this.cdr.markForCheck();
+                }),
               )
-              .subscribe(() => {
-            });
-
+              .subscribe(() => {});
           }),
         )
         .subscribe();
@@ -213,22 +209,6 @@ export class CategoryCreatingComponent
       });
   }
 
-  //images
-  onCategoryImageChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const userpicFile: File | undefined = input.files?.[0];
-
-    if (userpicFile) {
-      this.form.get('image')?.setValue(userpicFile);
-      const objectURL = URL.createObjectURL(userpicFile);
-      this.categoryImage = objectURL;
-    }
-  }
-  unsetCategoryImage(): void {
-    this.form.get('image')?.setValue(null);
-    this.categoryImage = this.defaultImage;
-  }
-
   //section
   clearSection(): void {
     this.form.get('section')?.setValue(null);
@@ -237,326 +217,272 @@ export class CategoryCreatingComponent
     this.form.get('section')?.setValue(selectedSection);
   }
 
-  createCategory() {
-        this.awaitModalShow = true;
-        this.cdr.markForCheck();
-
-        let loadImage = false;
-        let deleteImage = false;
-        if (this.editMode) {
-          if (this.editedCategory.image !== this.newCategory.image) {
-            if (this.newCategory.image) {
-              loadImage = true;
-            }
-            if (this.editedCategory.image) {
-              deleteImage = true;
-            }
-          }
-
-                  
-          let loadImage$: Observable<any> = of(null);
-
-          try {
-            loadImage$ = loadImage
-              ? this.categoryService
-                  .uploadCategoryImage(this.form.get('image')?.value)
-                  .pipe(
-                    map((response: any) => {
-                      const filename = response.filename;
-                      this.newCategory.image = filename;
-
-                    }),
-                  )
-              : of(null);
-          } catch {
-            this.error =
-              'Произошла ошибка при попытке загрузки картинки категории';
-            this.errorModal = true;
-            this.awaitModalShow = false;
-            this.cdr.markForCheck();
-          }
-
-          const deleteImage$ =
-            deleteImage && this.editedCategory.image
-              ? this.categoryService.deleteImage(this.editedCategory.image)
-              : of(null);
-          const putCategory$ = this.categoryService.updateCategory(
-            this.newCategory,
-          );
-
-          forkJoin([loadImage$, deleteImage$])
-            .pipe(
-              map(() => {
-                putCategory$
-                  .pipe(
-                    tap(() => {
-                    console.log(this.newCategory)
-                      this.successModal = true;
-                      this.cdr.markForCheck();
-                    }),
-
-                    catchError((response) => {
-                      if (loadImage && this.newCategory.image) {
-                        this.sectionService
-                          .deleteImage(this.newCategory.image)
-                          .pipe(
-                            catchError(() => {
-                              this.error =
-                                'Произошла ошибка при попытке удалить новую фотографию незагруженной категории';
-                              this.errorModal = true;
-                              return EMPTY;
-                            }),
-                          )
-                          .subscribe();
-                      }
-                      this.error = response.error.info || '';
-                      this.errorModal = true;
-                      this.cdr.markForCheck();
-                      return EMPTY;
-                    }),
-
-                    finalize(() => {
-                      this.awaitModalShow = false;
-                      this.cdr.markForCheck();
-                    }),
-                  )
-                  .subscribe();
-              }),
-            )
-            .subscribe();
-        } else {
-          if (this.form.get('image')?.value) {
-            this.categoryService
-              .uploadCategoryImage(this.form.get('image')?.value)
-              .subscribe((res: any) => {
-                const filename = res.filename;
-                this.newCategory.image = filename;
-                this.postCategory();
-              });
-          } else {
-            this.postCategory();
-          }
-        }
-
+  private editCategory() {
+    const id = this.editedCategory.id;
+    const sectionId = this.form.get('section')?.value.id;
+    const name = this.form.value.name;
+    const updatedCategory: ICategory = {
+      ...nullCategory,
+      id: id,
+      name: name,
+      image: this.getImageOfSavedCategory(),
+      sectionId: sectionId,
+    };
+    this.PUTCategory(updatedCategory);
   }
 
-   addCategory() {
-    this.awaitModalShow = true;
-    this.cdr.markForCheck();
-
-    if (this.editMode) {
-      let loadImage = false;
-      let deleteImage = false;
-
-      if (this.editedCategory.image !== this.newCategory.image) {
-        if (this.newCategory.image) {
-          loadImage = true;
-        }
-        if (this.editedCategory.image) {
-          console.log(true);
-          deleteImage = true;
-        }
-      }
-      if (this.newCategory.image === 'image') this.newCategory.image = '';
-
-      let loadImage$: Observable<any> = of(null);
-      try {
-        loadImage$ = loadImage
-          ? this.categoryService
-              .uploadCategoryImage(this.form.get('image')?.value)
-              .pipe(
-                map((response: any) => {
-                  const filename = response.filename;
-                  this.newCategory.image = filename;
-                }),
-                catchError((response) => {
-                  this.error = response.error.info || '';
-                  this.awaitModalShow = false;
-                  this.errorModal = true;
-
-                  this.cdr.markForCheck();
-                  return EMPTY;
-                }),
-              )
-          : of(null);
-      } catch (error) {
-        this.error = 'Произошла ошибка при попытке загрузки картинки категории';
-        this.errorModal = true;
-        this.awaitModalShow = false;
-        this.cdr.markForCheck();
-      }
-
-      const deleteImage$ =
-        deleteImage && this.editedCategory.image
-          ? this.categoryService.deleteImage(this.editedCategory.image)
-          : of(null);
-      const putCategory$ = this.categoryService.updateCategory(
-        this.newCategory,
-      );
-
-      try {
-        forkJoin([loadImage$, deleteImage$])
-          .pipe(
-            map(() => {
-              putCategory$
-                .pipe(
-                  catchError((response) => {
-                    if (loadImage && this.newCategory.image) {
-                      this.categoryService
-                        .deleteImage(this.newCategory.image)
-                        .pipe(
-                          catchError(() => {
-                            this.error =
-                              'Произошла ошибка при попытке удалить новую фотографию незагруженной категории';
-                            this.errorModal = true;
-                            return EMPTY;
-                          }),
-                        )
-                        .subscribe();
-                    }
-                    this.error = response.error.info || '';
-                    this.errorModal = true;
-                    return EMPTY;
-                  }),
-                  finalize(() => {
-                    this.awaitModalShow = false;
-                    this.cdr.markForCheck();
-                  }),
-                )
-                .subscribe();
-            }),
-          )
-          .subscribe(() => {});
-      } catch {
-        this.errorModal = true;
-        this.awaitModalShow = false;
-        this.cdr.markForCheck();
-      }
-    } else {
-      if (this.form.value.image) {
-        this.categoryService
-          .uploadCategoryImage(this.form.get('image')?.value)
-          .subscribe((res: any) => {
-            const filename = res.filename;
-            this.newCategory.image = filename;
-            this.postCategory();
-          });
-      } else {
-        this.postCategory();
-      }
-    }
+  private createCategory() {
+    const sectionId = this.form.get('section')?.value.id;
+    const name = this.form.value.name;
+    const createdCategory: ICategory = {
+      ...nullCategory,
+      name: name,
+      authorId: this.currentUser.id,
+      status: this.getStatusOfSavedCategory(),
+      sectionId: sectionId,
+    };
+    this.POSTCategory(createdCategory);
   }
 
   handleCategorySuccessLoading() {
     this.successModal = true;
   }
-  postCategory() {
+
+  POSTCategory(category: ICategory) {
+    const file: File = this.form.value.image;
+
+    this.savedCategory = category;
     this.categoryService
-      .postCategory(this.newCategory)
+      .postCategory(category)
       .pipe(
-        tap(() => {
-          this.handleCategorySuccessLoading();
-        }),
-        catchError((response) => {
-          if (this.newCategory.image) {
-            this.categoryService
-              .deleteImage(this.newCategory.image)
-              .pipe(
-                catchError(() => {
-                  this.error =
-                    'Произошла ошибка при попытке удалить новую фотографию незагруженной категории';
-                  this.errorModal = true;
-                  return EMPTY;
-                }),
-              )
-              .subscribe();
+        catchError((response: any) => {
+          if (response.error.info == 'NAME_EXISTS') {
+            this.throwErrorModal(
+              'Категория с таким названием уже существует. Измените название и попробуйте снова.',
+            );
+          } else {
+            this.throwErrorModal(
+              'Произошла ошибка при попытке создать категорию',
+            );
           }
-          this.error = response.error.info || '';
-          this.errorModal = true;
+          return EMPTY;
+        }),
+        switchMap((response: any) => {
+          const insertedId = response.id; // Сохраняем вставленный ID
+              this.savedCategory.id = insertedId;
+
+          // Если есть файл, загружаем изображение
+          if (file) {
+            return this.categoryService.uploadCategoryImage(file).pipe(
+              switchMap((uploadResponse: any) => {
+                const filename = uploadResponse.filename;
+                // Устанавливаем изображение для категории
+                return this.categoryService
+                  .setImageToCategory(insertedId, filename)
+                  .pipe(
+                    catchError(() => {
+                      this.throwErrorModal(
+                        'Произошла ошибка при попытке связать загруженное изображение и категорию',
+                      );
+                      return EMPTY;
+                    }),
+                  );
+              }),
+            );
+          } else {
+            // Если файла нет, возвращаем пустой поток
+            return of(null);
+          }
+        }),
+        catchError(() => {
           return EMPTY;
         }),
         finalize(() => {
-          this.awaitModalShow = false;
+          this.awaitModal = false; // Скрываем модальное окно ожидания
           this.cdr.markForCheck();
+        }),
+        tap(() => {
+
+          
+
+          this.successModal = true; // Устанавливаем флаг успешного выполнения операций
         }),
       )
       .subscribe();
   }
 
+
+  
+
+  PUTCategory(category: ICategory) {
+    const newImage = category.image;
+    const oldImage = this.editedCategory.image;
+    const imageChanged = oldImage !== newImage;
+    const loadImage = imageChanged && !!newImage;
+    const deleteImage = imageChanged && !!oldImage;
+
+
+    this.savedCategory = category; 
+
+    const file: File = this.form.value.image;
+
+    const putCategory$ = this.categoryService.putCategory(category, this.currentUser.id).pipe(
+      catchError((response: any) => {
+        if (response.error.info == 'NAME_EXISTS') {
+          this.throwErrorModal(
+            'Категория с таким названием уже существует. Измените название и попробуйте снова.',
+          );
+        } else {
+          this.throwErrorModal(
+            'Произошла ошибка при попытке обновить категорию',
+          );
+        }
+        return EMPTY;
+      }),
+    );
+
+    const loadImage$ = loadImage
+      ? this.categoryService.uploadCategoryImage(file).pipe(
+          catchError(() => {
+            this.throwErrorModal(
+              'Произошла ошибка при попытке загрузить файл нового изображения категории',
+            );
+            return EMPTY;
+          }),
+          concatMap((response: any) => {
+            const filename = response.filename;
+            return this.categoryService
+              .setImageToCategory(category.id, filename)
+              .pipe(
+                catchError(() => {
+                  this.throwErrorModal(
+                    'Произошла ошибка при попытке связать новое загруженное изображение и категорию',
+                  );
+                  return EMPTY;
+                }),
+              );
+          }),
+        )
+      : of(null);
+
+    const deleteImage$ = deleteImage
+      ? this.categoryService.deleteImage(oldImage!).pipe(
+          catchError(() => {
+            this.throwErrorModal(
+              'Произошла ошибка при попытке удалить старое изображение категории',
+            );
+            return EMPTY;
+          }),
+          concatMap(() => {
+            return this.categoryService
+              .setImageToCategory(category.id, '')
+              .pipe(
+                catchError(() => {
+                  this.throwErrorModal(
+                    'Произошла ошибка при попытке удаления связи старого изображения с категорией',
+                  );
+                  return EMPTY;
+                }),
+              );
+          }),
+        )
+      : of(null);
+
+    putCategory$
+      .pipe(
+        concatMap(() => deleteImage$),
+        concatMap(() => loadImage$),
+      )
+      .pipe(
+        finalize(() => {
+          this.awaitModal = false;
+          this.cdr.markForCheck();
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.successModal = true;
+        },
+        
+      });
+
+    
+    
+  }
+
+  private throwErrorModal(content: string) {
+    this.errorModalContent = content;
+    this.errorModal = true;
+  }
+
+  handleErrorModal() {
+    this.errorModal = false;
+    addModalStyle(this.renderer);
+  }
+
+  private saveCategory() {
+    this.awaitModal = true;
+    if (this.editMode) {
+      this.editCategory();
+    } else {
+      this.createCategory();
+    }
+  }
+
   //modals
   handleSaveModal(answer: boolean) {
     if (answer) {
-      let image = '';
-      if (this.editedCategory.image && this.form.get('image')?.value === 'url') {
-        image = this.editedCategory.image;
-      } else {
-        if (this.form.get('image')?.value) {
-          image = 'image';
-        }
-      }
-      this.newCategory = {
-        ...nullCategory,
-        image: image,
-        sectionId: this.form.get('section')?.value.id,
-        name: this.form.value.name,
-        status: this.editMode
-          ? 'public'
-          : this.currentUser.role === 'user'
-            ? 'awaits'
-            : 'public',
-
-        id: this.editMode ? this.editedCategory.id : 0,
-      };
-
-        this.createCategory();
-      
-    
+      this.saveCategory();
     }
-    addModalStyle(this.renderer);
     this.saveModal = false;
+    addModalStyle(this.renderer);
   }
+
   handleSuccessModal() {
     this.closeEmitter.emit(true);
     if (this.currentUser.role !== 'user') this.editEmitter.emit();
     this.successModal = false;
     if (this.editedCategory.id === 0) {
-
-      if (this.userService.getPermission(this.currentUser.limitations || [], Permission.CategorySend)) {
-        //.getPermission('you-create-category',) &&
-      
-      
+      if (
+        this.userService.getPermission(
+          this.currentUser.limitations || [],
+          Permission.CategorySend,
+        )
+      ) {
         const notify: INotification = this.notifyService.buildNotification(
           this.currentUser.role === 'user'
             ? 'Категория отправлена на проверку'
             : 'Категория опубликована',
-          `Созданная вами категория «${this.newCategory.name}» ${this.currentUser.role === 'user'
-            ? 'отправлена на проверку'
-            : 'успешно опубликована'
+          `Созданная вами категория «${this.savedCategory.name}» ${
+            this.currentUser.role === 'user'
+              ? 'отправлена на проверку'
+              : 'успешно опубликована'
           }`,
           'success',
           'category',
           this.currentUser.role === 'user'
             ? ''
-            : '/categories/list/' + this.newCategory.id,
+            : '/categories/list/' + this.savedCategory.id,
         );
         this.notifyService
           .sendNotification(notify, this.currentUser.id, true)
           .subscribe();
-      
       }
     }
   }
+
   handleCloseModal(answer: boolean) {
+    this.closeModal = false;
+
     if (answer) {
       this.closeEmitter.emit(true);
     } else {
       addModalStyle(this.renderer);
     }
-    this.closeModal = false;
   }
 
   closeEditModal() {
-    this.areObjectsEqual() 
+    this.areObjectsEqual()
       ? (this.closeModal = true)
       : this.closeEmitter.emit(true);
   }
@@ -628,6 +554,7 @@ export class CategoryCreatingComponent
   scrollTop(): void {
     if (this.scrollContainer) this.scrollContainer.nativeElement.scrollTop = 0;
   }
+
   goToNextStep() {
     if (this.currentStep < this.steps.length - 1) {
       this.currentStep++;
@@ -637,5 +564,41 @@ export class CategoryCreatingComponent
 
   ngOnDestroy(): void {
     removeModalStyle(this.renderer);
+  }
+
+  onImageChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const pictureFile: File | undefined = input.files?.[0];
+
+    if (pictureFile) {
+      this.form.get('image')?.setValue(pictureFile);
+      const objectURL = URL.createObjectURL(pictureFile);
+      this.categoryImage = objectURL;
+    }
+  }
+  unsetImage(): void {
+    this.form.get('image')?.setValue(null);
+    this.categoryImage = this.defaultImage;
+  }
+
+  getImageOfSavedCategory() {
+    let image = '';
+    const selectedImage = this.form.get('image')?.value;
+    if (this.editedCategory.image && selectedImage === 'existing_photo') {
+      image = this.editedCategory.image;
+    } else {
+      if (selectedImage) {
+        image = 'image';
+      }
+    }
+    return image;
+  }
+
+  getStatusOfSavedCategory() {
+    return this.editMode
+      ? 'public'
+      : this.currentUser.role === 'user'
+        ? 'awaits'
+        : 'public';
   }
 }

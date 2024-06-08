@@ -1,0 +1,168 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="main" [ngClass]="{
+    admin: this.currentUser.role === 'admin',
+    moderator: this.currentUser.role === 'moderator'
+  }">
+  <h1>
+    Панель управления
+  </h1>
+  <div class="wrap">
+    <div class="blocks">
+      <div class="block green" *ngIf="currentUser.role === 'admin'">
+        <div class="content">
+          <span [title]="updatesLength">{{ updatesLength === -1 ? '?' : formatNumber(updatesLength) }} </span>
+          <p>
+            <span appPluralRu="" [value]="updatesLength === -1 ? 3 : updatesLength"
+              [arVariants]="updateArVariants"></span>
+            на проверку
+          </p>
+        </div>
+        <svg-icon [applyClass]="true" class="icon" [src]="'/assets/images/svg/admin-panel/update.svg'">
+        </svg-icon>
+      </div>
+      <div class="block purple">
+        <div class="content">
+          <span [title]="recipesLength">{{ recipesLength === -1 ? '?' : formatNumber(recipesLength) }} </span>
+          <p>
+            <span appPluralRu="" [value]="recipesLength === -1 ? 5 : recipesLength"
+              [arVariants]="recipeArVariants"></span>
+            на проверку
+          </p>
+        </div>
+        <svg-icon [applyClass]="true" class="icon" [src]="'/assets/images/svg/admin-panel/recipes.svg'">
+        </svg-icon>
+      </div>
+      <div class="block orange">
+        <div class="content">
+          <span [title]="reportsLength">{{ reportsLength === -1 ? '?' : formatNumber(reportsLength) }}</span>
+          <p>
+            <span appPluralRu="" [value]="reportsLength === -1 ? 3 : reportsLength"
+              [arVariants]="reportsArVariants"></span>
+            на комментарии
+          </p>
+        </div>
+        <svg-icon [applyClass]="true" class="icon" [src]="'/assets/images/svg/admin-panel/report.svg'">
+        </svg-icon>
+      </div>
+      <div class="block blue">
+        <div class="content">
+          <span [title]="categoriesLength">{{ categoriesLength === -1 ? '?' : formatNumber(categoriesLength) }}</span>
+          <p>
+            <span appPluralRu="" [value]="categoriesLength === -1 ? 3 : categoriesLength"
+              [arVariants]="categoriesArVariants"></span>
+            на проверку
+          </p>
+        </div>
+        <svg-icon [applyClass]="true" class="icon" [src]="'/assets/images/svg/admin-panel/category.svg'">
+        </svg-icon>
+      </div>
+      <div class="block red">
+        <div class="content">
+          <span [title]="ingredientsLength">{{ ingredientsLength === -1 ? '?' : formatNumber(ingredientsLength) }}</span>
+          <p>
+            <span appPluralRu="" [value]="ingredientsLength === -1 ? 3 : ingredientsLength"
+              [arVariants]="ingredientsArVariants"></span>
+            на проверку
+          </p>
+        </div>
+        <svg-icon [applyClass]="true" class="icon" [src]="'/assets/images/svg/admin-panel/ingredient.svg'">
+        </svg-icon>
+      </div>
+
+      <div class="block yellow" *ngIf="currentUser.role === 'admin'">
+        <div class="content">
+          <span [title]="modetatorsLength">{{ modetatorsLength === -1 ? '?' : formatNumber(modetatorsLength) }}</span>
+          <p>
+            <span appPluralRu="" [value]="modetatorsLength === -1 ? 3 : modetatorsLength"
+              [arVariants]="moderatorsArVariants"></span>
+
+          </p>
+        </div>
+        <svg-icon [applyClass]="true" class="icon" [src]="'/assets/images/svg/moder.svg'">
+        </svg-icon>
+      </div>
+    </div>
+
+    <div class="view">
+      <div class="about">
+        <ul>
+          <li class="purple" routerLink="/control-dashboard/recipes">
+            Рецепты ({{ recipesLength === -1 ? "..." : formatNumber(recipesLength) }})
+          </li>
+          <li class="blue" routerLink="/control-dashboard/categories">
+            Категории ({{ categoriesLength === -1 ? "..." : formatNumber(categoriesLength) }})
+          </li>
+
+          <li routerLink="/control-dashboard/reports" class="orange">
+            Жалобы ({{ reportsLength === -1 ? "..." : formatNumber(reportsLength) }})
+          </li>
+          <li class="red" routerLink="/control-dashboard/ingredients">
+            Ингредиенты ({{ ingredientsLength === -1 ? "..." : formatNumber(ingredientsLength) }})
+          </li>
+          <li class="green" *ngIf="currentUser.role === 'admin'" routerLink="/control-dashboard/updates">
+            Новости ({{ updatesLength === -1 ? "..." : formatNumber(updatesLength) }})
+          </li>
+
+          <li class="yellow" *ngIf="currentUser.role === 'admin'" routerLink="/control-dashboard/moderators">
+            Модераторы ({{ modetatorsLength === -1 ? "..." : formatNumber(modetatorsLength) }})
+          </li>
+
+                  <li class="yellowreal" *ngIf="currentUser.role === 'admin'" routerLink="/control-dashboard/achievements">
+                    Достижения ({{ achievementsLength === -1 ? "..." : formatNumber(achievementsLength) }})
+                  </li>
+        </ul>
+      </div>
+      <div class="content">
+        <div class="nothing" [ngClass]="{'mini':currentUser.role === 'moderator'}">
+          <p>
+            Помните о правилах
+            <a routerLink="/user-policy">пользовательского соглашения</a> при
+            работе в панели управления
+          </p>
+          <div class="cook-icon">
+            <svg-icon [src]="'/assets/images/svg/look-cook.svg'" [applyClass]="true" class="look-cook" />
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+
+    <div class="about-page">
+      <h3>Подробнее о панели управления</h3>
+      <div class="content">
+        <p>Добро пожаловать в панель управления сайтом!</p>
+
+        <p>
+          Эта страница предназначена для модераторов и администраторов, которые
+          обеспечивают порядок и качество контента на нашем сайте. Ваша роль
+          важна для создания положительного опыта пользователей. Вот обзор
+          функциональности для каждой из ролей:
+        </p>
+
+        <div *ngFor="let action of actions">
+          <h4>{{ action.name }}</h4>
+          <ul>
+            <li *ngFor="let function of action.items">
+              <svg-icon class="cook" [applyClass]="true" [src]="'/assets/images/svg/cook-fill.svg'" />
+
+              {{ function }}
+            </li>
+          </ul>
+        </div>
+
+        <p>
+          Панель нужна для обеспечения эффективного взаимодействия между
+          модераторами, администраторами и кулинарами, гарантируя безупречное
+          функционирование нашего сайта. Благодарим вас за ваши усилия в
+          обеспечении качественного и безопасного контента для наших
+          пользователей.
+        </p>
+
+        <!-- <div class="icon">
+          <svg-icon [applyClass]="true" class="about-icon" [src]="'/assets/images/svg/admin-panel/about.svg'" />
+        </div> -->
+      </div>

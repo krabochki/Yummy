@@ -1,0 +1,184 @@
+<div
+  class="main"
+  [ngClass]="{
+    admin: this.currentUser.role === 'admin',
+    moderator: this.currentUser.role === 'moderator'
+  }"
+>
+  <h1>Рассмотрение категорий</h1>
+  <div class="wrap">
+    <div class="reports-block new">
+      <button
+        [disabled]="!loaded"
+        (click)="loaded ? checkActualCategories() : null"
+        class="update-button"
+      >
+        <svg-icon
+          class="icon"
+          [applyClass]="true"
+          [src]="'/assets/images/svg/update.svg'"
+        />
+        <span>{{ loaded ? "Обновить" : "Обновить..." }}</span>
+      </button>
+  
+      <div class="reports" >
+        <div
+          [ngClass]="{ blinked: !loaded && categories.length > 0 }"
+          class="report"
+          *ngFor="let category of categories"
+        >
+          <div class="report-header">
+            <a class="report-recipe not-link">
+              {{ category.name }}
+            </a>
+            <p class="report-date">
+              Категория отправлена
+              {{ category.sendDate | timePast | lowercase }}
+            </p>
+          </div>
+          <div class="report-users">
+            <p class="reporter">
+              Создатель:
+              <a
+                *ngIf="category.authorId"
+                class="report-user link"
+                [routerLink]="'/cooks/list/' + category.authorId"
+                >{{ category.authorName }}</a
+              >
+            </p>
+            <p *ngIf="category.sectionId">
+              Секция:
+              <a
+                [routerLink]="'/sections/list/' + category.sectionId"
+                class="report-user link"
+                >{{ category.sectionName }}
+              </a>
+            </p>
+          </div>
+          <div
+            class="category-image"
+            [style.background-image]="
+              'url(' +
+              (this.category.image && this.category.imageURL
+                ? this.category.imageURL
+                : categoryPlaceholder) +
+              ')'
+            "
+          >
+            <p class="caption" *ngIf="!this.category.imageURL">
+              Категория<br />«{{ category.name }}»
+            </p>
+          </div>
+          <div class="report-buttons">
+            <app-button [text]="'Принять'" (click)="updateToReviewActionClick('approve', category)" [color]="'admin'"
+              [style]="'filled'" [rounded]="true"></app-button>
+            <app-button [text]="'Отклонить'" (click)="updateToReviewActionClick('dismiss', category)" [color]="'admin'"
+              [style]="'filled-min'" [rounded]="true"></app-button>
+          </div>
+        </div>
+          <ng-container  *ngIf="!loaded ">
+          
+<div class="report loading" *ngFor="let report of [0,1,2]">
+  <div class="report-header">
+    <a class="report-recipe not-link">
+    dfffddfdfdf
+    </a>
+    <p class="report-date">
+      Категория отправлена
+      dfffddfdfdf
+    </p>
+  </div>
+  <div class="report-users">
+    <p class="reporter">
+      Создатель fddffdfd
+    </p>
+    <p >
+      Секция:
+      dfffddfdfdf
+    </p>
+  </div>
+  <div class="category-image
+            ">
+    
+  </div>
+  <div class="report-buttons">
+   <div class="load-button">
+      <app-button [text]="'Принять'"  [color]="'admin'"
+        [style]="'filled'" [rounded]="true"></app-button>
+   </div>
+   <div class="load-button">
+      <app-button [text]="'Отклонить'"  [color]="'admin'"
+        [style]="'filled-min'" [rounded]="true"></app-button>
+   </div>
+  </div>
+</div>
+            </ng-container>
+
+
+
+
+       
+      </div><app-button class="more-reports-button" [text]="'Загрузить еще...'" (click)="loadMoreUpdates()"
+        *ngIf="!everythingLoaded && categories.length > 0" [disabled]="loaded" [rounded]="true" [style]="'outlined'"
+        [color]="'prim'"></app-button>
+    
+    <div class="allloaded" *ngIf="!categories.length && loaded && everythingLoaded">
+        <div class="not-found-icon">
+            <svg-icon class="not-found-svg" [applyClass]="true" [src]="'/assets/images/svg/not-found.svg'" />
+        </div>
+    
+        Категорий на проверку пока нет
+    </div>
+    
+    <p class="allloaded" *ngIf="!loaded">Загружаем категории...</p>
+    <p *ngIf="everythingLoaded && loaded && categories.length" class="allloaded">
+        Все категории для проверки уже загружены
+    </p>
+    </div>
+  </div>
+
+  <app-modal
+    @modal
+    *ngIf="actionModal"
+    [style]="'sec'"
+    [title]="
+      'Категория успешно ' + (action === 'approve' ? 'одобрена' : 'отклонена')
+    "
+    [type]="'Ok'"
+    (resultEmit)="handleSuccessUpdateActionModal()"
+    [buttonsText]="['Хорошо']"
+    [description]="
+      'Вы успешно ' +
+      (action === 'approve' ? 'одобрили' : 'отклонили') +
+      ' эту категорию'
+    "
+  ></app-modal>
+
+  <app-modal
+    [style]="'await'"
+    *ngIf="loadingModal"
+    @modal
+  />
+
+  <app-modal
+    @modal
+    *ngIf="confirmModal"
+    [style]="action === 'dismiss' ? 'prim' : 'sec'"
+    [title]="
+      action === 'dismiss' ? 'Отклонение категории' : 'Одобрение категории'
+    "
+    [type]="'yesOrNo'"
+    (resultEmit)="handleConfirmModal($event)"
+    [buttonsText]="['Да', 'Нет']"
+    [description]="
+      action === 'dismiss'
+        ? 'Вы уверены, что хотите отклонить категорию?'
+        : 'Вы уверены, что хотите одобрить категорию?'
+    "
+  ></app-modal>
+</div>
+
+<app-modal @modal *ngIf="errorModal" [style]="'prim'" [title]="'Произошла ошибка'" [type]="'Ok'"
+  (resultEmit)="errorModal = false" [buttonsText]="['Хорошо']" [description]="
+    errorText || 'Произошла неизвестная ошибка'
+  "></app-modal>

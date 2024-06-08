@@ -1,0 +1,94 @@
+.container {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(4, 1fr); // Изначально 4 колонки
+row-gap: 1em;
+}
+
+.container.three-cols {
+  grid-template-columns: repeat(3, 1fr); // Изначально 4 колонки
+
+  .inner {
+    max-width: 13em;
+
+  }
+}
+
+
+
+.inner {
+  height: 15em;
+  width: 100%;
+  margin: 0 0.5rem
+}
+
+
+.block {
+  /* Стили для блоков */
+  height: 15em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Добавьте стили для блоков */
+}
+
+.block.null-block {}
+
+
+/* Добавьте стили для различных разрешений экрана и макетов */
+@media (max-width: 1200px) {
+  .container {
+    grid-template-columns: repeat(3, 1fr); // 3 колонки при ширине < 1000px
+  }
+
+  .container.three-cols {
+    grid-template-columns: repeat(3, 1fr); // Изначально 4 колонки
+
+  }
+
+}
+
+@media (max-width: 900px) {
+
+
+  .container.three-cols {
+    grid-template-columns: repeat(2, 1fr); // Изначально 4 колонки
+
+  }
+
+}
+
+
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: repeat(2, 1fr); // 2 колонки при ширине < 768px
+  }
+}
+
+
+
+@media (max-width: 480px) {
+  .container {
+
+    padding-right: 6%;
+
+    overflow-x: scroll;
+    overflow-y: hidden;
+    display: grid;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+  }
+
+  .block {
+    width: 13em;
+    ;
+  }
+
+  .multirows-mobile.container {
+    grid-template-rows: 1fr 1fr;
+
+  }
+}

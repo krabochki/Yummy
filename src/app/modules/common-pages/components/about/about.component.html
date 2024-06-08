@@ -1,0 +1,239 @@
+<div class="wrap">
+  <div class="header">
+    <h1>Узнайте больше о <span>Yummy</span>!</h1>
+    <p>Ваш надежный помощник в мире кулинарии</p>
+
+    <div class="community">
+      <svg-icon [applyClass]="true" class="community-svg" [src]="'/assets/images/svg/about-community.svg'" />
+    </div>
+  </div>
+  <div class="sections">
+    <section class="about-section">
+      <h2>Наша история</h2>
+      <p>
+        Идея создания появилась из-за интереса к созданию и обмену
+        вкусными рецептами. Вдохновившись радостью, которую приносит вкусная
+        еда, решено было создать платформу, где любители готовки могли бы
+        объединиться, исследовать новое и обучаться друг у друга.
+      </p>
+    </section>
+    <section class="about-section">
+      <h2>Что нас отличает</h2>
+
+      <div class="dream-team">
+        <div class="item">
+          <div class="head">
+            <svg-icon [src]="'/assets/images/svg/about/1.svg'" class="img" [applyClass]="true" />
+
+            <div>
+              <h3>Современный интерфейс</h3>
+              <p>Ключ к вдохновению и комфортному путешествию по миру кулинарии</p>
+            </div>
+          </div>
+          <p>
+            Сайт следует последним трендам в веб-дизайне. Наш интерфейс разработан с учетом максимального удобства
+            пользователей. И, конечно же, наш дизайн адаптируется под различные устройства и экраны.
+
+          </p>
+        </div>
+        <div class="item">
+          <div class="head">
+            <svg-icon [src]="'/assets/images/svg/about/2.svg'" class="img" [applyClass]="true" />
+            <div>
+              <h3>Поиск рецептов</h3>
+              <p>На вкус и цвет товарищей нет, а рецепты — вполне есть!</p>
+            </div>
+          </div>
+          <p>
+            Вы можете найти рецепты множеством способов — на странице групп рецептов, с помощью страницы подбора
+            рецептов, по ингредиентам и категориям, по конкретным авторам, и конечно же, по названию.
+          </p>
+        </div>
+        <div class="item">
+          <div class="head">
+            <svg-icon [src]="'/assets/images/svg/about/3.svg'" class="img" [applyClass]="true" />
+
+            <div>
+              <h3>Планирование</h3>
+              <p>Основа для здоровых привычек и улучшения качества жизни</p>
+            </div>
+          </div>
+          <p>
+            Календарь рецептов позволяет пользователям организовать свой рацион, а виртуальный структурированный список
+            покупок помогает избежать ненужных походов в магазин.
+
+          </p>
+        </div>
+      </div>
+    </section>
+    <section class="mission-section">
+      <h2>Наша миссия</h2>
+      <p>
+        Наша миссия - предоставить пространство для общения людей всех уровней
+        кулинарии. Будь вы опытным шеф-поваром или кулинарным новичком, Yummy
+        станет вашим другом, чтобы вдохновлять и создавать сообщество, где каждый найдет
+        что-то новое и увлекательное.
+      </p>
+    </section>
+
+    <section class="mission-section">
+      <h2>О разработчике</h2>
+      <div class="image-cont">
+        <div>
+          <img class="avatar" src="/assets/images/about/photo2.jpg" alt="">
+        </div>
+        <div>
+          <p>
+            Привет! Меня зовут Полина, и я живу в городе Гродно (Беларусь). Я занимаюсь разработкой приложений и
+            веб-сайтов,
+            интересуюсь темой
+            веб-дизайна и учусь создавать качественные и удобные сайты для пользователей. Главным в своем деле считаю
+            умение
+            сочетать функциональность с креативным дизайном.
+
+
+
+          </p>
+          <div class="social-links">
+            <a href="https://github.com/krabochki/">
+              <svg-icon [applyClass]="true" class="link-icon" [src]="'/assets/images/svg/github.svg'"></svg-icon>
+
+              Github</a>
+            <a href="https://www.linkedin.com/in/polina-kuzmenok-550449291/">
+              <svg-icon [applyClass]="true" class="link-icon" [src]="'/assets/images/svg/linkedin.svg'"></svg-icon>
+
+              LinkedIn</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="find-section">
+      <h2>Что вы можете найти</h2>
+      <section class="parts">
+        <a routerLink="/recipes" [class]="!auth ? 'fake' : ''">
+          <div>
+            <div class="icon">
+              <svg-icon [applyClass]="true" class="svg" [src]="'/assets/images/svg/about/receipt.svg'" />
+            </div>
+            <h3>Рецепты</h3>
+            <p>
+              Исследуйте огромное разнообразие рецептов, представленных
+              страстными кулинарами. Независимо от того, являетесь ли вы
+              новичком или опытным шеф-поваром, здесь вы обнаружите блюда на
+              любой вкус и уровень сложности.
+            </p>
+          </div>
+        </a>
+
+        <a routerLink="/categories">
+          <div>
+            <div class="icon">
+              <svg-icon [applyClass]="true" class="svg" [src]="'/assets/images/svg/about/category.svg'" />
+            </div>
+            <h3>Категории</h3>
+            <p>
+              Углубитесь в удобные категории, чтобы быстро найти идеальные
+              рецепты. От разнообразных завтраков до изысканных десертов, наш
+              ассортимент категорий покрывает все аспекты кулинарии.
+            </p>
+          </div>
+        </a>
+
+        <a routerLink="/plan/collections">
+          <div>
+            <div class="icon">
+              <svg-icon [applyClass]="true" class="svg" [src]="'/assets/images/svg/about/segment.svg'" />
+            </div>
+            <h3>Подборки</h3>
+            <p>
+              Проведите на странице подборок, где собраны рецепты и ингредиенты по той или иной теме. Здесь вы обнаружите вдохновляющие идеи и практичные ингредиенты, которые удивят ваши вкусовые рецепторы.
+            </p>
+          </div>
+        </a>
+
+        <a routerLink="/ingredients">
+          <div>
+            <div class="icon">
+              <svg-icon [applyClass]="true" class="svg" [src]="'/assets/images/svg/about/ingredient.svg'" />
+            </div>
+            <h3>Ингредиенты</h3>
+            <p>
+              Легко находите рецепты по конкретным ингредиентам, чтобы
+              использовать продукты, которые у вас есть. Экспериментируйте с
+              новыми сочетаниями и создавайте блюда, которые будут восхищать вас
+              и ваших близких.
+            </p>
+          </div>
+        </a>
+
+       
+
+        <a routerLink="/cooks">
+          <div>
+            <div class="icon">
+              <svg-icon [applyClass]="true" class="svg" [src]="'/assets/images/svg/about/community.svg'" />
+            </div>
+            <h3>Сообщество кулинаров</h3>
+            <p>
+              Присоединяйтесь к нашему активному сообществу кулинаров,
+              обменивайтесь опытом, делись своими любимыми рецептами и
+              участвуйте в обсуждениях. Здесь каждый может научиться чему-то
+              новому и поделиться своим кулинарным искусством.
+            </p>
+          </div>
+        </a>
+       
+
+        <a [class]="!auth ? 'fake' : ''" [routerLink]="auth ? '/plan/calendar' : null">
+          <div>
+            <div class="icon">
+              <svg-icon [applyClass]="true" class="svg" [src]="'/assets/images/svg/about/flag.svg'" />
+            </div>
+            <h3>Планирование рецептов</h3>
+            <p>
+              Организуйте свой кулинарный опыт с легкостью, добавляя рецепты в
+              персональный план. Планируйте вперед и создавайте свой уникальный
+              кулинарный маршрут, который приносит удовлетворение и радость
+              каждый день.
+            </p>
+          </div>
+        </a>
+      </section>
+    </section>
+
+    <section class="join-section" *ngIf="!auth">
+      <h2>Присоединяйтесь к нам сегодня!</h2>
+      <p>
+        Готовы отправиться в кулинарное приключение? Зарегистрируйтесь сейчас,
+        чтобы делиться своими любимыми рецептами, общаться с единомышленниками и
+        стать частью нашего развивающегося сообщества.
+      </p>
+      <app-button routerLink="/register" [text]="'Регистрация'" [color]="'prim'" [rounded]="true"></app-button>
+    </section>
+  </div>
+
+  <div class="footer">
+
+
+
+    <div>
+      <p class="info">Мы ценим ваше мнение — оставьте отзыв и пожелания проекту!</p>
+      <div class="links">
+        <p>
+          <a href="mailto:yummort@mail.ru">
+            <svg-icon class="footer-icon" [applyClass]="true" [src]="'/assets/images/svg/mail.svg'"></svg-icon>
+            <p>Почта</p>
+          </a>
+        </p>
+        <p>
+          <a href="tel:+375291510475">
+            <svg-icon class="footer-icon" [applyClass]="true" [src]="'/assets/images/svg/phone.svg'"></svg-icon>
+            <p>Телефон</p>
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,116 @@
+<div class="wrap">
+    <h1 
+    [ngClass]="{'load':initialLoading && !title}"
+    *ngIf="(!loaded && ingredients.length === 0) || ingredients.length > 0 || initialLoading">{{  title || 'Загрузка...' }}</h1>
+   <div class="search">
+        <app-search
+         *ngIf="!(ingredients.length<=0 && loaded && !initialLoading) "
+        [context]="group.id > 0 ? 'group-ingredients' : 'ingredients'" [group]="group"
+            [disabled]="(ingredients.length <= 0 && !loaded ) || initialLoading"></app-search>
+   </div>
+
+    <div *ngIf="loaded && ingredients.length === 0 && group.id > 0" class="container one-column not-found">
+        <div class="image">
+            <svg-icon [applyClass]="true" class="fridge" [src]="'/assets/images/svg/fridge.svg'"></svg-icon>
+        </div>
+        <div class="content">
+            <h1 class="label">Ингредиентов пока <span class="title">нет</span></h1>
+            <p class="tagline">
+                <ng-container *ngIf="this.currentUser.id;else noAuth">В группе «{{ this.title }}» пока нет ингредиентов. Но вы
+                    можете попробовать создать ингредиент сами!</ng-container>
+                <ng-template #noAuth>В группе «{{ this.title }}» пока нет ингредиентов. Вы можете поискать рецепты на
+                    специальной странице подбора рецептов!</ng-template>
+            </p>
+    
+            <hr />
+            <div class="buttons">
+                <app-button (click)="currentUser.id ? createModal = true : navigateToMatchRecipes()" [rounded]="true"
+                    [color]="'prim'" [text]="currentUser.id ? 'Создать ингредиент' : 'Подбор рецептов'"></app-button>
+            </div>
+        </div>
+    </div>
+
+    <div class="sections" *ngIf="ingredients.length">
+        <app-ingredients-vertical-list [ingredients]="ingredients"></app-ingredients-vertical-list>
+    </div>
+    <ng-container *ngIf="!loaded || initialLoading">
+        <div class="sections" style="margin-top:1.2em" >
+            <app-ingredients-vertical-list [preloader]="true"></app-ingredients-vertical-list>
+        </div>
+    </ng-container>
+
+    <app-button *ngIf="!everythingLoaded && !initialLoading" [class.disabled]="!loaded&&!initialLoading ? true : false" class="more-reports-button"
+        [text]="'Загрузить еще...'" (click)="loadMoreIngredients()" [disabled]="loaded" [rounded]="true"
+        [style]="'outlined'" [color]="'prim'"></app-button>
+
+    <section class="action-buttons" *ngIf="currentUser.role !== 'user' && showGroupsButtons() &&  group.id >0">
+        <button class="action-button edit" (click)="editModal = true">
+            <div class="action-icon"><svg-icon class="action-svg" [applyClass]="true"
+                    [src]="'/assets/images/svg/pen.svg'" /></div>
+            <p>Изменить группу</p>
+        </button>
+        <button class="action-button delete" (click)="deleteModal = true">
+            <div class="action-icon"><svg-icon class="action-svg" [applyClass]="true"
+                    [src]="'/assets/images/svg/trash.svg'" /></div>
+            <p>Удалить группу</p>
+        </button>
+        <button *ngIf="group.sendDate||group.modifiedDate" [class]="'action-button info-btn ' + currentUser.role"
+            (click)="moreInfo = !moreInfo">
+            <div [class]="'action-icon'">
+                <svg-icon class="action-svg" [applyClass]="true" [src]="'/assets/images/svg/info.svg'" />
+            </div>
+            <p>Подробнее</p>
+        </button>
+    </section>
+
+    <div @height *ngIf="moreInfo">
+        <div class="more-info">
+            <p *ngIf="group.sendDate" [title]="getDate(group.sendDate)">
+                Дата создания: {{ (group.sendDate | timePast).toLowerCase() }}
+            </p>
+            <p *ngIf="group.authorId && group.creatorName">
+                Создал(-а):
+                <a class="action-link" [routerLink]="'/cooks/list/' + group.authorId">{{
+                    group.creatorName
+                    }}</a>
+            </p>
+    
+            <p *ngIf="group.modifiedDate" [title]="getDate(group.modifiedDate)">
+                Дата последнего изменения: {{ (group.modifiedDate | timePast).toLowerCase() }}
+            </p>
+    
+    
+    
+            <p *ngIf="group.changerId && group.changerName">
+                Изменил(-а):
+                <a class="action-link" [routerLink]="'/cooks/list/' + group.changerId">{{
+                    group.changerName
+                    }}</a>
+            </p>
+        </div>
+    </div>
+
+</div>
+<!-- Если нет ингредиентов -->
+
+<app-modal @modal (resultEmit)="handleDeleteModal($event)" [type]="'yesOrNo'" [buttonsText]="['Да', 'Отмена']"
+    [style]="'prim'"
+    [description]="'Вы уверены, что хотите удалить эту группу?'"
+    [title]="'Удаление группы'" *ngIf="deleteModal"></app-modal>
+
+
+    <app-group-creating (closeEmitter)="editModal=false" @modal
+    (editEmitter)="updateGroup()"
+        *ngIf="editModal" [editedGroupId]="group.id" />
+
+        <app-ingredient-create style="z-index:10; position:fixed" (editEmitter)="initGroup()" @modal (closeEmitter)="createModal=false"
+            *ngIf="createModal" />
+
+            <app-modal @modal *ngIf="errorModal" [style]="'prim'" [title]="
+                      'Произошла ошибка'
+                    " [type]="'Ok'" (resultEmit)="handleErrorModal()" [buttonsText]="['Хорошо']" [description]="
+                      errorModalContent||'Произошла неизвестная ошибка'
+                    "></app-modal>
+            
+            <app-modal @modal [title]="'Группа удалена'" [type]="'Ok'" [buttonsText]="['Хорошо']" *ngIf="successDeleteModal"
+                (resultEmit)="handleSuccessDeleteModal()" [description]="'Группа успешно удалена'" [style]="'sec'" />

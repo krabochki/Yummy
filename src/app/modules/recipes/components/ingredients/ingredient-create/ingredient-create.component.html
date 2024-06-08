@@ -1,0 +1,465 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="outer" *ngIf="!initialLoading" (click)="clickBackgroundNotContent($event)">
+  <div class="inner">
+    <div class="close-button" (click)="closeIngredientCreating()">
+      <svg-icon [src]="'/assets/images/svg/close.svg'" [applyClass]="true" class="close-svg"></svg-icon>
+    </div>
+    <div class="header">
+      <h1>{{ edit ? "Изменение ингредиента" : "Создание ингредиента" }}</h1>
+      <div class="navigation">
+        <div class="nav-step-circles-block">
+          <div class="nav-step-block" *ngFor="let step of steps; let i = index">
+            <div class="nav-step-block-inner" (click)="clickOnCircleStep(i)">
+              <div class="nav-step-circle" [ngClass]="{
+                  active: i === currentStep,
+                  completed: i < currentStep,
+                  'not-valid': notValid() === i + 1
+                }">
+                {{ i + 1 }}
+              </div>
+              <p class="nav-step-short-title" [ngClass]="{
+                  active: i === currentStep,
+                  completed: i < currentStep,
+                  'not-valid': notValid() === i + 1
+                }">
+                {{ steps[i].shortTitle }}
+              </p>
+            </div>
+            <div [ngClass]="{
+                completed: i < currentStep
+              }" *ngIf="i !== steps.length - 1" class="nav-step-line"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="unique-content">
+      <hr />
+
+      <form [formGroup]="form" #scrollContainer>
+        <div class="description-container">
+          <button class="more-button" (click)="showInfo = !showInfo">
+            <svg-icon [src]="'/assets/images/svg/help.svg'" [applyClass]="true" class="help-svg"></svg-icon>
+            Подробнее
+          </button>
+          <p class="description" *ngIf="showInfo" @height>
+            {{ steps[currentStep].description }}
+          </p>
+        </div>
+        <div class="step-container" *ngIf="currentStep === 0">
+          <div class="form-control">
+            <h3>Название ингредиента*</h3>
+            <app-usual-input [value]="this.form.get('ingredientName')?.value" [inputRequired]="true" [max]="50"
+              type="text" formControlName="ingredientName" required [error]="
+                isControlValid(form, 'ingredientName')
+                  ? 'Название ингредиента должно содержать от 3 символов'
+                  : ''
+              " [placeholder]="'Введите название ингредиента'"></app-usual-input>
+          </div>
+          <div class="form-control ingred">
+            <h3>
+              <button class="plus-button" (click)="addBaseTextControl('variations')">
+                <span>+</span>
+              </button>
+              {{ getNameOfControlGroup("variations") }}
+             
+            </h3>
+
+
+
+            <div cdkDropList (cdkDropListDropped)="drop('variations', $event)" class="instructions"
+              [formArrayName]="'variations'">
+              <div class="boundary">
+                <div cdkDrag *ngFor="
+                                let variation of f('variations').controls;
+                                let i = index
+                              " [formGroupName]="i" class="instruction-cont" cdkDragBoundary=".boundary">
+                  <div class="instruction">
+                    <div class="instruction-text">
+                      <div tabindex="-1" class="drag" cdkDragHandle>
+                        <svg-icon [applyClass]="true" class="svg-drag" [src]="'/assets/images/svg/drag.svg'">
+                        </svg-icon>
+                      </div>
+                      <div class="num">{{ i + 1 }}</div>
+
+                      <app-usual-input [value]="variation.get('content')?.value" [inputRequired]="true" [error]="
+                                      isControlValid(variation, 'content') ? 'error' : ''
+                                    " [max]="50" [showError]="false" type="text" formControlName="content"
+                        [placeholder]="
+                                      getInputPlaceholderOfControlGroup('variations')
+                                    " required></app-usual-input>
+
+                      <button type="button" tabindex="-1" (click)="removeBaseTextControl(i, 'variations')"
+                        class="remove-button">
+                        <svg-icon [applyClass]="true" class="svg-trash" [src]="'/assets/images/svg/trash.svg'">
+                        </svg-icon>
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="error" *ngIf="isControlValid(variation, 'content')">
+                      {{ getInputPlaceholderOfControlGroup("variations") }}
+                      обязательно и должно содержать не менее 3 символов
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-control">
+            <h3>Группы ингредиентов*</h3>
+
+            <app-autocomplete (groupEmitter)="addGroup($event)" [startOnTyping]="true"
+              [disabled]="selectedIngredientsGroups.length === 5" [clearValueOnBlur]="true" [context]="'groups'"
+              [placeholder]="'Начните вводить название группы ингредиентов (нужна минимум одна)'" />
+            <div class="tags">
+              <div class="tag" *ngFor="let selected of selectedIngredientsGroups">
+                {{ selected.name }}
+                <span (click)="removeGroup(selected)" class="remove-tag"><svg-icon [applyClass]="true"
+                    class="remove-tag-svg" [src]="'/assets/images/svg/close.svg'"></svg-icon></span>
+              </div>
+            </div>
+            <div *ngIf="selectedIngredientsGroups.length === 5" class="max-categories">
+              Выбрано максимальное количество групп
+            </div>
+            <div *ngIf="selectedIngredientsGroups.length === 0" class="no-categories">
+              Вы пока не выбрали ни одну группу
+            </div>
+          </div>
+          <a class="more-info-link" routerLink="/groups">Просмотреть группы ингредиентов</a>
+          <div class="form-control">
+            <h3>Тип ингредиента</h3>
+            <p class="control-description">
+              Тип ингредиента нужно выбрать для того, чтобы пользователи могли
+              добавлять ингредиент в нужную группу продуктов в список покупок.
+              Если вы его не укажете, ингредиент по умолчанию будет считаться с
+              типом «Без категории».
+            </p>
+            <div class="search-block">
+              <div class="search">
+                <app-usual-input [ngModelOptions]="{ standalone: true }" (focusEmitter)="focus()" [error]="
+                              searchQuery && focused && selectedType.id === 0 ? ' ' : ''
+                            " (blurEmitter)="blur()" [(ngModel)]="searchQuery" (ngModelChange)="search()" type="text"
+                  placeholder="Выбери тип из результатов поиска" />
+              </div>
+          
+              <div class="autocomplete-list" style="overflow: hidden">
+                <ul @height *ngIf="autocompleteShow">
+                  <div *ngIf="autocompleteTypes.length === 0">
+                    <div class="no-found-recipes">
+                      <p>Ничего не найдено</p>
+          
+                      <svg-icon [applyClass]="true" class="tomato" [src]="'/assets/images/svg/grocery/shocked-tomato.svg'" />
+                    </div>
+                  </div>
+                  <li *ngFor="let item of autocompleteTypes" (mousedown)="chooseType(item)">
+                    <p class="text">
+                      <svg-icon class="autocomplete-svg" [applyClass]="true" [src]="
+                                    item.image
+                                      ? '/assets/images/svg/grocery/' +
+                                        item?.image +
+                                        '.svg'
+                                      : ''
+                                  "></svg-icon>
+                      {{ item.name }}
+                    </p>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="form-control">
+            <h3>Описание ингредиента</h3>
+            <app-usual-input [inputType]="'textarea'" [max]="5000" [value]="this.form.get('description')?.value"
+              type="text" id="description" formControlName="description" [placeholder]="'Опишите ингредиент'" />
+          </div>
+          <div class="form-control">
+            <h3>История ингредиента</h3>
+            <app-usual-input [inputType]="'textarea'" [max]="5000" [value]="this.form.get('history')?.value" type="text"
+              id="history" formControlName="history" [placeholder]="
+                'Расскажите немного о истории происхождении ингредиента'
+              "></app-usual-input>
+          </div>
+          <div class="form-control">
+            <h3>Место происхождения</h3>
+            <app-usual-input [value]="this.form.get('origin')?.value" [max]="20" type="text" id="origin"
+              formControlName="origin" [placeholder]="
+                'Укажите место происхождения ингредиента, например, страну или регион'
+              "></app-usual-input>
+          </div>
+
+
+
+
+          <div class="form-control img circle">
+            <div class="photo" [ngClass]="{
+                'have-image': this.form.get('image')?.value !== null
+              }" [ngStyle]="{ 'background-image': 'url(' + mainImage + ')' }">
+              <input type="file" class="input-image" id="image" name="image" accept=".png, .jpg, .jpeg, .svg"
+                (change)="mainPhotoChange($event)" />
+            </div>
+            <div class="delete" *ngIf="mainImage !== defaultImage" (click)="unsetImage()">
+              <svg-icon [applyClass]="true" class="svg-trash" [src]="'/assets/images/svg/trash.svg'"></svg-icon>
+            </div>
+          </div>
+        </div>
+
+        <ng-container *ngFor="let step of [1, 2, 3]; let i = index">
+          <div class="step-container" *ngIf="currentStep === step">
+            <div *ngFor="let controlGroup of stepControlGroups[i]" class="form-control ingred">
+              <h3>
+                <button class="plus-button" (click)="addBaseTextControl(controlGroup)">
+                  <span>+</span>
+                </button>
+                {{ getNameOfControlGroup(controlGroup) }}
+                
+              </h3>
+
+              <div cdkDropList (cdkDropListDropped)="drop(controlGroup, $event)" class="instructions"
+                [formArrayName]="controlGroup">
+                <div class="boundary">
+                  <div cdkDrag *ngFor="
+                      let advantage of f(controlGroup).controls;
+                      let i = index
+                    " [formGroupName]="i" class="instruction-cont" cdkDragBoundary=".boundary">
+                    <div class="instruction">
+                      <div class="instruction-text">
+                        <div tabindex="-1" class="drag" cdkDragHandle>
+                          <svg-icon [applyClass]="true" class="svg-drag" [src]="'/assets/images/svg/drag.svg'">
+                          </svg-icon>
+                        </div>
+                        <div class="num">{{ i + 1 }}</div>
+
+                        <app-usual-input [rows]="2" [inputType]="'textarea'" [value]="advantage.get('content')?.value"
+                          [inputRequired]="true" [error]="
+                            isControlValid(advantage, 'content') ? 'error' : ''
+                          " [max]="500" [showError]="false" type="text" formControlName="content" [placeholder]="
+                            getInputPlaceholderOfControlGroup(controlGroup)
+                          " required></app-usual-input>
+
+                        <button type="button" tabindex="-1" (click)="removeBaseTextControl(i, controlGroup)"
+                          class="remove-button">
+                          <svg-icon [applyClass]="true" class="svg-trash" [src]="'/assets/images/svg/trash.svg'">
+                          </svg-icon>
+                        </button>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="error" *ngIf="isControlValid(advantage, 'content')">
+                        {{ getInputPlaceholderOfControlGroup(controlGroup) }}
+                        обязательно и должно содержать не менее 3 символов
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <div *ngIf="currentStep === 4">
+          <div class="form-control ingred center">
+            <h3>Список нутриентов ингредиента</h3>
+
+            <div cdkDropList (cdkDropListDropped)="drop('nutritions', $event)" id="nutritions" class="nutritions"
+              formArrayName="nutritions">
+              <p class="no-content no-categories" *ngIf="f('nutritions').controls.length === 0">
+                Нутриентов пока нет
+              </p>
+
+              <div class="boundary">
+                <div cdkDrag *ngFor="
+                    let nutrition of f('nutritions').controls;
+                    let i = index
+                  " [formGroupName]="i" class="nutrition-cont" cdkDragBoundary=".boundary">
+                  <div class="nutrition">
+                    <div tabindex="-1" class="drag" cdkDragHandle>
+                      <svg-icon [applyClass]="true" class="svg-drag" [src]="'/assets/images/svg/drag.svg'">
+                      </svg-icon>
+                    </div>
+                    <div class="num">{{ i + 1 }}</div>
+
+                    <app-usual-input [value]="nutrition.get('name')?.value" [inputRequired]="true" [error]="
+                        isControlValid(nutrition, 'name')
+                          ? 'Название нутриента должно содержать не менее 2 и не более 20 символов'
+                          : ''
+                      " [max]="20" [showError]="false" type="text" id="nutritionName{{ i }}" formControlName="name"
+                      [placeholder]="'Название нутриента*'" required></app-usual-input>
+
+                    <app-usual-input [max]="6" [value]="nutrition.get('quantity')?.value" id="nutritionAmount{{ i }}"
+                      formControlName="quantity" [onlyNumbers]="true" [placeholder]="'Кол-во'" [showError]="false"
+                      [error]="
+                        isControlValid(nutrition, 'quantity')
+                          ? 'Количество нутриента должно содержать не более 6 символов'
+                          : ''
+                      "></app-usual-input>
+
+                    <app-usual-input type="text" [value]="nutrition.get('unit')?.value" [max]="10"
+                      id="nutritionUnit{{ i }}" formControlName="unit" [placeholder]="'Ед. изм.'"></app-usual-input>
+
+                    <button type="button" tabindex="-1" (click)="removeBaseTextControl(i, 'nutritions')"
+                      class="remove-button">
+                      <svg-icon [applyClass]="true" class="svg-trash" [src]="'/assets/images/svg/trash.svg'">
+                      </svg-icon>
+                    </button>
+                  </div>
+                  <div>
+                    <div class="error" *ngIf="isControlValid(nutrition, 'name')">
+                      Название нутриента обязательно и должно содержать не менее
+                      2 символов
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <app-button (click)="
+                  !(f('nutritions').controls.length >= 100)
+                    ? addNutrition()
+                    : null
+                " [disabled]="!(f('nutritions').controls.length >= 100)" [text]="'Добавить нутриент'" [color]="'sec'"
+                [style]="'filled-min'" [rounded]="true">
+              </app-button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="currentStep === 5">
+          <div class="form-control ingred center">
+            <h3>Список дополнительных источников</h3>
+
+            <div cdkDropList (cdkDropListDropped)="drop('sources', $event)" id="nutritions" class="nutritions"
+              formArrayName="sources">
+              <p class="no-content no-categories" *ngIf="f('sources').controls.length === 0">
+                Ссылок пока нет
+              </p>
+
+              <div class="boundary">
+                <div cdkDrag *ngFor="let source of f('sources').controls; let i = index" [formGroupName]="i"
+                  class="nutrition-cont" cdkDragBoundary=".boundary">
+                  <div class="source">
+                    <div tabindex="-1" class="drag" cdkDragHandle>
+                      <svg-icon [applyClass]="true" class="svg-drag" [src]="'/assets/images/svg/drag.svg'">
+                      </svg-icon>
+                    </div>
+                    <div class="num">{{ i + 1 }}</div>
+
+                    <app-usual-input [value]="source.get('name')?.value" [inputRequired]="true"
+                      [error]="isControlValid(source, 'name') ? ' ' : ''" [max]="50" [showError]="false" type="text"
+                      id="nutritionName{{ i }}" formControlName="name" [placeholder]="'Описание ссылки*'"
+                      required></app-usual-input>
+
+                    <app-usual-input required [max]="1000" [value]="source.get('link')?.value"
+                      id="nutritionAmount{{ i }}" formControlName="link" [placeholder]="'Ссылка*'" [showError]="false"
+                      [error]="isControlValid(source, 'link') ? ' ' : ''"></app-usual-input>
+
+                    <button type="button" tabindex="-1" (click)="removeBaseTextControl(i, 'sources')"
+                      class="remove-button">
+                      <svg-icon [applyClass]="true" class="svg-trash" [src]="'/assets/images/svg/trash.svg'">
+                      </svg-icon>
+                    </button>
+                  </div>
+                  <div>
+                    <div class="error" *ngIf="source.invalid && (source.dirty || source.touched)">
+                      Название ссылки и сама ссылка на источник обязательны, а
+                      также ссылка должна быть корректной ссылкой на веб-сайт в
+                      интернете.<br />
+                      Пример: https://ru.wikipedia.org/
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <app-button (click)="
+                  !(f('sources').controls.length >= 10) ? addSource() : null
+                " [disabled]="!(f('sources').controls.length >= 10)" [text]="'Добавить ссылку'" [color]="'sec'"
+                [style]="'filled-min'" [rounded]="true">
+              </app-button>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="currentStep === 6">
+          <div class="buttons">
+            <div class="button">
+              <p>
+                Если вы хотите, чтобы {{ edit ? "измененный" : "" }} ингредиент
+                увидели другие пользователи и могли с ним взаимодействовать,
+                {{ edit ? "измените" : "опубликуйте" }} его. Ингредиент будет
+                {{ edit ? "изменен" : "опубликован" }}
+                {{
+                currentUser.role === "user"
+                ? "после одобрения модератора"
+                : "после нажатия на кнопку"
+                }}
+              </p>
+              <app-button [disabled]="validForm" [title]="
+                  !validForm
+                    ? 'Ингредиент должен содержать как минимум название и одну группу ингредиентов, а также все поля должны быть корректно заполнены'
+                    : ''
+                " (click)="validForm ? submitForm() : null" [text]="edit ? 'Изменить' : 'Опубликовать'" [color]="'sec'"
+                [style]="'outlined'" [rounded]="true"></app-button>
+            </div>
+            <div class="button">
+              <p>
+                Если вы передумали
+                {{ edit ? "менять" : "создавать" }} ингредиент, отмените его
+                {{ edit ? "изменение" : "создание" }}. Все данные придется
+                вводить повторно, если вы захотите
+                {{ edit ? "изменить" : "создать" }}
+                этот ингредиент снова
+              </p>
+
+              <app-button (click)="closeIngredientCreating()" [text]="'Отменить'" [color]="'prim'" [style]="'outlined'"
+                [rounded]="true"></app-button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="footer">
+      <div>
+        <app-button [iconSize]="'min'" [color]="'sec'" [iconPosition]="'before'" [rounded]="true"
+          [icon]="'arrow-previous'" [iconStyle]="'as-text'" [style]="'outlined'" [text]="'Назад'"
+          (click)="goToPreviousStep()" *ngIf="!(currentStep === 0)"></app-button>
+      </div>
+      <div>
+        <app-button [title]="
+            validNextSteps() !== 0 ? noValidStepDescription(currentStep) : ''
+          " [iconSize]="'min'" [icon]="'arrow-next'" [color]="'sec'" [rounded]="true" [style]="'filled'"
+          [text]="'Вперед'" (click)="validNextSteps() === 0 ? goToNextStep() : null"
+          *ngIf="!(currentStep === steps.length - 1)" [disabled]="validNextSteps() === 0"></app-button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-modal @modal *ngIf="exitModalShow" [style]="'prim'"
+  [title]="'Отмена ' + (edit ? 'изменения' : 'создания') + ' ингредиента'" [type]="'yesOrNo'"
+  (resultEmit)="handleExitModal($event)" [buttonsText]="['Да', 'Нет']" [description]="
+    'Вы уверены, что не хотите ' +
+    (edit ? 'изменить' : 'создать') +
+    ' ингредиент?'
+  "></app-modal>
+
+<app-modal @modal *ngIf="successModalShow" [style]="'sec'" [title]="'Ингредиент успешно ' + (edit?'изменен':'создан')"
+  [type]="'Ok'" (resultEmit)="handleSuccessModal()" [buttonsText]="['Хорошо']" [description]="
+    'Ингредиент успешно ' +
+    (edit? 'изменен': isManager ? 'опубликован' : 'отправлен на проверку')
+  "></app-modal>
+
+<app-modal @modal *ngIf="createModalShow" [style]="'sec'"
+  [title]="'Подтвердите ' + (edit ? 'изменение' : 'создание') + ' ингредиента'" [type]="'yesOrNo'"
+  (resultEmit)="handleCreateModal($event)" [buttonsText]="['Да', 'Нет']" [description]="
+    'Вы уверены, что хотите ' +
+    (edit ? 'изменить' : 'создать') +
+    ' ингредиент' +
+    (isManager ? '' : ' и отправить его на проверку') +
+    '?'
+  "></app-modal>
+
+<app-modal [style]="'await'" *ngIf="awaitModal" @modal />
+<app-modal @modal *ngIf="errorModal" [style]="'prim'" [title]="
+    'Произошла ошибка'
+  " [type]="'Ok'" (resultEmit)="handleErrorModal()" [buttonsText]="['Хорошо']" [description]="
+    errorModalContent||'Произошла неизвестная ошибка'
+  "></app-modal>

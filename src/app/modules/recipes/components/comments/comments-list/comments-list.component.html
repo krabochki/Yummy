@@ -1,0 +1,14 @@
+<div class="list">
+   <ng-container *ngIf="!preloader;else preload">
+        <div  *ngFor="let comment of comments; let i = index"><app-comment [recipe]="recipe" [comment]="comment"></app-comment>
+        
+            <hr *ngIf="i<comments.length-1">
+        </div>
+   </ng-container>
+   <ng-template #preload>
+    <div *ngFor="let comment of preloaderComments; let i = index"><app-comment [recipe]="recipe" [comment]="comment"></app-comment>
+    
+        <hr>
+    </div>
+   </ng-template>
+</div>

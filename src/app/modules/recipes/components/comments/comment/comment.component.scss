@@ -1,0 +1,258 @@
+.wrap {
+  width: 100%;
+  background-color: var(--color-background);
+  display: flex;
+  column-gap: 1em;
+  transition: 0.3s ease-in-out;
+}
+
+.date.load{
+  margin-top: 0.2em;
+}
+.load {
+  color: transparent !important;
+  border-radius: 0.75em;
+  width: max-content;
+  &.num{
+    width: 1em;
+    height: 1em;
+  }
+        background-color: var(--loading);
+        animation: loading 0.75s infinite linear;
+}
+
+@keyframes loading {
+  0% {
+    background-color: var(--loading);
+  }
+
+  50% {
+    background-color: var(--loading-accent);
+  }
+
+  100% {
+    background-color: var(--loading);
+  }
+}
+
+.image-loading {
+  background-color: var(--loading);
+  background-image: none !important;
+  animation: loading 0.75s infinite linear;
+}
+
+h1 {
+  font-size: 1.1em;
+  font-weight: 700;
+}
+.userpic {
+      background-color: white;
+  min-width: 2em;
+  height: 2em;
+  border-radius: 100%;
+  background-position: center;
+  background-size: cover;
+}
+
+.disabled {
+  opacity: 0.5;
+}
+
+.content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 1em;
+}
+.footer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.dislike {
+  opacity: 0.5;
+}
+.text {
+  line-height: 1;
+}
+
+.likes {
+
+  button.like:hover,button.like:focus {
+    *{
+    color: var(--color-secondary);
+    fill: var(--color-secondary);
+    }
+  }
+  button.like.liked:hover,button.like.liked:focus {
+    *{
+    color: var(--color-secondary-focus);
+    fill: var(--color-secondary-focus);
+    }
+  }
+   button.like-dislike.disliked:hover,button.like-dislike.disliked:focus {
+    *{
+    color: var(--color-primary-focus);
+    fill: var(--color-primary-focus);
+    }
+  }
+  button.like-dislike:hover,button.like-dislike:focus {
+    *{
+    color: var(--color-primary);
+    fill: var(--color-primary);
+    }
+  }
+  .liked {
+    * {
+      color: var(--color-secondary);
+      fill: var(--color-secondary);
+    }
+  }
+}
+
+.likes .disliked {
+  * {
+    color: var(--color-primary);
+    fill: var(--color-primary);
+  }
+}
+
+.header {
+
+   
+  transition:  0.2s ease-in-out;
+  display: flex;
+  cursor: pointer;
+  &.nolink{
+    cursor: default;
+  }
+  flex-direction: column;
+  h1,
+  .date {
+    line-height: 1;
+  }
+}
+.date {
+  font-weight: 300;
+  color: var(--color-foreground-unactive);
+
+  font-size: 0.9em;
+  margin-top: 0.2em;
+}
+
+.licon{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.likes,
+.actions {
+  display: flex;
+  column-gap: 2em;
+}
+.likes{
+  display: grid;
+  grid-template-columns: 2.5em 2.5em;
+}
+.like,
+.action {
+  height: 1.2em;
+  .like-svg,
+  span {
+    transition:
+      fill 0.1s ease-in-out,
+      color 0.2s ease-in-out;
+  }
+
+  cursor: pointer;
+  column-gap: 0.5em;
+  display: flex;
+  align-items: flex-end;
+  span {
+    line-height: 1;
+  }
+}
+
+h1 span {
+  font-weight: 200;
+  font-size: 0.7em;
+}
+.modal {
+  overflow-y: hidden;
+  z-index: 3;
+  border-radius: 0.3em;
+  padding: 0.7em;
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.6em;
+  background-color: var(--color-background-deeper-unactive);
+  position: absolute;
+  bottom: 1.6em;
+  right: 0;
+}
+h1 {
+  display: flex;
+  column-gap: 0.5em;
+  align-items: center;
+}
+
+app-modal {
+  position: fixed;
+  z-index: 3;
+}
+.remove-svg {
+  fill: var(--color-primary);
+  height: 1em;
+  width: 1.2em;
+  transition: 0.1s ease-in-out;
+  &:hover {
+    fill: var(--color-primary-focus);
+  }
+}
+.action:hover,.action:focus {
+  .like-svg {
+    fill: var(--color-secondary);
+  }
+
+  span {
+    color: var(--color-secondary);
+  }
+}
+.action.red:hover,.action:focus {
+  .like-svg {
+    fill: var(--color-primary);
+  }
+
+  span {
+    color: var(--color-primary);
+  }
+}
+
+.like-svg {
+  fill: var(--color-foreground);
+  height: 1em;
+  min-width: 1.2em;
+}
+
+.action.haveReport {
+  opacity: 0.5;
+  &:hover {
+    .like-svg {
+      fill: var(--color-foreground);
+    }
+    span {
+      color: var(--color-foreground);
+    }
+    cursor: default;
+  }
+}
+
+@media (max-width: 480px) {
+  .action span {
+    display: none;
+  }
+  .likes,
+  .actions {
+    column-gap: 1em;
+  }
+}

@@ -1,0 +1,173 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="outer" *ngIf="!initialLoading" (click)="clickBackgroundNotContent($event)">
+  <div class="inner min-width">
+    <div class="close-button" (click)="closeEditModal()">
+      <svg-icon
+        [src]="'/assets/images/svg/close.svg'"
+        [applyClass]="true"
+        class="close-svg"
+      ></svg-icon>
+    </div>
+    <div class="cont">
+      <div class="header">
+        <h1>{{!editedGroup.id ? 'Создание' :'Изменение'}} группы ингредиентов</h1>
+      </div>
+      <div class="unique-content min">
+        <form [formGroup]="form" #scrollContainer>
+          <div class="step-container">
+
+
+                      <div class="main-info-control-with-image">
+<div class="form-control circle img">
+  <div class="image">
+    <div class="delete" *ngIf="groupImage !== defaultImage" (click)="unsetImage()">
+      <svg-icon [applyClass]="true" class="svgTrash" [src]="'/assets/images/svg/trash.svg'"></svg-icon>
+    </div>
+    <div class="photo" [ngClass]="{
+                                    'have-image': this.form.get('image')?.value !== null
+                                  }" [ngStyle]="{ 'background-image': 'url(' + groupImage + ')' }"
+      alt="Изображение группы ингредиентов">
+      <input class="input-image" type="file" (change)="onIngredientImageChange($event)"   accept=".png, .jpg, .jpeg, .svg" 
+ />
+    </div>
+  </div>
+</div>
+             
+            <div class="main-info-controls">
+
+                <div class="form-control">
+                  <h3>Название группы*</h3>
+                  <app-usual-input
+                    [inputRequired]="true"
+                    [max]="30"
+                    id="name"
+                    formControlName="name"
+                    [placeholder]="'Придумайте название группе'"
+                    required
+                    [value]="form.get('name')?.value"
+                    [error]="
+                      form.get('name')?.invalid &&
+                      (form.get('name')?.dirty || form.get('name')?.touched)
+                        ? 'Название группы должно содержать от 4 до 30 символов'
+                        : ''
+                    "
+                  ></app-usual-input>
+                </div>
+                <div class="form-control" *ngIf="!editedGroup.id">
+                  <h3>Начальные ингредиенты</h3>
+
+                  <app-autocomplete
+                  [startOnTyping]="true"
+                  [context]="'ingredients'"
+                    [clearValueOnBlur]="true"
+                    (ingredientEmitter)="addIngredient($event)"
+                    [placeholder]="'Начните вводить название ингредиента'"
+                  />
+                  <div class="tags">
+                    <div
+                      class="tag"
+                      *ngFor="let selected of selectedIngredients"
+                    >
+                      {{ selected.name }}
+                      <span
+                        (click)="removeIngredient(selected)"
+                        class="remove-tag"
+                        ><svg-icon
+                          [applyClass]="true"
+                          class="remove-tag-svg"
+                          [src]="'/assets/images/svg/close.svg'"
+                        ></svg-icon
+                      ></span>
+                    </div>
+                  </div>
+                  <div
+                    *ngIf="selectedIngredients.length === 0"
+                    class="no-categories"
+                  >
+                    Вы пока не выбрали ни один ингредиент
+                </div>
+              </div>
+
+                        <a *ngIf="!edit" class="more-info-link" routerLink="/ingredients">Просмотреть ингредиенты</a>
+</div>
+
+             
+            </div>
+
+            <div class="buttons row">
+              <app-button
+                [title]="
+                  !(areObjectsEqual() && form.valid)
+                    ? 'Все поля должны быть корректно заполнены'
+                    : ''
+                "
+                [disabled]="areObjectsEqual() && form.valid"
+                (click)="form.valid && areObjectsEqual() ? (saveModal = true) : null"
+                [text]="edit? 'Изменить' :'Опубликовать'"
+                [color]="'sec'"
+                [style]="'filled'"
+                [rounded]="true"
+              ></app-button>
+
+              <app-button
+                (click)="closeEditModal()"
+                [text]="'Отменить'"
+                [color]="'prim'"
+                [style]="'outlined'"
+                type="button"
+                [rounded]="true"
+              ></app-button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-modal
+  *ngIf="closeModal"
+  @modal
+  [style]="'prim'"
+  [title]="'Закрытие окна'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleCloseModal($event)"
+  [buttonsText]="['Да', 'Нет']"
+  [description]="'Вы уверены, что не хотите '+(edit?'менять':'сохранить')+' группу?'"
+>
+</app-modal>
+
+<app-modal
+  @modal
+  *ngIf="saveModal"
+  [style]="'sec'"
+  [title]="(edit?'Изменение':'Сохранение')+' группы'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleSaveModal($event)"
+  [buttonsText]="['Да', 'Нет']"
+  [description]="'Вы уверены, что хотите '+(edit?'изменить':'сохранить')+' группу?'"
+></app-modal>
+
+<app-modal
+  @modal
+  *ngIf="successModal"
+  [style]="'sec'"
+  [title]="'Группа успешно ' +(edit?'изменена':'сохранена')"
+  [type]="'Ok'"
+  (resultEmit)="handleSuccessModal()"
+  [buttonsText]="['Хорошо']"
+  [description]="
+    'Группа «' + savedGroup.name + '» успешно ' +(edit?'изменена':'сохранена')
+  "
+></app-modal>
+<app-modal
+  [style]="'await'"
+  *ngIf="loading || initialLoading"
+  @modal
+/>
+<app-modal @modal *ngIf="errorModal" [style]="'prim'" [title]="
+    'Произошла ошибка'
+  " [type]="'Ok'" (resultEmit)="handleErrorModal()" [buttonsText]="['Хорошо']" [description]="
+    errorModalContent||'Произошла неизвестная ошибка'
+  "></app-modal>

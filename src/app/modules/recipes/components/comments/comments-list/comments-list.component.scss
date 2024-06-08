@@ -1,0 +1,16 @@
+.list{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 1em 0;
+}
+
+hr{
+   background: var(--color-foreground-unactive-lighter);
+    width: 100%;
+    height: 1px;
+    opacity: 0.1;
+    margin: 1em 0;
+
+    
+}

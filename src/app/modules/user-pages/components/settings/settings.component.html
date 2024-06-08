@@ -1,0 +1,285 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="background" (click)="clickBackgroundNotContent($event)">
+  <div class="container">
+    <button (click)="closeEmitter.emit(true)" class="close">
+      <svg-icon
+        class="close-svg"
+        [applyClass]="true"
+        [src]="'/assets/images/svg/close.svg'"
+      ></svg-icon>
+    </button>
+
+    <div class="zero">
+      <section class="main-wrap">
+        <nav class="nav noselect">
+          <h1>Настройки</h1>
+          <hr />
+          <div class="switches">
+            <ng-container *ngFor="let item of steps; let i = index">
+              <button
+                *ngIf="showBlock(i)"
+                class="switch"
+                [ngClass]="{ selected: step === i }"
+                (click)="clickNextStep(i)"
+              >
+                {{ item }}
+              </button>
+            </ng-container>
+          </div>
+          <div class="mobile-switches">
+            <ng-container *ngFor="let item of steps; let i = index">
+              <button
+                *ngIf="showBlock(i)"
+                class="header-button"
+                [ngClass]="{ selected: step === i }"
+                (click)="clickNextStep(i)"
+              >
+                <svg-icon
+                  class="svg-trash"
+                  [applyClass]="true"
+                  [src]="
+                    '/assets/images/svg/settings/' +
+                    stepsIcons[i] +
+                    (step === i ? '-fill' : '') +
+                    '.svg'
+                  "
+                />
+              </button>
+            </ng-container>
+          </div>
+        </nav>
+        <div class="content">
+          <div *ngIf="step === 1">
+            <h2>Персональная информация</h2>
+            <div class="blocks">
+              <div>
+                <h3>
+                  <svg-icon
+                    [applyClass]="true"
+                    class="icon"
+                    [src]="'/assets/images/svg/settings/mail.svg'"
+                  />
+                  Электронная почта
+                </h3>
+                <p>{{ currentUser.email }}</p>
+              </div>
+              <div>
+                <h3>
+                  <svg-icon
+                    [applyClass]="true"
+                    class="icon"
+                    [src]="'/assets/images/svg/settings/username.svg'"
+                  />
+
+                  Имя пользователя
+                </h3>
+                <p>{{ "@" + user.username }}</p>
+              </div>
+              <button class="action">
+                <a routerLink="/password-reset">Поменять пароль</a>
+              </button>
+        
+            
+            </div>
+          </div>
+          <div *ngIf="step === 2">
+            <h2>Уведомления</h2>
+            <div class="blocks third">
+              <div *ngFor="let section of permissionNotificationSections">
+                <h3>
+                  <svg-icon
+                    [applyClass]="true"
+                    class="icon"
+                    [src]="
+                      '/assets/images/svg/settings/' + section.icon + '.svg'
+                    "
+                  />
+                  {{ section.title }}
+                </h3>
+                <div>
+                  <div class="toogle" *ngFor="let item of section.items">
+                    <p>{{ item.description }}</p>
+                    <app-toogle-switch
+                      [checked]="userPermissionEnabled(item.area)"
+                      (checkedEmit)="tooglePermission(item.area)"
+                    ></app-toogle-switch>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="step === 3">
+            <h2>Достижения</h2>
+            <div class="blocks" (scroll)="onScroll($event)">
+              <div class="ache-blocks">
+                <div
+                  [ngClass]="{
+                    loading: !achievement.id,
+                    blink: achievement.loading,
+                    achieved: achievement.isAchieved
+                  }"
+                  *ngFor="let achievement of achievements"
+                >
+                  <div class="icon-block">
+                    <div
+                      class="ico"
+                      [ngStyle]="{ 'background-color': achievement.color }"
+                    >
+                      <svg-icon
+                        [src]="achievement.iconUrl"
+                        [applyClass]="true"
+                        class="svgico"
+                      ></svg-icon>
+                    </div>
+                    <div>
+                      <h3>{{ achievement.title }}</h3>
+                      <p>{{ achievement.description }}</p>
+                    </div>
+                  </div>
+                  <div
+                    [ngClass]="{ exceeded: achievement.isScoreExceeded }"
+                    *ngIf="
+                      !achievement.isAchieved &&
+                      achievement.completionPercentage !== undefined
+                    "
+                    class="progress-bar"
+                    [title]="titleForPercents(achievement)"
+                  >
+                    <p
+                      class="percent"
+                      (click)="
+                        achievement.isScoreExceeded
+                          ? getAchievement(achievement)
+                          : null
+                      "
+                    >
+                      {{
+                        achievement.isScoreExceeded
+                          ? "Нажмите, чтобы получить достижение"
+                          : achievement.completionPercentage + "%"
+                      }}
+                    </p>
+
+                    <div
+                      class="progress"
+                      [style.width.%]="achievement.completionPercentage"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="step === 4">
+            <h2>Управление</h2>
+            <div class="blocks third">
+              <ng-container *ngFor="let section of managersPreferences">
+                <div
+                  *ngIf="section.role ? section.role.includes(user.role) : true"
+                >
+                  <h3>
+                    <svg-icon
+                      [applyClass]="true"
+                      class="icon"
+                      [src]="
+                        '/assets/images/svg/settings/' + section.icon + '.svg'
+                      "
+                    />
+                    {{ section.title }}
+                  </h3>
+                  <div>
+                    <div class="toogle" *ngFor="let item of section.items">
+                      <p>{{ item.description }}</p>
+                      <app-toogle-switch
+                        [checked]="userPermissionEnabled(item.area)"
+                        (checkedEmit)="tooglePermission(item.area)"
+                      ></app-toogle-switch>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+          <div *ngIf="step === 0">
+            <h2>Основное</h2>
+            <div class="blocks">
+              <div class="toogle">
+                <p class="not-link">Темная тема</p>
+                <app-toogle-switch
+                  [backgroundOff]="'var(--color-secondary)'"
+                  [backgroundOn]="'var(--color-foreground)'"
+                  [toogleOff]="'var(--color-background)'"
+                  [toogleOn]="'var(--color-secondary)'"
+                  (checkedEmit)="nightModeEmit()"
+                  [nightMode]="true"
+                ></app-toogle-switch>
+              </div>
+              <div>
+                <p><a routerLink="/about">Узнать больше о Yummy...</a></p>
+                <p>
+                  <a routerLink="/news">Свежие новости и изменения...</a>
+                </p>
+                <p>
+                  <a routerLink="/user-policy"
+                    >Пользовательское соглашение...</a
+                  >
+                </p>
+              </div>
+              <div>
+                <p style="margin: 0">
+                  Вопросы, жалобы, предложения, пожелания?
+                </p>
+                <p style="margin: 0">
+                  Пишите на почту:
+                  <a href="mailto:yummort@mail.ru">{{ "yummort@mail.ru" }}</a>
+                </p>
+              </div>
+              <div>
+                <p>Пригласите друзей</p>
+                <div class="socials">
+                  <app-social-button [url]="location"></app-social-button>
+                  <app-social-button
+                  [description]="'Yummy – социальная сеть для кулинаров!'"
+                    [url]="location" 
+                    
+                    [social]="social"
+                    *ngFor="let social of socials"
+                  ></app-social-button>
+                </div>
+              </div>
+              <button class="action red" (click)="exitModalShow = true">
+                Выйти из аккаунта
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  
+
+ 
+</div>
+
+<app-modal @modal *ngIf="exitModalShow" [style]="'prim'" [title]="'Подтвердите выход'" [type]="'yesOrNo'"
+  (resultEmit)="handleExitModal($event)" [buttonsText]="['Выйти', 'Остаться']"
+  [description]="'Вы действительно хотите выйти из текущего аккаунта?'"></app-modal>
+<app-modal @modal [style]="'await'" *ngIf="loading"></app-modal>
+
+
+<app-modal
+  [ngStyle]="{ 'z-index': 100 }"
+  @modal
+  *ngIf="errorModal"
+  [style]="'prim'"
+  [title]="'Неудачная попытка'"
+  [type]="'Ok'"
+  (resultEmit)="errorModal = false"
+  [buttonsText]="['Хорошо']"
+  [description]="
+    errorText ||
+    'Произошла неизвестная ошибка при попытке прислать письмо для подтверждения удаления аккаунта'
+  "
+></app-modal>

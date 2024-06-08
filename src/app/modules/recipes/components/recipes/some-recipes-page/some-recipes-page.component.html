@@ -1,0 +1,329 @@
+<div>
+  <div
+    class="main"
+    [ngClass]="{
+      'main-padding':
+        filter !== 'all' ? recipes.length > 0 || !loaded : true
+    }"
+  >
+    <div class="block">
+      <h1 *ngIf="filter !== 'all' ? recipes.length > 0 || !loaded : true">
+        {{ getTitleByRecipeType(recipeType) }}
+      </h1>
+
+      <app-button
+        class="add-recipe"
+        [icon]="'add-recipe'"
+        *ngIf="(filter === 'my-recipes' && (recipes.length  || !loaded)) || filter === 'all'  "
+        (click)="!loaded? null:createRecipeButtonClick()"
+        [color]="'prim'"
+        [disabled]="!initialLoading"
+                [text]="'Создать рецепт'"
+        [rounded]="true"
+      ></app-button>
+
+      <div
+        class="search"
+        *ngIf="
+          searchType !== '' &&
+          (filter !== 'all' ? recipes.length || !loaded : true)
+        "
+      >
+        <app-search
+          [category]="category"
+          [ingredient]="ingredient"
+          [context]="searchType"
+          [disabled]="initialLoading"
+        ></app-search>
+      </div>
+
+      <ng-container
+        *ngIf="filter !== 'all' ? recipes.length === 0 && loaded : false"
+      >
+        <div class="container one-column not-found">
+          <div class="image">
+            <svg-icon
+              [applyClass]="true"
+              class="fridge"
+              [src]="'/assets/images/svg/fridge.svg'"
+            ></svg-icon>
+          </div>
+          <div class="content">
+            <h1 class="label">Рецептов пока <span class="title">нет</span></h1>
+            <p class="tagline">
+              {{
+                filter === "category-recipes"
+                  ? "В категории «" +
+                    category.name +
+                    "» пока нет рецептов. Следи за обновлениями, совсем скоро они появятся! А также ты можешь создать рецепт
+              сам."
+                  : getNoRecipesTextByRecipetype(recipeType)
+              }}
+            </p>
+
+            <hr />
+            <div class="buttons">
+              <app-button
+                (click)="
+                  filter === 'my-recipes' || filter === 'category-recipes'
+                    ? (creatingMode = true)
+                    : null
+                "
+                [routerLink]="
+                  filter === 'my-recipes' || filter === 'category-recipes'
+                    ? null
+                    : getNoRecipesRouterLinkTextByRecipetype(recipeType)
+                "
+                [rounded]="true"
+                [color]="'prim'"
+                [text]="getNoRecipesButtonTextByRecipetype(recipeType)"
+              ></app-button>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #all>
+       <ng-container>
+          <div *ngFor="let group of recipesGroups">
+            <div class="block" *ngIf="group.recipes.length && (group.auth ? this.currentUser.id : true)">
+              <a class="head" [routerLink]="group.link">
+                <h2>{{ group.name }}</h2>
+                <svg-icon
+                  class="arrow-svg"
+                  [applyClass]="true"
+                  [src]="'/assets/images/svg/go-back.svg'"
+                ></svg-icon>
+              </a>
+              <div
+                class="recipes"
+                class="recipes"
+                [ngClass]="{
+                  horizontal: group.recipes.length >= minHorizontalLength
+                }"
+              >
+                <app-horizontal-recipe-list
+                  *ngIf="
+                    group.recipes.length >= minHorizontalLength;
+                    else vertical3
+                  "
+                  [recipes]="getRecipesByGroup(group.name)"
+                ></app-horizontal-recipe-list>
+                <ng-template #vertical3>
+                  <app-vertical-recipe-list
+                    [blocks]="getRecipesByGroup(group.name)"
+                  ></app-vertical-recipe-list>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+       </ng-container>
+
+      <ng-container  *ngIf="!loaded">
+        <div class="block" *ngFor="let block of blocks">
+          <div class="head">
+            <h2 class="loading">Запланированные рецепты</h2>
+          </div>
+          <div class="recipes">
+            <app-horizontal-recipe-list [preloader]="true" />
+          </div>
+        </div>
+      </ng-container>
+
+      
+
+
+        
+      </ng-template>
+
+      <div *ngIf="filter !== 'all'; else all">
+        <div class="recipes">
+          <div
+            style="margin-bottom: 1em"
+            *ngIf="loaded || recipes.length"
+          >
+            <app-vertical-recipe-list
+              [rowsNumberMobile]="
+                recipes.length >= minHorizontalLength ? 2 : 1
+              "
+              [showAuthor]="filter !== 'my-recipes' ? true : false"
+              [blocks]="recipes"
+              [cols]="4"
+            ></app-vertical-recipe-list>
+          </div>
+          <div class="noselect" style="pointer-events: none">
+            <app-vertical-recipe-list *ngIf="!loaded" [preloader]="true" />
+          </div>
+        </div>
+      </div>
+      <app-button
+        class="moreButton"
+        [text]="'Загрузить еще...'"
+        [disabled]="loaded"
+        (click)="loadMoreRecipes()"
+        *ngIf="
+          !everythingLoaded &&
+          filter !== 'all' &&
+          (filter !== 'all' ? recipes.length > 0 || !loaded : true)
+        "
+        [rounded]="true"
+        [style]="'outlined'"
+        [color]="'prim'"
+      ></app-button>
+    </div>
+  </div>
+
+  <div
+    style="margin-bottom: 2.5em"
+    class="main-padding"
+    *ngIf="
+      currentUser.role !== 'user' &&
+      loaded &&
+      showCategoryButtons() &&
+      filter === 'category-recipes'
+    "
+  >
+    <section class="action-buttons">
+      <button class="action-button edit" (click)="editModal = true">
+        <div class="action-icon">
+          <svg-icon
+            class="action-svg"
+            [applyClass]="true"
+            [src]="'/assets/images/svg/pen.svg'"
+          />
+        </div>
+        <p>Изменить категорию</p>
+      </button>
+      <button class="action-button delete" (click)="deleteModal = true">
+        <div class="action-icon">
+          <svg-icon
+            class="action-svg"
+            [applyClass]="true"
+            [src]="'/assets/images/svg/trash.svg'"
+          />
+        </div>
+        <p>Удалить категорию</p>
+      </button>
+      <button
+        [class]="'action-button info ' + currentUser.role"
+        (click)="moreInfo = !moreInfo"
+      >
+        <div [class]="'action-icon'">
+          <svg-icon
+            class="action-svg"
+            [applyClass]="true"
+            [src]="'/assets/images/svg/info.svg'"
+          />
+        </div>
+        <p>Подробнее</p>
+      </button>
+    </section>
+    <div @height *ngIf="moreInfo" class="more-info">
+      <p>
+        Создал(-а):
+        <a
+          class="action-link"
+          [routerLink]="'/cooks/list/' + category.authorId"
+          >{{ category.creatorName }}</a
+        >
+      </p>
+      <p *ngIf="category.approvedDate" [title]="getDate(category.approvedDate)">
+        Дата одобрения: {{ (category.approvedDate | timePast).toLowerCase() }}
+      </p>
+      <p *ngIf="category.approvedId && category.approvedName">
+        Одобрил(-а):
+        <a
+          class="action-link"
+          [routerLink]="'/cooks/list/' + category.approvedId"
+          >{{ category.approvedName }}</a
+        >
+      </p>
+      <p *ngIf="category.modifiedDate" [title]="getDate(category.modifiedDate)">
+        Дата последнего изменения:
+        {{ (category.modifiedDate | timePast).toLowerCase() }}
+      </p>
+
+      <p *ngIf="category.changerId && category.changerName">
+        Изменил(-а):
+        <a
+          class="action-link"
+          [routerLink]="'/cooks/list/' + category.changerId"
+          >{{ category.changerName }}</a
+        >
+      </p>
+    </div>
+  </div>
+</div>
+
+<app-recipe-create
+  style="position: fixed; z-index: 3"
+  (closeEmitter)="creatingMode = false"
+  @modal
+  *ngIf="creatingMode"
+></app-recipe-create>
+
+<app-modal
+  @modal
+  *ngIf="noAccessModalShow"
+  [style]="'prim'"
+  [title]="'Доступ к разделу ограничен'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleNoAccessModal($event)"
+  [buttonsText]="['Давайте', 'Не сейчас']"
+  [description]="
+    'Доступ к этой функции имеют только зарегистрированные пользователи. Хотите зарегистрироваться или войти в существующий аккаунт?'
+  "
+/>
+<ng-template #loading>
+  <div class="block">
+    <div class="head">
+      <h2 class="loading">Запланированные рецепты</h2>
+    </div>
+    <div class="recipes">
+      <app-horizontal-recipe-list [preloader]="true" />
+    </div>
+  </div>
+</ng-template>
+
+<app-modal
+  @modal
+  [title]="'Удаление категории'"
+  [type]="'yesOrNo'"
+  [buttonsText]="['Да', 'Отмена']"
+  *ngIf="deleteModal"
+  (resultEmit)="handleDeleteModal($event)"
+  [description]="'Вы уверены, что хотите удалить эту категорию?'"
+  [style]="'prim'"
+/>
+
+<app-modal
+  @modal
+  [title]="'Категория удалена'"
+  [type]="'Ok'"
+  [buttonsText]="['Хорошо']"
+  *ngIf="successDeleteModal"
+  (resultEmit)="handleSuccessDeleteModal()"
+  [description]="'Категория успешно удалена'"
+  [style]="'sec'"
+/>
+
+<app-category-creating
+  (editEmitter)="updateRecipesAfterCategoryEditing()"
+  [editedCategoryId]="category.id"
+  @modal
+  (closeEmitter)="editModal = false"
+  *ngIf="editModal"
+/>
+
+<app-modal *ngIf="awaitModal" [style]="'await'" @modal />
+
+<app-modal
+  @modal
+  *ngIf="errorModal"
+  [style]="'prim'"
+  [title]="'Произошла ошибка'"
+  [type]="'Ok'"
+  (resultEmit)="handleErrorModal()"
+  [buttonsText]="['Хорошо']"
+  [description]="errorModalContent || 'Произошла неизвестная ошибка'"
+></app-modal>

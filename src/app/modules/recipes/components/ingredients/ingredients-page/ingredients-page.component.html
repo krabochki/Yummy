@@ -1,0 +1,96 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="wrap">
+  <h1 >
+    {{ title || 'Загрузка...' }}
+  </h1>
+
+  <app-button
+    class="add-category"
+    [icon]="'ingredients/ingredient'"
+    [color]="'prim'"
+    [disabled]="!initialLoading"
+    [text]="'Создать ингредиент'"
+    (click)="createIngredientButtonClick()"
+    [rounded]="true"
+  ></app-button>
+
+<div class="search">
+    <app-search [context]="'groups & ingredients'" [disabled]=" initialLoading"></app-search>
+  
+</div>
+  <div>
+      <div class="sections" *ngIf="!popularLoaded ">
+        <div class="head">
+          <h2 class="load">Популярные ингредиенты</h2>
+        </div>
+        <app-ingredients-horizontal-list [preloader]="true"></app-ingredients-horizontal-list>
+      </div>
+
+
+    <div *ngFor="let group of groups" class="sections">
+      <div class="sections">
+        <a
+          [routerLink]="group.id> 0 ? '/groups/list/' + group.id :'/ingredients/popular'"
+          *ngIf="group.name !== ''"
+          class="head"
+        >
+          <h2>{{ group.name }}</h2>
+
+          <svg-icon
+            class="arrow-svg"
+            [applyClass]="true"
+            [src]="'/assets/images/svg/go-back.svg'"
+          ></svg-icon>
+        </a>
+
+        <app-ingredients-horizontal-list
+          [ingredients]="getIngredientsOfGroup(group)"
+        ></app-ingredients-horizontal-list>
+      </div>
+    </div>
+    <ng-container *ngFor="let preloader of skeleton">
+      <div class="sections" *ngIf="!loaded || !popularLoaded || initialLoading">
+        <div class="head">
+          <h2 class="load">Загрузкаааааааа</h2>
+        </div>
+
+        <app-ingredients-horizontal-list
+          [preloader]="true"
+        ></app-ingredients-horizontal-list>
+      </div>
+    </ng-container>
+  </div>
+  <app-button
+    [class.disabled]="!loaded || !popularLoaded ? true : false"
+    class="more-reports-button"
+    [text]="'Загрузить еще...'"
+    (click)="loadMoreGroups()"
+    *ngIf="!everythingLoaded && !initialLoading"
+    [disabled]="loaded  && popularLoaded"
+    [rounded]="true"
+    [style]="'outlined'"
+    [color]="'prim'"
+  ></app-button>
+</div>
+
+<app-ingredient-create  
+  (editEmitter)="updateAfterChanges()"
+  style="position: fixed; z-index: 3"
+  (closeEmitter)="createModal = false"
+  @modal
+  *ngIf="createModal"
+></app-ingredient-create>
+
+<app-modal
+  @modal
+  *ngIf="accessModal"
+  [style]="'prim'"
+  [title]="'Доступ к разделу ограничен'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleNoAccessModal($event)"
+  [buttonsText]="['Давайте', 'Не сейчас']"
+  [description]="
+    'Доступ к этой функции имеют только зарегистрированные пользователи. Хотите зарегистрироваться или войти в существующий аккаунт?'
+  "
+></app-modal>

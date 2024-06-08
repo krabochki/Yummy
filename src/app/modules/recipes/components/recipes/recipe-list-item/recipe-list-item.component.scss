@@ -1,0 +1,431 @@
+@import "../../../../../../tools/UI/UI.scss";
+
+@keyframes loading {
+  0% {
+    background-position: var(--loading);
+  }
+
+  50% {
+    background-color: var(--loading-accent);
+  }
+
+  100% {
+    background-position: var(--loading);
+  }
+}
+
+
+.recipe.placeholder{
+  background-size: 45%;
+  background-position-x: -0.5em;background-position-y: 0.3em;  box-shadow: none;
+  background-repeat: no-repeat;
+  background-color: #f4f4f4;
+
+  .rate-panel .like-icon{
+        fill: #808080;
+  }
+        .rate-panel .cook-icon {
+          fill: #808080;
+        }
+  *{
+    color: #808080;
+  }
+
+}
+
+.recipe.imageLoading{                  animation: loading 0.75s infinite linear;
+                  background-color: var(--loading);
+                  background-image: none;
+
+  box-shadow: none;
+}
+
+.recipe .fav.disabled {
+  background-color: var(--color-foreground-unactive);
+  cursor:default;
+  &::before{
+    display: none;
+  }
+}
+
+
+
+* {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+.no-author {
+  margin-bottom: 0.4em;
+}
+.author {
+  cursor: pointer;
+  font-size: 0.9em;
+  margin-bottom: 0.4em;
+}
+
+.recipe {
+  position: relative;
+
+  box-shadow: inset 0 -7em 4em rgba($color: #000000, $alpha: 0.7);
+  scroll-snap-align: start;
+  padding: 1rem 1rem;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  background-size: cover;
+  height: 15em;
+  min-height: 15em;
+  border-radius: 1.5em;
+  align-items: stretch;
+  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%; /* 4 колонки внутри грида */
+
+  &.sceleton {
+
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 2em;
+    &.null {
+      p {
+        opacity: 0.5;
+        font-size: 1em;
+        text-align: center;
+        line-height: 1;
+        color: var(--color-foreground-unactive);
+        margin-bottom: 0.75em;
+        font-weight: 600;
+        cursor: default;
+      }
+      .no-recipe-svg {
+        height: 100%;
+        opacity: 0.65;
+
+        fill: var(--color-foreground-unactive);
+      }
+      animation: none;
+      background-image: none;
+      background-image: linear-gradient(
+        to right,
+        transparent,
+        var(--color-background-deeper-unactive) 100%
+      );
+    }
+    box-shadow: none;
+
+    background: var(--color-background-deeper);
+    background-image: -webkit-linear-gradient(
+      to right,
+      #dedfe1 0%,
+      #f2f3f5 20%,
+      #dedfe1 40%,
+      #dedfe1 100%
+    );
+    background-image: linear-gradient(
+      to right,
+      #dedfe1 0%,
+      #f2f3f5 20%,
+      #dedfe1 40%,
+      #dedfe1 100%
+    );
+    background-repeat: no-repeat;
+
+    color: transparent !important;
+
+                &.loading {
+                  animation: loading 0.75s infinite linear;
+                  background-color: var(--loading);
+                  background-image: none;
+                }
+  }
+
+  * {
+    color: #fff;
+  }
+
+  .bottom {
+    width: 100%;
+        max-width:100%;
+        overflow: hidden;
+
+    justify-self: flex-end;
+    align-self: flex-end;
+  }
+
+  .top {
+    justify-self: flex-end;
+    align-self: start;
+    width: 100%;
+    row-gap: 0.4em;
+    
+
+
+    display: flex;
+    position: relative;
+
+    flex-direction: column;
+  }
+
+  .more-buttons{
+       column-gap: 0.25em;
+       right: 2.5em;
+    display: flex;
+    flex-direction: row-reverse;
+    position: absolute;
+
+    
+  }
+  .top-button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+
+        position: relative;
+
+        &.trash{
+          background-color: var(--color-primary);
+          transition: 0.3s ease-in-out;
+
+          &::before{
+                      background-color: var(--color-primary-focus);
+          }
+
+        
+        }
+     &::before {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      margin: auto;
+      content: "";
+      background-color: var(--color-secondary-focus);
+      height: 0px;
+      width: 0px;
+      border-radius: 100%;
+      z-index: 0;
+      transition: 0.2s ease-in-out;
+    }
+    &:hover::before{
+      width: 100%;
+      height: 100%;
+    }
+
+    .remove-svg{
+      z-index: 2;
+      display: flex;
+    align-items: center;
+    justify-content: center;
+      fill: white;
+            height: 1.3em;
+            width: 1em;
+
+    }
+    cursor: pointer;
+  width: 2em;
+  height: 2em;
+  border-radius: 100%;
+  background-color: var(--color-secondary);
+      margin-left: auto;
+
+}
+  .fav {
+    border-radius: 100%;
+    margin-left: auto;
+
+    background-color: var(--color-primary);
+    height: 2em;
+    width: 2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    position: relative;
+
+    overflow: hidden;
+    &::before {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      margin: auto;
+      content: "";
+      background-color: var(--color-primary-focus);
+      height: 0px;
+      width: 0px;
+      border-radius: 100%;
+      z-index: 0;
+      transition: 0.2s ease-in-out;
+    }
+
+    &:hover::before {
+      height: 100%;
+      width: 100%;
+    }
+    .fav-icon {
+      z-index: 1;
+      width: 1em;
+      fill: white;
+      height: 1.3em;
+    }
+  }
+  .rate-panel {
+    display: flex;
+    z-index: 100;
+    column-gap: 1em;
+    zoom:1.1;
+    
+    
+
+    span {
+
+      .plus{
+        font-size: 0.9em;
+      }
+   
+      font-size: 0.97em;
+      &.cooked {
+        color: var(--color-secondary);
+        font-weight: 700;
+
+        .plus {
+        color: var(--color-secondary);          }
+      }
+
+      &.liked {
+        color: var(--color-primary);
+        font-weight: 700;
+        .plus{
+          color: var(--color-primary);
+        }
+      }
+    }
+    .rate-item {
+      cursor: pointer;
+      display: flex;
+
+
+      column-gap: 0.5em;
+      justify-content: center;
+      border-radius: 100%;
+
+      align-items: center;
+      
+
+      span{
+        text-overflow: ellipsis;
+      }
+
+      &.cooks:hover{
+        .cook-icon{
+          fill: var(--color-secondary-focus);
+        }
+        span{
+          color: var(--color-secondary-focus);
+        }
+      }
+             &.likes:hover {
+               .like-icon {
+                 fill: var(--color-primary-focus);
+               }
+      
+               span {
+                 color: var(--color-primary-focus);
+               }
+             }
+    }
+    .like-icon {
+      fill: white;
+      height: 1em;
+      min-width:1.1em;
+
+      width: 1.1em;
+      margin-bottom: 0.04em;
+      &.liked {
+        fill: var(--color-primary);
+      }
+    }
+    .cook-icon {
+      fill: white;
+      height: 1.1em;
+      width: 1.2em;
+      min-height:1.1em;
+      min-width: 1.2em;
+      &.cooked {
+        fill: var(--color-secondary);
+      }
+    }
+  }
+
+
+
+  h1 {
+    cursor: pointer;
+    font-size: var(--font-m);
+    line-height: 1;
+    
+     display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3; /* Количество строк, которые вы хотите отобразить */
+    overflow-wrap: break-word; /* Разрешить перенос длинных слов */
+      hyphens: auto; /* Разрешить перенос слов */
+
+  white-space: normal; /* Изменить на "normal" */
+   overflow-y: hidden;
+   overflow-x: hidden;
+   text-overflow: ellipsis;
+
+    font-weight: 600;
+    padding-bottom: 0.2em;
+  }
+}
+
+@keyframes myAnimation {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(0.9);
+  }
+  75% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+app-modal {
+  position: fixed;
+  z-index: 20;
+}
+
+@media (max-width: 900px) {
+  .recipe {
+    box-shadow: inset 0 -7em 4em rgba($color: #000000, $alpha: 0.5);
+
+    h1 {
+      font-size: 1.3em;
+
+      padding-bottom: 0.2em;
+    }
+    .no-author.title {
+      margin-bottom: 0.4em;
+    }
+  }
+}

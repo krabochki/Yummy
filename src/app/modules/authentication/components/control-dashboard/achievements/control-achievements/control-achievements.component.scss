@@ -1,0 +1,71 @@
+app-new-achievement{
+    position: fixed;
+    z-index: 100;
+}
+
+
+.ico{
+    display: flex;
+    min-width: 2.5em;
+    height: 2.5em;
+    align-items: center;
+    justify-content: center;
+    border-width: 3px;
+    border-style: solid;
+    border-radius: 100%;
+    border-color: var(--color-foreground);
+    max-width: 2.5em !important;
+}
+
+app-modal{
+    position: fixed;
+    z-index: 100;
+}
+
+.icon{
+    max-width: 1.25em;
+    fill: var(--color-foreground);
+    
+    max-height: 1.25em;
+    height: 1.25em;
+    width: 1.25em;
+}
+
+.icon-block{
+    display: flex;
+    align-items: center;
+    column-gap: 1em;
+    justify-content: space-between;
+    
+}
+
+.remove-button{
+    position: absolute;
+    right:0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top:0.75em;
+    right:1em;
+    cursor: pointer;
+    opacity: 0.75;
+
+    transition: 0.2s;
+    &:hover{
+       opacity: 1;
+
+       & .svg-trash{
+        fill: var(--color-primary-focus);
+       }
+    }
+
+    .svg-trash{
+        width: 1em;
+        height: 1em;
+        transition: 0.2s;
+        fill: var(--color-primary);
+    }
+}
+.report{
+    position: relative;
+}

@@ -1,0 +1,444 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="wrap noselect" *ngIf="initialLoading">
+  <h1>{{ ingredient.name }}</h1>
+  <div class="container">
+    <div class="image loading"></div>
+    <div class="section-group center">
+      <p class="reading-time">
+        <span class="load" style="display: inline">
+          Чтение займет приблизительно 0 минут
+        </span>
+      </p>
+
+      <div class="content">
+        <ul class="load-ul">
+          <li>
+            <a class="load">• Основное</a>
+          </li>
+          <li>
+            <a class="load">• Обзор</a>
+          </li>
+          <li>
+            <a class="load">• Готовка</a>
+          </li>
+          <li>
+            <a class="load">• Пищевая ценность</a>
+          </li>
+          <li>
+            <a class="load">• Советы</a>
+          </li>
+          <li>
+            <a class="load">• Ссылки</a>
+          </li>
+        </ul>
+      </div>
+
+      <section class="shopping">
+        <p class="shopping-group load" [title]="'Тип продукта для списка покупок'">
+          Тип продукта: Без категории
+        </p>
+      </section>
+    </div>
+
+
+
+  </div>
+  
+
+
+</div>
+<div class="wrap" *ngIf="!initialLoading">
+  <h1>{{ ingredient.name }}</h1>
+
+  <div class="container">
+    <div (click)="viewImage()" class="image" [ngClass]="{ 'loading': ingredient.imageLoading}"
+      [style.background-image]="'url(' + (ingredient.imageURL ||( showCapture() ? placeholder : '')) + ')'">
+      <p class="caption" *ngIf="showCapture()">Ингредиент<br>«{{ingredient.name}}»</p>
+
+    </div>
+
+    <div class="section-group center">
+      <p class="reading-time">
+        <svg-icon class="read-icon" [applyClass]="true" [src]="'/assets/images/svg/reading.svg'" />
+        <span style="display: inline">
+          Чтение займет приблизительно {{ readingTimesInMinutes
+          }}<span appPluralRu="" [value]="readingTimesInMinutes" [arVariants]="[' минуту', ' минуты', ' минут']"></span>
+        </span>
+      </p>
+      <div class="content" *ngIf="showContentBlock">
+        <h3>
+          <svg-icon [applyClass]="true" class="icon" [src]="'/assets/images/svg/layers.svg'" />
+          Содержание
+        </h3>
+        <ul>
+          <li *ngIf="showMainSection">
+            <a (click)="goToSection('main')">Основное</a>
+          </li>
+          <li *ngIf="showReviewSection">
+            <a (click)="goToSection('review')">Обзор</a>
+          </li>
+          <li *ngIf="showCookingSection">
+            <a (click)="goToSection('cooking')">Готовка</a>
+          </li>
+          <li *ngIf="ingredient.nutritions && ingredient.nutritions.length>0">
+            <a (click)="goToSection('nutritions')">Пищевая ценность</a>
+          </li>
+          <li *ngIf="ingredient.tips&&ingredient.tips.length>0">
+            <a (click)="goToSection('tips')">Советы</a>
+          </li>
+          <li *ngIf="ingredient.externalLinks&& ingredient.externalLinks.length>0">
+            <a (click)="goToSection('links')">Ссылки</a>
+          </li>
+        </ul>
+      </div>
+      <section>
+        <div class="tags" *ngIf="groups&&groups.length">
+          <p>{{ groups.length > 1 ? "Группы" : "Группа" }}:</p>
+          <a class="tag" *ngFor="let group of groups" [routerLink]="'/groups/list/' + group.id">{{ group.name
+            }}</a>
+        </div>
+      </section>
+      <section *ngIf="relatedCategories.length > 0">
+        <div class="tags">
+          <p>
+            Используют в
+            {{ relatedCategories.length > 1 ? "категориях" : "категории" }}:
+          </p>
+          <a class="tag" *ngFor="let category of relatedCategories" [routerLink]="'/categories/list/' + category.id">{{
+            category.name }}</a>
+
+        </div>
+      </section>
+
+      <section *ngIf="relatedIngredients.length > 0">
+        <div class="tags">
+          <p>Похожие ингредиенты:</p>
+          <a class="tag" *ngFor="let ingredient of relatedIngredients"
+            [routerLink]="'/ingredients/list/' + ingredient.id">{{ ingredient.name }}</a>
+        </div>
+      </section>
+      <section class="shopping">
+        <button  [class.disabled]="addedAlready" (click)="addToBasket()" *ngIf="auth && ingredient.status==='public'" class="add-to-shopping-list">
+          <svg-icon [applyClass]="true" class="card-icon"
+            [src]="'/assets/images/svg/grocery/'+(addedAlready?'remove-from-card':'add-to-card')+'.svg'" />
+        </button>
+        <p class="shopping-group" [title]="'Тип продукта для списка покупок'">
+          Тип продукта: {{ shoppingGroup.name }}
+          <svg-icon [applyClass]="true" class="shopping-group-icon"
+            [src]="'/assets/images/svg/grocery/' + shoppingGroup.image + '.svg'" />
+        </p>
+      </section>
+
+      <div class="socials noselect" *ngIf="ingredient.status === 'public'">
+        <p>Поделиться этим ингредиентом</p>
+        <div class="row social">
+          <app-social-button [url]="linkForSocials"></app-social-button>
+          <app-social-button [url]="linkForSocials" [description]="'Узнал много нового об ингредиенте «' + (ingredient.name) + '» в соц. сети Yummy. Попробуй добавить его в свои блюда!'" *ngFor="let social of socials" [social]="social"></app-social-button>
+        </div>
+      </div>
+
+      <section class="recipes-with">
+        <p *ngIf="recipesLength > 0; else noRelatedRecipes">
+          На сайте есть {{ recipesLength }}
+          <span appPluralRu="" [value]="recipesLength" [arVariants]="['рецепт', 'рецепта', 'рецептов']"></span>
+          с таким ингредиентом
+        </p>
+        <ng-template #noRelatedRecipes>
+          <p>На сайте пока нет рецептов с таким ингредиентом</p>
+        </ng-template>
+        <app-button [routerLink]="'/ingredients/list/' + ingredient.id + '/recipes'" *ngIf="recipesLength > 0"
+          [color]="'sec'" [style]="'filled'" [text]="'Просмотреть'" [rounded]="true" />
+      </section>
+    </div>
+  </div>
+
+  <div *ngIf="showContentBlock">
+    <div class="info">
+      <section id="main" class="section-group" *ngIf="showMainSection">
+        <h2>Основное</h2>
+
+        <section *ngIf="ingredient.description">
+          <h3>
+            <svg-icon [applyClass]="true" class="icon" [src]="'/assets/images/svg/description.svg'" />
+            Описание
+          </h3>
+          <p class="margin-block" [innerHTML]="addParagraphs(ingredient.description)"></p>
+        </section>
+
+        <section *ngIf="ingredient.origin">
+          <h3>
+            <svg-icon [applyClass]="true" class="icon" [src]="'/assets/images/svg/origin.svg'" />
+            Место происхождения
+          </h3>
+          <p>
+            {{ ingredient.origin }}
+          </p>
+        </section>
+        <section *ngIf="ingredient.history">
+          <h3>
+            <svg-icon [applyClass]="true" class="icon" [src]="'/assets/images/svg/history.svg'" />История
+          </h3>
+
+          <button class="history-button" (click)="showHistory = !showHistory">
+            {{
+            !showHistory
+            ? "Расскрыть
+            историю..."
+            : "Свернуть историю..."
+            }}
+          </button>
+          <p class="history margin-block" @height *ngIf="showHistory" [innerHTML]="addParagraphs(ingredient.history)">
+          </p>
+        </section>
+      </section>
+      <section id="review" class="section-group" *ngIf="showReviewSection">
+        <h2>Обзор</h2>
+        <section *ngIf="
+            (ingredient.advantages && ingredient.advantages.length > 0) ||
+            (ingredient.disadvantages && ingredient.disadvantages.length > 0)
+          " class="double-block" [ngClass]="{ 'one-column': oneColumn('advantages') }">
+          <section class="positive" *ngIf="ingredient.advantages&& ingredient.advantages.length> 0">
+            <h3>Достоинства</h3>
+            <ol [ngStyle]="noListStyle(ingredient.advantages)">
+              <li *ngFor="let advantage of ingredient.advantages">
+                {{ advantage }}
+              </li>
+            </ol>
+          </section>
+          <section class="negative" *ngIf="ingredient.disadvantages &&  ingredient.disadvantages.length > 0">
+            <h3>Недостатки</h3>
+            <ol [ngStyle]="noListStyle(ingredient.disadvantages)">
+              <li *ngFor="let disadvantage of ingredient.disadvantages">
+                {{ disadvantage }}
+              </li>
+            </ol>
+          </section>
+        </section>
+
+        <section *ngIf="
+            (ingredient.recommendedTo && ingredient.recommendedTo.length > 0) ||
+            (ingredient.contraindicatedTo &&
+              ingredient.contraindicatedTo.length > 0)
+          " class="double-block" [ngClass]="{ 'one-column': oneColumn('recommendations') }">
+          <section class="positive" *ngIf="
+              ingredient.recommendedTo && ingredient.recommendedTo.length > 0
+            ">
+            <h3>Рекомендовано</h3>
+            <ol [ngStyle]="noListStyle(ingredient.recommendedTo)">
+              <li *ngFor="let recommendation of ingredient.recommendedTo">
+                {{ recommendation }}
+              </li>
+            </ol>
+          </section>
+
+          <section class="negative" *ngIf="
+              ingredient.contraindicatedTo &&
+              ingredient.contraindicatedTo.length > 0
+            ">
+            <h3>Противопоказано</h3>
+            <ol [ngStyle]="noListStyle(ingredient.contraindicatedTo)">
+              <li *ngFor="let contraindication of ingredient.contraindicatedTo">
+                {{ contraindication }}
+              </li>
+            </ol>
+          </section>
+        </section>
+        <section class="pictures">
+          <svg-icon [applyClass]="true" class="cook-icon angel" [src]="'/assets/images/svg/angel.svg'" />
+          <svg-icon [applyClass]="true" class="cook-icon demon" [src]="'/assets/images/svg/demon.svg'" />
+        </section>
+      </section>
+
+      <section id="cooking" class="section-group" *ngIf="showCookingSection">
+        <h2>Готовка</h2>
+        <section class="warning" *ngIf="ingredient.precautions && ingredient.precautions.length > 0">
+          <h3>
+            <svg-icon [applyClass]="true" class="icon" [src]="'/assets/images/svg/iwarning.svg'" />
+            Меры предосторожности
+          </h3>
+          <ol [ngStyle]="noListStyle(ingredient.precautions)">
+            <li *ngFor="let precaution of ingredient.precautions">
+              {{ precaution }}
+            </li>
+          </ol>
+        </section>
+
+        <section [ngClass]="{ 'one-column': oneColumn('cooking') }" class="double-block" *ngIf="
+            (ingredient.cookingMethods &&
+              ingredient.cookingMethods.length > 0) ||
+            (ingredient.storageMethods && ingredient.storageMethods.length > 0)
+          ">
+          <section *ngIf="
+              ingredient.cookingMethods && ingredient.cookingMethods.length > 0
+            ">
+            <h3>
+              <svg-icon [applyClass]="true" class="icon" [src]="'/assets/images/svg/bulb.svg'" />
+              Способы приготовления
+            </h3>
+            <ol [ngStyle]="noListStyle(ingredient.cookingMethods)">
+              <li *ngFor="let cookingMethod of ingredient.cookingMethods">
+                {{ cookingMethod }}
+              </li>
+            </ol>
+          </section>
+          <section *ngIf="
+              ingredient.storageMethods && ingredient.storageMethods.length > 0
+            ">
+            <h3>
+              <svg-icon [applyClass]="true" class="icon" [src]="'/assets/images/svg/ifridge.svg'" />
+              Способы хранения
+            </h3>
+            <ol [ngStyle]="noListStyle(ingredient.storageMethods)">
+              <li *ngFor="let storageMethod of ingredient.storageMethods">
+                {{ storageMethod }}
+              </li>
+            </ol>
+          </section>
+        </section>
+
+        <section *ngIf="
+            ingredient.compatibleDishes &&
+            ingredient.compatibleDishes.length > 0
+          ">
+          <h3>
+            <svg-icon [applyClass]="true" class="icon" [src]="'/assets/images/svg/puzzle.svg'" />
+            Сочетания
+          </h3>
+          <ol [ngStyle]="noListStyle(ingredient.compatibleDishes)">
+            <li *ngFor="let compatibleDish of ingredient.compatibleDishes">
+              {{ compatibleDish }}
+            </li>
+          </ol>
+        </section>
+      </section>
+
+
+      <section id="nutritions" class="section-group" *ngIf="ingredient.nutritions && ingredient.nutritions.length > 0">
+        <h2>Пищевая ценность</h2>
+
+        <div class="nutritions" *ngIf="nutritionWithContent&&nutritionWithContent.length">
+          <ng-container *ngFor="let nutrition of nutritionWithContent">
+            <p class="name">{{ nutrition.name }}</p>
+            <p>{{ nutrition.quantity.trim() }} {{ nutrition.unit.trim() }}</p>
+          </ng-container>
+        </div>
+        <p [ngClass]="{'additional': (nutritionWithContent&&nutritionWithContent.length) }"
+          *ngIf="nutritionsWithoutContentText">
+          {{ nutritionWithContent&&nutritionWithContent.length ?'Также ингредиент':'Ингредиент'}} содержит {{
+          nutritionsWithoutContentText }}.
+        </p>
+      </section>
+
+      <section id="tips" class="section-group" *ngIf="ingredient.tips && ingredient.tips.length > 0">
+        <h2>Советы</h2>
+        <ol [ngStyle]="noListStyle(ingredient.tips)">
+          <li *ngFor="let tip of ingredient.tips">{{ tip }}</li>
+        </ol>
+      </section>
+
+      <hr *ngIf="ingredient.externalLinks && ingredient.externalLinks.length > 0" />
+      <section id="links" class="section-group" *ngIf="ingredient.externalLinks && ingredient.externalLinks.length > 0">
+        <h2>Дополнительные ссылки</h2>
+        <ol class="no-list-style" [ngStyle]="noListStyle(ingredient.externalLinks)">
+          <li *ngFor="let externalLink of ingredient.externalLinks">
+            <svg-icon [src]="'/assets/images/svg/link.svg'" [applyClass]="true" class="svg-link" />
+            <a [href]="externalLink.link">{{ externalLink.name }}</a>
+          </li>
+        </ol>
+      </section>
+
+      <section class="additional" *ngIf="ingredient.variations&&ingredient.variations.length > 0">
+        <p>
+          *Этот ингредиент также включает в себя все ингредиенты, содержащие в
+          себе
+          {{
+          ingredient.variations.length > 1 ? "такие слова" : "такое слово"
+          }}, как: {{ variations.toLowerCase() }}.
+        </p>
+      </section>
+    </div>
+  </div>
+  <div>
+    <section class="action-buttons"
+      *ngIf="currentUser.role !== 'user' && showIngredientButtons()&&  ingredient.id >0 && !loading && ingredient.status !== 'awaits'">
+      <button class="action-button edit" (click)="editModal = true">
+        <div class="action-icon"><svg-icon class="action-svg" [applyClass]="true"
+            [src]="'/assets/images/svg/pen.svg'" />
+        </div>
+        <p>Изменить ингредиент</p>
+      </button>
+      <button class="action-button delete" (click)="deleteModal = true">
+        <div class="action-icon"><svg-icon class="action-svg" [applyClass]="true"
+            [src]="'/assets/images/svg/trash.svg'" />
+        </div>
+        <p>Удалить ингредиент</p>
+      </button><button *ngIf="ingredient.sendDate||ingredient.approvedDate||ingredient.modifiedDate" [class]="'action-button info-btn ' + currentUser.role" (click)="moreInfo = !moreInfo">
+        <div [class]="'action-icon'">
+          <svg-icon class="action-svg" [applyClass]="true" [src]="'/assets/images/svg/info.svg'" />
+        </div>
+        <p>Подробнее</p>
+      </button>
+    </section>
+    <div @height *ngIf="moreInfo">
+      <div class="more-info">
+        <p *ngIf="ingredient.sendDate" [title]="getDate(ingredient.sendDate)">
+          Дата создания: {{ (ingredient.sendDate | timePast).toLowerCase() }}
+        </p>
+        <p *ngIf="ingredient.author && ingredient.creatorName">
+          Создал(-а):
+          <a class="action-link" [routerLink]="'/cooks/list/' + ingredient.author">{{
+            ingredient.creatorName
+            }}</a>
+        </p>
+        <p *ngIf="ingredient.approvedDate" [title]="getDate(ingredient.approvedDate)">
+          Дата одобрения: {{ (ingredient.approvedDate|timePast).toLowerCase() }}
+        </p>
+        <p *ngIf="ingredient.approvedId && ingredient.approvedName">
+          Одобрил(-а):
+          <a class="action-link" [routerLink]="'/cooks/list/' + ingredient.approvedId">{{
+            ingredient.approvedName
+            }}</a>
+        </p>
+        <p *ngIf="ingredient.modifiedDate" [title]="getDate(ingredient.modifiedDate)">
+          Дата последнего изменения: {{ (ingredient.modifiedDate | timePast).toLowerCase() }}
+        </p>
+
+
+
+        <p *ngIf="ingredient.changerId && ingredient.changerName">
+          Изменил(-а):
+          <a class="action-link" [routerLink]="'/cooks/list/' + ingredient.changerId">{{
+            ingredient.changerName
+            }}</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>
+<app-modal [style]="'await'" *ngIf="loading" @modal />
+
+
+<app-ingredient-create *ngIf="editModal" [editedIngredient]="ingredient" (editEmitter)="changeIngredientAfterEditing()"
+  (closeEmitter)="editModal=false" @modal />
+
+<app-image-viewer style="z-index:10; position: fixed;" @modal [currentImage]="startImageToView"
+  (closeEmitter)="showedImages = []; startImageToView = 0" *ngIf="showedImages.length > 0"
+  [images]="showedImages"></app-image-viewer>
+
+
+
+<app-modal @modal [title]="'Удаление ингредиента'" [type]="'yesOrNo'" [buttonsText]="['Да', 'Отмена']"
+  *ngIf="deleteModal" (resultEmit)="handleDeleteModal($event)"
+  [description]="'Вы уверены, что хотите удалить этот ингредиент?'" [style]="'prim'" />
+
+<app-modal @modal [title]="'Ингредиент удален'" [type]="'Ok'" [buttonsText]="['Хорошо']" *ngIf="successDeleteModal"
+  (resultEmit)="handleSuccessDeleteModal()" [description]="'Ингредиент успешно удален'" [style]="'sec'" />
+
+
+<app-modal @modal *ngIf="errorModal" [style]="'prim'" [title]="
+              'Произошла ошибка'
+            " [type]="'Ok'" (resultEmit)="handleErrorModal()" [buttonsText]="['Хорошо']" [description]="
+              errorModalContent||'Произошла неизвестная ошибка'
+            "></app-modal>

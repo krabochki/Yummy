@@ -1,0 +1,51 @@
+.skeleton {
+  * {
+    pointer-events: none;
+  }
+  p,
+  a,
+  h3,
+  h1,
+  img,
+  .social-btn {
+    animation: loading 0.75s infinite linear;
+    background-repeat: no-repeat;
+
+    border-radius: 0.75em;
+
+    color: transparent !important;
+  }
+
+  .social-btn {
+    width: 2em;
+    height: 2em;
+    border-radius: 100%;
+  }
+  p,
+  h3,
+  h1 {
+    width: fit-content;
+  }
+  .userpic {
+
+    border: none;
+    background-color: red;
+      animation: loading 0.75s infinite linear;
+  }
+}
+
+
+@keyframes loading {
+  0% {
+    background-color: var(--loading);
+
+  }
+
+  50% {
+    background-color: var(--loading-accent);
+  }
+
+  100% {
+    background-color: var(--loading);
+  }
+}

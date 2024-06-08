@@ -1,0 +1,62 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<a
+  (click)="$event.preventDefault()"
+  [routerLink]="link"
+  class="ingredient-cont"
+  [title]="title"
+  *ngIf="ingredient.id > 0; else nullCategory"
+>
+  <div class="ingredient-wrap">
+    <div
+      class="ingredient"
+      [ngClass]="{ 'image-loading': ingredient.imageLoading }"
+      [style.background-image]="
+        !ingredient.imageLoading
+          ? 'url(' + (ingredient.imageURL || placeholder) + ')'
+          : null
+      "
+      *ngIf="ingredient.id > 0; else nullCategory"
+    >
+      <p
+        class="caption"
+        *ngIf="!ingredient.imageURL && !ingredient.imageLoading"
+      >
+        {{ context === "ingredient" ? "Ингредиент" : "Группа" }}<br />
+        «{{ ingredient.name }}»
+      </p>
+    </div>
+  </div>
+
+  <div style="position: relative; overflow: visible; text-align: center; margin:  auto; display: flex;
+  justify-content: center;">
+    <h1 class="name">
+      <sup >({{ formatNumber(ingredient.recipesCount) || 0 }})</sup>{{ ingredient.name }}
+    </h1>
+  </div>
+</a>
+
+<ng-template #nullCategory>
+  <div
+    class="ingredient-cont noselect loading"
+    *ngIf="ingredient.id === -1; else nullBlock"
+  >
+    <div class="ingredient-wrap">
+      <div class="ingredient null loading"></div>
+    </div>
+    <div style="position: relative; overflow: visible">
+      <h1 class="name loading">Загрузка</h1>
+    </div>
+  </div>
+
+  <ng-template #nullBlock>
+    <div class="ingredient null noselect">
+      <p>Скоро...</p>
+      <svg-icon
+        [applyClass]="true"
+        class="svg"
+        [src]="'/assets/images/svg/shocked-apples.svg'"
+      ></svg-icon>
+    </div>
+  </ng-template>
+</ng-template>

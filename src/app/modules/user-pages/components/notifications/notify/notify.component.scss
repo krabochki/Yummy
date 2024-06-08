@@ -1,0 +1,203 @@
+
+.info{
+    --main: #59aef3;
+}
+
+.preloader {
+    .body{
+        pointer-events: none;
+    }
+    cursor: wait;
+    --main: var(--color-foreground-unactive);
+
+    h1,p{
+        animation: loading 0.75s infinite linear;
+        background-color: var(--loading);
+        line-height: 1 !important;
+        padding: 0;
+        overflow: hidden;
+        width: max-content;
+        color: transparent;border-radius: 0.75em;
+
+        
+    }
+
+    .svg-notify{animation: loading 0.75s infinite linear;
+        background-color: var(--loading);
+        border-radius: 100%;
+    }
+    .time-cont{
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-end;
+        width: 100%;
+    }
+
+    .time{
+        font-size: 0.7em;
+        margin-top: 0.5em;
+    }
+
+    p:first-of-type{
+    margin-bottom: 0.2em;
+    }
+}
+
+@keyframes loading {
+    0% {
+        background-position: var(--loading);
+    }
+
+    50% {
+        background-color: var(--loading-accent);
+    }
+
+    100% {
+        background-position: var(--loading);
+    }
+}
+
+.warning{
+    --main:#e0d900; 
+}
+.calendar-recipe{
+    --main: #da71fa; 
+}
+
+.night-mode {
+    --main: #7173fa;
+}
+
+
+.hire{
+        --main: var(--color-moderator); 
+
+}
+.success{
+    --main:rgb(113, 218, 117); 
+}
+.born{
+    --main:rgb(66, 170, 70); 
+}
+
+
+.plan{
+    --main: rgb(255, 105, 165); 
+}
+.plan-start{
+    --main:rgb(147, 234, 7); 
+}
+.error{
+    --main:var(--color-primary); 
+}
+.not-readed .body{
+background-color: var(--not-read);
+border-bottom: 1px solid color-mix(in srgb, var(--color-background-deeper) 60%, var(--not-read));
+}
+.popup .body{
+    background-color: var(--not-read);
+}
+
+.update {
+    --main: #ff9100;
+}
+.main{
+    position: relative;
+}
+.time,.explain{
+    margin-top: 0.5em;
+    color: var(--color-foreground-unactive);
+    text-align: right;
+    font-size: 0.75rem;
+
+}
+
+.explain{
+    font-size: 0.7rem;
+    text-align: left;
+    line-height: 1;
+}
+.delete-button{
+    width: 0.75em;
+    top:0.5em;right:1em;
+    opacity: 0.5;
+    height: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    transition: 0.2s;
+
+    &:hover,&:focus{
+        opacity: 1;
+    }
+}
+
+.delete{
+    width: 1em;
+    height: 1em;
+    display: flex;
+    align-self: center;
+    justify-content: center;
+    fill: var(--color-foreground-unactive);
+}
+
+a.body{
+    display: block;
+    border-left:4px solid var(--main);
+    padding: 0.5em 1em;
+}
+
+
+.title{
+        overflow: hidden;
+            text-overflow: ellipsis;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--main);
+}
+.text{
+    line-height: 1;
+    font-size: 0.8em;
+}
+.preloader .text{
+    padding: 0;white-space: nowrap;
+    margin: 0;
+    max-width: 75%;
+margin-top: 0.35em;
+}
+
+
+.svg-notify{
+    fill:var(--main);
+    min-width: 1.25em;
+    height: 1.25em;
+}
+.head{
+    align-items: center;
+        margin-bottom: 0.75em;
+        margin-right: 1em;
+
+    display: flex;
+    column-gap: 0.5em;
+}
+
+@media(max-width:768px){
+    .main{
+        zoom:1.2
+    }
+
+    
+}
+
+@media(max-width:480px){
+    .popup
+{
+    width: 100%;
+
+}
+
+.delete-button{
+    zoom:1.05
+}
+}

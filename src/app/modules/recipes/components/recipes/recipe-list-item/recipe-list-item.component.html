@@ -1,0 +1,191 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<ng-template #sceleton>
+  <div class="recipe sceleton null" *ngIf="recipe.id === 0">
+    <p>
+      Здесь могла быть <br />
+      ваша реклама
+    </p>
+    <svg-icon
+      [applyClass]="true"
+      class="no-recipe-svg"
+      [src]="'/assets/images/svg/no-recipe.svg'"
+    ></svg-icon>
+  </div>
+    <div class="recipe sceleton loading " *ngIf="recipe.id === -1">
+    </div>
+</ng-template>
+<div [ngClass]="{'placeholder':!recipe.imageURL && !recipe.imageLoading, 'imageLoading':recipe.imageLoading}" [style.background-image]="!recipe.imageLoading? 'url('+(recipe.imageURL?recipe.imageURL:'/assets/images/cook.png')+')' : null" [routerLink]="'/recipes/list/'+recipe.id" *ngIf=" recipe.id > 0; else sceleton" class="recipe">
+  <div class="top" *ngIf="!shortView && recipe.status!=='private'">
+    
+    <div
+      [title]="
+        recipe.status === 'awaits'
+          ? 'Рецепт ожидает проверки'
+          : ''
+      "
+      [ngClass]="{ disabled: recipe.status === 'awaits' }"
+      *ngIf="recipe.authorId === currentUser.id || recipe.status === 'public'"
+      (click)=" innerClick($event);
+        recipe.status === 'public' && currentUser.id
+            ? makeThisRecipeFavorite()
+           : !currentUser.id ? noAccessModalShow=true :null
+          
+      "
+      class="fav"
+    >
+     
+      <svg-icon
+        *ngIf="recipe.status === 'awaits' && recipe.authorId === currentUser.id"
+        [src]="'/assets/images/svg/await.svg'"
+        [applyClass]="true"
+        class="fav-icon"
+      ></svg-icon>
+      <svg-icon
+        *ngIf="
+          recipe.status === 'public'  &&
+          !recipe.faved
+        "
+        [src]="'/assets/images/svg/fav.svg'"
+        [applyClass]="true"
+        class="fav-icon"
+      ></svg-icon>
+      <svg-icon
+        *ngIf="
+          recipe.status === 'public' &&
+          recipe.faved
+        "
+        [src]="'/assets/images/svg/fav-fill.svg'"
+        [applyClass]="true"
+        class="fav-icon"
+      ></svg-icon>
+    </div>
+
+  </div>
+  <div class="bottom">
+    <h1
+      [ngStyle]="{ 'margin-bottom': !showAuthor ? '0.25em' : null }"
+      [title]="recipe.name"
+    >
+      <a [routerLink]="'/recipes/list/' + recipe.id">{{ recipe.name }}</a>
+    </h1>
+    <div
+
+    (click)="innerClick($event);"
+      [ngStyle]="{ 'pointer-events': recipe.authorId === 0 ? 'none' : 'all' }"
+      *ngIf="showAuthor"
+      class="author"
+    >
+      <a [routerLink]="(recipe.authorId === 0) ? null : '/cooks/list/' + recipe.authorId">{{
+        (recipe.authorId > 0)
+          ? recipe.authorName
+          : "Автор удален"
+      }}</a>
+    </div>
+
+    <div class="rate-panel" *ngIf="!shortView && recipe.status === 'public'">
+      <div class="rate-item likes" (click)="innerClick($event);likeThisRecipe()">
+        <svg-icon
+          *ngIf="!recipe.liked"
+          [src]="'/assets/images/svg/like.svg'"
+          [applyClass]="true"
+          class="like-icon"
+        ></svg-icon>
+        <svg-icon
+          *ngIf="recipe.liked"
+          [src]="'/assets/images/svg/like-fill.svg'"
+          [applyClass]="true"
+          class="like-icon liked"
+        ></svg-icon>
+        <span [title]="recipe.likesLength" class="likes-num" [ngClass]="{ liked: recipe.liked }">{{
+        formatNumber(recipe.likesLength)
+        }}</span>
+      </div>
+      <div
+        class="rate-item cooks"
+        (click)="innerClick($event);
+          !recipe.cooked && currentUser.id > 0
+            ? (voteModalShow = true)
+            : cookThisRecipe()
+        "
+      >
+        <svg-icon
+          *ngIf="!recipe.cooked"
+          [src]="'/assets/images/svg/cook.svg'"
+          [applyClass]="true"
+          class="cook-icon"
+        ></svg-icon>
+        <svg-icon
+          *ngIf="recipe.cooked"
+          [src]="'/assets/images/svg/cook-fill.svg'"
+          [applyClass]="true"
+          class="cook-icon cooked"
+        ></svg-icon>
+        <span [title]="recipe.cooksLength"  [ngClass]="{ cooked: recipe.cooked }">{{
+         formatNumber(recipe.cooksLength)
+        }}</span>
+      </div>
+
+     
+    </div>
+    <div class="rate-panel" *ngIf="!(recipe.status === 'public')">
+      <div class="rate-item " style="cursor: default">
+        <svg-icon
+          [src]="
+            '/assets/images/svg/' +
+            (recipe.status === 'awaits' ? 'awaits' : 'private') +
+            '.svg'
+          "
+          [applyClass]="true"
+          class="like-icon"
+        ></svg-icon>
+        <span>{{
+          recipe.status === "private" ? "Не опубликован" : "Ожидает проверки"
+        }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-modal
+  @modal
+  *ngIf="noAccessModalShow"
+  [style]="'prim'"
+  [title]="'Доступ к функции ограничен'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleNoAccessModal($event)"
+  [buttonsText]="['Давайте', 'Не сейчас']"
+  [description]="
+    'Взаимодействовать с рецептами могут только пользователи с личным аккаунтом. Хочешь зарегистрироваться или войти в существующий аккаунт?'
+  "
+></app-modal>
+
+
+
+
+
+
+<app-modal
+  @modal
+  *ngIf="voteModalShow"
+  [style]="'vote'"
+  (closeEmit)="voteModalShow=false"
+  [title]="'Оставьте отзыв'"
+  [type]="'yesOrNo'"
+
+  (resultEmit)="handleVoteModal($event)"
+  [buttonsText]="['Советую', 'Не советую']"
+  [description]="'Поделитесь впечатлением для статистики рецепта: вы бы приготовили этот рецепт снова?'"
+></app-modal>
+
+<app-modal
+  @modal
+  *ngIf="successVoteModalShow"
+  [style]="'sec'"
+  [title]="'Ваш отзыв сохранен'"
+  [type]="'Ok'"
+  (resultEmit)="handleSuccessVoteModal()"
+  [buttonsText]="['Хорошо']"
+  [description]="'Спасибо! Ваше мнение важно для нас и остальных кулинаров'"
+></app-modal>
+<app-modal  [style]="'await'" *ngIf="loading"  @modal />

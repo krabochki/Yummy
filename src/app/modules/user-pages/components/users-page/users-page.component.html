@@ -1,0 +1,81 @@
+<div class="wrap">
+  <h1 >{{ getTitleByUserType(userType) }}</h1>
+
+
+  <app-search [disabled]="initialLoading" [context]="userType" ></app-search>
+
+  <ng-template #notAll>
+    <div *ngIf="allUsers.length > 0 || initialLoading; else noUsers">
+      <app-users-list [users]="allUsers"></app-users-list>
+      <div [ngStyle]="{'margin-top':allUsers.length?'1em':null}" *ngIf="!loaded || initialLoading"> <app-users-list
+          [loading]="this.usersPerStep"></app-users-list></div>
+
+      <app-button [disabled]="!initialLoading && loaded" (click)="(!initialLoading && loaded) ? loadMoreUsers() : null"
+        *ngIf="(!everythingLoaded || initialLoading)" [text]="'Загрузить еще...'" [rounded]="true" class="load-more"
+        [style]="'outlined'" [color]="'prim'"></app-button>
+    </div>
+
+    <ng-template #noUsers>
+      <div class="container one-column not-found">
+        <div class="image">
+          <svg-icon [applyClass]="true" class="fridge" [src]="'/assets/images/svg/fridge.svg'"></svg-icon>
+        </div>
+        <div class="content">
+          <h1 class="label">Кулинаров пока <span class="title">нет</span></h1>
+          <p class="tagline">{{ getNoUsersTextByUserType(userType) }}</p>
+
+          <hr />
+          <div class="buttons">
+            <app-button routerLink="/cooks" [rounded]="true" [color]="'prim'" [text]="'Все кулинары'"></app-button>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </ng-template>
+
+  <div *ngIf="filter === 'all'; else notAll">
+    
+      
+
+
+     <ng-container *ngFor="let group of userGroups">
+        <div class="block" *ngIf="group.users.length && (group.auth ? this.currentUserId : true)">
+          <div [routerLink]="group.link" class="head">
+            <h2>{{group.name}}</h2>
+  
+            <svg-icon class="arrow-svg" [applyClass]="true" [src]="'/assets/images/svg/go-back.svg'"></svg-icon>
+          </div>
+  
+  
+          <app-users-list [users]="getUsersByGroup(group.name)"></app-users-list>
+        </div>
+    </ng-container>
+    
+
+          <ng-container *ngIf="filter==='all' && !allUsersLoaded">
+            <div class="block" *ngFor="let block of blocks">
+              <div class="head">
+                <h2 class="loading">Самые продуктивные</h2>
+              </div>
+      <div> <app-users-list [loading]="mainPageUsersPerStep"></app-users-list></div>
+            </div>
+          </ng-container>
+
+
+            
+
+   
+
+  </div>
+
+
+  <ng-template #loadingUsers>
+    <div class="block" *ngFor="let item of [1,2,3,4,5]">
+      <div class="head">
+        <h2 class="loading">Самые продуктивные</h2>
+      </div>
+      <div> <app-users-list [loading]="mainPageUsersPerStep"></app-users-list></div>
+    </div>
+  </ng-template>
+  
+  <app-modal *ngIf="loadingModal" [style]="'await'" @modal></app-modal>

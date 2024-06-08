@@ -1,0 +1,78 @@
+<div class="container one-column">
+  <div class="content">
+    <h1 class="label">Вход в аккаунт</h1>
+    <p class="tagline">
+      Пожалуйста, введите ваш логин (электронная почта или имя пользователя) и пароль, для того чтобы войти
+      в аккаунт.
+    </p>
+
+    <form [formGroup]="form">
+      <div>
+        <div class="control">
+          <app-usual-input
+            [inputRequired]="true"
+            [max]="64"
+            formControlName="login"
+            [placeholder]="'Логин'"
+            required
+            [error]="loginNotValidError"
+          ></app-usual-input>
+          <svg-icon
+            [src]="'/assets/images/svg/badge.svg'"
+            class="icon"
+            [applyClass]="true"
+          ></svg-icon>
+        </div>
+      </div>
+      <app-usual-input
+        [inputRequired]="true"
+        [inputType]="'password'"
+        formControlName="password"
+        [placeholder]="'Пароль'"
+        [max]="20"
+        required
+        [error]="passwordNotValidError"
+      ></app-usual-input>
+    </form>
+
+    <hr />
+
+    <a [routerLink]="'/password-recovery'">Восстановление пароля</a>
+
+    <div class="buttons">
+      <app-button
+        (click)="loginUser()"
+        [disabled]="form.valid"
+        [rounded]="true"
+        [color]="'prim'"
+        [text]="'Войти'"
+      ></app-button>
+    </div>
+  </div>
+</div>
+
+<app-modal
+  [ngStyle]="{ 'z-index': 100 }"
+  @modal
+  *ngIf="errorModal"
+  [style]="'prim'"
+  [title]="'Неудачная попытка входа'"
+  [type]="'Ok'"
+  (resultEmit)="errorModal = false"
+  [buttonsText]="['Хорошо']"
+  [description]="
+    failInfo || 'Произошла неизвестная ошибка при попытке входа в аккаунт'
+  "
+></app-modal>
+
+<app-modal
+  [style]="'await'"
+  *ngIf="loadingModal"
+  @modal
+/>
+
+
+<app-modal [style]="'sec'" @modal [title]="'Вход произведен успешно!'" [type]="'Ok'" *ngIf="successModal"
+  (resultEmit)="handleSuccessModal()" [buttonsText]="['На главную']" [description]="
+    'Вход в аккаунт пользователя с введенными данными произведен успешно!'
+  "></app-modal>

@@ -1,0 +1,66 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="wrap">
+  <input
+
+  *ngIf="inputType==='input' || inputType==='password';else textarea"
+    [maxlength]="max ? max : null"
+            [type]="showPassword && inputType==='password'?'password':'text'"
+
+            (keydown.enter)="enter()"
+    #input
+    [value]="value"
+    (keyup)="filter();change()"
+    [(ngModel)]="value"
+    [disabled]="disabled || inputDisabled"
+    [ngClass]="{
+      uncorrect: error !== ''
+    }"
+    [ngStyle]="{
+      'padding-right':pad?'2em':null
+    }"
+    [placeholder]="placeholder"
+    (focus)="focus()"
+    (blur)="blur()"
+  />
+  <ng-template #textarea>
+    <textarea
+    
+      [ngClass]="{ active: !isSleep && isFocused, uncorrect: error !== '' }"
+      spellcheck="false"
+      #input
+      [maxlength]="max ? max : null"
+      [(ngModel)]="value"
+      cdkTextareaAutosize  
+      (keyup)="change()"
+      (focus)="focus()" 
+      (blur)="blur()"
+      [placeholder]="placeholder"
+      [rows]="rows"
+      [ngStyle]="{'min-height': 'calc('+rows +'* (1em + 1.3em))'}"
+    >
+  </textarea>
+  </ng-template>
+
+   <span class="resizer" *ngIf="inputType === 'textarea'"> <svg-icon class="resizer-icon" [src]="'/assets/images/svg/resize.svg'" /></span>
+
+   <span class="eye" *ngIf="inputType==='password'" (click)="eye()">
+      <svg-icon
+        [applyClass]="true"
+        [class]="error !== '' ? 'uncorrect' : 'correct'"
+        *ngIf="!this.showPassword"
+        [src]="'/assets/images/svg/eye-close.svg'"
+      ></svg-icon>
+
+      <svg-icon
+        *ngIf="this.showPassword"
+        [applyClass]="true"
+                [class]="error !== '' ? 'uncorrect' : 'correct'"
+        [src]="'/assets/images/svg/eye-open.svg'"
+      ></svg-icon>
+    </span>
+    
+  <p class="howmuch noselect" *ngIf="(max!==undefined)">{{value? value.length:0 }}/{{ max }}</p>
+</div>
+
+<div *ngIf="showError" class="error">{{ error }}</div>

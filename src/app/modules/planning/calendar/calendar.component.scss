@@ -1,0 +1,391 @@
+
+table {
+  margin: 0 auto;
+  column-gap: 1em;
+  border-collapse: separate;
+  border-spacing: 2em 1em;
+
+ 
+}
+
+app-modal{
+  z-index: 10;
+  position: fixed;
+}
+
+.active{
+  font-weight: 800 !important;
+}
+
+.no-recipes{
+  color: var(--color-foreground-unactive);
+  text-align: center;
+}
+  
+@mixin flex{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+ .info-button{
+  display: flex;
+  margin: 0 auto;
+  width: fit-content;  margin-top: 2em;
+
+ }
+
+ .title::first-letter{
+  text-transform: uppercase;
+ }
+.how-to-use-it
+{
+  margin: 2em 0;
+    margin-top: 1em;
+    margin-bottom: 3em;
+
+  display: flex;
+  flex-direction: column;
+  column-gap: 2em;
+
+
+ol{
+  font-size: 0.95em;
+  li{
+    display: flex;
+    column-gap: 1em;
+    margin:  0.5em 0;
+  }
+  div{
+    display: flex
+    ;
+    flex-direction: column;
+    row-gap: 0.5em;
+  }
+  ul{
+    list-style-type: disc;list-style-position: inside;
+
+    li{
+      display:list-item;
+  list-style-type: disc;list-style-position: inside;
+    }
+  }
+  .num{
+    font-size: 1em;
+    @include flex;
+    min-width: 1.3rem;
+    height:1.3rem;
+    color: var(--color-background);
+    border-radius: 100%;
+    background-color: var(--color-secondary);
+    font-weight: 800;
+  }
+  h2{
+    font-size: 1.2em;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.1em;
+    color: var(--color-secondary);
+  }
+}
+
+.links{
+  display: flex;
+  flex-direction: column;
+  li{
+    margin: 0;      transition: 0.2s ease-in-out;
+
+    &:hover, &:focus{
+        color: var(--color-secondary);
+        a{
+          color: var(--color-secondary);
+        }
+      }
+        width: fit-content;
+      
+    a{line-height: 1;
+      transition: 0.2s ease-in-out;
+
+      
+    text-decoration: underline;}
+  }
+}
+}
+h3 {
+  line-height: 1;
+  font-size: var(--font-l);
+  font-weight: 700;
+  padding:  0 1em;
+  text-align: center;
+}
+.btn-wrap {
+  display: flex;
+  margin-top: 1em;
+  align-items: center;
+  justify-content: space-between;
+
+    margin-bottom:1em;
+
+}
+
+
+.edit-plan {
+  margin-bottom: 1em;
+}
+
+h1 {
+  font-size: var(--font-xxl);
+  font-family: var(--font-family-accent);
+  text-align: center;
+  margin-bottom: 1em;
+  line-height: 1;
+}
+.btn-group {
+  zoom: 0.9;
+  width: fit-content;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1.5em;
+  background-color: var(--color-secondary);
+
+  .btn {
+    zoom: 0.9;
+    color: var(--color-background);
+    font-weight: 600;
+    text-align: center;
+    padding: 0.6em 2em;
+    &.primary {
+      zoom: 1;
+      background-color: var(--color-primary);
+    }
+  }
+}
+
+@mixin flex{
+  display: flex;
+  align-items: center;
+justify-content: center
+}
+
+.clear-all-button {
+  margin: 0 auto;
+  @include flex;
+  line-height: 1;
+  color: var(--color-primary);
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+        color: var(--color-primary-focus);
+    .clear-all-icon {
+      fill: var(--color-primary-focus);
+    }
+     .clear-all-icon.edit {
+      fill:var(--color-foreground)
+    }
+  }
+
+
+  .clear-all-icon {
+    @include flex;
+    min-height: 1rem;
+    min-width: 1rem;
+    transition: 0.1s ease-in-out;
+    fill: var(--color-primary);
+  }
+  .clear-all-icon.edit {
+      fill:var(--color-foreground)
+    }
+}
+
+.fulldate::first-letter{
+  text-transform: uppercase;
+}
+
+
+.new-recipe-button{
+  display: flex;
+  width: fit-content;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  margin-top: 2em;
+  margin-bottom: 3em;
+}
+
+.real-link{
+  text-decoration: underline;
+}
+
+.status{
+  font-weight:600;
+  &.future{
+    color: #59aef3;
+  }
+  &.past{
+    color: var(--color-primary)
+  }
+  &.now{
+    color:rgb(113, 218, 117)
+  }
+}
+
+.table{
+      background-color: var(--color-background-deeper);
+
+  div{
+    background-color: var(--color-background);
+    vertical-align: middle;
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    text-align: right;
+    padding: 0.5em;
+
+     &.head{
+      justify-content: center;
+      height: 100%;
+    text-align: center;
+    align-self: center;
+    justify-self: center;
+    width: 100%;
+    font-size: 1.1em;
+    text-align: center;
+    font-weight: 600;
+
+
+  }
+  }
+  .date{
+    display:flex;flex-direction: column;
+    text-align: left;
+    row-gap: 0.5em;
+  
+    justify-content: center;
+    align-items: flex-start;
+   span{
+      font-weight: 600;
+
+      &.both{
+        font-weight: 400;
+      }
+    }
+
+    &:nth-child(2n+1){
+      background-color: var(--color-background-deeper-unactive);
+    }
+  }
+  .color-block{
+     &:nth-child(2n){
+      background-color: var(--color-background-deeper-unactive);
+    }
+  }
+  .edit,.delete{
+     &:nth-child(2n){
+      background-color: var(--color-background-deeper-unactive);
+    }
+  }
+  .name{
+    &:nth-child(2n+1){
+      background-color: var(--color-background-deeper-unactive);
+    }
+  }
+  .color{
+    align-self: center;
+    justify-self: center;
+    
+  }
+
+  *{
+    max-width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  row-gap: 2px;
+  column-gap: 2px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 3em 0.5fr 3em 1fr  3em;
+}
+
+.row{
+  display: flex;
+}
+
+.color{
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 100%;
+  margin: 0 auto;
+}
+
+@media(max-width:1200px){
+  
+.btn-wrap {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  row-gap: 1em;
+  justify-content: space-between;
+}
+
+}
+
+@media(max-width:480px){
+  
+  .table .date{
+   align-items: flex-start;
+   justify-content: center;
+   align-self: flex-start;
+   justify-self: center;
+   text-align: left;
+
+
+ row-gap: 0;
+   width: 100%;
+   height: 100%;
+    grid-column-start:1;
+    grid-column-end: 4;
+  }
+  .table div{
+    text-align: center;
+    justify-self: center;
+    align-self: center;
+  }
+ 
+.table{
+  grid-template-columns:2em 1fr max-content ;
+  column-gap: 0;
+
+  row-gap: 0;
+  background:none;
+   div.head{
+    display: none;
+  }
+  .color-block{
+      width: 100%;
+      height: 100%;
+  }
+  .edit,.name{
+    width: 100%;
+    align-items: center;
+    height: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+  .delete{
+    width: 100%;
+    grid-column-start: 1;
+    grid-column-end: 4;
+    justify-self: end;
+    align-self: flex-end;
+    justify-content: end;
+    align-items: flex-end;
+margin-bottom: 1em;
+    .clear-all-button{
+      margin: 0;
+    }
+  }
+}
+
+}

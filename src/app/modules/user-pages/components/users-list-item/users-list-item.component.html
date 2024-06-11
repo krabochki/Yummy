@@ -1,0 +1,65 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+
+<div class="main-wrap" 
+    [ngClass]="{'admin':user.role==='admin', 'moder': user.role === 'moderator','loading':loading}">
+    <div class="main-and-follow" [ngStyle]="{'opacity':loading?'0':null}">
+        <div style="display: flex; flex-direction: column; row-gap: 0.5em;">
+            <a class="wrap" [routerLink]="'/cooks/list/'+user.id">
+                <div class="userpic" [style.background-image]="'url('+(user.avatarUrl||noAvatar)+')'">
+                    <ngx-emoji class="emoji" *ngIf="user.emoji" [emoji]="user.emoji" [size]="22"></ngx-emoji>
+
+                </div>
+                <div>
+                    <div class="star-h1">
+                        <!-- <div class="star" *ngIf="user.role!=='user'"> <svg-icon class="star-svg"
+                                [applyClass]="true" [src]="'/assets/images/svg/user-star.svg'"></svg-icon></div> -->
+                        <h1
+                            [title]="user.role==='admin'?'Это администратор Yummy':user.role==='moderator'?'Это модератор Yummy':''">
+                            {{user.fullName || '@' + user.username}}</h1>
+                    </div>
+                    <h2 *ngIf="user.fullName">{{'@'+user.username}}</h2>
+                </div>
+            </a>
+            <p class="location" *ngIf="user.location">
+                <svg-icon class="geo" [applyClass]="true" [src]="'/assets/images/svg/geo.svg'"></svg-icon>
+                <span [title]="user.location"> {{user.location}}</span>
+
+            </p>
+        </div>
+        <button [class.disabled]="currentUser.id<=0" *ngIf="currentUser.id!==user.id"
+            (click)="clickFollowButton()" class="follow-button"
+            [ngClass]="{'follow-btn':!isFollower  , 'unfollow-btn':  isFollower}">{{
+            !isFollower?'Подписаться':'Отписаться'}}</button>
+
+        <button [class.disabled]="currentUser.id<=0" (click)="clickFollowButton()"
+            [title]="currentUser.id>0?isFollower?'Отписаться':'Подписаться':''"
+            [class]="isFollower ?'unfollow':'follow'" *ngIf="currentUser.id!==user.id">
+
+            <ng-container >
+                <svg-icon *ngIf="!isFollower" class="follow-svg" [src]="'/assets/images/svg/follow.svg'"></svg-icon>
+                <svg-icon *ngIf="isFollower" class="follow-svg" [src]="'/assets/images/svg/unfollow.svg'"></svg-icon>
+            </ng-container>
+
+        </button>
+    </div>
+    <div class="follows"  [ngStyle]="{'opacity':loading?'0':null}">
+        <p title="Подписки">
+            {{user.followingsCount|| 0}} <span appPluralRu="" [value]="user.followingsCount || 0"
+                [arVariants]="['подписка', 'подписки', 'подписок']"></span>
+        </p>
+        <p title="Подписчики">
+            {{user.followersCount|| 0}} <span appPluralRu="" [value]="user.followersCount || 0"
+                [arVariants]="['подписчик', 'подписчика', 'подписчиков']"></span>
+        </p>
+        <p title="Рецепты">
+            {{user.recipesCount || 0}} <span appPluralRu="" [value]="user.recipesCount || 0"
+                [arVariants]="['рецепт', 'рецепта', 'рецептов']"></span>
+        </p>
+    </div>
+</div>
+
+<app-modal @modal *ngIf="noAccessModalShow" [style]="'prim'" [title]="'Доступ к функции ограничен'" [type]="'yesOrNo'"
+    (resultEmit)="handleNoAccessModal($event)" [buttonsText]="['Давайте', 'Не сейчас']" [description]="
+    'Доступ к этой функции имеют только зарегистрированные пользователи. Хотите зарегистрироваться или войти в существующий аккаунт?'
+  " />

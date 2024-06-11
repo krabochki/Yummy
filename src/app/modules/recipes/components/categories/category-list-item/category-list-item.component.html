@@ -1,0 +1,42 @@
+<a [routerLink]="
+    context === 'category'
+      ? '/categories/list/' + category.id
+      : '/sections/list/' + category.id
+  " class="category-cont noselect" [title]="title" *ngIf="category.id > 0; else nullCategory">
+
+  <div class="category-wrap">
+    <div [ngClass]="{'image-loading':category.imageLoading===true}" class="category"
+      *ngIf="category.id > 0; else nullCategory" [style.background-image]="!category.imageLoading?
+        'url(' + (category.imageURL || placeholder) + ')'
+      :null">
+      <p class="caption" *ngIf="!category.imageURL && !category.imageLoading">
+        {{ context === "category" ? "Категория" : "Раздел" }}<br />«{{
+        category.name
+        }}»
+      </p>
+
+    </div>
+  </div>
+  <div style="position: relative; overflow: visible">
+    <h1 class="name">
+      <sup  *ngIf="category.recipeCount>=0">({{ formatNumber(category.recipeCount) }})</sup>{{ category.name }}
+    </h1>
+  </div>
+</a>
+
+<ng-template #nullCategory>
+  <div class="category-cont noselect loading" *ngIf="category.id === -1">
+    <div class="category-wrap">
+      <div class="category null loading"></div>
+    </div>
+    <div style="position: relative; overflow: visible">
+      <h1 class="name loading">
+        Загрузкаааа
+      </h1>
+    </div>
+  </div>
+  <div *ngIf="category.id === 0" class="category null">
+    <p>Скоро...</p>
+    <svg-icon [applyClass]="true" class="svg" [src]="'/assets/images/svg/no-category.svg'"></svg-icon>
+  </div>
+</ng-template>

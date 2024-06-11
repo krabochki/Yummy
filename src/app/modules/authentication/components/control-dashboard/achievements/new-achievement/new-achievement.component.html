@@ -1,0 +1,260 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="outer" (click)="clickBackgroundNotContent($event)">
+  <div class="inner">
+    <div class="close-button" (click)="closeEditModal()">
+      <svg-icon
+        [src]="'/assets/images/svg/close.svg'"
+        [applyClass]="true"
+        class="close-svg"
+      ></svg-icon>
+    </div>
+
+    <div class="header">
+      <h1>Создание достижения</h1>
+    <div class="navigation">
+        <div class="nav-step-circles-block">
+            <div class="nav-step-block" *ngFor="let step of steps; let i = index">
+                <div class="nav-step-block-inner" (click)="clickOnCircleStep(i)">
+                    <div class="nav-step-circle" [ngClass]="{
+                      active: i === currentStep,
+                      completed: i < currentStep,
+                      'not-valid': notValid() === i + 1
+                    }">
+                        {{ i + 1 }}
+                    </div>
+                    <p class="nav-step-short-title" [ngClass]="{
+                      active: i === currentStep,
+                      completed: i < currentStep,
+                      'not-valid': notValid() === i + 1
+                    }">
+                        {{ steps[i].shortTitle }}
+                    </p>
+                </div>
+                <div [ngClass]="{
+                    completed: i < currentStep
+                  }" *ngIf="i !== steps.length - 1" class="nav-step-line"></div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="unique-content ">
+            <div>
+                <h2>{{ steps[currentStep].title }}</h2>
+            </div>
+            
+            <hr />
+      <form [formGroup]="form">
+
+        <div class="description-container">
+            <button class="more-button" (click)="showInfo = !showInfo">
+                <svg-icon [src]="'assets/images/svg/help.svg'" [applyClass]="true" class="help-svg"></svg-icon>
+                Подробнее
+            </button>
+            <p class="description" *ngIf="showInfo" @height>
+                {{ steps[currentStep].description }}
+            </p>
+        </div>
+        <div class="step-container" *ngIf="currentStep === 0">
+          <div class="main-info-control">
+            <!-- <div class="form-control circle img">
+              <div class="image">
+                <div
+                  class="delete"
+                  *ngIf="achievementImage !== defaultImage"
+                  (click)="unsetImage()"
+                >
+                  <svg-icon
+                    [applyClass]="true"
+                    class="svgTrash"
+                    [src]="'/assets/images/svg/trash.svg'"
+                  ></svg-icon>
+                </div>
+                <div
+                  class="photo"
+                  [ngClass]="{
+                    'have-image': achievementImage !== defaultImage
+                  }"
+                  [ngStyle]="{
+                    'background-image': 'url(' + achievementImage + ')'
+                  }"
+                  alt="Изображение категории"
+                >
+                  <input
+                    type="file"
+                    class="input-image"
+                    (change)="onImageChange($event)"
+                    accept="image/*"
+                  />
+                </div>
+              </div>
+            </div> -->
+            <div class="main-info-controls">
+
+
+              <div class="form-control">
+                <h3>Название достижения*</h3>
+                <app-usual-input
+                  formControlName="title"
+                  [inputRequired]="true"
+                  [value]="form.get('title')?.value"
+                  required
+                  [max]="30"
+                  [error]="
+                    form.get('title')?.invalid &&
+                    (form.get('title')?.dirty || form.get('title')?.touched)
+                      ? 'Название должно содержать от 4 до 30 символов'
+                      : ''
+                  "
+                  [placeholder]="'Введите название достижения'"
+                ></app-usual-input>
+              </div>
+              <div class="form-control">
+                <h3>Описание достижения*</h3>
+                <app-usual-input
+                  formControlName="description"
+                  [inputType]="'textarea'"
+                   [inputRequired]="true"
+                  [value]="form.get('description')?.value"
+                  required
+                  [max]="200"
+                    [error]="
+                    form.get('description')?.invalid &&
+                    (form.get('description')?.dirty || form.get('description')?.touched)
+                      ? 'Описание должно содержать от 10 до 200 символов'
+                      : ''
+                  "
+                  [placeholder]="'Введите описание достижения'"
+                ></app-usual-input>
+              </div>
+
+            <div class="form-control">
+                <h3>Цвет и иконка*</h3>
+                <div class="show">
+                   <div>
+                        <div class="palette">
+                            <button class="color" *ngFor="let color of colors; let i = index" (click)="selectColor(i)" [ngClass]="{
+                                        selected:
+                                          i === selectedColorIndex && colorSource === 'palette'
+                                      }" [ngStyle]="{ 'background-color': color }"></button>
+                        </div>
+                        <div class="custom-color">
+                            <p class="noselect" style="zoom: 0.9">
+                                Или выберите собственный цвет:
+                            </p>
+                            <input [ngClass]="{ selected: colorSource === 'custom' }" (blur)="selectCustomColor()" formControlName="color"
+                                type="color" class="color-picker" />
+                        </div>
+                   </div>
+                    <div class="icon" title="Предпросмотр иконки достижения" [ngStyle]="{ 'border-width':achievementImage===defaultImage?'0':null, 'background-color':achievementImage===defaultImage?'transparent':color}">
+                
+                <svg-icon [applyClass]="true" class="ico" [src]="achievementImage===defaultImage?'/assets/images/svg/add-photo.svg' :achievementImage" [applyClass]="true" class="ico"></svg-icon>
+
+                                <input type="file" class="input-image" (change)="onImageChange($event)" accept="image/*" />
+                </div>
+                </div>
+            </div>
+
+
+       
+
+              <!-- <app-button [disabled]="form.valid" [text]="'Создать'" [rounded]="true" [style]="'filled'"
+            [color]="'prim'"></app-button> -->
+            </div>
+          </div>
+        </div>
+        <div class="step-container" *ngIf="currentStep===1">
+        
+            <div class="form-control">
+                <h3>Взаимосвязь достижения*</h3>
+                <app-autocomplete [value]="form.value.kind" [leaveValueAfterBlur]="true" [clearValueOnBlur]="false"
+                    formControlName="kind" [anyData]="descriptionsArray" [placeholder]="'Выберите, с чем будет связано достижение'"
+                    (anyEmitter)="setKind($event)"></app-autocomplete>
+            </div>
+            
+            <div class="form-control ">
+            
+                <h3>Количество повторений</h3>
+            
+                <div class="row">
+                    <div class="count-group">
+                        <p>Количество:</p>
+                        <app-count-input formControlName="points" [max]="1000" [min]="1" [value]="0" [step]="form.value.step"
+                            [readonly]="true"></app-count-input>
+                    </div>
+                    <div class="count-group">
+                        <p>Шаг:</p>
+                        <app-count-input formControlName="step" [max]="100" [min]="1" [value]="form.value.step"
+                            [readonly]="true"></app-count-input>
+                    </div>
+                </div>
+            </div></div>
+
+            <div *ngIf="currentStep === 2">
+                <div class="buttons">
+                    <div class="button">
+                        <p>
+                            Если вы хотите, чтобы
+                            достижение увидели и смогли получать все кулинары, опубликуйте его.
+                        </p>
+                        <app-button [disabled]="areObjectsEqual() && form.valid"
+                            (click)="areObjectsEqual() &&form.valid ? (saveModal = true) : null"
+                            [text]="'Опубликовать'" [color]="'sec'" [style]="'filled'"
+                            [rounded]="true"></app-button>
+                    </div>
+            
+                    <div class="button">
+                        <p>
+                            Если вы передумали
+                            создавать достижение, просто
+                            отмените его создание. Все
+                            данные придется вводить повторно, если вы захотите
+                            создать его снова.
+                        </p>
+            
+                        <app-button (click)="closeEditModal()" [text]="'Отменить'" [color]="'prim'" [style]="'outlined'"
+                            type="button" [rounded]="true"></app-button>
+                    </div>
+                </div></div>
+                
+      </form>
+    </div>
+    <div class="footer">
+        <div>
+            <app-button [iconSize]="'min'" [color]="'sec'" [iconPosition]="'before'" [rounded]="true"
+                [icon]="'arrow-previous'" [iconStyle]="'as-text'" [style]="'outlined'" [text]="'Назад'"
+                (click)="goToPreviousStep()" *ngIf="!(currentStep === 0)"></app-button>
+        </div>
+        <div>
+            <app-button [iconSize]="'min'" [icon]="'arrow-next'" [color]="'sec'" [rounded]="true"
+                *ngIf="this.currentStep !== steps.length - 1" [style]="'filled'" [text]="'Вперед'"
+                (click)="!buttonDisabled() ? goToNextStep() : null" [disabled]="!buttonDisabled()"></app-button>
+        </div>
+        </div>
+  </div>
+</div>
+
+
+
+<app-modal *ngIf="closeModal" @modal [style]="'prim'" [title]="'Закрытие окна'" [type]="'yesOrNo'"
+    (resultEmit)="handleCloseModal($event)" [buttonsText]="['Да', 'Нет']" [description]="
+    'Вы уверены, что не хотите создавать достижение?'
+  ">
+</app-modal>
+
+<app-modal @modal *ngIf="saveModal" [style]="'sec'" [title]="'Создание достижения'" [type]="'yesOrNo'"
+    (resultEmit)="handleSaveModal($event)" [buttonsText]="['Да', 'Нет']" [description]="
+    'Вы уверены, что хотите создать достижение?'
+  "></app-modal>
+
+<app-modal @modal *ngIf="successModal" [style]="'sec'" [title]="
+    'Успешное создание'
+  " [type]="'Ok'" (resultEmit)="handleSuccessModal()" [buttonsText]="['Хорошо']" [description]="
+   'Достижение успешно создано'
+  "></app-modal>
+<app-modal @modal [style]="'await'" *ngIf="awaitModal "></app-modal>
+<app-modal @modal *ngIf="errorModal" [style]="'prim'" [title]="
+    'Произошла ошибка'
+  " [type]="'Ok'" (resultEmit)="handleErrorModal()" [buttonsText]="['Хорошо']" [description]="
+    errorModalContent||'Произошла неизвестная ошибка'
+  "></app-modal>

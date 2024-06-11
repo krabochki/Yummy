@@ -1,0 +1,82 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="footer noselect">
+  <div class="main-info">
+    <div>
+      <a class="label" routerLink="/">
+        Yummy</a>
+      <div class="night-mode">
+        <div class="switch" (click)="nightModeEmit()">
+          <svg-icon [src]="'/assets/images/svg/dark.svg'" />
+        </div>
+        <app-toogle-switch [backgroundOff]="'var(--color-secondary)'" [backgroundOn]="'var(--color-foreground)'"
+          [toogleOff]="'var(--color-background)'" [toogleOn]="'var(--color-secondary)'"
+          (checkedEmit)="nightModeEmit()" [nightMode]="true"></app-toogle-switch>
+        <p>Темная тема</p>
+
+      </div>
+      <a class="top-link" routerLink="/about">Узнать больше о Yummy</a>
+      <a class="top-link" *ngIf="currentUser.role === 'admin' || currentUser.role === 'moderator'" routerLink="/control-dashboard">Панель управления</a>
+      <a class="top-link" routerLink="/news">Свежие новости и изменения</a>
+
+      <a class="top-link" routerLink="/user-policy">Пользовательское соглашение</a>
+      <a class="top-link" routerLink="/registration-benefits">Преимущества регистрации</a>
+
+      <div style="display:flex;flex-direction: column; row-gap: 0;">
+        <p style="margin-top:0.5em; margin-bottom:0.3em; padding: 0;">Обратная связь</p>
+        <a class="top-link" href="mailto:yummort@mail.ru">{{'yummort@mail.ru'}}</a>
+      </div>
+    </div>
+    <div class="sections">
+      <div class="left">
+        <p>Рецепты</p>
+        <ul>
+          <a (click)="linkClick()" [ngClass]="{ disabling: currentUser.id === 0 }"
+            [routerLink]="currentUser.id === 0 ? null : '/recipes/yours'">Ваши рецепты</a>
+          <a routerLink="/recipes">Все рецепты</a>
+          <a (click)="linkClick()" [ngClass]="{ disabling: currentUser.id === 0 }"
+            [routerLink]="currentUser.id === 0 ? null : '/recipes/favorite'">Закладки</a>
+
+          <a routerLink="/groups">Группы ингредиентов</a>
+            <a routerLink="/ingredients">Ингредиенты</a>
+          <a routerLink="/sections">Разделы категорий</a>
+          <a routerLink="/categories">Категории</a>
+
+        </ul>
+      </div>
+      <div class="center">
+        <p>Кулинары</p>
+        <ul>
+          <a (click)="linkClick()" [ngClass]="{ disabling: currentUser.id === 0 }"
+            [routerLink]="this.currentUser.id > 0 ? '/cooks/following' : null">Ваши подписки</a>
+          <a routerLink="/cooks">Все кулинары</a>
+          <a [routerLink]="this.currentUser.id > 0 ? '/recipes/updates' : null" (click)="linkClick()"
+            [ngClass]="{ disabling: currentUser.id === 0 }">Обновления</a>
+        </ul>
+      </div>
+      <div class="right">
+        <p>Меню</p>
+        <ul>
+          <a [routerLink]="this.currentUser.id > 0 ? '/plan/calendar' : null" (click)="linkClick()"
+            [ngClass]="{ disabling: currentUser.id === 0 }">Календарь рецептов</a>
+          <a routerLink="/plan/collections">Подборки</a>
+          <a [routerLink]="
+              this.currentUser.id > 0 ? '/plan/shopping-list' : null
+            " (click)="linkClick()" [ngClass]="{ disabling: currentUser.id === 0 }">Список покупок</a>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <hr />
+
+  <div class="other-info">
+    <p class="copyright">© 2023-2024 Yummy. Все права защищены</p>
+
+   
+  </div>
+</div>
+
+<app-modal @modal *ngIf="noAccessModalShow" [style]="'prim'" [title]="'Доступ к разделу ограничен'" [type]="'yesOrNo'"
+  (resultEmit)="handleNoAccessModal($event)" [buttonsText]="['Давайте', 'Не сейчас']" [description]="
+    'Этот раздел могут просматривать только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'
+  "></app-modal>

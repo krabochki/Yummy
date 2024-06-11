@@ -1,0 +1,19 @@
+<div class="main-wrap"> 
+    <h1>Подборки</h1>
+    <div class="blocks">
+        <div class="block"  *ngFor="let collection of collections">
+            <h2>{{collection.name}}</h2>
+            <p class="main-description">{{collection.description}}</p>
+
+            <div class="categories">
+                <a class="category-background" [ngStyle]="{'background-image':'url('+ item.image +')'}" [routerLink]="item.link" *ngFor="let item of collection.sections">
+                    <div class="category">
+                        <h4>{{item.name}}</h4>
+                        <hr>
+                        <p>{{item.description}}</p>
+                    </div>
+                </a>  
+            </div>
+        </div>
+    </div>
+</div>

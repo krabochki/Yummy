@@ -1,0 +1,129 @@
+
+
+<div class="main" [ngClass]="{
+    admin: this.currentUser.role === 'admin',
+    moderator: this.currentUser.role === 'moderator'
+  }">
+  <h1>Создание достижений</h1>
+    <app-button class="main-button" [color]="'prim'" (click)="creatingMode = true" [style]="'filled'" [rounded]="true"
+      [icon]="'achieve'" [text]="'Создать достижение'"></app-button>
+
+
+  <div class="wrap">
+    
+    <div class="reports-block new">
+        <button [disabled]="!loaded" (click)="loaded ? checkActualAchievements() : null" class="update-button">
+          <svg-icon class="icon" [applyClass]="true" [src]="'/assets/images/svg/update.svg'" />
+          <span>{{ loaded ? "Обновить" : "Обновить..." }}</span>
+        </button>
+
+      <div class="reports" >
+        <div *ngFor="let achievement of achievements" class="report">
+          <div class="remove-button" (click)="actionAchievement=achievement;deleteModal=true;" >
+                        <svg-icon [applyClass]="true" class="svg-trash" [src]="'/assets/images/svg/trash.svg'"></svg-icon>
+
+          </div>
+          <div class="report-header">
+            <a *ngIf="achievement.id" class="report-recipe"
+              >
+              {{ achievement.title }}
+            </a>
+            <p class="report-date" *ngIf="achievement.date">
+              Создано {{ achievement.date | timePast | lowercase }}
+            </p>
+          </div>
+         
+        <div class="icon-block">
+           <div>
+              <p class="report-content">
+                {{achievement.description}}
+              </p>
+              <div class="report-users" *ngIf="achievement.userCount !==undefined">
+                <p class="reporter">
+                  Достижение получили {{achievement.userCount}} <span appPluralRu="" [value]="achievement.userCount"
+                    [arVariants]="countArVariants"></span>
+                </p>
+              
+              </div>
+           </div>
+            <div class="ico" [ngStyle]="{'background-color':achievement.color}"> <svg-icon [src]="achievement.iconUrl"
+                [applyClass]="true" class="icon"></svg-icon></div>
+        </div>
+        </div>
+
+        <ng-container *ngIf="!loaded">
+          <div class="report loading" *ngFor="let recipe of preloader">
+            <div class="report-header">
+              <p class="report-recipe">0000000000000000</p>
+              <p class="report-date" >
+                Создано 0100101001
+              </p>
+            </div>
+            
+                    <div class="icon-block">
+                      <div>
+                        <p class="report-recipe">
+                          Описание описание описание
+                        </p>
+                        <div class="report-users">
+                          <p class="reporter">
+                            Достижение получили  
+                          </p>
+                    
+                        </div>
+                      </div>
+                    </div>
+
+           
+          </div>
+        </ng-container>
+
+         
+
+      </div>
+<app-button class="more-reports-button" [text]="'Загрузить еще...'" (click)="loadMoreAchievements()"
+  *ngIf="!everythingLoaded && achievements.length > 0" [disabled]="loaded" [rounded]="true" [style]="'outlined'"
+  [color]="'prim'"></app-button>
+
+  
+
+  <div class="allloaded" *ngIf="!achievements.length && loaded && everythingLoaded">
+    <div class="not-found-icon">
+      <svg-icon class="not-found-svg" [applyClass]="true" [src]="'/assets/images/svg/not-found.svg'" />
+    </div>
+  
+    Достижений пока не создано
+  </div>
+  
+  <p class="allloaded" *ngIf="!loaded">Загружаем достижения...</p>
+  <p *ngIf="everythingLoaded && loaded && achievements.length" class="allloaded">
+    Все достижения уже загружены
+  </p>
+
+    </div>
+  </div>
+
+
+</div>
+
+
+
+<app-new-achievement @modal (editEmitter)="checkActualAchievements()" (closeEmitter)="closeCreatingMode()"  *ngIf="creatingMode"></app-new-achievement>
+
+
+<app-modal @modal (resultEmit)="handleDeleteModal($event)" [type]="'yesOrNo'" [buttonsText]="['Да', 'Отмена']"
+    [style]="'prim'"
+    [description]="'Вы уверены, что хотите удалить это достижение?'"
+    [title]="'Удаление достижения'" *ngIf="deleteModal"></app-modal>
+
+<app-modal [style]="'await'" *ngIf="loadingModal" @modal />
+
+
+<app-modal @modal *ngIf="errorModal" [style]="'prim'" [title]="
+          'Произошла ошибка'
+        " [type]="'Ok'" (resultEmit)="handleErrorModal()" [buttonsText]="['Хорошо']" [description]="
+          errorModalContent||'Произошла неизвестная ошибка'
+        "></app-modal>
+
+<app-modal @modal [title]="'Достижение удалено'" [type]="'Ok'" [buttonsText]="['Хорошо']" *ngIf="successDeleteModal"
+    (resultEmit)="handleSuccessDeleteModal()" [description]="'Достижение успешно удалено'" [style]="'sec'" />

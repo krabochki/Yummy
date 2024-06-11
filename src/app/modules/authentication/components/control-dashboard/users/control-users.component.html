@@ -1,0 +1,83 @@
+<div class="main" [ngClass]="{
+    admin: this.currentUser.role === 'admin'
+  }">
+    <h1>Пользователи</h1>
+    <div class="wrap">
+
+<div>
+    <button class="delete-button" *ngIf="users.length && expiredCount" (click)="deleteUsers()">Удалить неподтвержденных пользователей
+    <svg-icon class="delete-svg" [applyClass]="true" [src]="'/assets/images/svg/trash.svg'"/>
+
+    
+    </button>
+       <div class="inf" *ngIf="loaded || users.length">
+            <p *ngIf="!expiredCount; else haveExpired">Неподтвержденных пользователей нет</p>
+            <ng-template #haveExpired>
+                <p>Неподтвержденных пользователей: {{expiredCount}} шт.</p>
+            </ng-template>
+       </div>
+
+            <div class="reports-block new">
+
+
+                <button [disabled]="!loaded" (click)="loaded ? checkActualUsers() : null" class="update-button">
+                    <svg-icon class="icon" [applyClass]="true" [src]="'/assets/images/svg/update.svg'" />
+                    <span>{{ loaded ? "Обновить" : "Обновить..." }}</span>
+                </button>
+
+                               <div *ngIf="!loaded && !users.length" class="table-load"></div>
+                   
+                    <div class="table-container" *ngIf="users.length">
+                        <table class="table table-striped table-bordered">
+                            <thead class="fixed-table-header">
+                                <tr>
+                                    <th style="min-width:75px">ID</th>
+                                    <th style="min-width:200px">Почта</th>
+                                    <th style="min-width:200px">Имя пользователя</th>
+                                    <th style="min-width:110px">Роль</th>
+                                    <th style="min-width:110px">Подтвержден</th>
+                                    <th style="min-width:110px">Срок истек</th>
+                                    <th style="min-width:150px">Дата регистрации</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let user of users">
+                                    <td style="min-width:75px">{{ user.id }}</td>
+                                    <td style="min-width:200px" class="user-link"><a [href]="'mailto:'+user.email">{{ user.email }}</a></td>
+                                    <td style="min-width:200px"><a [routerLink]="user.token? null: ('/cooks/list/'+ user.id)" [ngClass]="{'user-link':!user.token}">{{'@'+ user.username }}</a></td>
+                                    <td style="min-width:110px">{{ user.role }}</td>
+                                    <td style="min-width:110px" [ngClass]="{'bad':user.token}">{{ user.token ? 'Нет' :'Да' }}</td>
+                                    <td style="min-width:110px" [ngClass]="{'bad':user.expire && user.token}">{{ user.token ? (user.expire ? 'Да' : 'Нет') : '-'
+                                        }}</td>
+                                    <td style="min-width:150px" [title]="fullRegistrationDate(user)" ><ng-container *ngIf="registrationDate(user); else noDate">{{ registrationDate(user) | timePast}}</ng-container><ng-template #noDate>Потеряна</ng-template></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+    
+                 
+                <app-button class="more-reports-button" [text]="'Загрузить еще...'" (click)="loadMoreUsers()"
+                    *ngIf="!everythingLoaded && users.length > 0" [disabled]="loaded" [rounded]="true"
+                    [style]="'outlined'" [color]="'prim'"></app-button>
+    
+               
+    
+                <p class="allloaded" *ngIf="!loaded">Загружаем пользователей...</p>
+                <p *ngIf="everythingLoaded && loaded && users.length" class="allloaded">
+                    Все пользователи уже загружены
+                </p>
+            </div>
+        </div>
+    
+</div></div>
+
+
+
+<app-modal [style]="'await'" *ngIf="loadingModal" @modal/>
+
+<app-modal @modal *ngIf="errorModal" [style]="'prim'" [title]="'Произошла ошибка'" [type]="'Ok'"
+    (resultEmit)="errorModal = false" [buttonsText]="['Хорошо']" [description]="
+    error || 'Произошла неизвестная ошибка'
+  "></app-modal>
+
+  <app-modal @modal (resultEmit)="handleSuccessModal()" [type]="'Ok'" [buttonsText]="['Хорошо']" [title]="'Пользователи удалены'" [description]="'Все пользователи с истекшим сроком подтверждения регистрации успешно удалены!'" *ngIf="successModal" [style]="'sec'"></app-modal>

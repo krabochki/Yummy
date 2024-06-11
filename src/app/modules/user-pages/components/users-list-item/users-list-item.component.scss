@@ -1,0 +1,385 @@
+p {
+  cursor: default;
+}
+
+.star-h1 {
+  display: flex;
+  column-gap: 0.3em;
+  align-items: center;
+
+}
+
+.main-wrap.loading {
+  animation: loading 0.75s infinite linear;
+  background-color: var(--loading);
+  pointer-events: none;
+
+
+}
+
+@keyframes loading {
+  0% {
+    background-position: var(--loading);
+  }
+
+  50% {
+    background-color: var(--loading-accent);
+  }
+
+  100% {
+    background-position: var(--loading);
+  }
+}
+
+
+
+.indicator {
+  border-radius: 100%;
+  width: 0.5em;
+  height: 0.5em;
+  background-color: var(--scroll-thumb);
+
+  &.online {
+
+
+    background-color: rgb(113, 255, 113);
+  }
+}
+
+.geo {
+  fill: var(--color-foreground);
+  height: 1em;
+}
+
+
+* {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  /* Disable selection/copy in UIWebView */
+}
+
+.admin {
+  
+
+  .userpic {
+    border: 3px solid var(--color-admin);
+  }
+
+  h1 {
+    color: var(--color-admin);
+  }
+}
+
+.moder {
+
+  .userpic {
+    border: 3px solid var(--color-moderator);
+  }
+
+  h1 {
+    color: var(--color-moderator);
+  }
+}
+
+.main-wrap {
+  display: flex;
+  background-color: var(--color-background-deeper-unactive);
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  padding: 1em;
+  position: relative;
+  row-gap: 0.5em;
+  border-radius: 0.5em;
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    scale: 1.05;
+    background-color: var(--color-background-deeper);
+  }
+}
+
+.location {
+  font-size: 0.9em;
+  display: flex;
+  column-gap: 0.4em;
+  align-items: center;
+
+  span {
+    max-width: 10em;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}
+
+.follow,
+.unfollow {
+  display: flex;
+  cursor: pointer;
+  position: relative;
+
+  &::after {
+    transition: 0.3s ease-in-out;
+    position: absolute;
+    width: 0;
+    background-color: var(--color-secondary-focus);
+    height: 0;
+    content: "";
+    border-radius: 100%;
+  }
+
+  &:hover::after {
+    width: 100%;
+    height: 100%;
+  }
+
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-secondary);
+  border-radius: 100%;
+  width: 2em;
+  min-width: 2em;
+  height: 2em;
+
+  .follow-svg {
+    z-index: 1;
+    fill: var(--color-background);
+    height: 1.3em;
+    width: 1.3em;
+    min-width: 1.3em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.unfollow {
+  background-color: var(--color-primary);
+
+  &::after {
+    background-color: var(--color-primary-focus);
+  }
+}
+
+
+app-modal {
+  position: fixed;
+  z-index: 10;
+}
+
+.wrap {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  column-gap: 0.5em;
+
+  h1 {
+    font-weight: 600;
+    max-width: 8em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1em;
+    line-height: 1;
+  }
+
+  h2 {
+    line-height: 1;
+    max-width: 9em;
+    line-height: 1.25;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+
+    font-weight: 300;
+    font-size: 0.8em;
+  }
+
+
+  .userpic {
+    width: 2em;
+    border-radius: 100%;
+    height: 2em;
+    min-width: 2em;
+    background-size: cover;
+    position: relative;
+    background-color: white;
+
+    .emoji {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      right: -0.4em;
+      bottom: -0.5em;
+    }
+  }
+}
+
+.follows {
+  display: flex;
+  justify-content: space-between;
+
+  p,
+  span {
+    font-weight: 500;
+  }
+
+  p {
+    white-space: nowrap;
+    max-width: 30%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    font-size: 0.8em;
+  }
+}
+
+.main-and-follow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.follow-button {
+  display: none;
+}
+
+@media (max-width: 1080px) {
+  .wrap .userpic .emoji {
+    right: -0.6em;
+    bottom: -0.5em;
+    zoom: 0.9;
+  }
+}
+
+@media (max-width: 620px) {
+
+  .wrap .userpic .emoji {
+    right: -0.7em;
+    bottom: -0.6em;
+    zoom: 0.9;
+  }
+
+  .follows {
+    flex-direction: column;
+
+    p {
+      max-width: unset;
+      text-align: center;
+      overflow: visible;
+      font-size: 0.9em;
+    }
+  }
+
+  .wrap {
+    justify-content: center;
+  }
+
+  .follow-button {
+    display: inline;
+    margin: 0.3em 0;
+
+    padding: 0.5em 1em;
+    color: var(--color-background);
+    font-weight: 600;
+    border-radius: 0.5em;
+    font-size: 1em;
+    line-height: 1.2;
+  }
+
+  .follow-btn.follow-button {
+    background-color: var(--color-secondary);
+  }
+
+  .unfollow-btn.follow-button {
+    background-color: var(--color-primary);
+  }
+
+  .follow,
+  .unfollow {
+    display: none;
+  }
+
+  .main-and-follow {
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.5em;
+  }
+}
+
+@media (max-width: 480px) {
+  .follow-button{
+    display: none;
+  }
+  .follow, .unfollow{
+    display: flex;
+  }
+  .main-and-follow{
+    flex-direction: row;
+  }
+  .star-h1 {
+    display: flex;
+    margin: 0.25em 0;
+    flex-direction: column;
+    row-gap: 0.1em;
+    align-items: center;
+    h1{
+      text-align: left;
+      max-width: 11em;
+      width: unset;
+    }
+
+  }
+
+  .wrap .userpic .emoji {
+    right: -0.6em;
+    bottom: -0.5em;
+    zoom: 1.1;
+  }
+
+  .main-wrap {
+    padding: 0.75em 1em;
+  }
+
+  .wrap {
+    row-gap: 0.5em;
+    column-gap: 0.75em;
+
+    h2 {
+      max-width: 11em;
+    
+      margin: 0;
+      text-align: left;
+      width: min-content;
+    }
+
+    .userpic {
+      width: 3em;
+
+      height: 3em;
+      min-width: 3em;
+    }
+  }
+
+  .star-h1 {
+    display: inline;
+  }
+
+  h1,
+  h2 {
+    width: min-content;
+    text-align: center;
+    margin: 0;
+  }
+
+  .location {
+    display: none;
+    justify-content: center;
+  }
+
+  .follows {
+    flex-direction: row;
+  }
+}

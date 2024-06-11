@@ -1,0 +1,32 @@
+<div class="wrap">
+    <h1>Разделы категорий</h1>
+
+    <app-button *ngIf="currentUser.role !== 'user'" class="add-category" [icon]="'ingredients/section'"
+        [color]="'prim'"  [text]="'Добавить раздел'"
+        (click)="createButtonClick()" [rounded]="true"></app-button>
+
+    <app-search  [context]="'sections'"></app-search>
+
+    <div>
+            <div class="sections">
+                <div [ngStyle]="{'margin-bottom':!loaded&&sections.length? '1.3em':null}">
+                    <app-vertical-category-list [categories]="sections" [showRecipesNumber]="true"
+                        [context]="'section'"></app-vertical-category-list>
+                </div>
+
+                <ng-container *ngIf="!loaded">
+
+                        <div [ngStyle]="{'margin-top': sections.length ?  '1.3em' : null}"> <app-vertical-category-list
+                                [preloader]="true"></app-vertical-category-list></div>
+                </ng-container>
+            </div>
+
+
+    </div>
+    <app-button [class.disabled]="!loaded ? true : false" class="more-reports-button" [text]="'Загрузить еще...'"
+        (click)="loadMoreSections()" *ngIf="!everythingLoaded" [disabled]="loaded" [rounded]="true" [style]="'outlined'"
+        [color]="'prim'"></app-button>
+</div>
+
+<app-section-creating style="z-index:10; position:fixed"  @modal *ngIf="createModal" (closeEmitter)="createModal = false"
+    (editEmitter)="updateAfterChanges()"></app-section-creating>

@@ -1,0 +1,17 @@
+    <div class="container one-column not-found margin">
+        <div class="not-found">
+
+            <svg-icon [applyClass]="true" class="svg-pic" [src]="'/assets/images/svg/sad-cook-not-found.svg'"></svg-icon>
+           
+
+        </div>
+       <div class="content">
+            <h1 class="label">Страница <span class="title">не найдена</span></h1>
+            <p  class="tagline ">Извините, страницы по такому адресу не существует. Попробуйте ввести адрес снова или найдите её по сайту.</p>
+    
+            <hr>
+           <div class="buttons">
+                <app-button (click)="noPageToGoBack?goToMain():goBack()" [rounded]="true" [color]="'prim'" [text]="noPageToGoBack?'На главную':'Назад'"></app-button>
+           </div>
+       </div>
+    </div>

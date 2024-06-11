@@ -1,0 +1,183 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="container" (click)="clickBackgroundNotContent($event)">
+  <div class="content">
+    <div class="block-1">
+      <input
+        [(ngModel)]="searchQuery"
+        (ngModelChange)="filter()"
+        [disabled]="loading"
+        [readonly]="loading"
+        class="search-div"
+        @search
+        *ngIf="searchMode"
+        placeholder="Начните вводить запрос"
+      />
+
+      <div class="svg-button" (click)="searchOnOff(); closeEmitter.emit(true)">
+        <svg-icon
+          src="/assets/images/svg/go-back.svg"
+          class="svg"
+          [applyClass]="true"
+        >
+        </svg-icon>
+      </div>
+      <div
+      *ngIf="loading || users.length"
+        class="search-button"
+        [ngClass]="{
+          disabled: loading
+        }"
+        [@magnifier]="searchMode ? 'open' : 'closed'"
+        (click)="searchOnOff()"
+      >
+        <svg-icon
+          src="/assets/images/svg/search.svg"
+          class="svg magn"
+          [applyClass]="true"
+        >
+        </svg-icon>
+      </div>
+    </div>
+
+    <div class="block-2">
+      <div class="button-row">
+        <app-button
+          [color]="'prim'"
+          (click)="switchObject('followers')"
+          [text]="'Подписчики'"
+          [style]="object === 'followers' ? 'filled' : 'outlined'"
+          [rounded]="true"
+        ></app-button>
+        <app-button
+          [color]="'prim'"
+          (click)="switchObject('following')"
+          [text]="'Подписки'"
+          [style]="object === 'following' ? 'filled' : 'outlined'"
+          [rounded]="true"
+        ></app-button>
+      </div>
+    </div>
+
+    <div class="block-3">
+      <hr />
+      <div>
+        <div class="template"  (scroll)="onScroll($event)">
+
+                    <span *ngIf=" spinner && (!users.length || searchMode)" class="loader"></span>
+
+
+
+          <div *ngIf="users.length === 0 && !loading &&!searchMode &&!spinner" class="nofollow">
+            <p>
+              У этого кулинара пока нет
+              {{ object === "followers" ? "подписчиков" : "подписок" }} :(
+            </p>
+
+            <svg-icon
+              [src]="'/assets/images/svg/sad-cook.svg'"
+              [svgStyle]="{
+                'height.em': '9',
+                'width.em': '9',
+                fill: 'var(--color-foreground)'
+              }"
+            ></svg-icon>
+          </div>
+          <div class="nofollow" *ngIf="users.length === 0 && searchMode && !spinner">
+            <p>
+              Подписчиков по вашему запросу не найдено :( <br />
+              Попробуйте изменить параметры поиска
+            </p>
+
+            <svg-icon
+              [src]="'/assets/images/svg/sad-cook.svg'"
+              [svgStyle]="{
+                'height.em': '9',
+                'width.em': '9',
+                fill: 'var(--color-foreground)'
+              }"
+            ></svg-icon>
+          </div>
+          <div class="row" *ngFor="let follower of users">
+            <ng-container *ngIf="follower.id; else nullUser">
+              <div class="column">
+                <div
+                  class="userpic"
+                  [style.background-image]="
+                    'url(' + (follower.avatarUrl || noUserpic) + ')'
+                  "
+                ></div>
+              </div>
+              <div
+                class="column"
+                (click)="goToFollowerAccount('/cooks/list/' + follower.id)"
+              >
+                <h2>{{ follower.fullName }}</h2>
+                <p>{{ "@" + follower.username }}</p>
+              </div>
+              <div class="column">
+                <app-button
+                  [disabled]="!follower.loading || true"
+                  *ngIf="follower.id !== currentUser.id"
+                  (click)="follow(follower)"
+                  [disabled]="follower.loading ? false : true"
+                  [color]="'prim'"
+                  [text]="
+                    follower.loading
+                      ? 'Подождите...'
+                      : follower.isFollower
+                        ? 'Отписаться'
+                        : 'Подписаться'
+                  "
+                  [style]="follower.isFollower ? 'outlined' : 'filled'"
+                  [rounded]="true"
+                >
+                </app-button>
+              </div>
+            </ng-container>
+            <ng-template #nullUser>
+              <div class="column loading">
+                <div class="userpic loading"></div>
+              </div>
+              <div
+                class="column loading"
+                (click)="goToFollowerAccount('/cooks/list/' + follower.id)"
+              >
+                <h2>Загрузка...</h2>
+                <p>{{ "@" }}Загрузка...</p>
+              </div>
+
+              <div class="column">
+                <app-button
+                  [disabled]="!follower.loading || true"
+                  [disabled]="false "
+                  [color]="'prim'"
+                  [text]="
+                      'Загрузка'
+                      
+                  "
+                  [style]="'filled'"
+                  [rounded]="true"
+                >
+                </app-button>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-modal
+  @modal
+  *ngIf="noAccessModalShow"
+  [style]="'prim'"
+  [title]="'Доступ к функции ограничен'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleAccessModal($event)"
+  [buttonsText]="['Давайте', 'Не сейчас']"
+  [description]="
+    'Взаимодействовать с кулинарами могут только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'
+  "
+></app-modal>

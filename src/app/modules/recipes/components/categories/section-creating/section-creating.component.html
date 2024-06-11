@@ -1,0 +1,156 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div
+  @modal
+  *ngIf="editedCategoryDataLoaded"
+  class="outer"
+  (click)="clickBackgroundNotContent($event)"
+>
+  <div class="inner min-width">
+    <div class="close-button" (click)="closeEditModal()">
+      <svg-icon
+        [src]="'/assets/images/svg/close.svg'"
+        [applyClass]="true"
+        class="close-svg"
+      ></svg-icon>
+    </div>
+    <div class="header">
+      <h1>{{ edit ? "Изменение" : "Добавление" }} раздела</h1>
+    </div>
+    <div class="unique-content min">
+      <form [formGroup]="form" #scrollContainer autocomplete="false">
+        <div class="step-container">
+          <div class="form-control">
+            <h3>Название раздела*</h3>
+            <app-usual-input
+              [inputRequired]="true"
+              [max]="30"
+              id="name"
+              formControlName="name"
+              [placeholder]="'Придумайте название раздела'"
+              required
+              [value]="form.get('name')?.value"
+              [error]="
+                form.get('name')?.invalid &&
+                (form.get('name')?.dirty || form.get('name')?.touched)
+                  ? 'Название раздела должно содержать от 4 до 30 символов'
+                  : ''
+              "
+            ></app-usual-input>
+          </div>
+
+          <div class="form-control circle img">
+            <div class="image">
+              <div
+                class="delete"
+                *ngIf="sectionImage !== defaultImage"
+                (click)="unsetImage()"
+              >
+                <svg-icon
+                  [applyClass]="true"
+                  class="svgTrash"
+                  [src]="'/assets/images/svg/trash.svg'"
+                ></svg-icon>
+              </div>
+              <div
+                class="photo"
+                [ngClass]="{
+                  'have-image': this.form.get('image')?.value !== null
+                }"
+                [ngStyle]="{
+                  'background-image':
+                    'url(' + sectionImage || defaultImage + ')'
+                }"
+                alt="Изображение раздела"
+              >
+                <input
+                  type="file"
+                  class="input-image"
+                  (change)="onSectionImageChange($event)"
+                  accept=".png, .jpg, .jpeg, .svg" 
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="buttons row">
+          <app-button
+            [title]="
+              !(areObjectsEqual() && form.valid)
+                ? 'Все поля должны быть корректны'
+                : ''
+            "
+            [disabled]="areObjectsEqual() && form.valid"
+            (click)="
+              (areObjectsEqual() && form.valid) ? (saveModal = true) : null
+            "
+            [text]="edit ? 'Изменить' : 'Опубликовать'"
+            [color]="'sec'"
+            [style]="'filled'"
+            [rounded]="true"
+          ></app-button>
+
+          <app-button
+            (click)="closeEditModal()"
+            [text]="'Отменить'"
+            [color]="'prim'"
+            [style]="'outlined'"
+            type="button"
+            [rounded]="true"
+          ></app-button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<app-modal
+  *ngIf="closeModal"
+  @modal
+  [style]="'prim'"
+  [title]="'Закрытие окна'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleCloseModal($event)"
+  [buttonsText]="['Да', 'Нет']"
+  [description]="
+    'Вы уверены, что не хотите ' +
+    (edit ? 'менять' : 'опубликовать') +
+    ' раздел?'
+  "
+>
+</app-modal>
+
+<app-modal
+  @modal
+  *ngIf="saveModal"
+  [style]="'sec'"
+  [title]="(edit ? 'Изменение' : 'Добавление') + ' раздела'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleSaveModal($event)"
+  [buttonsText]="['Да', 'Нет']"
+  [description]="
+    'Вы уверены, что хотите ' + (edit ? 'изменить' : 'добавить') + ' раздел?'
+  "
+></app-modal>
+
+<app-modal
+  @modal
+  *ngIf="successModal"
+  [style]="'sec'"
+  [title]="'Раздел успешно ' + (edit ? 'изменен' : 'добавлен')"
+  [type]="'Ok'"
+  (resultEmit)="handleSuccessModal()"
+  [buttonsText]="['Хорошо']"
+  [description]="'Раздел успешно ' + (edit ? 'изменен' : 'добавлен')"
+></app-modal>
+<app-modal
+  [style]="'await'"
+  *ngIf="awaitModal || !editedCategoryDataLoaded"
+  @modal
+/>
+<app-modal @modal *ngIf="errorModal" [style]="'prim'" [title]="
+    'Произошла ошибка'
+  " [type]="'Ok'" (resultEmit)="handleErrorModal()" [buttonsText]="['Хорошо']" [description]="
+    errorModalContent||'Произошла неизвестная ошибка'
+  "></app-modal>

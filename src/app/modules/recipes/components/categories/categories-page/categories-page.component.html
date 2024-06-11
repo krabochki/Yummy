@@ -1,0 +1,135 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="wrap">
+  <h1>
+    {{ title ||'Загрузка...' }}
+  </h1>
+
+  <app-button
+    class="add-category"
+    [icon]="'add-category'"
+    [color]="'prim'"
+    [disabled]="!initialLoading"
+    [text]="'Добавить категорию'"
+    (click)="createCategoryButtonClick()"
+    [rounded]="true"
+  ></app-button>
+
+<div class="search">
+    <app-search
+      [disabled]="initialLoading"
+      [context]="'sections & categories'"
+    ></app-search>
+</div>
+
+
+  <div>
+        <ng-container>
+          <div class="sections" *ngIf="popularCategories.length ===0 ">
+            <div class="head">
+              <h2 class="load">Загрузкаааааааа</h2>
+            </div>
+        
+            <app-horizontal-category-list [preloader]="true"></app-horizontal-category-list>
+          </div>
+        </ng-container>
+
+    <div class="sections" *ngIf="popularCategories.length > 0">
+      <a [routerLink]="'/categories/popular'" class="head">
+        <h2>Популярные категории</h2>
+
+        <svg-icon
+          class="arrow-svg"
+          [applyClass]="true"
+          [src]="'/assets/images/svg/go-back.svg'"
+        ></svg-icon>
+      </a>
+
+      <app-horizontal-category-list
+        (editEmitter)="successEditModal = true"
+        [showRecipesNumber]="true"
+        [categories]="popularCategories"
+      ></app-horizontal-category-list>
+    </div>
+
+    <div *ngFor="let section of sections" class="sections">
+      <div
+        class="sections"
+      >
+        <a
+          [routerLink]="'/sections/list/' + section.id"
+          *ngIf="section.name !== ''"
+          class="head"
+        >
+          <h2>{{ section.name }}</h2>
+
+          <svg-icon
+            class="arrow-svg"
+            [applyClass]="true"
+            [src]="'/assets/images/svg/go-back.svg'"
+          ></svg-icon>
+        </a>
+
+        <app-horizontal-category-list
+          (editEmitter)="successEditModal = true"
+          [showRecipesNumber]="true"
+          [categories]="getCategoriesOfSection(section)"
+        ></app-horizontal-category-list>
+      </div>
+    </div>
+    <ng-container *ngFor="let preloader of skeleton">
+      <div class="sections" *ngIf="!loaded || initialLoading" >
+        <div class="head">
+          <h2 class="load">Загрузкаааааааа</h2>
+        </div>
+
+        <app-horizontal-category-list
+          [preloader]="true"
+        ></app-horizontal-category-list>
+      </div>
+    </ng-container>
+  </div>
+  <app-button
+    [class.disabled]="!loaded ? true : false"
+    class="more-reports-button"
+    [text]="'Загрузить еще...'"
+    (click)="loadMoreSections()"
+    *ngIf="!everythingLoaded && !initialLoading"
+    [disabled]="loaded"
+    [rounded]="true"
+    [style]="'outlined'"
+    [color]="'prim'"
+  ></app-button>
+</div>
+
+<app-category-creating
+  style="position: fixed; z-index: 3"
+  (closeEmitter)="creatingMode = false"
+  (editEmitter)="updateAfterChanges()"
+  @modal
+  *ngIf="creatingMode"
+></app-category-creating>
+
+<app-modal
+  @modal
+  *ngIf="noAccessModalShow"
+  [style]="'prim'"
+  [title]="'Доступ к разделу ограничен'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleNoAccessModal($event)"
+  [buttonsText]="['Давайте', 'Не сейчас']"
+  [description]="
+    'Доступ к этой функции имеют только зарегистрированные пользователи. Хотите зарегистрироваться или войти в существующий аккаунт?'
+  "
+></app-modal>
+
+<app-modal
+  @modal
+  *ngIf="successEditModal"
+  [style]="'sec'"
+  [title]="'Категория изменена'"
+  [type]="'Ok'"
+  (resultEmit)="successEditModal = false"
+  [buttonsText]="['Хорошо']"
+  [description]="'Категория успешно изменена'"
+></app-modal>

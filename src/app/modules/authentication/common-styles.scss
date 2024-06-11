@@ -1,0 +1,407 @@
+@import "../../../tools/UI/UI.scss";
+
+div.container.not-found {
+  .tagline {
+    width: 100%;
+  }
+
+  &.one-column {
+    .tagline {
+      width: 70%;
+    }
+  }
+}
+
+.important {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 1em;
+}
+
+.accent {
+  color: var(--color-primary);
+  font-family: var(--font-family-accent);
+  font-size: 2em;
+}
+
+.icon {
+  position: absolute;
+  width: 1.5em;
+  height: 1.5em;
+  top: 0.3em;
+  right: 0.3em;
+  fill: var(--color-foreground-unactive);
+}
+
+.control {
+  position: relative;
+}
+
+.user-policy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 1em;
+  margin: 0 auto;
+
+  p {
+    text-align: left;
+    line-height: 1;
+  }
+
+  p a {
+    transition: 0.2s;
+    color: inherit;
+    font-weight: 400;
+
+    &:focus {
+      color: var(--color-secondary);
+    }
+  }
+
+  column-gap: 1em;
+}
+
+.checkbox {
+  cursor: pointer;
+  min-width: 1.5em;
+  max-width: 1.5em;
+  height: 1.5em;
+  border-radius: 100%;
+  border: 2px solid var(--color-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+
+  &:focus,
+  &:hover {
+    .checkbox-icon {
+      fill: var(--color-secondary-focus);
+    }
+
+    border-color: var(--color-secondary-focus);
+    background-color: var(--color-background-deeper);
+  }
+
+  .checkbox-icon {
+    fill: var(--color-secondary);
+    width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.container.one-column {
+  hr,
+  .tagline,
+  .note {
+    width: 62%;
+    margin: 0 auto;
+  }
+
+  row-gap: 0;
+
+  .svg-pic {
+    height: 11em;
+  }
+
+  .image {
+    display: flex;
+    justify-content: center;
+  }
+
+  .not-found {
+    display: flex;
+    justify-content: center;
+    height: 11em;
+    width: 100%;
+  }
+
+  form,
+  .formed {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1.25em;
+    margin: 0 auto;
+    width: 18em;
+  }
+
+  .label,
+  .tagline,
+  .note {
+    text-align: center;
+  }
+
+  .form {
+    margin: 0 auto;
+  }
+
+  .buttons {
+    margin: 0 auto;
+  }
+
+  row-gap: var(--space-s);
+}
+
+.svg-pic {
+  fill: var(--color-foreground);
+}
+
+.container {
+  padding-left: calc(14.4vw + 0 * (100vw - 768px) / 760);
+  padding-right: calc(14.4vw + 0 * (100vw - 768px) / 760);
+
+  height: fit-content;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+
+  grid-template-rows: min-content;
+
+  margin: 2em 0;
+
+  a.usual {
+    font-weight: 400;
+  }
+
+  &.img-container {
+    column-gap: var(--space-xxl);
+    grid-template-columns: 11em 32em;
+  }
+
+  .code-p {
+    text-align: center;
+    font-weight: 700;
+    * {
+      color: var(--color-secondary);
+    }
+    cursor: pointer;
+    text-decoration: underline;
+        text-decoration-color: var(--color-secondary);
+    &.disabled {
+      cursor:wait;
+      * {
+        color: var(--color-foreground-unactive);
+      }
+      text-decoration-color: var(--color-foreground-unactive);
+    }
+  }
+  a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    font-weight: 700;
+    text-align: center;
+
+    &.good {
+      color: var(--color-secondary);
+    }
+  }
+
+  .error {
+    font-size: 0.8em;
+    color: var(--color-primary);
+    line-height: 1;
+  }
+
+  .content {
+    @include flexy(column);
+    row-gap: 1.5em;
+
+    .note {
+      line-height: 1;
+      font-size: 1em;
+    }
+
+    .tagline {
+      font-size: var(--font-m);
+      line-height: 1;
+    }
+
+    .buttons {
+      @include flexy(row);
+      column-gap: var(--space-m);
+    }
+
+    hr {
+      height: 1px;
+      background-color: var(--color-foreground);
+      opacity: 0.1;
+    }
+
+    .label {
+      font-size: var(--font-xxl);
+      font-family: var(--font-family-accent);
+      line-height: 1;
+      margin-top: 0.5em;
+
+      .title {
+        color: var(--color-primary);
+        font-family: var(--font-family-accent);
+      }
+    }
+  }
+}
+
+.margin.container {
+  margin: 2em calc(14.4vw + 0 * (100vw - 768px) / 760);
+  padding: 0 calc(14.4vw + 0 * (100vw - 768px) / 760);
+}
+
+@media (max-width: 900px) {
+  .image {
+    display: none;
+  }
+
+  .container.one-column {
+    padding: 0;
+
+    hr,
+    .tagline,
+    .note {
+      margin: 0 auto;
+    }
+
+    row-gap: 0;
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      row-gap: var(--space-s);
+    }
+
+    .label,
+    .tagline {
+      text-align: center;
+    }
+
+    .form {
+      margin: 0 auto;
+    }
+
+    .buttons {
+      margin: 0 auto;
+    }
+  }
+
+  .container {
+    display: flex;
+    align-items: flex-start;
+
+    justify-content: center;
+    flex-direction: column;
+    row-gap: var(--space-xl);
+    margin-right: 3em;
+    margin-left: 3em;
+
+    &.img-container {
+      column-gap: 0;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+    }
+
+    .content {
+      .tagline {
+        text-align: center;
+      }
+
+      .buttons {
+        margin: 0 auto;
+        flex-direction: column;
+        row-gap: var(--space-s);
+      }
+
+      .label {
+        text-align: center;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  div.container.not-found.one-column .tagline {
+    width: 100%;
+  }
+  .container {
+    margin-right: 3em;
+    margin-left: 3em;
+  }
+
+  .container.one-column {
+    form,
+    .formed {
+      width: 18em;
+    }
+  }
+
+  .container.one-column .tagline,
+  .container.one-column .note {
+    width: 90%;
+  }
+
+  .container.one-column.not-found.margin {
+    padding: 0 3em;
+  }
+}
+
+@media (max-width: 480px) {
+  .container.one-column.not-found.margin {
+    margin: 2em 6%;
+    padding: 0;
+  }
+
+  .container.one-column .svg-pic {
+    height: 9em;
+  }
+
+  .container.one-column .not-found {
+    height: 9em;
+  }
+
+  .container.one-column {
+    form,
+    .formed {
+      width: 100%;
+    }
+  }
+
+  .container {
+    padding: 0;
+    margin-right: 12%;
+    margin-left: 12%;
+
+    &.not-found {
+      margin: 2em 0;
+    }
+
+    .content {
+      .note {
+        width: 100%;
+      }
+
+      .tagline,
+      hr {
+        width: 100%;
+
+        text-align: center;
+      }
+
+      .buttons {
+        margin: 0 auto;
+        flex-direction: column;
+        row-gap: var(--space-s);
+      }
+
+      .label {
+        text-align: center;
+      }
+    }
+  }
+}
+
+app-modal {
+  position: fixed;
+  z-index: 10;
+}

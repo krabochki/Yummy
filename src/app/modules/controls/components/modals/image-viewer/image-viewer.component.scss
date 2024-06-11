@@ -1,0 +1,227 @@
+.bg {
+
+  .back,
+  .next {
+    position: absolute;
+    opacity: 0.75;
+    margin: auto;
+    margin: 0;
+    height: fit-content;
+    width: fit-content;
+    transition: 0.2s;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .back {
+    left: 0;
+  }
+
+  .next {
+    right: 0;
+  }
+
+  .arrow {
+    height: 4em;
+    margin: 2em;
+    fill: var(--color-foreground);
+  }
+
+
+}
+
+
+
+
+
+@media (max-width: 720px) {
+  .bg .arrow {
+    height: 4em;
+    margin: 0 1.5em;
+  }
+}
+
+
+
+@media (max-width: 600px) {
+  .bg .arrow {
+    height: 4em;
+    margin: 0 3.5vw;
+  }
+}
+
+
+/* Общий стиль для всего документа */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.circles {
+  margin: 0 auto;
+  width: max-content;
+
+  display: flex;
+  column-gap: 1em;
+
+  .circle {
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    width: 1.75em;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100%;
+
+    height: 1.75em;
+    background-color: white;
+
+    cursor: pointer;
+    transition: 0.2s;
+
+    &.translucent {
+      opacity: 0.5;
+
+      &:hover {
+        opacity: 0.75;
+      }
+    }
+
+    &:hover {
+      scale: 1.5;
+
+    }
+  }
+}
+
+
+.close-button,
+.download-button {
+  zoom: 0.9;
+  font-weight: 1000;
+  right: 1.5em;
+  top: 1em;
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  width: 2em;
+  height: 2em;
+  border-radius: 100%;
+  cursor: pointer;
+  background-color: var(--color-background-deeper);
+  transition: opacity 0.2s ease-in-out;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  .close-icon {
+    fill: var(--color-foreground-unactive);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.75em;
+    height: 0.75em;
+  }
+}
+
+.download-button {
+  right: unset;
+  left: 1.5em
+}
+
+/* Стили для фона */
+.bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--modal-black);
+  backdrop-filter: blur(1px);
+  /* черный цвет с прозрачностью 80% */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* изображение будет выравниваться по верхнему краю */
+  padding: 10em;
+  box-sizing: border-box;
+}
+
+/* Стили для контейнера изображения */
+.image-container {
+  position: relative;
+  max-width: 100%;
+}
+
+/* Стили для изображения */
+.viewed-image {
+  border-radius: 2em;background-color: white;
+  max-width: 100%;
+  max-height: calc(100vh - 5em);
+  /* высота экрана минус верхний и нижний отступы */
+  object-fit: contain;
+  /* изображение будет сохранять пропорции и вмещаться в контейнер */
+}
+
+
+.image:after {
+  content: "";
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+
+  right: 0;
+
+  margin: 0;
+}
+
+img {
+  pointer-events: none;
+}
+
+.image {
+  position: relative;
+}
+
+/* Стили для кнопки закрытия */
+
+
+@media screen and (max-width: 768px) {
+
+  .back,
+  .next {
+    display: none;
+  }
+
+  .bg {
+    padding: 6em;
+  }
+
+  .viewed-image {
+    max-height: calc(100vh - 3em);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .bg {
+    padding: 2em;
+  }
+
+  /* Изменяем размеры изображения относительно ширины экрана */
+  .viewed-image {
+    max-width: 100%;
+    max-height: none;
+  }
+}

@@ -1,0 +1,171 @@
+<div class="container one-column">
+  <div class="content">
+    <h1 class="label">Регистрация</h1>
+    <p class="tagline">
+      {{ codeMode ? 'Введите код из письма, которое вы получили на электронную почту.': 'Введите электронную почту, а также придумайте имя пользователя и пароль. На указанную вами почту будет выслано письмо с кодом для регистрации.'}}
+    </p>
+
+    <form [formGroup]="codeForm" class="formed" *ngIf="codeMode">
+      <div>
+        <div class="control">
+          <app-usual-input
+            [pad]="true"
+            [inputRequired]="true"
+            type="text"
+            [max]="6"
+            formControlName="code"
+            [placeholder]="'Шестизначный код'"
+            required
+          >
+          </app-usual-input>
+          <svg-icon
+            [src]="'/assets/images/svg/key.svg'"
+            class="icon"
+            [applyClass]="true"
+          ></svg-icon>
+        </div>
+      </div>
+    </form>
+
+
+    <form [formGroup]="form" *ngIf="!codeMode">
+      <div>
+        <div class="control">
+          <app-usual-input
+            [pad]="true"
+            [inputRequired]="true"
+            type="text"
+            [max]="64"
+            formControlName="email"
+            [placeholder]="'Электронная почта'"
+            required
+            [error]="emailNotValidError"
+          >
+          </app-usual-input>
+          <svg-icon
+            [src]="'/assets/images/svg/email.svg'"
+            class="icon"
+            [applyClass]="true"
+          ></svg-icon>
+        </div>
+      </div>
+      <div>
+        <div class="control">
+          <app-usual-input
+            [inputRequired]="true"
+            [max]="20"
+            formControlName="username"
+            [placeholder]="'Имя пользователя'"
+            required
+            [error]="usernameNotValidError"
+          ></app-usual-input>
+          <svg-icon
+            [src]="'/assets/images/svg/badge.svg'"
+            class="icon"
+            [applyClass]="true"
+          ></svg-icon>
+        </div>
+      </div>
+
+      <app-usual-input
+        [inputType]="'password'"
+        [inputRequired]="true"
+        formControlName="password"
+        [placeholder]="'Пароль'"
+        [max]="20"
+        required
+        [error]="passwordNotValidError"
+      ></app-usual-input>
+      <div class="user-policy">
+        <button
+          class="checkbox"
+          (click)="
+            this.form.get('policy')?.setValue(!this.form.get('policy')?.value)
+          "
+        >
+          <svg-icon
+            *ngIf="this.form.get('policy')?.value === true"
+            class="checkbox-icon"
+            [applyClass]="true"
+            [src]="'/assets/images/svg/checkbox.svg'"
+          ></svg-icon>
+        </button>
+        <p>
+          Я согласен(-на) с правилами
+          <a routerLink="/user-policy">пользовательского соглашения</a>
+        </p>
+      </div>
+    </form>
+
+    <hr />
+    <a class="good" *ngIf="!codeMode" [routerLink]="'/registration-benefits'"
+      >Преимущества регистрации</a
+    >
+
+  
+    <div class="buttons">
+      <app-button
+        *ngIf="!codeMode"
+        (click)="form.valid ? (confirmModal = true) : false"
+        [disabled]="form.valid"
+        [rounded]="true"
+        [color]="'sec'"
+        [text]="'Регистрация'"
+      ></app-button>
+      <app-button
+        *ngIf="codeMode"
+        (click)="codeForm.valid ? confirmCode() : false"
+        [disabled]="codeForm.valid"
+        [rounded]="true"
+        [color]="'sec'"
+        [text]="'Подтвердить'"
+      ></app-button>
+    </div>
+  </div>
+</div>
+
+<app-modal
+  @modal
+  [style]="'prim'"
+  *ngIf="confirmModal"
+  [title]="'Подтвердите регистрацию'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleConfirmModal($event)"
+  [buttonsText]="['Да', 'Нет']"
+  [description]="
+    'Вы уверены, что хотите зарегистрироваться с введенными данными и получить письмо c кодом на электронную почту?'
+  "
+></app-modal>
+
+<app-modal [style]="'sec'" @modal [title]="'Успешное подтверждение!'" [type]="'Ok'" *ngIf="noFormModal"
+  (resultEmit)="handleNoFormModal()" [buttonsText]="['Вход']" [description]="
+    'Вы успешно подтвердили аккаунт. Войдите с новыми данными на странице входа!'
+  "></app-modal>
+
+<app-modal
+  [style]="'sec'"
+  @modal
+  [title]="'Успешная регистрация!'"
+  [type]="'Ok'"
+  *ngIf="successModal"
+  (resultEmit)="handleSuccessModal()"
+  [buttonsText]="['Хорошо']"
+  [description]="
+    'Письмо для подтверждения регистрации успешно отправлено на вашу электронную почту! Подтверждение по этому письму будет доступно в течении получаса.'
+  "
+></app-modal>
+
+<app-modal
+  [style]="'prim'"
+  @modal
+  *ngIf="errorModal"
+  [title]="'Ошибка регистрации'"
+  [type]="'Ok'"
+  (resultEmit)="errorModal = false; failText = ''"
+  [buttonsText]="['Хорошо']"
+  [description]="
+    failText || 'Произошла неизвестная ошибка при попытке регистрации'
+  "
+></app-modal>
+
+<app-modal [style]="'await'" *ngIf="loadingModal" @modal />

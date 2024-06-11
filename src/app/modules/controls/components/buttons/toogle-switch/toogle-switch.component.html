@@ -1,0 +1,6 @@
+<div [ngStyle]="{'--toogle-off':toogleOff, '--background-off':backgroundOff, '--toogle-on': toogleOn, '--background-on':backgroundOn }" class="toggle-switch" [ngClass]="{ 'night-mode': nightMode }">
+  <label>
+    <input [checked]="checked" (click)="check()" type="checkbox" />
+    <span class="slider"></span>
+  </label>
+</div>

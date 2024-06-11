@@ -1,0 +1,104 @@
+
+
+.arrow-svg{
+  height: 1em;
+  display: flex;
+  align-items: center;
+  fill: var(--color-foreground);
+  justify-content: center;
+  transform: rotate(-90deg);
+
+}
+
+app-modal{
+  position: fixed;
+  z-index: 10;
+}
+.head{
+  display: flex;
+  align-items: center;
+  column-gap: 1.5em;
+  width:fit-content;
+  cursor: pointer;
+
+      margin: 0 calc(14.4vw + 0 * (100vw - 768px) / 760);
+    margin-bottom: 1.75em;
+
+}
+h2{
+  line-height: 1;
+  font-weight: 600;
+  font-size: 1.5em;
+
+}
+.block{
+  
+  margin: 3.5em 0;
+}
+
+
+
+.recipes {
+  padding: 0 calc(14.4vw + 0 * (100vw - 768px) / 760);
+
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  &.horizontal::after {
+    margin: 0 calc(14.4vw + 0 * (100vw - 768px) / 760);
+
+    height: calc(100% - 0.8em);
+    width: 15%;
+    background: linear-gradient(to right, transparent 0%,var(--color-background));
+
+    z-index: 1;
+    right: 0;
+    top: 0;
+    content: "";
+    position: absolute;
+    pointer-events: none;
+  }
+}
+
+
+
+@media (max-width: 768px) {
+  .recipes {
+    &.horizontal::after { 
+      all: unset;
+    }
+  }
+}
+
+@media (max-width:480px){
+  .recipes {
+      padding: 0 0 0 6%
+  }
+
+  .head{
+          margin: 0 6%;margin-bottom: 1.75em;
+  }
+}
+
+
+h2.loading {
+  border-radius: 0.75em;
+  width: max-content;
+      animation: loading 0.75s infinite linear;
+        background-color: var(--loading);
+  color: transparent;
+}
+
+@keyframes loading {
+  0% {
+    background-position: var(--loading);
+  }
+
+  50% {
+    background-color: var(--loading-accent);
+  }
+
+  100% {
+    background-position: var(--loading);
+  }
+}

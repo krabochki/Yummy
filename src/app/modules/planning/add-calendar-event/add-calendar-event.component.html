@@ -1,0 +1,202 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="background" (click)="clickBackgroundNotContent($event)">
+  <div class="main-cont">
+    <div class="close-button" (click)="close()">
+      <svg-icon
+        class="close-svg"
+        [applyClass]="true"
+        [src]="'/assets/images/svg/close.svg'"
+      ></svg-icon>
+    </div>
+    <h1 class="noselect">
+      {{ editMode ? "Изменение рецепта в плане" : "Добавление рецепта в план" }}
+    </h1>
+
+    <p class="description begin noselect">
+      {{
+        editMode
+          ? "Тут вы можете изменить существующий рецепт в вашем плане готовки. Измените нужные поля ниже, чтобы обновленный рецепт попал в план."
+          : "Тут вы можете добавить новый рецепт в ваш план готовки. Заполните необходимые поля ниже, чтобы интегрировать рецепт в твой гастрономический календарь."
+      }}
+      После заполнения всех полей, нажмите «{{
+        editMode ? "Обновить рецепт в плане" : "Добавить рецепт в план"
+      }}» для сохранения.
+    </p>
+
+    <hr />
+
+    <div>
+      <div class="for-effect">
+        <div class="img-cont">
+          <div class="first-col">
+            <div class="section">
+              <h2 class="noselect">Название рецепта</h2>
+              <app-usual-input
+                [(ngModel)]="title"
+                [max]="50"
+                #input
+                [value]="title"
+                [placeholder]="'Введите название предстоящего шедевра'"
+                type="text"
+                [inputRequired]="true"
+                class="form-control"
+                [(ngModel)]="title"
+              />
+            </div>
+
+            <div class="section">
+              <h2 class="noselect" >Связанный рецепт Yummy</h2>
+
+              <app-autocomplete
+              style="zoom:0.9"
+              (blurEmitter)="blur()"
+                [disabled]="this.event.recipe>0"
+                [placeholder]="'Начните вводить название связанного рецепта'"
+                [(ngModel)]="searchQuery"
+                [startOnTyping]="true"
+                (recipeEmitter)="selectRecipe($event)"
+                [context]="'recipes'"
+                [currentUserId]="currentUser.id"
+              ></app-autocomplete>
+            </div>
+
+            <div class="section">
+              <h2 class="noselect">Цвет</h2>
+              <div class="palette">
+                <button
+                  class="color"
+                  *ngFor="let color of colors; let i = index"
+                  (click)="selectColor(i)"
+                  [ngClass]="{
+                    selected:
+                      i === selectedColorIndex && colorSource === 'palette'
+                  }"
+                  [ngStyle]="{ 'background-color': color }"
+                ></button>
+              </div>
+              <div class="custom-color">
+                <p class="noselect" style="zoom: 0.9">
+                  Или выберите собственный цвет:
+                </p>
+                <input
+                  [ngClass]="{ selected: colorSource === 'custom' }"
+                  (blur)="selectCustomColor()"
+                  [(ngModel)]="customColor"
+                  type="color"
+                  class="color-picker"
+                />
+              </div>
+            </div>
+
+            <div class="dates">
+              <div class="section">
+                <h2 class="noselect">Начало</h2>
+                <div>
+                  <input
+                    class="calendar-event"
+                    type="text"
+                    mwlFlatpickr
+                    [(ngModel)]="start"
+                    [altInput]="true"
+                    [convertModelValue]="true"
+                    [enableTime]="true"
+                    [time24hr]="true"
+                    dateFormat="Y-m-dTH:i"
+                    altFormat="F j, Y H:i"
+                    placeholder="Выберите начало*"
+                  />
+                </div>
+              </div>
+              <div class="section">
+                <h2 class="noselect">Конец</h2>
+                <div>
+                  <input
+                    class="calendar-event"
+                    type="text"
+                    mwlFlatpickr
+                    [(ngModel)]="end"
+                    [altInput]="true"
+                    [convertModelValue]="true"
+                    [enableTime]="true"
+                    [time24hr]="true"
+                    dateFormat="Y-m-dTH:i"
+                    altFormat="F j, Y H:i"
+                    placeholder="Выберите конец*"
+                  />
+                </div>
+              </div>
+
+              <p
+                class="error noselect"
+                *ngIf="end && start ? start >= end : null || !start"
+              >
+                {{
+                  (end ? start >= end : null)
+                    ? "Приготовление не может заканчиваться раньше, чем начинается!"
+                    : "Дата начала приготовления обязательна"
+                }}
+              </p>
+            </div>
+          </div>
+          <svg-icon
+            class="icon"
+            [applyClass]="true"
+            [src]="'/assets/images/svg/planning/cook-and-ingredients.svg'"
+          ></svg-icon>
+        </div>
+      </div>
+
+      <app-button
+        [style]="'filled'"
+        [color]="'sec'"
+        [disabled]="valid"
+        [rounded]="true"
+        [text]="editMode ? 'Обновить рецепт в плане' : 'Добавить рецепт в план'"
+        (click)="valid ? (modalSaveShow = true) : null"
+      >
+      </app-button>
+    </div>
+  </div>
+</div>
+
+<app-modal
+  @modal
+  (resultEmit)="handleExitModal($event)"
+  *ngIf="modalExitShow"
+  [style]="'prim'"
+  [type]="'yesOrNo'"
+  [buttonsText]="['Да', 'Отмена']"
+  [title]="getModalTitle('exit')"
+  [description]="getModalDescription('exit')"
+>
+</app-modal>
+
+<app-modal
+  @modal
+  (resultEmit)="handleSaveModal($event)"
+  *ngIf="modalSaveShow"
+  [style]="'sec'"
+  [type]="'yesOrNo'"
+  [buttonsText]="['Да', 'Отмена']"
+  [title]="getModalTitle('save')"
+  [description]="getModalDescription('save')"
+>
+</app-modal>
+
+<app-modal
+  [title]="getModalTitle('success')"
+  @modal
+  (resultEmit)="handleSuccessSaveModal()"
+  *ngIf="modalSuccessSaveShow"
+  [style]="'sec'"
+  [type]="'Ok'"
+  [buttonsText]="['Хорошо']"
+  [description]="getModalDescription('success')"
+>
+</app-modal>
+<app-modal
+  [style]="'await'"
+  *ngIf="loading"
+  @modal
+/>

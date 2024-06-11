@@ -1,0 +1,36 @@
+<div class="wrap">
+  <h1>Группы ингредиентов</h1>
+
+  <app-button *ngIf="currentUser.role !== 'user'" class="add-category" [icon]="'ingredients/create-ingredient'"
+    [color]="'prim'" [text]="'Добавить группу'"
+    (click)="createButtonClick()" [rounded]="true"></app-button>
+
+<div class="search">
+    <app-search [context]="'groups'"></app-search>
+  
+</div>
+  <div>
+    <div class="sections">
+      <div class="sections">
+        <div [ngStyle]="{'margin-bottom':!loaded && groups.length? '1.3em':null}">
+          <app-ingredients-vertical-list [ingredients]="groups" [context]="'group'"></app-ingredients-vertical-list>
+        </div>
+
+        <ng-container *ngIf="!loaded ">
+
+            <div [ngStyle]="{'margin-top': groups.length ? '1.3em':null }"> <app-ingredients-vertical-list
+                [preloader]="true"></app-ingredients-vertical-list></div>
+
+        </ng-container>
+      </div>
+
+    </div>
+
+  </div>
+  <app-button [class.disabled]="!loaded ? true : false" class="more-reports-button" [text]="'Загрузить еще...'"
+    (click)="loadMoreGroups()" *ngIf="!everythingLoaded" [disabled]="loaded" [rounded]="true" [style]="'outlined'"
+    [color]="'prim'"></app-button>
+</div>
+
+<app-group-creating @modal *ngIf="createModal" (closeEmitter)="createModal = false"
+  (editEmitter)="updateAfterChanges()"></app-group-creating>

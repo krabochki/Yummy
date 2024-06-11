@@ -1,0 +1,120 @@
+
+.dropdown {
+  background-color: var(--color-background-deeper-unactive);
+  position: absolute;
+  width: 100%;
+  top: var(--space-xl);
+  max-height: 20em;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  font-size: var(--font-s);
+  z-index: 10;
+  overflow: hidden !important;
+  overflow-y: none;
+  display: flex;
+  line-height: 1;
+  flex-direction: column;
+
+  border-top: none;
+  box-shadow: 0px 4px 6px 1px rgba($color: #000000, $alpha: 0.05);
+
+  border-bottom-right-radius: var(--space-m);
+  border-bottom-left-radius: var(--space-m);
+
+  .dsl a{
+    color: var(--color-foreground-unactive);
+  }
+
+  a {
+    padding: var(--space-xs) var(--space-m);
+    border-bottom: 1px solid var(--color-background-deeper);
+    border-left: 0;
+    border-right: 0;
+
+    li{
+          font-weight: 500;
+
+    }
+
+    cursor: pointer;
+    &:last-of-type {
+
+      border: none;
+      padding-bottom: var(--space-s);
+      border-bottom-right-radius: var(--space-m);
+      border-bottom-left-radius: var(--space-m);
+    }
+
+    &:hover {
+      background-color: var(--color-secondary);
+      li {
+        font-weight: 700;
+        color: var(--color-background);
+      }
+    }
+
+    &.dsl li{
+      color: var(--color-foreground-unactive);
+    }
+    &.dsl:hover {
+      background-color: var(--color-primary);
+    }
+    &.dsl:hover li{
+      color: var(--color-background);
+    }
+  }
+}
+.disabling {
+  z-index: 8;
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+.select {
+  width: 9rem;
+  position: relative;
+}
+
+svg {
+  fill: var(--color-foreground);
+  margin-top: var(--space-xxs);
+}
+.head {
+  column-gap: var(--space-xs);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-align: center;
+  font-weight: 500;
+  position: relative;
+}
+
+@media (max-width: 480px) {
+  .select {
+    width: 13rem;
+
+    position: relative;
+  }
+  .head {
+    justify-content: left;
+  }
+
+  .dropdown {
+    top: var(--space-l);
+  }
+}
+
+app-modal {
+  z-index: 11;
+  position: fixed;
+}

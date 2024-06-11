@@ -1,0 +1,39 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="list " >
+    <div class="close"  (click)="closeEmitter.emit()">
+     <svg-icon [applyClass]="true" class="close-svg" [src]="'/assets/images/svg/close.svg'"></svg-icon>
+    </div> 
+  <div class="main">
+    <h1 [title]="totalNotifications">Уведомления ({{ totalNotifications > 999 ? '999+' : totalNotifications }})</h1>
+    <button *ngIf="notifications.length" (click)="clearAll()" class="clear-all" >
+      <svg-icon
+        class="trash"
+        [applyClass]="true"
+        [src]="'/assets/images/svg/trash.svg'"
+      />
+      Очистить все
+    </button>
+    <hr />
+  </div>
+  <div class="notifies" (scroll)="onScroll($event)" *ngIf="notifications.length > 0 || loading; else noAnyNotifies">
+    <app-notify 
+    (hover)="hover.emit(notify)"
+    (clickEmitter)="clickEmitter.emit()"
+    (notifyDeleteClick)="deleteNotify($event)"
+      *ngFor="let notify of notifications"
+      [notify]="notify"
+    ></app-notify>
+  </div>
+  <ng-template #noAnyNotifies>
+    <div class="no-notifies" *ngIf="!notifications.length">
+      У вас пока нет уведомлений
+      <svg-icon
+        class="mail-cook"
+        [applyClass]="true"
+        [src]="'/assets/images/svg/mail-cook.svg'"
+      ></svg-icon>
+    </div>
+  </ng-template>
+</div>
+

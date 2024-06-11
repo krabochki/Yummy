@@ -1,0 +1,497 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+
+<div class="popups">
+  <div class="popup" @popup *ngFor="let item of popups">
+    <app-notify
+      (hover)="popupHover($event)"
+      (clickEmitter)="removePopup(item)"
+      (blurEmitter)="popupBlur($event)"
+      [popup]="true"
+      (notifyDeleteClick)="removePopup(item)"
+      [notify]="item"
+    ></app-notify>
+  </div>
+</div>
+<div class="header">
+  <a routerLink="/" class="label">Yummy</a>
+
+  <ng-container *ngIf="!mobile">
+    <div class="menu-items">
+      <app-select [items]="recipeSelectItems" [routes]="recipeRoutes" />
+      <app-select [items]="cooksSelectItems" [routes]="userRoutes" />
+      <app-select [items]="planSelectItems" [routes]="planRoutes" />
+    </div>
+
+    <div class="buttons">
+      <button
+        class="admin-panel svg-button"
+        [ngClass]="{
+          admin: currentUser.role === 'admin',
+          moder: currentUser.role === 'moderator'
+        }"
+        *ngIf="
+          (currentUser.role === 'admin' || currentUser.role === 'moderator') &&
+          showAdminpanel
+        "
+      >
+        <a routerLink="/control-dashboard">
+          <svg-icon class="admin-svg" [src]="svgPath('star')" [class]="'svg'" />
+          <div @count class="notifications" *ngIf="adminActionsCount > 0">
+          {{ adminActionsCount >=100 ? '99+' : adminActionsCount }}
+          </div>
+        </a>
+      </button>
+      <button
+        (click)="notifiesOpen = true; popups = [];
+    cd.markForCheck();"
+        *ngIf="this.currentUser.id !== 0"
+        class="svg-button"
+      >
+        <svg-icon [src]="svgPath('bell')" [class]="'svg'" />
+        <div @count class="notifications" *ngIf="notReadedNotifies">
+          {{ notReadedNotifies >=100 ? '99+' : notReadedNotifies }}
+        </div>
+      </button>
+
+      <a
+        [routerLink]="
+          !this.currentUser.id ? 'greetings' : 'cooks/list/' + currentUser.id
+        "
+      >
+        <button class="svg-button">
+          <ng-template #account>
+            <svg-icon [src]="svgPath('account')" [class]="'svg'" />
+          </ng-template>
+          <svg-icon
+            *ngIf="!this.currentUser.id; else account"
+            [src]="svgPath('enter')"
+            [class]="'svg'"
+          />
+        </button>
+      </a>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="mobile">
+    <label [ngClass]="{ open: mobileMenuOpen }">
+      <input [ngClass]="{ open: mobileMenuOpen }" type="checkbox" />
+      <span  (click)="hamburgerClick()"
+       
+        class="menu"
+        [ngClass]="{ open: mobileMenuOpen }"
+      >
+        <span class="hamburger"></span>
+      </span>
+      <div *ngIf="mobileMenuOpen" @height class="menu-cont">
+       
+        <div *ngIf="currentUser.id > 0" class="card">
+            
+          <div class="user-info" (click)="clickMobileMenuLink('/cooks/list/'+currentUser.id)">
+            <div
+              [style.background-image]="'url(' + (avatar ? avatar : 'assets/images/userpic.png') + ')'"
+              class="userpic"
+            ></div>
+            <div>
+              <h3>
+                {{
+                  currentUser.fullName
+                    ? currentUser.fullName
+                    : "@" + currentUser.username
+                }}
+              </h3>
+              <p>{{ currentUser.email }}</p>
+            </div>
+            <div class="logout" (click)="$event.preventDefault();$event.stopPropagation();exitModalShow=true">
+              <svg-icon
+                [applyClass]="true"
+                class="menu-svg"
+                [src]="'/assets/images/svg/logout.svg'"
+              />
+            </div>
+          </div>
+          <hr />
+        </div>
+        <ul
+          [style]="
+            currentUser.id > 0
+              ? 'max-height: calc(100vh - 15em)'
+              : 'max-height: calc(100vh - 10em)'
+          "
+          [ngClass]="{ open: mobileMenuOpen }"
+          class="menu-ul"
+        >
+        <div *ngIf="currentUser.id === 0" (click)="clickMobileMenuLink('/greetings')">
+          <h2>
+            <p class="log">Регистрация/Вход</p>
+          </h2>
+        </div>
+          <div>
+            <li
+              
+            >
+              <h2 (click)="
+                mobileSectionsOpen[0] === true
+                  ? (mobileSectionsOpen[0] = false)
+                  : (mobileSectionsOpen[0] = true)
+              ">
+                <svg-icon
+                  [applyClass]="true"
+                  class="menu-svg"
+                  [src]="'/assets/images/svg/header/recipes.svg'"
+                />
+
+                <p>Рецепты</p>
+              </h2>
+              <div
+                class="routes"
+                @height
+                *ngIf="mobileSectionsOpen[0]"
+              >
+                <div
+                  [ngClass]="{
+                    'disabled-link':
+                      currentUser.id === 0 && recipeRoutes[i].disabled
+                  }"
+                  (click)="
+                    !recipeRoutes[i].disabled
+                      ? clickMobileMenuLink(recipeRoutes[i].routeLink)
+                      : (noAccessModalShow = true)
+                  "
+                  *ngFor="
+                    let recipeSelectItem of mobileRecipeSelectItems;
+                    let i = index
+                  "
+                >
+                  {{ recipeSelectItem }} 
+                </div>
+              </div>
+            </li>
+            <li
+              
+            >
+              <h2 (click)="
+                mobileSectionsOpen[1] === true
+                  ? (mobileSectionsOpen[1] = false)
+                  : (mobileSectionsOpen[1] = true)
+              ">
+                <svg-icon
+                  [applyClass]="true"
+                  class="menu-svg"
+                  [src]="'/assets/images/svg/group.svg'"
+                />
+
+                <p>Кулинары</p>
+              </h2>
+              <div
+                class="routes"
+                @height
+                *ngIf="mobileSectionsOpen[1] === true"
+              >
+                <div
+                  [ngClass]="{
+                    'disabled-link':
+                      currentUser.id === 0 && userRoutes[i].disabled
+                  }"
+                  (click)="
+                    !userRoutes[i].disabled
+                      ? clickMobileMenuLink(userRoutes[i].routeLink)
+                      : (noAccessModalShow = true)
+                  "
+                  *ngFor="
+                    let cookSelectItem of mobileCooksSelectItems;
+                    let i = index
+                  "
+                >
+                  {{ cookSelectItem }}
+                </div>
+              </div>
+            </li>
+            <li
+             
+            >
+              <h2  (click)="
+                mobileSectionsOpen[2] === true
+                  ? (mobileSectionsOpen[2] = false)
+                  : (mobileSectionsOpen[2] = true)
+              ">
+                <svg-icon
+                  [applyClass]="true"
+                  class="menu-svg"
+                  [src]="'/assets/images/svg/plan-notify.svg'"
+                />
+                <p>Меню</p>
+              </h2>
+              <div
+                class="routes"
+                @height
+                *ngIf="mobileSectionsOpen[2] === true"
+              >
+                <div
+                  [ngClass]="{
+                    'disabled-link':
+                      currentUser.id === 0 && planRoutes[i].disabled
+                  }"
+                  (click)="
+                    !planRoutes[i].disabled
+                      ? clickMobileMenuLink(planRoutes[i].routeLink)
+                      : (noAccessModalShow = true)
+                  "
+                  *ngFor="
+                    let planSelectItem of mobilePlanSelectItems;
+                    let i = index
+                  "
+                >
+                  {{ planSelectItem }}
+                </div>
+              </div>
+            </li>
+          </div>
+
+          <div>
+              <li (click)="clickMobileMenuLink('/about')">
+                <h2>
+                  <svg-icon [applyClass]="true" class="menu-svg" [src]="'/assets/images/svg/about.svg'" />
+                  <p>Узнать больше о Yummy</p>
+                </h2>
+              </li>
+
+              <li (click)="clickMobileMenuLink('/news')">
+                <h2>
+                  <svg-icon [applyClass]="true" class="menu-svg" [src]="'/assets/images/svg/updates.svg'" />
+              
+                  <p>Свежие новости и изменения</p>
+                </h2>
+              </li>
+
+                <li *ngIf="currentUser.role === 'admin' || currentUser.role === 'moderator'" (click)="clickMobileMenuLink('/control-dashboard')">
+                  <h2>
+                    <svg-icon [applyClass]="true" class="menu-svg" [src]="'/assets/images/svg/star.svg'" />
+                
+                    <p>Панель управления</p>
+                  </h2>
+                </li>
+            <li (click)="clickMobileMenuLink('/user-policy')">
+              <h2>
+                <svg-icon
+                  [applyClass]="true"
+                  class="menu-svg"
+                  [src]="'/assets/images/svg/security.svg'"
+                />
+
+                <p>Пользовательское соглашение</p>
+              </h2>
+            </li>
+            <li *ngIf="currentUser.id === 0" (click)="clickMobileMenuLink('/registration-benefits')">
+              <h2>
+                <svg-icon [applyClass]="true" class="menu-svg" [src]="'/assets/images/svg/class.svg'" />
+            
+                <p>Преимущества регистрации</p>
+              </h2>
+            </li>
+          
+            
+
+              <a href="mailto:yummort@mail.ru">
+                <li >
+                  <h2>
+                    <svg-icon [applyClass]="true" class="menu-svg" [src]="'/assets/images/svg/mail-mobile.svg'" />
+                
+                    <p>Обратная связь</p>
+                  </h2>
+                </li>
+              </a>
+          </div>
+
+          <li>
+            <h2>
+              <p>Темная тема</p>
+
+              <app-toogle-switch
+                [backgroundOff]="'var(--color-secondary)'"
+                [backgroundOn]="'var(--color-foreground)'"
+                [toogleOff]="'var(--color-background)'"
+                [toogleOn]="'var(--color-secondary)'"
+                (checkedEmit)="nightModeEmit()"
+                [nightMode]="true"
+              ></app-toogle-switch>
+            </h2>
+          </li>
+
+        
+        </ul>
+      </div>
+    </label>
+
+    <div>
+      <div class="mobile-buttons-panel">
+        <a
+          class="admin-panel"
+          [ngClass]="{
+            admin: currentUser.role === 'admin',
+            moder: currentUser.role === 'moderator'
+          }"
+          routerLink="/control-dashboard"
+          *ngIf="
+            (currentUser.role === 'admin' ||
+              currentUser.role === 'moderator') &&
+            showAdminpanel
+          "
+        >
+          <div
+            *ngIf="currentUser.id > 0 && adminActionsCount > 0"
+            class="count"
+          >
+            {{ adminActionsCount }}
+          </div>
+
+          <svg-icon
+            class="admin-svg"
+            [src]="svgPath('thick-star')"
+            [class]="'svg'"
+          ></svg-icon>
+        </a>
+        <a
+          class="acc"
+          [style]="currentUser.id > 0 ? '' : 'margin:0'"
+          (click)="
+            currentUser.id > 0
+              ? linkClick('/cooks/list/' + currentUser.id)
+              : linkClick('/greetings')
+          "
+        >
+          <svg-icon
+            *ngIf="currentUser.id > 0"
+            class="header-top-svg"
+            [applyClass]="true"
+            [src]="svgPath('header/account')"
+          />
+          <svg-icon
+            style="scale: 0.86"
+            *ngIf="currentUser.id === 0"
+            class="header-top-svg"
+            [applyClass]="true"
+            [src]="svgPath('header/login')"
+          />
+        </a>
+
+        <a *ngIf="currentUser.id > 0" (click)="openNotifies()">
+          <div
+            *ngIf="currentUser.id && notReadedNotifies"
+            class="count"
+          >
+            {{ notReadedNotifies }}
+          </div>
+          <svg-icon
+            class="header-top-svg"
+            [applyClass]="true"
+            [src]="svgPath('header/notification')"
+          />
+        </a>
+        
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+<div *ngIf="mobile" class="menu-bottom">
+  <div class="item-cont">
+    <a [routerLink]="'/'">
+      <div class="item">
+        <svg-icon
+          [class]="svgActiveClass('main')"
+          [applyClass]="true"
+          [src]="isActiveSvgPath('home', 'main')"
+        />
+        <p [class.active]="activePage === 'main'">Главная</p>
+      </div>
+    </a>
+    <a [routerLink]="'/recipes'">
+      <div class="item">
+        <svg-icon
+          [class]="svgActiveClass('recipes')"
+          [applyClass]="true"
+          [src]="isActiveSvgPath('recipes', 'recipes')"
+        />
+        <p [class.active]="activePage === 'recipes'">Рецепты</p>
+      </div>
+    </a>
+    <a [routerLink]="currentUser.id === 0 ? '/greetings' : null">
+      <div class="item">
+        <div
+          class="main-button"
+          (click)="currentUser.id === 0 ? null : (creatingMode = true)"
+        >
+          <svg-icon
+            *ngIf="currentUser.id <= 0; else plusSvg"
+            class="header-svg"
+            [applyClass]="true"
+            [src]="svgPath('header/login')"
+          />
+          <ng-template #plusSvg>
+            <svg-icon
+              class="header-svg"
+              [applyClass]="true"
+              [src]="svgPath('header/add')"
+            />
+          </ng-template>
+        </div>
+      </div>
+    </a>
+    <a [routerLink]="'/cooks'">
+      <div class="item">
+        <svg-icon
+          [class]="svgActiveClass('cooks')"
+          [applyClass]="true"
+          [src]="isActiveSvgPath('profiles', 'cooks')"
+        />
+        <p [class.active]="activePage === 'cooks'">Кулинары</p>
+      </div>
+    </a>
+    <a (click)="currentUser.id ? null :noAccessModalShow =true" [routerLink]="currentUser.id ? '/plan/calendar':null" >
+      <div class="item">
+        <svg-icon
+          [class]="svgActiveClass('calendar')"
+          [applyClass]="true"
+          [src]="isActiveSvgPath('calendar', 'calendar')"
+        ></svg-icon>
+        <p [class.active]="activePage === 'calendar'">Календарь</p>
+      </div>
+    </a>
+  </div>
+</div>
+
+<app-modal
+  @modal
+  *ngIf="noAccessModalShow"
+  [style]="'prim'"
+  [title]="'Доступ к разделу ограничен'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleNoAccessModal($event)"
+  [buttonsText]="['Давайте', 'Не сейчас']"
+  [description]="
+    'Этот раздел могут просматривать только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'
+  "
+></app-modal>
+
+<app-recipe-create
+  style="z-index: 10; position: fixed"
+  *ngIf="creatingMode"
+  (closeEmitter)="creatingMode = false"
+  @modal
+></app-recipe-create>
+
+<app-notifications-list
+  (closeEmitter)="notifiesOpen = false; markNotifiesAsReaded()"
+  @notifies
+  (clickEmitter)="notifiesClick()"
+  *ngIf="notifiesOpen"
+></app-notifications-list>
+  <app-modal @modal *ngIf="exitModalShow" [style]="'prim'" [title]="'Подтвердите выход'" [type]="'yesOrNo'"
+    (resultEmit)="handleExitModal($event)" [buttonsText]="['Выйти', 'Остаться']"
+    [description]="'Вы действительно хотите выйти из текущего аккаунта?'"></app-modal>
+
+    <app-modal @modal [style]="'await'" 
+     *ngIf="loading"></app-modal>
+
+    <div class="background" @modal *ngIf="notifiesOpen" (click)="notifiesOpen=false; notReadedNotifies = 0"></div>

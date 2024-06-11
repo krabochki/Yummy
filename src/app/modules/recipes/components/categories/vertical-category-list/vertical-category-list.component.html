@@ -1,0 +1,6 @@
+
+
+<div class="wrap" >
+  <div   class="recipe-list" #list>
+     <app-category-list-item (editEmitter)="editEmitter.emit()" [context]="context" [showRecipesNumber]="showRecipesNumber" class="content"   *ngFor="let item of categories, let i=index" [category]="categories[i]"></app-category-list-item></div>
+</div>

@@ -134,10 +134,11 @@
 <h3 align="center"> Автор 💡</h3>
 
 
-
   <p align="center">
 Автор проекта: Кузьменок Полина :)
     <br />
+  <a href="https://www.yuummy.site">@Yummy</a>
+    ·
       <a href="https://instagram.com/krabochki">@Instagram</a>
     ·
     <a href="https://www.linkedin.com/in/polina-kuzmenok-550449291">@LinkedIn</a>

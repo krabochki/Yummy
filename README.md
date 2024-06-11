@@ -137,7 +137,7 @@
   <p align="center">
 Автор проекта: Кузьменок Полина :)
     <br />
-  <a href="https://www.yuummy.site">@Yummy</a>
+  <a href="https://www.yuummy.site/cooks/list/13">@Yummy</a>
     ·
       <a href="https://instagram.com/krabochki">@Instagram</a>
     ·

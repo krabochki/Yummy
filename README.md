@@ -9,7 +9,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://yummy-kitchen.vercel.app/">
+  <a href="https://www.yuummy.site/">
     <img src="src/assets/images/chef-day.png" alt="Logo" width="80" height="80">
   </a>
 

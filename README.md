@@ -10,7 +10,7 @@
 <br />
 <div align="center">
   <a href="https://www.yuummy.site/">
-    <img src="src/assets/images/chef-day.png" alt="Logo" width="80" height="80">
+    <img src="src/assets/images/chef-night.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Yummy</h3>

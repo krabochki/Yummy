@@ -32,6 +32,7 @@
     <li><a href="#usage">Периодичность использования</a></li>
     <li><a href="#libs">Библиотеки</a></li>
         <li><a href="#author">Автор</a></li>
+        <li><a href="#gallery">Галерея</a></li>
 
   </ol>
 </details>
@@ -59,7 +60,7 @@
 - обмен рецептами и страницами кулинаров в социальных сетях.
 
 <div align="center">
-    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/mainpage.png"  height="350">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/main_page.png"  width="880">
 </div>
 
 <br>
@@ -146,5 +147,100 @@
   </p>
 
 <p align="right">(<a href="#readme-top">наверх</a>)</p>
+
+<a name="gallery"></a>
+
+## Галерея 🖼️
+
+Все рецепты:
+<div align="center">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/recipes_page.png"  width="880">
+</div>
+
+Все ингредиенты:
+<div align="center">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/ingredients_page.png"  width="880">
+</div>
+
+Все категории:
+<div align="center">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/categories_page.png"  width="880">
+</div>
+
+Все кулинары:
+<div align="center">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/cooks.png"  width="880">
+</div>
+
+Пример страницы рецепта:
+<div align="center">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/recipe_example_head.png"  width="880">
+</div>
+<div align="center">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/recipe_example_instructions.png"  width="880">
+</div>
+<div align="center">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/comments.png"  width="880">
+</div>
+
+Пример некоторых форм:
+<div align="center">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/recipe_creation.png"  width="880">
+</div>
+<div align="center">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/ingredient_creation.png"  width="880">
+</div>
+
+Пример страницы пользователя:
+<div align="center">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/profile.png"  width="880">
+</div>
+<div align="center">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/more-info.png"  width="880">
+</div>
+<div align="center">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/edit-account.png"  width="880">
+</div>
+
+Подписчики/подписки:
+<div align="center">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/followers.png"  width="880">
+</div>
+
+Настройки:
+<div align="center">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/settings.png"  width="880">
+</div>
+<div align="center">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/achievements.png"  width="880">
+</div>
+Панель уведомлений:
+<div align="center">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/notifies.png"  width="880">
+</div>
+Календарь рецептов:
+<div align="center">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/calendar.png"  width="880">
+</div>
+<div align="center">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/add-event.png"  width="880">
+</div>
+Список покупок:
+<div align="center">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/products.png"  width="880">
+</div>
+Страница с новостями об изменениях:
+<div align="center">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/news.png"  width="880">
+</div>
+Панель управления:
+<div align="center">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/admin_panel.png"  width="880">
+</div>
+
+
+<p align="right">(<a href="#readme-top">наверх</a>)</p>
+
+
 
 </div>

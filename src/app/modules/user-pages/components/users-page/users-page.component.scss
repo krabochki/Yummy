@@ -1,19 +1,46 @@
-.wrap{
-    margin: 2em calc(14.4vw + 0 * (100vw - 768px) / 760);
+.wrap {
+  margin: 2em calc(14.4vw + 0 * (100vw - 768px) / 760);
 }
 
-.content h1.label{
+.content h1.label {
   margin: 0;
   line-height: 1.2;
 }
+
 div.container.not-found {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    row-gap: var(--space-s);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  row-gap: var(--space-s);
 }
+
+.loading {
+  animation: loading 0.75s infinite linear;
+  background-color: var(--loading);
+  pointer-events: none;
+  color: transparent;
+  border-radius: 0.85em;
+  pointer-events: none;
+
+
+}
+
+@keyframes loading {
+  0% {
+    background-position: var(--loading);
+  }
+
+  50% {
+    background-color: var(--loading-accent);
+  }
+
+  100% {
+    background-position: var(--loading);
+  }
+}
+
 .fridge {
   height: 11em;
   margin: 0 auto;
@@ -24,17 +51,18 @@ div.container.not-found {
 }
 
 
-h1{
-    font-size: var(--font-xxl);
-    line-height: 1;
-    font-family: var(--font-family-accent);
-    text-align: center;
-    margin-bottom: 1em;
+h1 {
+  font-size: var(--font-xxl);
+  line-height: 1;
+  font-family: var(--font-family-accent);
+  text-align: center;
+  margin-bottom: 1em;
 }
 
-.block{
-    margin-bottom: 2.5em;
+.block {
+  margin-bottom: 2.5em;
 }
+
 .arrow-svg {
   height: 1em;
   display: flex;
@@ -155,7 +183,7 @@ h2 {
     p {
       text-overflow: ellipsis;
       overflow: hidden;
-      width:9em;
+      width: 9em;
     }
 
     &:hover {
@@ -182,7 +210,7 @@ h2 {
   margin-top: 0.5em;
   overflow-y: auto !important;
   position: absolute;
-  border-radius:  1.5em;
+  border-radius: 1.5em;
   display: flex;
   padding: 0;
   flex-direction: column;
@@ -206,23 +234,23 @@ h2 {
     border-radius: 20px;
     border: 3px solid var(--scroll-body);
   }
-} 
+}
 
-@media (max-width: 769px){
+@media (max-width: 769px) {
 
-    .wrap{
+  .wrap {
     margin: 2em calc(14.4vw + 0 * (100vw - 768px) / 760);
-}
+  }
 
 }
 
 
 
-@media(max-width:480px){
-    .wrap{
-            margin: 2em 6%;
+@media(max-width:480px) {
+  .wrap {
+    margin: 2em 6%;
 
-    }
+  }
 
 
   .search-block {
@@ -254,7 +282,8 @@ h2 {
 
 
 }
-.load-more{
+
+.load-more {
   display: flex;
   justify-content: center;
   margin-top: 2em;

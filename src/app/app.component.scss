@@ -3,42 +3,133 @@
   flex-direction: column;
   min-height: 100vh;
 }
- 
+
+.main {
+  width: 100%;
+  height: 100vh;
+  row-gap: 1.5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+a{
+  text-decoration: underline;
+}
+.cat-block {
+  align-items: center;
+  column-gap: 2.5em;
+  display: flex;
+
+}
+
+.error-content {
+  max-width: 30vw;
+}
+
+.error-title{
+  font-weight: 700;line-height: 1;
+  font-size: 1.65em;
+  margin-bottom: 0.5em;
+}
+
+.status {
+  color: var(--color-foreground-unactive);
+  font-weight: 300;
+  font-size: 0.7em;
+}
+
+.internet-icon {
+  min-width: 7em;
+  max-width: 7em;
+  fill: var(--color-foreground);
+}
+
+.main-text{
+  flex-direction: column;
+  row-gap: 0.65em;
+  display: flex;
+
+}
+@media(max-width:1000px) {
+
+.error-content {
+    max-width: 40vw;
+  }
+}
+@media(max-width:480px){
+  .internet-icon {
+      min-width: 6em;
+      max-width: 6em;
+      margin-bottom: 0.5em;
+    }
+
+  .cat-block {
+      align-items: center;
+      column-gap: 2em;
+      flex-direction: column;
+  
+    }
+    h1{
+      text-align: center;
+    }
+    .error-content{
+     max-width: 80%; 
+    }
+}
+ul{
+  list-style-type: disc;
+  li{
+    list-style-type: disc;
+    list-style-position: inside;
+  }
+}
 .content {
   flex: 1;
 }
- 
+
 .footer {
   flex-shrink: 0;
 }
 
-.loading{
+.loading {
   flex-direction: column;
 
- min-height: 100vh;
- display: flex;
- align-items: center;
- justify-content: center;
- min-width: 100%;
- h1{
-  font-size: 1.5em;animation: l 1s steps(4) infinite;
- }
- img{
-  height: 100%;
-  padding:3.2em;
-  position: absolute;
-  top:0;left:0;bottom:0;right:0;margin:0;
-    -webkit-filter: brightness(0) ;
-    filter: brightness(1.02) ;
- }
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100%;
+
+  h1 {
+    font-size: 1.5em;
+    animation: l 1s steps(4) infinite;
+  }
+
+  img {
+    height: 100%;
+    padding: 3.2em;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: 0;
+    -webkit-filter: brightness(0);
+    filter: brightness(1.02);
+  }
 }
+
 @keyframes l {
   to {
     clip-path: inset(0 -0.28em 0 0)
   }
-}.lds-ring {
-    zoom: 0.9;
-  --size:1em;
+}
+
+.lds-ring {
+  zoom: 0.9;
+  --size: 1em;
   display: inline-block;
   position: relative;
   width: calc(var(--size) * 14);
@@ -79,4 +170,3 @@
     transform: rotate(360deg);
   }
 }
-

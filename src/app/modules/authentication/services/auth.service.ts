@@ -1,13 +1,16 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { IUser, nullUser } from '../../user-pages/models/users';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { UserService } from '../../user-pages/services/user.service';
+import {
+  BehaviorSubject,
+  Observable,
+} from 'rxjs';
 import { IRecipe } from '../../recipes/models/recipes';
 import { IIngredient } from '../../recipes/models/ingredients';
-import { supabase, supabaseAdmin } from '../../controls/image/supabase-data';
-import { AuthChangeEvent, Session } from '@supabase/supabase-js';
-import { Router } from '@angular/router';
-import { state } from 'src/tools/state';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { CookieService } from 'ngx-cookie-service';
+import { INotification } from '../../user-pages/models/notifications';
+import { apiSource } from '../../../../tools/sourses';
+import { notificationsSource } from '../../../../tools/sourses';
 
 @Injectable({
   providedIn: 'root',
@@ -15,186 +18,139 @@ import { state } from 'src/tools/state';
 export class AuthService {
   role = 'user';
 
+  private authUrl = apiSource;
+
   registerUser: IUser = { ...nullUser };
+
+  private dashboardOpenedSource = new BehaviorSubject<boolean>(false);
+  dashboardOpened$ = this.dashboardOpenedSource.asObservable();
+
+  setDashboardOpened(isOpened: boolean) {
+    this.dashboardOpenedSource.next(isOpened);
+  }
 
   private currentUserSubject: BehaviorSubject<IUser> =
     new BehaviorSubject<IUser>({ ...nullUser });
+  loadingSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+  errorSubject: BehaviorSubject<HttpErrorResponse | undefined> =
+    new BehaviorSubject<HttpErrorResponse | undefined>(undefined);
   currentUser$ = this.currentUserSubject.asObservable();
+  error$ = this.errorSubject.asObservable();
+  loading$ = this.loadingSubject.asObservable();
 
   users: IUser[] = [];
   uid = '';
 
   constructor(
-    private userService: UserService,
-    private router: Router,
-    private ngZone: NgZone,
+    private cookieService: CookieService,
+    private http: HttpClient,
   ) {}
 
-  setOnline(user: IUser) {
-    user = { ...user, online: true };
-    return this.userService.updateUserInSupabase(user);
-  }
-  setOffline(user: IUser) {
-    user = { ...user, online: false };
-    return this.userService.updateUserInSupabase(user);
+  isCurrentUserSaved(): string | null {
+    const cookieValue = this.cookieService.get('token'); // To Get Cookie
+    return cookieValue;
   }
 
-  // supabase.auth.onAuthStateChange((event, session) => {
-  //   if (event === 'SIGNED_IN')
-  //     if (session?.user.email) {
-  //       const user = { ...session?.user };
-  //       if (user && user.email) {
-  //         const iuser: IUser = {
-  //           ...nullUser,
-  //           email: user.email,
-  //         };
-  //         const loginUser = this.loginUser({ ...iuser });
-  //         if (loginUser && loginUser.email === user.email) {
-  //           this.currentUserSubject.next(loginUser);
-  //         } else {
-  //           this.currentUserSubject.next({ ...nullUser });
-  //         }
-  //       }
-  //     }
+  notifyUrl: string = notificationsSource;
 
-  async passwordReset(email: string, users: IUser[]) {
-    const resetUser = {
-      ...nullUser,
-      email: email,
-    };
-    try {
-      const finded = users.find((u) => u.email === resetUser.email);
-
-      if (!finded) {
-        throwError;
-      } else {
-        await supabase.auth.resetPasswordForEmail(resetUser.email, {});
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        throwError;
-      }
-    }
-  }
-  loadCurrentUserData() {
-    this.userService.users$.subscribe((users) => {
-      this.users = users;
-      supabase.auth.onAuthStateChange((event, session) => {
-        if (event ==='INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'USER_UPDATED') {
-          this.handleAuthStateChange(session);
-        }
-      });
-    });
+  getNotificationsByUser(userId: number) {
+    const url = `${this.notifyUrl}/${userId}`;
+    return this.http.get<INotification[]>(url);
   }
 
-  handleAuthStateChange(session: Session | null) {
-    const user = { ...session?.user };
-    if (user && user.email) {
-      this.loadUserFromSupabaseByEmail(user.email)
-        .then((loadedUser) => {
-          if (loadedUser) {
-            const user = this.userService.translateUser(loadedUser);
-            this.currentUserSubject.next(user);
-          } else {
-            this.currentUserSubject.next({ ...nullUser });
-          }
-        })
-        .catch((error) => {
-          console.error('Error loading user from Supabase:', error);
-        });
-    }
+  getModeratorsCount() {
+    const options = { withCredentials: true };
+
+    const url = `${this.authUrl}/moderators-count`;
+    return this.http.get<number>(url, options);
   }
 
-  loginUserWithToken(hash: string) {
-    const urlSearchParams = new URLSearchParams(hash);
-    const accessToken = urlSearchParams.get('access_token');
-    const refreshToken = urlSearchParams.get('refresh_token');
-    if (accessToken && refreshToken) {
-      return supabase.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken,
-      });
-    } else return false;
+  forgotPassword(email: string) {
+    return this.http.post(`${this.authUrl}/forgot-password`, { email });
   }
 
-  async setCurrentUser(user: IUser) {
-    await supabase.auth.getSession().then(({ data }) => {
-      const session = data.session;
-      this.uid = session?.user.id || '';
-      this.currentUserSubject.next({ ...user });
-    });
+  findUserByConfirmToken(token: string) {
+    return this.http.get<IUser>(`${this.authUrl}/findUserByToken/${token}`);
   }
 
-  async supabaseLogin(user: IUser) {
-    await supabase.auth.signInWithPassword({
-      email: user.email,
-      password: user.password,
-    });
+  findUserByResetToken(token: string) {
+    const options = { withCredentials: true };
+
+    return this.http.get<number>(
+      `${this.authUrl}/findUserByResetToken/${token}`,
+      options,
+    );
   }
 
-  register(user: IUser) {
-    return supabase.auth.signUp({
-      email: user.email,
-
-      password: user.password,
-      options: {
-        emailRedirectTo:
-          state === 'dev'
-            ? 'http://localhost:4200/#/welcome'
-            : 'https://yummy-kitchen.vercel.app/#/welcome',
-      },
-    });
+  deleteExpiredUsers() {
+    const options = { withCredentials: true };
+    const url = `${this.authUrl}/expired`;
+    return this.http.delete(url, options);
   }
 
-  _session: Session | null = null;
-  get session() {
-    supabase.auth.getSession().then(({ data }) => {
-      this._session = data.session;
-    });
+  getSomeModerators(limit: number, page: number) {
+    const options = { withCredentials: true };
 
-    return this._session;
+    const url = `${this.authUrl}/moderators?limit=${limit}&page=${page}`;
+    return this.http.get<{ moderators: IUser[]; count: number }>(url, options);
   }
 
-  profile(user: IUser) {
-    return supabase.from('profiles').select(`*`).eq('id', user.id).single();
-  }
-
-  updateProfile(profile: IUser) {
-    const update = {
-      ...profile,
-      updated_at: new Date(),
-    };
-
-    return supabase.from('profiles').upsert(update);
-  }
-
-  deleteUserFromSupabase() {
-    return supabaseAdmin.auth.admin.deleteUser(this.uid);
-  }
-
-  authChanges(
-    callback: (event: AuthChangeEvent, session: Session | null) => void,
-  ) {
-    return supabase.auth.onAuthStateChange(callback);
-  }
-
-  async signIn(email: string, password: string) {
-    return await supabase.auth.signInWithPassword({
-      email: email,
+  changePassword(userId: number, password: string, resetToken: string) {
+    return this.http.put(`${this.authUrl}/change-password/${userId}`, {
       password: password,
+      resetToken: resetToken,
     });
+  }
+  getManagerActionsCount() {
+    const options = { withCredentials: true };
+
+    const url = `${this.authUrl}/manager-actions-count`;
+    return this.http.get<number>(url, options);
+  }
+
+  secureChangePassword(newPassword: string, oldPassword: string) {
+    const options = { withCredentials: true };
+
+    return this.http.put(
+      `${this.authUrl}/change-password-secure`,
+      {
+        newPassword: newPassword,
+        oldPassword: oldPassword,
+      },
+      options,
+    );
+  }
+
+  loadCurrentUser(user: IUser) {
+    if (user.id) {
+      this.setCurrentUser(user);
+      this.loadingSubject.next(false);
+    } else {
+      this.setCurrentUser(user);
+      this.loadingSubject.next(false);
+    }
+  }
+
+  setCurrentUser(user: IUser) {
+    this.currentUserSubject.next(user);
+  }
+
+  postUser(user: IUser) {
+    return this.http.post(this.authUrl + '/register', user);
   }
 
   getCurrentUser(): Observable<IUser> {
     return this.currentUserSubject.asObservable();
   }
-
-  logoutUser() {
-    this.setCurrentUser({ ...nullUser });
+  getExpiredUsersCount() {
+    const options = { withCredentials: true };
+    const url = `${this.authUrl}/expired-count`;
+    return this.http.get<number>(url, options);
   }
 
   logout() {
-    return supabase.auth.signOut();
+    const options = { withCredentials: true };
+    return this.http.post(`${this.authUrl}/logout`, {}, options);
   }
 
   isEmailExist(users: IUser[], email: string): boolean {
@@ -208,37 +164,22 @@ export class AuthService {
     else return false;
   }
 
+  getTokenUser(): Observable<IUser> {
+    const options = { withCredentials: true };
+    return this.http.get<IUser>(`${this.authUrl}/token-user`, options);
+  }
+
+  getUserIdBySiteToken(siteToken: string) {
+    return this.http.post(`${this.authUrl}/site-token`, { siteToken });
+  }
+
+  verifyUser(userId: number, code: number) {
+    return this.http.get(`${this.authUrl}/verify-user/${userId}/${code}`);
+  }
+
   loginUser(user: IUser) {
-    return this.users.length > 0
-      ? this.users?.find(
-          (u) => u.email === user.email || u.username === user.username,
-        ) || null
-      : null;
-  }
-
-  async loadUserFromSupabaseByEmail(
-    email: string
-  ): Promise<number | null> {
-    return supabase
-      .from('profiles')
-      .select('*')
-      .eq('email', email)
-      .then((response) => {
-        if (response.data) {
-          const res = response.data[0];
-         
-            if (res) return res;
-            else return null;
-          
-        } else {
-          return null;
-        }
-      });
-  }
-
-  async getUserByEmail(email: string) {
-    const user = await this.loadUserFromSupabaseByEmail(email);
-    return user;
+    const options = { withCredentials: true };
+    return this.http.post(`${this.authUrl}/login`, user, options);
   }
 
   checkValidity(recipe: IRecipe, user: IUser): boolean {

@@ -1,64 +1,59 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<div class="main-wrap"
-    [ngClass]="{'admin':user.role==='admin' && showStatus(user), 'moder': user.role === 'moderator'&& showStatus(user)}">
 
-    <div class="main-and-follow">
+<div class="main-wrap" 
+    [ngClass]="{'admin':user.role==='admin', 'moder': user.role === 'moderator','loading':loading}">
+    <div class="main-and-follow" [ngStyle]="{'opacity':loading?'0':null}">
         <div style="display: flex; flex-direction: column; row-gap: 0.5em;">
             <a class="wrap" [routerLink]="'/cooks/list/'+user.id">
-                <div class="userpic" [style.background-image]="'url('+(avatar?avatar:noAvatar)+')'">
-                    <ngx-emoji class="emoji" *ngIf="emoji" [emoji]="emoji" [size]="22"></ngx-emoji>
+                <div class="userpic" [style.background-image]="'url('+(user.avatarUrl||noAvatar)+')'">
+                    <ngx-emoji class="emoji" *ngIf="user.emoji" [emoji]="user.emoji" [size]="22"></ngx-emoji>
 
                 </div>
                 <div>
                     <div class="star-h1">
-                        <div class="star" *ngIf="user.role!=='user' && showStatus(user)"> <svg-icon class="star-svg"
-                                [applyClass]="true" [src]="'/assets/images/svg/user-star.svg'"></svg-icon></div>
+                        <!-- <div class="star" *ngIf="user.role!=='user'"> <svg-icon class="star-svg"
+                                [applyClass]="true" [src]="'/assets/images/svg/user-star.svg'"></svg-icon></div> -->
                         <h1
-                            [title]="showStatus(user)?(user.role==='admin'?'Это администратор Yummy':user.role==='moderator'?'Это модератор Yummy':''):''">
-                            {{user.fullName}}</h1>
+                            [title]="user.role==='admin'?'Это администратор Yummy':user.role==='moderator'?'Это модератор Yummy':''">
+                            {{user.fullName || '@' + user.username}}</h1>
                     </div>
-                    <h2>{{'@'+user.username}}</h2>
+                    <h2 *ngIf="user.fullName">{{'@'+user.username}}</h2>
                 </div>
             </a>
-            <!-- <p class="location">
-                                    <span class="indicator" [ngClass]="{'online':user.online}"></span>
-{{user.online?'Онлайн':'Оффлайн'}}
-            </p> -->
-            <p class="location" *ngIf="user.location!==''">
+            <p class="location" *ngIf="user.location">
                 <svg-icon class="geo" [applyClass]="true" [src]="'/assets/images/svg/geo.svg'"></svg-icon>
                 <span [title]="user.location"> {{user.location}}</span>
 
             </p>
         </div>
         <button [class.disabled]="currentUser.id<=0" *ngIf="currentUser.id!==user.id"
-            (click)="!adminpanel?clickFollowButton():demote()" class="follow-button"
-            [ngClass]="{'follow-btn':!isFollower && !adminpanel , 'unfollow-btn':adminpanel || isFollower}">{{!adminpanel?
-            !isFollower?'Подписаться':'Отписаться':'Разжаловать'}}</button>
+            (click)="clickFollowButton()" class="follow-button"
+            [ngClass]="{'follow-btn':!isFollower  , 'unfollow-btn':  isFollower}">{{
+            !isFollower?'Подписаться':'Отписаться'}}</button>
 
-        <button [class.disabled]="currentUser.id<=0" (click)="!adminpanel?clickFollowButton():demote()"
+        <button [class.disabled]="currentUser.id<=0" (click)="clickFollowButton()"
             [title]="currentUser.id>0?isFollower?'Отписаться':'Подписаться':''"
-            [class]="isFollower || adminpanel?'unfollow':'follow'" *ngIf="currentUser.id!==user.id">
+            [class]="isFollower ?'unfollow':'follow'" *ngIf="currentUser.id!==user.id">
 
-            <ng-container *ngIf="!adminpanel">
+            <ng-container >
                 <svg-icon *ngIf="!isFollower" class="follow-svg" [src]="'/assets/images/svg/follow.svg'"></svg-icon>
                 <svg-icon *ngIf="isFollower" class="follow-svg" [src]="'/assets/images/svg/unfollow.svg'"></svg-icon>
             </ng-container>
-            <svg-icon *ngIf="adminpanel" class="follow-svg" [src]="'/assets/images/svg/demote.svg'"></svg-icon>
 
         </button>
     </div>
-    <div class="follows">
+    <div class="follows"  [ngStyle]="{'opacity':loading?'0':null}">
         <p title="Подписки">
-            {{followingLength}} <span appPluralRu="" [value]="followingLength"
+            {{user.followingsCount|| 0}} <span appPluralRu="" [value]="user.followingsCount || 0"
                 [arVariants]="['подписка', 'подписки', 'подписок']"></span>
         </p>
         <p title="Подписчики">
-            {{followersLength}} <span appPluralRu="" [value]="followersLength"
+            {{user.followersCount|| 0}} <span appPluralRu="" [value]="user.followersCount || 0"
                 [arVariants]="['подписчик', 'подписчика', 'подписчиков']"></span>
         </p>
         <p title="Рецепты">
-            {{userRecipesLength}} <span appPluralRu="" [value]="userRecipesLength"
+            {{user.recipesCount || 0}} <span appPluralRu="" [value]="user.recipesCount || 0"
                 [arVariants]="['рецепт', 'рецепта', 'рецептов']"></span>
         </p>
     </div>

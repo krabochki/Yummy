@@ -1,0 +1,43 @@
+
+.twitter{
+    background-color: var(--twitter);
+}
+.pinterest{
+    background-color: var(--pinterest);
+}
+.vk{
+    background-color: var(--vk);
+}
+.facebook{
+    background-color: var(--facebook);
+}
+.telegram {
+    background-color: #2AABEE
+}
+.viber{
+    background-color: #7360f2;
+}
+
+.email{
+    background-color: rgb(249, 80, 80);
+}
+
+
+share-buttons{
+
+            width: 2em;
+    height:2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    border-radius: 100%;
+    transition: scale 0.2s ease-in-out;
+
+    &:hover,&:focus{
+        scale:1.2;
+    }
+    
+}
+

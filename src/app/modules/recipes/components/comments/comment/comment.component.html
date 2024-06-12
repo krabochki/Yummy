@@ -1,20 +1,20 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<div class="wrap" [ngClass]="{
+<div class="wrap" *ngIf="comment.id>0; else preloader" [ngClass]="{
     dislike:
-      comment.dislikesId.length > comment.likesId.length &&
-      comment.dislikesId.length > 5
+      comment.dislikesLength > comment.likesLength &&
+      comment.dislikesLength > 5
   }">
-    <div class="userpic" [style.background-image]="'url('+(showCommentAuthor&&avatar?avatar:noAvatar)+')'"></div>
+    <div class="userpic" [style.background-image]="'url('+(comment.avatarUrl||noAvatar)+')'"></div>
     <div class="content">
-        <a class="header" [ngClass]="{'nolink':!showCommentAuthor}" [routerLink]="showCommentAuthor?'/cooks/list/' + author.id:null">
+        <a class="header"  [routerLink]="'/cooks/list/' + comment.authorId">
             <h1>
-                {{ showCommentAuthor? author.fullName !== "" ? author.fullName : "@" + author.username :'Анонимный кулинар' }}
+                {{  comment.authorName  }}
 
-               <ng-template *ngIf="showRecipeAuthor && showCommentAuthor && comment.authorId === recipe.authorId">
+               <ng-container *ngIf="comment.authorId === recipe.authorId">
                     <span class="noselect">·</span>
                     <span>Автор рецепта</span>
-               </ng-template>
+               </ng-container>
             </h1>
             <p class="date">{{ date | timePast }}</p>
         </a>
@@ -22,23 +22,25 @@
         <div class="footer noselect">
             <div class="likes" >
                 <button class="like" (click)="currentUser.id>0?likeComment():noAccessModalShow=true"
-                    [ngClass]="{ liked: comment.likesId.includes(currentUser.id) }">
-                    <svg-icon class="like-svg" *ngIf="!comment.likesId.includes(currentUser.id)" [applyClass]="true"
+                    [ngClass]="{ liked: comment.liked }">
+                    <svg-icon class="like-svg" *ngIf="!comment.liked" [applyClass]="true"
                         [src]="'/assets/images/svg/like-comment.svg'"></svg-icon>
-                    <svg-icon class="like-svg" *ngIf="comment.likesId.includes(currentUser.id)" [applyClass]="true"
+                    <svg-icon class="like-svg" *ngIf="comment.liked" [applyClass]="true"
                         [src]="'/assets/images/svg/like-comment-fill.svg'"></svg-icon>
-                    <span>{{ comment.likesId.length }}</span>
+                    <span [title]="comment.likesLength">{{ formatNumber(comment.likesLength) }}</span>
                 </button>
                 <button (click)="currentUser.id>0?dislikeComment():noAccessModalShow=true" class="like like-dislike"
-                    [ngClass]="{ disliked: comment.dislikesId.includes(currentUser.id) }">
-                    <svg-icon class="like-svg" *ngIf="!comment.dislikesId.includes(currentUser.id)" [applyClass]="true"
-                        [src]="'/assets/images/svg/dislike.svg'"></svg-icon>
-                    <svg-icon *ngIf="comment.dislikesId.includes(currentUser.id)" class="like-svg" [applyClass]="true"
-                        [src]="'/assets/images/svg/broken-heart-fill.svg'"></svg-icon>
-                    <span>{{
-                        comment.dislikesId.length === 0
+                    [ngClass]="{ disliked: comment.disliked }">
+                    <div class="licon">
+                        <svg-icon class="like-svg" *ngIf="!comment.disliked" [applyClass]="true"
+                            [src]="'/assets/images/svg/dislike.svg'"></svg-icon>
+                        <svg-icon *ngIf="comment.disliked" class="like-svg" [applyClass]="true"
+                            [src]="'/assets/images/svg/broken-heart-fill.svg'"></svg-icon>
+                    </div>
+                    <span [title]="comment.dislikesLength ? ('−' +comment.dislikesLength) : 0">{{
+                        !comment.dislikesLength 
                         ? 0
-                        : "−" + comment.dislikesId.length
+                        : "−" + formatNumber(comment.dislikesLength)
                         }}</span>
                 </button>
             </div>
@@ -48,11 +50,13 @@
                         [src]="'/assets/images/svg/copy.svg'"></svg-icon>
                     <span>{{ !copyState ? "Копировать" : "Скопировано" }}</span>
                 </button>
-                <button  [ngClass]="{'haveReport':haveReport}" [title]="haveReport?'Вы уже подавали жалобу на этот комментарий':''" (click)="currentUser.id>0?(haveReport?null:reportCommentModalShow = true):noAccessModalShow=true" class="action red" *ngIf=" currentUser.id !== comment.authorId; else remove">
-                    <svg-icon class="like-svg" [applyClass]="true"
-                        [src]="'/assets/images/svg/report.svg'"></svg-icon>
-                    <span>Жалоба</span>
-                </button>
+                <div [title]="comment.reported?'Вы уже подавали жалобу на этот комментарий':''">
+                    <button [ngStyle]="{'pointer-events': comment.reported ? 'none' :null }"  [ngClass]="{'haveReport':comment.reported}" (click)="currentUser.id>0?(comment.reported?null:(currentUser.role==='user'?reportCommentModalShow = true:deleteCommentModalShow=true)):noAccessModalShow=true" class="action red" *ngIf=" currentUser.id !== comment.authorId; else remove">
+                        <svg-icon class="like-svg" [applyClass]="true"
+                            [src]="'/assets/images/svg/report.svg'"></svg-icon>
+                        <span>{{currentUser.role ==='user'? 'Жалоба' : 'Удалить'}}</span>
+                    </button>
+                </div>
                 <ng-template #remove>
                     <button class="action red" (click)="deleteCommentModalShow=true">
                         <svg-icon class="like-svg" [applyClass]="true"
@@ -64,18 +68,64 @@
         </div>
     </div>
 </div>
+<ng-template #preloader>
+      <div class="wrap " style="cursor: wait;">
+            <div class="userpic image-loading" ></div>
+            <div class="content" style="pointer-events: none;">
+                <a class="header">
+                    <h1 class="load">
+                       Fgfggfggfg
+            
+                    </h1>
+                    <p class="date load">dfffdfffddfdf</p>
+                </a>
+                <p class="text load">{{ comment.text }}</p>
+                <div class="footer noselect">
+                    <div class="likes">
+                        <button class="like" >
+                            <svg-icon class="like-svg load num"></svg-icon>
+                            <span class="load">арар</span>
+                        </button>
+                        <button class="like like-dislike"
+    > <svg-icon class="like-svg load num"></svg-icon>
 
+                            <span class="load">арар</span>
+                        </button>
+                    </div>
+                    <div class="actions">
+                        <button class="action" >
+                            <span class="load">Копировать</span>
+                        </button>
+                        <button  class="action red" >
+                            <span class="load">Жалоба</span>
+                        </button>
+                     
+                    </div>
+                </div>
+            </div>
+    
+        </div>
+</ng-template>
 <app-modal @modal *ngIf="deleteCommentModalShow" [style]="'prim'" [title]="'Удаление комментария'" [type]="'yesOrNo'"
     (resultEmit)="handleDeleteCommentModal($event)" [buttonsText]="['Да', 'Нет']"
-    [description]="'Ты действительно хочешь удалить этот комментарий?'"></app-modal>
+    [description]="'Вы действительно хотите удалить этот комментарий?'"></app-modal>
 
     <app-modal @modal *ngIf="reportCommentModalShow" [style]="'prim'" [title]="'Жалоба на комментарий'" [type]="'yesOrNo'"
     (resultEmit)="handleReportCommentModal($event)" [buttonsText]="['Да', 'Нет']"
-    [description]="'Ты действительно хочешь подать жалобу на этот комментарий?'"></app-modal>
+    [description]="'Вы действительно хотите подать жалобу на этот комментарий?'"></app-modal>
 
         <app-modal @modal *ngIf="successReportCommentModalShow" [style]="'sec'" [title]="'Жалоба успешно отправлена'" [type]="'Ok'"
     (resultEmit)="handleSuccessReportCommentModal()" [buttonsText]="['Хорошо']"
-    [description]="'Жалоба успешно отправлена модератору и будет обработана в ближайшее время'"></app-modal>
+    [description]="'Жалоба успешно отправлена на проверку и будет обработана в ближайшее время'"></app-modal>
+
+
+
+
+            <app-modal @modal *ngIf="reportExistModal" [style]="'prim'" [title]="'Жалоба уже отправлена'"
+                [type]="'Ok'" (resultEmit)="reportExistModal = false" [buttonsText]="['Хорошо']"
+                [description]="'Вы уже отправляли жалобу на этот комментарий. Дождитесь её рассмотрения.'"></app-modal>
+
+
 
 
     
@@ -90,5 +140,4 @@
   [description]="'Взаимодействовать с комментариями  могут только пользователи с личным аккаунтом. Хотите зарегистрироваться или войти в существующий аккаунт?'"
 ></app-modal>
 
-<app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
-    [description]=" 'Вносим изменения... Подождите немного...'" />
+<app-modal [style]="'await'" *ngIf="loading"  @modal />

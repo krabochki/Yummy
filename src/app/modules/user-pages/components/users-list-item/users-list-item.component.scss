@@ -9,15 +9,40 @@ p {
 
 }
 
-.indicator{
+.main-wrap.loading {
+  animation: loading 0.75s infinite linear;
+  background-color: var(--loading);
+  pointer-events: none;
+
+
+}
+
+@keyframes loading {
+  0% {
+    background-position: var(--loading);
+  }
+
+  50% {
+    background-color: var(--loading-accent);
+  }
+
+  100% {
+    background-position: var(--loading);
+  }
+}
+
+
+
+.indicator {
   border-radius: 100%;
   width: 0.5em;
   height: 0.5em;
   background-color: var(--scroll-thumb);
-  &.online{
 
-  
-  background-color: rgb(113, 255, 113);
+  &.online {
+
+
+    background-color: rgb(113, 255, 113);
   }
 }
 
@@ -26,16 +51,6 @@ p {
   height: 1em;
 }
 
-.star {
-  width: 0.75em;
-  height: 0.75em;
-
-  .star-svg {
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-  }
-}
 
 * {
   -webkit-touch-callout: none;
@@ -44,9 +59,7 @@ p {
 }
 
 .admin {
-  .star-svg {
-    fill: var(--color-admin);
-  }
+  
 
   .userpic {
     border: 3px solid var(--color-admin);
@@ -58,9 +71,6 @@ p {
 }
 
 .moder {
-  .star-svg {
-    fill: var(--color-moderator);
-  }
 
   .userpic {
     border: 3px solid var(--color-moderator);
@@ -78,6 +88,7 @@ p {
   height: 100%;
   justify-content: center;
   padding: 1em;
+  position: relative;
   row-gap: 0.5em;
   border-radius: 0.5em;
   transition: 0.2s ease-in-out;
@@ -128,6 +139,7 @@ p {
   background-color: var(--color-secondary);
   border-radius: 100%;
   width: 2em;
+  min-width: 2em;
   height: 2em;
 
   .follow-svg {
@@ -135,6 +147,7 @@ p {
     fill: var(--color-background);
     height: 1.3em;
     width: 1.3em;
+    min-width: 1.3em;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -150,10 +163,11 @@ p {
 }
 
 
-app-modal{
+app-modal {
   position: fixed;
   z-index: 10;
 }
+
 .wrap {
   display: flex;
   align-items: center;
@@ -187,6 +201,7 @@ app-modal{
     width: 2em;
     border-radius: 100%;
     height: 2em;
+    min-width: 2em;
     background-size: cover;
     position: relative;
     background-color: white;
@@ -295,14 +310,29 @@ app-modal{
 }
 
 @media (max-width: 480px) {
-.star-h1 {
+  .follow-button{
+    display: none;
+  }
+  .follow, .unfollow{
+    display: flex;
+  }
+  .main-and-follow{
+    flex-direction: row;
+  }
+  .star-h1 {
     display: flex;
     margin: 0.25em 0;
     flex-direction: column;
     row-gap: 0.1em;
     align-items: center;
+    h1{
+      text-align: left;
+      max-width: 11em;
+      width: unset;
+    }
 
   }
+
   .wrap .userpic .emoji {
     right: -0.6em;
     bottom: -0.5em;
@@ -310,16 +340,18 @@ app-modal{
   }
 
   .main-wrap {
-    padding: 1em 0.5em;
+    padding: 0.75em 1em;
   }
 
   .wrap {
-    flex-direction: column;
     row-gap: 0.5em;
+    column-gap: 0.75em;
 
     h2 {
-      max-width: 90%;
-      margin: 0 auto;
+      max-width: 11em;
+    
+      margin: 0;
+      text-align: left;
       width: min-content;
     }
 
@@ -327,11 +359,12 @@ app-modal{
       width: 3em;
 
       height: 3em;
+      min-width: 3em;
     }
   }
 
   .star-h1 {
-    justify-content: center;
+    display: inline;
   }
 
   h1,
@@ -346,5 +379,7 @@ app-modal{
     justify-content: center;
   }
 
-  .follows {}
+  .follows {
+    flex-direction: row;
+  }
 }

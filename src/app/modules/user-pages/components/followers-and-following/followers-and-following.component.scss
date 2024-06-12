@@ -6,14 +6,17 @@
 
   fill: var(--color-foreground);
 }
-app-modal{
+
+app-modal {
   position: fixed;
   z-index: 100;
 }
+
 .magn {
   width: 1.75em;
   height: 1.75em;
 }
+
 .svg-button {
   cursor: pointer;
   display: flex;
@@ -23,15 +26,18 @@ app-modal{
 
 .container {
   position: fixed;
+  backdrop-filter: blur(1px);
   top: 0;
   z-index: 100;
   left: 0;
   width: 100vw;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Черный фон с 50% непрозрачностью */
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Черный фон с 50% непрозрачностью */
   display: flex;
   justify-content: center;
   align-items: center;
+
   .content {
     display: flex;
     flex-direction: column;
@@ -62,6 +68,7 @@ app-modal{
     margin-left: auto;
     transition: opacity 0.3s;
   }
+
   .search-div {
     padding: 0 var(--space-s);
     padding-left: calc(var(--space-l) + 0.3em);
@@ -77,6 +84,7 @@ app-modal{
     position: absolute;
     font-weight: 500;
     transition: background-color 0.3s ease-in-out;
+
     &:focus {
       background-color: var(--color-background-deeper-unactive);
     }
@@ -117,10 +125,10 @@ hr {
 
 .block-3 {
   position: relative;
-  min-height: 40vh;
+  min-height: 44vh;
 
   .nofollow {
-    height: 40vh;
+    height: 44vh;
     width: 95%;
     flex-direction: column;
     row-gap: 1em;
@@ -134,21 +142,22 @@ hr {
   .template {
     row-gap: var(--space-s);
     display: flex;
-    height: 40vh;
+    height: 44vh;
 
     overflow-y: auto;
 
-    scroll-snap-type: y mandatory;
 
     flex-direction: column;
 
     &::-webkit-scrollbar {
       width: 10px;
     }
+
     &::-webkit-scrollbar-track {
       border-radius: 20px;
       background: var(--scroll-body);
     }
+
     &::-webkit-scrollbar-thumb {
       background-color: var(--scroll-thumb);
       border-radius: 20px;
@@ -158,7 +167,6 @@ hr {
 
   .row {
     margin: 0 0.5em;
-    scroll-snap-align: start;
     display: grid;
     grid-template-columns: 2.5em 10em 7.2em;
     align-items: center;
@@ -176,6 +184,7 @@ hr {
       font-size: 1.1em;
       margin-bottom: 0.1em;
     }
+
     p {
       overflow: hidden;
       text-overflow: ellipsis;
@@ -184,6 +193,7 @@ hr {
       font-weight: 500;
       color: var(--color-foreground-unactive);
     }
+
     h2,
     p {
       line-height: 1.2;
@@ -192,13 +202,16 @@ hr {
     app-button {
       zoom: 0.8;
     }
+
     .column {
       .userpic {
         background-color: white;
         background-position: center;
         background-repeat: no-repeat;
         background-size: cover;
-        height: 2.5em;min-width: 2.5em;        margin: 0 auto;
+        height: 2.5em;
+        min-width: 2.5em;
+        margin: 0 auto;
         border-radius: 100%;
       }
     }
@@ -238,6 +251,7 @@ hr {
 
     .nofollow {
       height: 70vh;
+
       br {
         display: none;
       }
@@ -251,5 +265,61 @@ hr {
         display: none;
       }
     }
+  }
+}
+
+.block-3 {
+  .row {
+    .column.loading {
+      .userpic {animation: loading 0.75s infinite linear;
+              background-color: var(--loading);
+      }
+
+      h2,
+      p {
+        line-height: 1;
+        color: transparent;border-radius: 0.75em;
+        width: min-content;animation: loading 0.75s infinite linear;
+              background-color: var(--loading);
+      }
+
+    }
+  }
+}
+
+@keyframes loading {
+  0% {
+    background-position: var(--loading);
+  }
+
+  50% {
+    background-color: var(--loading-accent);
+  }
+
+  100% {
+    background-position: var(--loading);
+  }
+}
+
+.loader {
+  width: 3em;
+  height: 3em;
+  border: 5px solid var(--color-primary-lighter);
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  position: absolute;
+  top:0;left:0;right:0;bottom: 0;margin: auto;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
   }
 }

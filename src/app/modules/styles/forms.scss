@@ -10,9 +10,40 @@
   justify-content: center;
 }
 
+.nutrition.group-start, .ingredient.group-start{
+   .num{
+  background-color: var(--color-primary-lighter);
+  color: var(--color-primary);
+}}
+
+.more-info-link{
+  text-decoration: underline;
+  font-size: 0.9em;
+}
+
+.circle .photo.loading-image{
+      animation: loading 0.75s infinite linear;
+  background-color: var(--loading) ;
+}
+
+@keyframes loading {
+  0% {
+    background-color: var(--loading) ;
+  }
+
+  50% {
+    background-color: var(--loading-accent);
+  }
+
+  100% {
+    background-color: var(--loading) ;
+  }
+}
+
 h3 {
   display: -webkit-box;
   display: -ms-flexbox;
+  line-height: 1;
   display: flex;
   height: 1.3em;
   width: -webkit-fit-content;
@@ -116,6 +147,11 @@ app-modal {
     font-size: 0.9em;
     position: absolute;
   }
+}
+
+.star{
+  color: var(--color-foreground-unactive);
+  font-size: 0.9em
 }
 
 .search-block {
@@ -268,6 +304,7 @@ app-modal {
   max-height: 40vh;
   -webkit-box-shadow: inset 2px 2px 10px rgba($color: #000000, $alpha: 0.02);
   box-shadow: inset 2px 2px 10px rgba($color: #000000, $alpha: 0.02);
+  backdrop-filter: blur(1px);
 
   margin-top: 0.5em;
   overflow-y: scroll !important;
@@ -308,7 +345,7 @@ app-modal {
   background-color: var(--modal-black);
   left: 0;
   top: 0;
-  width: 100vw;
+  width: 100vw;backdrop-filter: blur(1px);
 
   height: 100vh;
   position: fixed;
@@ -324,6 +361,7 @@ app-modal {
   justify-content: center;
 
   .inner {
+    
     position: relative;
     cursor: default;
 
@@ -332,6 +370,9 @@ app-modal {
     zoom: 0.95;
     background-color: var(--color-background);
     width: 70%;
+    &.min-width{
+      width: 55%;
+    }
     border-radius: 2em;
     padding: 2em 3em;
     height: -webkit-fit-content;
@@ -416,7 +457,20 @@ h2 {
 
 
 }
+.buttons-group{
+  display:flex;
+  margin-top: 1em;
+  flex-direction: column;
+  row-gap: 0.5em;
+}
 
+.open-more{
+  margin: 0 auto;
+  text-align: center;
+  text-decoration: underline;
+  margin: 0;
+  font-weight: 500;
+}
 form {
   height: 100%;
 
@@ -1029,10 +1083,6 @@ svg-icon {
   justify-content: center;
 }
 
-.boundary {
-  margin-bottom: 1em;
-}
-
 .ingred {
   h3 {
     text-align: center;
@@ -1060,6 +1110,10 @@ svg-icon {
   }
 }
 
+.boundary + app-button{
+  margin-top: 1em;
+}
+
 .cont {
   width: 100%;
 }
@@ -1069,6 +1123,7 @@ svg-icon {
 .nutrition-cont {
   padding: 0.5em;
 }
+
 
 .source,
 .instruction,
@@ -1352,7 +1407,11 @@ app-modal {
 @media (max-width: 1100px) {
   .outer .inner {
     width: 85%;
+        &.min-width {
+            width: 50%;
+          }
   }
+  
 }
 
 @media (max-width: 768px) {
@@ -1524,8 +1583,8 @@ app-modal {
       cursor: pointer;
     }
 
-    width: 16em;
-    height: 10em;
+    width: 14em;
+    height: 14em;
     border-radius: 0 2em 0 2em;
     background-size: cover;
     background-position: center center;
@@ -1553,6 +1612,15 @@ app-modal {
   .outer .inner {
     width: 100%;
     height: 100%;
+
+        &.min-width {
+            width: 100%;
+
+            .unique-content{
+              margin: 0 auto;
+              width: 70%;
+            }
+          }
     border-radius: 0;
           zoom: 1;
     .navigation {
@@ -1638,6 +1706,7 @@ app-modal {
   }
 }
 
+
 @media (max-width: 480px) {
 
 
@@ -1666,7 +1735,7 @@ app-modal {
   }
 
   .close-button {
-    zoom: 1.1;
+    zoom: 1.2;
 
     .close-svg {
       height: 0.7em;
@@ -1687,6 +1756,13 @@ app-modal {
 
   .outer .inner {
     row-gap: 1em;
+
+      &.min-width {
+      
+          .unique-content {
+            width: 100%;
+          }
+        }
 
     .unique-content {
       height: 68vh;

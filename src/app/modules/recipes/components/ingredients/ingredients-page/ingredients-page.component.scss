@@ -12,6 +12,8 @@ h1 {
   font-family: var(--font-family-accent);
 }
 
+ 
+
 .sections {
   margin-bottom: 3em;
 }
@@ -242,21 +244,11 @@ div.container.not-found {
 }
 
 @media (max-width: 480px) {
-  .search-block {
-    width: 100%;
 
-    .search {
-      display: grid;
-      width: 100%;
-      padding-right: 6%;
-      grid-template-columns: 1fr max-content;
+  .search {
+      margin-right: 6%;
     }
 
-    input {
-      width: 100%;
-      text-overflow: ellipsis;
-    }
-  }
   div.container.not-found {
     margin: 2em 0;
     margin-right: 6%;
@@ -281,4 +273,40 @@ div.container.not-found {
 app-ingredient-create {
   position: fixed;
   z-index: 10;
+}
+
+
+.load {
+  cursor: wait;
+  color: transparent;
+  animation: loading 0.75s infinite linear;
+  background-color: var(--loading);
+  border-radius: 0.75em;
+}
+
+
+@keyframes loading {
+  0% {
+    background-position: var(--loading);
+  }
+
+  50% {
+    background-color: var(--loading-accent);
+  }
+
+  100% {
+    background-position: var(--loading);
+  }
+}
+
+
+.image-loading {
+  animation: loading 0.75s infinite linear;
+  background-color: var(--loading);
+  background-repeat: no-repeat;
+}
+
+.disabled {
+  pointer-events: none !important;
+
 }

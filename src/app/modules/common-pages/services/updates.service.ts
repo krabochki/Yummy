@@ -1,165 +1,86 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { IUpdate } from '../updates/updates/const';
-import { supabase } from '../../controls/image/supabase-data';
-import { INotification } from '../../user-pages/models/notifications';
-import { IUser } from '../../user-pages/models/users';
-
+import { Observable } from 'rxjs';
+import { IUpdate } from '../components/updates/updates/const';
+import { updatesSource } from 'src/tools/sourses';
+import { HttpClient } from '@angular/common/http';
 @Injectable({
   providedIn: 'root',
 })
 export class UpdatesService {
-  updatesSubject = new BehaviorSubject<IUpdate[]>([]);
-  updates$ = this.updatesSubject.asObservable();
+  private updatesUrl = updatesSource;
 
-  loadUpdatesData() {
-    return this.loadUpdatesFromSupabase();
+  constructor(private http: HttpClient) {}
+
+  getStatus(updateId: number) {
+    const options = { withCredentials: true };
+
+    const url = `${this.updatesUrl}/isAwaits/${updateId}`;
+    return this.http.get(url, options);
   }
 
-  getMaxUpdateId() {
-    return supabase
-      .from('updates')
-      .select('id')
-      .order('id', { ascending: false })
-      .limit(1)
-      .then((response) => {
-        if (response.data && response.data.length > 0) {
-          return response.data[0].id;
-        } else {
-          return 0;
-        }
-      });
+  deleteUpdate(updateId: number) {
+    const options = { withCredentials: true };
+    return this.http.delete(`${this.updatesUrl}/${updateId}`, options);
   }
+  changeUpdateState(updateId: number, state: string) {
+    const options = { withCredentials: true };
 
-  loadUpdatesFromSupabase() {
-    return supabase
-      .from('updates')
-      .select('*')
-      .then((response) => {
-        const updates = response.data;
-        if (updates) this.updatesSubject.next(updates);
-      });
-  }
-
-  addUpdateToSupabase(update: IUpdate) {
-    return supabase.from('updates').upsert([
+    return this.http.put(
+      `${this.updatesUrl}/state/${updateId}`,
       {
-        id: update.id,
-        shortName: update.shortName,
-        fullName: update.fullName,
-        link: update.link,
-        showAuthor: update.showAuthor,
-
-        description: update.description,
-        date: update.date,
-        tags: update.tags,
-        state: update.state,
-        whoCanView: update.whoCanView,
-
-        context: update.context,
-        author: update.author,
-
-        status: update.status,
+        state: state,
       },
-    ]);
-  }
-
-  async addNotificationToUsers(
-    newNotification: INotification,
-    users: IUser[],
-    context: string,
-  ) {
-    let usersToUpdate = [];
-    switch (context) {
-      case 'Уведомить всех кулинаров':
-        usersToUpdate = users;
-        break;
-      case 'Уведомить модераторов и администратора':
-        usersToUpdate = users.filter((u) => u.role !== 'user');
-        break;
-      case 'Никого не уведомлять':
-        return;
-      default:
-        return;
-    }
-
-    const updatedUsers = usersToUpdate.map((user: IUser) => {
-      const notifications = user.notifications || [];
-      const maxId = Math.max(...user.notifications.map((n) => n.id));
-      const editedNotification = { ...newNotification, id: maxId + 1 };
-      notifications.push(editedNotification);
-      return { ...user, notifications };
-    });
-
-    const updates = updatedUsers.map((user) => ({
-      username: user.username,
-      email: user.email,
-      id: user.id,
-      avatarurl: user.avatarUrl || '',
-      description: user.description || '', // Описание пользователя
-      quote: user.quote || '', // Цитата пользователя
-      fullname: user.fullName || '', // Полное имя пользователя
-      followersids: user.followersIds || [], // Список идентификаторов подписчиков
-      socialnetworks: user.socialNetworks || [], // Список социальных сетей пользователя
-      personalwebsite: user.personalWebsite || '', // Личный веб-сайт пользователя
-      location: user.location || '', // Локация пользователя
-      profileviews: user.profileViews || 0, // Количество просмотров профиля
-      role: user.role || 'user',
-      notifications: user.notifications || [],
-      permissions: user.permissions || [],
-      exclusions: user.exclusions || [],
-      permanent: user.permanent || [],
-      emojistatus: user.emojiStatus || null,
-    }));
-
-    return supabase.from('profiles').upsert(updates);
-  }
-
-  deleteUpdateFromSupabase(id: number) {
-    return supabase.from('updates').delete().eq('id', id);
-  }
-  async updateUpdateInSupabase(update: IUpdate) {
-    const { id } = update;
-    await supabase
-      .from('updates')
-      .update({
-        id: update.id,
-        shortName: update.shortName,
-        fullName: update.fullName,
-        link: update.link,
-        showAuthor: update.showAuthor,
-        description: update.description,
-        date: update.date,
-        tags: update.tags,
-        context: update.context,
-        state: update.state,
-        author: update.author,
-        whoCanView: update.whoCanView,
-        status: update.status,
-      })
-      .eq('id', id);
-  }
-
-  updateUpdatesAfterUPSERT(payload: any) {
-    const currentUpdates = this.updatesSubject.value;
-    const index = currentUpdates.findIndex((r) => r.id === payload.id);
-    if (index !== -1) {
-      const updatedUpdates = [...currentUpdates];
-      updatedUpdates[index] = payload;
-      this.updatesSubject.next(updatedUpdates);
-    }
-  }
-
-  updateUpdatesAfterINSERT(payload: any) {
-    const currentUpdates = this.updatesSubject.value;
-    const updatedUpdates = [...currentUpdates, payload];
-    this.updatesSubject.next(updatedUpdates);
-  }
-  updateUpdatesAfterDELETE(payload: any) {
-    this.updatesSubject.next(
-      this.updatesSubject.value.filter(
-        (categories) => categories.id !== payload.id,
-      ),
+      options,
     );
+  }
+
+  getTagsBySearch(search: string) {
+    const options = { withCredentials: true };
+
+    const url = `${this.updatesUrl}/tags?search=${search}`;
+    return this.http.get<string[]>(url, options);
+  }
+
+  publishUpdate(updateId: number) {
+    const options = { withCredentials: true };
+
+    const url = `${this.updatesUrl}/${updateId}/publish`;
+    return this.http.put(url, {}, options);
+  }
+
+  getPublicUpdates(
+    limit: number,
+    page: number,
+    filter?: 'state' | 'tag',
+    filterContent?: string,
+  ): Observable<IUpdate[]> {
+    let url = `${this.updatesUrl}?limit=${limit}&page=${page}`;
+    const options = { withCredentials: true };
+
+    if (filter) {
+      url += `&${filter}=${filterContent}`;
+    }
+
+    return this.http.get<IUpdate[]>(url, options);
+  }
+
+  getAwaitingUpdatesCount() {
+    const options = { withCredentials: true };
+
+    const url = `${this.updatesUrl}/awaits-count`;
+
+    return this.http.get<number>(url, options);
+  }
+
+  getAwaitsUpdates(limit: number, page: number) {
+    const options = { withCredentials: true };
+    const url = `${this.updatesUrl}/awaits?limit=${limit}&page=${page}`;
+    return this.http.get<IUpdate[]>(url, options);
+  }
+
+  postUpdate(update: IUpdate) {
+    const options = { withCredentials: true };
+
+    return this.http.post(this.updatesUrl, update, options);
   }
 }

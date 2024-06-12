@@ -1,9 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
 import { Observable, of } from "rxjs";
-import { AuthService } from "src/app/modules/authentication/services/auth.service";
 import { IUser } from "src/app/modules/user-pages/models/users";
-import { UserService } from "src/app/modules/user-pages/services/user.service";
+
+
+export function notNullValidator(): ValidatorFn {
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    return control.value === null ? { 'notNull': { value: control.value } } : null;
+  };
+}
+
+export function notOnlyGroupDivider(): ValidatorFn {
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    const value = control.value as string;
+    if (value && value.includes('!!!') && value.replace(/!/g, '').length < 2) {
+      return { invalid: true };
+    }
+    return null;
+  };
+}
+
+
 
 export function usernameExistsValidator(users: IUser[], user:IUser) {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -56,26 +73,6 @@ export const policyValidator: ValidatorFn = (
 }
   
 
-export async function emailExistsValidator(users: IUser[],authService:AuthService) {
-
-
-  return async (control: AbstractControl): Promise<ValidationErrors | null> => {
-    const email = control.value;
-
-    if (email === undefined || email === '') {
-      return null; // Пустое значение считается допустимым
-    }
-
-    // Асинхронно загружаем пользователей из базы данных
-    const userInDatabase = await authService.loadUserFromSupabaseByEmail(email);
-
-    if (userInDatabase !== null) {
-      return { emailExists: true }; // Устанавливаем ошибку с именем 'emailExists'
-    } else {
-      return null;
-    }
-  };
-}
 
 
   

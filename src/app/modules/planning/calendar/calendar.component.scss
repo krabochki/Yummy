@@ -136,7 +136,7 @@ h1 {
   font-size: var(--font-xxl);
   font-family: var(--font-family-accent);
   text-align: center;
-  margin-bottom: 1em;
+  margin-bottom: 1.2em;
   line-height: 1;
 }
 .btn-group {
@@ -259,10 +259,11 @@ justify-content: center
   .date{
     display:flex;flex-direction: column;
     text-align: left;
-    row-gap: 0.5em;
+    row-gap: 0.3em;
   
     justify-content: center;
     align-items: flex-start;
+    line-height: 1.2;
    span{
       font-weight: 600;
 
@@ -284,11 +285,35 @@ justify-content: center
      &:nth-child(2n){
       background-color: var(--color-background-deeper-unactive);
     }
+
   }
+  .fulldate{
+    line-height: 1.2;
+  }
+  .edit:nth-child(2n){
+    background:linear-gradient(to right, var(--color-background) 10%, var(--color-background-deeper-unactive))
+  }
+        .delete:nth-child(2n) {
+          background: linear-gradient(to left, var(--color-background) 10%, var(--color-background-deeper-unactive))
+        }
   .name{
     &:nth-child(2n+1){
       background-color: var(--color-background-deeper-unactive);
     }
+    font-weight: 700;
+    p{transition: 0.2s;}
+    a{
+      transition: 0.2s;
+      text-decoration-thickness: 1.3px;
+      &:hover {
+          p {
+            color: var(--color);
+          }
+      
+            text-decoration-color: var(--color);
+        }
+    }
+    
   }
   .color{
     align-self: center;
@@ -300,12 +325,13 @@ justify-content: center
     max-width: 100%;
     text-overflow: ellipsis;
     overflow: hidden;
+    word-break: break-word;
   }
   row-gap: 2px;
   column-gap: 2px;
   width: 100%;
   display: grid;
-  grid-template-columns: 3em 0.5fr 3em 1fr  3em;
+  grid-template-columns: 3em 0.5fr 4em 1fr  3em;
 }
 
 .row{
@@ -330,9 +356,31 @@ justify-content: center
 }
 
 }
+@media(max-width:600px) and (min-width:481px){
+  .table{
+    grid-template-columns: 3em 0.5fr 1fr 3em;
+  }
+  .name p{
+    color: var(--color);
+  }
+  .name a{
+        text-decoration-color: var(--color);
+  }
+  .color-block, .head.colr{
+    display: none !important;
+  }
+}
 
 @media(max-width:480px){
+  .table > *{
+    background-color: none !important;
+    background: none !important;
+  }
   
+  .table .delete:not(:last-of-type){
+    padding-bottom: 1.4em;
+    border-bottom: 1px solid var(--color-foreground-unactive);
+  }
   .table .date{
    align-items: flex-start;
    justify-content: center;
@@ -373,6 +421,7 @@ justify-content: center
     justify-content: center;
     text-align: center;
   }
+
   .delete{
     width: 100%;
     grid-column-start: 1;

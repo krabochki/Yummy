@@ -1,6 +1,5 @@
-import { IUpdate } from 'src/app/modules/common-pages/updates/updates/const';
+import { IUpdate } from 'src/app/modules/common-pages/components/updates/updates/const';
 import { ICategory } from 'src/app/modules/recipes/models/categories';
-import { IComment } from 'src/app/modules/recipes/models/comments';
 import { IIngredient } from 'src/app/modules/recipes/models/ingredients';
 import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
@@ -8,72 +7,71 @@ import { IUser } from 'src/app/modules/user-pages/models/users';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 
 export function notifyForAuthorOfBlockedComment(
-  blockedComment: IComment,
-  recipeWithComment: IRecipe,
-  notificationService: NotificationService,
+  commentText: string,
+  recipeName: string,
+  recipeId:number
+  ,  notificationService: NotificationService,
 ) {
   return notificationService.buildNotification(
     'Ваш комментарий удален по жалобе',
-    `Ваш комментарий «${blockedComment.text}» под рецептом « ${recipeWithComment.name} » удален по жалобе`,
+    `Ваш комментарий «${commentText}» под рецептом « ${recipeName} » удален по жалобе`,
     'error',
     'comment',
-    '/recipes/list/' + recipeWithComment.id,
+    '/recipes/list/' + recipeId,
   );
 }
 
 export function notifyForReporterOfBlockedComment(
-  blockedComment: IComment,
-  recipeWithComment: IRecipe,
-  authorOfBlockedComment: IUser,
+  commentText: string,
+  recipeName: string,
+  recipeId: number,
+  commentAuthorName: string,
   notifyService: NotificationService,
 ) {
   return notifyService.buildNotification(
     'Комментарий удален по твоей жалобе',
     `Ваша жалоба на комментарий пользователя ${
-      authorOfBlockedComment.fullName
-        ? authorOfBlockedComment.fullName
-        : '@' + authorOfBlockedComment.username
-    } «${blockedComment.text}» под рецептом «${
-      recipeWithComment.name
+      commentAuthorName } «${commentText}» под рецептом «${
+      recipeName
     }» принята`,
     'success',
     'comment',
-    '/recipes/list/' + recipeWithComment.id,
+    '/recipes/list/' + recipeId,
   );
 }
 
 export function notifyForReporterOfLeavedComment(
-  authorOfLeavedComment: IUser,
-  recipeWithComment: IRecipe,
-  leavedComment: IComment,
+  authorName: string,
+  recipeName: string,
+  recipeId: number,
+  commentText:string,
   notifyService: NotificationService,
 ): INotification {
   return notifyService.buildNotification(
     'Жалоба на комментарий отклонена',
     `Ваша жалоба на комментарий пользователя ${
-      authorOfLeavedComment.fullName
-        ? authorOfLeavedComment.fullName
-        : '@' + authorOfLeavedComment.username
-    } «${leavedComment.text}» под рецептом «${
-      recipeWithComment.name
+      authorName
+    } «${commentText}» под рецептом «${
+      recipeName
     }» отклонена`,
     'error',
     'comment',
-    '/recipes/list/' + recipeWithComment.id,
+    '/recipes/list/' + recipeId,
   );
 }
 
 export function notifyForAuthorOfLeavedComment(
-  leavedComment: IComment,
-  recipeWithComment: IRecipe,
+  commentText:string,
+  recipeName:string,
+  recipeId:number,
   notifyService: NotificationService,
 ): INotification {
   return notifyService.buildNotification(
     'Жалоба на комментарий отклонена',
-    `Жалоба на ваш комментарий «${leavedComment.text}» под рецептом «${recipeWithComment.name}» отклонена модератором. Комментарий сохранен!`,
+    `Жалоба на ваш комментарий «${commentText}» под рецептом «${recipeName}» отклонена модератором. Комментарий сохранен!`,
     'info',
     'comment',
-    '/recipes/list/' + recipeWithComment.id,
+    '/recipes/list/' + recipeId,
   );
 }
 
@@ -94,23 +92,22 @@ export function notifyForAuthorOfApprovedUpdate(
   notifyService: NotificationService,
 ) {
   return notifyService.buildNotification(
-    'Обновление одобрено',
-    `Ваше обновление «${approvedUpdate.shortName}» одобрено администратором`,
+    'Новость одобрена',
+    `Ваша новость «${approvedUpdate.shortName}» одобрена администратором`,
     'success',
     'without',
-    '/updates',
+    '/news',
   );
 }
 export function notifyForFollowersOfApprovedRecipeAuthor(
-  author: IUser,
+
+  authorName:string,
   recipe: IRecipe,
   notifyService: NotificationService,
 ) {
   return notifyService.buildNotification(
     'Новый рецепт от кулинара',
-    `Кулинар ${getName(
-      author,
-    )}, на которого вы подписаны, поделился новым рецептом «${recipe.name}»`,
+    `Кулинар ${authorName}, на которого вы подписаны, поделился новым рецептом «${recipe.name}»`,
     'info',
     'recipe',
     '/recipes/list/' + recipe.id,
@@ -139,8 +136,8 @@ export function notifyForAuthorOfDismissedUpdate(
   notifyService: NotificationService,
 ): INotification {
   return notifyService.buildNotification(
-    'Обновление отклонено',
-    `Ваше обновление «${update.shortName}» отклонено администратором`,
+    'Новость отклонена',
+    `Ваша новость «${update.shortName}» отклонена администратором`,
     'error',
     'without',
     '',
@@ -156,7 +153,7 @@ export function notifyForAuthorOfIngredient(
   const link = action === 'approve' ? '/ingredients/list/' + ingredient.id : '';
   return notifyService.buildNotification(
     `Ингредиент ${verb}`,
-    `Созданный вами и отправленный на проверку ингредиент «${ingredient.name}» ${verb}`,
+    `Добавленный вами и отправленный на проверку ингредиент «${ingredient.name}» ${verb}`,
     action === 'approve' ? 'success' : 'error',
     'ingredient',
     link,
@@ -191,16 +188,13 @@ export function notifyForAuthorOfApprovedCategory(
 }
 
 export function notifyForDemotedUser(
-  user: IUser,
   notifyService: NotificationService,
 ) {
   return notifyService.buildNotification(
     'Вас разжаловали',
-    `Вы теперь не являетесь модератором сайта Yummy. Вас разжаловал администратор ${getName(
-      user,
-    )}`,
+    `Вы теперь не являетесь модератором сайта Yummy`,
     'warning',
     'demote',
-    `/cooks/list/${user.id}`,
+    '',
   );
 }

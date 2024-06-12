@@ -1,0 +1,37 @@
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+
+
+<div class="bg" (click)="clickBackgroundNotContent($event)">
+  <button class="back" *ngIf="currentImage!==0 && images.length>1" (click)="backClick()">
+    <svg-icon [applyClass]="true" class="arrow" [src]="'/assets/images/svg/back.svg'" />
+  </button>
+  <div  class="image-container" (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)">
+    <div class="image">
+      
+      
+      <img  [ngStyle]="{'zoom':images.length>1?'0.9':1, 'margin-bottom':images.length>1?'1em':'0'}" class="viewed-image noselect" [src]="image" alt="Просматриваемое изображение">
+    
+    <button (click)="downloadImage()" class="download-button">
+      <svg-icon style="zoom:1.3" [applyClass]="true" class="close-icon" [src]="'/assets/images/svg/download.svg'" />
+    </button>
+
+    <button (click)="closeEmitter.emit()" class="close-button">
+      <svg-icon  [applyClass]="true" class="close-icon" [src]="'/assets/images/svg/close.svg'" />
+    </button>
+
+    </div>
+    <div class="circles" *ngIf="images.length>1">
+    <div [ngClass]="{'translucent':currentImage!==i}" *ngFor="let circle of images; let i =index" class="circle" (click)="currentImage=i; image=circle" [ngStyle]="{'background-image':'url('+circle+')'}">
+        
+    </div>
+
+   
+    </div>
+    
+    
+  </div>
+  <button class="next" *ngIf="currentImage!==images.length-1 && images.length>1" (click)="nextClick()">
+    <svg-icon [applyClass]="true" class="arrow" [src]="'/assets/images/svg/next.svg'" />
+  </button>
+</div>

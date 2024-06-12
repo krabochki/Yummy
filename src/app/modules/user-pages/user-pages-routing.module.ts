@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { UserPagesComponent } from './user-pages.component';
 import { UserPageComponent } from './components/user-page/user-page.component';
 import { UsersPageComponent } from './components/users-page/users-page.component';
-import { SomeRecipesPageComponent } from '../recipes/components/recipes/some-recipes-page/some-recipes-page.component';
 import { UserResolver } from './services/user.resolver';
 import { AuthGuard } from '../authentication/guards/auth.guard';
 const routes: Routes = [
@@ -31,13 +30,7 @@ const routes: Routes = [
 
         component: UsersPageComponent,
       },
-      {
-        path: 'cooks/followers',
-        data: { filter: 'followers' },
-        canActivate: [AuthGuard],
-
-        component: UsersPageComponent,
-      },
+   
       {
         path: 'cooks/following',
         data: { filter: 'following' },
@@ -74,14 +67,8 @@ const routes: Routes = [
         path: 'cooks/list/:id',
         component: UserPageComponent,
         resolve: { user: UserResolver },
-      },
+      }
 
-      {
-        path: 'cooks/updates',
-        canActivate: [AuthGuard],
-        data: { filter: 'updates' },
-        component: SomeRecipesPageComponent,
-      },
     ],
   },
 ];

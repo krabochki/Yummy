@@ -1,40 +1,62 @@
-import { Nutrition } from "./recipes";
+import { Nutrition } from './recipes';
 
 export interface IIngredient {
-  id: number; 
-  name: string; 
+  id: number;
+  name: string;
   history: string;
-  description: string; 
-  variations: string[]; //варианты написания ингредиента 
-                        //которые будут учитываться при поиске рецептов с ним.например картофель: картошка, бульба и тд
+  description: string;
+  imageLoading?: boolean;
+  approvedName?: string;
+  creatorName?: string;
+  changerName?: string;
+  recipesCount?: number;
+  modifiedDate?: string;
+
+  changerId?: number;
+  approvedDate?: string;
+
+  approvedId?: number;
+
+  variations: string[]; //варианты написания ингредиента
+  //которые будут учитываться при поиске рецептов с ним.например картофель: картошка, бульба и тд
   advantages?: string[];
-  disadvantages?: string[]; 
+  disadvantages?: string[];
   recommendedTo?: string[];
   contraindicatedTo?: string[]; //противопоказано
   status: 'awaits' | 'public';
-  origin?: string; 
-  precautions?: string[]; //меры предосторожности 
-  compatibleDishes?: string[]; // с чем сочетается 
-  cookingMethods?: string[]; //как готовить 
-  tips?: string[]; 
-  author?: number,
-  sendDate?: string,
-  nutritions?:Nutrition[],
-  storageMethods?: string[],//способы хранения  
+  origin?: string;
+  precautions?: string[]; //меры предосторожности
+  compatibleDishes?: string[]; // с чем сочетается
+  cookingMethods?: string[]; //как готовить
+  tips?: string[];
+  authorName?: string;
+  author?: number;
+  sendDate?: string;
+  nutritions?: Nutrition[];
+  storageMethods?: string[]; //способы хранения
   externalLinks?: ExternalLink[]; //доп ресурсы
   shoppingListGroup?: number; //основное
   image?: string;
+  imageURL?: string;
 }
-export interface ExternalLink{
-  name: string,
-  link:string
+export interface ExternalLink {
+  name: string;
+  link: string;
 }
 
-export interface IIngredientsGroup {
+export interface IGroup {
   id: number;
   name: string;
+  imageLoading?: boolean;
+  changerName?: string;
+  creatorName?: string;
+  authorId?: number;
+  changerId?: number;
+  sendDate?: string;
+  modifiedDate?: string;
   ingredients: number[];
-  image?:string
+  imageURL?: string;
+  image?: string;
 }
 
 export const nullIngredient: IIngredient = {
@@ -42,12 +64,11 @@ export const nullIngredient: IIngredient = {
   name: '',
   description: '',
   history: '',
-  status:'public',
+  status: 'public',
   variations: [],
 };
-export const nullIngredientsGroup: IIngredientsGroup = {
+export const nullGroup: IGroup = {
   id: 0,
   name: '',
   ingredients: [],
 };
-

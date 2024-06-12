@@ -1,6 +1,6 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
-<div class="outer" (click)="clickBackgroundNotContent($event)">
+<div class="outer" *ngIf="!initialLoading" (click)="clickBackgroundNotContent($event)">
   <div class="inner">
     <div class="close-button" (click)="closeEditModal()">
       <svg-icon
@@ -76,7 +76,8 @@
                 class="file"
                   type="file"
                   (change)="onUserpicChange($event)"
-                  accept="image/*"
+                    accept=".png, .jpg, .jpeg, .svg" 
+
                 />
 
                 <div
@@ -102,7 +103,7 @@
             </div>
             <div class="main-info-controls">
               <div class="form-control">
-                <h3>Имя пользователя</h3>
+                <h3>Имя пользователя*</h3>
                 <app-usual-input
                   [inputRequired]="true"
                   [max]="20"
@@ -147,8 +148,11 @@
                   [ngModelOptions]="{standalone: true}"
                     class="calendar-event"
                     type="text"
+                    
                     [(ngModel)]="birthDate"
                     mwlFlatpickr
+                    [dateFormat]="'F, j'"
+                    [altFormat]="'F, j'"
                     [altInput]="true"
                     [convertModelValue]="true"
                 
@@ -204,7 +208,7 @@
           <div class="form-control">
             <h3>Личный веб-сайт</h3>
             <app-usual-input
-              [max]="1000"
+              [max]="100"
               id="website"
               formControlName="website"
               [value]="form.get('website')?.value"
@@ -235,26 +239,33 @@
           </div>
         </div>
         <div *ngIf="currentStep === 2" class="step-container">
+        
+                    <div class="form-control">
+                      <h3>Аккаунт в Telegram</h3>
+                      <app-usual-input [max]="100" id="telegram" [value]="form.get('telegram')?.value" formControlName="telegram"
+                        [placeholder]="'Оставьте ссылку на ваш аккаунт в Telegram'" [error]="
+                                    form.get('telegram')?.invalid &&
+                                    (form.get('telegram')?.dirty || form.get('telegram')?.touched)
+                                      ? 'Введенное значение не является корректной ссылкой на аккаунт пользователя во ВКонтакте. Пример: https://t.me/krabochki'
+                                      : ''
+                                  "></app-usual-input>
+                    </div>
           <div class="form-control">
-            <h3>Аккаунт в Pinterest</h3>
-            <app-usual-input
-              [max]="1000"
-              [value]="form.get('pinterest')?.value"
-              id="pinterest"
-              formControlName="pinterest"
-              [placeholder]="'Оставьте ссылку на ваш аккаунт в Pinterest'"
-              [error]="
-                form.get('pinterest')?.invalid &&
-                (form.get('pinterest')?.dirty || form.get('pinterest')?.touched)
-                  ? 'Введенное значение не является корректной ссылкой на аккаунт пользователя в Pintreset. Пример: https://pinterest.com/krabochki'
-                  : ''
-              "
-            ></app-usual-input>
-          </div>
-          <div class="form-control">
+
+                      <div class="form-control">
+                        <h3>Электронная почта</h3>
+                        <app-usual-input [max]="64" id="email" [value]="form.get('email')?.value" formControlName="email"
+                          [placeholder]="'Введите тут название своей электронной почты'" [error]="
+                                      form.get('email')?.invalid &&
+                                      (form.get('email')?.dirty || form.get('email')?.touched)
+                                        ? 'Введенное значение не является корректной электронной почтой.'
+                                        : ''
+                                    "></app-usual-input>
+                                    <p class="star">*Эта электронная почта не обязательно должна совпадать с почтой, использованной при регистрации. Оставьте тут почту, если хотите, чтобы другие пользователи могли связаться с вами.</p>
+                      </div>
             <h3>Аккаунт во ВКонтакте</h3>
             <app-usual-input
-              [max]="1000"
+              [max]="100"
               id="vk"
               [value]="form.get('vk')?.value"
               formControlName="vk"
@@ -267,11 +278,21 @@
               "
             ></app-usual-input>
           </div>
+            <div class="form-control">
+              <h3>Аккаунт в Pinterest</h3>
+              <app-usual-input [max]="100" [value]="form.get('pinterest')?.value" id="pinterest" formControlName="pinterest"
+                [placeholder]="'Оставьте ссылку на ваш аккаунт в Pinterest'" [error]="
+                            form.get('pinterest')?.invalid &&
+                            (form.get('pinterest')?.dirty || form.get('pinterest')?.touched)
+                              ? 'Введенное значение не является корректной ссылкой на аккаунт пользователя в Pintreset. Пример: https://pinterest.com/krabochki'
+                              : ''
+                          "></app-usual-input>
+            </div>
           <div class="form-control">
             <h3>Аккаунт в Twitter</h3>
             <app-usual-input
               [value]="form.get('twitter')?.value"
-              [max]="1000"
+              [max]="100"
               id="twitter"
               formControlName="twitter"
               [placeholder]="'Оставьте ссылку на ваш аккаунт в Twitter'"
@@ -287,7 +308,7 @@
             <h3>Аккаунт в Facebook</h3>
             <app-usual-input
               type="facebook"
-              [max]="1000"
+              [max]="100"
               [value]="form.get('facebook')?.value"
               id="facebook"
               formControlName="facebook"
@@ -310,7 +331,7 @@
               </p>
               <app-button
                 [disabled]="areObjectsEqual() && form.valid"
-                (click)="form.valid ? (saveModal = true) : null"
+                (click)="form.valid && areObjectsEqual() ? (saveModal = true) : null"
                 [text]="'Изменить'"
                 [color]="'sec'"
                 [style]="'filled'"
@@ -400,23 +421,22 @@
 
 <app-modal
   @modal
-  *ngIf="successModal"
-  [style]="'sec'"
-  [title]="'Аккаунт успешно изменен'"
+  *ngIf="errorModal"
+  [style]="'prim'"
+  [title]="'Произошла ошибка'"
   [type]="'Ok'"
-  (resultEmit)="handleSuccessModal($event)"
+  (resultEmit)="handleErrorModal()"
   [buttonsText]="['Хорошо']"
-  [description]="'Изменения вашего аккаунта успешно сохранены!'"
+  [description]="error || 'Произошла неизвестная ошибка при попытке обновить данные пользователя'"
 ></app-modal>
+
+<app-modal @modal *ngIf="successModal" [style]="'sec'" [title]="'Аккаунт успешно изменен'" [type]="'Ok'"
+  (resultEmit)="handleSuccessModal()" [buttonsText]="['Хорошо']"
+  [description]="'Изменения вашего аккаунта успешно сохранены! '"></app-modal>
 
 <app-modal
   @modal
   [style]="'await'"
   [type]="'Ok'"
-  [noButtons]="true"
-  [style]="'sec'"
-  [title]="'Подождите...'"
-  [type]="'Ok'"
-  [description]="'Применяются настройки...'"
-  *ngIf="loading"
+  *ngIf="loading || initialLoading"
 ></app-modal>

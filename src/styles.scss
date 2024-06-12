@@ -13,6 +13,27 @@
   display: flex;
 }
 
+.caption {
+  text-align: center;
+  width: 85%;
+  line-height: 1;
+  font-weight: 300;
+  font-size: 0.95rem;  
+  display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    white-space: normal;
+    margin-bottom: 6em;
+    text-overflow: ellipsis;
+  color: #808080;
+
+  &.big{
+    font-size: 1.2rem;
+    margin-bottom: 8em;
+    width: 80%;
+  }
+}
 @mixin center {
   align-items: center;
   justify-content: center;
@@ -57,6 +78,9 @@ body {
 
   --scroll-thumb: #cccccc;
   --scroll-body: #e1e0e0;
+  --sun: #ffab2c;
+  --moon: #212121;
+
   --scroll-body-modal: #8b8b8b;
 
   --color-admin: #d659f6;
@@ -76,6 +100,9 @@ body {
   --facebook: #4994f7;
   --vk: #7094bd;
   --pinterest: #c73d4d;
+
+  --loading-accent: rgb(215, 215, 215);
+  --loading: rgb(200,200, 200);
 }
 
 .dark-mode {
@@ -84,11 +111,17 @@ body {
   --vk: #4a76a8;
   --pinterest: #bd081c;
 
+
+  --loading-accent: #7d7d7d;
+  --loading: #5b5b5b;
+
   --color-primary: #fe6668;
   --scroll-body-modal: #191919;
   --color-secondary: #ffb446;
 
   --color-foreground: #e3e3e3;
+  --sun: #e3e3e3;
+  --moon: #ffb446;
   --color-background: #272727;
   --color-background-deeper: #363636;
   --not-read: #494949;
@@ -149,15 +182,44 @@ body {
   --font-family-main: "URW Geometric";
   --font-family-accent: "Appetite new";
 }
+@media(max-width:900px){
+  .caption {
+  
+      &.big {
+        font-size: 1rem;
+        margin-bottom: 6em;
+      }
+    }
+}
+@media(max-width:768px) {
+  .caption {
+
+    &.big {
+      font-size: 1.2rem;
+    }
+  }
+}
+
+@media (max-width:480px) {
+
+      .caption {
+  
+        &.big {
+          font-size: 1.15rem;
+        }
+      }
+    
+  :root {
+    --font-xxl: 1.75em;
+  }
+}
 
 $maxWidth: 1280;
 
 @mixin adaptive-font($pcSize, $mobSize) {
   $addSize: $pcSize - $mobSize;
   $maxWidth: $maxWidth - 320;
-  font-size: calc(
-    #{$mobSize + px} + #{$addSize} * ((100vw - 320px) / #{$maxWidth})
-  );
+  font-size: calc(#{$mobSize + px} + #{$addSize} * ((100vw - 320px) / #{$maxWidth}));
 }
 
 :root {
@@ -199,6 +261,7 @@ body.inheritCursors * {
   background-color: var(--color-secondary);
   color: var(--color-background);
 }
+
 *,
 *::before,
 *::after {
@@ -302,9 +365,10 @@ label {
 legend {
   display: block;
 }
+
 body,
-html {
-}
+html {}
+
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
@@ -314,9 +378,11 @@ body {
 body::-webkit-scrollbar {
   width: 16px;
 }
+
 body::-webkit-scrollbar-track {
   background: var(--scroll-body);
 }
+
 body::-webkit-scrollbar-thumb {
   background-color: var(--scroll-thumb);
   border-radius: 20px;
@@ -344,11 +410,12 @@ body {
   .drag-scroll-content {
     margin-right: 0;
     padding-right: 6%;
-    word-wrap: normal !important;
+    word-wrap: break-word !important;
 
     * {
-      word-wrap: normal !important;
+      word-wrap: break-word !important;
     }
+
     &::-webkit-scrollbar {
       display: none !important;
     }
@@ -359,10 +426,12 @@ body {
   &::-webkit-scrollbar {
     width: 12px;
   }
+
   &::-webkit-scrollbar-track {
     border-radius: 20px;
     background: var(--scroll-body);
   }
+
   &::-webkit-scrollbar-thumb {
     background-color: var(--scroll-thumb);
     border-radius: 20px;
@@ -394,6 +463,7 @@ input.calendar-event {
   transition: all 0.2s ease-in-out;
   line-height: 1.4;
   font-size: 0.9em;
+
   &::placeholder {
     font-weight: 300;
   }
@@ -405,11 +475,16 @@ input.calendar-event {
 }
 
 .noselect {
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-  -khtml-user-select: none; /* Konqueror HTML */
-  -moz-user-select: none; /* Old versions of Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Safari */
+  -khtml-user-select: none;
+  /* Konqueror HTML */
+  -moz-user-select: none;
+  /* Old versions of Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
   user-select: none;
 }
 
@@ -417,108 +492,123 @@ input.calendar-event {
 
 @font-face {
   font-family: 'URW Geometric';
-  src: url(assets/fonts/URWGEOMETRIC-THIN.TTF) format('truetype'),
-    url(assets/fonts/URWGEOMETRIC-THIN.woff) format('woff'),
-    url(assets/fonts/URWGEOMETRIC-THIN.woff2) format('woff2');
+  src: url(/assets/fonts/URWGEOMETRIC-THIN.TTF) format('truetype'),
+    url(/assets/fonts/URWGEOMETRIC-THIN.woff) format('woff'),
+    url(/assets/fonts/URWGEOMETRIC-THIN.woff2) format('woff2');
   font-weight: 100;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'URW Geometric';
-  src: url(assets/fonts/URWGEOMETRIC-EXTRALIGHT.TTF) format('truetype'),
-    url(assets/fonts/URWGEOMETRIC-EXTRALIGHT.woff) format('woff'),
-    url(assets/fonts/URWGEOMETRIC-EXTRALIGHT.woff2) format('woff2');
+  src: url(/assets/fonts/URWGEOMETRIC-EXTRALIGHT.TTF) format('truetype'),
+    url(/assets/fonts/URWGEOMETRIC-EXTRALIGHT.woff) format('woff'),
+    url(/assets/fonts/URWGEOMETRIC-EXTRALIGHT.woff2) format('woff2');
   font-weight: 200;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'URW Geometric';
-  src: url(assets/fonts/URWGEOMETRIC-LIGHT.TTF) format('truetype'),
-    url(assets/fonts/URWGEOMETRIC-LIGHT.woff) format('woff'),
-    url(assets/fonts/URWGEOMETRIC-LIGHT.woff2) format('woff2');
+  src: url(/assets/fonts/URWGEOMETRIC-LIGHT.TTF) format('truetype'),
+    url(/assets/fonts/URWGEOMETRIC-LIGHT.woff) format('woff'),
+    url(/assets/fonts/URWGEOMETRIC-LIGHT.woff2) format('woff2');
   font-weight: 300;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'URW Geometric';
-  src: url(assets/fonts/URWGEOMETRIC-REGULAR.TTF) format('truetype'),
-    url(assets/fonts/URWGEOMETRIC-REGULAR.WOFF) format('woff'),
-    url(assets/fonts/URWGEOMETRIC-REGULAR.WOFF2) format('woff2');
+  src: url(/assets/fonts/URWGEOMETRIC-REGULAR.TTF) format('truetype'),
+    url(/assets/fonts/URWGEOMETRIC-REGULAR.WOFF) format('woff'),
+    url(/assets/fonts/URWGEOMETRIC-REGULAR.WOFF2) format('woff2');
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'URW Geometric';
-  src: url(assets/fonts/URWGEOMETRIC-ITALIC.TTF) format('truetype'),
-    url(assets/fonts/URWGEOMETRIC-ITALIC.woff) format('woff'),
-    url(assets/fonts/URWGEOMETRIC-ITALIC.woff2) format('woff2');
+  src: url(/assets/fonts/URWGEOMETRIC-ITALIC.TTF) format('truetype'),
+    url(/assets/fonts/URWGEOMETRIC-ITALIC.woff) format('woff'),
+    url(/assets/fonts/URWGEOMETRIC-ITALIC.woff2) format('woff2');
   font-weight: 400;
   font-style: italic;
 }
 
 @font-face {
   font-family: 'URW Geometric';
-  src: url(assets/fonts/URWGEOMETRIC-MEDIUM.TTF) format('truetype'),
-    url(assets/fonts/URWGEOMETRIC-MEDIUM.woff) format('woff'),
-    url(assets/fonts/URWGEOMETRIC-MEDIUM.woff2) format('woff2');
+  src: url(/assets/fonts/URWGEOMETRIC-MEDIUM.TTF) format('truetype'),
+    url(/assets/fonts/URWGEOMETRIC-MEDIUM.woff) format('woff'),
+    url(/assets/fonts/URWGEOMETRIC-MEDIUM.woff2) format('woff2');
   font-weight: 500;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'URW Geometric';
-  src: url(assets/fonts/URWGEOMETRIC-SEMIBOLD.TTF) format('truetype'),
-    url(assets/fonts/URWGEOMETRIC-SEMIBOLD.woff) format('woff'),
-    url(assets/fonts/URWGEOMETRIC-SEMIBOLD.woff2) format('woff2');
+  src: url(/assets/fonts/URWGEOMETRIC-SEMIBOLD.TTF) format('truetype'),
+    url(/assets/fonts/URWGEOMETRIC-SEMIBOLD.woff) format('woff'),
+    url(/assets/fonts/URWGEOMETRIC-SEMIBOLD.woff2) format('woff2');
   font-weight: 600;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'URW Geometric';
-  src: url(assets/fonts/URWGEOMETRIC-BOLD.TTF) format('truetype'),
-    url(assets/fonts/URWGEOMETRIC-BOLD.woff) format('woff'),
-    url(assets/fonts/URWGEOMETRIC-BOLD.woff2) format('woff2');
+  src: url(/assets/fonts/URWGEOMETRIC-BOLD.TTF) format('truetype'),
+    url(/assets/fonts/URWGEOMETRIC-BOLD.woff) format('woff'),
+    url(/assets/fonts/URWGEOMETRIC-BOLD.woff2) format('woff2');
   font-weight: 700;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'URW Geometric';
-  src: url(assets/fonts/URWGEOMETRIC-EXTRABOLD.TTF) format('truetype'),
-    url(assets/fonts/URWGEOMETRIC-EXTRABOLD.woff) format('woff'),
-    url(assets/fonts/URWGEOMETRIC-EXTRABOLD.woff2) format('woff2');
+  src: url(/assets/fonts/URWGEOMETRIC-EXTRABOLD.TTF) format('truetype'),
+    url(/assets/fonts/URWGEOMETRIC-EXTRABOLD.woff) format('woff'),
+    url(/assets/fonts/URWGEOMETRIC-EXTRABOLD.woff2) format('woff2');
   font-weight: 800;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'URW Geometric';
-  src: url(assets/fonts/URWGEOMETRIC-HEAVY.TTF) format('truetype'),
-    url(assets/fonts/URWGEOMETRIC-HEAVY.woff) format('woff'),
-    url(assets/fonts/URWGEOMETRIC-HEAVY.woff2) format('woff2');
+  src: url(/assets/fonts/URWGEOMETRIC-HEAVY.TTF) format('truetype'),
+    url(/assets/fonts/URWGEOMETRIC-HEAVY.woff) format('woff'),
+    url(/assets/fonts/URWGEOMETRIC-HEAVY.woff2) format('woff2');
   font-weight: 900;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'URW Geometric';
-  src: url(assets/fonts/URWGEOMETRIC-BLACK.TTF) format('truetype'),
-    url(assets/fonts/URWGEOMETRIC-BLACK.woff) format('woff'),
-    url(assets/fonts/URWGEOMETRIC-BLACK.woff2) format('woff2');
+  src: url(/assets/fonts/URWGEOMETRIC-BLACK.TTF) format('truetype'),
+    url(/assets/fonts/URWGEOMETRIC-BLACK.woff) format('woff'),
+    url(/assets/fonts/URWGEOMETRIC-BLACK.woff2) format('woff2');
   font-weight: 1000;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Appetite New';
-  src: url(assets/fonts/APPETITENEW.TTF) format('truetype'),
-    url(assets/fonts/APPETITENEW.woff) format('woff'),
-    url(assets/fonts/APPETITENEW.woff2) format('woff2');
+  src: url(/assets/fonts/APPETITENEW.TTF) format('truetype'),
+    url(/assets/fonts/APPETITENEW.woff) format('woff'),
+    url(/assets/fonts/APPETITENEW.woff2) format('woff2');
   font-weight: 400;
   font-style: normal;
+}
+
+
+
+@media print {
+
+  app-footer,
+  app-header,
+  .header-margin {
+    display: none !important
+  }
+
+  body {
+    background-color: white;
+  }
 }

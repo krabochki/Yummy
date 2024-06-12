@@ -1,17 +1,19 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { IUser } from '../../models/users';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { IUser, nullUser } from '../../models/users';
 
 @Component({
   selector: 'app-users-list',
   templateUrl: './users-list.component.html',
   styleUrls: ['./users-list.component.scss'],
 })
-export class UsersListComponent {
-  @Input() adminpanel = false;
+export class UsersListComponent implements OnInit {
+  @Input() loading: number = 0;
   @Input() public users: IUser[] = [];
-  @Output() demoteClick = new EventEmitter<IUser>();
+  @Output() followStateChanges = new EventEmitter();
 
-  demote(event:IUser) {
-    this.demoteClick.emit(event)
+  ngOnInit() {
+    if (this.loading) {
+      this.users = Array(this.loading).fill(nullUser);
+    }
   }
 }

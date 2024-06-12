@@ -64,13 +64,13 @@
             ></svg-icon>
             Подробнее
           </button>
-          <p class="description" *ngIf="showInfo" @height>
-            {{ steps[currentStep].description }}
+          <p class="description" [innerHTML]="steps[currentStep].description" *ngIf="showInfo" @height>
+         
           </p>
         </div>
         <div class="step-container" *ngIf="currentStep === 0">
           <div class="form-control">
-            <h3>Название рецепта</h3>
+            <h3>Название рецепта*</h3>
             <app-usual-input
               [value]="this.form.get('recipeName')?.value"
               [inputRequired]="true"
@@ -90,18 +90,21 @@
             ></app-usual-input>
           </div>
           <div class="form-control">
-            <h3>Описание рецепта</h3>
+            <h3>Описание рецепта*</h3>
             <app-usual-input
               [inputType]="'textarea'"
               [max]="5000"
+                            [inputRequired]="true"
+
               [value]="this.form.get('description')?.value"
               type="text"
               id="description"
               formControlName="description"
               [error]="
-                form.get('description')?.invalid &&
-                form.get('description')?.touched
-                  ? 'Описание рецепта не должно превышать 5000 символов'
+                 form.get('description')?.invalid &&
+                (form.get('description')?.dirty ||
+                  form.get('description')?.touched)
+                  ? 'Описание рецепта обязательно (не менее 15 символов) и не должно превышать 5000 символов'
                   : ''
               "
               [placeholder]="'Опишите ваш рецепт, его вкус и особенности'"
@@ -140,7 +143,8 @@
                 class="input-image"
                 id="image"
                 name="image"
-                accept="image/*"
+                  accept=".png, .jpg, .jpeg, .svg" 
+
                 (change)="mainPhotoChange($event)"
               />
 
@@ -243,9 +247,10 @@
 
             <div>
               <app-autocomplete
+              [startOnTyping]="true"
+              [context]="'categories'"
                 [disabled]="selectedCategories.length === 5"
                 (categoryEmitter)="addCategory($event)"
-                [group]="group"
                 [clearValueOnBlur]="true"
                 [placeholder]="
                   'Выберите соответствующие категории для вашего рецепта'
@@ -280,6 +285,9 @@
           <div class="form-control ingred">
             <h3>Список ингредиентов вашего рецепта</h3>
 
+ 
+
+
             <div
               cdkDropList
               (cdkDropListDropped)="drop('ingredients', $event)"
@@ -305,7 +313,8 @@
                   class="ingredient-cont"
                   cdkDragBoundary=".boundary"
                 >
-                  <div class="ingredient">
+                  <div class="ingredient"                 [ngClass]="{'group-start':ingredient.get('name')?.value.slice(0,3) === '!!!'}"
+>
                     <div tabindex="-1" class="drag" cdkDragHandle>
                       <svg-icon
                         [applyClass]="true"
@@ -316,16 +325,15 @@
                     </div>
                     <div class="num">{{ i + 1 }}</div>
 
-                    <app-autocomplete
+
+
+                    <app-usual-input
                       [error]="controlInvalid('name', ingredient) ? ' ' : ''"
                       [max]="50"
-                      [startOnTyping]="true"
                       required
                       formControlName="name"
-                      [leaveValueAfterBlur]="true"
-                      [ingredients]="ingredients"
                       [placeholder]="'Название ингредиента*'"
-                    ></app-autocomplete>
+                    ></app-usual-input>
 
                     <app-usual-input
                       [onlyNumbers]="true"
@@ -418,7 +426,7 @@
                   class="nutrition-cont"
                   cdkDragBoundary=".boundary"
                 >
-                  <div class="nutrition">
+                  <div class="nutrition" [ngClass]="{'group-start':nutrition.get('name')?.value.slice(0,3) === '!!!'}">
                     <div tabindex="-1" class="drag" cdkDragHandle>
                       <svg-icon
                         [applyClass]="true"
@@ -441,7 +449,7 @@
                       [showError]="false"
                       type="text"
                       formControlName="name"
-                      [placeholder]="'Название'"
+                      [placeholder]="'Название*'"
                       required
                     ></app-usual-input>
 
@@ -509,6 +517,7 @@
         <div *ngIf="currentStep === 5">
           <div class="form-control ingred">
             <h3>Список инструкций твоего рецепта</h3>
+
             <div
               formArrayName="instructions"
               id="instructions"
@@ -554,7 +563,7 @@
                         type="text"
                         id="name"
                         formControlName="name"
-                        [placeholder]="'Содержание'"
+                        [placeholder]="'Содержание*'"
                         [inputRequired]="true"
                         [showError]="false"
                         [error]="
@@ -573,6 +582,7 @@
                           (click)="removeInstruction(i)"
                           class="remove-button"
                         >
+                        
                           <svg-icon
                             [applyClass]="true"
                             class="svg-trash"
@@ -631,12 +641,12 @@
                             ></svg-icon>
                           </div>
                           <input
-                            tabindex="-1"
-                            accept="image/*"
-                            type="file"
-                            id="image{{ i }}-{{ j }}"
-                            name="image"
-                            (change)="instuctionImageChange($event, i, j)"
+  tabindex="-1"
+  accept=".png, .jpg, .jpeg, .svg" 
+  type="file"
+  id="image{{ i }}-{{ j }}"
+  name="image"
+  (change)="instuctionImageChange($event, i, j)"
                           />
                         </div>
                       </div>
@@ -654,6 +664,7 @@
                     </div>
                   </div>
                 </div>
+                
               </div>
               <app-button
                 (click)="
@@ -668,6 +679,12 @@
                 [rounded]="true"
               >
               </app-button>
+            </div>
+            <div class="buttons-group" >
+              <button class="open-more" *ngIf="f('instructions').controls.length && anyClosed()"
+                (click)="openAllInstructions()">Открыть везде загрузку изображений</button>
+              <button class="open-more" *ngIf="f('instructions').controls.length && anyOpen()"
+                (click)="closeAllInstructions()">Закрыть везде загрузку изображений</button>
             </div>
           </div>
         </div>
@@ -722,7 +739,10 @@
 
               <app-button
                 class="main"
-                (click)="areObjectsEqual() && form.valid ? submitForm() : null"
+                (click)="
+                areObjectsEqual() && form.valid 
+                ? ( this.editMode ? this.editModalShow = true: this.createModalShow = true)
+                : null"
                 [text]="editMode ? 'Изменить' : 'Сохранить'"
                 [color]="'sec'"
                 [disabled]="areObjectsEqual() && form.valid"
@@ -861,5 +881,10 @@
   [buttonsText]="['Да', 'Нет']"
   [description]="'Вы уверены, что хотите изменить рецепт?'"
 ></app-modal>
-<app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
-  [description]="'Загружаем данные о новом рецепте... Совсем скоро он будет готов...'"/>
+<app-modal [style]="'await'" *ngIf="loading" @modal/>
+
+<app-modal @modal *ngIf="errorModal" [style]="'prim'" [title]="
+    'Произошла ошибка'
+  " [type]="'Ok'" (resultEmit)="handleErrorModal()" [buttonsText]="['Хорошо']" [description]="
+    errorModalContent||'Произошла неизвестная ошибка'
+  "></app-modal>

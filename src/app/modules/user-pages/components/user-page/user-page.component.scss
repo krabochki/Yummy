@@ -8,20 +8,63 @@
   justify-content: center;
 }
 
-.online span{
+.ico{
+  fill: var(--color-foreground);
+  width: 1.2em;
+  min-width: 1.2em;
+  max-width: 1.2em;display: flex;
+    align-items: center;
+    justify-content: center;
+  height: 1.2em;
+  transition: fill 0.1s;
+}
+
+.achievements{
+  row-gap: 0.5em;
+}
+
+.achievement{
+  &.hovered 
+  {
+    .ico{
+    fill: var(--hover-color);
+  }
+  p{
+    color: var(--hover-color);
+  }
+}
+  p{
+    cursor: pointer;
+    transition: 0.2s;
+    font-weight: 600;
+  }
+  display: flex;
+  column-gap:var(--space-xs);
+align-items: center;
+  .box{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+.online span {
   width: 0.6em;
   border-radius: 100%;
   height: 0.6em;
-  &.on{
+
+  &.on {
     background-color: rgb(113, 255, 113);
   }
+
   background-color: var(--scroll-thumb);
 }
-.online{
+
+.online {
   display: flex;
   column-gap: 0.5em;
   align-items: center;
 }
+
 app-modal {
   position: fixed;
   z-index: 10;
@@ -29,10 +72,12 @@ app-modal {
 
 .img-cont {
   position: relative;
-  & .emoji-button:hover ~ .userpic {
+
+  & .emoji-button:hover~.userpic {
     box-shadow: 0 0 0px 3px var(--color-primary-focus);
   }
-  & .hire-button:hover ~ .userpic {
+
+  & .hire-button:hover~.userpic {
     box-shadow: 0 0 0px 3px var(--color-admin-focus);
   }
 
@@ -48,6 +93,7 @@ app-modal {
 
     min-width: 44px;
     min-height: 44px;
+
     &.no-emoji {
       background-color: var(--scroll-body);
       border-radius: 100%;
@@ -100,6 +146,7 @@ app-modal {
 
   .hire-button {
     z-index: 1;
+
     &::after {
       width: 0;
       height: 0;
@@ -248,6 +295,7 @@ ul {
 li {
   display: inline;
 }
+
 @keyframes moveGradient {
   50% {
     background-position: 100% 50%;
@@ -255,14 +303,14 @@ li {
 }
 
 .userpic {
-  
-    --border-width: 3px;
+
+  --border-width: 3px;
   min-width: 10em;
   height: 10em;
   border-radius: 100%;
   transition: 0.2s ease-in-out;
   border: 1px solid #e1e0e0;
-  background-color:#f4f4f4;
+  background-color: #f4f4f4;
   margin: 0 auto;
   min-width: 10em;
   background-size: cover;
@@ -272,60 +320,30 @@ li {
 
 
 
-  &.loading{
-
-      &::after {
-          position: absolute;
-          content: "";
-          top: calc(-1 * var(--border-width));
-          left: calc(-1 * var(--border-width));
-          z-index: -1;
-          width: calc(100% + var(--border-width) * 2);
-          height: calc(100% + var(--border-width) * 2);
-          background: linear-gradient(60deg,
-              hsl(0, 85%, 66%),
-              hsl(23, 85%, 66%),
-              hsl(59, 100%, 55%),
-              hsl(359, 85%, 66%),
-              hsl(44, 85%, 66%),
-              hsl(0, 100%, 57%),
-              hsl(26, 92%, 53%),
-              hsl(20, 85%, 66%));
-          background-size: 300% 300%;
-          background-position: 0 50%;
-          border-radius: 100%;
-          animation: moveGradient 3s infinite;
-        }
-
-  animation: loading 1.7s infinite linear;
-  background: #dedfe1;
-  background-image: -webkit-linear-gradient(
-    to right,
-    #dedfe1 0%,
-    #f2f3f5 20%,
-    #dedfe1 40%,
-    #dedfe1 100%
-  ) !important;
-  background-image: linear-gradient(
-    to right,
-    #dedfe1 0%,
-    #f2f3f5 20%,
-    #dedfe1 40%,
-    #dedfe1 100%
-  ) !important;
-  background-repeat: no-repeat;
+  &.loading {
+    background-color: var(--loading);
+    border: none;
+    animation: loading 0.75s infinite linear;
   }
+
+
 }
 
 @keyframes loading {
   0% {
-    background-position: -100px;
+    background-color: var(--loading);
+
+  }
+
+  50% {
+    background-color: var(--loading-accent);
   }
 
   100% {
-    background-position: 200px;
+    background-color: var(--loading);
   }
 }
+
 .center {
   display: flex;
   align-items: flex-start;
@@ -352,14 +370,18 @@ li {
 
 .noRecipes {
   flex-direction: column;
-  row-gap: 1em;
+  row-gap: 1.1em;
   align-items: center;
   display: flex;
   justify-content: center;
+  p{
+    color: var(--color-foreground);
+  }
 }
 
 app-vertical-recipe-list {
-  width: 100%;padding: 0 calc(150px + 100 * ((100vw - 900px) / (1280 - 900)));
+  width: 100%;
+  padding: 0 calc(150px + 100 * ((100vw - 900px) / (1280 - 900)));
 }
 
 
@@ -367,7 +389,8 @@ app-vertical-recipe-list {
 .socialAndAdd {
   display: grid;
   justify-content: center;
-  width: 90%;
+  width: 100%;
+  column-gap: 1em;
 }
 
 .links {
@@ -385,6 +408,7 @@ app-vertical-recipe-list {
     &:hover,
     &:focus {
       padding-left: 0.5em;
+
       span {
         color: var(--color-primary-focus);
       }
@@ -420,7 +444,8 @@ app-vertical-recipe-list {
 
   &:hover,
   &:focus {
-          padding-left: 0.5em;
+    padding-left: 0.5em;
+
     a {
       color: var(--color-primary-focus);
     }
@@ -431,10 +456,13 @@ app-vertical-recipe-list {
   }
 }
 
-.description,
 .share * {
   text-align: center;
 }
+
+
+
+
 
 svg {
   height: 1em;
@@ -462,8 +490,13 @@ svg {
   align-items: center;
 
   .social {
-    column-gap: var(--space-s);
-    align-items: center;
+    .soc{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    flex-wrap: wrap;
+    column-gap: 0.65em;row-gap: 0.4em;    align-items: center;
     justify-content: center;
 
     button {
@@ -484,6 +517,10 @@ svg {
     font-size: var(--font-m);
   }
 }
+.social-block h3{
+  text-align: center;
+}
+
 
 .block1 {
   width: 80%;
@@ -536,7 +573,7 @@ svg {
 @media (max-width: 1200px) {
   .img-cont .hire-button {
     zoom: 0.9;
-  
+
 
     top: 0;
     right: 0;
@@ -552,14 +589,17 @@ svg {
 @media (max-width: 900px) {
 
 
-app-vertical-recipe-list {
-  padding: 0;
-      width: calc(330px + 100 * ((100vw - 550px) / (900 - 550)));}
+  app-vertical-recipe-list {
+    padding: 0;
+    width: calc(330px + 100 * ((100vw - 550px) / (900 - 550)));
+  }
+
   .emoji {
     zoom: 0.8;
   }
 
   .container {
+
     .block1,
     .block2,
     .block4,
@@ -584,11 +624,16 @@ app-vertical-recipe-list {
 }
 
 @media (max-width: 540px) {
+        .container .info {
+            width: unset;
+          }
+
   .img-cont {
     display: flex;
     width: 100%;
     align-items: center;
     justify-content: center;
+
     .emoji-status,
     .emoji-pick {
       margin: auto;
@@ -602,6 +647,7 @@ app-vertical-recipe-list {
       left: -10em;
       right: 0;
     }
+
     .hire-button {
       right: -10em;
       left: 0;
@@ -612,13 +658,16 @@ app-vertical-recipe-list {
   .block1 {
     .statistics {
       display: flex;
-      flex-direction: column;
-      row-gap: 1em;
+      column-gap: 1.25em;
+    }
+
+    .col {
+      flex: unset;
     }
 
     .main {
       flex-direction: column;
-      row-gap: 2em;
+      row-gap:1em;
 
       .info {
         * {
@@ -705,6 +754,8 @@ app-settings {
 }
 
 @media (max-width: 480px) {
+
+  
   .container .info {
     width: 100%;
   }
@@ -714,6 +765,20 @@ app-settings {
     padding: 0;
     padding-left: 6%;
   }
+  .exit{
+    left:1em
+  }
+  .settings{
+    right:1em
+  }
+  .exit,.settings{
+    z-index: 2;
+    zoom:1.2
+  }
+
+  .container{ .block1,.block2, .block3{
+    width: calc(100% - 15%);
+  }}
 
   .block2 {
     button {
@@ -726,4 +791,10 @@ app-settings {
   .emoji-pick {
     zoom: 0.85;
   }
+}
+@media(max-width:320px){
+    .social {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+      }
 }

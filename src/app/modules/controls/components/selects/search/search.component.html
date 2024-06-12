@@ -1,0 +1,35 @@
+<div class="search-block">
+  <div class="search">
+    <input [disabled]="disabled" (focus)="focusSearch()" [ngClass]="{'disabled':disabled}" (blur)="blurSearch()"
+      [maxlength]="30" [(ngModel)]="searchQuery" (ngModelChange)="turnOnSearch()" type="text"
+      placeholder="Введите запрос" />
+    <div class="magnifier" [ngClass]="{'disabled':disabled}">
+      <svg-icon [applyClass]="true" class="search-svg" [src]="'/assets/images/svg/search.svg'"></svg-icon>
+    </div>
+  </div>
+
+  <div class="autocomplete-list">
+    <ul @auto-complete *ngIf="autocompleteShow">
+      <ng-container *ngIf="loading">
+        <li class="preload noselect" *ngFor="let preloader of preloaderArray">
+          <p class="preload">{{ preloader }}</p>
+        </li>
+      </ng-container>
+      <div *ngIf="autocomplete.length === 0 && !loading">
+        <div class="no-found-recipes">
+          <div class="image">
+            <svg-icon [applyClass]="true" class="sad-cook" [src]="'/assets/images/svg/sad-cook.svg'"></svg-icon>
+          </div>
+          <p>
+            По вашему запросу ничего не найдено. Попробуйте изменить
+            параметры поиска!
+          </p>
+        </div>
+      </div>
+      <li *ngFor="let item of autocomplete"
+        (mousedown)="getLink(item)!==null?navigateTo(getLink(item)||''):ClickEmitter.emit(item)">
+        {{ userContext? (item.fullName || ('@'+item.username)) : item.name }}
+      </li>
+    </ul>
+  </div>
+</div>

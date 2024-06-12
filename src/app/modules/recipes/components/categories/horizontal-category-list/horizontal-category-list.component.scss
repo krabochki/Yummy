@@ -11,6 +11,8 @@ drag-scroll {
     height: 100%;
     margin: 0 0.5em;
     min-width: calc(19% - 0.6em);
+    width: calc(19% - 0.6em);
+    max-width: calc(19% - 0.6em);
     margin-bottom: 0.5em;
   }
 }

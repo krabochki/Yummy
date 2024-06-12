@@ -20,11 +20,23 @@ import {
   state,
 } from '@angular/animations';
 import { widthAnim } from 'src/tools/animations';
-import { Subject, takeUntil } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  Subject,
+  Subscription,
+  debounceTime,
+  finalize,
+  switchMap,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import { NotificationService } from '../../services/notification.service';
 import { INotification } from '../../models/notifications';
-import { supabase } from 'src/app/modules/controls/image/supabase-data';
 import { modal } from 'src/tools/animations';
+import { addModalStyle, removeModalStyle } from 'src/tools/common';
+import { AuthService } from 'src/app/modules/authentication/services/auth.service';
+import { Permission } from '../settings/conts';
 
 @Component({
   selector: 'app-followers-and-following',
@@ -50,128 +62,232 @@ import { modal } from 'src/tools/animations';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
-  @Input() userPage: IUser = { ...nullUser };
-  @Input() currentUser: IUser = { ...nullUser };
   @Input() object: 'followers' | 'following' = 'following';
   @Input() user: IUser = { ...nullUser };
   @Output() closeEmitter: EventEmitter<boolean> = new EventEmitter<boolean>();
-
-  followers: IUser[] = [];
-  following: IUser[] = [];
-  followersDisplay: IUser[] = [];
-  followingDisplay: IUser[] = [];
-  currentUserFollowingIds: number[] = []; //подписки авторизованного пользователя
+  @Output() followingEmitter: EventEmitter<boolean> =
+    new EventEmitter<boolean>();
 
   searchMode: boolean = false;
   searchQuery: string = '';
+  subscriptions = new Subscription();
   protected destroyed$: Subject<void> = new Subject<void>();
-
+  currentUser: IUser = { ...nullUser };
   constructor(
     private renderer: Renderer2,
     private notifyService: NotificationService,
     private cd: ChangeDetectorRef,
+    private authService: AuthService,
     private router: Router,
     public userService: UserService,
   ) {}
 
   ngOnInit(): void {
-    this.renderer.addClass(document.body, 'hide-overflow');
-    (<HTMLElement>document.querySelector('.header')).style.width =
-      'calc(100% - 16px)';
-    this.userService.users$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((data) => {
-        this.following = this.userService.getFollowing(data, this.user.id);
-        this.followers = this.userService.getFollowers(data, this.user.id);
-        this.followingDisplay = this.following;
-        this.followersDisplay = this.followers;
-        if (this.currentUser.id !== 0) {
-          const currentUserFollowing = this.userService.getFollowing(
-            data,
-            this.currentUser?.id,
-          );
-          this.currentUserFollowingIds = [];
-          currentUserFollowing.forEach((currFollowing) => {
-            this.currentUserFollowingIds.push(currFollowing.id);
-          });
-          this.cd.detectChanges();
+    addModalStyle(this.renderer);
+    this.loadFollowers();
+    this.subscriptions.add(
+      this.authService.currentUser$
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe(
+        (user) => {
+          this.currentUser = user;
+          this.cd.markForCheck();
         }
-      });
+      ));
   }
 
-  noUserpic = '/assets/images/userpic.png';
+  loading = true;
+  limit = 20;
+  users: IUser[] = [];
+  totalUsers: number = 0;
+  offset = 0;
 
-  getUserpic(user: IUser) {
-    if (user.avatarUrl) {
-      return supabase.storage.from('userpics').getPublicUrl(user.avatarUrl).data
-        .publicUrl;
-    } else return this.noUserpic;
+  loadFollowers() {
+    this.loading = true;
+    this.spinner = true;
+    const waitingForLoading = this.totalUsers - this.users.length;
+    if (waitingForLoading) {
+      this.pushPreloaders(
+        waitingForLoading < this.limit ? waitingForLoading : this.limit,
+      );
+    }
+    setTimeout(() => {
+      this.subscriptions.add(
+        this.findUsers().pipe(takeUntil(this.destroyed$)).subscribe(),
+      );
+    }, 300);
+
   }
 
-  switchObject(object: 'following' | 'followers') {
-    if (this.searchMode) this.searchOnOff();
-    if (object === 'following') {
-      this.object = 'following';
-    } else {
-      this.object = 'followers';
+  findUsers() {
+    const observable$ =
+      this.object === 'followers'
+        ? this.userService.getSomeFollowers(
+            this.user.id,
+            this.offset,
+            this.limit,
+            this.searchQuery,
+          )
+        : this.userService.getSomeFollowings(
+            this.user.id,
+            this.offset,
+            this.limit,
+            this.searchQuery,
+          );
+    return observable$.pipe(
+      tap((data: any) => {
+        this.users = this.users.concat(data.users);
+        this.totalUsers = data.total;
+        this.users.forEach((user) => {
+          this.loadImage(user);
+        });
+        this.filterPreloader();
+        this.spinner = false;
+        this.loading = false;
+        this.cd.markForCheck();
+      }),
+    );
+  }
+
+  changeState() {
+    this.users = [];
+    this.totalUsers = 0;
+    this.offset = 0;
+    
+
+    this.loadFollowers();
+  }
+
+  loadMoreFollowers() {
+    this.offset += this.limit; // Увеличиваем смещение на текущий лимит
+    this.loadFollowers();
+  }
+
+  onScroll(event: any) {
+    const element = event.target;
+    const atBottom =
+      element.scrollHeight - element.scrollTop - 2 <= element.clientHeight;
+
+    if (atBottom && !this.loading && this.users.length < this.totalUsers) {
+      this.offset = this.users.length;
+
+      this.loadFollowers();
+    }
+  }
+
+  filterPreloader() {
+    this.users = this.users.filter((n) => n.id);
+    this.cd.markForCheck();
+  }
+
+  pushPreloaders(n: number) {
+    for (let index = 0; index < n; index++) {
+      this.users.push(nullUser);
     }
     this.cd.markForCheck();
   }
 
-  async updateUser(user: IUser) {
-    await this.userService.updateUserInSupabase(user);
+  noUserpic = '/assets/images/userpic.png';
+
+  loadImage(follower: IUser) {
+    if (follower.image) {
+      this.subscriptions.add(
+        this.userService
+          .downloadUserpic(follower.image)
+          .pipe(
+            takeUntil(this.destroyed$),
+            tap((blob) => {
+              follower.avatarUrl = URL.createObjectURL(blob);
+            }),
+            finalize(() => {
+              this.cd.markForCheck();
+            }),
+          )
+          .subscribe());
+    }
+  }
+
+  switchObject(object: 'following' | 'followers') {
+    if (!this.loading) {
+      if (this.searchMode) {
+        this.searchMode = !this.searchMode;
+        this.searchQuery = '';
+      }
+      if (object !== this.object) {
+        this.object = object;
+
+        this.changeState();
+        this.cd.markForCheck();
+      }
+    }
   }
 
   //подписка текущего пользователя на людей в списке
-  async follow(user: IUser) {
-    if (!user.loading) {
-      if (this.currentUser.id > 0) {
-        user.loading = true;
-        this.cd.markForCheck();
-
-        user = this.userService.addFollower(user, this.currentUser?.id);
-        await this.updateUser(user);
-        if (this.userService.getPermission('new-follower', user)) {
-          const notify: INotification = this.notifyService.buildNotification(
-            'Новый подписчик',
-            `Кулинар ${this.currentUser.fullName
-              ? this.currentUser.fullName
-              : '@' + this.currentUser.username
-            } подписался на тебя`,
-            'info',
-            'user',
-            '/cooks/list/' + this.currentUser.id,
-          );
-          await this.notifyService.sendNotification(notify, user);
-                user.loading = false;
-          this.cd.markForCheck();
-        }
-      } else {
-        this.noAccessModalShow = true;
+  follow(user: IUser) {
+    if (this.currentUser.id && user.id) {
+      if (user.isFollower) {
+        this.unfollow(user);
+        return;
       }
+      this.userService.followUser( user.id).subscribe({
+        next: () => {
+          user.isFollower = 1;
+          if (this.currentUser.id === this.user.id) {
+            this.followingEmitter.emit(true);
+          }
+
+          this.cd.markForCheck();
+          this.userService
+            .getLimitation(user.id, Permission.FollowToYou)
+            .subscribe((limit) => {
+              if (!limit) {
+                const notify: INotification =
+                  this.notifyService.buildNotification(
+                    'Новый подписчик',
+                    `Кулинар ${
+                      this.currentUser.fullName || `@${this.currentUser.username}`
+                    } подписался на тебя`,
+                    'info',
+                    'user',
+                    `/cooks/list/${this.currentUser.id}`,
+                  );
+                this.notifyService
+                  .sendNotification(notify, user.id)
+                  .subscribe();
+              }
+            });
+        },
+      });
+    } else {
+      this.noAccessModalShow = true;
     }
   }
 
   noAccessModalShow = false;
 
   //отписка текущего пользователя от людей в списке
-  async unfollow(user: IUser) {
-    if (!user.loading) {
-      if (this.currentUser.id > 0) {
-        user.loading = true;
-        user = this.userService.removeFollower(user, this.currentUser?.id);
-        await this.updateUser(user);
-        user.loading = false;
+  unfollow(user: IUser) {
+    this.userService.unfollowUser(user.id).subscribe({
+      next: () => {
+        user.isFollower = 0;
+        if (this.currentUser.id === this.user.id) {
+          this.followingEmitter.emit(false);
+        }
+
         this.cd.markForCheck();
-      }
-    }
+      },
+    });
   }
 
   searchOnOff() {
-    this.searchMode = !this.searchMode;
-    this.followingDisplay = this.following;
-    this.followersDisplay = this.followers;
-    this.searchQuery = '';
+    if (!this.loading) {
+      this.searchMode = !this.searchMode;
+      if (!this.searchMode && this.searchQuery) {
+        this.searchQuery = '';
+
+        this.changeState();
+      }
+    }
   }
 
   //переход по ссылке на человека
@@ -180,44 +296,53 @@ export class FollowersAndFollowingComponent implements OnInit, OnDestroy {
     this.closeEmitter.emit(true);
   }
 
+  private searchQuerySubject = new BehaviorSubject<string>('');
+  private searchSubscription?: Subscription;
+
   filter() {
-    if (this.object === 'followers') {
-      if (this.searchQuery) {
-        this.followersDisplay = this.followers.filter(
-          (follower: IUser) =>
-            follower.fullName
-              .toLowerCase()
-              .includes(this.searchQuery.toLowerCase()) ||
-            follower.username
-              .toLowerCase()
-              .includes(this.searchQuery.toLowerCase()),
-        );
-      } else {
-        this.followersDisplay = this.followers; // Если поле поиска пустое, показать всех подписчиков
-      }
-    } else {
-      if (this.searchQuery) {
-        this.followingDisplay = this.following.filter(
-          (follower: IUser) =>
-            follower.fullName
-              .toLowerCase()
-              .includes(this.searchQuery.toLowerCase()) ||
-            follower.username.toLowerCase().includes(this.searchQuery),
-        );
-      } else {
-        this.followingDisplay = this.following; // Если поле поиска пустое, показать всех подписчиков
-      }
+    this.searchQuerySubject.next(this.searchQuery);
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
     }
+    this.filterPreloader();
+    this.users = [];
+    this.totalUsers = 0;
+    this.spinner = true;
+    this.offset = 0;
+    this.subscriptions.add(
+      this.searchSubscription = this.searchQuerySubject
+        .pipe(
+          takeUntil(this.destroyed$),
+          debounceTime(1000),
+          switchMap((query) => {
+            this.searchQuery = query;
+            this.loading = true;
+            const subscribe: Observable<any> = this.findUsers();
+            return subscribe;
+          }),
+        )
+        .subscribe());
   }
 
+  spinner = true;
   clickBackgroundNotContent(elem: Event) {
     if (elem.target !== elem.currentTarget) return;
     this.closeEmitter.emit(true);
   }
+
+  handleAccessModal(response: boolean) {
+    this.noAccessModalShow = false;
+    if (response) {
+      this.router.navigateByUrl('/greetings');
+    } else {
+      addModalStyle(this.renderer);
+    }
+  }
+
   ngOnDestroy(): void {
     this.destroyed$.next();
     this.destroyed$.complete();
-    this.renderer.removeClass(document.body, 'hide-overflow');
-    (<HTMLElement>document.querySelector('.header')).style.width = '100%';
+    this.subscriptions.unsubscribe();
+    removeModalStyle(this.renderer);
   }
 }

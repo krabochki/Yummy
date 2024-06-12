@@ -21,42 +21,26 @@ export class UserResolver implements Resolve<IUser> {
 
   resolve(route: ActivatedRouteSnapshot): Observable<IUser> {
     const userId = Number(route.params['id']);
+
     if (userId <= 0) {
       this.router.navigate(['/cooks']);
       return EMPTY;
     }
 
-    return this.userService.users$.pipe(
-      map((users: IUser[]) => {
-        const foundUser = users.find((user) => {
-          if (user.id === userId) return true;
-          else return false;
-        });
-
-        //не показываем страницу если пользователь это запретил(но показываем если это сам пользователь на нее перешел или модератор/админ)
-        if (foundUser) {
-          if (
-            ((!this.userService.getPermission('show-my-page', foundUser) &&
-            this.currentUser.id !== foundUser.id )
-            && (this.currentUser.role === 'user' || foundUser.role === 'admin'))
-          ) {
-              throw new Error('anonimous');
-          }
-          else {
-           return foundUser;
-          }
+    return this.userService.getUser(userId).pipe(
+      map((user: IUser
+        ) => {
+        if (user) {
+          return user;
         } else {
-          throw new Error('nouser');
+          throw new Error('Пользователь не найден');
         }
       }),
-      catchError((e: Error) => {
-        if (e.message === 'anonimous') {
-          this.router.navigate(['/access-denied']);
-        } else {
-          this.router.navigate(['/cooks']);
-        }
+      catchError(() => {
+        this.router.navigate(['/cooks']);
         return EMPTY;
       }),
     );
+
   }
 }

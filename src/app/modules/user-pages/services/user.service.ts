@@ -1,265 +1,298 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
-import { IUser, PermissionContext } from '../models/users';
-import {
-  BehaviorSubject,
-} from 'rxjs';
-import { allPunctuationMarks, brackets } from 'src/tools/regex';
-import { supabase } from '../../controls/image/supabase-data';
-import { getCurrentDate } from 'src/tools/common';
+import { IUser } from '../models/users';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { usersSource } from '../../../../tools/sourses';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  private usersSubject = new BehaviorSubject<IUser[]>([]);
-  users$ = this.usersSubject.asObservable();
-  
-
-  getMaxUserId() {
-    return supabase
-      .from('profiles')
-      .select('id')
-      .order('id', { ascending: false })
-      .limit(1)
-      .then((response) => {
-        if (response.data && response.data.length > 0) {
-          return response.data[0].id;
-        } else {
-          return 0;
-        }
-      });
-  }
-
-  loadUsersData() {
-    return this.loadUsersFromSupabase();
-  }
+  constructor(private http: HttpClient) {}
 
   isUserSubscriber(user: IUser, userId: number) {
     if (!user) return false;
     return user?.followersIds?.includes(userId);
   }
-  getFollowers(users: IUser[], userId: number): IUser[] {
-    const user = users.find((user: IUser) => user.id === userId);
-    const followersIds = user?.followersIds;
 
-    if (followersIds) {
-      const followers = users.filter((user: IUser) =>
-        followersIds.includes(user.id),
-      );
-      return followers;
-    } else {
-      return [];
-    }
+  public followUser(following: number) {
+    const options = { withCredentials: true };
+    const url = `${this.usersUrl}/subscribe/${following}`;
+    return this.http.post(url,{}, options);
   }
 
-  getNearby(users: IUser[], user: IUser): IUser[] {
-    if (user.location.trim() !== '') {
-      const currentUserLocationWords = user.location
-        .toLowerCase()
-        .replace(brackets, ' ')
-        .split(allPunctuationMarks);
-
-      let matchingUsers = users.filter((item) => {
-        if (item.location.trim() !== '') {
-          const userLocationWords = item.location
-            .toLowerCase()
-            .replace(brackets, ' ')
-            .split(allPunctuationMarks);
-          //есть ли хотя бы одно совпадающее слово
-          return currentUserLocationWords.some((word) =>
-            userLocationWords.includes(word),
-          );
-        }
-        return null;
-      });
-
-      matchingUsers = matchingUsers.filter((item) => item.id !== user.id);
-
-      return matchingUsers;
-    } else return [];
+  public unfollowUser(following: number) {
+    const options = { withCredentials: true };
+    const url = `${this.usersUrl}/subscribe/${following}`;
+    return this.http.delete(url,options);
   }
 
-  getFollowing(users: IUser[], userId: number): IUser[] {
-    const following: IUser[] = [];
-    users.forEach((user: IUser) => {
-      user.followersIds?.forEach((follower: number) => {
-        if (follower === userId) {
-          following.push(user);
-        }
-      });
-    });
-
-    return following;
+  incrementProfileViews(userId: number) {
+    const url = `${this.usersUrl}/profile-views`;
+    return this.http.put(url, { userId });
   }
 
-  deleteDataAboutDeletingUser(deletingId: number) {
-    let users: IUser[] = [];
-    this.users$.subscribe((data) => {
-      users = data;
-      users.forEach((user) => {
-        if (user.followersIds.includes(deletingId)) {
-          user.followersIds = user.followersIds?.filter(
-            (element) => element !== deletingId,
-          );
-          this.updateUser(user);
-        }
-      });
-    });
+  getManagersShort() {
+    const options = { withCredentials: true };
+
+    const url = `${this.usersUrl}/managers-short`;
+    return this.http.get(url, options);
   }
 
-  addFollower(user: IUser, followerId: number): IUser {
-    if (user && user.followersIds) {
-      if (!user.followersIds.includes(followerId)) {
-        user.followersIds.push(followerId);
-      }
-    }
-    return user;
-  }
-  removeFollower(user: IUser, followerId: number) {
-    if (user && user.followersIds) {
-      const followerIndex = user.followersIds.indexOf(followerId);
-      if (followerIndex !== -1) {
-        user.followersIds.splice(followerIndex, 1);
-      }
-    }
-    return user;
+  getSomeFollowings(
+    userId: number,
+    offset: number,
+    limit: number,
+    search?: string,
+  ) {
+    const options = { withCredentials: true };
+
+    const url =
+      `${this.usersUrl}/followings/${userId}?offset=${offset}&limit=${limit}` +
+      (search ? `&search=${search}` : '');
+    return this.http.get(url, options);
   }
 
-  private async updateUser(user: IUser) {
-    await this.updateUserInSupabase(user);
+  getSomeFollowers(
+    userId: number,
+    offset: number,
+    limit: number,
+    search?: string,
+  ) {
+    const options = { withCredentials: true };
+
+    const url =
+      `${this.usersUrl}/followers/${userId}?offset=${offset}&limit=${limit}` +
+      (search ? `&search=${search}` : '');
+    return this.http.get(url, options);
   }
 
-  loadUsersFromSupabase() {
+    getSomeUsers(
+    offset: number,
+    limit: number,
+  ) {
+    const options = { withCredentials: true };
 
-    return supabase
-      .from('profiles')
-      .select(
-        'id, username,online, avatarurl, description, quote, fullname, followersids, socialnetworks, personalwebsite, location, profileviews, notifications, permissions, exclusions, permanent, emojistatus, role, registrationDate, birthday',
-      )
-      .then((response) => {
-        const supRecipes = response.data;
-        const users = supRecipes?.map((supUser) => {
-          return this.translateUser(supUser);
-        });
-        if (users) this.usersSubject.next(users);
-      });
+      const url =
+        `${this.usersUrl}/some?page=${offset}&limit=${limit}`;
+    return this.http.get(url, options);
   }
 
-   translateUser(user: any): IUser {
-     return {
-      online:user.online,
-      id: user.id || 0, // Уникальный идентификатор пользователя
-      username: user.username || '', // Имя пользователя
-      avatarUrl: user.avatarurl || '', // URL аватара пользователя
-      description: user.description || '', // Описание пользователя
-      quote: user.quote || '', // Цитата пользователя
-      email: user.email,
-      fullName: user.fullname || '', // Полное имя пользователя
-      followersIds: user.followersids || [], // Список идентификаторов подписчиков
-      socialNetworks: user.socialnetworks || [], // Список социальных сетей пользователя
-      personalWebsite: user.personalwebsite || '', // Личный веб-сайт пользователя
-      location: user.location || '', // Локация пользователя
-      profileViews: user.profileviews || 0, // Количество просмотров профиля
-      role: user.role || 'user',
-      registrationDate: user.registrationDate,
-      birthday:user.birthday,
-      notifications: user.notifications || [],
-      permissions: user.permissions || [],
-      exclusions: user.exclusions || [],
-      permanent: user.permanent || [],
-      emojiStatus: user.emojistatus || null,
-    } as IUser;
-  }
-  async addUserToSupabase(id: number, username: string, email: string) {
-    return supabase.from('profiles').upsert([
-      {
-        id: id,
-        username: username,
-        email: email,
-        registrationDate: getCurrentDate(),
-        role: 'user',
-      },
-    ]);
-  }
-  deleteUserFromSupabase(id: number) {
-    return supabase.from('profiles').delete().eq('id', id);
-  }
-  updateUserInSupabase(user: IUser) {
-    const { id, ...updateData } = user;
-    return supabase
-      .from('profiles')
-      .update({
-        online: user.online,
-        username: user.username,
-        avatarurl: user.avatarUrl || '',
-        description: user.description || '', // Описание пользователя
-        quote: user.quote || '', // Цитата пользователя
-        fullname: user.fullName || '', // Полное имя пользователя
-        followersids: user.followersIds || [], // Список идентификаторов подписчиков
-        socialnetworks: user.socialNetworks || [], // Список социальных сетей пользователя
-        personalwebsite: user.personalWebsite || '', // Личный веб-сайт пользователя
-        location: user.location || '', // Локация пользователя
-        profileviews: user.profileViews || 0, // Количество просмотров профиля
-        role: user.role || 'user',
-        notifications: user.notifications || [],
-        birthday:user.birthday,
-        permissions: user.permissions || [],
-        exclusions: user.exclusions || [],
-        permanent: user.permanent || [],
-        emojistatus: user.emojiStatus || null,
-      })
-      .eq('id', id);
+
+  getAllShort() {
+    const options = { withCredentials: true };
+    const url = `${this.usersUrl}/all-short`;
+    return this.http.get(url, options);
   }
 
-  updateUsersAfterUPSERT(payload: any) {
-    const currentUsers = this.usersSubject.value;
-    const index = currentUsers.findIndex(
-      (r) => r.id === this.translateUser(payload).id,
+  getAllUsersBySearch(search: string) {
+    const url = `${this.usersUrl}/search/all?search=${search}`;
+    return this.http.get(url);
+  }
+
+  getManagersBySearch(search: string) {
+    const url = `${this.usersUrl}/search/managers?search=${search}`;
+    return this.http.get(url);
+  }
+
+  getMostViewedBySearch(search: string) {
+    const url = `${this.usersUrl}/search/most-viewed?search=${search}`;
+    return this.http.get(url);
+  }
+
+  getFollowingsBySearch(search: string) {const options = { withCredentials: true };
+    const url = `${this.usersUrl}/search/followings?search=${search}`;
+    return this.http.get(url,options);
+  }
+
+  getNearbyBySearch(search: string) {
+    const options = { withCredentials: true };
+    const url = `${this.usersUrl}/search/nearby?search=${search}`;
+    return this.http.get(url,options);
+  }
+
+  getMostProductiveBySearch(search: string) {const options = { withCredentials: true };
+    const url = `${this.usersUrl}/search/productive?search=${search}`;
+    return this.http.get(url,options);
+  }
+  getPopularBySearch(search: string) {
+    const url = `${this.usersUrl}/search/popular?search=${search}`;
+    return this.http.get(url);
+  }
+
+  public getUserForEdit(): Observable<IUser> {const options = { withCredentials: true };
+    const url = `${this.usersUrl}/edit`;
+    return this.http.get<IUser>(url,options);
+  }
+
+  updateUserpic(filename: string) {
+    const options = { withCredentials: true };
+
+    const url = `${this.usersUrl}/userpic`;
+    return this.http.put(url, { image: filename }, options);
+  }
+
+  public postLimitation(context: string) {
+    const options = { withCredentials: true };
+    const url = `${this.usersUrl}/limitations`;
+    return this.http.post(url, { limitation: context }, options);
+  }
+  public deleteLimitation( context: string) {
+    const options = { withCredentials: true };
+
+    const url = `${this.usersUrl}/limitations?limitation=${context}`;
+    return this.http.delete(url, options);
+  }
+
+  usersUrl = usersSource;
+
+  updateUserProperty(
+    property:
+      | 'username'
+      | 'description'
+      | 'quote'
+      | 'fullName'
+      | 'socialNetworks'
+      | 'personalWebsite'
+      | 'location'
+      | 'permissions'
+      | 'emoji'
+      | 'birthday',
+    value: any,
+  ): Observable<any> {
+        const options = { withCredentials: true };
+
+    const url = `${this.usersUrl}/property/${property}`;
+    return this.http.put(url, { value }, options);
+  }
+
+  makeModerator(userId: number) {
+    const options = { withCredentials: true };
+    const url = `${this.usersUrl}/moderator/${userId}`;
+    return this.http.post(url, {}, options);
+  }
+  demoteModerator(userId: number) {
+    const options = { withCredentials: true };
+    const url = `${this.usersUrl}/moderator/${userId}`;
+    return this.http.delete(url, options);
+  }
+
+  updatePublicUser(user: IUser) {const options = { withCredentials: true };
+    const url = `${this.usersUrl}/public`;
+    return this.http.put<IUser>(url, user,options);
+  }
+
+  downloadUserpic(filename: string) {
+    
+    const fileUrl = `${this.usersUrl}/files/${filename}`;
+    return this.http.get(fileUrl, { responseType: 'blob' });
+  }
+
+  deleteUserpic(): Observable<any> {
+    const options = { withCredentials: true };
+
+    const url = `${this.usersUrl}/files`;
+    return this.http.delete(url, options);
+  }
+
+  uploadUserpic(file: File): Observable<any> {
+    const options = { withCredentials: true };
+
+    const formData: FormData = new FormData();
+    formData.append('avatar', file, file.name);
+
+    return this.http.post<any>(`${this.usersUrl}/userpic`, formData, options);
+  }
+
+  getPermission(limitations: string[], permission: string) {
+    return !limitations?.find((limitation) => limitation === permission);
+  }
+
+  getLimitation(userId: number, permission: string) {
+    const url = `${this.usersUrl}/limitation/${userId}?limitation=${permission}`;
+    return this.http.get<boolean>(url);
+  }
+
+  public getFollowersIds(userId: number): Observable<number[]> {
+    const url = `${this.usersUrl}/followersIds/${userId}`;
+    return this.http.get<number[]>(url);
+  }
+  public getLimitations(): Observable<string[]> {    const options = { withCredentials: true };
+
+    const url = `${this.usersUrl}/limitations`;
+    return this.http.get<string[]>(url,options);
+  }
+
+  getInfoForUserpage(userId:number) {
+
+    return this.http.get<IUser>(`${this.usersUrl}/userpage/${userId}`);
+  }
+
+  getUserRecipesStatistics(userId: number) {
+    return this.http.get<{ likes: number; cooks: number; comments: number }>(
+      `${this.usersUrl}/user-recipes-statistics/${userId}`,
     );
-    if (index !== -1) {
-      const updatedUsers = [...currentUsers];
-      updatedUsers[index] = this.translateUser(payload);
-
-      this.usersSubject.next(updatedUsers);
-    }
   }
 
-  updateUsersAfterINSERT(payload: any) {
-    const currentUsers = this.usersSubject.value;
-    const updatedUsers = [...currentUsers, this.translateUser(payload)];
-    this.usersSubject.next(updatedUsers);
+  getUserStatistics(userId: number) {
+    const options = { withCredentials: true };
+    return this.http.get<{
+      followers: number;
+      followings: number;
+      recipes: number;
+      follower: number;
+      achievements: number;
+    }>(`${this.usersUrl}/user-statistics/${userId}`, options);
   }
-  updateUsersAfterDELETE(payload: any) {
-    this.usersSubject.next(
-      this.usersSubject.value.filter(
-        (users) => users.id !== this.translateUser(payload).id,
-      ),
+
+  getUser(userId: number) {
+    return this.http.get<IUser>(`${this.usersUrl}/user/${userId}`);
+  }
+
+  getProductiveUsers(limit: number, page: number) {
+       const options = { withCredentials: true };
+    return this.http.get<{ count: number; users: IUser[] }>(
+      `${this.usersUrl}/productive?limit=${limit}&page=${page}`, options
     );
   }
 
-  getUsersWhichWillBeUpdatedWhenUserDeleting(
-    users: IUser[],
-    user: IUser,
-  ): IUser[] {
-    const usersToUpdate: IUser[] = [];
-    users.forEach((u) => {
-      if (u.followersIds.includes(user.id)) {
-        u.followersIds = u.followersIds.filter((f) => f !== user.id);
-        usersToUpdate.push(u);
-      }
-    });
-    return usersToUpdate;
+  getPopularUsers(limit: number, page: number) {const options = { withCredentials: true };
+    return this.http.get<{ count: number; users: IUser[] }>(
+      `${this.usersUrl}/popular?limit=${limit}&page=${page}`,options
+    );
   }
 
-  getPermission(context: PermissionContext, user: IUser): boolean {
-    const permissions = user.permissions;
-    //возвращаем что уведомление включено true, только если оно конкретно не установлено false
+  getMostViewedUsers(limit: number, page: number) {
+    const options = { withCredentials: true };
+    return this.http.get<{ count: number; users: IUser[] }>(
+      `${this.usersUrl}/most-viewed?limit=${limit}&page=${page}`, options
+    );
+  }
+  getNewUsers(limit: number, page: number) {
+    const options = { withCredentials: true };
+    return this.http.get<{ count: number; users: IUser[] }>(
+      `${this.usersUrl}/new?limit=${limit}&page=${page}`, options
+    );
+  }
 
-    if (permissions && permissions.length) {
-      const permissionExist = permissions.find((p) => p.context === context);
-      if (permissionExist) return permissionExist.enabled;
-      else return true;
-    }
-    return true;
+  getManagers(limit: number, page: number) {    const options = { withCredentials: true };
+
+    return this.http.get<{ count: number; users: IUser[] }>(
+      `${this.usersUrl}/managers?limit=${limit}&page=${page}`, options
+    );
+  }
+
+  getUsersIFollow(limit: number, page: number, ) {const options = { withCredentials: true };
+    return this.http.get<{ count: number; users: IUser[] }>(
+      `${this.usersUrl}/my-followers?limit=${limit}&page=${page}`, options
+    );
+  }
+
+  getNearbyUsers(limit: number, page: number) {
+    const options = { withCredentials: true };
+    return this.http.get<{ count: number; users: IUser[] }>(
+      `${this.usersUrl}/nearby?limit=${limit}&page=${page}`, options
+    );
   }
 }

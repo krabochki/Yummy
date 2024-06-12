@@ -1,0 +1,189 @@
+<div
+  class="main"
+  [ngClass]="{
+    admin: this.currentUser.role === 'admin',
+    moderator: this.currentUser.role === 'moderator'
+  }"
+>
+  <h1>Рассмотрение рецептов</h1>
+  <div class="wrap">
+    <div class="reports-block new">
+      <button
+        [disabled]="!loaded"
+        (click)="loaded ? checkActualRecipes() : null"
+        class="update-button"
+      >
+        <svg-icon
+          class="icon"
+          [applyClass]="true"
+          [src]="'/assets/images/svg/update.svg'"
+        />
+        <span>{{ loaded ? "Обновить" : "Обновить..." }}</span>
+      </button>
+
+      <div class="reports" >
+        <div
+          [ngClass]="{ blinked: !loaded }"
+          class="report"
+          *ngFor="let recipe of recipes"
+        >
+          <div class="report-header">
+            <a
+              class="report-recipe link"
+              [routerLink]="'/recipes/list/' + recipe.id"
+            >
+              {{ recipe.name }}
+            </a>
+            <p class="report-date">
+              Рецепт отправлен
+              {{
+                getDate(recipe.publicationDate).toString()
+                  | timePast
+                  | lowercase
+              }}
+            </p>
+          </div>
+          <div class="report-users" *ngIf="recipe.authorId > 0">
+            <p class="reporter">
+              Автор:
+              <a
+                class="report-user link"
+                [routerLink]="'/cooks/list/' + recipe.authorId"
+                >{{ recipe.authorName}}</a
+              >
+            </p>
+          </div>
+          <div
+            class="recipe-image"
+            [ngClass]="{ 'image-loading': recipe.imageLoading }"
+            [style.background-image]="
+              'url(' + (recipe.imageURL || placeholder) + ')'
+            "
+          ></div>
+
+          <div class="report-buttons">
+            <app-button
+              [text]="'Принять'"
+              (click)="updateToReviewActionClick('approve', recipe)"
+              [color]="currentUser.role !== 'user' ? currentUser.role : 'prim'"
+              [style]="'filled'"
+              [rounded]="true"
+            ></app-button>
+            <app-button
+              [text]="'Отклонить'"
+              (click)="updateToReviewActionClick('dismiss', recipe)"
+              [color]="currentUser.role !== 'user' ? currentUser.role : 'prim'"
+              [style]="'filled-min'"
+              [rounded]="true"
+            ></app-button>
+          </div>
+        </div>
+        <ng-container *ngIf="!loaded">
+          <div class="report loading" *ngFor="let recipe of  preloader">
+            <div class="report-header">
+              <p class="report-recipe link">0000000000000000</p>
+              <p class="report-date">00000000000000000000000000</p>
+            </div>
+            <div class="report-users">
+              <p class="reporter">000000000000</p>
+            </div>
+            <div class="recipe-image image-loading"></div>
+            <div class="report-buttons">
+              <div class="load-button">
+                <app-button
+                  [text]="'Принять'"
+                  [color]="'prim'"
+                  [disabled]="false"
+                  [style]="'filled'"
+                  [rounded]="true"
+                ></app-button>
+              </div>
+              <div class="load-button">
+                <app-button
+                  [text]="'Отклонить'"
+                  [disabled]="false"
+                  [color]="'prim'"
+                  [style]="'filled-min'"
+                  [rounded]="true"
+                ></app-button>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <app-button
+        class="more-reports-button"
+        [text]="'Загрузить еще...'"
+        (click)="loadMoreRecipes()"
+        *ngIf="!everythingLoaded && recipes.length > 0"
+        [disabled]="loaded"
+        [rounded]="true"
+        [style]="'outlined'"
+        [color]="'prim'"
+      ></app-button>
+
+      <div
+        class="allloaded"
+        *ngIf="!recipes.length && loaded && everythingLoaded"
+      >
+        <div class="not-found-icon">
+          <svg-icon
+            class="not-found-svg"
+            [applyClass]="true"
+            [src]="'/assets/images/svg/not-found.svg'"
+          />
+        </div>
+
+        Рецептов на проверку пока нет
+      </div>
+
+      <p class="allloaded" *ngIf="!loaded">Загружаем рецепты...</p>
+      <p *ngIf="everythingLoaded && loaded && recipes.length" class="allloaded">
+        Все рецепты для проверки уже загружены
+      </p>
+    </div>
+  </div>
+</div>
+
+<app-modal
+  @modal
+  *ngIf="actionModal"
+  [style]="'sec'"
+  [title]="'Рецепт успешно ' + (action === 'approve' ? 'одобрен' : 'отклонен')"
+  [type]="'Ok'"
+  (resultEmit)="handleSuccessUpdateActionModal()"
+  [buttonsText]="['Хорошо']"
+  [description]="
+    'Вы успешно ' +
+    (action === 'approve' ? 'одобрили' : 'отклонили') +
+    ' этот рецепт'
+  "
+></app-modal>
+
+<app-modal
+  [style]="'await'"
+  *ngIf="loadingModal"
+  @modal
+/>
+
+<app-modal
+  @modal
+  *ngIf="confirmModal"
+  [style]="action === 'dismiss' ? 'prim' : 'sec'"
+  [title]="action === 'dismiss' ? 'Отклонение рецепта' : 'Одобрение рецепта'"
+  [type]="'yesOrNo'"
+  (resultEmit)="handleConfirmModal($event)"
+  [buttonsText]="['Да', 'Нет']"
+  [description]="
+    action === 'dismiss'
+      ? 'Вы уверены, что хотите отклонить рецепт?'
+      : 'Вы уверены, что хотите одобрить рецепт?'
+  "
+></app-modal>
+
+
+<app-modal @modal *ngIf="errorModal" [style]="'prim'"
+  [title]="'Произошла ошибка'" [type]="'Ok'"
+  (resultEmit)="errorModal = false" [buttonsText]="['Хорошо']" [description]="
+    errorText || 'Произошла неизвестная ошибка'
+  "></app-modal>

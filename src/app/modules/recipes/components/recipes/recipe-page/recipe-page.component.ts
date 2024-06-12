@@ -6,40 +6,60 @@ import {
   OnInit,
 } from '@angular/core';
 import { ActivatedRoute, Data, Router } from '@angular/router';
-import { IRecipe, Ingredient, Instruction, nullRecipe } from '../../../models/recipes';
+import {
+  IRecipe,
+  Ingredient,
+  Instruction,
+  nullRecipe,
+} from '../../../models/recipes';
 import { Title } from '@angular/platform-browser';
 import { RecipeService } from '../../../services/recipe.service';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { UserService } from 'src/app/modules/user-pages/services/user.service';
-import { CategoryService } from '../../../services/category.service';
 import { ICategory } from '../../../models/categories';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
-import { SectionService } from '../../../services/section.service';
-import { Subject, takeUntil } from 'rxjs';
+import {
+  EMPTY,
+  Observable,
+  Subject,
+  Subscription,
+  catchError,
+  concatMap,
+  filter,
+  finalize,
+  forkJoin,
+  from,
+  of,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import { CommentService } from '../../../services/comment.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IComment } from '../../../models/comments';
 import { getFormattedDate, setReadingTimeInMinutes } from 'src/tools/common';
 import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
-import { INotification } from 'src/app/modules/user-pages/models/notifications';
-import { PlanService } from 'src/app/modules/planning/services/plan-service';
 import {
-  IPlan,
-  nullCalendarEvent,
-  nullPlan,
-} from 'src/app/modules/planning/models/plan';
+  INotification,
+  nullNotification,
+} from 'src/app/modules/user-pages/models/notifications';
+import { PlanService } from 'src/app/modules/planning/services/plan.service';
+import { nullCalendarEvent } from 'src/app/modules/planning/models/plan';
 import {
   ShoppingListItem,
   nullProduct,
 } from 'src/app/modules/planning/models/shopping-list';
 import { IngredientService } from '../../../services/ingredient.service';
-import { IIngredient } from '../../../models/ingredients';
 import { RecipeCalendarEvent } from 'src/app/modules/planning/models/calendar';
 import { Location } from '@angular/common';
-import { supabase } from 'src/app/modules/controls/image/supabase-data';
 import { trimmedMinLengthValidator } from 'src/tools/validators';
+import { notifyForFollowersOfApprovedRecipeAuthor } from 'src/app/modules/authentication/components/control-dashboard/notifications';
+import {
+  Permission,
+  social,
+} from 'src/app/modules/user-pages/components/settings/conts';
+import { CategoryService } from '../../../services/category.service';
 
 @Component({
   selector: 'app-recipe-page',
@@ -50,36 +70,34 @@ import { trimmedMinLengthValidator } from 'src/tools/validators';
 })
 export class RecipePageComponent implements OnInit, OnDestroy {
   protected destroyed$: Subject<void> = new Subject<void>();
-
+  subscriptions = new Subscription();
   protected addingToPlanMode: boolean = false;
 
   recipe: IRecipe = nullRecipe;
 
   authorAvatar = '';
   noAvatar = '/assets/images/userpic.png';
-  currentUserAvatar = '';
-  supabase = supabase;
+
+  COMMENTS_PER_STEP = 3;
+  COMMENTS_STEP = 0;
+  commentsLoaded = false;
+  everythingLoaded = false;
 
   categories: ICategory[] = [];
   downRecipes: IRecipe[] = [];
   recentRecipes: IRecipe[] = [];
 
-  author: IUser = { ...nullUser };
   currentUser: IUser = { ...nullUser };
 
-  iHaveIndgredient: boolean[] = [];
-  basket: boolean[] = [];
   basketMode = false;
-
-  isRecipeFavorite: boolean = false;
-  isRecipeLiked: boolean = false;
-  isRecipeCooked: boolean = false;
 
   noAccessModalShow: boolean = false;
   commentModalShow = false;
   successCommentModalShow = false;
 
   dataLoaded = false;
+
+  loadingRecipe = { ...nullRecipe, id: -1 };
 
   showHistory = false;
 
@@ -92,14 +110,31 @@ export class RecipePageComponent implements OnInit, OnDestroy {
 
   statisticPercent = 0;
 
-  ingredients: IIngredient[] = [];
+  relatedIngredients: { name: string; id: number; groupId: number }[] = [];
   voteModalShow: boolean = false;
   successVoteModalShow: boolean = false;
-  commentsToShow: IComment[] = [];
 
-  myPlan: IPlan = nullPlan;
+  recentRecipesLoading = true;
+  alsoFromThisCookLoading = true;
+  loading = false;
+  showedImages: string[] = [];
+  startImageToView = 0;
+  recipeLoading = true;
+  similarRecipesLoading = true;
+  similarRecipes: IRecipe[] = [];
+
+  avatarUrl = '';
+  init = false;
   protected targetCalendarEvent: RecipeCalendarEvent = nullCalendarEvent;
   vote: boolean = false;
+  imageIndex: number = 0;
+  currentUserShoppingList: ShoppingListItem[] = [];
+  deleteRecipeModalShow = false;
+  successDeleteModalShow = false;
+  editMode = false;
+
+  successPublishModalShow = false;
+  publishModalShow = false;
 
   get noPageToGoBack() {
     return window.history.length <= 1;
@@ -111,21 +146,21 @@ export class RecipePageComponent implements OnInit, OnDestroy {
 
   protected alsoFromThisCook: IRecipe[] = [];
 
-  get hideAuthor(): boolean {
-    return this.recipeService.hideAuthor(this.currentUser, this.author);
-  }
-
-  get authorInfo(): string {
-    if (this.author.id <= 0) return 'Автор удален';
-    if (!this.hideAuthor) return 'Автор скрыт';
-    return !this.author.fullName
-      ? '@' + this.author.username
-      : this.author.fullName;
+  getRecipesFull(startRecipes: IRecipe[]) {
+    const width = window.innerWidth;
+    let maxRecipes = 3;
+    if (width <= 768) {
+      maxRecipes = 2;
+    }
+    const recipes = [...startRecipes];
+    while (recipes.length < maxRecipes) {
+      recipes.push(nullRecipe);
+    }
+    return recipes;
   }
 
   constructor(
     private notifyService: NotificationService,
-    private sectionService: SectionService,
     private planService: PlanService,
     private route: ActivatedRoute,
     private titleService: Title,
@@ -134,11 +169,16 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private commentService: CommentService,
     public router: Router,
-    private ingredientService: IngredientService,
-    private categoryService: CategoryService,
     private cd: ChangeDetectorRef,
+    private categoryService: CategoryService,
     private location: Location,
   ) {
+    const width = window.innerWidth;
+
+    if (width <= 960) {
+      this.recentNumber = 4;
+      this.recentSkeleton = Array.from({ length: 4 }, () => this.loadingRecipe);
+    }
     this.commentForm = this.fb.group({
       commentText: [
         '',
@@ -152,212 +192,607 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit() {
-    this.route.data.subscribe((data: Data) => {
-      this.recipe = data['RecipeResolver'];
-      this.linkForSocials = window.location.href;
+  private getIngredients(recipeId: number) {
+    return this.recipeService.getIngredients(recipeId).pipe(
+      tap((ingredients: any) => {
+        this.recipe.ingredients = ingredients || [];
+      }),
+    );
+  }
+  private getInstructions(recipeId: number) {
+    return this.recipeService.getInstructions(recipeId).pipe(
+      tap((instructions: Instruction[]) => {
+        this.recipe.instructions = instructions || [];
+      }),
+    );
+  }
 
-      this.userService.users$
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe((data) => {
-          if (this.recipe.authorId !== -1) {
-            const findedUser = data.find(
-              (user) => user.id === this.recipe.authorId,
-            );
-            if (findedUser) {
-              this.author = findedUser;
-            }
-          } else {
-            this.author = { ...nullUser };
-            this.author.id = -1;
-          }
-          this.authService.currentUser$
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe((data: IUser) => {
-              this.currentUser = data;
+  recentNumber = 3;
+  recentSkeleton = Array.from({ length: 3 }, () => this.loadingRecipe);
+  alsoFromThisCookNumber = 4;
+  alsoFromThisCookSkeleton = Array.from(
+    { length: 4 },
+    () => this.loadingRecipe,
+  );
 
-              this.recipeService.recipes$
-                .pipe(takeUntil(this.destroyed$))
-                .subscribe((recipes: IRecipe[]) => {
-                  const finded = recipes.find((r) => r.id === this.recipe.id);
-                  if (finded) this.recipe = finded;
-                  else {
-                    this.router.navigateByUrl('/recipes');
-                  }
-                  this.cd.markForCheck();
-                  this.titleService.setTitle(this.recipe.name);
+  private getRecipesFromThisCook() {
+    if (this.recipe.authorId && this.recipe.authorId > 0)
+      this.subscriptions.add(
+        this.recipeService
+          .getSomePublicRecipesByUser(
+            this.alsoFromThisCookNumber,
+            0,
+            this.recipe.authorId,
+            this.recipe.id,
+          )
+          .pipe(
+            takeUntil(this.destroyed$),
+            tap((response: any) => {
+              const recipes: IRecipe[] = response.recipes;
+              this.loadRecipesImages(recipes);
 
-                  this.ingredientService.ingredients$
-                    .pipe(takeUntil(this.destroyed$))
-                    .subscribe((receivedIngredients) => {
-                      this.ingredients = receivedIngredients.filter(
-                        (i) => i.status === 'public',
-                      );
-                    });
+              this.alsoFromThisCookLoading = false;
+              this.alsoFromThisCook = recipes;
 
-                  this.statisticPercent = Number(
-                    this.getStatictics().toFixed(0),
-                  );
+              this.cd.markForCheck();
+            }),
+          )
+          .subscribe(),
+      );
+  }
 
-                  if (this.recipe.categories.length > 0) {
-                    const publicRecipes =
-                      this.recipeService.getPublicRecipes(recipes);
-                    this.downRecipes = this.getSimilarRecipes(publicRecipes, 4);
-                  }
-                  if (this.hideAuthor && this.author.id > 0) {
-                    this.alsoFromThisCook = this.recipeService
-                      .getRecipesByUser(
-                        this.recipeService.getPublicRecipes(recipes),
-                        this.author.id,
-                      )
-                      .filter((r) => r.id !== this.recipe.id)
-                      .slice(0, 4);
-                  }
-                  this.recentRecipes = this.recipeService.getRecentRecipes(
-                    this.recipeService.getPublicRecipes(recipes),
-                  );
+  private getRecentRecipes() {
+    this.subscriptions.add(
+      this.recipeService
+        .getSomeMostRecentRecipes(
+          this.recentNumber,
+          0,
+          this.recipe.id,
+          this.recipe.authorId,
+        )
+        .pipe(
+          takeUntil(this.destroyed$),
+          tap((response: any) => {
+            const recipes: IRecipe[] = response.recipes;
 
-                  this.recentRecipes = this.recentRecipes.filter(
-                    (recipe) => recipe.authorId !== this.currentUser.id,
-                  );
-                  this.recentRecipes = this.recentRecipes.filter(
-                    (recipe) => recipe.id !== this.recipe.id,
-                  );
-                  this.recentRecipes = this.recentRecipes.slice(0, 3);
+            this.loadRecipesImages(recipes);
+            this.recentRecipesLoading = false;
+            this.recentRecipes = recipes;
 
-                  this.recipe.comments = this.commentService.sortComments([
-                    ...this.recipe.comments,
-                  ]);
-                  if (this.commentsToShow.length > 4)
-                    this.commentsToShow = this.recipe.comments.slice(
-                      0,
-                      this.commentsToShow.length + 1,
-                    );
-                  else {
-                    this.commentsToShow = this.recipe.comments.slice(0, 4);
-                  }
+            this.cd.markForCheck();
+          }),
+        )
+        .subscribe(),
+    );
+  }
 
-                  this.recipe.ingredients.forEach((ingredient) => {
-                    const findedIngredient = this.recipe.ingredients.find(
-                      (i) => i === ingredient,
-                    );
-                    if (findedIngredient && findedIngredient.quantity !== '') {
-                      findedIngredient.quantity = ingredient.quantity
-                        .toString()
-                        .replace(',', '.');
-                    }
-                  });
+  private loadRecipesImages(recipes: IRecipe[]) {
+    recipes.forEach((recipe) => {
+      if (recipe.mainImage) {
+        recipe.imageLoading = true;
 
-                  this.downloadAvatars();
-                  if (this.recipe.mainImage) {
-                    this.downloadPicFromSupabase(this.recipe.mainImage);
-                  } else {
-                    this.recipe.mainImage = '';
-                  }
-
-                  this.setCategories();
-                  this.setReadingTimeInMinutes();
-                  this.setStatistics();
-                  this.iHaveIndgredient = Array.from(
-                    { length: this.recipe.ingredients.length },
-                    () => false,
-                  );
-
-                  this.cd.markForCheck();
-                });
-
-              this.planService.plans$
-                .pipe(takeUntil(this.destroyed$))
-                .subscribe((data) => {
-                  const find = data.find((p) => p.user === this.currentUser.id);
-                  this.myPlan = find ? find : nullPlan;
-                  this.basketInit();
-                });
-            });
-        });
+        this.subscriptions.add(
+          this.recipeService
+            .downloadRecipeImage(recipe.mainImage)
+            .pipe(
+              takeUntil(this.destroyed$),
+              tap((blob) => {
+                recipe.imageURL = URL.createObjectURL(blob);
+              }),
+              finalize(() => {
+                recipe.imageLoading = false;
+                this.cd.markForCheck();
+              }),
+            )
+            .subscribe(),
+        );
+      }
     });
   }
 
-  private getSupabaseLink(path: string) {
-    return this.supabase.storage.from('userpics').getPublicUrl(path).data
-      .publicUrl;
+  getSimilarRecipes() {
+    this.subscriptions.add(
+      this.recipeService
+        .getSomeSimilarRecipes(
+          this.alsoFromThisCookNumber,
+          0,
+          this.recipe.id,
+          this.recipe.authorId,
+        )
+        .pipe(
+          takeUntil(this.destroyed$),
+          tap((response: any) => {
+            const recipes: IRecipe[] = response.recipes;
+
+            this.loadRecipesImages(recipes);
+
+            this.similarRecipesLoading = false;
+            this.similarRecipes = response.recipes;
+
+            this.cd.markForCheck();
+          }),
+        )
+        .subscribe(),
+    );
   }
 
-  downloadAvatars() {
-    if (this.currentUser.avatarUrl)
-      this.currentUserAvatar = this.getSupabaseLink(this.currentUser.avatarUrl);
-    else {
-      this.currentUser.avatarUrl = this.noAvatar;
-    }
-    if (this.author.avatarUrl)
-      this.authorAvatar = this.getSupabaseLink(this.author.avatarUrl);
-    else this.authorAvatar = this.noAvatar;
-    this.cd.markForCheck();
+  private loadComments() {
+    this.recipe.commentsLength = 0;
+    this.commentsLoaded = false;
+    this.COMMENTS_STEP = 0;
+    this.loadMoreComments();
   }
 
-  goToSection(section: string) {
-    const sectionTag = document.getElementById(section);
-    if (sectionTag) {
-      const headerHeight =
-        document.getElementsByClassName('header')[0].clientHeight;
-      window.scrollTo({
-        top: sectionTag.offsetTop - headerHeight,
-        behavior: 'smooth',
-      });
-    }
+  handleSuccessPublishRecipeModal() {
+    this.successPublishModalShow = false;
+    this.loadRecipe(this.recipe.id);
+  }
+  publishRecipe() {
+    this.loading = true;
+    const publishRecipe$ =
+      this.currentUser.role !== 'user'
+        ? this.recipeService.approveMyRecipe(this.recipe.id)
+        : this.recipeService.makeRecipeAwaits(this.recipe.id);
+
+    publishRecipe$
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+          this.cd.markForCheck();
+        }),
+        tap(() => {
+          this.successPublishModalShow = true;
+          this.cd.markForCheck();
+
+          if (
+            this.userService.getPermission(
+              this.currentUser.limitations || [],
+              Permission.RecipeSend,
+            )
+          ) {
+            const notify: INotification = this.notifyService.buildNotification(
+              this.currentUser.role === 'user'
+                ? 'Рецепт отправлен на проверку'
+                : 'Рецепт успешно опубликован',
+              `Рецепт «${this.recipe.name}» успешно ${
+                this.currentUser.role === 'user'
+                  ? 'отправлен на проверку'
+                  : 'опубликован'
+              }`,
+              'success',
+              'recipe',
+              '/recipes/list/' + this.recipe.id,
+            );
+            this.notifyService
+              .sendNotification(notify, this.recipe.authorId, true)
+              .subscribe();
+          }
+          if (this.currentUser.role !== 'user')
+            this.sendNotifiesAfterPublishing();
+        }),
+      )
+      .subscribe();
   }
 
-  protected addToPlan(): void {
-    this.targetCalendarEvent.id = -1;
-    this.targetCalendarEvent.recipe = this.recipe.id;
-    this.targetCalendarEvent.title = this.recipe.name;
-    this.addingToPlanMode = true;
+  private sendNotifiesAfterPublishing() {
+    this.userService
+      .getFollowersIds(this.currentUser.id)
+      .pipe(
+        tap((response: number[]) => {
+          console.log(response);
+          const authorFollowers = response;
+          const notifyForFollower = notifyForFollowersOfApprovedRecipeAuthor(
+            this.currentUser.fullName || `@${this.currentUser.username}`,
+            this.recipe,
+            this.notifyService,
+          );
+
+          const notifications = authorFollowers.map((follower) => {
+            return this.userService
+              .getLimitation(follower, Permission.RecipeFromFollowing)
+              .pipe(
+                filter((limit) => !limit),
+                tap(() =>
+                  this.notifyService
+                    .sendNotification(notifyForFollower, follower)
+                    .subscribe(),
+                ),
+              );
+          });
+
+          forkJoin(notifications).subscribe();
+        }),
+      )
+      .subscribe();
   }
 
-  handleVoteModal(event: boolean) {
-    this.vote = event;
-    if (event) {
-      this.recipe = this.recipeService.voteForRecipe(
-        this.recipe,
-        this.currentUser.id,
-        true,
-      );
-    } else {
-      this.recipe = this.recipeService.voteForRecipe(
-        this.recipe,
-        this.currentUser.id,
-        false,
-      );
-    }
-    this.cookThisRecipe();
-    this.voteModalShow = false;
+  loadRecipe(recipeId: number) {
+    this.recipeLoading = true;
+    this.recentRecipes = [];
+    this.categories = [];
+    this.similarRecipes = [];
+    this.alsoFromThisCook = [];
+    this.recentRecipesLoading = true;
+    this.alsoFromThisCookLoading = true;
+    this.similarRecipesLoading = true;
+    this.commentsLoaded = false;
+    this.recipe.commentsLength = 0;
+    this.authorAvatar = '';
+    this.everythingLoaded = false;
+
+    this.showHistory = false;
+    this.statisticPercent = 0;
+
+    this.subscriptions.add(
+      this.recipeService
+        .getRecipe(recipeId)
+        .pipe(
+          takeUntil(this.destroyed$),
+          tap((recipe: IRecipe) => {
+            const tRecipe = this.recipeService.translateRecipe(recipe);
+            this.recipe = tRecipe;
+
+            const categories$ = this.categoryService
+              .getShortCategoriesByRecipe(recipe.id)
+              .pipe(
+                tap((receivedCategories: ICategory[]) => {
+                  this.categories = receivedCategories;
+                }),
+              );
+
+            const statistics$ =
+              this.recipe.status === 'public'
+                ? this.recipeService.getVotes(this.recipe.id).pipe(
+                    tap((response) => {
+                      this.recipe.statistics =
+                        this.recipeService.translateStatistics(response);
+                    }),
+                  )
+                : of(null);
+
+            const ingredients$ = this.getIngredients(this.recipe.id);
+            const instructions$ = this.getInstructions(this.recipe.id);
+            const instructionsImages$ = this.getInstructionsImages();
+            const relatedIngredients$ = this.getRelatedIngredients();
+
+            this.subscriptions.add(
+              forkJoin([
+                categories$,
+                ingredients$,
+                instructions$,
+                statistics$,
+                relatedIngredients$,
+              ])
+                .pipe(takeUntil(this.destroyed$))
+                .subscribe(() => {
+                  this.recipeInitialize();
+                  this.loadComments();
+                  this.getRecipeImage();
+                  instructionsImages$.subscribe();
+
+                  if (this.recipe.avatar) {
+                    this.subscriptions.add(
+                      this.userService
+                        .downloadUserpic(this.recipe.avatar)
+                        .pipe(
+                          takeUntil(this.destroyed$),
+                          tap((blob) => {
+                            this.recipe.avatarURL = URL.createObjectURL(blob);
+                            this.cd.markForCheck();
+                          }),
+                          catchError(() => {
+                            this.recipe.avatarURL = '';
+                            return EMPTY;
+                          }),
+                        )
+                        .subscribe(),
+                    );
+                  }
+
+                  if (this.recipe.status === 'public') {
+                    this.getRecentRecipes();
+                    this.getRecipesFromThisCook();
+                    this.getSimilarRecipes();
+                  }
+                  this.recipeLoading = false;
+                  this.cd.markForCheck();
+                }),
+            );
+          }),
+        )
+        .subscribe(),
+    );
   }
 
-  findIngredientByName(name: string) {
-    return this.ingredientService.findIngredientByName(name, this.ingredients);
-  }
-  async handleSuccessVoteModal() {
-    if (this.isRecipeCooked) {
-      if (
-        this.author.id !== this.currentUser.id &&
-        this.userService.getPermission('cook-on-your-recipe', this.author)
-      ) {
-        const notify: INotification = this.notifyService.buildNotification(
-          'Твой рецепт приготовили',
-          `Твой рецепт «${this.recipe.name}» приготовил кулинар ${
-            this.currentUser.fullName
-              ? this.currentUser.fullName
-              : '@' + this.currentUser.username
-          }${
-            this.vote
-              ? ' и оставил положительный отзыв'
-              : ' и оставил негативный отзыв'
-          }`,
-          'info',
-          'recipe',
-          '/cooks/list/' + this.currentUser.id,
+  getInstructionsImages() {
+    return this.recipeService.getInstructionsImages(this.recipe.id).pipe(
+      concatMap((response) => {
+        const instructions = response.filter((res) => res); // Фильтрация пустых значений
+
+        return from(instructions).pipe(
+          concatMap((res) => {
+            const instruction = this.recipe.instructions.find(
+              (instruction) => instruction.id === res.instructionId,
+            );
+
+            if (res.image && instruction) {
+              if (!instruction.images) instruction.images = [];
+              instruction.images.push('');
+              this.cd.markForCheck();
+              return this.recipeService
+                .downloadInstructionImage(res.image)
+                .pipe(
+                  catchError(() => {
+                    return EMPTY;
+                  }), // Обрабатываем ошибку загрузки
+                  tap((blob) => {
+                    if (instruction) {
+                      const url = URL.createObjectURL(blob);
+                      const loadIndex = instruction.images.indexOf('');
+                      if (loadIndex !== -1) {
+                        instruction.images[loadIndex] = url;
+                      } else {
+                        instruction.images.push(url);
+                      }
+
+                      this.cd.markForCheck();
+                    }
+                  }),
+                );
+            } else {
+              return of(null);
+            }
+          }),
         );
-        this.notifyService.sendNotification(notify, this.author);
+      }),
+    );
+  }
+
+  divideGroup(group: any) {
+    const grouped = [];
+    let currentGroup: any = null;
+
+    if (group) {
+      const ingredients = group;
+      for (let i = 0; i < ingredients.length; i++) {
+        const ingredient = ingredients[i];
+        if (ingredient.name.startsWith('!!!')) {
+          // Проверяем, есть ли элементы после текущего элемента с "!!!"
+          const isLastElement = i === ingredients.length - 1;
+          const nextElementIsNotExclamation =
+            !isLastElement && !ingredients[i + 1].name.startsWith('!!!');
+          if (isLastElement || !nextElementIsNotExclamation) {
+            // Если это последний элемент или следующий элемент не нутриент, удаляем "!!!" и добавляем как обычный нутриент
+            if (!currentGroup) {
+              currentGroup = { title: null, items: [] };
+            }
+            currentGroup.items.push({
+              ...ingredient,
+              name: ingredient.name.replace(/^!!!/, ''),
+            });
+          } else {
+            // Если текущая группа пустая, добавляем её в список перед созданием новой группы
+            if (currentGroup) {
+              grouped.push(currentGroup);
+            }
+            currentGroup = {
+              title: ingredient.name.replace(/^!!!/, ''),
+              items: [],
+            };
+          }
+        } else {
+          // Если заголовка нет, создаем группу по умолчанию
+          if (!currentGroup) {
+            currentGroup = { title: null, items: [] };
+          }
+          currentGroup.items.push(ingredient);
+        }
+      }
+      // Добавляем последнюю группу в список
+      if (currentGroup) {
+        grouped.push(currentGroup);
+      }
+    }
+
+    return grouped;
+  }
+
+  getRecipeImage() {
+    if (this.recipe.mainImage) {
+      this.recipe.imageLoading = true;
+      this.subscriptions.add(
+        this.recipeService
+          .downloadRecipeImage(this.recipe.mainImage)
+          .pipe(
+            takeUntil(this.destroyed$),
+            catchError(() => {
+              return EMPTY;
+            }),
+            finalize(() => {
+              this.recipe.imageLoading = false;
+              this.cd.markForCheck();
+            }),
+            tap((blob) => {
+              this.recipe.imageURL = URL.createObjectURL(blob);
+            }),
+          )
+          .subscribe(),
+      );
+    }
+  }
+
+  private shoppingListInitialize() {
+    this.subscriptions.add(
+      this.planService
+        .getProductsByUserId()
+        .pipe(
+          takeUntil(this.destroyed$),
+          tap((shoppingList) => {
+            this.currentUserShoppingList = shoppingList;
+          }),
+        )
+        .subscribe(),
+    );
+  }
+
+  private currentUserInitialize() {
+    this.subscriptions.add(
+      this.authService.currentUser$
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe((receivedUser: IUser) => {
+          if (!this.init && receivedUser.id) {
+            this.init = true;
+            this.shoppingListInitialize();
+            if (receivedUser.image) {
+              this.subscriptions.add(
+                this.userService
+                  .downloadUserpic(receivedUser.image)
+                  .pipe(
+                    takeUntil(this.destroyed$),
+                    tap((blob) => {
+                      this.avatarUrl = URL.createObjectURL(blob);
+                      this.cd.markForCheck();
+                    }),
+                    catchError(() => {
+                      this.avatarUrl = '';
+                      return EMPTY;
+                    }),
+                  )
+                  .subscribe(),
+              );
+            }
+          }
+          this.currentUser = receivedUser;
+        }),
+    );
+  }
+
+  private recipeInitialize() {
+    this.titleService.setTitle(this.recipe.name);
+
+    this.statisticPercent = Number(this.getStatictics().toFixed(0));
+
+    this.recipe.ingredients.forEach((ingredient) => {
+      const findedIngredient = this.recipe.ingredients.find(
+        (i) => i === ingredient,
+      );
+      if (findedIngredient && findedIngredient.quantity !== '') {
+        findedIngredient.quantity = ingredient.quantity
+          .toString()
+          .replace(',', '.');
+      }
+    });
+
+    this.setReadingTimeInMinutes();
+    this.basketInit();
+  }
+  protected socials: social[] = [
+    'email',
+    'telegram',
+    'vk',
+    'viber',
+    'twitter',
+    'facebook',
+  ];
+
+  ngOnInit() {
+    this.currentUserInitialize();
+    this.route.data.subscribe((data: Data) => {
+      this.linkForSocials = window.location.href;
+      const resolverRecipe: IRecipe = data['RecipeResolver'];
+
+      this.loadRecipe(resolverRecipe.id);
+    });
+  }
+
+  loadMoreComments() {
+    if (this.commentsLoaded || !this.recipe.comments.length) {
+      this.commentsLoaded = false;
+      this.subscriptions.add(
+        this.commentService
+          .getComments(
+            this.recipe.id,
+            this.COMMENTS_PER_STEP,
+            this.COMMENTS_STEP,
+          )
+          .pipe(
+            takeUntil(this.destroyed$),
+            tap((response: any) => {
+              const count = response.count;
+              if (!count) {
+                this.commentsLoaded = true;
+                this.everythingLoaded = true;
+                return;
+              }
+              const comments: IComment[] = response.comments;
+
+              comments.forEach((comment) => {
+                if (comment.avatar) {
+                  this.subscriptions.add(
+                    this.userService
+                      .downloadUserpic(comment.avatar)
+                      .pipe(
+                        takeUntil(this.destroyed$),
+                        tap((blob) => {
+                          comment.avatarUrl = URL.createObjectURL(blob);
+                          this.cd.markForCheck();
+                        }),
+                        catchError(() => {
+                          comment.avatarUrl = '';
+                          return EMPTY;
+                        }),
+                      )
+                      .subscribe(),
+                  );
+                }
+              });
+
+              this.recipe.commentsLength = count;
+              this.recipe.comments = [...this.recipe.comments, ...comments];
+              if (count <= this.recipe.comments.length) {
+                this.everythingLoaded = true;
+              }
+              this.COMMENTS_STEP++;
+              this.commentsLoaded = true;
+              this.cd.markForCheck();
+            }),
+          )
+          .subscribe(),
+      );
+    }
+  }
+
+  hasIngredientsWithServings(): boolean {
+    return this.recipe.ingredients.some((ingredient) => ingredient.quantity);
+  }
+
+  handleSuccessVoteModal() {
+    const authorId = this.recipe.authorId;
+    if (this.recipe.cooked) {
+      if (authorId !== this.currentUser.id && authorId > 0) {
+        this.userService
+          .getLimitation(authorId, Permission.YourRecipeCooked)
+          .subscribe((limit) => {
+            if (!limit) {
+              const notify: INotification =
+                this.notifyService.buildNotification(
+                  'Твой рецепт приготовили',
+                  `Твой рецепт «${this.recipe.name}» приготовил кулинар ${
+                    this.currentUser.fullName
+                      ? this.currentUser.fullName
+                      : '@' + this.currentUser.username
+                  }${
+                    this.vote
+                      ? ' и оставил положительный отзыв'
+                      : ' и оставил негативный отзыв'
+                  }`,
+                  'info',
+                  'recipe',
+                  '/cooks/list/' + this.currentUser.id,
+                );
+              this.notifyService.sendNotification(notify, authorId).subscribe();
+            }
+          });
       }
     }
 
@@ -365,31 +800,159 @@ export class RecipePageComponent implements OnInit, OnDestroy {
 
     this.successVoteModalShow = false;
   }
-
-  getStatictics(): number {
-    if (this.recipe.statistics && this.recipe.statistics.length > 0) {
-      const totalVotes = this.recipe.statistics.length;
-      const positiveVotes = this.recipe.statistics.filter(
-        (item) => item.answer,
-      ).length;
-      const successRate = (positiveVotes / totalVotes) * 100;
-
-      return successRate;
+  handlePublishRecipeModal(event: boolean) {
+    if (event) {
+      this.publishRecipe();
     }
-    return 0;
+    this.publishModalShow = false;
+  }
+  deleteRecipe() {
+    this.loading = true;
+
+    this.recipeService
+      .deleteInstructionsImages(this.recipe.id)
+      .pipe(
+        tap(() => {
+          this.deleteRecipeAndImageAfterInstructionImages();
+        }),
+      )
+      .subscribe();
   }
 
-  async addComment() {
+  deleteRecipeAndImageAfterInstructionImages() {
+    this.recipeService
+      .deleteRecipeImage(this.recipe.id)
+      .pipe(
+        tap(() => {
+          this.deleteRecipeAfterImage();
+        }),
+      )
+      .subscribe();
+  }
+
+  deleteRecipeAfterImage() {
+    this.recipeService
+      .deleteRecipe(this.recipe.id)
+      .pipe(
+        tap(() => {
+          this.successDeleteModalShow = true;
+          this.loading = false;
+          this.cd.markForCheck();
+          if (this.currentUser.id === this.recipe.authorId) {
+            const notify = this.notifyService.buildNotification(
+              'Рецепт удален',
+              `Вы успешно удалили свой рецепт «${this.recipe.name}».`,
+              'success',
+              'recipe',
+              '',
+            );
+            this.notifyService
+              .sendNotification(
+                notify,
+                this.recipe.authorId > 0
+                  ? this.recipe.authorId
+                  : this.currentUser.id,
+                true,
+              )
+              .subscribe();
+          } else {
+            let notify = nullNotification;
+            if (
+              this.userService.getPermission(
+                this.currentUser.limitations || [],
+                Permission.WorkNotifies,
+              )
+            ) {
+              notify = this.notifyService.buildNotification(
+                'Рецепт удален',
+                `Вы успешно удалили рецепт «${this.recipe.name}».`,
+                'success',
+                'recipe',
+                '',
+              );
+
+              this.notifyService
+                .sendNotification(notify, this.currentUser.id, true)
+                .subscribe();
+
+              if (this.recipe.authorId > 0) {
+                notify = this.notifyService.buildNotification(
+                  'Ваш рецепт удален',
+                  `Ваш ранее опубликованный рецепт «${this.recipe.name}» был удален по решению администратора`,
+                  'error',
+                  'recipe',
+                  '',
+                );
+
+                this.notifyService
+                  .sendNotification(notify, this.recipe.authorId)
+                  .subscribe();
+              }
+            }
+          }
+        }),
+      )
+      .subscribe();
+  }
+
+  showRecipeDeleteButton() {
+    return this.userService.getPermission(
+      this.currentUser.limitations || [],
+      Permission.OtherRecipesDeleteButton,
+    );
+  }
+
+  handleSuccessDeleteModal() {
+    this.router.navigateByUrl('/recipes');
+  }
+
+  handleDeleteRecipeModal(event: boolean) {
+    if (event) {
+      this.deleteRecipe();
+    }
+    this.deleteRecipeModalShow = false;
+  }
+
+  handleEditedRecipe() {
+    this.loadRecipe(this.recipe.id);
+  }
+
+  addComment() {
     const comment: IComment = this.commentService.makeComment(
-      this.currentUser,
+      this.currentUser.id,
       this.commentForm.get('commentText')?.value,
+      this.currentUser.fullName || `@${this.currentUser.username}`,
+      this.avatarUrl,
     );
     this.loading = true;
-    this.cd.markForCheck();
-    await this.commentService.addCommentToRecipe(this.recipe, comment);
+    this.commentService
+      .postComment(comment, this.recipe)
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+          this.cd.markForCheck();
+        }),
+        tap((res: any) => {
+          const commentId = res.id;
+          comment.id = commentId;
+          this.recipe.comments = [comment, ...this.recipe.comments];
 
+          this.recipe.commentsLength
+            ? this.recipe.commentsLength++
+            : (this.recipe.commentsLength = 1);
+          this.commentNotifies(comment);
+          this.successCommentModalShow = true;
+        }),
+      )
+      .subscribe();
+  }
+
+  commentNotifies(comment: IComment) {
     if (
-      this.userService.getPermission('you-commented-recipe', this.currentUser)
+      this.userService.getPermission(
+        this.currentUser.limitations || [],
+        Permission.YouCommentRecipe,
+      )
     ) {
       const notify: INotification = this.notifyService.buildNotification(
         'Комментарий опубликован',
@@ -398,385 +961,285 @@ export class RecipePageComponent implements OnInit, OnDestroy {
         'comment',
         '/recipes/list/' + this.recipe.id,
       );
-      await this.notifyService.sendNotification(notify, this.currentUser);
+      this.notifyService
+        .sendNotification(notify, this.currentUser.id, true)
+        .subscribe();
     }
 
     if (
-      this.currentUser.id !== this.author.id &&
-      this.userService.getPermission('your-recipe-commented', this.author)
+      this.currentUser.id !== this.recipe.authorId &&
+      this.recipe.authorId > 0
     ) {
-      const notify: INotification = this.notifyService.buildNotification(
-        'Ваш рецепт прокомментировали',
-        `Ваш рецепт «${this.recipe.name}» прокомментировал 
+      this.userService
+        .getLimitation(this.recipe.authorId, Permission.YourRecipeCommented)
+        .subscribe((limit) => {
+          if (!limit) {
+            const notify: INotification = this.notifyService.buildNotification(
+              'Ваш рецепт прокомментировали',
+              `Ваш рецепт «${this.recipe.name}» прокомментировал 
           кулинар ${
             this.currentUser.fullName
               ? this.currentUser.fullName
               : '@' + this.currentUser.username
           }`,
-        'info',
-        'comment',
-        '/recipes/list/' + this.currentUser.id,
-      );
-      await this.notifyService.sendNotification(notify, this.author);
-    }
-    this.successCommentModalShow = true;
-    this.loading = false;
-    this.cd.markForCheck();
-  }
-  setCategories(): void {
-    this.categoryService.categories$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((allCategories) => {
-        this.categories = allCategories.filter((element) =>
-          this.recipe.categories.includes(element.id),
-        );
-      });
-  }
-
-  setStatistics(): void {
-    if (this.currentUser.id !== 0) {
-      this.isRecipeLiked = this.recipe.likesId.includes(this.currentUser.id);
-
-      this.isRecipeCooked = this.recipe.cooksId.includes(this.currentUser.id);
-
-      this.isRecipeFavorite = this.recipe.favoritesId.includes(
-        this.currentUser.id,
-      );
+              'info',
+              'comment',
+              '/recipes/list/' + this.currentUser.id,
+            );
+            this.notifyService
+              .sendNotification(notify, this.recipe.authorId)
+              .subscribe();
+          }
+        });
     }
   }
 
   basketInit(): void {
-    this.basket = Array.from(
-      { length: this.recipe.ingredients.length },
-      () => false,
-    );
     this.recipe.ingredients.forEach((ingredient, index) => {
-      const matchingProduct = this.myPlan.shoppingList.find(
+      const matchingProduct = this.currentUserShoppingList.find(
         (product) =>
           product.name === ingredient.name &&
-          product.relatedRecipe === this.recipe.id,
+          product.recipeId === this.recipe.id,
       );
 
       if (matchingProduct) {
-        this.basket[index] = true;
+        this.recipe.ingredients[index].basket = true;
       }
     });
     this.cd.markForCheck();
   }
 
-  async addToBasket(i: number, ingredient: Ingredient) {
-    const groceryList = this.myPlan.shoppingList;
-    let maxId = 0;
-    if (groceryList.length > 0)
-      maxId = Math.max(...groceryList.map((g) => g.id));
-    const find = this.recipe.ingredients.find(
-      (ingr) => ingr.name === ingredient.name,
-    );
-    if (find) {
-      const relatedIngredient: IIngredient = this.findIngredientByName(
-        ingredient.name,
-      );
+  addToBasket(ingredient: Ingredient) {
+    const relatedIngredient = this.findIngredientByName(ingredient.name);
+    const product: ShoppingListItem = {
+      ...nullProduct,
+      name: ingredient.name,
+      typeId: relatedIngredient?.groupId || 0,
+      amount:
+        (ingredient.quantity ? ingredient.quantity + ' ' : '') +
+        ingredient.unit,
+      recipeId: this.recipe.id,
+      userId: this.currentUser.id,
+    };
 
-      const product: ShoppingListItem = {
-        ...nullProduct,
-        id: maxId + 1,
-        name: find.name,
-        type: relatedIngredient.shoppingListGroup || 0,
-        howMuch: (find.quantity ? find.quantity + ' ' : '') + find.unit,
-        relatedRecipe: this.recipe.id,
-      };
-      groceryList.push(product);
-      this.myPlan.shoppingList = groceryList;
-      this.loading = true;
-      this.cd.markForCheck();
-
-      await this.planService.updatePlanInSupabase(this.myPlan);
-
-      this.basket[i] = true;
-      this.loading = false;
-      this.cd.markForCheck();
-    }
-  }
-  picture = '';
-  downloadPicFromSupabase(path: string) {
-    this.picture = supabase.storage
-      .from('recipes')
-      .getPublicUrl(path).data.publicUrl;
-
+    this.loading = true;
     this.cd.markForCheck();
+
+    this.planService
+      .postProduct(product)
+      .pipe(
+        tap((res: any) => {
+          const id = res.id;
+          product.id = id;
+          this.currentUserShoppingList.push(product);
+          ingredient.basket = true;
+        }),
+        finalize(() => {
+          this.loading = false;
+          this.cd.markForCheck();
+        }),
+      )
+      .subscribe();
   }
 
-  downloadInstructionPicFromSupabase(path: string) {
-    return supabase.storage.from('recipes').getPublicUrl(path).data.publicUrl;
-  }
-
-  showedImages:string[] =[];
-  startImageToView = 0;
-
-  viewMainImage() {
-    this.startImageToView = 0;
-    this.showedImages = [this.picture]
-  }
-
-  chooseImagesForViewer(instruction: Instruction,instructionNum:number) {
-    const images: string[] = [];
-    instruction.images.forEach((image: any) => {
-      if (image.file) {
-        images.push(this.downloadInstructionPicFromSupabase(image.file));
-      }
-    });
-    this.startImageToView = instructionNum;
-      this.showedImages = images;
-
-      }
-
-  async removeFromBasket(i: number, ingredient: Ingredient) {
-    const groceryList = this.myPlan.shoppingList;
+  removeFromBasket(selectedIngredient: Ingredient) {
+    const groceryList = this.currentUserShoppingList;
     const findIndex = groceryList.findIndex(
       (ingr) =>
-        ingr.name === ingredient.name && ingr.relatedRecipe === this.recipe.id,
+        ingr.name === selectedIngredient.name &&
+        ingr.recipeId === this.recipe.id,
+    );
+    const findedProduct = groceryList.find(
+      (ingredient) =>
+        ingredient.name === selectedIngredient.name &&
+        ingredient.recipeId === this.recipe.id,
     );
 
-    if (findIndex !== -1) {
-      groceryList.splice(findIndex, 1);
-      this.myPlan.shoppingList = groceryList;
+    if (findIndex !== -1 && findedProduct) {
       this.loading = true;
       this.cd.markForCheck();
-      await this.planService.updatePlanInSupabase(this.myPlan);
-      this.loading = false;
-      this.cd.markForCheck();
-
-      this.basket[i] = false;
-    }
-  }
-  loading = false;
-
-  getSimilarRecipes(publicRecipes: IRecipe[], maxRecipes: number): IRecipe[] {
-    const recipesToAdd: IRecipe[] = [];
-    publicRecipes = publicRecipes.filter(
-      (recipe) => recipe.authorId !== this.currentUser.id,
-    );
-    for (const category of this.recipe.categories) {
-      const recipesFromCategory = this.recipeService.getRecipesByCategory(
-        publicRecipes,
-        category,
-      );
-
-      for (const newRecipe of recipesFromCategory) {
-        if (
-          !recipesToAdd.some(
-            (existingRecipe) => existingRecipe.id === newRecipe.id,
-          ) &&
-          newRecipe.id !== this.recipe.id
-        ) {
-          recipesToAdd.push(newRecipe);
-          if (recipesToAdd.length >= maxRecipes) {
-            break;
-          }
-        }
-      }
-
-      if (recipesToAdd.length >= maxRecipes) {
-        break;
-      }
-    }
-
-    // Если до сих пор не заполнились то перебираем все рецепты в категориях из секций категорий рецепта
-    if (recipesToAdd.length < maxRecipes && this.recipe.categories.length > 0) {
-      this.recipe.categories.forEach((element) => {
-        const findSection = element;
-
-        this.categoryService.categories$
-          .pipe(takeUntil(this.destroyed$))
-          .subscribe((cat: ICategory[]) => {
-            const category = cat.find((categ) => categ.id === findSection);
-
-            if (category)
-              this.sectionService.sections$
-                .pipe(takeUntil(this.destroyed$))
-                .subscribe((sect) => {
-                  const section = this.sectionService.getSectionOfCategory(
-                    sect,
-                    category,
-                  );
-                  const sectionCategories =
-                    this.categoryService.getCategoriesBySection(section, cat);
-
-                  for (const category of sectionCategories) {
-                    const recipesFromCategory =
-                      this.recipeService.getRecipesByCategory(
-                        publicRecipes,
-                        category.id,
-                      );
-
-                    for (const newRecipe of recipesFromCategory) {
-                      if (
-                        !recipesToAdd.some(
-                          (existingRecipe) =>
-                            existingRecipe.id === newRecipe.id,
-                        ) &&
-                        newRecipe.id !== this.recipe.id
-                      ) {
-                        recipesToAdd.push(newRecipe);
-                        if (recipesToAdd.length >= maxRecipes) {
-                          break;
-                        }
-                      }
-                    }
-
-                    if (recipesToAdd.length >= maxRecipes) {
-                      break;
-                    }
-                  }
-                });
-          });
-      });
-    }
-    //если все равно нет 4 рецептов то берем популярные
-    if (recipesToAdd.length < maxRecipes && this.recipe.categories.length > 0) {
-      let popularRecipes = this.recipeService.getPopularRecipes(publicRecipes);
-
-      popularRecipes = popularRecipes.filter(
-        (recipe) => recipe.authorId !== this.recipe.authorId,
-      );
-      for (const newRecipe of popularRecipes) {
-        if (
-          !recipesToAdd.some(
-            (existingRecipe) => existingRecipe.id === newRecipe.id,
-          ) &&
-          newRecipe.id !== this.recipe.id
-        ) {
-          recipesToAdd.push(newRecipe);
-          if (recipesToAdd.length >= maxRecipes) {
-            break;
-          }
-        }
-      }
-    }
-    return recipesToAdd.slice(0, maxRecipes);
-  }
-
-  setReadingTimeInMinutes(): void {
-    const combinedText = [
-      this.recipe.history,
-      this.recipe.description,
-      ...this.recipe.ingredients.map((ingredient) => ingredient.name),
-      ...this.recipe.nutritions.map((ingredient) => ingredient.name),
-      ...this.recipe.instructions.map((instruction) => instruction.name),
-    ].join(' ');
-    this.readingTimeInMinutes = setReadingTimeInMinutes(combinedText);
-  }
-
-  async makeThisRecipeFavorite() {
-    if (this.currentUser.id === 0) {
-      this.noAccessModalShow = true;
-      return;
-    }
-    this.isRecipeFavorite = !this.isRecipeFavorite;
-    if (this.isRecipeFavorite) {
-      this.recipe = this.recipeService.addRecipeToFavorites(
-        this.currentUser.id,
-        this.recipe,
-      );
-    } else {
-      this.recipe = this.recipeService.removeRecipeFromFavorites(
-        this.currentUser.id,
-        this.recipe,
-      );
-    }
-
-    await this.recipeService.updateRecipeFunction(this.recipe);
-    if (this.isRecipeFavorite) {
-      if (
-        this.author.id !== this.currentUser.id &&
-        this.userService.getPermission('fav-on-your-recipe', this.author)
-      ) {
-        const notify: INotification = this.notifyService.buildNotification(
-          'Твой рецепт добавили в избранное',
-          `Твой рецепт «${this.recipe.name}» кто-то добавил в избранное`,
-          'info',
-          'recipe',
-          '/recipes/list/' + this.recipe.id,
-        );
-        this.notifyService.sendNotification(notify, this.author);
-      }
+      this.planService
+        .deleteProduct(findedProduct.id)
+        .pipe(
+          tap(() => {
+            groceryList.splice(findIndex, 1);
+            this.currentUserShoppingList = groceryList;
+            selectedIngredient.basket = false;
+          }),
+          finalize(() => {
+            this.loading = false;
+            this.cd.markForCheck();
+          }),
+        )
+        .subscribe();
     }
   }
 
-  async likeThisRecipe() {
+  makeThisRecipeFavorite() {
     if (this.currentUser.id === 0) {
       this.noAccessModalShow = true;
       return;
     }
 
-    let updatedRecipe: IRecipe;
-
-    this.isRecipeLiked = !this.isRecipeLiked;
-
-    if (this.isRecipeLiked) {
-      updatedRecipe = this.recipeService.likeRecipe(
-        this.currentUser.id,
-        this.recipe,
-      );
+    this.recipe.faved = !this.recipe.faved;
+    if (this.recipe.faved) {
+      this.recipeService
+        .pushToFavorites(this.recipe.id)
+        .pipe(
+          tap(() => {
+            const recipe = this.recipeService.addRecipeToFavorites(this.recipe);
+            this.recipe = recipe;
+            this.cd.markForCheck();
+          }),
+        )
+        .subscribe();
     } else {
-      updatedRecipe = this.recipeService.unlikeRecipe(
-        this.currentUser.id,
-        this.recipe,
-      );
+      this.recipeService
+        .removeFromFavorites(this.recipe.id)
+        .pipe(
+          tap(() => {
+            const recipe = this.recipeService.removeRecipeFromFavorites(
+              this.recipe,
+            );
+            this.recipe = recipe;
+            this.cd.markForCheck();
+          }),
+        )
+        .subscribe();
     }
-    await this.recipeService.updateRecipeFunction(updatedRecipe);
-    if (this.isRecipeLiked) {
-      if (this.isRecipeLiked) {
-        if (
-          this.author.id !== this.currentUser.id &&
-          this.userService.getPermission('like-on-your-recipe', this.author)
-        ) {
-          const notify: INotification = this.notifyService.buildNotification(
-            'Твой рецепт оценили',
-            `Твой рецепт «${this.recipe.name}» понравился пользователю 
-            ${
-              this.currentUser.fullName
-                ? this.currentUser.fullName
-                : '@' + this.currentUser.username
-            }`,
-            'info',
-            'recipe',
-            '/cooks/list/' + this.currentUser.id,
-          );
-          this.notifyService.sendNotification(notify, this.author);
-        }
-      }
+
+    const authorId = this.recipe.authorId;
+    if (this.recipe.faved && authorId > 0 && authorId !== this.currentUser.id) {
+      this.userService
+        .getLimitation(authorId, Permission.YourRecipeFaved)
+        .subscribe((limit) => {
+          if (!limit) {
+            const title =
+              'Твой рецепт «' +
+              this.recipe.name +
+              '» кто-то добавил в избранное';
+
+            const notify: INotification = this.notifyService.buildNotification(
+              'Твой рецепт добавили в избранное',
+              title,
+              'info',
+              'recipe',
+              '/recipes/list/' + this.recipe.id,
+            );
+            this.notifyService.sendNotification(notify, authorId).subscribe();
+          }
+        });
     }
   }
+
+  likeThisRecipe() {
+    if (this.currentUser.id === 0) {
+      this.noAccessModalShow = true;
+      return;
+    }
+
+    this.recipe.liked = !this.recipe.liked;
+
+    if (this.recipe.liked) {
+      this.recipeService
+        .setLike(this.recipe.id)
+        .pipe(
+          tap(() => {
+            const recipe = this.recipeService.likeRecipe(this.recipe);
+            this.recipe = recipe;
+            this.cd.markForCheck();
+          }),
+        )
+        .subscribe();
+    } else {
+      this.recipeService
+        .unsetLike(this.recipe.id)
+        .pipe(
+          tap(() => {
+            const recipe = this.recipeService.unlikeRecipe(this.recipe);
+            this.recipe = recipe;
+            this.cd.markForCheck();
+          }),
+        )
+        .subscribe();
+    }
+
+    const authorId = this.recipe.authorId;
+    if (
+      this.recipe.liked &&
+      this.recipe.authorId > 0 &&
+      this.recipe.authorId !== this.currentUser.id
+    ) {
+      this.userService
+        .getLimitation(authorId, Permission.YourRecipeLiked)
+        .subscribe((limit) => {
+          if (!limit) {
+            const notify: INotification = this.notifyService.buildNotification(
+              'Твой рецепт оценили',
+              `Твой рецепт «${this.recipe.name}» понравился кулинару ${
+                this.currentUser.fullName
+                  ? this.currentUser.fullName
+                  : '@' + this.currentUser.username
+              }`,
+              'info',
+              'recipe',
+              '/cooks/list/' + this.currentUser.id,
+            );
+            this.notifyService.sendNotification(notify, authorId).subscribe();
+          }
+        });
+    }
+  }
+
   //готовим рецепт
-  async cookThisRecipe() {
+  cookThisRecipe() {
     if (this.currentUser.id === 0) {
       this.noAccessModalShow = true;
       return;
     }
 
-    this.isRecipeCooked = !this.isRecipeCooked;
+    this.recipe.cooked = !this.recipe.cooked;
 
-    if (this.isRecipeCooked) {
-      this.recipe = this.recipeService.cookRecipe(
-        this.currentUser.id,
-        this.recipe,
+    if (this.recipe.cooked) {
+      const subscribes: Observable<any>[] = [];
+      subscribes.push(this.recipeService.setCook(this.recipe.id));
+      subscribes.push(
+        this.recipeService.pushVoteForRecipe(this.recipe.id, this.vote),
       );
-      await this.recipeService.updateRecipeFunction(this.recipe);
+      forkJoin(subscribes)
+        .pipe(
+          tap(() => {
+            let recipe = this.recipeService.cookRecipe(this.recipe);
+            recipe = this.recipeService.voteForRecipe(this.recipe, this.vote);
+            this.recipe = recipe;
+            this.statisticPercent = Number(this.getStatictics().toFixed(0));
 
-      this.successVoteModalShow = true;
+            this.cd.markForCheck();
+          }),
+        )
+        .subscribe();
     } else {
-      this.recipe = this.recipeService.uncookRecipe(
-        this.currentUser.id,
-        this.recipe,
-      );
+      const subscribes: Observable<any>[] = [];
+      subscribes.push(this.recipeService.removeVoteForRecipe(this.recipe.id));
+      subscribes.push(this.recipeService.unsetCook(this.recipe.id));
+      forkJoin(subscribes)
+        .pipe(
+          tap(() => {
+            let recipe = this.recipeService.uncookRecipe(this.recipe);
+            recipe = this.recipeService.removeVote(this.recipe);
+            this.recipe = recipe;
+            this.statisticPercent = Number(this.getStatictics().toFixed(0));
 
-      this.recipe = this.recipeService.removeVote(
-        this.recipe,
-        this.currentUser.id,
-      );
-      await this.recipeService.updateRecipeFunction(this.recipe);
+            this.cd.markForCheck();
+          }),
+        )
+        .subscribe();
     }
+
+    if (this.recipe.cooked) this.successVoteModalShow = true;
+  }
+  printRecipe() {
+    window.print();
   }
 
   handleNoAccessModal(result: boolean) {
@@ -786,15 +1249,16 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     this.noAccessModalShow = false;
   }
 
-  async handleCommentModal(answer: boolean) {
+  handleCommentModal(answer: boolean) {
     this.commentModalShow = false;
     if (answer) {
-      await this.addComment();
+      this.addComment();
       this.commentForm.get('commentText')?.setValue('');
       this.commentForm.get('commentText')?.markAsPristine();
       this.commentForm.get('commentText')?.markAsUntouched();
     }
   }
+
   handleSuccessCommentModal() {
     this.successCommentModalShow = false;
   }
@@ -847,16 +1311,89 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   goBack() {
     this.location.back();
   }
-  loadMoreComments() {
-    const currentLength = this.commentsToShow.length;
-    const nextComments = this.recipe.comments.slice(
-      currentLength,
-      currentLength + 2,
-    );
-    this.commentsToShow = [...this.commentsToShow, ...nextComments];
+
+  goToSection(section: string) {
+    const sectionTag = document.getElementById(section);
+    if (sectionTag) {
+      const headerHeight =
+        document.getElementsByClassName('header')[0].clientHeight;
+      window.scrollTo({
+        top: sectionTag.offsetTop - headerHeight,
+        behavior: 'smooth',
+      });
+    }
   }
+
+  protected addToPlan(): void {
+    this.targetCalendarEvent.id = -1;
+    this.targetCalendarEvent.recipe = this.recipe.id;
+    this.targetCalendarEvent.title = this.recipe.name;
+    this.addingToPlanMode = true;
+  }
+
+  viewMainImage() {
+    if (this.recipe.imageURL) {
+      this.startImageToView = 0;
+      this.showedImages = [this.recipe.imageURL];
+    }
+  }
+
+  chooseImagesForViewer(instruction: Instruction, instructionNum: number) {
+    this.startImageToView = instructionNum;
+    this.showedImages = [...instruction.images];
+  }
+
+  setReadingTimeInMinutes(): void {
+    const combinedText = [
+      this.recipe.history,
+      this.recipe.description,
+      ...this.recipe.ingredients.map((ingredient) => ingredient.name),
+      ...(this.recipe.nutritions || []).map((ingredient) => ingredient.name),
+      ...(this.recipe.instructions || []).map(
+        (instruction) => instruction.name,
+      ),
+    ].join(' ');
+    this.readingTimeInMinutes = setReadingTimeInMinutes(combinedText);
+  }
+
+  getStatictics(): number {
+    if (this.recipe.statistics) {
+      const totalVotes =
+        this.recipe.statistics.negative + this.recipe.statistics.positive;
+      const positiveVotes = this.recipe.statistics.positive;
+      const successRate = (positiveVotes / totalVotes) * 100;
+
+      return successRate;
+    }
+    return 0;
+  }
+  handleVoteModal(event: boolean) {
+    this.vote = event;
+    this.cookThisRecipe();
+
+    this.voteModalShow = false;
+  }
+
+  findIngredientByName(name: string) {
+    const ingredient = this.relatedIngredients.find(
+      (ingredient) => ingredient.name === name,
+    );
+    if (ingredient) {
+      return ingredient;
+    } else return { name: '', id: 0, groupId: 0 };
+  }
+
+  getRelatedIngredients() {
+    return this.recipeService.getRelatedIngredients(this.recipe.id).pipe(
+      tap((ingredients) => {
+        this.relatedIngredients = ingredients;
+      }),
+    );
+  }
+
   ngOnDestroy(): void {
     this.destroyed$.next();
     this.destroyed$.complete();
+    this.subscriptions.unsubscribe();
   }
 }

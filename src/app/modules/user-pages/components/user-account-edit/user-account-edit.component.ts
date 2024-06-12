@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   AfterContentChecked,
   ChangeDetectionStrategy,
@@ -5,6 +6,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  HostListener,
   Input,
   OnDestroy,
   OnInit,
@@ -18,7 +20,7 @@ import {
   customLinkPatternValidator,
 } from 'src/tools/validators';
 import { steps, Step } from './consts';
-import { usernameMask } from 'src/tools/regex';
+import { loginMask, telegramMask, usernameMask } from 'src/tools/regex';
 import { IUser, nullUser, SocialNetwork } from '../../models/users';
 import { trigger } from '@angular/animations';
 import { heightAnim, modal } from 'src/tools/animations';
@@ -30,17 +32,25 @@ import {
   anySiteMask,
 } from 'src/tools/regex';
 import { UserService } from '../../services/user.service';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormGroup,
-  ValidationErrors,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { NotificationService } from '../../services/notification.service';
 import { INotification } from '../../models/notifications';
-import { supabase } from 'src/app/modules/controls/image/supabase-data';
+import { addModalStyle, removeModalStyle } from 'src/tools/common';
+import {
+  EMPTY,
+  Subject,
+  Subscription,
+  catchError,
+  concatMap,
+  finalize,
+  of,
+  takeUntil,
+  tap,
+} from 'rxjs';
+import { checkFile } from 'src/tools/error.handler';
+import { Permission } from '../settings/conts';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-user-account-edit',
   templateUrl: './user-account-edit.component.html',
@@ -51,11 +61,11 @@ import { supabase } from 'src/app/modules/controls/image/supabase-data';
 export class UserAccountEditComponent
   implements OnInit, AfterContentChecked, OnDestroy
 {
-  @Input() editableUser: IUser = { ...nullUser };
+  editableUser: IUser = { ...nullUser };
   @Output() closeEmitter = new EventEmitter<boolean>();
+  @Output() editEmitter = new EventEmitter<boolean>();
+  @Input() userId: number = 0;
   @ViewChild('scrollContainer', { static: false }) scrollContainer?: ElementRef;
-
-  private supabaseFilepath: string = '';
 
   viewedSteps: number[] = [];
 
@@ -65,10 +75,9 @@ export class UserAccountEditComponent
   closeModal: boolean = false;
   successModal: boolean = false;
 
-  private newUser: IUser = { ...nullUser };
-  private users: IUser[] = [];
-
   currentStep: number = 0;
+
+  initialLoading = true;
 
   showInfo: boolean = false;
   steps: Step[] = steps;
@@ -86,45 +95,52 @@ export class UserAccountEditComponent
     private notifyService: NotificationService,
     private authService: AuthService,
     private fb: FormBuilder,
+    private router: Router,
   ) {
     this.form = this.fb.group({
       username: [
-        this.newUser.username,
+        this.editableUser.username,
         [
           Validators.required,
           Validators.minLength(4),
           Validators.maxLength(20),
           customPatternValidator(usernameMask),
-          this.usernameExistsValidator(),
         ],
       ],
-      fullname: [this.newUser.fullName, [Validators.maxLength(30)]],
-      quote: [this.newUser.quote, [Validators.maxLength(500)]],
+      fullname: [this.editableUser.fullName, [Validators.maxLength(30)]],
+      quote: [this.editableUser.quote, [Validators.maxLength(500)]],
       description: ['', [Validators.maxLength(2000)]],
       location: ['', [Validators.maxLength(30)]],
       website: [
         '',
-        [Validators.maxLength(1000)],
+        [Validators.maxLength(100)],
         customLinkPatternValidator(anySiteMask),
       ],
       twitter: [
         '',
-        [Validators.maxLength(1000)],
+        [Validators.maxLength(100)],
         customLinkPatternValidator(twitterMask),
       ],
       facebook: [
         '',
-        [Validators.maxLength(1000)],
+        [Validators.maxLength(100)],
         customLinkPatternValidator(facebookMask),
       ],
-      vk: [
+      vk: ['', [Validators.maxLength(100)], customLinkPatternValidator(vkMask)],
+
+      telegram: [
         '',
-        [Validators.maxLength(1000)],
-        customLinkPatternValidator(vkMask),
+        [Validators.maxLength(100)],
+        customLinkPatternValidator(telegramMask),
+      ],
+      email: [
+        '',
+        [Validators.maxLength(64)],
+        customLinkPatternValidator(loginMask),
       ],
       pinterest: [
         '',
-        [Validators.maxLength(1000)],
+        [Validators.maxLength(100)],
         customLinkPatternValidator(pinterestMask),
       ],
       userpic: [null],
@@ -132,6 +148,15 @@ export class UserAccountEditComponent
   }
   birthDate: Date | null = null;
 
+    @HostListener('window:beforeunload')
+  canDeactivate() {
+    if (this.areObjectsEqual())
+      return confirm(
+        'Вы уверены, что хотите покинуть страницу? Все несохраненные изменения будут потеряны.',
+      );
+    else return true;
+  }
+  
   ngAfterContentChecked(): void {
     this.cdr.detectChanges();
   }
@@ -207,6 +232,8 @@ export class UserAccountEditComponent
             (!this.form.get('facebook')!.valid ||
               !this.form.get('pinterest')!.valid ||
               !this.form.get('vk')!.valid ||
+              !this.form.get('email')!.valid ||
+              !this.form.get('telegram')!.valid ||
               !this.form.get('twitter')!.valid) &&
             this.viewedSteps.includes(2)
           ) {
@@ -229,100 +256,119 @@ export class UserAccountEditComponent
       this.scrollTop();
     }
   }
+  subscriptions = new Subscription();
+  protected destroyed$: Subject<void> = new Subject<void>();
 
+  currentUser: IUser = nullUser;
   ngOnInit() {
-    this.renderer.addClass(document.body, 'hide-overflow');
-    (<HTMLElement>document.querySelector('.header')).style.width =
-      'calc(100% - 16px)';
-    this.renderer.addClass(document.body, 'hide-overflow');
-    this.newUser = { ...this.editableUser };
-    this.form.get('username')?.setValue(this.newUser.username);
-    this.form.get('quote')?.setValue(this.newUser.quote);
-    this.form.get('fullname')?.setValue(this.newUser.fullName);
-    this.form.get('description')?.setValue(this.newUser.description);
-    this.birthDate = this.newUser.birthday ? new Date(this.newUser.birthday) : null;
-    this.form.get('location')?.setValue(this.newUser.location);
-    this.form.get('userpic')?.setValue(this.newUser.avatarUrl);
-    this.form.get('website')?.setValue(this.newUser.personalWebsite);
-    for (const network of this.newUser.socialNetworks) {
-      switch (network.name) {
-        case 'pinterest':
-          this.form.get('pinterest')?.setValue(network.link);
-          break;
-        case 'facebook':
-          this.form.get('facebook')?.setValue(network.link);
-          break;
-        case 'twitter':
-          this.form.get('twitter')?.setValue(network.link);
-          break;
-        case 'ВКонтакте':
-          this.form.get('vk')?.setValue(network.link);
-          break;
-      }
-    }
+    addModalStyle(this.renderer);
+    this.subscriptions.add(
+      this.authService.currentUser$
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe((currentUser) => {
+          this.currentUser = currentUser;
+        }));
+    this.subscriptions.add(
+      this.userService.getUserForEdit()
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe((user) => {
+          this.editableUser = user;
 
-    this.userService.users$.subscribe((data: IUser[]) => {
-      this.users = data;
-    });
+          user.quote = user.quote || '';
+          user.fullName = user.fullName || '';
+          user.description = user.description || '';
+          user.location = user.location || '';
+          user.quote = user.quote || '';
+          user.personalWebsite = user.personalWebsite || '';
 
-    if (this.editableUser.avatarUrl) {
-      this.downloadUserpicFromSupabase(this.editableUser.avatarUrl);
-      this.supabaseFilepath = this.editableUser.avatarUrl;
-    } else {
-      this.showedUserpicImage = this.noUserpicImage;
-    }
+          this.form.get('username')?.setValue(user.username);
+          this.form.get('quote')?.setValue(user.quote);
+          this.form.get('fullname')?.setValue(user.fullName);
+          this.form.get('website')?.setValue(user.personalWebsite);
+          this.form.get('description')?.setValue(user.description);
+          this.birthDate = user.birthday ? new Date(user.birthday) : null;
+          this.form.get('location')?.setValue(user.location);
+          user.socialNetworks = user.socialNetworks || [];
+          for (const network of user.socialNetworks) {
+            switch (network.name) {
+              case 'pinterest':
+                this.form.get('pinterest')?.setValue(network.link);
+                break;
+              case 'email':
+                this.form.get('email')?.setValue(network.link);
+                break;
 
-    this.beginningData = this.form.getRawValue();
-    this.cdr.markForCheck();
+              case 'telegram':
+                this.form.get('telegram')?.setValue(network.link);
+                break;
+
+              case 'facebook':
+                this.form.get('facebook')?.setValue(network.link);
+                break;
+              case 'twitter':
+                this.form.get('twitter')?.setValue(network.link);
+                break;
+              case 'ВКонтакте':
+                this.form.get('vk')?.setValue(network.link);
+                break;
+            }
+          }
+          this.showedUserpicImage = this.noUserpicImage;
+          if (user.image) {
+            this.subscriptions.add(
+              this.userService
+                .downloadUserpic(user.image)
+                .pipe(
+                  takeUntil(this.destroyed$),
+                  tap((blob) => {
+                    user.avatarUrl = URL.createObjectURL(blob);
+                    this.showedUserpicImage = user.avatarUrl;
+                    this.form.get('userpic')?.setValue('existing_photo');
+                  }),
+                  catchError(() => {
+                    return EMPTY;
+                  }),
+
+                  finalize(() => {
+                    this.initialLoading = false;
+                    addModalStyle(this.renderer);
+                    this.cdr.markForCheck();
+                    this.beginningData = this.form.getRawValue();
+                  }),
+                )
+                .subscribe());
+          } else {
+            this.initialLoading = false;
+            this.showedUserpicImage = this.noUserpicImage;
+            this.beginningData = this.form.getRawValue();
+            this.cdr.markForCheck();
+          }
+        }));
   }
 
   onUserpicChange(event: Event) {
     const input = event.target as HTMLInputElement;
     const userpicFile: File | undefined = input.files?.[0];
 
-    if (userpicFile) {
+    if (userpicFile && checkFile(userpicFile)) {
       this.form.get('userpic')?.setValue(userpicFile);
       const objectURL = URL.createObjectURL(userpicFile);
       this.showedUserpicImage = objectURL;
-      this.supabaseFilepath = this.setUserpicFilenameForSupabase();
     }
   }
 
   unsetImage() {
     this.form.get('userpic')?.setValue(null);
     this.showedUserpicImage = this.noUserpicImage;
-    this.supabaseFilepath = '';
-  }
-
-  usernameExistsValidator() {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const username = control.value;
-
-      if (username !== this.editableUser.username) {
-        if (username === undefined || username === '') {
-          return null; // Пустое значение считается допустимым
-        }
-
-        const usernameExists = this.users.find((u) => u.username === username);
-
-        if (usernameExists !== undefined) {
-          return { usernameExists: true }; // Устанавливаем ошибку с именем 'usernameExists'
-        }
-      }
-
-      return null; // Имя пользователя допустимо
-    };
   }
 
   //проверяем равны ли все поля в обьектах
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   areObjectsEqual(): boolean {
-   
     if (
-      this.birthDate&&(
+      this.birthDate &&
       this.birthDate.toString() !=
         new Date(this.editableUser.birthday).toString()
-      )
     )
       return true;
     return (
@@ -331,83 +377,172 @@ export class UserAccountEditComponent
     );
   }
 
-  async updateUser() {
-    const socialNetworks: SocialNetwork[] = [];
+  updateUser() {
+    this.loading = true;
 
-    const socialNetworksData: SocialNetwork[] = [
-      { name: 'pinterest', link: this.form.value.pinterest },
-      { name: 'facebook', link: this.form.value.facebook },
-      { name: 'twitter', link: this.form.value.twitter },
-      { name: 'ВКонтакте', link: this.form.value.vk },
-    ];
-
-    for (const data of socialNetworksData) {
-      if (data.link !== '') {
-        socialNetworks.push(data);
-      }
-    }
-
-    this.newUser = {
+    const user: IUser = {
       ...this.editableUser,
       username: this.form.value.username,
-      birthday:this.birthDate ? this.birthDate.toJSON() : '',
+      birthday: this.birthDate ? this.birthDate.toJSON() : '',
       fullName: this.form.value.fullname,
-      avatarUrl: this.form.value.userpic ? this.supabaseFilepath : undefined,
       quote: this.form.value.quote,
       personalWebsite: this.form.value.website,
       description: this.form.value.description,
       location: this.form.value.location,
-      socialNetworks: socialNetworks,
+      socialNetworks: this.getSocialNetworks(),
+      image: this.getImageOfSavedUser(),
     };
 
-    await this.updateUserInSupabase();
+    this.PUTUser(user);
+  }
 
-    if (this.editableUser.avatarUrl && this.newUser.avatarUrl !== this.editableUser.avatarUrl) {
-      await this.deleteOldUserpic(this.editableUser.avatarUrl);
+  savedUser: IUser = { ...nullUser };
+
+  throwErrorModal(error: string) {
+    this.error = error;
+    this.errorModal = true;
+    this.cdr.markForCheck();
+  }
+
+  private PUTUser(user: IUser) {
+    let loadImage = false;
+    let deleteImage = false;
+
+    const image = this.form.value.userpic;
+
+    if (image === null) {
+      deleteImage = true;
+    } else if (image !== 'existing_photo') {
+      loadImage = true;
+      deleteImage = true;
     }
+
+    this.savedUser = user;
+
+    const file: File = this.form.value.userpic;
+
+    const putUser$ = this.userService.updatePublicUser(user).pipe(
+      catchError((response: any) => {
+        if (response.error.info == 'NAME_EXISTS') {
+          this.throwErrorModal(
+            'Аккаунт с таким именем пользователя уже существует. Измените это поле и попробуйте снова.',
+          );
+        } else {
+          this.throwErrorModal(
+            'Произошла ошибка при попытке обновить аккаунт.',
+          );
+        }
+        return EMPTY;
+      }),
+    );
+
+    const loadImage$ = loadImage
+      ? this.userService.uploadUserpic(file).pipe(
+          catchError(() => {
+            this.throwErrorModal(
+              'Произошла ошибка при попытке загрузить файл нового изображения аккаунта.',
+            );
+            return EMPTY;
+          }),
+          concatMap((response: any) => {
+            const filename = response.filename;
+            return this.userService.updateUserpic(filename).pipe(
+              catchError(() => {
+                this.throwErrorModal(
+                  'Произошла ошибка при попытке связать новое загруженное изображение и аккаунт.',
+                );
+                return EMPTY;
+              }),
+            );
+          }),
+        )
+      : of(null);
+
+    const deleteImage$ = deleteImage
+      ? this.userService.deleteUserpic().pipe(
+          catchError(() => {
+            this.throwErrorModal(
+              'Произошла ошибка при попытке удалить старое изображение аккаунта.',
+            );
+            return EMPTY;
+          }),
+          concatMap(() => {
+            return this.userService.updateUserpic('').pipe(
+              catchError(() => {
+                this.throwErrorModal(
+                  'Произошла ошибка при попытке удаления связи старого изображения с категорией',
+                );
+                return EMPTY;
+              }),
+            );
+          }),
+        )
+      : of(null);
+
+    putUser$
+      .pipe(
+        concatMap(() => deleteImage$),
+        concatMap(() => loadImage$),
+      )
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+          this.cdr.markForCheck();
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.successModal = true;
+        },
+      });
   }
 
-  async updateSupabaseUser(user: IUser) {
-    await this.userService.updateUserInSupabase(user);
+  image: string = '';
+
+  handleErrorModal() {
+    this.errorModal = false;
+    addModalStyle(this.renderer);
   }
 
+  error: string = '';
+  errorModal: boolean = false;
   handleSaveModal(answer: boolean) {
     if (answer) {
       this.updateUser();
     }
-    setTimeout(() => {
-      this.renderer.addClass(document.body, 'hide-overflow');
-      (<HTMLElement>document.querySelector('.header')).style.width =
-        'calc(100% - 16px)';
-    }, 0);
+    addModalStyle(this.renderer);
     this.saveModal = false;
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async handleSuccessModal(answer: boolean) {
+  handleSuccessModal() {
     this.closeEmitter.emit(true);
-
+    this.editEmitter.emit(true);
     this.successModal = false;
 
-    if (this.userService.getPermission('you-edit-your-account', this.newUser)) {
+    if (
+      this.userService.getPermission(
+        this.currentUser.limitations || [],
+        Permission.AccountEdited,
+      )
+    ) {
       const notify: INotification = this.notifyService.buildNotification(
         'Профиль изменен',
-        'Твой профиль успешно изменен',
+        'Вы успешно изменили свой профиль',
         'success',
         'user',
-        '/cooks/list/' + this.newUser.id,
+        '/cooks/list/' + this.savedUser.id,
       );
-      await this.notifyService.sendNotification(notify, this.newUser);
+
+      this.notifyService
+        .sendNotification(notify, this.savedUser.id, true)
+        .subscribe();
     }
   }
   handleCloseModal(answer: boolean) {
     if (answer) {
       this.closeEmitter.emit(true);
     } else {
-      setTimeout(() => {
-        this.renderer.addClass(document.body, 'hide-overflow');
-        (<HTMLElement>document.querySelector('.header')).style.width =
-          'calc(100% - 16px)';
-      }, 0);
+      addModalStyle(this.renderer);
     }
     this.closeModal = false;
   }
@@ -426,46 +561,41 @@ export class UserAccountEditComponent
   }
 
   ngOnDestroy(): void {
-    this.renderer.removeClass(document.body, 'hide-overflow');
-    (<HTMLElement>document.querySelector('.header')).style.width = '100%';
+    this.destroyed$.next(); this.destroyed$.complete();
+    this.subscriptions.unsubscribe();
+    removeModalStyle(this.renderer);
   }
 
-  //работа с данными supabase
+  getSocialNetworks() {
+    const socialNetworks: SocialNetwork[] = [];
 
-  private setUserpicFilenameForSupabase(): string {
-    const file = this.form.get('userpic')?.value;
-    const fileExt = file.name.split('.').pop();
-    return `${Math.random()}.${fileExt}`;
-  }
+    const socialNetworksData: SocialNetwork[] = [
+      { name: 'pinterest', link: this.form.value.pinterest },
+      { name: 'facebook', link: this.form.value.facebook },
+      { name: 'twitter', link: this.form.value.twitter },
+      { name: 'ВКонтакте', link: this.form.value.vk },
+      { name: 'telegram', link: this.form.value.telegram },
+      { name: 'email', link: this.form.value.email },
+    ];
 
-  downloadUserpicFromSupabase(path: string) {
-    this.showedUserpicImage = supabase.storage
-      .from('userpics')
-      .getPublicUrl(path).data.publicUrl;
-  }
-
-  async updateUserInSupabase() {
-    this.loading = true;
-    this.cdr.markForCheck();
-    try {
-      const file = this.form.get('userpic')?.value;
-      if (file) {
-        const filePath = this.supabaseFilepath;
-        await supabase.storage.from('userpics').upload(filePath, file);
+    for (const data of socialNetworksData) {
+      if (data.link !== '') {
+        socialNetworks.push(data);
       }
-      await this.updateSupabaseUser(this.newUser);
-
-      this.successModal = true;
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error(error.message);
-      }
-    } finally {
-      this.loading = false;
-      this.cdr.markForCheck();
     }
+    return socialNetworks;
   }
-  async deleteOldUserpic(path: string) {
-    await supabase.storage.from('userpics').remove([path]);
+
+  getImageOfSavedUser() {
+    let image = '';
+    const selectedImage = this.form.get('userpic')?.value;
+    if (this.editableUser.image && selectedImage === 'existing_photo') {
+      image = this.editableUser.image;
+    } else {
+      if (selectedImage) {
+        image = 'image';
+      }
+    }
+    return image;
   }
 }

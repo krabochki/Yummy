@@ -1,0 +1,23 @@
+
+<div class="banner noselect" [class.not-main]="notMain" [style.background-image]="'url(/assets/images/' + background +'.jpg)'">
+    
+    
+   <div class="content" >
+        <div class="wrap">
+            <p class="label" [innerHTML]="formattedLabel"></p>
+            <p class="info" *ngIf="info">{{info}}</p>
+          
+
+            <a href="mailto:yummort@mail.ru" *ngIf="mail">
+<app-button (click)="this.clickButton.emit(true)" [routerLink]="!mail?link?link:null:null" [text]="buttonText"
+    [rounded]="false" [style]="'banner'"></app-button>
+            </a>
+
+            <app-button *ngIf="!mail" (click)="this.clickButton.emit(true)" [routerLink]="!mail?link?link:null:null" [text]="buttonText"
+                [rounded]="false" [style]="'banner'"></app-button>
+
+            
+        </div>
+   </div>
+</div>
+

@@ -1,24 +1,24 @@
-import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
 import { DragScrollComponent } from 'ngx-drag-scroll';
-import { nullSection } from 'src/app/modules/recipes/models/categories';
+import { nullCategory, nullSection } from 'src/app/modules/recipes/models/categories';
 import { dragEnd, dragStart } from 'src/tools/common';
 
 @Component({
   selector: 'app-horizontal-category-list',
   templateUrl: './horizontal-category-list.component.html',
-  styleUrls: ['./horizontal-category-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./horizontal-category-list.component.scss']
 })
-export class HorizontalCategoryListComponent implements OnChanges {
+export class HorizontalCategoryListComponent implements OnChanges, OnInit {
   @Input() categories: any[] = [];
   @Input() showRecipesNumber: boolean = false;
-  @Output() editEmitter = new EventEmitter();
+  @Input() preloader: boolean = false;
 
   @ViewChild('list')
   list: ElementRef | null = null;
   @Input() context: 'category' | 'section' = 'category';
 
   showScrollButtons = true;
+  constructor(private cd:ChangeDetectorRef){}
 
   filterNullBlocks() {
     this.categories = this.categories.filter((block) => block.id !== 0);
@@ -27,8 +27,44 @@ export class HorizontalCategoryListComponent implements OnChanges {
   disableDrag = false;
   @ViewChild('nav', { read: DragScrollComponent }) ds?: DragScrollComponent;
 
+
+  ngOnInit() {
+
+    if (this.preloader) {
+        const width = window.innerWidth;
+        let blocks = 0;
+        switch (true) {
+          case width < 480:
+            blocks = 3;
+            break;
+          case width > 480 && width <= 610:
+            blocks = 2;
+            break;
+          case width > 610 && width <= 960:
+            blocks = 3;
+            break;
+          case width > 960 && width <= 1400:
+            blocks = 4;
+            break;
+          case width > 1400:
+            blocks = 5;
+            break;
+        }
+        const loadingCategory = { ...nullCategory, id: -1 };
+        for (let index = 0; index < blocks; index++) {
+          this.categories.push(loadingCategory);
+        }
+      }
+
+  }
+
   ngOnChanges() {
-    this.onResize();
+    if (!this.preloader) {
+      this.onResize();
+    }
+    else {
+      this.showScrollButtons = false;
+    }
   }
 
   dragStart(): void {

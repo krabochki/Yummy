@@ -1,51 +1,42 @@
 <a [routerLink]="
-        context === 'category'
-          ? '/categories/list/' + category.id
-          : '/sections/list/' + category.id
-      "
-  class="category-cont noselect"
-  [title]="title"
-  *ngIf="category.id > 0; else nullCategory"
->
- <div class="category-wrap">
-   
-    <div class="category"  *ngIf="category.id > 0; else nullCategory" [style.background-image]="'url('+(picture?picture:placeholder)+')'">
-    
-     <p class="caption" *ngIf="!picture">{{context==='category'?'Категория':'Раздел'}}<br>«{{category.name}}»</p>
-    <button class="delete" (click)="clickDeleteButton($event)" *ngIf="currentUser.role!=='user' && showDeletingButton">
-      <svg-icon class="trash-svg" [applyClass]="true" [src]="'assets/images/svg/trash.svg'" />
-    </button>
-    <button class="edit" (click)="clickEditButton($event)" *ngIf="currentUser.role !== 'user'   && showEditButton">
-      <svg-icon class="trash-svg" [applyClass]="true" [src]="'/assets/images/svg/pen.svg'" />
-    </button>
+    context === 'category'
+      ? '/categories/list/' + category.id
+      : '/sections/list/' + category.id
+  " class="category-cont noselect" [title]="title" *ngIf="category.id > 0; else nullCategory">
+
+  <div class="category-wrap">
+    <div [ngClass]="{'image-loading':category.imageLoading===true}" class="category"
+      *ngIf="category.id > 0; else nullCategory" [style.background-image]="!category.imageLoading?
+        'url(' + (category.imageURL || placeholder) + ')'
+      :null">
+      <p class="caption" *ngIf="!category.imageURL && !category.imageLoading">
+        {{ context === "category" ? "Категория" : "Раздел" }} «{{
+        category.name
+        }}»
+      </p>
+
     </div>
-   
- </div>
-    <div
-     
-      style="position: relative; overflow: visible"
-    >
-      <h1 class="name"><sup>({{recipesNumber}})</sup>{{category.name}}</h1>
-    </div>
+  </div>
+  <div style="position: relative; overflow: visible">
+    <h1 class="name">
+      <sup  *ngIf="category.recipeCount>=0">({{ formatNumber(category.recipeCount) }})</sup>{{ category.name }}
+    </h1>
+  </div>
 </a>
 
 <ng-template #nullCategory>
-  <div class="category null">
+  <div class="category-cont noselect loading" *ngIf="category.id === -1">
+    <div class="category-wrap">
+      <div class="category null loading"></div>
+    </div>
+    <div style="position: relative; overflow: visible">
+      <h1 class="name loading">
+        Загрузкаааа
+      </h1>
+    </div>
+  </div>
+  <div *ngIf="category.id === 0" class="category null">
     <p>Скоро...</p>
-    <svg-icon
-      [applyClass]="true"
-      class="svg"
-      [src]="'/assets/images/svg/no-category.svg'"
-    ></svg-icon>
+    <svg-icon [applyClass]="true" class="svg" [src]="'/assets/images/svg/no-category.svg'"></svg-icon>
   </div>
 </ng-template>
-
-<app-modal @modal (resultEmit)="handleDeleteModal($event)" [type]="'yesOrNo'" [buttonsText]="['Да','Отмена']" [style]="'prim'" [description]="'Вы уверены, что хотите удалить эту ' + (context==='category'?'категорию?':'секцию?')" [title]="'Удаление '+(context==='category'?'категории':'секции')" *ngIf="deleteModalShow"></app-modal>
-
-<app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
-  [description]="loadingText || 'Вносим изменения... Подождите немного...'" />
-
-  <app-category-creating (editEmitter)="editEmitter.emit()" [editedCategory]="category" (closeEmitter)="editMode=false" *ngIf="context==='category'&&editMode" @modal />
-
-    <app-section-creating (editEmitter)="editEmitter.emit()" [editedSection]="category"
-      (closeEmitter)=" editMode=false" *ngIf="context==='section'&&editMode" @modal />

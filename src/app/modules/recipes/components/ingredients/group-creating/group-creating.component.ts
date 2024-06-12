@@ -5,6 +5,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  HostListener,
   Input,
   OnDestroy,
   OnInit,
@@ -14,22 +15,41 @@ import {
 } from '@angular/core';
 import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+  EMPTY,
+  Observable,
+  Subject,
+  Subscriber,
+  Subscription,
+  catchError,
+  concatMap,
+  finalize,
+  forkJoin,
+  map,
+  of,
+  switchMap,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import {
   IIngredient,
-  IIngredientsGroup,
+  IGroup,
   nullIngredient,
-  nullIngredientsGroup,
+  nullGroup,
 } from '../../../models/ingredients';
-import { IngredientService } from '../../../services/ingredient.service';
-import { supabase } from 'src/app/modules/controls/image/supabase-data';
 import { trimmedMinLengthValidator } from 'src/tools/validators';
 import { addModalStyle, removeModalStyle } from 'src/tools/common';
+import { groupCreatingPlaceholder } from 'src/tools/images';
+import { GroupService } from '../../../services/group.service';
+import { checkFile } from 'src/tools/error.handler';
+import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
+import { AuthService } from 'src/app/modules/authentication/services/auth.service';
+import { IngredientService } from '../../../services/ingredient.service';
+import { Permission } from 'src/app/modules/user-pages/components/settings/conts';
+import { INotification, nullNotification } from 'src/app/modules/user-pages/models/notifications';
+import { UserService } from 'src/app/modules/user-pages/services/user.service';
+import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
 
 @Component({
   selector: 'app-group-creating',
@@ -42,43 +62,52 @@ export class GroupCreatingComponent implements OnInit, OnDestroy {
   @Output() closeEmitter = new EventEmitter<boolean>();
   @Output() editEmitter = new EventEmitter();
   @ViewChild('scrollContainer', { static: false }) scrollContainer?: ElementRef;
+  @Input() editedGroupId: number = 0;
 
-  maxId = 0;
+  currentUser: IUser = { ...nullUser };
 
   //modals
   saveModal: boolean = false;
   closeModal: boolean = false;
   loading = false;
-  supabaseFilepath = '';
+  error = '';
 
   successModal: boolean = false;
+  errorModal = false;
 
-  //init
-  ingredients: IIngredient[] = [];
+  errorModalContent = '';
+
   beginningIngredients: IIngredient[] = [];
-  @Input() editedGroup: IIngredientsGroup = nullIngredientsGroup;
 
-  newGroup: IIngredientsGroup = { ...nullIngredientsGroup };
+  editedGroup: IGroup = { ...nullGroup };
+  savedGroup: IGroup = { ...nullGroup };
 
   selectedIngredients: IIngredient[] = [];
+  subscriptions = new Subscription();
 
   //image
   groupImage: string = '';
-  defaultImage: string = '/assets/images/add-group.png';
+  defaultImage: string = groupCreatingPlaceholder;
 
   //form
   form: FormGroup;
   beginningData: any;
 
+  initialLoading = true;
+
   protected destroyed$: Subject<void> = new Subject<void>();
 
   get edit() {
-    return this.editedGroup.id > 0;
+    return this.editedGroupId > 0;
   }
 
   constructor(
     private renderer: Renderer2,
+    private userService: UserService,
+    private notifyService: NotificationService,
     private cdr: ChangeDetectorRef,
+    private groupService: GroupService,
+    private authService: AuthService,
     private fb: FormBuilder,
     private ingredientService: IngredientService,
   ) {
@@ -98,45 +127,343 @@ export class GroupCreatingComponent implements OnInit, OnDestroy {
     this.beginningData = this.form.getRawValue();
   }
 
-  private editedGroupInit() {
-    if (this.edit) {
-      this.form.get('name')?.setValue(this.editedGroup.name);
-      const groupImage = this.editedGroup.image;
-      if (groupImage) {
-        this.groupImage = this.downloadGroupImageFromSupabase(groupImage);
-        this.supabaseFilepath = groupImage;
-        this.form.get('image')?.setValue('url');
-      }
-      this.editedGroup.ingredients.forEach((ingredientId) => {
-        const findedCategory = this.ingredients.find(
-          (ingredient) => ingredient.id === ingredientId,
-        );
-        if (findedCategory) this.selectedIngredients.push(findedCategory);
-      });
-      this.beginningData = this.form.getRawValue();
-    }
-    this.beginningIngredients = this.selectedIngredients;
-  }
-
-  downloadGroupImageFromSupabase(path: string) {
-    return supabase.storage.from('groups').getPublicUrl(path).data.publicUrl;
-  }
-
-  private ingredientsInit() {
-    this.ingredientService.ingredients$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe(
-        (receivedIngredients: IIngredient[]) =>
-          (this.ingredients = receivedIngredients.filter(
-            (i) => i.status === 'public',
-          )),
-      );
-  }
-
   ngOnInit() {
     addModalStyle(this.renderer);
-    this.ingredientsInit();
     this.editedGroupInit();
+    this.subscriptions.add(
+      this.authService.currentUser$
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe((user) => {
+          this.currentUser = user;
+        }),
+    );
+  }
+
+  @HostListener('window:beforeunload')
+  canDeactivate() {
+    if (this.areObjectsEqual())
+      return confirm(
+        'Вы уверены, что хотите покинуть страницу? Все несохраненные изменения будут потеряны.',
+      );
+    else return true;
+  }
+
+  private editedGroupInit() {
+    if (this.edit) {
+      this.subscriptions.add(
+        this.groupService
+          .getGroupForEditing(this.editedGroupId)
+          .pipe(
+            tap((group) => {
+              let loadImage$: Observable<any> = EMPTY;
+
+              if (group.image) {
+                loadImage$ = this.groupService.downloadImage(group.image).pipe(
+                  tap((blob) => {
+                    this.editedGroup.imageURL = URL.createObjectURL(blob);
+                    this.editedGroup.image = group.image;
+                    this.groupImage = this.editedGroup.imageURL || '';
+                    this.form.get('image')?.setValue('existing_photo');
+                  }),
+
+                  catchError(() => {
+                    return EMPTY;
+                  }),
+                );
+              }
+              this.editedGroup.name = group.name;
+              this.form.get('name')?.setValue(this.editedGroup.name);
+              this.editedGroup.id = group.id;
+              this.subscriptions.add(
+                loadImage$
+                  .pipe(
+                    finalize(() => {
+                      this.initialLoading = false;
+                      this.beginningData = this.form.getRawValue();
+                      addModalStyle(this.renderer);
+                      this.cdr.markForCheck();
+                    }),
+                  )
+                  .subscribe(),
+              );
+            }),
+          )
+          .subscribe(),
+      );
+    } else {
+      this.initialLoading = false;
+    }
+  }
+
+  saveGroup() {
+    this.loading = true;
+    if (this.edit) {
+      this.editGroup();
+    } else {
+      this.createGroup();
+    }
+  }
+
+  private editGroup() {
+    const id = this.editedGroup.id;
+    const name = this.form.value.name;
+    const updatedGroup: IGroup = {
+      ...nullGroup,
+      id: id,
+      name: name,
+      image: this.getImageOfSavedGroup(),
+    };
+    this.PUTGroup(updatedGroup);
+  }
+
+  private PUTGroup(group: IGroup) {
+    let loadImage = false;
+    let deleteImage = false;
+
+    const image = this.form.value.image;
+
+    if (image === null) {
+      deleteImage = true;
+    } else if (image !== 'existing_photo') {
+      loadImage = true;
+      deleteImage = true;
+    }
+
+    const file: File = this.form.value.image;
+
+    const putCategory$ = this.groupService.updateGroup(group).pipe(
+      catchError((response: any) => {
+        if (response.error.info == 'NAME_EXISTS') {
+          this.throwErrorModal(
+            'Группа с таким названием уже существует. Измените название и попробуйте снова.',
+          );
+        } else {
+          this.throwErrorModal('Произошла ошибка при попытке обновить группу.');
+        }
+        return EMPTY;
+      }),
+    );
+
+    const loadImage$ = loadImage
+      ? this.groupService.uploadGroupImage(file).pipe(
+          catchError(() => {
+            this.throwErrorModal(
+              'Произошла ошибка при попытке загрузить файл нового изображения группы.',
+            );
+            return EMPTY;
+          }),
+          concatMap((response: any) => {
+            const filename = response.filename;
+            return this.groupService.setImageToGroup(group.id, filename).pipe(
+              catchError(() => {
+                this.throwErrorModal(
+                  'Произошла ошибка при попытке связать новое загруженное изображение и группу.',
+                );
+                return EMPTY;
+              }),
+            );
+          }),
+        )
+      : of(null);
+
+    const deleteImage$ = deleteImage
+      ? this.groupService.deleteImage(group.id).pipe(
+          catchError(() => {
+            this.throwErrorModal(
+              'Произошла ошибка при попытке удалить старое изображение группы.',
+            );
+            return EMPTY;
+          }),
+          concatMap(() => {
+            return this.groupService.setImageToGroup(group.id, '').pipe(
+              catchError(() => {
+                this.throwErrorModal(
+                  'Произошла ошибка при попытке удаления связи старого изображения с группой.',
+                );
+                return EMPTY;
+              }),
+            );
+          }),
+        )
+      : of(null);
+
+    putCategory$
+      .pipe(
+        concatMap(() => deleteImage$),
+        concatMap(() => loadImage$),
+      )
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+          this.cdr.markForCheck();
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.savedGroup = group;
+          this.successModal = true;
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  private throwErrorModal(content: string) {
+    this.errorModalContent = content;
+    this.errorModal = true;
+    this.cdr.markForCheck();
+  }
+
+  handleErrorModal() {
+    this.errorModal = false;
+    addModalStyle(this.renderer);
+  }
+
+  private POSTGroup(group: IGroup) {
+    const file: File = this.form.value.image;
+    this.savedGroup = group;
+
+    this.groupService
+      .postGroup(group)
+      .pipe(
+        concatMap((response: any) => {
+          const insertedId = response.id;
+          const ingredients$ = group.ingredients.length
+            ? group.ingredients.map((ingredientId) =>
+                this.ingredientService
+                  .setGroupToIngredient(insertedId, ingredientId)
+                  .pipe(
+                    catchError(() => {
+                      this.throwErrorModal(
+                        'Произошла ошибка при попытке связать ингредиент и группу ингредиентов.',
+                      );
+                      return EMPTY;
+                    }),
+                  ),
+              )
+            : of(null);
+          return forkJoin(ingredients$).pipe(
+            map(() => response), // Возвращаем результат postGroup после завершения forkJoin
+          );
+        }),
+        concatMap((response: any) => {
+          const insertedId = response.id;
+          this.savedGroup.id = insertedId;
+          if (file) {
+            return this.groupService.uploadGroupImage(file).pipe(
+              catchError(() => {
+                this.throwErrorModal(
+                  'Произошла ошибка при попытке загрузить изображение группы.',
+                );
+                return EMPTY;
+              }),
+              switchMap((uploadResponse: any) => {
+                const filename = uploadResponse.filename;
+                return this.groupService
+                  .setImageToGroup(insertedId, filename)
+                  .pipe(
+                    catchError(() => {
+                      this.throwErrorModal(
+                        'Произошла ошибка при попытке связать загруженное изображение и группу.',
+                      );
+                      return EMPTY;
+                    }),
+                  );
+              }),
+            );
+          } else {
+            return of(null);
+          }
+        }),
+        catchError((response: any) => {
+          if (response.error.info == 'NAME_EXISTS') {
+            this.throwErrorModal(
+              'Группа с таким названием уже существует. Измените название и попробуйте снова.',
+            );
+          } else {
+            this.throwErrorModal(
+              'Произошла ошибка при попытке добавить группу.',
+            );
+          }
+          return EMPTY;
+        }),
+        finalize(() => {
+          this.loading = false;
+          this.cdr.markForCheck();
+        }),
+        tap(() => {
+          this.successModal = true;
+        }),
+      )
+      .subscribe();
+  }
+
+  private createGroup() {
+    const ingredients = this.selectedIngredients.map(
+      (ingredient) => ingredient.id,
+    );
+
+    const name = this.form.value.name;
+    const createdGroup: IGroup = {
+      ...nullGroup,
+      name: name,
+      ingredients: ingredients,
+    };
+    this.POSTGroup(createdGroup);
+  }
+
+  handleSaveModal(answer: boolean) {
+    if (answer) {
+      this.saveGroup();
+    } else {
+      addModalStyle(this.renderer);
+    }
+    this.saveModal = false;
+  }
+
+  handleSuccessModal() {
+    this.successModal = false;
+    this.closeEmitter.emit(true);
+    this.editEmitter.emit(true);
+
+    if (this.currentUser.id) {
+      if (
+        this.userService.getPermission(
+          this.currentUser.limitations || [],
+          Permission.WorkNotifies,
+        )
+      ) {
+        let notify: INotification = nullNotification;
+        if (this.edit) {
+          notify = this.notifyService.buildNotification(
+            'Раздел изменен',
+            `Вы успешно изменили группу ингредиентов «${this.savedGroup.name}»`,
+            'success',
+            'ingredient',
+            `/groups/list/${this.savedGroup.id}`,
+          );
+        } else {
+          notify = this.notifyService.buildNotification(
+            'Раздел добавлен',
+            `Вы успешно добавили новую группу ингредиентов «${this.savedGroup.name}»`,
+            'success',
+            'ingredient',
+            `/groups/list/${this.savedGroup.id}`,
+          );
+        }
+        this.notifyService
+          .sendNotification(notify, this.currentUser.id, true)
+          .subscribe();
+      }
+    }
+  }
+
+  handleCloseModal(answer: boolean) {
+    if (answer) {
+      this.closeEmitter.emit(true);
+    } else {
+      addModalStyle(this.renderer);
+    }
+    this.closeModal = false;
   }
 
   addIngredient(event: IIngredient) {
@@ -156,104 +483,11 @@ export class GroupCreatingComponent implements OnInit, OnDestroy {
   onIngredientImageChange(event: Event) {
     const input = event.target as HTMLInputElement;
     const file: File | undefined = input.files?.[0];
-
-    if (file) {
+    if (file && checkFile(file)) {
       this.form.get('image')?.setValue(file);
       const objectURL = URL.createObjectURL(file);
       this.groupImage = objectURL;
-      this.supabaseFilepath = this.setGroupPictureFilenameForSupabase();
     }
-  }
-
-  async loadGroupImageToSupabase() {
-    const file = this.form.get('image')?.value;
-    const filePath = this.supabaseFilepath;
-    await this.ingredientService.loadGroupImageToSupabase(filePath, file);
-  }
-
-  async createGroup() {
-    const ingredientsOfGroup = this.selectedIngredients.map(
-      (ingredient) => ingredient.id,
-    );
-
-    this.newGroup = {
-      ...nullIngredientsGroup,
-      name: this.form.value.name,
-      image: this.form.value.image ? this.supabaseFilepath : undefined,
-      id: this.edit ? this.editedGroup.id : this.maxId + 1,
-      ingredients: [...ingredientsOfGroup],
-    };
-    this.loading = true;
-    this.cdr.markForCheck();
-
-    if (this.edit) {
-      if (this.editedGroup.image === null) {
-        this.editedGroup.image = '';
-      }
-      if (this.editedGroup.image !== this.newGroup.image) {
-        if (this.newGroup.image) {
-          await this.loadGroupImageToSupabase();
-        }
-        if (this.editedGroup.image) {
-          await this.ingredientService.removeGroupImageFromSupabase(
-            this.editedGroup.image,
-          );
-        }
-      } else {
-        await this.loadGroupImageToSupabase();
-      }
-      await this.ingredientService.updateGroupInSupabase(this.newGroup);
-      this.editEmitter.emit();
-      this.closeEmitter.emit(true);
-    } else {
-      if (this.form.get('image')?.value) {
-        this.loadGroupImageToSupabase();
-      }
-
-      await this.ingredientService.addGroupToSupabase(this.newGroup);
-    }
-    this.loading = false;
-    this.successModal = true;
-
-    this.cdr.markForCheck();
-  }
-  unsetImage() {
-    this.form.get('image')?.setValue(null);
-    this.groupImage = this.defaultImage;
-    this.supabaseFilepath = '';
-  }
-
-  loadSectionPicture() {
-    const file = this.form.get('image')?.value;
-    const filePath = this.supabaseFilepath;
-    return supabase.storage.from('groups').upload(filePath, file);
-  }
-
-  private setGroupPictureFilenameForSupabase(): string {
-    const file = this.form.get('image')?.value;
-    const fileExt = file.name.split('.').pop();
-    return `${Math.random()}.${fileExt}`;
-  }
-
-  handleSaveModal(answer: boolean) {
-    if (answer) {
-      this.createGroup();
-    } else {
-      addModalStyle(this.renderer);
-    }
-    this.saveModal = false;
-  }
-  handleSuccessModal() {
-    this.closeEmitter.emit(true);
-    this.successModal = false;
-  }
-  handleCloseModal(answer: boolean) {
-    if (answer) {
-      this.closeEmitter.emit(true);
-    } else {
-      addModalStyle(this.renderer);
-    }
-    this.closeModal = false;
   }
 
   closeEditModal() {
@@ -280,7 +514,29 @@ export class GroupCreatingComponent implements OnInit, OnDestroy {
     if (elem.target !== elem.currentTarget) return;
     this.closeEditModal();
   }
+
   ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
+    this.subscriptions.unsubscribe();
     removeModalStyle(this.renderer);
+  }
+
+  unsetImage() {
+    this.form.get('image')?.setValue(null);
+    this.groupImage = this.defaultImage;
+  }
+
+  getImageOfSavedGroup() {
+    let image = '';
+    const selectedImage = this.form.get('image')?.value;
+    if (this.editedGroup.image && selectedImage === 'existing_photo') {
+      image = this.editedGroup.image;
+    } else {
+      if (selectedImage) {
+        image = 'image';
+      }
+    }
+    return image;
   }
 }

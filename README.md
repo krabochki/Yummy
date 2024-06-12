@@ -57,6 +57,11 @@
 - получение достижений;
 - настройки интерфейса и уведомлений;
 - обмен рецептами и страницами кулинаров в социальных сетях.
+
+<div align="center">
+    <img src="https://github.com/krabochki/Yummy/readme/mainpage.png"  height="350">
+</div>
+
 <br>
 
 <p align="right">(<a href="#readme-top">наверх</a>)</p>

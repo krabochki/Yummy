@@ -152,7 +152,7 @@
 
 ## Галерея 🖼️
 
-Все рецепты:
+<p align="left">Все рецепты:</p>
 <div align="center">
     <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/recipes_page.png"  width="760">
 </div>

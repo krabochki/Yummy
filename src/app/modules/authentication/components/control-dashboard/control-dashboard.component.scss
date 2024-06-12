@@ -627,9 +627,18 @@ h2 {
 }
 
 .content {
+
   border-radius: 1.5em;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
+
+  p{
+      display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+        text-overflow: ellipsis;
+  }
 }
 
 .wrap {

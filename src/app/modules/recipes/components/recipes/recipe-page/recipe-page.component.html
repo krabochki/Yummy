@@ -219,13 +219,13 @@
                     [src]="'/assets/images/svg/checkbox.svg'"></svg-icon>
                 </div>
                 <a [routerLink]="
-                                findIngredientByName(ingredient.name).id
+                                findIngredientByName(ingredient.id)
                                   ? '/ingredients/list/' +
-                                    findIngredientByName(ingredient.name).id
+                                    findIngredientByName(ingredient.id)?.ingredientId
                                   : null
                               " [ngClass]="{
                                 'i-have': ingredient.have,
-                                link: findIngredientByName(ingredient.name).id
+                                link: findIngredientByName(ingredient.id) 
                               }" class="name">
                   {{ ingredient.name }}
                 </a>

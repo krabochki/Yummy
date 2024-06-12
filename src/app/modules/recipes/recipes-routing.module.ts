@@ -101,6 +101,24 @@ const routes: Routes = [
         canActivate: [AuthGuard],
       },
       {
+        path: 'recipes/yours/public',
+        data: { filter: 'public' },
+        component: SomeRecipesPageComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'recipes/yours/private',
+        data: { filter: 'private' },
+        component: SomeRecipesPageComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'recipes/yours/awaits',
+        data: { filter: 'awaits' },
+        component: SomeRecipesPageComponent,
+        canActivate: [AuthGuard],
+      },
+      {
         path: 'recipes/favorite',
         data: { filter: 'favorite' },
         component: SomeRecipesPageComponent,
@@ -134,10 +152,6 @@ const routes: Routes = [
         canActivate: [AuthGuard],
       },
 
-      {
-        path: 'recipes/search-results',
-        component: SomeRecipesPageComponent,
-      },
       {
         path: 'recipes/best',
         data: { filter: 'popular' },

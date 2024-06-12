@@ -15,7 +15,7 @@
       <app-button
         class="add-recipe"
         [icon]="'add-recipe'"
-        *ngIf="(filter === 'my-recipes' && (recipes.length  || !loaded)) || filter === 'all'  "
+        *ngIf="recipes.length  || !loaded"
         (click)="initialLoading? null:createRecipeButtonClick()"
         [color]="'prim'"
         [disabled]="!initialLoading"
@@ -84,41 +84,44 @@
         </div>
       </ng-container>
 
-      <ng-template #all>
-       <ng-container>
-          <div *ngFor="let group of recipesGroups">
-            <div class="block" *ngIf="group.recipes.length && (group.auth ? this.currentUser.id : true)">
-              <a class="head" [routerLink]="group.link">
-                <h2>{{ group.name }}</h2>
-                <svg-icon
-                  class="arrow-svg"
-                  [applyClass]="true"
-                  [src]="'/assets/images/svg/go-back.svg'"
-                ></svg-icon>
-              </a>
-              <div
-                class="recipes"
-                class="recipes"
-                [ngClass]="{
-                  horizontal: group.recipes.length >= minHorizontalLength
-                }"
-              >
-                <app-horizontal-recipe-list
-                  *ngIf="
-                    group.recipes.length >= minHorizontalLength;
-                    else vertical3
-                  "
-                  [recipes]="getRecipesByGroup(group.name)"
-                ></app-horizontal-recipe-list>
-                <ng-template #vertical3>
-                  <app-vertical-recipe-list
-                    [blocks]="getRecipesByGroup(group.name)"
-                  ></app-vertical-recipe-list>
-                </ng-template>
+      <ng-container *ngIf="filter === 'all' || filter === 'my-recipes'">
+         <ng-container >
+            <div *ngFor="let group of recipesGroups">
+              <div class="block" *ngIf="group.recipes.length && (group.auth ? this.currentUser.id : true)">
+                <a class="head" [routerLink]="group.link">
+                  <h2>{{ group.name }}</h2>
+                  <svg-icon
+                    class="arrow-svg"
+                    [applyClass]="true"
+                    [src]="'/assets/images/svg/go-back.svg'"
+                  ></svg-icon>
+                </a>
+                <div
+                  class="recipes"
+                  class="recipes"
+                  [ngClass]="{
+                    horizontal: group.recipes.length >= minHorizontalLength
+                  }"
+                >
+                  <app-horizontal-recipe-list
+                    *ngIf="
+                      group.recipes.length >= minHorizontalLength;
+                      else vertical3
+                    "
+                    [showAuthor]="filter !== 'my-recipes' && group.name !== 'Ваши рецепты'"
+                    [recipes]="getRecipesByGroup(group.name)"
+                  ></app-horizontal-recipe-list>
+                  <ng-template #vertical3>
+                    <app-vertical-recipe-list
+                    [showAuthor]="filter !== 'my-recipes' && group.name !== 'Ваши рецепты'"
+                      [blocks]="getRecipesByGroup(group.name)"
+                    ></app-vertical-recipe-list>
+                  </ng-template>
+                </div>
               </div>
             </div>
-          </div>
-       </ng-container>
+         </ng-container>
+      </ng-container>
 
       <ng-container  *ngIf="!loaded">
         <div class="block" *ngFor="let block of blocks">
@@ -135,9 +138,8 @@
 
 
         
-      </ng-template>
 
-      <div *ngIf="filter !== 'all'; else all">
+      <div *ngIf="filter !== 'all' && filter!== 'my-recipes'">
         <div class="recipes">
           <div
             style="margin-bottom: 1em"
@@ -147,7 +149,7 @@
               [rowsNumberMobile]="
                 recipes.length >= minHorizontalLength ? 2 : 1
               "
-              [showAuthor]="filter !== 'my-recipes' ? true : false"
+              [showAuthor]="!['awaits','public','private'].includes(filter)"
               [blocks]="recipes"
               [cols]="4"
             ></app-vertical-recipe-list>
@@ -164,8 +166,7 @@
         (click)="loadMoreRecipes()"
         *ngIf="
           !everythingLoaded &&
-          filter !== 'all' &&
-          (filter !== 'all' ? recipes.length > 0 || !loaded : true)
+           (recipes.length > 0 || !loaded) && (filter !== 'all' && filter !== 'my-recipes')
         "
         [rounded]="true"
         [style]="'outlined'"

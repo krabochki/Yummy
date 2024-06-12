@@ -63,8 +63,6 @@ printRecipe() {
   constructor(
     private cd: ChangeDetectorRef,
     private planService: PlanService,
-    private authService: AuthService,
-    private router: Router,
     private fb: FormBuilder,
     private title: Title,
   ) {
@@ -296,20 +294,9 @@ printRecipe() {
         .postProduct(newProduct)
         .pipe(
           tap((res: any) => {
-            this.planService
-              .getRelatedIngredientsForProduct(res.id)
-              .pipe(
-                tap((relatedIngredients) => {
-                  if (relatedIngredients.length) {
-                    this.relatedIngredients = [
-                      ...this.relatedIngredients,
-                      ...relatedIngredients,
-                    ];
-                  }
+            
                   newProduct.id = res.id;
                   this.actualShoppingList.push(newProduct);
-                   this.setRelatedIngredientsToProducts();
-
                   this.getListInfo();
                   this.cd.markForCheck();
                 }),
@@ -320,9 +307,6 @@ printRecipe() {
                 }),
               )
               .subscribe();
-          }),
-        )
-        .subscribe();
       this.cd.markForCheck();
     }
   }

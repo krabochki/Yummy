@@ -58,6 +58,9 @@ export class SearchComponent {
     | 'cooked-recipes'
     | 'my-recipes'
     | 'match-ingredients'
+    | 'private'
+    | 'awaits'
+    | 'public'
     | 'following-recipes'
     | 'groups'
     | 'discussed-recipes'
@@ -125,7 +128,7 @@ export class SearchComponent {
   getLink(item: any) {
     if (this.userContext) return `/cooks/list/${item.id}`;
 
-    if (this.context.includes('recipes')) return `/recipes/list/${item.id}`;
+    if (this.context.includes('recipes') || this.context === 'private' || this.context === 'awaits' || this.context === 'public') return `/recipes/list/${item.id}`;
 
     switch (this.context) {
       case 'groups':
@@ -197,26 +200,20 @@ export class SearchComponent {
                 subscribe = this.userService.getAllUsersBySearch(query);
                 break;
               case 'following':
-                subscribe = this.userService.getFollowingsBySearch(
-                  query,
-                );
+                subscribe = this.userService.getFollowingsBySearch(query);
                 break;
               case 'managers':
                 subscribe = this.userService.getManagersBySearch(query);
                 break;
               case 'nearby':
-                subscribe = this.userService.getNearbyBySearch(
-                  query,
-                );
+                subscribe = this.userService.getNearbyBySearch(query);
                 break;
               case 'popular':
                 subscribe = this.userService.getPopularBySearch(query);
 
                 break;
               case 'productive':
-                subscribe = this.userService.getMostProductiveBySearch(
-                  query,
-                );
+                subscribe = this.userService.getMostProductiveBySearch(query);
 
                 break;
               case 'most-viewed':
@@ -229,9 +226,8 @@ export class SearchComponent {
                 subscribe = this.recipeService.getPublicRecipesBySearch(query);
                 break;
               case 'public-and-my-recipes':
-                subscribe = this.recipeService.getPublicAndMyRecipesBySearch(
-                  query,
-                );
+                subscribe =
+                  this.recipeService.getPublicAndMyRecipesBySearch(query);
                 break;
               case 'recipes-by-ingredient':
                 subscribe = this.recipeService.getRecipesByIngredientBySearch(
@@ -240,23 +236,19 @@ export class SearchComponent {
                 );
                 break;
               case 'commented-recipes':
-                subscribe = this.recipeService.getCommentedRecipesBySearch(
-                  query,
-                );
+                subscribe =
+                  this.recipeService.getCommentedRecipesBySearch(query);
                 break;
               case 'cooked-recipes':
-                subscribe = this.recipeService.getCookedRecipesBySearch(
-                  query,
-                );
+                subscribe = this.recipeService.getCookedRecipesBySearch(query);
                 break;
               case 'discussed-recipes':
                 subscribe =
                   this.recipeService.getDiscussedRecipesBySearch(query);
                 break;
               case 'favorite-recipes':
-                subscribe = this.recipeService.getFavoriteRecipesBySearch(
-                  query,
-                );
+                subscribe =
+                  this.recipeService.getFavoriteRecipesBySearch(query);
                 break;
               case 'sections':
                 subscribe = this.sectionService.getSectionsBySearch(
@@ -264,24 +256,17 @@ export class SearchComponent {
                 );
                 break;
               case 'liked-recipes':
-                subscribe = this.recipeService.getLikedRecipesBySearch(
-                  query,
-                );
+                subscribe = this.recipeService.getLikedRecipesBySearch(query);
                 break;
               case 'my-recipes':
-                subscribe = this.recipeService.getMyRecipesBySearch(
-                  query,
-                );
+                subscribe = this.recipeService.getMyRecipesBySearch(query);
                 break;
               case 'planned-recipes':
-                subscribe = this.recipeService.getPlannedRecipesBySearch(
-                  query,
-                );
+                subscribe = this.recipeService.getPlannedRecipesBySearch(query);
                 break;
               case 'following-recipes':
-                subscribe = this.recipeService.getFollowingRecipesBySearch(
-                  query,
-                );
+                subscribe =
+                  this.recipeService.getFollowingRecipesBySearch(query);
                 break;
               case 'category-recipes':
                 subscribe = this.recipeService.getRecipesOfCategoryBySearch(
@@ -321,6 +306,24 @@ export class SearchComponent {
               case 'ingredients':
                 subscribe =
                   this.ingredientService.getIngredientsBySearch(query);
+                break;
+              case 'private':
+                subscribe = this.recipeService.getOtherMyRecipesBySearch(
+                  query,
+                  'private',
+                );
+                break;
+              case 'public':
+                subscribe = this.recipeService.getOtherMyRecipesBySearch(
+                  query,
+                  'public',
+                );
+                break;
+              case 'awaits':
+                subscribe = this.recipeService.getOtherMyRecipesBySearch(
+                  query,
+                  'awaits',
+                );
                 break;
             }
             return subscribe;

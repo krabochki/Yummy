@@ -31,9 +31,11 @@ import {
   filter,
   forkJoin,
   of,
+  retry,
   switchMap,
   takeUntil,
   tap,
+  throwError,
 } from 'rxjs';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { INotification } from 'src/app/modules/user-pages/models/notifications';
@@ -131,15 +133,12 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
 
   hamburgerClick() {
     this.mobileMenuOpen = !this.mobileMenuOpen;
-        this.popups = [];
+    this.popups = [];
 
     if (this.mobileMenuOpen) this.addModalStyle();
-      
     else {
-      this.removeModalStyle(); 
-          this.mobileSectionsOpen = [false, false, false];
-
-
+      this.removeModalStyle();
+      this.mobileSectionsOpen = [false, false, false];
     }
   }
 
@@ -215,7 +214,6 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     this.authService.dashboardOpened$.subscribe(() => {
       this.adminActionsCount = 0;
     });
-
   }
 
   private sendDarkModeNotify() {
@@ -257,7 +255,8 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
       if (this.mobileMenuOpen) {
         this.removeModalStyle();
         this.mobileMenuOpen = false;
-      }   this.mobileSectionsOpen = [false, false, false];
+      }
+      this.mobileSectionsOpen = [false, false, false];
 
       this.mobile = false;
     }
@@ -282,7 +281,8 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
     const eventsString = eventTitles.join(', <br>');
 
     const eventString = `Запланированный рецепт: ${eventTitles[0].replace(
-      'ㅤ',''
+      'ㅤ',
+      '',
     )}.`;
 
     const moreEvents = `Запланированные рецепты:<br>${eventsString}`;
@@ -293,7 +293,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
       events.length > 1 ? 'ы' : ''
     } на ближайшее время. Не забудьте проверить список ингредиентов и подготовьтесь к приготовлению ${
       events.length > 1 ? 'этих вкусных блюд' : 'этого вкусного блюда'
-    }.<br>${events.length===1?eventString:moreEvents}`;
+    }.<br>${events.length === 1 ? eventString : moreEvents}`;
     const reminder: INotification = {
       ...this.notifyService.buildNotification(
         'Начало запланированного рецепта уже скоро!',
@@ -357,7 +357,6 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   }
 
   upcomingEventsHandling(userId: number) {
-
     if (
       this.userService.getPermission(
         this.currentUser.limitations || [],
@@ -397,7 +396,8 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
       this.loading = true;
       this.authService.logout().subscribe(() => {
         this.router.navigateByUrl('/');
-        this.mobileMenuOpen = false;    this.mobileSectionsOpen = [false, false, false];
+        this.mobileMenuOpen = false;
+        this.mobileSectionsOpen = [false, false, false];
 
         this.loading = false;
         this.router.navigateByUrl('/');
@@ -412,10 +412,13 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
         .getFirstUnreadedNotifications(this.maxNumberOfPopupsInSameTime)
         .pipe(
           tap((response) => {
-            const notifications:INotification[] = response.notifications;
+            const notifications: INotification[] = response.notifications;
             this.notReadedNotifies = response.count;
-           
-            this.notifiesHistory = [...this.notifiesHistory, ...notifications.map(n=>n.id)]
+
+            this.notifiesHistory = [
+              ...this.notifiesHistory,
+              ...notifications.map((n) => n.id),
+            ];
             this.currentUser.notifications = notifications;
             this.authService.setCurrentUser(this.currentUser);
             this.updateNotifies();
@@ -427,11 +430,9 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
 
       return of(null);
     }
-
-  
   }
 
-  loadUserpic():Observable<any> {
+  loadUserpic(): Observable<any> {
     if (this.currentUser.id) {
       const avatar = this.currentUser.image;
       if (avatar) {
@@ -440,15 +441,17 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
             this.avatar = URL.createObjectURL(blob);
           }),
           catchError(() => {
-            this.avatar = ''
-            return EMPTY
-          })
+            this.avatar = '';
+            return EMPTY;
+          }),
         );
-      } else {            this.avatar = '';
+      } else {
+        this.avatar = '';
 
         return of(null);
       }
-    } else {            this.avatar = '';
+    } else {
+      this.avatar = '';
 
       return of(null);
     }
@@ -457,49 +460,58 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   init = false;
 
   currentUserInit() {
+    const MAX_RETRY_ATTEMPTS = 3;
     this.authService.currentUser$
       .pipe(takeUntil(this.destroyed$))
       .subscribe((user) => {
-      
         if (!this.init) {
-          this.authService.getTokenUser().subscribe((tokenUser) => {
-            this.currentUser = tokenUser;
-            this.authService.loadingSubject.next(true);
-            this.init = true;
-            this.remindersInit();
-          });
+          this.authService
+            .getTokenUser()
+            .pipe(
+              retry(MAX_RETRY_ATTEMPTS),
+              catchError((error) => {
+                this.authService.loadingSubject.next(false);
+                this.authService.errorSubject.next(error);
+                return throwError(error); // Передаем ошибку дальше для обработки
+              }),
+              takeUntil(this.destroyed$),
+            )
+
+            .subscribe((tokenUser) => {
+              this.currentUser = tokenUser;
+              this.authService.loadingSubject.next(true);
+              this.init = true;
+              this.remindersInit();
+            });
         } else {
           if (user.id !== this.currentUser.id) {
-                      this.currentUser = user;
+            this.currentUser = user;
 
             this.popupHistory = [];
             this.popups = [];
             this.authService.loadingSubject.next(true);
             this.remindersInit();
-          }
-          else {
-                      this.currentUser = user;
+          } else {
+            this.currentUser = user;
 
             if (!this.currentUser.notifications) {
               this.currentUser.notifications = [];
             }
-            this.currentUser.notifications.forEach(n => {
+            this.currentUser.notifications.forEach((n) => {
               if (!n.read && !this.notifiesHistory.includes(n.id)) {
                 this.notReadedNotifies++;
-                this.notifiesHistory.push(n.id)
+                this.notifiesHistory.push(n.id);
               }
             });
             this.updateNotifies();
           }
         }
 
-
         this.cd.markForCheck();
       });
   }
 
-
-  notifiesHistory: number[] = []; 
+  notifiesHistory: number[] = [];
   getUserLimitations() {
     return this.userService.getLimitations().pipe(
       tap((limitations) => {
@@ -536,7 +548,7 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
               : of(null),
           ),
           switchMap(() =>
-            this.currentUser.role !=='user'
+            this.currentUser.role !== 'user'
               ? this.getManagersActionsCount()
               : of(null),
           ),
@@ -564,14 +576,13 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   }
 
   getManagersActionsCount() {
-    return this.authService.getManagerActionsCount().pipe(tap(
-      (count) => {
+    return this.authService.getManagerActionsCount().pipe(
+      tap((count) => {
         this.adminActionsCount = count;
-      }
-    ))
+      }),
+    );
   }
 
-  
   markNotifiesAsReaded() {
     this.currentUser.notifications.forEach((notify: INotification) => {
       notify.read = 1;
@@ -684,10 +695,9 @@ export class HeaderComponent implements OnInit, DoCheck, OnDestroy {
   handleNoAccessModal(event: boolean): void {
     if (event) {
       this.router.navigateByUrl('/greetings');
-          this.removeModalStyle();
-    this.mobileMenuOpen = false;
-    this.mobileSectionsOpen = [false, false, false];
-
+      this.removeModalStyle();
+      this.mobileMenuOpen = false;
+      this.mobileSectionsOpen = [false, false, false];
     }
     this.noAccessModalShow = false;
   }

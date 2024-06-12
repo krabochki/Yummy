@@ -29,12 +29,7 @@ export class PlanService {
       options,
     );
   }
-  getRelatedIngredientsForProduct(productId: number) {
-                const options = { withCredentials: true };
-
-    const url = `${this.planUrl}/related-ingredients-by-product/${productId}`;
-    return this.http.get<{ ingredientId: number; productId: number }[]>(url, options);
-  }
+  
 
   getEventsByUserId(): Observable<ICalendarDbEvent[]> {
                     const options = { withCredentials: true };

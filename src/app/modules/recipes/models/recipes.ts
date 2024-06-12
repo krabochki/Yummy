@@ -78,6 +78,7 @@ export interface Ingredient {
   name: string; // Название ингредиента
   quantity: string; // Количество
   have: boolean;
+  id: number;
   basket: boolean;
   unit: string; // Единица измерения
 }

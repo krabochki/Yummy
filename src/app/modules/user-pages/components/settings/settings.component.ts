@@ -279,6 +279,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
             tap((blob) => {
               if (blob) {
                 achievement.iconUrl = URL.createObjectURL(blob);
+                this.cd.markForCheck();
               }
             }),
             catchError(() => {

@@ -9,9 +9,7 @@ import { recipesSource } from 'src/tools/sourses';
   providedIn: 'root',
 })
 export class RecipeService {
-  constructor(private http: HttpClient) { }
-  
-  
+  constructor(private http: HttpClient) {}
 
   getRecipeForEditing(recipeId: number): Observable<IRecipe> {
     const options = { withCredentials: true };
@@ -27,6 +25,12 @@ export class RecipeService {
   getMyRecipesBySearch(searchText: string): Observable<any> {
     const options = { withCredentials: true };
     const url = `${this.recipesUrl}/search/my?search=${searchText}`;
+    return this.http.get(url, options);
+  }
+
+  getOtherMyRecipesBySearch(searchText: string, status:'private'|'awaits'|'public'): Observable<any> {
+    const options = { withCredentials: true };
+    const url = `${this.recipesUrl}/search/my-recipes?search=${searchText}&status=${status}`;
     return this.http.get(url, options);
   }
 
@@ -64,9 +68,13 @@ export class RecipeService {
     return this.http.get(url, options);
   }
 
-   approveMyRecipe(recipeId: number) {
+  approveMyRecipe(recipeId: number) {
     const options = { withCredentials: true };
-    return this.http.put(`${this.recipesUrl}/approve-myself/${recipeId}`, {}, options);
+    return this.http.put(
+      `${this.recipesUrl}/approve-myself/${recipeId}`,
+      {},
+      options,
+    );
   }
   approveRecipe(recipeId: number) {
     const options = { withCredentials: true };
@@ -260,7 +268,6 @@ export class RecipeService {
     return this.http.get<string[]>(url, options);
   }
 
- 
   postInstruction(recipeId: number, instruction: string) {
     const options = { withCredentials: true };
 
@@ -327,10 +334,9 @@ export class RecipeService {
     const options = { withCredentials: true };
 
     const url = `${this.recipesUrl}/related-ingredients/${recipeId}`;
-    return this.http.get<{ name: string; id: number; groupId: number }[]>(
-      url,
-      options,
-    );
+    return this.http.get<
+      { name: string; id: number; ingredientId: number; groupId: number }[]
+    >(url, options);
   }
 
   deleteRecipeImage(recipeId: number) {
@@ -421,7 +427,6 @@ export class RecipeService {
   }
 
   uploadRecipeImage(file: File) {
-    
     const options = { withCredentials: true };
 
     const formData: FormData = new FormData();
@@ -433,6 +438,17 @@ export class RecipeService {
     const options = { withCredentials: true };
 
     const url = `${this.recipesUrl}/user-favorites?limit=${limit}&page=${page}`;
+    return this.http.get<{ recipes: IRecipe[]; count: number }>(url, options);
+  }
+
+  getSomeUserRecipes(
+    limit: number,
+    page: number,
+    type: 'private' | 'awaits' | 'public',
+  ) {
+    const options = { withCredentials: true };
+
+    const url = `${this.recipesUrl}/user-recipes?limit=${limit}&page=${page}&type=${type}`;
     return this.http.get<{ recipes: IRecipe[]; count: number }>(url, options);
   }
 

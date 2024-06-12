@@ -253,6 +253,17 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
       case 'cooked':
         this.recipeType = RecipeType.Cooked;
         break;
+      case 'private':
+        this.recipeType = RecipeType.Private;
+        break;
+      case 'awaits':
+        this.recipeType = RecipeType.Awaits;
+        break;
+
+      case 'public':
+        this.recipeType = RecipeType.Public;
+        break;
+
       case 'category-recipes':
         this.recipeType = RecipeType.Category;
         break;
@@ -273,6 +284,10 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
         break;
       case 'ingredient-recipes':
         this.recipeType = RecipeType.ByIngredient;
+    }
+    if (this.recipeType === RecipeType.My) {
+        this.blocks = Array.from({ length: 3 }).map((_, index) => index + 1);
+
     }
   }
 
@@ -309,7 +324,32 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
           }),
         )
         .subscribe());
-    } else {
+    }
+    else if (this.recipeType === RecipeType.My)
+    {
+            const recipes$: Observable<any>[] = [];
+            recipes$.push(this.getMyRecipes(2));
+            recipes$.push(this.getMyRecipes(1));
+            recipes$.push(this.getMyRecipes(0));
+            this.subscriptions.add(
+              from(recipes$)
+                .pipe(
+                  takeUntil(this.destroyed$),
+                  concatMap((recipe$) =>
+                    recipe$.pipe(takeUntil(this.destroyed$)),
+                  ),
+                  last(),
+                  finalize(() => {
+                    this.loaded = true;
+                    this.cd.markForCheck();
+                  }),
+                )
+                .subscribe(),
+            );
+
+      
+      }
+    else {
       this.startRecipesInit();
     }
   }
@@ -353,6 +393,12 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
       }
     } else {
       switch (this.recipeType) {
+        case RecipeType.Private:
+          return 'private';
+        case RecipeType.Awaits:
+          return 'awaits';
+        case RecipeType.Public:
+          return 'public';
         case RecipeType.Recent:
           return 'public-recipes';
         case RecipeType.Popular:
@@ -425,6 +471,42 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
       );
     else return of(null);
   }
+
+  
+  private getMyRecipes(i:number) {
+    const names: string[] = ['Опубликованные рецепты', 'Ожидающие проверки рецепты', 'Приватные рецепты'];
+    const subscribes = [
+      this.recipeService.getSomeUserRecipes(8, 0,'public'),
+      this.recipeService.getSomeUserRecipes(8, 0,'awaits'),
+      this.recipeService.getSomeUserRecipes(8, 0, 'private'),
+    ];
+    const shortNames = ['public', 'awaits', 'private'];
+    if (this.currentUserId)
+      return subscribes[i].pipe(
+        tap((response) => {
+          const recipes: IRecipe[] = response.recipes;
+          const newRecipes: IRecipe[] = recipes.filter((recipe) => {
+            return !this.recipes.some(
+              (existingRecipe) => existingRecipe.id === recipe.id,
+            );
+          });
+          const recipesIds = recipes.map((recipe) => recipe.id);
+          const group: RecipeGroup = {
+            name: names[i],
+            link: `/recipes/yours/${shortNames[i]}`,
+            recipes: recipesIds,
+            auth: true,
+          };
+          this.recipesGroups.push(group);
+          this.loadRecipesImages(newRecipes);
+          this.blocks.pop();
+          this.recipes = [...newRecipes, ...this.recipes];
+          this.cd.markForCheck();
+        }),
+      );
+    else return of(null);
+  }
+
 
   private getCurrentUserFollowedRecipes() {
     if (this.currentUserId)
@@ -744,6 +826,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     if (this.loaded || !this.recipes.length) {
       this.loaded = false;
       let context: Observable<any> = EMPTY;
+      console.log(this.recipeType)
 
       switch (this.recipeType) {
         case RecipeType.Planning:
@@ -778,6 +861,28 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
           context = this.recipeService.getSomeMostCookedRecipes(
             this.RECIPES_PER_STEP,
             this.currentStep,
+          );
+          break;
+
+        case RecipeType.Private:
+          context = this.recipeService.getSomeUserRecipes(
+            this.RECIPES_PER_STEP,
+            this.currentStep,
+            'private',
+          );
+          break;
+        case RecipeType.Awaits:
+          context = this.recipeService.getSomeUserRecipes(
+            this.RECIPES_PER_STEP,
+            this.currentStep,
+            'awaits',
+          );
+          break;
+        case RecipeType.Public:
+          context = this.recipeService.getSomeUserRecipes(
+            this.RECIPES_PER_STEP,
+            this.currentStep,
+            'public',
           );
           break;
         case RecipeType.MostFavorite:

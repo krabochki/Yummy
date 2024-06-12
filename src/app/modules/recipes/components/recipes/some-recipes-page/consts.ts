@@ -13,12 +13,18 @@ export enum RecipeType {
   Commented = 'commented',
   Planning = 'planning',
   MostCooked = 'most-cooked',
+  Private = 'private',
+  Awaits = 'awaits',
+  Public = 'public',
   MostFavorite = 'most-favorite',
   ByIngredient = 'ingredient-recipes'
 }
 
 export const recipeTitles = {
   [RecipeType.Recent]: 'Самые свежие рецепты',
+  [RecipeType.Private]: 'Ваши приватные рецепты',
+  [RecipeType.Awaits]: 'Ваши ожидающие проверку рецепты',
+  [RecipeType.Public]: 'Ваши опубликованные рецепты',
   [RecipeType.Popular]: 'Популярные рецепты',
   [RecipeType.My]: 'Ваши рецепты',
   [RecipeType.Favorite]: 'Ваши закладки',
@@ -31,9 +37,9 @@ export const recipeTitles = {
   [RecipeType.Commented]: 'Вы комментировали эти рецепты',
   [RecipeType.Planning]: 'Вы запланировали эти рецепты',
   [RecipeType.MostFavorite]: 'Сохраняют чаще всего',
-  [RecipeType.MostCooked]: 'Готовят чаще всего',  
+  [RecipeType.MostCooked]: 'Готовят чаще всего',
   [RecipeType.Match]: 'Подобранные рецепты',
-  [RecipeType.ByIngredient]:''
+  [RecipeType.ByIngredient]: '',
 };
 
  export const recipeNoRecipesRouterLinkText = {
@@ -45,6 +51,9 @@ export const recipeTitles = {
    [RecipeType.All]: '',
    [RecipeType.Liked]: '/recipes',
    [RecipeType.Cooked]: '/recipes',
+   [RecipeType.Public]: '/recipes/yours',
+   [RecipeType.Private]: '/recipes/yours',
+   [RecipeType.Awaits]: '/recipes/yours',
    [RecipeType.Updates]: '/cooks',
    [RecipeType.Discussed]: '/recipes',
    [RecipeType.Commented]: '/recipes',
@@ -52,7 +61,7 @@ export const recipeTitles = {
    [RecipeType.MostCooked]: '',
    [RecipeType.MostFavorite]: '',
    [RecipeType.Match]: '',
-   [RecipeType.ByIngredient]: '/ingredients'
+   [RecipeType.ByIngredient]: '/ingredients',
  };
 
 export const recipeNoRecipesButtonText = {
@@ -65,19 +74,27 @@ export const recipeNoRecipesButtonText = {
   [RecipeType.Liked]: 'Все рецепты',
   [RecipeType.Cooked]: 'Все рецепты',
   [RecipeType.Updates]: 'Все кулинары',
+  [RecipeType.Private]: "Ваши рецепты",
+  [RecipeType.Awaits]: "Ваши рецепты",
+  [RecipeType.Public]: "Ваши рецепты",
   [RecipeType.Discussed]: 'Все рецепты',
   [RecipeType.Commented]: 'Все рецепты',
   [RecipeType.Planning]: 'Календарь рецептов',
   [RecipeType.MostCooked]: '',
   [RecipeType.MostFavorite]: '',
   [RecipeType.Match]: '',
-  [RecipeType.ByIngredient]: 'Все ингредиенты'
-  
+  [RecipeType.ByIngredient]: 'Все ингредиенты',
 };
 
 export const recipeNoRecipesText = {
   [RecipeType.Recent]: '',
   [RecipeType.Popular]: '',
+  [RecipeType.Private]:
+    'У вас пока нет приватных рецептов. Попробуйте создать парочку рецептов и зайдите сюда снова.',
+  [RecipeType.Awaits]:
+    'У вас пока нет приватных рецептов. Попробуйте прислать парочку рецептов на проверку и зайдите сюда снова.',
+  [RecipeType.Public]:
+    'У вас пока нет опубликованных рецептов. Попробуйте опубликовать парочку рецептов и зайдите сюда снова.',
   [RecipeType.My]:
     'У вас пока нет собственных рецептов. Попробуйте создать парочку рецептов и зайдите сюда снова',
   [RecipeType.Favorite]:
@@ -99,5 +116,5 @@ export const recipeNoRecipesText = {
   [RecipeType.MostCooked]: '',
   [RecipeType.MostFavorite]: '',
   [RecipeType.Match]: '',
-  [RecipeType.ByIngredient]:''
+  [RecipeType.ByIngredient]: '',
 };

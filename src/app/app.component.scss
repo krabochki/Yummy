@@ -15,7 +15,13 @@
 }
 
 a{
+  font-weight: 500;
+  color: var(--color-primary);
   text-decoration: underline;
+  transition: 0.2s;
+  &:hover{
+    color: var(--color-primary-focus);
+  }
 }
 .cat-block {
   align-items: center;
@@ -78,10 +84,10 @@ a{
      max-width: 80%; 
     }
 }
+
 ul{
-  list-style-type: disc;
   li{
-    list-style-type: disc;
+    list-style-type: "— ";
     list-style-position: inside;
   }
 }

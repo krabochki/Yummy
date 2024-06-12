@@ -31,6 +31,7 @@ import {
   finalize,
   forkJoin,
   from,
+  last,
   of,
   takeUntil,
   tap,
@@ -110,7 +111,7 @@ export class RecipePageComponent implements OnInit, OnDestroy {
 
   statisticPercent = 0;
 
-  relatedIngredients: { name: string; id: number; groupId: number }[] = [];
+  relatedIngredients: { id: number; name: string; ingredientId: number; groupId: number }[] = [];
   voteModalShow: boolean = false;
   successVoteModalShow: boolean = false;
 
@@ -505,12 +506,14 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   }
 
   getInstructionsImages() {
+    const loadImages$: Observable<any>[] = [];
     return this.recipeService.getInstructionsImages(this.recipe.id).pipe(
       concatMap((response) => {
         const instructions = response.filter((res) => res); // Фильтрация пустых значений
 
         return from(instructions).pipe(
-          concatMap((res) => {
+          takeUntil(this.destroyed$),
+          tap((res) => {
             const instruction = this.recipe.instructions.find(
               (instruction) => instruction.id === res.instructionId,
             );
@@ -519,7 +522,8 @@ export class RecipePageComponent implements OnInit, OnDestroy {
               if (!instruction.images) instruction.images = [];
               instruction.images.push('');
               this.cd.markForCheck();
-              return this.recipeService
+
+              const loadImage$ = this.recipeService
                 .downloadInstructionImage(res.image)
                 .pipe(
                   catchError(() => {
@@ -537,14 +541,26 @@ export class RecipePageComponent implements OnInit, OnDestroy {
 
                       this.cd.markForCheck();
                     }
-                  }),
-                );
-            } else {
-              return of(null);
-            }
+                  }));
+                          loadImages$.push(loadImage$);
+
+                
+            } 
           }),
         );
       }),
+      tap(() => {
+        console.log('start load images')
+        this.subscriptions.add(
+          from(loadImages$)
+            .pipe(
+              last(),
+              concatMap((loadImage) => loadImage),
+              takeUntil(this.destroyed$),
+            )
+            .subscribe(),
+        );
+      })
     );
   }
 
@@ -1010,11 +1026,12 @@ export class RecipePageComponent implements OnInit, OnDestroy {
   }
 
   addToBasket(ingredient: Ingredient) {
-    const relatedIngredient = this.findIngredientByName(ingredient.name);
+    const relatedIngredient = this.findIngredientByName(ingredient.id);
+    const groupId = !relatedIngredient ? 0 : relatedIngredient.groupId;
     const product: ShoppingListItem = {
       ...nullProduct,
       name: ingredient.name,
-      typeId: relatedIngredient?.groupId || 0,
+      typeId: groupId,
       amount:
         (ingredient.quantity ? ingredient.quantity + ' ' : '') +
         ingredient.unit,
@@ -1374,13 +1391,14 @@ export class RecipePageComponent implements OnInit, OnDestroy {
     this.voteModalShow = false;
   }
 
-  findIngredientByName(name: string) {
+  findIngredientByName(id: number) {
     const ingredient = this.relatedIngredients.find(
-      (ingredient) => ingredient.name === name,
+      (ri) => ri.id === id,
     );
     if (ingredient) {
       return ingredient;
-    } else return { name: '', id: 0, groupId: 0 };
+    } 
+    return undefined;
   }
 
   getRelatedIngredients() {

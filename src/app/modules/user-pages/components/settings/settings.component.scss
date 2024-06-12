@@ -9,6 +9,156 @@ button.action{
     color: var(--color-secondary);
   }
 }
+@keyframes loading {
+  0% {
+    background-position: var(--loading);
+  }
+
+  50% {
+    background-color: var(--loading-accent);
+  }
+
+  100% {
+    background-position: var(--loading);
+  }
+}
+
+.loading{
+h3,p{
+  color: transparent;
+  width: max-content;
+  
+          animation: loading 0.75s infinite linear;
+            background-color: var(--loading);
+            line-height: 1 !important;
+            padding: 0;
+            pointer-events: none;
+            overflow: hidden;
+            border-radius: 0.75em;
+}
+
+.ico{
+  border: none;
+  width: calc(2.5em + 3px);
+    min-width: calc(2.5em + 3px);
+      max-width: calc(2.5em + 3px);
+      min-height: calc(2.5em + 3px);
+      max-height: calc(2.5em + 3px);height: calc(2.5em + 3px);
+  background-color: var(--loading);animation: loading 0.75s infinite linear;
+}
+.progress{
+  width: 50% !important;
+}
+}
+
+.blink {
+  pointer-events: none;
+  animation: blinker 1s linear infinite;
+}
+
+
+.progress-bar {
+  width: 100%;
+  height: 1em;
+  position: relative;
+  background-color: var(--scroll-body);
+  border-radius: 10px;
+  overflow: hidden;
+  /* чтобы обрезать содержимое, если прогресс выходит за границы */
+}
+
+.icon-block{
+  display: flex;
+  align-items: center;
+  column-gap: 0.5em;
+}
+.ico{
+  
+      display: flex;
+      min-width: 2.5em;
+      max-height: 2.5em;
+      height: 2.5em;
+      align-items: center;
+      justify-content: center;
+      border-width: 3px;
+      border-style: solid;
+      border-radius: 100%;
+      border-color: var(--color-foreground);
+      max-width: 2.5em !important;
+}
+
+.ache-blocks{
+  display: flex;
+  flex-direction: column;
+  row-gap: 1em;
+}
+
+.percent{
+  position: absolute;
+  top:0;
+  margin: 0 !important;
+  color: var(--color-background);
+  text-align: center;
+  left:0;
+  font-size: 0.9em;
+  font-weight: 600;
+  margin-top: auto !important ;
+  margin-bottom: auto !important;
+  right:0;
+  bottom:0;
+
+}
+
+
+.svgico{
+    max-width: 1.25em;
+    fill: var(--color-foreground);
+    width: 1.25em;
+    height:1.25em;
+    max-height: 1.25em;
+}
+
+
+.progress {
+  height: 100%;
+  background-color: #3dc342;
+  /* зеленый цвет */
+  border-radius: 10px;
+  /* чтобы скруглить углы */
+}
+
+.exceeded{
+  cursor:pointer;
+
+  p{
+      transition: 0.2s;
+&:hover{
+      letter-spacing: 0.5px;
+}  }
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+.unactive{
+  background-color: gray;
+}
+.achieved{
+  filter: blur(1px);
+  opacity: 90%;
+transition: 0.2s;
+  &:hover{
+    opacity: 100%;
+    filter: blur(0px);
+  }
+}
+.password-box{
+  margin:1em 0;
+  width: 70%;
+}
 .background {
   top: 0;
   left: 0;
@@ -17,6 +167,7 @@ button.action{
   z-index: 3;
   width: 100vw;
   height: 100%;
+  backdrop-filter: blur(1px);
   @include flex;
 }
 
@@ -282,9 +433,15 @@ button.action{
     &:focus {
       color: var(--color-secondary-focus);
       transform: translateX(0.2em);
+
+      
       &.red {
         color: var(--color-primary-focus);
       }
+            &.del {
+              transform: none;
+              
+            }
     }
   }
 }
@@ -299,12 +456,12 @@ button.action{
 .socials {
   margin-top: var(--space-xs);
   display: flex;
-  column-gap: var(--space-s);
+  column-gap: 0.65em;
 }
 
 @media (max-width: 1000px) {
   .container {
-    width: 65%;
+    width: 70%;
   }
 }
 
@@ -329,9 +486,7 @@ button.action{
     .content {
       .blocks {
         height: calc(100vh - 23em);
-        &::-webkit-scrollbar {
-          display: none;
-        }
+      
       }
     }
     nav h1 {
@@ -376,7 +531,7 @@ button.action{
 
       .svg-trash{
                 @include flex;
-        max-height: 2rem;max-width: 2rem;        fill:var(--color-foreground);
+        min-height: 2rem;min-width: 1.75rem;        fill:var(--color-foreground);
 
         
       }
@@ -414,12 +569,9 @@ button.action{
     }
   }
   .main-wrap .content .blocks {
-    height: calc(100vh - 6rem - 5em - 4.5em);
-    overflow: scroll;
+    height: calc(100vh - 6rem - 14em);
+    overflow-y: auto;
     
-    &::-webkit-scrollbar {
-        display: none;
-      }
   }
 
   .close {

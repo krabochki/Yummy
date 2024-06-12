@@ -1,16 +1,31 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
-import { Subject, takeUntil } from 'rxjs';
-import { IUser, nullUser } from '../../models/users';
-import { IRecipe } from 'src/app/modules/recipes/models/recipes';
-import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
+import {
+  EMPTY,
+  Observable,
+  Subject,
+  Subscription,
+  concatMap,
+  finalize,
+  from,
+  last,
+  takeUntil,
+  tap,
+} from 'rxjs';
+import { IUser } from '../../models/users';
 import { ActivatedRoute, Router } from '@angular/router';
 import { trigger } from '@angular/animations';
-import { heightAnim } from 'src/tools/animations';
+import { heightAnim, modal } from 'src/tools/animations';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
-import { UsersType, noUsersText, userTitles } from './consts';
+import {
+  UserGroup,
+  UsersType,
+  noUsersText,
+  searchTypes,
+  userTitles,
+} from './consts';
 import { Title } from '@angular/platform-browser';
-import { baseComparator } from 'src/tools/common';
 import { ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
@@ -21,34 +36,31 @@ import { ChangeDetectionStrategy } from '@angular/core';
     '../../../authentication/common-styles.scss',
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [trigger('auto-complete', heightAnim())],
+  animations: [
+    trigger('auto-complete', heightAnim()),
+    trigger('modal', modal()),
+  ],
 })
 export class UsersPageComponent implements OnInit, OnDestroy {
   private destroyed$: Subject<void> = new Subject<void>();
-  protected users: IUser[] = [];
-  protected recipes: IRecipe[] = [];
-  protected popularUsers: IUser[] = [];
-  protected nearbyUsers: IUser[] = [];
-  protected allUsers: IUser[] = [];
-  protected moreProductiveUsers: IUser[] = [];
-  protected administratorsAndModerators: IUser[] = [];
-  protected currentUserFollowingUsers: IUser[] = [];
-  protected moreViewedUsers: IUser[] = [];
-  protected currentUserFollowersUsers: IUser[] = [];
-  protected newUsers: IUser[] = [];
-  protected currentUser: IUser = { ...nullUser };
   protected filter: string = '';
   protected userType: UsersType = UsersType.All;
-  protected showUsers: IUser[] = [];
-  protected searchQuery: string = '';
-  protected autocompleteShow: boolean = false;
-  protected autocompleteUsersList: IUser[] = [];
-  init = false;
+  allUsers: IUser[] = [];
+
+  everythingLoaded = false;
+  usersPerStep = 6;
+  mainPageUsersPerStep = 6;
+  currentStep = 0;
+  initialLoading = true;
+  loadingModal = false;
+
+  searchTypes = searchTypes;
+  currentUserId = 0;
+  private subscriptions: Subscription = new Subscription();
 
   constructor(
     private userService: UserService,
     private title: Title,
-    private recipeService: RecipeService,
     private router: Router,
     private authService: AuthService,
     private route: ActivatedRoute,
@@ -56,137 +68,243 @@ export class UsersPageComponent implements OnInit, OnDestroy {
   ) {}
 
   public ngOnInit(): void {
+    const screenWidth = window.innerWidth;
+
+    if (screenWidth <= 620) {
+      this.usersPerStep = 4;
+      this.mainPageUsersPerStep = 2;
+    } else if (screenWidth <= 1080) {
+      this.mainPageUsersPerStep = 4;
+    }
+
     this.route.data.subscribe((data) => {
       this.filter = data['filter'];
-      this.setUserType(this.filter);
-    });
-      this.recipeService.recipes$
-        .pipe(takeUntil(this.destroyed$))
-        .subscribe((data) => {
-          this.recipes = data;
-        });
 
-    this.authService.currentUser$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((data) => {
-        this.currentUser = data;
-        this.userService.users$
-          .pipe(takeUntil(this.destroyed$))
-          .subscribe((data) => {
-            this.users = data;
-            if (!this.init && this.users.length > 0) {
+      this.subscriptions.add(
+        this.authService
+          .getTokenUser()
+          .pipe(
+            takeUntil(this.destroyed$),
+            tap((user) => {
+              this.currentUserId = user.id;
+
+              this.initialLoading = false;
+              this.allUsers = [];
+              this.everythingLoaded = false;
+              this.currentStep = 0;
+
+              this.setUserType(this.filter);
               this.initializeUsers();
-              this.init = true;
-            }
-            this.currentUserFollowingUsers = this.getCurrentUserFollowingUsers(
-              this.users,
-            );
-
-            switch (this.userType) {
-              case UsersType.Following:
-                this.allUsers = this.currentUserFollowingUsers;
-                break;
-            }
-            this.cd.markForCheck();
-          });
-      });
-  
-    //списки юзеров создаются только 1 раз а при подписке и тд обновляется уже сам элемент списка  а список не сортируется заново
+            }),
+          )
+          .subscribe(),
+      );
+    });
   }
+
+  getAvatar(user: IUser) {
+    if (user.image) {
+      this.subscriptions.add(
+        this.userService
+          .downloadUserpic(user.image)
+          .pipe(
+            takeUntil(this.destroyed$),
+
+            tap((blob) => {
+              user.avatarUrl = URL.createObjectURL(blob);
+            }),
+            finalize(() => {
+              user.loadingImage = false;
+              this.cd.markForCheck();
+            }),
+          )
+          .subscribe(),
+      );
+    }
+  }
+
+  private getMostViewedUsers() {
+    return this.userService
+      .getMostViewedUsers(this.mainPageUsersPerStep, 0)
+      .pipe(
+        takeUntil(this.destroyed$),
+
+        tap((response) => {
+          this.updateUsers(
+            response,
+            'Самые просматриваемые',
+            '/cooks/most-viewed',
+            false,
+          );
+        }),
+      );
+  }
+
+  private getNewUsers() {
+    return this.userService.getNewUsers(this.mainPageUsersPerStep, 0).pipe(
+      takeUntil(this.destroyed$),
+
+      tap((response) => {
+        this.updateUsers(response, 'Новые авторы', '/cooks/new', false);
+      }),
+    );
+  }
+
+  private getProductiveUsers() {
+    return this.userService
+      .getProductiveUsers(this.mainPageUsersPerStep, 0)
+      .pipe(
+        takeUntil(this.destroyed$),
+
+        tap((response) => {
+          this.updateUsers(
+            response,
+            'Самые продуктивные',
+            '/cooks/productive',
+            false,
+          );
+        }),
+      );
+  }
+
+  private updateUsers(
+    response: any,
+    groupName: string,
+    groupLink: string,
+    groupAuth: boolean,
+  ): void {
+    const users: IUser[] = response.users;
+    const newUsers: IUser[] = users.filter(
+      (user: IUser) =>
+        !this.allUsers.some((existingUser) => existingUser.id === user.id),
+    );
+
+    const userIds = users.map((user: IUser) => user.id);
+    const group: UserGroup = {
+      name: groupName,
+      link: groupLink,
+      auth: groupAuth,
+      users: userIds,
+    };
+    this.userGroups.push(group);
+
+    newUsers.map((u: any) => {
+      if (u.image) {
+        this.getAvatar(u);
+      }
+    });
+
+    this.allUsers = [...this.allUsers, ...newUsers];
+    this.blocks.pop();
+
+    this.cd.markForCheck();
+  }
+
+  blocks = Array.from({ length: 6 }).map((_, index) => index + 1);
+
+  userGroups: UserGroup[] = [];
+
+  getUsersByGroup(name: string) {
+    const group = this.userGroups.find((g) => g.name === name);
+    if (group) {
+      return group.users
+        .map((userId) => this.allUsers.find((u) => u.id === userId))
+        .filter((user) => !!user) as IUser[]; // Фильтруем undefined и приводим к типу Irecipe
+    } else return [];
+  }
+
+  private getPopularUsers() {
+    return this.userService.getPopularUsers(this.mainPageUsersPerStep, 0).pipe(
+      takeUntil(this.destroyed$),
+
+      tap((response) => {
+        this.updateUsers(response, 'Самые популярные', '/cooks/popular', false);
+      }),
+    );
+  }
+
+  private getManagers() {
+    return this.userService.getManagers(this.mainPageUsersPerStep, 0).pipe(
+      takeUntil(this.destroyed$),
+
+      tap((response) => {
+        this.updateUsers(response, 'Управляющие', '/cooks/managers', false);
+      }),
+    );
+  }
+
+  private getUsersIFollow() {
+    return this.userService.getUsersIFollow(this.mainPageUsersPerStep, 0).pipe(
+      takeUntil(this.destroyed$),
+
+      tap((response) => {
+        this.updateUsers(response, 'Ваши подписки', '/cooks/following', true);
+      }),
+    );
+  }
+
+  private getNearbyUsers() {
+    return this.userService.getNearbyUsers(this.mainPageUsersPerStep, 0).pipe(
+      takeUntil(this.destroyed$),
+
+      tap((response) => {
+        this.updateUsers(response, 'Кулинары рядом', '/cooks/nearby', true);
+      }),
+    );
+  }
+
+  usersLoaded = false;
 
   initializeUsers() {
-    this.users = this.users.sort((a, b) => baseComparator(a.id, b.id));
-    this.popularUsers = this.getPopularUsers(this.users);
-    this.nearbyUsers = this.getNearbyUsers(this.users);
-    this.moreProductiveUsers = this.getMoreProductiveUsers(this.users,this.recipes);
-    this.currentUserFollowingUsers = this.getCurrentUserFollowingUsers(
-      this.users,
-    );
-    this.administratorsAndModerators = this.getAdministratorssAndModerators(
-      this.users,
-    );
-    this.administratorsAndModerators = this.administratorsAndModerators.filter(
-      (m) => this.showStatus(m),
-    );
-    this.currentUserFollowersUsers = this.getCurrentUserFollowersUsers(
-      this.users,
-    );
-    this.newUsers = this.getNewUsers(this.users);
-    this.moreViewedUsers = this.getMoreViewedUsers(this.users);
+    const subscribes$: Observable<any>[] = [];
+    if (this.userType === UsersType.All) {
+      subscribes$.push(this.getPopularUsers());
+      if (this.currentUserId) {
+        subscribes$.push(this.getUsersIFollow());
+      }
+      subscribes$.push(this.getProductiveUsers());
+            subscribes$.push(this.getNewUsers());
 
-    switch (this.userType) {
-      case UsersType.All:
-        this.allUsers = this.users;
-        this.popularUsers = this.getPublicUsers(this.popularUsers);
-        this.nearbyUsers = this.getPublicUsers(this.nearbyUsers);
-        this.moreProductiveUsers = this.getPublicUsers(
-          this.moreProductiveUsers,
-        );
-        this.currentUserFollowersUsers = this.getPublicUsers(
-          this.currentUserFollowersUsers,
-        );
-        this.currentUserFollowingUsers = this.getPublicUsers(
-          this.currentUserFollowingUsers,
-        );
-        this.newUsers = this.getPublicUsers(this.newUsers);
-        this.administratorsAndModerators = this.getPublicUsers(
-          this.administratorsAndModerators,
-        );
-        this.moreViewedUsers = this.getPublicUsers(this.moreViewedUsers);
-        break;
-      case UsersType.Nearby:
-        this.allUsers = this.nearbyUsers;
-        break;
-      case UsersType.Popular:
-        this.allUsers = this.popularUsers;
-        break;
-      case UsersType.Followers:
-        this.allUsers = this.currentUserFollowersUsers;
-        break;
-      case UsersType.Following:
-        this.allUsers = this.currentUserFollowingUsers;
-        break;
-      case UsersType.MostViewed:
-        this.allUsers = this.moreViewedUsers;
-        break;
-      case UsersType.Productive:
-        this.allUsers = this.moreProductiveUsers;
-        break;
-      case UsersType.Managers:
-        this.allUsers = this.administratorsAndModerators;
-        break;
-      case UsersType.New:
-        this.allUsers = this.newUsers;
+      if (this.currentUserId) {
+        subscribes$.push(this.getNearbyUsers());
+      }
+
+      subscribes$.push(this.getMostViewedUsers());
+      subscribes$.push(this.getManagers());
     }
-    this.showUsers = this.getPublicUsers(this.allUsers).slice(0, 6);
 
     this.title.setTitle(this.getTitleByUserType(this.userType));
-  }
+    this.cd.markForCheck();
 
-  showStatus(user: IUser) {
-    if (this.currentUser.id === user.id) return true;
-    if (this.currentUser.role === 'admin') return true;
-    return this.userService.getPermission('show-status', user);
-  }
+    if (this.userType === UsersType.All) {
+      this.subscriptions.add(
+        from(subscribes$)
+          .pipe(
+            takeUntil(this.destroyed$),
 
-  getPublicUsers(users: IUser[]) {
-    return users.filter((u) =>
-      this.userService.getPermission('show-me-on-userspage', u),
-    );
+            concatMap((subscribe$) =>
+              subscribe$.pipe(takeUntil(this.destroyed$)),
+            ),
+            last(),
+            finalize(() => {
+              this.usersLoaded = true;
+              this.cd.markForCheck();
+            })
+          )
+          .subscribe(() => {
+          }),
+      );
+    } else {
+      this.loadMoreUsers();
+    }
   }
 
   getTitleByUserType(userType: UsersType): string {
     return userTitles[userType] || '';
   }
+
   getNoUsersTextByUserType(userType: UsersType): string {
     return noUsersText[userType] || '';
-  }
-
-  private getNewUsers(users: IUser[]): IUser[] {
-    users = users.sort((u1, u2) =>
-      u1.registrationDate < u2.registrationDate ? 1 : -1,
-    );
-    return users;
   }
 
   setUserType(filter: string): void {
@@ -200,9 +318,7 @@ export class UsersPageComponent implements OnInit, OnDestroy {
       case 'all':
         this.userType = UsersType.All;
         break;
-      case 'followers':
-        this.userType = UsersType.Followers;
-        break;
+
       case 'following':
         this.userType = UsersType.Following;
         break;
@@ -221,115 +337,95 @@ export class UsersPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  protected loadMoreUsers() {
-    const currentLength = this.showUsers.length;
-    const nextUsers = this.getPublicUsers(this.allUsers).slice(
-      currentLength,
-      currentLength + 3,
-    );
-    this.showUsers = [...this.showUsers, ...nextUsers];
-  }
-
-  private getPopularUsers(users: IUser[]): IUser[] {
-    const popularUsers = [...users].sort((u1, u2) =>
-      this.userService.getFollowers(this.users, u2.id).length >
-      this.userService.getFollowers(this.users, u1.id).length
-        ? 1
-        : -1,
-    );
-    return popularUsers;
-  }
-  private getNearbyUsers(users: IUser[]): IUser[] {
-    return this.userService.getNearby(users, this.currentUser);
-  }
-
-  private getMoreViewedUsers(users: IUser[]): IUser[] {
-    return [...users].sort((n1, n2) => n2.profileViews - n1.profileViews);
-  }
-
-  private getAdministratorssAndModerators(users: IUser[]): IUser[] {
-    return [...users].filter((element) => element.role !== 'user').slice(0, 6);
-  }
-
-  private getUserRecipesLength(user: IUser, recipes: IRecipe[]): number {
-    return this.recipeService.getRecipesByUser(
-      this.recipeService.getPublicAndAllMyRecipes(
-        [...recipes],
-        this.currentUser.id,
-      ),
-      user.id,
-    ).length;
-  }
-
-  private getCurrentUserFollowingUsers(users: IUser[]) {
-    return this.userService.getFollowing(users, this.currentUser.id);
-  }
-
-  private getCurrentUserFollowersUsers(users: IUser[]) {
-    return this.userService.getFollowers(users, this.currentUser.id);
-  }
-
-  private getMoreProductiveUsers(users: IUser[],recipes:IRecipe[]): IUser[] {
-    const moreProductive = [...users].sort((n1, n2) => {
-      if (
-        this.getUserRecipesLength(n1, recipes) >
-        this.getUserRecipesLength(n2, recipes)
-      ) {
-        return -1;
-      }
-      if (
-        this.getUserRecipesLength(n1, recipes) <
-        this.getUserRecipesLength(n2, recipes)
-      ) {
-        return 1;
-      }
-      return 0;
-    });
-    return moreProductive;
-  }
-
-  searchOff() {
-    this.searchQuery = '';
-  }
-
   navigateTo(link: string) {
     this.router.navigateByUrl(link);
   }
 
-  blur() {
-    this.autocompleteShow = false;
-  }
+  loadMoreUsers() {
+    let context: Observable<any> = EMPTY;
+    if (this.usersLoaded || !this.allUsers.length) {
+      switch (this.userType) {
+        case UsersType.Nearby:
+          context = this.userService.getNearbyUsers(
+            this.usersPerStep,
+            this.currentStep,
+          );
+          break;
+        case UsersType.Popular:
+          context = this.userService.getPopularUsers(
+            this.usersPerStep,
+            this.currentStep,
+          );
+          break;
+        case UsersType.Following:
+          context = this.userService.getUsersIFollow(
+            this.usersPerStep,
+            this.currentStep,
+          );
+          break;
 
-  focus() {
-    if (this.searchQuery !== '') {
-      this.autocompleteShow = true;
+        case UsersType.MostViewed:
+          context = this.userService.getMostViewedUsers(
+            this.usersPerStep,
+            this.currentStep,
+          );
+          break;
+        case UsersType.Productive:
+          context = this.userService.getProductiveUsers(
+            this.usersPerStep,
+            this.currentStep,
+          );
+          break;
+        case UsersType.Managers:
+          context = this.userService.getManagers(
+            this.usersPerStep,
+            this.currentStep,
+          );
+          break;
+        case UsersType.New:
+          context = this.userService.getNewUsers(
+            this.usersPerStep,
+            this.currentStep,
+          );
+      }
+
+      this.usersLoaded = false;
+      this.subscriptions.add(
+        context
+          .pipe(
+            takeUntil(this.destroyed$),
+
+            tap((response: any) => {
+              const receivedUsers: IUser[] = response.users;
+              const length: number = response.count;
+
+              this.currentStep++;
+
+              this.allUsers = [...this.allUsers, ...receivedUsers];
+              receivedUsers.map((u) => {
+                if (u.image) {
+                  this.getAvatar(u);
+                }
+              });
+
+              if (length <= this.allUsers.length) {
+                this.everythingLoaded = true;
+              }
+            }),
+            finalize(() => {
+              this.usersLoaded = true;
+              this.cd.markForCheck();
+            }),
+          )
+
+          .subscribe(),
+      );
     }
-  }
-
-  search() {
-    this.autocompleteShow = true;
-    if (this.searchQuery && this.searchQuery !== '') {
-      this.autocompleteUsersList = [];
-
-      const search = this.searchQuery.toLowerCase().replace(/\s/g, '');
-
-      this.allUsers = this.allUsers.filter((u) =>
-        this.userService.getPermission('search-me-on-userspage', u),
-      );
-      const filterUsers: IUser[] = this.allUsers.filter(
-        (user: IUser) =>
-          user.fullName.toLowerCase().replace(/\s/g, '').includes(search) ||
-          user.username.toLowerCase().replace(/\s/g, '').includes(search),
-      );
-
-      filterUsers.forEach((user) => {
-        this.autocompleteUsersList.push(user);
-      });
-    } else this.autocompleteShow = false;
   }
 
   public ngOnDestroy(): void {
     this.destroyed$.next();
-    this.destroyed$.complete();
+    this.destroyed$.complete();   this.subscriptions.unsubscribe();
+
   }
 }

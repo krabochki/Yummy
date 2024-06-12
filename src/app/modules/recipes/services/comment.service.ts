@@ -1,126 +1,146 @@
 import { Injectable } from '@angular/core';
 import {
   IComment,
-  ICommentReport,
   nullComment,
 } from 'src/app/modules/recipes/models/comments';
 import { IRecipe } from '../models/recipes';
-import { RecipeService } from './recipe.service';
 import { IUser } from '../../user-pages/models/users';
-import { UserService } from '../../user-pages/services/user.service';
+import { commentsSource } from 'src/tools/sourses';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CommentService {
   constructor(
-    private recipeService: RecipeService,
-    private userService: UserService,
+    private http: HttpClient,
   ) {}
 
-  makeComment(user: IUser, content: string): IComment {
+  makeComment(userId:number, content: string, authorName:string, avatarUrl?: string): IComment {
     const comment: IComment = {
       ...nullComment,
       text: content,
-      authorId: user.id,
+      authorName: authorName,
+      authorId: userId,
       date: new Date().toJSON(),
+      avatarUrl: avatarUrl
     };
     return comment;
   }
 
- async deleteComment(comment: IComment, recipe: IRecipe) {
-    recipe.comments = recipe.comments.filter((item) => item.id !== comment.id);
-    await this.recipeService.updateRecipeFunction(recipe);
-  }
-  sortComments(comments: IComment[]): IComment[] {
-    return comments.sort((commentA, commentB) => {
-      if (commentA.date < commentB.date) return 1;
-      if (commentA.date > commentB.date) return -1;
-      else return 0;
-    });
-  }
-  async reportComment(comment: IComment, recipe: IRecipe, reporter: IUser) {
-    let maxId: number = 0;
-    if (recipe.reports) {
-      maxId = recipe.reports.reduce((max, c) => (c.id > max ? c.id : max), 0);
-    }
-
-    const report: ICommentReport = {
-      id: maxId + 1,
-      date: new Date().toJSON(),
-      reporter: reporter.id,
-      comment: comment.id,
-    };
-    if (!recipe.reports) recipe.reports = [];
-    recipe.reports.push(report);
-    await this.recipeService.updateRecipeFunction(recipe);
-  }
-
-  showAuthor(author: IUser, currentUser: IUser): boolean {
-    return (
-      currentUser.id === author.id ||
-      (author.role !== 'admin' && currentUser.role !== 'user') ||
-      this.userService.getPermission('comment-author', author)
+  removeCommentFromRecipe(commentId: number, recipe: IRecipe) {
+    const newComments = recipe.comments.filter(
+      (comment) => comment.id !== commentId,
     );
+    const newRecipe = { ...recipe, comments: newComments };
+    return newRecipe;
   }
 
-  async likeComment(user: IUser, comment: IComment, recipe: IRecipe) {
+  
+
+  dislikeComment(comment: IComment, recipe: IRecipe) {
     recipe.comments.map((item) => {
       if (comment.id === item.id) {
-        if (!comment.likesId.includes(user.id)) {
-          comment.likesId.push(user.id);
-        } else {
-          comment.likesId = comment.likesId.filter((id) => id !== user.id);
+        if (!comment.disliked) {
+          comment.disliked = true;
+          comment.dislikesLength++;
         }
-        if (comment.dislikesId.includes(user.id)) {
-          comment.dislikesId = comment.dislikesId.filter(
-            (id) => id !== user.id,
-          );
+        if (comment.liked) {
+          comment.liked = false;
+          comment.likesLength--;
         }
       }
     });
-    await this.recipeService.updateRecipeFunction(recipe);
   }
 
-  async dislikeComment(user: IUser, comment: IComment, recipe: IRecipe) {
-     recipe.comments.map((item) => {
+  likeComment(comment: IComment, recipe: IRecipe) {
+    recipe.comments.map((item) => {
       if (comment.id === item.id) {
-        if (!comment.dislikesId.includes(user.id)) {
-          comment.dislikesId.push(user.id);
-        } else {
-          comment.dislikesId = comment.dislikesId.filter(
-            (id) => id !== user.id,
-          );
+        if (!comment.liked) {
+          comment.liked = true;
+          comment.likesLength++;
         }
-        if (comment.likesId.includes(user.id)) {
-          comment.likesId = comment.likesId.filter((id) => id !== user.id);
+        if (comment.disliked) {
+          comment.disliked = false;
+          comment.dislikesLength--;
         }
       }
     });
-    await this.recipeService.updateRecipeFunction(recipe);
   }
 
-  async addCommentToRecipe(recipe: IRecipe, comment: IComment) {
-    const maxId = recipe.comments.reduce(
-      (max, c) => (c.id > max ? c.id : max),
-      0,
+  deleteLikeFromComment(comment: IComment, recipe: IRecipe) {
+    recipe.comments.map((item) => {
+      if (comment.id === item.id) {
+        comment.liked = false;
+        comment.likesLength--;
+      }
+    });
+  }
+
+  deleteDislikeFromComment(user: IUser, comment: IComment, recipe: IRecipe) {
+    recipe.comments.map((item) => {
+      if (comment.id === item.id) {
+        comment.disliked = false;
+        comment.dislikesLength--;
+      }
+    });
+  }
+
+  postLike(commentId: number) {
+            const options = { withCredentials: true };
+    return this.http.post(`${this.commentsUrl}/like`, {
+      commentId: commentId,
+    }, options);
+  }
+
+  deleteLike( commentId: number) {
+    const options = { withCredentials: true };
+    return this.http.delete(`${this.commentsUrl}/like/${commentId}`, options);
+  }
+
+  getComment(commentId: number) {
+    
+    return this.http.get<IComment>(`${this.commentsUrl}/short-comment/${commentId}`);
+  }
+
+
+
+
+  postDislike(commentId: number) {
+    const options = { withCredentials: true };
+    return this.http.post(`${this.commentsUrl}/dislike`, {
+      commentId: commentId,
+    },options);
+  }
+
+  deleteDislike(commentId: number) {
+    const options = { withCredentials: true };
+    return this.http.delete(
+      `${this.commentsUrl}/dislike/${commentId}`,
+     options);
+  }
+
+  deleteComment(commentId: number) {
+        const options = { withCredentials: true };
+
+    return this.http.delete(`${this.commentsUrl}/comment/${commentId}`, options);
+  }
+
+  commentsUrl: string = commentsSource;
+
+  getComments(recipeId: number, limit: number, page: number) {
+    const options = { withCredentials: true };
+    return this.http.get<{ comments: IComment[]; count: number }>(
+      `${this.commentsUrl}/recipe-comments/${recipeId}?limit=${limit}&page=${page}`, options
     );
-    comment.id = maxId + 1;
-
-    if (recipe.comments) {
-      recipe.comments.push(comment);
-    } else {
-      recipe.comments = [comment];
-    }
-    await this.recipeService.updateRecipeFunction(recipe);
   }
 
-  async removeCommentFromRecipe(recipe: IRecipe, commentId: number) {
-    if (recipe.comments) {
-      recipe.comments = recipe.comments.filter(
-        (comment) => comment.id !== commentId,
-      );
-    }
-    await this.recipeService.updateRecipeFunction(recipe);
+  postComment(comment: IComment, recipe: IRecipe) {
+        const options = { withCredentials: true };
+
+    comment.recipeId = recipe.id;
+    return this.http.post(this.commentsUrl, comment, options);
   }
+
+  
 }

@@ -1,182 +1,163 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
-import { ICategory, ISection } from '../models/categories';
-import { BehaviorSubject } from 'rxjs';
-import { IRecipe } from '../models/recipes';
-import { supabase } from '../../controls/image/supabase-data';
-
-interface CategoryCounts {
-  [categoryId: number]: number;
-}
+import { ICategory } from '../models/categories';
+import {
+  Observable
+} from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { IUser, nullUser } from '../../user-pages/models/users';
+import { categoriesSource } from 'src/tools/sourses';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CategoryService {
-  private categoriesSubject = new BehaviorSubject<ICategory[]>([]);
-  categories$ = this.categoriesSubject.asObservable();
+  categoriesUrl = categoriesSource;
+  currentUser: IUser = { ...nullUser };
 
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
-  removeCategoryImageFromSupabase(path: string) {
-    return supabase.storage.from('categories').remove([path]);
+  getCategory(id: number) {
+    const options = { withCredentials: true };
+    return this.http.get(`${this.categoriesUrl}/category/${id}`, options);
   }
 
-  loadCategoryImageToSupabase(path: string, file: File) {
-    return supabase.storage.from('categories').upload(path, file);
+  getShortCategoriesByRecipe(id: number): Observable<ICategory[]> {
+    const options = { withCredentials: true };
+    return this.http.get<ICategory[]>(
+      this.categoriesUrl + '/by-recipe/' + id,
+      options,
+    );
   }
 
-  getMaxCategoryId() {
-    return supabase
-      .from('categories')
-      .select('id')
-      .order('id', { ascending: false })
-      .limit(1)
-      .then((response) => {
-        if (response.data && response.data.length > 0) {
-          return response.data[0].id;
-        } else {
-          return 0;
-        }
-      });
+  getCategoriesBySearch(
+    searchText: string,
+    sectionId: number,
+  ): Observable<any> {
+    const url = `${this.categoriesUrl}/section/search/${sectionId}?search=${searchText}`;
+    return this.http.get(url);
+  }
+  getCategoryForEditing(id: number): Observable<ICategory> {
+    const options = { withCredentials: true };
+    const url = `${this.categoriesUrl}/editing/${id}`;
+    return this.http.get<ICategory>(url, options);
   }
 
-  loadCategoriesFromSupabase() {
-    return supabase
-      .from('categories')
-      .select('*')
-      .then((response) => {
-        const supCategories = response.data;
-        const categories = supCategories?.map((supCategory) => {
-          return this.translateCategory(supCategory);
-        });
-        if (categories) this.categoriesSubject.next(categories);
-      });
+  getPopularCategoriesBySearch(searchText: string): Observable<any> {
+    const url = `${this.categoriesUrl}/popular/search/?search=${searchText}`;
+    return this.http.get(url);
   }
 
-  private translateCategory(category: any): ICategory {
-    return {
-      id: category.id,
-      name: category.name,
-      photo: category.photo,
-      authorId: category.authorid,
-      status: category.status,
-      sendDate: category.senddate,
-    } as ICategory;
+  getPopularCategories() {
+    const options = { withCredentials: true };
+
+    return this.http.get<ICategory[]>(`${this.categoriesUrl}/popular`, options);
   }
-  addCategoryToSupabase(category: ICategory) {
-    return supabase.from('categories').upsert([
+
+  getCategoriesGroupsBySearch(searchText: string): Observable<any> {
+    const url = `${this.categoriesUrl}/groups/search?search=${searchText}`;
+    return this.http.get(url);
+  }
+
+  getAwaitsCategories(limit: number, page: number) {
+    const options = { withCredentials: true };
+    const url = `${this.categoriesUrl}/public?limit=${limit}&page=${page}`;
+    return this.http.get(url, options);
+  }
+
+  getSomeCategoriesOfSection(limit: number, page: number, sectionId: number) {
+    const options = { withCredentials: true };
+
+    const url = `${this.categoriesUrl}/some-section/${sectionId}?limit=${limit}&page=${page}`;
+    return this.http.get(url, options);
+  }
+  getSomePopularCategories(limit: number, page: number) {
+    const options = { withCredentials: true };
+
+    const url = `${this.categoriesUrl}/some/popular?limit=${limit}&page=${page}`;
+    return this.http.get(url, options);
+  }
+  getAwaitingCategoriesCount() {
+    const options = { withCredentials: true };
+
+    const url = `${this.categoriesUrl}/awaits-count`;
+    return this.http.get<number>(url, options);
+  }
+  getCategoriesOfSection(sectionId: number) {
+    const options = { withCredentials: true };
+    const url = `${this.categoriesUrl}/by-section/${sectionId}`;
+    return this.http.get<ICategory[]>(url, options);
+  }
+
+  publishCategory(categoryId: number) {
+    const options = { withCredentials: true };
+    const url = `${this.categoriesUrl}/${categoryId}/publish`;
+    return this.http.put(url, {}, options);
+  }
+
+  setImageToCategory(categoryId: number, filename: string) {
+    const options = { withCredentials: true };
+
+    return this.http.put(
+      `${this.categoriesUrl}/image/${categoryId}`,
       {
-        id: category.id,
-        name: category.name,
-        photo: category.photo,
-        authorid: category.authorId,
-        status: category.status,
-        senddate: category.sendDate,
+        image: filename,
       },
-    ]);
-  }
-  deleteCategoryFromSupabase(id: number) {
-    return supabase.from('categories').delete().eq('id', id);
-  }
-  updateCategoryInSupabase(category: ICategory) {
-    const { id, ...updateData } = category;
-    return supabase
-      .from('categories')
-      .update({
-        id: category.id,
-        name: category.name,
-        photo: category.photo,
-        authorid: category.authorId,
-        status: category.status,
-        senddate: category.sendDate,
-      })
-      .eq('id', id);
-  }
-
-  updateCategoriesAfterUPSERT(payload: any) {
-    const currentCategories = this.categoriesSubject.value;
-    const index = currentCategories.findIndex(
-      (r) => r.id === this.translateCategory(payload).id,
-    );
-    if (index !== -1) {
-      const updatedCategories = [...currentCategories];
-      updatedCategories[index] = this.translateCategory(payload);
-
-      this.categoriesSubject.next(updatedCategories);
-    }
-  }
-
-  updateCategoriesAfterINSERT(payload: any) {
-    const currentUsers = this.categoriesSubject.value;
-    const updatedCategories = [
-      ...currentUsers,
-      this.translateCategory(payload),
-    ];
-    this.categoriesSubject.next(updatedCategories);
-  }
-  updateCategoriesAfterDELETE(payload: any) {
-    this.categoriesSubject.next(
-      this.categoriesSubject.value.filter(
-        (categories) => categories.id !== this.translateCategory(payload).id,
-      ),
+      options,
     );
   }
 
-  getRelatedCategories(
-    recipes: IRecipe[],
-    categories: ICategory[],
-  ): ICategory[] {
-    const uniqueCategories: { [id: string]: boolean } = {};
-    recipes.forEach((recipe) => {
-      recipe.categories.forEach((categoryId) => {
-        uniqueCategories[categoryId] = true;
-      });
-    });
-
-    const uniqueCategoriesArray: ICategory[] = categories.filter(
-      (category) => uniqueCategories[category.id],
-    );
-
-    return uniqueCategoriesArray;
-  }
-
-  getCategoriesBySection(
-    section: ISection,
-    categories: ICategory[],
-  ): ICategory[] {
-    const findedCategories: ICategory[] = [];
-    categories.forEach((category) => {
-      if (section.categories.includes(category.id)) {
-        findedCategories.push(category);
-      }
-    });
-
-    return findedCategories;
-  }
-
-  sortCategoriesByName(categories: ICategory[]): ICategory[] {
-    return categories.sort((category1: ICategory, category2: ICategory) =>
-      category1.name > category2.name ? 1 : -1,
+  putCategory(updatedCategory: ICategory) {
+    const options = { withCredentials: true };
+    return this.http.put(
+      `${this.categoriesUrl}/update/${updatedCategory.id}`,
+      updatedCategory,
+      options,
     );
   }
 
-  getPopularCategories(categories: ICategory[], recipes: IRecipe[]) {
-    // Создаем объект, в котором ключами будут ID категорий, а значениями количество рецептов в каждой категории
-    const categoryCounts: CategoryCounts = {};
-    // Перебираем рецепты и увеличиваем счетчик в соответствующей категории
-    for (const recipe of recipes) {
-      for (const categoryId of recipe.categories) {
-        categoryCounts[categoryId] = (categoryCounts[categoryId] || 0) + 1;
-      }
-    }
-    // Сортируем категории по количеству рецептов в убывающем порядке
-    const sortedCategories = categories.slice().sort((a, b) => {
-      const countA = categoryCounts[a.id] || 0;
-      const countB = categoryCounts[b.id] || 0;
-      return countB - countA;
-    });
+  uploadCategoryImage(file: File) {
+    const options = { withCredentials: true };
 
-    return sortedCategories;
+    const formData: FormData = new FormData();
+    formData.append('image', file, file.name);
+
+    return this.http.post(`${this.categoriesUrl}/image`, formData, options);
+  }
+
+  deleteCategory(categoryId: number) {
+    const options = { withCredentials: true };
+
+    return this.http.delete(`${this.categoriesUrl}/${categoryId}`, options);
+  }
+
+  deleteImage(categoryId: number) {
+    const options = { withCredentials: true };
+
+    const url = `${this.categoriesUrl}/files/${categoryId}`;
+    return this.http.delete(url, options);
+  }
+
+  getStatus(categoryId: number) {
+    const options = { withCredentials: true };
+
+    const url = `${this.categoriesUrl}/isAwaits/${categoryId}`;
+    return this.http.get(url, options);
+  }
+
+  downloadImage(filename: string) {
+    const fileUrl = `${this.categoriesUrl}/files/${filename}`;
+
+    const options = {
+      responseType: 'blob' as 'blob',
+      withCredentials: true,
+    };
+    return this.http.get(fileUrl, options);
+  }
+
+  postCategory(newCategory: ICategory) {
+    const options = { withCredentials: true };
+    const url = `${this.categoriesUrl}/category`;
+    return this.http.post(url, newCategory, options);
   }
 }

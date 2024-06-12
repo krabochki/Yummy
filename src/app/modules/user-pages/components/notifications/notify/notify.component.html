@@ -1,19 +1,59 @@
-<div class="main" (mouseleave)="blurEmitter.emit(notify)" (mouseenter)="hover.emit(notify)" [ngClass]="getClass()">
-    <button *ngIf="!notify.context.includes('plan')" class="delete-button" (click)="deleteNotify()">
-        <svg-icon class="delete" [applyClass]="true" [src]="'/assets/images/svg/close.svg'"></svg-icon>
-    </button>
-    <a class="body"  [routerLink]="notify.relatedLink?notify.relatedLink:null" >
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div
+  class="main"
+  (click)="clickNotify()"
+  (mouseleave)="blurEmitter.emit(notify)"
+  (mouseenter)="hover.emit(notify)"
+  [ngClass]="getClass()"
+  *ngIf="notify.id ; else preloader"
+>
+  <button
+    *ngIf="!notify.context.includes('plan') || popup"
+    class="delete-button"
+    (click)="deleteNotify()"
+  >
+    <svg-icon
+      class="delete"
+      [applyClass]="true"
+      [src]="'/assets/images/svg/close.svg'"
+    ></svg-icon>
+  </button>
+  <a class="body" [routerLink]="notify.link && !mobile ? notify.link : null">
+    <div class="head">
+      <svg-icon class="svg-notify" [applyClass]="true" [src]="icon"></svg-icon>
+      <h1 class="title">{{ notify.title }}</h1>
+    </div>
 
-        <div class="head">
-            <svg-icon class="svg-notify" [applyClass]="true" [src]="icon"></svg-icon>
-            <h1 class="title">{{notify.title}}</h1>
-        </div>
+    <p class="text" [innerHTML]="notify.message"></p>
+    <a class="text link" *ngIf="notify.link && mobile && !popup" [routerLink]=" notify.link " (click)="clickEmitter.emit()">
+            <svg-icon class="link-svg" [applyClass]="true" [src]="'/assets/images/svg/link.svg'"></svg-icon>
 
-        <p class="text" [innerHTML]="notify.message"></p>
+      Связанная ссылка</a>
 
-                            <p *ngIf="notify.context.includes('plan')" class="text explain">*Уведомление удалится самостоятельно</p>
+    <p *ngIf="notify.context.includes('plan') && !popup" class="text explain">
+      *Уведомление удалится самостоятельно
+    </p>
 
-        <p class="text time">{{notify.timestamp|timePast}}</p>
-    </a>
-    
+    <p class="text time">{{ notify.sendDate | timePast }}</p>
+  </a>
 </div>
+
+<ng-template #preloader>
+<div class="main" class="preloader">
+  <a class="body" >
+    <div class="head">
+      <div class="svg-notify" ></div>
+      <h1 class="title">Загрузка</h1>
+    </div>
+
+    <p class="text" [innerHTML]="'Идет загрузка уведомлений...'"></p>
+    <p class="text" [innerHTML]="'Подождите, пожалуйста...'"></p>
+
+
+    <div class="time-cont"><p class="text time">Загрузка...</p></div>
+  </a>
+</div>
+
+
+</ng-template>

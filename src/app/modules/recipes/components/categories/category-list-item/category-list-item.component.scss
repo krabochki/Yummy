@@ -91,26 +91,8 @@ app-modal{
   min-height: 8em;
   flex-direction: column;
   justify-content: flex-end;
- .caption{
 
-  width: 90%;
-
-  font-weight: 300;
-  font-size: 0.85em;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-  margin-bottom: 5.75em;
-  color: #808080;
- }
 }
-
-.category.null p {
-  width: 100%;
-  min-width: 100%;
-  max-width: 100%;
-}
-
 
 .category.null{
   justify-content: center;
@@ -150,9 +132,6 @@ h1 {
     width: 17vmax;
   }
 
-  p {
-    width: 16vmax;
-  }
 }
 
 @media (max-width: 480px) {
@@ -160,25 +139,52 @@ h1 {
     height: 7em;
     width: 7em;
   }
+  h1{
+    max-width: 7em;
+  }
 }
 
 .category.null {
   padding: 2em;
   background-image: none;
 
-  p {
-    overflow: visible;
-    opacity: 0.5;
-    font-size: 0.9em;
-    color: var(--color-foreground-unactive);
-    margin-bottom: 0.75em;
-    font-weight: 600;
-    cursor: default;
-  }
+
+}
+
+.image-loading{
+    animation: loading 0.75s infinite linear;
+      background-color: var(--loading);
+      background-repeat: no-repeat;
 }
 
 .svg {
   height: 100%;
   opacity: 0.65;
   fill: var(--color-foreground-unactive);
+}
+
+.loading.category.null, .name.loading {
+    animation: loading 0.75s infinite linear;
+    background-color: var(--loading) ;
+}
+.category-cont.loading{
+  cursor: wait;
+}
+.name.loading{
+  border-radius: 0.75em;
+      width: min-content;
+      color: transparent;
+}
+@keyframes loading {
+    0% {
+        background-position: var(--loading);
+      }
+
+  50% {
+    background-color: var(--loading-accent);
+  }
+
+  100% {
+    background-position:var(--loading);
+  }
 }

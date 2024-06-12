@@ -2,15 +2,15 @@
 <div class="wrap">
 
   <drag-scroll  (dragStart)="dragStart()" (dragEnd)="dragEnd()" class="drag" #nav  [drag-disabled]="disableDrag" [snap-disabled]="disableDrag"  > 
-     <app-recipe-list-item drag-scroll-item   [showAuthor]="showAuthor" class="content" *ngFor="let item of recipes; let i = index"
+     <app-recipe-list-item [shortView]="shortView" drag-scroll-item   [showAuthor]="showAuthor" class="content" *ngFor="let item of recipes; let i = index"
         [recipe]="recipes[i]"></app-recipe-list-item>
   </drag-scroll>
-  <button class="scroll-left">
+  <button *ngIf="showScrollButtons" class="scroll-left">
     <svg-icon class="svg-arrow" (click)="scrollRight()" [applyClass]="true"
       [src]="'/assets/images/svg/arrow.svg'">
     </svg-icon>
   </button>
-  <button class="scroll-right">
+  <button *ngIf="showScrollButtons" class="scroll-right">
     <svg-icon class="svg-arrow right" (click)="scrollLeft()" [applyClass]="true"
       [src]="'/assets/images/svg/arrow.svg'">
     </svg-icon>

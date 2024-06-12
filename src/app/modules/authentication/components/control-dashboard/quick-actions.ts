@@ -25,7 +25,7 @@ export function getUser(userId: number, users: IUser[]): IUser {
 }
 export function getSection(category: number, sections: ISection[]): ISection {
   return (
-    sections.find((section) => section.categories.includes(category)) ||
+    sections.find((section) => section.categoriesIds.includes(category)) ||
     nullSection
   );
 }

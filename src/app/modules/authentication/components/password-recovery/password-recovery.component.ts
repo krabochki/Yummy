@@ -7,15 +7,11 @@ import {
 } from '@angular/core';
 import { loginMask } from 'src/tools/regex';
 import { Title } from '@angular/platform-browser';
-import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
-import { UserService } from 'src/app/modules/user-pages/services/user.service';
 import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { EMPTY, Subject, catchError, finalize, tap } from 'rxjs';
 import { customPatternValidator } from 'src/tools/validators';
-import { supabase } from 'src/app/modules/controls/image/supabase-data';
-import { state } from 'src/tools/state';
 import { AuthService } from '../../services/auth.service';
 @Component({
   templateUrl: './password-recovery.component.html',
@@ -26,9 +22,9 @@ import { AuthService } from '../../services/auth.service';
 export class PasswordRecoveryComponent implements OnInit, OnDestroy {
   successModal: boolean = false;
   loadingModal: boolean = false;
-  users: IUser[] = [];
   form: FormGroup;
   errorModal: boolean = false;
+  error = '';
   protected destroyed$: Subject<void> = new Subject<void>();
 
   constructor(
@@ -36,7 +32,6 @@ export class PasswordRecoveryComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private authService:AuthService,
     private cd: ChangeDetectorRef,
-    private usersService: UserService,
   ) {
     this.titleService.setTitle('Восстановление пароля');
 
@@ -44,11 +39,6 @@ export class PasswordRecoveryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.usersService.users$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((receivedUsers: IUser[]) => {
-        this.users = receivedUsers;
-      });
 
     this.form = this.fb.group({
       email: [
@@ -71,49 +61,36 @@ export class PasswordRecoveryComponent implements OnInit, OnDestroy {
       : ' ';
   }
 
-  async passwordRecovery(): Promise<void> {
+   passwordRecovery(){
     if (this.form.valid) {
-      const resetUser = { ...nullUser, email: this.form.get('email')?.value };
-      try {
-        this.loadingModal = true;
-
-              const userInDatabase =
-                await this.authService.loadUserFromSupabaseByEmail(
-                  resetUser.email,
-                );
-
-        if (userInDatabase) {
-          // Выполняем сброс пароля, используя email из формы
-          const { error } = await supabase.auth.resetPasswordForEmail(resetUser.email, {
-            redirectTo:
-              state === 'dev'
-                ? 'http://localhost:4200/#/password-reset'
-                : 'https://yummy-kitchen.vercel.app/#/password-reset',
-          });
-          if (error) {
-            console.log(error)
-          }
-          else {
-
-            // Показываем модальное окно об успешной отправке ссылки на сброс пароля
-            this.successModal = true;
-            this.cd.markForCheck();
-          }
-        }
-        else {
-                    this.errorModal = true;
-
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          // Показываем модальное окно об ошибке
-          this.errorModal = true;
-        }
-      } finally {
-        this.loadingModal = false;
-        this.cd.markForCheck();
-      }
+      const email = this.form.get('email')?.value;
+      this.loadingModal = true;
+      this.authService.forgotPassword(email)
+        .pipe(
+          tap(
+            () => {
+              this.successModal = true;
+            }
+            
+          ),
+          catchError(
+            (response) => {
+              this.error = response.error.message || '';
+              this.errorModal = true;
+              return EMPTY;
+            }
+          ),
+          finalize(
+            () => {
+              this.loadingModal = false;
+              this.cd.markForCheck();
+            }
+          )
+        )
+        .subscribe()
     }
+      
+      
   }
 
   ngOnDestroy(): void {

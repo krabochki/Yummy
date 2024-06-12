@@ -5,9 +5,9 @@
   <div class="popup" @popup *ngFor="let item of popups">
     <app-notify
       (hover)="popupHover($event)"
+      (clickEmitter)="removePopup(item)"
       (blurEmitter)="popupBlur($event)"
       [popup]="true"
-      [user]="currentUser"
       (notifyDeleteClick)="removePopup(item)"
       [notify]="item"
     ></app-notify>
@@ -38,18 +38,19 @@
         <a routerLink="/control-dashboard">
           <svg-icon class="admin-svg" [src]="svgPath('star')" [class]="'svg'" />
           <div @count class="notifications" *ngIf="adminActionsCount > 0">
-            {{ adminActionsCount }}
+          {{ adminActionsCount >=100 ? '99+' : adminActionsCount }}
           </div>
         </a>
       </button>
       <button
-        (click)="notifiesOpen = true"
+        (click)="notifiesOpen = true; popups = [];
+    cd.markForCheck();"
         *ngIf="this.currentUser.id !== 0"
         class="svg-button"
       >
         <svg-icon [src]="svgPath('bell')" [class]="'svg'" />
-        <div @count class="notifications" *ngIf="notificationCount > 0">
-          {{ notificationCount }}
+        <div @count class="notifications" *ngIf="notReadedNotifies">
+          {{ notReadedNotifies >=100 ? '99+' : notReadedNotifies }}
         </div>
       </button>
 
@@ -83,10 +84,12 @@
         <span class="hamburger"></span>
       </span>
       <div *ngIf="mobileMenuOpen" @height class="menu-cont">
+       
         <div *ngIf="currentUser.id > 0" class="card">
+            
           <div class="user-info" (click)="clickMobileMenuLink('/cooks/list/'+currentUser.id)">
             <div
-              [style.background-image]="'url(' + avatar + ')'"
+              [style.background-image]="'url(' + (avatar ? avatar : 'assets/images/userpic.png') + ')'"
               class="userpic"
             ></div>
             <div>
@@ -118,15 +121,20 @@
           [ngClass]="{ open: mobileMenuOpen }"
           class="menu-ul"
         >
+        <div *ngIf="currentUser.id === 0" (click)="clickMobileMenuLink('/greetings')">
+          <h2>
+            <p class="log">Регистрация/Вход</p>
+          </h2>
+        </div>
           <div>
             <li
-              (click)="
+              
+            >
+              <h2 (click)="
                 mobileSectionsOpen[0] === true
                   ? (mobileSectionsOpen[0] = false)
                   : (mobileSectionsOpen[0] = true)
-              "
-            >
-              <h2>
+              ">
                 <svg-icon
                   [applyClass]="true"
                   class="menu-svg"
@@ -138,7 +146,7 @@
               <div
                 class="routes"
                 @height
-                *ngIf="mobileSectionsOpen[0] === true"
+                *ngIf="mobileSectionsOpen[0]"
               >
                 <div
                   [ngClass]="{
@@ -155,18 +163,18 @@
                     let i = index
                   "
                 >
-                  {{ recipeSelectItem }}
+                  {{ recipeSelectItem }} 
                 </div>
               </div>
             </li>
             <li
-              (click)="
+              
+            >
+              <h2 (click)="
                 mobileSectionsOpen[1] === true
                   ? (mobileSectionsOpen[1] = false)
                   : (mobileSectionsOpen[1] = true)
-              "
-            >
-              <h2>
+              ">
                 <svg-icon
                   [applyClass]="true"
                   class="menu-svg"
@@ -183,7 +191,7 @@
                 <div
                   [ngClass]="{
                     'disabled-link':
-                      currentUser.id === 0 && recipeRoutes[i].disabled
+                      currentUser.id === 0 && userRoutes[i].disabled
                   }"
                   (click)="
                     !userRoutes[i].disabled
@@ -200,19 +208,19 @@
               </div>
             </li>
             <li
-              (click)="
+             
+            >
+              <h2  (click)="
                 mobileSectionsOpen[2] === true
                   ? (mobileSectionsOpen[2] = false)
                   : (mobileSectionsOpen[2] = true)
-              "
-            >
-              <h2>
+              ">
                 <svg-icon
                   [applyClass]="true"
                   class="menu-svg"
                   [src]="'/assets/images/svg/plan-notify.svg'"
                 />
-                <p>Планнер</p>
+                <p>Меню</p>
               </h2>
               <div
                 class="routes"
@@ -222,7 +230,7 @@
                 <div
                   [ngClass]="{
                     'disabled-link':
-                      currentUser.id === 0 && recipeRoutes[i].disabled
+                      currentUser.id === 0 && planRoutes[i].disabled
                   }"
                   (click)="
                     !planRoutes[i].disabled
@@ -247,6 +255,22 @@
                   <p>Узнать больше о Yummy</p>
                 </h2>
               </li>
+
+              <li (click)="clickMobileMenuLink('/news')">
+                <h2>
+                  <svg-icon [applyClass]="true" class="menu-svg" [src]="'/assets/images/svg/updates.svg'" />
+              
+                  <p>Свежие новости и изменения</p>
+                </h2>
+              </li>
+
+                <li *ngIf="currentUser.role === 'admin' || currentUser.role === 'moderator'" (click)="clickMobileMenuLink('/control-dashboard')">
+                  <h2>
+                    <svg-icon [applyClass]="true" class="menu-svg" [src]="'/assets/images/svg/star.svg'" />
+                
+                    <p>Панель управления</p>
+                  </h2>
+                </li>
             <li (click)="clickMobileMenuLink('/user-policy')">
               <h2>
                 <svg-icon
@@ -258,14 +282,25 @@
                 <p>Пользовательское соглашение</p>
               </h2>
             </li>
-          
-            <li (click)="clickMobileMenuLink('/updates')">
+            <li *ngIf="currentUser.id === 0" (click)="clickMobileMenuLink('/registration-benefits')">
               <h2>
-                <svg-icon [applyClass]="true" class="menu-svg" [src]="'/assets/images/svg/updates.svg'" />
+                <svg-icon [applyClass]="true" class="menu-svg" [src]="'/assets/images/svg/class.svg'" />
             
-                <p>Обновления в Yummy</p>
+                <p>Преимущества регистрации</p>
               </h2>
             </li>
+          
+            
+
+              <a href="mailto:yummort@mail.ru">
+                <li >
+                  <h2>
+                    <svg-icon [applyClass]="true" class="menu-svg" [src]="'/assets/images/svg/mail-mobile.svg'" />
+                
+                    <p>Обратная связь</p>
+                  </h2>
+                </li>
+              </a>
           </div>
 
           <li>
@@ -277,20 +312,13 @@
                 [backgroundOn]="'var(--color-foreground)'"
                 [toogleOff]="'var(--color-background)'"
                 [toogleOn]="'var(--color-secondary)'"
-                (checkedEmit)="nightModeEmit($event)"
+                (checkedEmit)="nightModeEmit()"
                 [nightMode]="true"
               ></app-toogle-switch>
             </h2>
           </li>
 
-          <li
-            *ngIf="currentUser.id === 0"
-            (click)="clickMobileMenuLink('/greetings')"
-          >
-            <h2>
-              <p class="log">Регистрация/Вход</p>
-            </h2>
-          </li>
+        
         </ul>
       </div>
     </label>
@@ -349,10 +377,10 @@
 
         <a *ngIf="currentUser.id > 0" (click)="openNotifies()">
           <div
-            *ngIf="currentUser.id > 0 && notificationCount > 0"
+            *ngIf="currentUser.id && notReadedNotifies"
             class="count"
           >
-            {{ notificationCount }}
+            {{ notReadedNotifies }}
           </div>
           <svg-icon
             class="header-top-svg"
@@ -360,13 +388,7 @@
             [src]="svgPath('header/notification')"
           />
         </a>
-        <a *ngIf="currentUser.id > 0" (click)="linkClick('plan/calendar')">
-          <svg-icon
-            class="header-top-svg"
-            [applyClass]="true"
-            [src]="svgPath('header/calendar')"
-          />
-        </a>
+        
       </div>
     </div>
   </ng-container>
@@ -426,14 +448,14 @@
         <p [class.active]="activePage === 'cooks'">Кулинары</p>
       </div>
     </a>
-    <a [routerLink]="'/match'">
+    <a (click)="currentUser.id ? null :noAccessModalShow =true" [routerLink]="currentUser.id ? '/plan/calendar':null" >
       <div class="item">
         <svg-icon
-          [class]="svgActiveClass('match')"
+          [class]="svgActiveClass('calendar')"
           [applyClass]="true"
-          [src]="isActiveSvgPath('match', 'match')"
+          [src]="isActiveSvgPath('calendar', 'calendar')"
         ></svg-icon>
-        <p [class.active]="activePage === 'match'">Подбор</p>
+        <p [class.active]="activePage === 'calendar'">Календарь</p>
       </div>
     </a>
   </div>
@@ -460,15 +482,16 @@
 ></app-recipe-create>
 
 <app-notifications-list
-  (closeEmitter)="notifiesOpen = false; makeAllNotifiesReaded()"
+  (closeEmitter)="notifiesOpen = false; markNotifiesAsReaded()"
   @notifies
-  [user]="currentUser"
+  (clickEmitter)="notifiesClick()"
   *ngIf="notifiesOpen"
-  [notifies]="notifies"
 ></app-notifications-list>
   <app-modal @modal *ngIf="exitModalShow" [style]="'prim'" [title]="'Подтвердите выход'" [type]="'yesOrNo'"
     (resultEmit)="handleExitModal($event)" [buttonsText]="['Выйти', 'Остаться']"
     [description]="'Вы действительно хотите выйти из текущего аккаунта?'"></app-modal>
 
-    <app-modal @modal [style]="'await'" [type]="'Ok'" [noButtons]="true" [title]="'Подождите...'" [type]="'Ok'"
-      [description]="'Выполняется выход из аккаунта... Подождите немного...'" *ngIf="loading"></app-modal>
+    <app-modal @modal [style]="'await'" 
+     *ngIf="loading"></app-modal>
+
+    <div class="background" @modal *ngIf="notifiesOpen" (click)="notifiesOpen=false; notReadedNotifies = 0"></div>

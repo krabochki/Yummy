@@ -5,29 +5,31 @@
   height: 100%;
   z-index: 10;
   width: 17em;
-  
 
-  
+
+
 
 }
 
-.trash{
+.trash {
   width: 1em;
   height: 1em;
   display: flex;
   align-items: center;
   justify-content: center;
   fill: var(--color-foreground);
-    transition: 0.15s ;
-  
+  transition: 0.15s;
+
 
 }
-@mixin flex{
+
+@mixin flex {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.no-notifies{
+
+.no-notifies {
   @include flex;
   flex-direction: column;
   row-gap: 1.5em;
@@ -36,7 +38,7 @@
   height: 100%;
   width: 100%;
 
-  .mail-cook{
+  .mail-cook {
     @include flex;
     fill: var(--color-foreground-unactive);
     width: 85%;
@@ -44,50 +46,57 @@
 }
 
 
-.clear-all{
+.clear-all {
   column-gap: 0.5em;
   margin-left: 1.25em;
   display: flex;
   align-items: center;
-  margin-bottom:0.5em;
+  margin-bottom: 0.5em;
   font-size: 0.9em;
   justify-content: center;
   width: fit-content;
 
-  transition: 0.3s ;
-  &:hover,&:focus{
+  transition: 0.3s;
+
+  &:hover,
+  &:focus {
     color: var(--color-primary);
-    & .trash{
-      fill:var(--color-primary)
+
+    & .trash {
+      fill: var(--color-primary)
     }
   }
 }
-.background{
-  position: fixed;
-  top:0;left:0;
-  z-index: -1;
-  width: 100%;
 
-  height: 100%;
-
-  background-color: transparent
-}
-.notifies{
+.notifies {
   z-index: 2;
   overflow-y: auto;
-      width: 100%;
-  &::-webkit-scrollbar{
-    display: none;
-  }
-   display: flex;
-    flex-direction: column;
+  width: 100%;
 
-    justify-content: flex-start;
-    align-items: flex-start;
-    align-content: flex-start;
-      margin-bottom: 3em;
+
+   &::-webkit-scrollbar {
+      width: 12px;
+    }
+  
+    &::-webkit-scrollbar-track {
+      background: var(--scroll-body);
+    }
+  
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--scroll-thumb);
+      border-radius: 20px;
+      border: 3px solid var(--scroll-body);
+    }
+  display: flex;
+  flex-direction: column;
+
+  justify-content: flex-start;
+  align-items: flex-start;
+  align-content: flex-start;
+  margin-bottom: 4.5em;
 
 }
+
 h1 {
   text-align: center;
   font-weight: 700;
@@ -95,18 +104,20 @@ h1 {
   font-size: var(--font-l);
   margin-top: 0.5em;
 }
-app-notify{
-      width: 100%;
 
-      &:nth-child(2n+1){
-        background-color: color-mix(in srgb, var(--color-background-deeper) 98%, var(--color-foreground) );
-      }
+app-notify {
+  width: 100%;
+
+  &:nth-child(2n+1) {
+    background-color: color-mix(in srgb, var(--color-background-deeper) 98%, var(--color-foreground));
+  }
 }
 
 
-.list{
+.list {
 
-  display: grid;  z-index: 2;
+  display: grid;
+  z-index: 2;
   background-color: var(--color-background-deeper);
 
 
@@ -117,58 +128,68 @@ app-notify{
 
 
 
-@media(max-width:768px){
-  :host{
+
+.close-svg {
+  @include flex;
+  height: 0.7em;
+  fill: var(--color-foreground);
+}
+
+.close {
+
+  font-weight: 1000;
+  zoom: 0.9;
+  right: 1.5em;
+  z-index: 10;
+  top: 1em;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  width: 2em;
+  height: 2em;
+  border-radius: 100%;
+  cursor: pointer;
+  background-color: var(--scroll-body);
+  transition: opacity 0.2s ease-in-out;
+  font-weight: 1000;
+  right: 0;
+  top: 0;
+  padding-bottom: 0.25em;
+  padding-left: 0.25em;
+  border-radius: 0 0 0 100%;
+}
+
+@media(max-width:768px) {
+  :host {
     width: 23em;
   }
-  .main{
-    zoom:1.2
+
+  .main {
+    zoom: 1.2
   }
+    .notifies {
+      margin-bottom: 5.6em;
+    }
 }
-@media(max-width:480px){
-  .close{
-  zoom: 1;  }
-  :host{
-    width:100%;
+
+@media(max-width:480px) {
+  .close {
+    zoom: 1.25;
   }
-  .no-notifies{
+
+  :host {
+    width: 100%;
+  }
+
+  .no-notifies {
     font-size: 1.1em;
   }
-  .no-notifies .mail-cook{
+
+  .no-notifies .mail-cook {
     width: 13em;
   }
- 
+  
+
 }
-
-
- .close-svg {
-   @include flex;
-   height: 0.7em;
-   fill: var(--color-foreground);
- }
-
- .close {
-
-   font-weight: 1000;
-   zoom:0.9;
-   right: 1.5em;
-   z-index: 10;
-   top: 1em;
-   position: absolute;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   opacity: 0.7;
-   width: 2em;
-   height: 2em;
-   border-radius: 100%;
-   cursor: pointer;
-   background-color: var(--scroll-body);
-   transition: opacity 0.2s ease-in-out;
-   font-weight: 1000;
-   right: 0;
-   top: 0;
-   padding-bottom: 0.25em;
-   padding-left: 0.25em;
-   border-radius: 0 0 0 100%;
- }

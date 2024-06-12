@@ -117,8 +117,8 @@ b::first-letter{
 .cal-month-view .cal-day-number {
   font-size: 1.2em;
   font-weight: 400;
-  margin-top: 1em;
-  margin-right:1em;
+  margin-top: 1rem;
+  margin-right:1rem;
   opacity: 0.5;
     float: right;  
 }
@@ -161,6 +161,7 @@ b::first-letter{
 }
 .cal-month-view .cal-day-cell.cal-today .cal-day-number {
   font-size: 1.5em;
+  line-height: 1;
   font-weight: 700;
   color: var(--color-secondary-focus) !important;
 }
@@ -637,7 +638,7 @@ b::first-letter{
 
   }
   .cal-month-view .cal-cell-top {
-  min-height:6em;
+  min-height:4em;
        position: relative;
 
   }

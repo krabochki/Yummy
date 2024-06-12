@@ -104,6 +104,7 @@
   <app-button
     class="new-recipe-button noselect"
     [text]="'Добавить рецепт в план'"
+    [icon]="'header/calendar'"
     (click)="createMode = true"
     [color]="'sec'"
     [style]="'filled'"
@@ -113,10 +114,9 @@
   <h3 class="edit-plan noselect">Все запланированные рецепты</h3>
 
   <app-add-calendar-event
-    [currentUser]="currentUser"
     [event]="findRecipeEvent(targetEvent.id)"
-    [plan]="currentUserPlan"
     @modal
+    (editEmitter)="changeEvents($event)"
     style="position: fixed; z-index: 10"
     *ngIf="createMode"
     (closeEmitter)="closeCreateModal()"
@@ -125,7 +125,7 @@
   <div class="table" *ngIf="events.length>0; else noEvents">
     <div class="head"></div>
     <div class="head noselect">Название</div>
-    <div class="head noselect">Цвет</div>
+    <div class="head noselect colr">Цвет</div>
     <div class="head noselect">Дата</div>
     <div class="head"></div>
 
@@ -143,12 +143,12 @@
         </button>
       </div>
       <div class="name">
-        <a
+        <a [ngStyle]="{'--color':event.color!.primary}"
           [ngClass]="{ 'real-link': findRecipeEvent(event.id).recipe }"
           [routerLink]="
             findRecipeEvent(event.id).recipe ? '/recipes/list/' + findRecipeEvent(event.id).recipe : null
           "
-          ><p>{{ event.title }}</p></a
+          ><p >{{ event.title }}</p></a
         >
       </div>
 
@@ -252,13 +252,11 @@
           <div>
             <h2>Найдите рецепты, которые вас интересуют</h2>
             <p>
-              Вы можете попробовать подобрать рецепт в специальном разделе
-              «Подбор рецептов» по ингредиентам и категориям, а также найти
+              Вы можете попробовать подобрать рецепт по ингредиентам и категориям, а также найти
               рецепты по разделам, среди рецептов интересующих кулинаров, или по
               поиску на страницах различных групп рецептов.
             </p>
             <ul class="links">
-              <li><a routerLink="/match">Подбор рецептов</a></li>
               <li><a routerLink="/recipes">Все рецепты</a></li>
               <li><a routerLink="/sections">Рецепты по разделам</a></li>
               <li><a routerLink="/cooks">Все кулинары</a></li>
@@ -356,5 +354,4 @@
 
 <app-modal @modal *ngIf="deleteModalShow" (resultEmit)="handleDeleteModal($event)" [buttonsText]="['Да','Отмена']" [description]="'Вы уверены, что хотите удалить запланированный рецепт из «Календаря рецептов»?'" [title]="'Подтвердите удаление рецепта'" [style]="'prim'" [type]="'yesOrNo'" />
 
-  <app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
-    [description]=" 'Вносим изменения... Подождите немного...'" />
+  <app-modal  [style]="'await'" *ngIf="loading"  @modal />

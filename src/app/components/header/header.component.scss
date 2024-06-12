@@ -189,6 +189,20 @@ label ul {
   }
 }
 
+
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  backdrop-filter: blur(1px);
+  width: 100%;
+
+  height: 100%;
+
+  background-color: var(--modal-black)
+}
+
 label h2 {
   align-items: center;
   display: grid;
@@ -210,6 +224,7 @@ label h2 {
   text-decoration: none;
   p {
     &.log {
+      text-decoration: underline;
       color: var(--color-secondary);
     }
     &.logout {
@@ -432,6 +447,7 @@ p {
 @media (max-width: 480px) {
   .admin-panel {
     position: relative;
+    zoom:1.1;
     &:hover::after {
       height: 0;
       width: 0;
@@ -521,7 +537,7 @@ p {
     display: flex;
     align-items: center;
     justify-content: center;
-    column-gap: 0.5em;
+    column-gap: 0.65em;
 
     &.unactive > a,
     &.unactive > a:first-of-type {
@@ -552,6 +568,7 @@ p {
     }
 
     & > a:not(.admin-panel) {
+      zoom:1.1;
       background-color: var(--color-secondary);
       width: 2em;
 
@@ -687,10 +704,11 @@ app-modal {
 
 @media (max-width: 480px) {
   .popups {
-    top: 0;
+    top: 4em;
     margin: 0;
     left: 0;
     right: 0;
+    opacity: 0.95;
     margin: 0 auto;
     margin-top: 1em;
     width: 88%;
@@ -700,7 +718,7 @@ app-modal {
 
 @media (max-width: 360px) {
   .mobile-buttons-panel {
-    column-gap: 0.4em;
+    column-gap: 0.55em;
   }
   .admin-panel,
   .mobile-buttons-panel > a.acc {

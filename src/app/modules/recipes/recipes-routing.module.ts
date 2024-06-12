@@ -3,19 +3,23 @@ import { RouterModule, Routes } from '@angular/router';
 import { RecipesComponent } from './recipes.component';
 import { RecipePageComponent } from './components/recipes/recipe-page/recipe-page.component';
 import { CategoriesPageComponent } from './components/categories/categories-page/categories-page.component';
-import { MatchRecipesComponent } from './components/recipes/match-recipes/match-recipes.component';
 import { SomeRecipesPageComponent } from './components/recipes/some-recipes-page/some-recipes-page.component';
 import { CategoryCreatingComponent } from './components/categories/category-creating/category-creating.component';
 import { AuthGuard } from '../authentication/guards/auth.guard';
-import { RecipeResolver } from './services/recipe.resolver';
+import { RecipeResolver } from './resolvers/recipe.resolver';
 import { RecipeAccessGuard } from './guards/recipe-access.guard';
-import { CategoryResolver } from './services/category.resolver';
-import { SectionResolver } from './services/section.resolver';
+import { CategoryResolver } from './resolvers/category.resolver';
+import { SectionResolver } from './resolvers/section.resolver';
 import { IngredientsPageComponent } from './components/ingredients/ingredients-page/ingredients-page.component';
 import { IngredientPageComponent } from './components/ingredients/ingredient-page/ingredient-page.component';
-import { IngredientGroupResolver } from './services/ingredient-group.resolver';
-import { IngredientResolver } from './services/ingredient.resolver';
-import { IngredientAccessGuard } from './guards/ingredient-access.guard';const routes: Routes = [
+import { GroupResolver } from './resolvers/group.resolver';
+import { IngredientResolver } from './resolvers/ingredient.resolver';
+import { IngredientAccessGuard } from './guards/ingredient-access.guard';
+import { SectionPageComponent } from './components/categories/section-page/section-page.component';
+import { GroupsPageComponent } from './components/ingredients/groups-page/groups-page.component';
+import { GroupPageComponent } from './components/ingredients/group-page/group-page.component';
+import { SectionsPageComponent } from './components/categories/sections-page/sections-page.component';
+const routes: Routes = [
   {
     path: '',
     component: RecipesComponent,
@@ -26,20 +30,24 @@ import { IngredientAccessGuard } from './guards/ingredient-access.guard';const r
         data: { filter: 'all-groups' },
       },
       {
+        path: 'groups',
+        component: GroupsPageComponent,
+      },
+      {
         path: 'ingredients/list/:id',
         component: IngredientPageComponent,
         canActivate: [IngredientAccessGuard],
         resolve: { IngredientResolver },
       },
       {
-        path: 'ingredients/groups/:id',
-        component: IngredientsPageComponent,
-        data: { filter: 'ingredient-group' },
-        resolve: { IngredientGroupResolver },
+        path: 'groups/list/:id',
+        component: GroupPageComponent,
+        data: { filter: 'group' },
+        resolve: { GroupResolver },
       },
       {
         path: 'ingredients/popular',
-        component: IngredientsPageComponent,
+        component: GroupPageComponent,
         data: { filter: 'popular' },
       },
       {
@@ -99,16 +107,20 @@ import { IngredientAccessGuard } from './guards/ingredient-access.guard';const r
         canActivate: [AuthGuard],
       },
       {
-        path: 'sections',
+        path: 'categories',
 
         data: { filter: 'sections' },
         component: CategoriesPageComponent,
       },
       {
+        path: 'sections',
+        component: SectionsPageComponent,
+      },
+      {
         path: 'sections/list/:id',
         data: { filter: 'section' },
         resolve: { SectionResolver },
-        component: CategoriesPageComponent,
+        component: SectionPageComponent,
       },
       {
         path: 'categories/add',
@@ -157,7 +169,7 @@ import { IngredientAccessGuard } from './guards/ingredient-access.guard';const r
 
         component: SomeRecipesPageComponent,
       },
-    
+
       {
         path: 'ingredients/list/:id/recipes',
         data: { filter: 'ingredient-recipes' },
@@ -168,16 +180,16 @@ import { IngredientAccessGuard } from './guards/ingredient-access.guard';const r
       {
         path: 'categories/popular',
         data: { filter: 'popular' },
-        component: CategoriesPageComponent,
+        component: SectionPageComponent,
       },
       {
         path: 'categories',
         redirectTo: 'sections',
       },
-      {
-        path: 'match',
-        component: MatchRecipesComponent,
-      },
+      // {
+      //   path: 'match',
+      //   component: MatchRecipesComponent,
+      // },
     ],
   },
 ];

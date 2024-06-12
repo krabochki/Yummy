@@ -6,6 +6,41 @@
   transition: 0.3s ease-in-out;
 }
 
+.date.load{
+  margin-top: 0.2em;
+}
+.load {
+  color: transparent !important;
+  border-radius: 0.75em;
+  width: max-content;
+  &.num{
+    width: 1em;
+    height: 1em;
+  }
+        background-color: var(--loading);
+        animation: loading 0.75s infinite linear;
+}
+
+@keyframes loading {
+  0% {
+    background-color: var(--loading);
+  }
+
+  50% {
+    background-color: var(--loading-accent);
+  }
+
+  100% {
+    background-color: var(--loading);
+  }
+}
+
+.image-loading {
+  background-color: var(--loading);
+  background-image: none !important;
+  animation: loading 0.75s infinite linear;
+}
+
 h1 {
   font-size: 1.1em;
   font-weight: 700;
@@ -102,12 +137,22 @@ h1 {
   color: var(--color-foreground-unactive);
 
   font-size: 0.9em;
+  margin-top: 0.2em;
 }
 
+.licon{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .likes,
 .actions {
   display: flex;
   column-gap: 2em;
+}
+.likes{
+  display: grid;
+  grid-template-columns: 2.5em 2.5em;
 }
 .like,
 .action {
@@ -186,7 +231,7 @@ app-modal {
 .like-svg {
   fill: var(--color-foreground);
   height: 1em;
-  width: 1.2em;
+  min-width: 1.2em;
 }
 
 .action.haveReport {

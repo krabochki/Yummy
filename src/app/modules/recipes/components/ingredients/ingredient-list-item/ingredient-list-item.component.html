@@ -3,67 +3,60 @@
 <a
   (click)="$event.preventDefault()"
   [routerLink]="link"
-  class="ingredient-cont noselect"
+  class="ingredient-cont"
   [title]="title"
   *ngIf="ingredient.id > 0; else nullCategory"
 >
   <div class="ingredient-wrap">
-    <div class="ingredient"  [style.background-image]="'url('+(picture?picture:placeholder)+')'" *ngIf="ingredient.id > 0; else nullCategory">
-    <p class="caption" *ngIf="!picture"> {{context==='ingredient'?'Ингредиент':'Группа'}}<br> «{{ingredient.name}}»</p>
-    <button class="delete" (click)="clickDeleteButton($event)" *ngIf="currentUser.role !== 'user' && showDeletingButton">
-      <svg-icon class="trash-svg" [applyClass]="true" [src]="'/assets/images/svg/trash.svg'" />
-    </button>
-    <button class="edit" (click)="clickEditButton($event)"
-      *ngIf="currentUser.role !== 'user'  && showEditButton">
-      <svg-icon class="trash-svg" [applyClass]="true" [src]="'/assets/images/svg/pen.svg'" />
-    </button>
-  
-  
-  </div>
-  
+    <div
+      class="ingredient"
+      [ngClass]="{ 'image-loading': ingredient.imageLoading }"
+      [style.background-image]="
+        !ingredient.imageLoading
+          ? 'url(' + (ingredient.imageURL || placeholder) + ')'
+          : null
+      "
+      *ngIf="ingredient.id > 0; else nullCategory"
+    >
+      <p
+        class="caption"
+        *ngIf="!ingredient.imageURL && !ingredient.imageLoading"
+      >
+        {{ context === "ingredient" ? "Ингредиент" : "Группа" }} 
+        «{{ ingredient.name }}»
+      </p>
+    </div>
   </div>
 
-  <div style="position: relative; overflow: visible">
+  <div style="position: relative; overflow: visible; text-align: center; margin:  auto; display: flex;
+  justify-content: center;">
     <h1 class="name">
-      <sup>({{ recipesNumber }})</sup>{{ ingredient.name }}
+      <sup >({{ formatNumber(ingredient.recipesCount) || 0 }})</sup>{{ ingredient.name }}
     </h1>
   </div>
 </a>
 
 <ng-template #nullCategory>
-  <div class="ingredient null">
-    <p>Скоро...</p>
-    <svg-icon
-      [applyClass]="true"
-      class="svg"
-      [src]="'/assets/images/svg/shocked-apples.svg'"
-    ></svg-icon>
+  <div
+    class="ingredient-cont noselect loading"
+    *ngIf="ingredient.id === -1; else nullBlock"
+  >
+    <div class="ingredient-wrap">
+      <div class="ingredient null loading"></div>
+    </div>
+    <div style="position: relative; overflow: visible">
+      <h1 class="name loading">Загрузкаааа</h1>
+    </div>
   </div>
+
+  <ng-template #nullBlock>
+    <div class="ingredient null noselect">
+      <p>Скоро...</p>
+      <svg-icon
+        [applyClass]="true"
+        class="svg"
+        [src]="'/assets/images/svg/shocked-apples.svg'"
+      ></svg-icon>
+    </div>
+  </ng-template>
 </ng-template>
-
-<app-modal
-  @modal
-  (resultEmit)="handleDeleteModal($event)"
-  [type]="'yesOrNo'"
-  [buttonsText]="['Да', 'Отмена']"
-  [style]="'prim'"
-  [description]="
-    'Вы уверены, что хотите удалить ' +
-    (context === 'ingredient' ? 'этот ингредиент?' : 'эту группу ингредиентов?')
-  "
-  [title]="
-    'Удаление ' +
-    (context === 'ingredient' ? 'ингредиента' : 'группы ингредиентов')
-  "
-  *ngIf="deleteModalShow"
-></app-modal>
-
-<app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
-  [description]=" 'Вносим изменения... Подождите немного...'" />
-
-  <app-ingredient-create (editEmitter)="editEmitter.emit()" (closeEmitter)="editMode=false" @modal *ngIf="editMode&&context==='ingredient'" [editedIngredient]="ingredient"/>
-
-
-  <app-group-creating  (editEmitter)="editEmitter.emit()" (closeEmitter)="editMode=false" @modal *ngIf="editMode && context==='group'"
-    [editedGroup]="ingredient" />
-

@@ -1,0 +1,135 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<div class="wrap">
+  <h1 [ngClass]="{'loading':!loaded && categories.length ===0}"
+    *ngIf="(!loaded && categories.length === 0) || categories.length > 0">
+    {{ title }}
+  </h1>
+
+<div style="margin-top:2em" *ngIf="!loaded || categories.length> 0">
+    <app-button  class="add-category" [icon]="'add-category'" [color]="'prim'"
+       [text]="'Добавить категорию'" (click)="createCategoryButtonClick()"
+      [rounded]="true"></app-button>
+</div>
+
+    <app-search *ngIf="!(categories.length<=0 && loaded)" [disabled]="!loaded"
+      [context]="!popular?'section-categories':'popular-categories'" [section]="section"></app-search>
+
+  <div *ngIf="loaded && categories.length === 0 && !popular" class="container one-column not-found">
+    <div class="image">
+      <svg-icon [applyClass]="true" class="fridge" [src]="'/assets/images/svg/fridge.svg'"></svg-icon>
+    </div>
+    <div class="content">
+      <h1 class="label">Категорий пока <span class="title">нет</span></h1>
+      <p class="tagline">
+        <ng-container *ngIf="this.currentUser.id;else noAuth">В разделе «{{ this.title }}» пока нет категорий. Но вы
+          можете попробовать добавить категорию сами!</ng-container>
+        <ng-template #noAuth>В разделе «{{ this.title }}» пока нет категорий. Вы можете поискать рецепты на 
+          странице всех рецептов!</ng-template>
+      </p>
+
+      <hr />
+      <div class="buttons">
+        <app-button (click)="currentUser.id ? createModal = true : navigateToMatchRecipes()" [rounded]="true"
+          [color]="'prim'" [text]="currentUser.id ? 'Добавить категорию' : 'Все рецепты'"></app-button>
+      </div>
+    </div>
+  </div>
+
+    <div style="margin-bottom: 1.5em" *ngIf="!loaded && categories.length === 0">
+      <app-vertical-category-list 
+        [preloader]="true"></app-vertical-category-list>
+    </div>
+
+  <div>
+    <div class="sections">
+      <div *ngIf="categories && categories.length" class="sections">
+        <app-vertical-category-list  (editEmitter)="successEditModal = true" [showRecipesNumber]="true"
+          [categories]="categories"></app-vertical-category-list>
+        <div style="margin: 1.3em 0 !important" *ngIf="!loaded && categories.length > 0">
+          <app-vertical-category-list [preloader]="true"></app-vertical-category-list>
+        </div>
+      </div>
+      <div class="button">
+        <app-button [disabled]="loaded" *ngIf="!everythingLoaded" (click)="loadMoreCategories()"
+          [text]="'Загрузить еще...'" [rounded]="true" [style]="'outlined'" [color]="'prim'"></app-button>
+      </div>
+    </div>
+  </div>
+  <div>
+    <section class="action-buttons" *ngIf="currentUser.role !== 'user' && !popular && showSectionButtons() ">
+      <button class="action-button edit" (click)="editModal = true">
+        <div class="action-icon"><svg-icon class="action-svg" [applyClass]="true" [src]="'/assets/images/svg/pen.svg'" />
+        </div>
+        <p>Изменить раздел</p>
+      </button>
+      <button class="action-button delete" (click)="deleteModal = true">
+        <div class="action-icon"><svg-icon class="action-svg" [applyClass]="true"
+            [src]="'/assets/images/svg/trash.svg'" /></div>
+        <p>Удалить раздел</p>
+      </button>
+      <button *ngIf="section.sendDate||section.modifiedDate"
+        [class]="'action-button info-btn ' + currentUser.role" (click)="moreInfo = !moreInfo">
+        <div [class]="'action-icon'">
+          <svg-icon class="action-svg" [applyClass]="true" [src]="'/assets/images/svg/info.svg'" />
+        </div>
+        <p>Подробнее</p>
+      </button>
+    </section>
+
+    <div @height *ngIf="moreInfo">
+      <div class="more-info">
+        <p *ngIf="section.sendDate" [title]="getDate(section.sendDate)">
+          Дата добавления: {{ (section.sendDate | timePast).toLowerCase() }}
+        </p>
+        <p *ngIf="section.authorId && section.creatorName">
+          Добавил(-а):
+          <a class="action-link" [routerLink]="'/cooks/list/' + section.authorId">{{
+            section.creatorName
+            }}</a>
+        </p>
+       
+        <p *ngIf="section.modifiedDate" [title]="getDate(section.modifiedDate)">
+          Дата последнего изменения: {{ (section.modifiedDate | timePast).toLowerCase() }}
+        </p>
+    
+    
+    
+        <p *ngIf="section.changerId && section.changerName">
+          Изменил(-а):
+          <a class="action-link" [routerLink]="'/cooks/list/' + section.changerId">{{
+            section.changerName
+            }}</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-section-creating [editedSection]="section" (editEmitter)="updateSectionData($event)" (closeEmitter)="editModal = false"
+  *ngIf="editModal" @modal/>
+
+
+<app-category-creating [startedSection]="section"  @modal (closeEmitter)="createModal=false"
+  *ngIf="createModal" />
+
+<app-modal @modal (resultEmit)="handleDeleteModal($event)" [type]="'yesOrNo'" [buttonsText]="['Да', 'Отмена']"
+  [style]="'prim'"
+  [description]="'Вы уверены, что хотите удалить этот раздел? Все категории в этом разделе также будут удалены.'"
+  [title]="'Удаление раздела'" *ngIf="deleteModal"></app-modal>
+
+<app-modal [style]="'await'" *ngIf="loadingModal" @modal />
+
+  <app-modal @modal *ngIf="accessModal" [style]="'prim'" [title]="'Доступ к разделу ограничен'" [type]="'yesOrNo'"
+    (resultEmit)="handleNoAccessModal($event)" [buttonsText]="['Давайте', 'Не сейчас']" [description]="
+      'Доступ к этой функции имеют только зарегистрированные пользователи. Хотите зарегистрироваться или войти в существующий аккаунт?'
+    "></app-modal> 
+
+    <app-modal @modal *ngIf="errorModal" [style]="'prim'" [title]="
+          'Произошла ошибка'
+        " [type]="'Ok'" (resultEmit)="handleErrorModal()" [buttonsText]="['Хорошо']" [description]="
+          errorModalContent||'Произошла неизвестная ошибка'
+        "></app-modal>
+
+        <app-modal @modal [title]="'Раздел удален'" [type]="'Ok'" [buttonsText]="['Хорошо']" *ngIf="successDeleteModal"
+          (resultEmit)="handleSuccessDeleteModal()" [description]="'Раздел успешно удален'" [style]="'sec'" />

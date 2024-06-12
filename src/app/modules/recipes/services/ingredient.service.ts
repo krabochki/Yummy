@@ -1,422 +1,270 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject } from 'rxjs';
-import { IRecipe } from '../models/recipes';
-import {
-  IIngredient,
-  IIngredientsGroup,
-  nullIngredient,
-} from '../models/ingredients';
-import { RecipeService } from './recipe.service';
-import { baseComparator } from 'src/tools/common';
-import { supabase } from '../../controls/image/supabase-data';
+import { Observable } from 'rxjs';
+import { IIngredient, IGroup } from '../models/ingredients';
+import { ingredientsSource } from 'src/tools/sourses';
+import { ICategory } from '../models/categories';
 
 @Injectable({
   providedIn: 'root',
 })
 export class IngredientService {
-  ingredientSubject = new BehaviorSubject<IIngredient[]>([]);
-  ingredients$ = this.ingredientSubject.asObservable();
+  ingredientsUrl = ingredientsSource;
 
-  ingredientGroupsSubject = new BehaviorSubject<IIngredientsGroup[]>([]);
-  ingredientsGroups$ = this.ingredientGroupsSubject.asObservable();
+  constructor(private http: HttpClient) {}
 
-  constructor(
-    private http: HttpClient,
-    private recipeService: RecipeService,
-  ) {}
+  getIngredient(id: number): Observable<IIngredient> {
+    const options = { withCredentials: true };
 
-  loadIngredientsGroupsData() {
-    return this.loadGroupsFromSupabase();
-  }
-
-  loadIngredientsData() {
-    return this.loadIngredientsFromSupabase();
-  }
-
-  getAllNamesOfIngredient(ingredient: IIngredient): string[] {
-    const ingridientName = ingredient.name.toLowerCase().trim();
-    const variations = ingredient.variations.map((variation) =>
-      variation.trim().toLowerCase(),
-    );
-    return [ingridientName, ...variations];
-  }
-  getRelatedIngredients(ingredient: IIngredient, ingredients: IIngredient[]) {
-    const targetName = ingredient.name.trim().toLowerCase();
-
-    const targetVariations = ingredient.variations.map((variation) =>
-      variation.trim().toLowerCase(),
-    );
-
-    let relatedIngredients = ingredients.filter((ing) => {
-      const currentName = ing.name.trim().toLowerCase();
-      if (currentName.includes(targetName)) {
-        return true;
-      }
-      if (targetName.includes(currentName)) {
-        return true;
-      }
-
-      const currentVariations = ing.variations.map((variation) =>
-        variation.trim().toLowerCase(),
-      );
-      return targetVariations.some((targetVar) =>
-        currentVariations.includes(targetVar),
-      );
-    });
-    relatedIngredients = relatedIngredients.filter(
-      (i) => i.id !== ingredient.id,
-    );
-
-    return relatedIngredients;
-  }
-
-  getRecipesNumberOfGroup(
-    group: IIngredientsGroup,
-    ingredients: IIngredient[],
-    recipes: IRecipe[],
-  ) {
-    let recipesIdsInGroup: number[] = [];
-    if (group.ingredients) {
-      group.ingredients.forEach((ingredient) => {
-        const findedIngredient =
-          ingredients.find((i) => i.id === ingredient) || nullIngredient;
-        if (findedIngredient.id > 0) {
-          const findedRecipesByIngredient =
-            this.recipeService.getRecipesByIngredient(
-              recipes,
-              findedIngredient,
-            );
-          const findedRecipesByIngredientIds: number[] =
-            findedRecipesByIngredient.map((recipe) => recipe.id);
-          recipesIdsInGroup = [
-            ...recipesIdsInGroup,
-            ...findedRecipesByIngredientIds,
-          ];
-        }
-      });
-    }
-    return Array.from(new Set(recipesIdsInGroup)).length;
-  }
-
-  findAllIngrdientsFitByName(name: string, ingredients: IIngredient[]) {
-    const findedIngredients: IIngredient[] = [];
-    const searchName = name.toLowerCase().trim();
-    ingredients.forEach((ingredient) => {
-      const formatIngredient = ingredient.name.toLowerCase().trim();
-      const variationsMatch =
-        ingredient.variations.length > 0 &&
-        ingredient.variations.some((variation) => {
-          const formattedVariation = variation.toLowerCase().trim();
-          return searchName.includes(formattedVariation);
-        });
-
-      if (searchName.includes(formatIngredient) || variationsMatch) {
-        findedIngredients.push(ingredient);
-      }
-    });
-    return findedIngredients;
-  }
-
-  findIngredientByName(name: string, ingredients: IIngredient[]): IIngredient {
-    const findedIngredients: IIngredient[] = [];
-    const ingredientName = name.toLowerCase().trim();
-    ingredients.forEach((ingredient) => {
-      const variationsMatch =
-        ingredient.variations.length > 0 &&
-        ingredient.variations.some((variation) => {
-          const formattedVariation = variation.toLowerCase().trim();
-          return ingredientName.includes(formattedVariation);
-        });
-
-      if (
-        ingredientName.includes(ingredient.name.toLowerCase().trim()) ||
-        variationsMatch
-      ) {
-        findedIngredients.push(ingredient);
-      }
-    });
-    const findIngredient =
-      findedIngredients.sort((a, b) => baseComparator(b.name, a.name))[0] ||
-      nullIngredient;
-    return findIngredient;
-  }
-
-  sortIngredients(ingredients: IIngredient[], recipes: IRecipe[]) {
-    return ingredients.sort((a, b) => {
-      if (
-        this.recipeService.getRecipesByIngredient(recipes, b) >
-        this.recipeService.getRecipesByIngredient(recipes, a)
-      )
-        return 1;
-      else if (
-        this.recipeService.getRecipesByIngredient(recipes, b) ===
-        this.recipeService.getRecipesByIngredient(recipes, a)
-      )
-        return baseComparator(a.name, b.name);
-      else {
-        return -1;
-      }
-    });
-  }
-
-  getGroupOfIngredient(
-    groups: IIngredientsGroup[],
-    ingredient: IIngredient,
-  ): IIngredientsGroup[] {
-    return (
-      groups.filter(
-        (group) =>
-          group.ingredients.length > 0 &&
-          group.ingredients.includes(ingredient.id),
-      ) || []
+    return this.http.get<IIngredient>(
+      this.ingredientsUrl + '/ingredient/' + id,
+      options,
     );
   }
 
-  getIngredientsOfGroup(
-    group: IIngredientsGroup,
-    ingredients: IIngredient[],
-  ): IIngredient[] {
-    return ingredients.filter((i) => group.ingredients.includes(i.id));
+  getInfoAboutIngredientInShoppingList(ingredientId: number) {
+    const options = { withCredentials: true };
+
+    return this.http.get(
+      `${this.ingredientsUrl}/products/${ingredientId}`,
+      options,
+    );
   }
 
-  getMaxIngredientId() {
-    return supabase
-      .from('ingredients')
-      .select('id')
-      .order('id', { ascending: false })
-      .limit(1)
-      .then((response) => {
-        if (response.data && response.data.length > 0) {
-          return response.data[0].id;
-        } else {
-          return 0;
-        }
-      });
+  getAwaitingIngredientsCount() {
+    const options = { withCredentials: true };
+
+    const url = `${this.ingredientsUrl}/awaits-count`;
+    return this.http.get<number>(url, options);
   }
 
-  getMaxGroupId() {
-    return supabase
-      .from('groups')
-      .select('id')
-      .order('id', { ascending: false })
-      .limit(1)
-      .then((response) => {
-        if (response.data && response.data.length > 0) {
-          return response.data[0].id;
-        } else {
-          return 0;
-        }
-      });
+  getVariations(id: number) {
+    const options = { withCredentials: true };
+
+    return this.http.get<string[]>(
+      this.ingredientsUrl + '/variations/' + id,
+      options,
+    );
   }
 
-  loadIngredientsFromSupabase() {
-    return supabase
-      .from('ingredients')
-      .select('*')
-      .then((response) => {
-        const supCategories = response.data;
-        const categories = supCategories?.map((supCategory) => {
-          return this.translateIngredient(supCategory);
-        });
-        if (categories) this.ingredientSubject.next(categories);
-      });
+  getRelatedCategories(id: number) {
+    const options = { withCredentials: true };
+
+    return this.http.get<ICategory[]>(
+      this.ingredientsUrl + '/related-categories/' + id,
+      options,
+    );
   }
 
-  loadGroupsFromSupabase() {
-    return supabase
-      .from('groups')
-      .select('*')
-      .then((response) => {
-        const sGroups = response.data;
-        const groups = sGroups?.map((sGroup) => {
-          return this.translateGroup(sGroup);
-        });
-        if (groups) this.ingredientGroupsSubject.next(groups);
-      });
+  getRelatedIngredients(id: number) {
+    const options = { withCredentials: true };
+
+    return this.http.get<IIngredient[]>(
+      this.ingredientsUrl + '/related-ingredients/' + id,
+      options,
+    );
   }
-  private translateGroup(group: any): IIngredientsGroup {
-    return {
-      id: group.id,
-      name: group.name,
-      ingredients: group.ingredients,
-      image: group.image,
-    } as IIngredientsGroup;
+
+  getFullIngredient(ingredientId: number): Observable<IIngredient> {
+    const options = { withCredentials: true };
+
+    return this.http.get<IIngredient>(
+      `${this.ingredientsUrl}/full-ingredient/${ingredientId}`,
+      options,
+    );
   }
-  private translateIngredient(ingredient: any): IIngredient {
-    return {
-      id: ingredient.id,
-      name: ingredient.name,
-      history: ingredient.history,
-      description: ingredient.description,
-      variations: ingredient.variations,
-      advantages: ingredient.advantages,
-      disadvantages: ingredient.disadvantages,
-      recommendedTo: ingredient.recommendedto,
-      contraindicatedTo: ingredient.contraindicatedto,
-      status: ingredient.status,
-      origin: ingredient.origin,
-      precautions: ingredient.precautions, //меры предосторожности
-      compatibleDishes: ingredient.compatibledishes, // с чем сочетается
-      cookingMethods: ingredient.cookingmethods, //как готовить
-      tips: ingredient.tips,
-      author: ingredient.author,
-      sendDate: ingredient.senddate,
-      nutritions: ingredient.nutritions,
-      storageMethods: ingredient.storagemethods, //способы хранения
-      externalLinks: ingredient.externallinks, //доп ресурсы
-      shoppingListGroup: ingredient.shoppinglistgroup, //основное
-      image: ingredient.image,
-    } as IIngredient;
+
+  getIngredientForEditing(ingredientId: number): Observable<IIngredient> {
+    const options = { withCredentials: true };
+
+    return this.http.get<IIngredient>(
+      `${this.ingredientsUrl}/edit-ingredient/${ingredientId}`,
+      options,
+    );
   }
-  addIngredientToSupabase(ingredient: IIngredient) {
-    return supabase.from('ingredients').upsert([
+
+  getGroupsOfIngredient(id: number) {
+    const options = { withCredentials: true };
+
+    return this.http.get<IGroup[]>(
+      `${this.ingredientsUrl}/groups/${id}`,
+      options,
+    );
+  }
+
+  setGroupToIngredient(sectionId: number, ingredientId: number) {
+    const options = { withCredentials: true };
+
+    const url = `${this.ingredientsUrl}/set-group/${ingredientId}`;
+    return this.http.put(url, { id: sectionId }, options);
+  }
+
+  getIngredientsOfGroup(groupId: number) {
+    const options = { withCredentials: true };
+
+    const url = `${this.ingredientsUrl}/by-group/${groupId}`;
+    return this.http.get<IIngredient[]>(url, options);
+  }
+
+  approveIngredient(ingredientId: number) {
+    const options = {
+      withCredentials: true,
+    };
+
+    return this.http.put(
+      `${this.ingredientsUrl}/approve/${ingredientId}`,
+      {},
+      options,
+    );
+  }
+
+  getSomeAwaitingIngredients(limit: number, page: number) {
+    const options = {
+      withCredentials: true,
+    };
+
+    const url = `${this.ingredientsUrl}/awaiting?limit=${limit}&page=${page}`;
+    return this.http.get<{ ingredients: IIngredient[]; count: number }>(
+      url,
+      options,
+    );
+  }
+
+  updateIngredient(updatedIngredient: IIngredient) {
+    const options = {
+      withCredentials: true,
+    };
+    return this.http.put(
+      `${this.ingredientsUrl}/${updatedIngredient.id}`,
+      updatedIngredient,
+      options,
+    );
+  }
+  setImageToIngredient(id: number, filename: string) {
+    const options = {
+      withCredentials: true,
+    };
+    return this.http.put(
+      `${this.ingredientsUrl}/image/${id}`,
       {
-        id: ingredient.id,
-        name: ingredient.name,
-        history: ingredient.history,
-        description: ingredient.description,
-        variations: ingredient.variations,
-        advantages: ingredient.advantages,
-        disadvantages: ingredient.disadvantages,
-        recommendedto: ingredient.recommendedTo,
-        contraindicatedto: ingredient.contraindicatedTo,
-        status: ingredient.status,
-        origin: ingredient.origin,
-        precautions: ingredient.precautions, //меры предосторожности
-        compatibledishes: ingredient.compatibleDishes, // с чем сочетается
-        cookingmethods: ingredient.cookingMethods, //как готовить
-        tips: ingredient.tips,
-        author: ingredient.author,
-        senddate: ingredient.sendDate,
-        nutritions: ingredient.nutritions,
-        storagemethods: ingredient.storageMethods, //способы хранения
-        externallinks: ingredient.externalLinks, //доп ресурсы
-        shoppinglistgroup: ingredient.shoppingListGroup, //основное
-        image: ingredient.image,
+        image: filename,
       },
-    ]);
+      options,
+    );
   }
-  addGroupToSupabase(group: IIngredientsGroup) {
-    return supabase.from('groups').upsert([
+
+  uploadIngredientImage(file: File) {
+    const options = {
+      withCredentials: true,
+    };
+
+    const formData: FormData = new FormData();
+    formData.append('image', file, file.name);
+
+    return this.http.post(`${this.ingredientsUrl}/image`, formData, options);
+  }
+
+  getStatus(ingredientId: number) {
+    const options = { withCredentials: true };
+
+    const url = `${this.ingredientsUrl}/isAwaits/${ingredientId}`;
+    return this.http.get(url, options);
+  }
+
+  deleteIngredient(ingredientId: number) {
+    const options = {
+      withCredentials: true,
+    };
+    return this.http.delete(`${this.ingredientsUrl}/${ingredientId}`, options);
+  }
+
+  deleteProductsByIngredientName(ingredientId: number) {
+    const options = {
+      withCredentials: true,
+    };
+    return this.http.delete(
+      `${this.ingredientsUrl}/products/${ingredientId}`,
+      options,
+    );
+  }
+
+  getIngredientsBySearch(searchText: string) {
+    const url = `${this.ingredientsUrl}/search/?search=${searchText}`;
+    return this.http.get<IIngredient[]>(url);
+  }
+
+  getSomePopularIngredients(limit: number, page: number) {
+    const options = {
+      withCredentials: true,
+    };
+    const url = `${this.ingredientsUrl}/some-popular?limit=${limit}&page=${page}`;
+
+    return this.http.get<IIngredient[]>(url, options);
+  }
+
+  getPopularIngredients() {
+    const options = {
+      withCredentials: true,
+    };
+    const url = `${this.ingredientsUrl}/popular`;
+    return this.http.get<IIngredient[]>(url, options);
+  }
+
+  deleteImage(ingredientId: number) {
+    const options = {
+      withCredentials: true,
+    };
+
+    const url = `${this.ingredientsUrl}/files/${ingredientId}`;
+    return this.http.delete(url, options);
+  }
+
+  deleteAllGroups(ingredientId: number) {
+    const options = {
+      withCredentials: true,
+    };
+    const url = `${this.ingredientsUrl}/groups/${ingredientId}`;
+    return this.http.delete(url, options);
+  }
+
+  deleteAllVariations(ingredientId: number) {
+    const options = {
+      withCredentials: true,
+    };
+    const url = `${this.ingredientsUrl}/variations/${ingredientId}`;
+    return this.http.delete(url, options);
+  }
+
+  downloadImage(filename: string) {
+    const fileUrl = `${this.ingredientsUrl}/files/${filename}`;
+    const options = {
+      responseType: 'blob' as 'blob',
+      withCredentials: true,
+    };
+
+    return this.http.get(fileUrl, options);
+  }
+
+  postVariation(ingredientId: number, variation: string) {
+    const options = {
+      withCredentials: true,
+    };
+    const url = `${this.ingredientsUrl}/variation/${ingredientId}`;
+    return this.http.post(
+      url,
       {
-        id: group.id,
-        name: group.name,
-        ingredients: group.ingredients,
-        image: group.image,
+        variation: variation,
       },
-    ]);
-  }
-  deleteIngredientFromSupabase(id: number) {
-    return supabase.from('ingredients').delete().eq('id', id);
-  }
-  deleteGroupFromSupabase(id: number) {
-    return supabase.from('groups').delete().eq('id', id);
-  }
-  updateIngredientInSupabase(ingredient: IIngredient) {
-    const { id, ...updateData } = ingredient;
-    return supabase
-      .from('ingredients')
-      .update({
-        id: ingredient.id,
-        name: ingredient.name,
-        history: ingredient.history,
-        description: ingredient.description,
-        variations: ingredient.variations,
-        advantages: ingredient.advantages,
-        disadvantages: ingredient.disadvantages,
-        recommendedto: ingredient.recommendedTo,
-        contraindicatedto: ingredient.contraindicatedTo,
-        status: ingredient.status,
-        origin: ingredient.origin,
-        precautions: ingredient.precautions, //меры предосторожности
-        compatibledishes: ingredient.compatibleDishes, // с чем сочетается
-        cookingmethods: ingredient.cookingMethods, //как готовить
-        tips: ingredient.tips,
-        author: ingredient.author,
-        senddate: ingredient.sendDate,
-        nutritions: ingredient.nutritions,
-        storagemethods: ingredient.storageMethods, //способы хранения
-        externallinks: ingredient.externalLinks, //доп ресурсы
-        shoppinglistgroup: ingredient.shoppingListGroup, //основное
-        image: ingredient.image,
-      })
-      .eq('id', id);
-  }
-
-  removeGroupImageFromSupabase(path: string) {
-    return supabase.storage.from('groups').remove([path]);
-  }
-
-  loadGroupImageToSupabase(path: string, file: File) {
-    return supabase.storage.from('groups').upload(path, file);
-  }
-
-  
-  updateGroupInSupabase(group: IIngredientsGroup) {
-    const { id, ...updateData } = group;
-    return supabase
-      .from('groups')
-      .update({
-        id: group.id,
-        name: group.name,
-        ingredients: group.ingredients,
-        image: group.image,
-      })
-      .eq('id', id);
-  }
-
-  updateIngredientsAfterUPSERT(payload: any) {
-    const currentCategories = this.ingredientSubject.value;
-    const index = currentCategories.findIndex(
-      (r) => r.id === this.translateIngredient(payload).id,
-    );
-    if (index !== -1) {
-      const updatedCategories = [...currentCategories];
-      updatedCategories[index] = this.translateIngredient(payload);
-
-      this.ingredientSubject.next(updatedCategories);
-    }
-  }
-  updateGroupsAfterUPSERT(payload: any) {
-    const currentGroups = this.ingredientGroupsSubject.value;
-    const index = currentGroups.findIndex(
-      (r) => r.id === this.translateGroup(payload).id,
-    );
-    if (index !== -1) {
-      const updatedGroups = [...currentGroups];
-      updatedGroups[index] = this.translateGroup(payload);
-
-      this.ingredientGroupsSubject.next(updatedGroups);
-    }
-  }
-  updateGroupsAfterINSERT(payload: any) {
-    const currentGroups = this.ingredientGroupsSubject.value;
-    const updatedGroups = [...currentGroups, this.translateGroup(payload)];
-    this.ingredientGroupsSubject.next(updatedGroups);
-  }
-
-  updateIngredientsAfterINSERT(payload: any) {
-    const currentUsers = this.ingredientSubject.value;
-    const updatedCategories = [
-      ...currentUsers,
-      this.translateIngredient(payload),
-    ];
-    this.ingredientSubject.next(updatedCategories);
-  }
-  updateIngredientsAfterDELETE(payload: any) {
-    return this.ingredientSubject.next(
-      this.ingredientSubject.value.filter(
-        (ingredients) =>
-          ingredients.id !== this.translateIngredient(payload).id,
-      ),
+      options,
     );
   }
-  updateGroupsAfterDELETE(payload: any) {
-    return this.ingredientGroupsSubject.next(
-      this.ingredientGroupsSubject.value.filter(
-        (group) => group.id !== this.translateIngredient(payload).id,
-      ),
-    );
+
+  postIngredient(newIngredient: IIngredient) {
+    const options = {
+      withCredentials: true,
+    };
+
+    const url = `${this.ingredientsUrl}`;
+    return this.http.post(url, newIngredient, options);
   }
 }

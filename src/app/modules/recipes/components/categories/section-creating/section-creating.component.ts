@@ -5,6 +5,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  HostListener,
   Input,
   OnDestroy,
   OnInit,
@@ -15,22 +16,32 @@ import {
 import { trigger } from '@angular/animations';
 import { modal } from 'src/tools/animations';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {  ISection, nullSection } from '../../../models/categories';
 import {
-  ICategory,
-  ISection,
-  nullCategory,
-  nullSection,
-} from '../../../models/categories';
-import { Subject, takeUntil } from 'rxjs';
+  EMPTY,
+  Observable,
+  Subject,
+  Subscription,
+  catchError,
+  concatMap,
+  finalize,
+  of,
+  pipe,
+  switchMap,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import { SectionService } from '../../../services/section.service';
-import { supabase } from 'src/app/modules/controls/image/supabase-data';
 import { trimmedMinLengthValidator } from 'src/tools/validators';
-import { CategoryService } from '../../../services/category.service';
-import {
-  addModalStyle,
-  baseComparator,
-  removeModalStyle,
-} from 'src/tools/common';
+import { addModalStyle, removeModalStyle } from 'src/tools/common';
+import { checkFile } from 'src/tools/error.handler';
+import { NotificationService } from 'src/app/modules/user-pages/services/notification.service';
+import { nullUser } from 'src/app/modules/user-pages/models/users';
+import { AuthService } from 'src/app/modules/authentication/services/auth.service';
+import { UserService } from 'src/app/modules/user-pages/services/user.service';
+import { Permission } from 'src/app/modules/user-pages/components/settings/conts';
+import { INotification, nullNotification } from 'src/app/modules/user-pages/models/notifications';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-section-creating',
@@ -41,54 +52,46 @@ import {
 })
 export class SectionCreatingComponent implements OnInit, OnDestroy {
   @Output() closeEmitter = new EventEmitter<boolean>();
-  @Output() editEmitter = new EventEmitter();
+  @Output() editEmitter = new EventEmitter<string>();
   @ViewChild('scrollContainer', { static: false }) scrollContainer?: ElementRef;
 
   protected destroyed$: Subject<void> = new Subject<void>();
 
-  //modals
+  currentUser = { ...nullUser };
+
   saveModal: boolean = false;
   closeModal: boolean = false;
   successModal: boolean = false;
-  loading: boolean = false;
+  awaitModal: boolean = false;
+  errorModal = false;
+  errorModalContent = '';
 
-  newSection: ISection = { ...nullSection };
+  savedSection: ISection = { ...nullSection };
 
-  selectedCategories: ICategory[] = [];
-
-  //image
   sectionImage: string = '';
   defaultImage: string = '/assets/images/add-section.png';
-  supabaseFilepath: string = '';
 
-  //form
   form: FormGroup;
   beginningData: any;
 
-  //initData
-  @Input() editedSection: ISection = nullSection;
-  categoriesWithoutSection: ICategory[] = [];
-  categories: ICategory[] = [];
-  categoriesNames: string[] = [];
-  sections: ISection[] = [];
-  beginningCategories:ICategory[]=[]
+  @Input() editedSection: ISection = { ...nullSection };
 
-  maxId = 0;
+  editedCategoryDataLoaded = false;
 
   get edit() {
     return this.editedSection.id > 0;
   }
 
   constructor(
+    private userService: UserService,
+    private router: Router,
+    private authService: AuthService,
     private renderer: Renderer2,
+    private notifyService: NotificationService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private sectionService: SectionService,
-    private categoryService: CategoryService,
   ) {
-    this.sectionService.getMaxCategoryId().then((maxId) => {
-      this.maxId = maxId;
-    });
     this.form = this.fb.group({
       form: [],
       name: [
@@ -105,165 +108,245 @@ export class SectionCreatingComponent implements OnInit, OnDestroy {
     this.sectionImage = this.defaultImage;
   }
 
-  private initCategories() {
-    this.categoryService.categories$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((receivedCategories: ICategory[]) => {
-        const categories = receivedCategories.filter(
-          (category) => category.status === 'public',
-        );
-        this.categories = categories;
-        categories.forEach((category) => {
-          let categoryHaveSection = false;
-
-          this.sections.forEach((section) => {
-            if (section.categories.includes(category.id)) {
-              categoryHaveSection = true;
-            }
-          });
-          if (!categoryHaveSection) {
-            this.categoriesWithoutSection.push(category);
-          }
-        });
-      });
-    this.updateCategoriesWithoutSection();
+  @HostListener('window:beforeunload')
+  canDeactivate() {
+    if (this.areObjectsEqual())
+      return confirm(
+        'Вы уверены, что хотите покинуть страницу? Все несохраненные изменения будут потеряны.',
+      );
+    else return true;
   }
+
   private initEditedSection() {
     if (this.edit) {
-      this.form.get('name')?.setValue(this.editedSection.name);
-      const sectionImage = this.editedSection.photo;
-      if (sectionImage) {
-        this.sectionImage = this.downloadSectionImageFromSupabase(sectionImage);
-        this.supabaseFilepath = sectionImage;
-        this.form.get('image')?.setValue('url');
-      }
-      this.editedSection.categories.forEach((categoryId) => {
-        const findedCategory = this.categories.find(
-          (category) => category.id === categoryId,
-        );
-        if (findedCategory) this.selectedCategories.push(findedCategory);
-      });
-      this.beginningData = this.form.getRawValue();
+      this.subscriptions.add(
+        this.sectionService
+          .getSectionForEditing(this.editedSection.id)
+          .pipe(
+            pipe(takeUntil(this.destroyed$)),
+
+            tap((section) => {
+              this.editedSection = section;
+              this.form.get('name')?.setValue(this.editedSection.name);
+
+              let loadImage$: Observable<any> = of(null);
+              if (this.editedSection.image) {
+                loadImage$ = this.sectionService
+                  .downloadImage(this.editedSection.image)
+                  .pipe(
+                    tap((blob) => {
+                      this.editedSection.imageURL = URL.createObjectURL(blob);
+                      this.sectionImage = this.editedSection.imageURL || '';
+                      this.form.get('image')?.setValue('existing_photo');
+                      this.beginningData = this.form.getRawValue();
+                    }),
+                    finalize(() => {
+                      this.editedCategoryDataLoaded = true;
+                      addModalStyle(this.renderer);
+
+                      this.cdr.markForCheck();
+                    }),
+                    catchError(() => {
+                      return EMPTY;
+                    }),
+                  );
+              }
+              this.subscriptions.add(
+                loadImage$
+                  .pipe(
+                    finalize(() => {
+                      this.editedCategoryDataLoaded = true;
+                      this.cdr.markForCheck();
+                    }),
+                  )
+                  .subscribe(),
+              );
+            }),
+          )
+          .subscribe(),
+      );
     }
-    this.beginningCategories = this.selectedCategories;
-  }
-  private initSections() {
-    this.sectionService.sections$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((receivedSections: ISection[]) => {
-        this.sections = receivedSections;
-      });
   }
 
   ngOnInit() {
+    this.subscriptions.add(
+      this.authService.currentUser$
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe((user) => {
+          this.currentUser = user;
+        }),
+    );
+    if (!this.edit) {
+      this.editedCategoryDataLoaded = true;
+    }
+
     addModalStyle(this.renderer);
-    this.initSections();
-    this.initCategories();
     this.initEditedSection();
   }
 
-  addCategory(event: string) {
-    if (!this.selectedCategories.find((category) => category.name === event)) {
-      const findedCategory: ICategory =
-        this.categoriesWithoutSection.find(
-          (category) => category.name === event,
-        ) || nullCategory;
-
-      this.selectedCategories.push(findedCategory);
-    }
-  }
-
-  removeCategory(event: string) {
-    this.selectedCategories = this.selectedCategories.filter(
-      (category) => category.name !== event,
-    );
-    const findedCategory = this.categories.find(
-      (category) => category.name === event,
-    );
-    if (findedCategory) {
-      const findedCategoryInCategoriesWithoutSection =
-        this.categoriesWithoutSection.find(
-          (category) => category.name === event,
-        );
-      if (!findedCategoryInCategoriesWithoutSection) {
-        this.categoriesWithoutSection.push(findedCategory);
-        this.updateCategoriesWithoutSection();
-      }
-    }
-  }
-
-  updateCategoriesWithoutSection() {
-    this.categoriesNames = this.categoriesWithoutSection
-      .map((category) => category.name)
-      .sort((a, b) => baseComparator(a, b));
-  }
   onSectionImageChange(event: Event) {
     const input = event.target as HTMLInputElement;
-    const userpicFile: File | undefined = input.files?.[0];
+    const file: File | undefined = input.files?.[0];
 
-    if (userpicFile) {
-      this.form.get('image')?.setValue(userpicFile);
-      const objectURL = URL.createObjectURL(userpicFile);
+    if (file && checkFile(file)) {
+      this.form.get('image')?.setValue(file);
+      const objectURL = URL.createObjectURL(file);
       this.sectionImage = objectURL;
-      this.supabaseFilepath = this.setSectionImageFilenameForSupabase();
     }
-  }
-
-  private setSectionImageFilenameForSupabase(): string {
-    const file = this.form.get('image')?.value;
-    const fileExt = file.name.split('.').pop();
-    return `${Math.random()}.${fileExt}`;
   }
 
   unsetImage() {
     this.form.get('image')?.setValue(null);
     this.sectionImage = this.defaultImage;
-    this.supabaseFilepath = '';
   }
 
-  downloadSectionImageFromSupabase(path: string) {
-    return supabase.storage.from('sections').getPublicUrl(path).data.publicUrl;
+  POSTSection(section: ISection) {
+    const file: File = this.form.value.image;
+    this.savedSection = section;
+
+    this.sectionService
+      .postSection(section)
+      .pipe(
+        catchError((response: any) => {
+          if (response.error.info == 'NAME_EXISTS') {
+            this.throwErrorModal(
+              'Раздел с таким названием уже существует. Измените название и попробуйте снова.',
+            );
+          } else {
+            this.throwErrorModal(
+              'Произошла ошибка при попытке добавить раздел.',
+            );
+          }
+          return EMPTY;
+        }),
+        switchMap((response: any) => {
+          const insertedId = response.id;
+          this.savedSection.id = insertedId;
+          if (file) {
+            return this.sectionService.uploadSectionImage(file).pipe(
+              switchMap((uploadResponse: any) => {
+                const filename = uploadResponse.filename;
+                return this.sectionService
+                  .setImageToSection(insertedId, filename)
+                  .pipe(
+                    catchError(() => {
+                      this.throwErrorModal(
+                        'Произошла ошибка при попытке связать загруженное изображение и раздел.',
+                      );
+                      return EMPTY;
+                    }),
+                  );
+              }),
+            );
+          } else {
+            return of(null);
+          }
+        }),
+        catchError(() => {
+          return EMPTY;
+        }),
+        finalize(() => {
+          this.awaitModal = false;
+          this.cdr.markForCheck();
+        }),
+        tap(() => {
+          this.successModal = true;
+        }),
+      )
+      .subscribe();
   }
 
-  async loadSectionImageToSupabase() {
-    const file = this.form.get('image')?.value;
-    const filePath = this.supabaseFilepath;
-    await this.sectionService.loadSectionImageToSupabase(filePath, file);
-  }
+  PUTSection(section: ISection) {
+    let loadImage = false;
+    let deleteImage = false;
 
-  async createSection() {
-    this.loading = true;
-    this.cdr.markForCheck();
+    const image = this.form.value.image;
 
-    if (this.edit) {
-      if (this.editedSection.photo === null) {
-        this.editedSection.photo = '';
-      }
-      if (this.editedSection.photo !== this.newSection.photo) {
-        if (this.newSection.photo) {
-          await this.loadSectionImageToSupabase();
-        }
-        if (this.editedSection.photo) {
-          await this.sectionService.removeSectionImageFromSupabase(
-            this.editedSection.photo,
-          );
-        }
-      } else {
-        await this.loadSectionImageToSupabase();
-      }
-      await this.sectionService.updateSectionInSupabase(this.newSection);
-      this.editEmitter.emit();
-      this.closeEmitter.emit(true);
-    } else {
-      if (this.form.get('image')?.value) {
-        this.loadSectionImageToSupabase();
-      }
-
-      await this.sectionService.addSectionToSupabase(this.newSection);
+    if (image === null) {
+      deleteImage = true;
+    } else if (image !== 'existing_photo') {
+      loadImage = true;
+      deleteImage = true;
     }
-    this.loading = false;
-    this.successModal = true;
-    this.cdr.markForCheck();
+
+    const file: File = this.form.value.image;
+
+    const putCategory$ = this.sectionService.updateSection(section).pipe(
+      catchError((response: any) => {
+        if (response.error.info == 'NAME_EXISTS') {
+          this.throwErrorModal(
+            'Раздел с таким названием уже существует. Измените название и попробуйте снова.',
+          );
+        } else {
+          this.throwErrorModal('Произошла ошибка при попытке обновить раздел.');
+        }
+        return EMPTY;
+      }),
+    );
+
+    const loadImage$ = loadImage
+      ? this.sectionService.uploadSectionImage(file).pipe(
+          catchError(() => {
+            this.throwErrorModal(
+              'Произошла ошибка при попытке загрузить файл нового изображения раздела.',
+            );
+            return EMPTY;
+          }),
+          concatMap((response: any) => {
+            const filename = response.filename;
+            return this.sectionService
+              .setImageToSection(section.id, filename)
+              .pipe(
+                catchError(() => {
+                  this.throwErrorModal(
+                    'Произошла ошибка при попытке связать новое загруженное изображение и раздел.',
+                  );
+                  return EMPTY;
+                }),
+              );
+          }),
+        )
+      : of(null);
+
+    const deleteImage$ = deleteImage
+      ? this.sectionService.deleteImage(section.id).pipe(
+          catchError(() => {
+            this.throwErrorModal(
+              'Произошла ошибка при попытке удалить старое изображение раздела.',
+            );
+            return EMPTY;
+          }),
+          concatMap(() => {
+            return this.sectionService.setImageToSection(section.id, '').pipe(
+              catchError(() => {
+                this.throwErrorModal(
+                  'Произошла ошибка при попытке удаления связи старого изображения с разделом.',
+                );
+                return EMPTY;
+              }),
+            );
+          }),
+        )
+      : of(null);
+
+    putCategory$
+      .pipe(
+        concatMap(() => deleteImage$),
+        concatMap(() => loadImage$),
+      )
+      .pipe(
+        finalize(() => {
+          this.awaitModal = false;
+          this.cdr.markForCheck();
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.savedSection = section;
+
+          this.successModal = true;
+        },
+      });
   }
 
   closeEditModal() {
@@ -278,34 +361,100 @@ export class SectionCreatingComponent implements OnInit, OnDestroy {
   }
 
   areObjectsEqual(): boolean {
-    if (JSON.stringify(this.beginningCategories) !== JSON.stringify(this.selectedCategories))
-      return true;
     return (
       JSON.stringify(this.beginningData) !==
       JSON.stringify(this.form.getRawValue())
     );
   }
 
-  handleSaveModal(answer: boolean) {
-    const categoriesOfSection = this.selectedCategories.map(
-      (category) => category.id,
-    );
-    this.newSection = {
-      ...nullSection,
-      categories: [...categoriesOfSection],
-      photo: this.form.value.image ? this.supabaseFilepath : undefined,
-      name: this.form.value.name,
-      id: this.edit ? this.editedSection.id : this.maxId + 1,
-    };
-    if (answer) {
+  saveSection() {
+    this.awaitModal = true;
+    if (this.edit) {
+      this.editSection();
+    } else {
       this.createSection();
     }
-    addModalStyle(this.renderer);
-    this.saveModal = false;
   }
+
+  private editSection() {
+    const id = this.editedSection.id;
+    const name = this.form.value.name;
+    const updatedSection: ISection = {
+      ...nullSection,
+      id: id,
+      name: name,
+      image: this.getImageOfSavedSection(),
+    };
+    this.PUTSection(updatedSection);
+  }
+
+  private createSection() {
+    const name = this.form.value.name;
+    const createdSection: ISection = {
+      ...nullSection,
+      name: name,
+    };
+    this.POSTSection(createdSection);
+  }
+
+  handleSaveModal(answer: boolean) {
+    if (answer) {
+      this.saveSection();
+    }
+    this.saveModal = false;
+    addModalStyle(this.renderer);
+  }
+
+  private throwErrorModal(content: string) {
+    this.errorModalContent = content;
+    this.errorModal = true;
+  }
+
+  handleErrorModal() {
+    this.errorModal = false;
+    addModalStyle(this.renderer);
+  }
+
   handleSuccessModal() {
     this.closeEmitter.emit(true);
+    if (this.edit) {
+      this.editEmitter.emit(this.savedSection.name);
+    }
+    else {
+      this.router.navigateByUrl(`/sections/list/${this.savedSection.id}`)
+    }
     this.successModal = false;
+
+    if (this.currentUser.id) {
+      if (
+        this.userService.getPermission(
+          this.currentUser.limitations || [],
+          Permission.WorkNotifies,
+        )
+      ) {
+        let notify: INotification = nullNotification;
+        if (this.edit) {
+          notify = this.notifyService.buildNotification(
+            'Раздел изменен',
+            `Вы успешно изменили раздел категорий ${this.savedSection.name}`,
+            'success',
+            'category',
+            `/sections/list/${this.savedSection.id}`,
+          );
+        } else {
+          notify = this.notifyService.buildNotification(
+            'Раздел добавлен',
+            `Вы успешно добавили новый раздел категорий «${this.savedSection.name}»`,
+            'success',
+            'category',
+            `/sections/list/${this.savedSection.id}`,
+          );
+        }
+        this.notifyService
+          .sendNotification(notify, this.currentUser.id, true)
+          .subscribe();
+      }
+    }
   }
   handleCloseModal(answer: boolean) {
     if (answer) {
@@ -316,7 +465,24 @@ export class SectionCreatingComponent implements OnInit, OnDestroy {
     this.closeModal = false;
   }
 
+  subscriptions = new Subscription();
   ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
+    this.subscriptions.unsubscribe();
     removeModalStyle(this.renderer);
+  }
+
+  getImageOfSavedSection() {
+    let image = '';
+    const selectedImage = this.form.get('image')?.value;
+    if (this.editedSection.image && selectedImage === 'existing_photo') {
+      image = this.editedSection.image;
+    } else {
+      if (selectedImage) {
+        image = 'image';
+      }
+    }
+    return image;
   }
 }

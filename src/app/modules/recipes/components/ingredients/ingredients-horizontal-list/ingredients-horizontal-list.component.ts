@@ -21,7 +21,8 @@ import { dragStart, dragEnd } from 'src/tools/common';
 export class IngredientsHorizontalListComponent implements OnChanges, OnInit {
   @Input() ingredients: any[] = [];
   @Input() context: 'ingredient' | 'group' = 'ingredient';
-  @Output() editEmitter = new EventEmitter()
+  @Output() editEmitter = new EventEmitter();
+  @Input() preloader: boolean = false;
 
   @ViewChild('list') list: ElementRef | null = null;
   disableDrag = false;
@@ -34,11 +35,40 @@ export class IngredientsHorizontalListComponent implements OnChanges, OnInit {
   @ViewChild('nav', { read: DragScrollComponent }) ds?: DragScrollComponent;
 
   ngOnInit() {
-    this.onResize();
+    
+    if (this.preloader) {
+      const width = window.innerWidth;
+      let blocks = 0;
+      switch (true) {
+        case width < 480:
+          blocks = 3;
+          break;
+        case width > 480 && width <= 700:
+          blocks = 2;
+          break;
+        case width > 700 && width <= 960:
+          blocks = 3;
+          break;
+        case width > 960 && width <= 1400:
+          blocks = 4;
+          break;
+        case width > 1400:
+          blocks = 5;
+          break;
+      }
+      const loadingCategory = { ...nullIngredient, id: -1 };
+      for (let index = 0; index < blocks; index++) {
+        this.ingredients.push(loadingCategory);
+      }
+    }
   }
 
   ngOnChanges() {
-    this.onResize();
+     if (!this.preloader) {
+       this.onResize();
+     } else {
+       this.showScrollButtons = false;
+     }
   }
 
   dragStart(): void {

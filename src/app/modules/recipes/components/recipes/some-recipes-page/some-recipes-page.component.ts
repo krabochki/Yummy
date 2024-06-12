@@ -1,7 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RecipeService } from '../../../services/recipe.service';
-import { IRecipe } from '../../../models/recipes';
+import { IRecipe, RecipeGroup } from '../../../models/recipes';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { IUser, nullUser } from 'src/app/modules/user-pages/models/users';
 import { ICategory, nullCategory } from '../../../models/categories';
@@ -16,12 +16,25 @@ import {
   recipeNoRecipesRouterLinkText,
   recipeTitles,
 } from './consts';
-import { Subject, takeUntil } from 'rxjs';
-import { PlanService } from 'src/app/modules/planning/services/plan-service';
-import { IPlan, nullPlan } from 'src/app/modules/planning/models/plan';
-import { baseComparator } from 'src/tools/common';
+import {
+  EMPTY,
+  Observable,
+  Subject,
+  Subscription,
+  catchError,
+  concatMap,
+  finalize,
+
+  from,
+  last,
+  of,
+  takeUntil,
+  tap,
+} from 'rxjs';
+import {  getFormattedDate } from 'src/tools/common';
 import { IIngredient, nullIngredient } from '../../../models/ingredients';
 import { CategoryService } from '../../../services/category.service';
+import { Permission } from 'src/app/modules/user-pages/components/settings/conts';
 
 @Component({
   templateUrl: './some-recipes-page.component.html',
@@ -32,6 +45,7 @@ import { CategoryService } from '../../../services/category.service';
   animations: [
     trigger('auto-complete', heightAnim()),
     trigger('modal', modal()),
+    trigger('height', heightAnim()),
   ],
 })
 export class SomeRecipesPageComponent implements OnInit, OnDestroy {
@@ -42,70 +56,155 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private title: Title,
     private router: Router,
-    private planService: PlanService,
-    private categoryService:CategoryService
+    private cd: ChangeDetectorRef,
+    private categoryService: CategoryService,
   ) {
-    const matchRecipes =
-      this.router.getCurrentNavigation()?.extras.state?.['recipes'];
-    if (matchRecipes) {
-      this.matchRecipes = matchRecipes;
-    }
+    // const matchRecipes =
+    //   this.router.getCurrentNavigation()?.extras.state?.['recipes'];
+    // if (matchRecipes) {
+    //   this.matchRecipes = matchRecipes;
+    // }
   }
 
-  protected dataLoad: boolean = false;
-  protected creatingMode: boolean = false;
-  protected filter: string = '';
+  moreInfo = false;
 
+  editModal = false;
+  deleteModal = false;
+
+  blocks = Array.from({ length: 6 }).map((_, index) => index + 1);
+
+  protected creatingMode: boolean = false;
+  protected filter: string = 'all';
   ingredient: IIngredient = nullIngredient;
-  protected recipesToShow: IRecipe[] = [];
-  protected allRecipes: IRecipe[] = [];
 
   protected category: ICategory = nullCategory;
 
-  protected recentRecipes: IRecipe[] = [];
-  protected plannedRecipes: IRecipe[] = [];
-  protected popularRecipes: IRecipe[] = [];
-  protected discussedRecipes: IRecipe[] = [];
-  protected commentedRecipes: IRecipe[] = [];
-  protected myRecipes: IRecipe[] = [];
-  protected likedRecipes: IRecipe[] = [];
-  protected cookedRecipes: IRecipe[] = [];
-  protected favoriteRecipes: IRecipe[] = [];
-  protected followingRecipes: IRecipe[] = [];
-  protected mostCooked: IRecipe[] = [];
-  protected mostFavorite: IRecipe[] = [];
-  protected matchRecipes: IRecipe[] = [];
-
-  categories:ICategory[] = []
+  recipesGroups: RecipeGroup[] = [];
 
   protected currentUser: IUser = { ...nullUser };
-  protected searchQuery: string = '';
-  protected autocompleteShow: boolean = false;
-  protected autocomplete: IRecipe[] = [];
-  private allUsers: IUser[] = [];
   protected recipeType: RecipeType = RecipeType.All;
-  private currentUserPlan: IPlan = nullPlan;
 
   private destroyed$: Subject<void> = new Subject<void>();
+  subscriptions = new Subscription();
+
+  minHorizontalLength = 5;
 
   noAccessModalShow = false;
+  recipes: IRecipe[] = [];
+  currentUserId = 0;
+  initialLoading = true;
 
   ngOnInit(): void {
-    this.usersInit();
+    const screenWidth = window.innerWidth;
 
+    if (screenWidth <= 768) {
+      this.RECIPES_PER_STEP = 4;
+      this.minHorizontalLength = 3;
+    } else if (screenWidth <= 1200) {
+      this.minHorizontalLength = 4;
+
+      this.RECIPES_PER_STEP = 6;
+    } else {
+      this.minHorizontalLength = 5;
+    }
     this.route.data.subscribe((data) => {
-      this.filter = data['filter'];
-      if (this.filter === 'matching' && this.matchRecipes.length === 0)
-        this.router.navigateByUrl('/recipes');
-      this.setRecipeType(this.filter);
+      this.subscriptions.add(
+        this.authService.getTokenUser()
+          .pipe(takeUntil(this.destroyed$))
+          .subscribe((receivedUser) => {
+          this.currentUserId = receivedUser.id;
 
-      this.currentUserInit(
-        data['CategoryResolver'],
-        data['IngredientResolver'],
+          this.currentUserRole = receivedUser.role;
+          window.scrollTo(0, 0);
+
+          this.recipes = [];
+          this.filter = data['filter'];
+            this.setRecipeType(this.filter);
+            
+          this.recipeSourceInit(
+            data['CategoryResolver'],
+            data['IngredientResolver'],
+          );          this.initialLoading = false;
+
+                      this.loaded = false;
+
+          this.currentUserInit();
+
+          this.cd.markForCheck();
+        }));
+    });
+  }
+
+  currentUserRole = 'user';
+
+  getDate(date: string) {
+    return getFormattedDate(date);
+  }
+
+  handleDeleteModal(answer: boolean) {
+    if (answer) {
+      this.deleteCategory();
+    }
+    this.deleteModal = false;
+  }
+
+  deleteCategory() {
+    this.awaitModal = true;
+
+    const deleteCategory$ = this.categoryService
+      .deleteCategory(this.category.id)
+      .pipe(
+        catchError(() => {
+          this.throwErrorModal(
+            'Произошла ошибка при попытке удалить категорию',
+          );
+          return EMPTY;
+        }),
       );
 
-      this.dataLoad = true;
-    });
+    const deleteImage$: Observable<any> = this.categoryService
+      .deleteImage(this.category.id)
+      .pipe(
+        catchError(() => {
+          this.throwErrorModal(
+            'Произошла ошибка при попытке удалить файл изображения категории',
+          );
+          return EMPTY;
+        }),
+      );
+
+    deleteImage$
+      .pipe(
+        concatMap(() => deleteCategory$),
+        finalize(() => {
+          this.awaitModal = false;
+          this.cd.markForCheck();
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.successDeleteModal = true;
+        },
+      });
+  }
+
+  throwErrorModal(content: string) {
+    this.errorModalContent = content;
+    this.errorModal = true;
+  }
+
+  awaitModal = false;
+  errorModalContent = '';
+  successDeleteModal = false;
+  errorModal = false;
+
+  handleErrorModal() {
+    this.errorModal = false;
+  }
+
+  handleSuccessDeleteModal() {
+    this.successDeleteModal = false;
+    this.router.navigateByUrl('/categories');
   }
 
   handleNoAccessModal(event: boolean) {
@@ -116,10 +215,12 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
   }
 
   createRecipeButtonClick() {
-    if (this.currentUser.id > 0) {
-      this.creatingMode = true;
-    } else {
-      this.noAccessModalShow = true;
+    if (!this.initialLoading) {
+      if (this.currentUser.id > 0) {
+        this.creatingMode = true;
+      } else {
+        this.noAccessModalShow = true;
+      }
     }
   }
 
@@ -175,233 +276,632 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  showAuthor(recipe: IRecipe): boolean {
-    const author = this.getUser(recipe.authorId);
-    return !this.recipeService.hideAuthor(this.currentUser, author);
+  showCategoryButtons() {
+    return this.userService.getPermission(
+      this.currentUser.limitations || [],
+      Permission.CategoryManagingButtons,
+    );
   }
 
-  private categoryInit(categoryFromData: ICategory, recipes: IRecipe[]): void {
+  private getRecipesOfAllTypes(): void {
+    if (this.recipeType === RecipeType.All) {
+      const recipes$: Observable<any>[] = [];
+      recipes$.push(this.getCurrentUserRecipes());
+      recipes$.push(this.getCurrentUserPlannedRecipes());
+      recipes$.push(this.getCurrentUserFollowedRecipes());
+      recipes$.push(this.getLikedRecipesOfCurrentUser());
+      recipes$.push(this.getCookedRecipesOfCurrentUser());
+      recipes$.push(this.getCommentedRecipesOfCurrentUser());
+      recipes$.push(this.getFavoriteRecipesOfCurrentUser());
+      recipes$.push(this.getPopularRecipes());
+      recipes$.push(this.getMostRecentRecipes());
+      recipes$.push(this.getMostCommentedRecipes());
+      recipes$.push(this.getMostFavoriteRecipes());
+      recipes$.push(this.getMostCookedRecipes());
+      this.subscriptions.add(from(recipes$)
+        .pipe(
+          takeUntil(this.destroyed$),
+          concatMap((recipe$) => recipe$.pipe(takeUntil(this.destroyed$))),
+          last(),
+          finalize(() => {
+            this.loaded = true;
+            this.cd.markForCheck();
+          }),
+        )
+        .subscribe());
+    } else {
+      this.startRecipesInit();
+    }
+  }
 
-    this.categoryService.categories$.pipe(takeUntil(this.destroyed$)).subscribe(
-      (receivedCategories: ICategory[]) => {
-        this.categories = receivedCategories.filter(c => c.status === 'public')
-      
+  private loadRecipesImages(recipes: IRecipe[]) {
+    recipes.forEach((recipe) => {
+      if (recipe.mainImage) {
+        recipe.imageLoading = true;
 
-        const findedCategory = this.categories.find(category => category.id === categoryFromData.id)
-        if (findedCategory) {
-          this.category = categoryFromData;
-        }
-        else {
-          this.router.navigateByUrl('/sections')
-        }
-
-        const publicAndMyRecipes = this.recipeService.getPublicAndAllMyRecipes(
-          recipes,
-          this.currentUser.id,
-        );
-        this.allRecipes = this.recipeService.getRecipesByCategory(
-          publicAndMyRecipes,
-          this.category.id,
-        );
-        this.recipesToShow = this.allRecipes.slice(0, 8);
+        this.subscriptions.add(
+          this.recipeService
+            .downloadRecipeImage(recipe.mainImage)
+            .pipe(
+              takeUntil(this.destroyed$),
+              tap((blob) => {
+                recipe.imageURL = URL.createObjectURL(blob);
+              }),
+              finalize(() => {
+                recipe.imageLoading = false;
+                this.cd.markForCheck();
+              }),
+            )
+            .subscribe());
       }
-    )
-   
-  }
-
-  private currentUserPlanInit(): void {
-    this.planService.plans$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((receivedPlans: IPlan[]) => {
-        this.currentUserPlan = this.planService.getPlanByUser(
-          this.currentUser.id,
-          receivedPlans,
-        );
-      });
-  }
-
-  private getRecipesOfAllTypes(allRecipes: IRecipe[]): void {
-    const publicRecipes = this.recipeService.getPublicRecipes(allRecipes);
-    const publicAndAllMyRecipes = this.recipeService.getPublicAndAllMyRecipes(
-      allRecipes,
-      this.currentUser.id,
-    );
-
-    this.allRecipes = publicRecipes;
-    this.recipesToShow = publicRecipes;
-
-    this.popularRecipes = this.recipeService.getPopularRecipes([
-      ...publicRecipes,
-    ]);
-
-    this.plannedRecipes = this.recipeService.getPlannedRecipes(
-      [...publicAndAllMyRecipes],
-      this.currentUserPlan,
-    );
-    this.discussedRecipes = this.recipeService.getMostDiscussedRecipes([
-      ...publicRecipes,
-    ]);
-    this.commentedRecipes = this.recipeService.getCommentedRecipesByUser(
-      [...publicRecipes],
-      this.currentUser.id,
-    );
-    this.mostCooked = this.recipeService.getMostCookedRecipes([
-      ...publicRecipes,
-    ]);
-    this.mostFavorite = this.recipeService.getMostFavoriteRecipes([
-      ...publicRecipes,
-    ]);
-    this.recentRecipes = this.recipeService.getRecentRecipes([
-      ...this.allRecipes,
-    ]);
-    this.cookedRecipes = this.recipeService.getCookedRecipesByUser(
-      [...this.allRecipes],
-      this.currentUser.id,
-    );
-    this.likedRecipes = this.recipeService.getLikedRecipesByUser(
-      [...this.allRecipes],
-      this.currentUser.id,
-    );
-    this.favoriteRecipes = this.recipeService.getFavoriteRecipesByUser(
-      [...this.allRecipes],
-      this.currentUser.id,
-    );
-
-    this.myRecipes = this.recipeService.getRecipesByUser(
-      [...allRecipes],
-      this.currentUser.id,
-    );
-
-    this.followingRecipes = this.getFollowingRecipes(publicRecipes);
-    this.followingRecipes = this.followingRecipes.filter((r) => {
-      return this.currentUser.role === 'user' ||
-        this.getUser(r.authorId).role === 'admin'
-        ? this.userService.getPermission(
-            'hide-author',
-            this.getUser(r.authorId),
-          )
-        : true;
     });
   }
 
-  private setRecipesByType(): void {
-    switch (this.recipeType) {
-      case RecipeType.Planning:
-        this.allRecipes = this.plannedRecipes;
-        break;
-      case RecipeType.Match:
-        this.allRecipes = this.matchRecipes;
-        break;
-      case RecipeType.Discussed:
-        this.allRecipes = this.discussedRecipes;
-        break;
-      case RecipeType.MostCooked:
-        this.allRecipes = this.mostCooked;
-        break;
-      case RecipeType.MostFavorite:
-        this.allRecipes = this.mostFavorite;
-        break;
-      case RecipeType.Popular:
-        this.allRecipes = this.popularRecipes;
-        break;
-      case RecipeType.Updates:
-        this.allRecipes = this.followingRecipes;
-        break;
-      case RecipeType.Recent:
-        this.allRecipes = this.recentRecipes;
-        break;
-      case RecipeType.My:
-        this.allRecipes = this.myRecipes;
-        break;
-      case RecipeType.Favorite:
-        this.allRecipes = this.favoriteRecipes;
-        break;
-      case RecipeType.Commented:
-        this.allRecipes = this.commentedRecipes;
-        break;
-      case RecipeType.Liked:
-        this.allRecipes = this.likedRecipes;
-        break;
-      case RecipeType.Cooked:
-        this.allRecipes = this.cookedRecipes;
-        break;
-      case RecipeType.All:
-        this.allRecipes = this.allRecipes.filter(
-          (r) => r.authorId !== this.currentUser.id,
-        );
-        this.allRecipes = [...this.allRecipes, ...this.myRecipes];
-        break;
+  updateCategoryAfterEdit(name:string) {
+    this.category = { ...this.category, name: name };
+            this.title.setTitle(this.category.name);
+            this.cd.markForCheck();
+
+  }
+
+  get searchType() {
+    if (this.recipeType === RecipeType.All) {
+      if (this.currentUserId) {
+        return 'public-and-my-recipes';
+      } else {
+        return 'public-recipes';
+      }
+    } else {
+      switch (this.recipeType) {
+        case RecipeType.Recent:
+          return 'public-recipes';
+        case RecipeType.Popular:
+          return 'public-recipes';
+
+        case RecipeType.My:
+          return 'my-recipes';
+
+        case RecipeType.Favorite:
+          return 'favorite-recipes';
+
+        case RecipeType.Category:
+          return 'category-recipes';
+        case RecipeType.Liked:
+          return 'liked-recipes';
+
+        case RecipeType.Cooked:
+          return 'cooked-recipes';
+        case RecipeType.Match:
+          return '';
+        case RecipeType.Updates:
+          return 'following-recipes';
+        case RecipeType.Discussed:
+          return 'discussed-recipes';
+        case RecipeType.Commented:
+          return 'commented-recipes';
+        case RecipeType.Planning:
+          return 'planned-recipes';
+        case RecipeType.MostCooked:
+          return 'public-recipes';
+        case RecipeType.MostFavorite:
+          return 'public-recipes';
+
+        case RecipeType.ByIngredient:
+          return 'recipes-by-ingredient';
+      }
     }
   }
-  private sliceAllRecipes(): void {
-    this.popularRecipes = this.popularRecipes.slice(0, 8);
-    this.plannedRecipes = this.plannedRecipes.slice(0, 8);
-    this.recentRecipes = this.recentRecipes.slice(0,8)
-    this.discussedRecipes = this.discussedRecipes.slice(0, 8);
-    this.mostCooked = this.mostCooked.slice(0, 8);
-    this.commentedRecipes = this.commentedRecipes.slice(0, 8);
-    this.mostFavorite = this.mostFavorite.slice(0, 8);
-    this.cookedRecipes = this.cookedRecipes.slice(0, 8);
-    this.likedRecipes = this.likedRecipes.slice(0, 8);
-    this.favoriteRecipes = this.favoriteRecipes.slice(0, 8);
-    this.myRecipes = this.myRecipes.slice(0, 8);
-    this.followingRecipes = this.followingRecipes.slice(0, 8);
+
+  startRecipesInit() {
+    this.currentStep = 0;
+    this.everythingLoaded = false;
+    this.recipes = [];
+    this.loadMoreRecipes();
+  }
+
+  private getCurrentUserPlannedRecipes() {
+    if (this.currentUserId)
+      return this.recipeService.getSomeUserPlannedRecipes(8, 0).pipe(
+        tap((response) => {
+          const recipes: IRecipe[] = response.recipes;
+          const newRecipes: IRecipe[] = recipes.filter((recipe) => {
+            return !this.recipes.some(
+              (existingRecipe) => existingRecipe.id === recipe.id,
+            );
+          });
+          const recipesIds = recipes.map((recipe) => recipe.id);
+          const group: RecipeGroup = {
+            name: 'Вы запланировали эти рецепты',
+            link: '/recipes/planned',
+            recipes: recipesIds,
+            auth: true,
+          };
+          this.recipesGroups.push(group);
+          this.loadRecipesImages(newRecipes);
+          this.blocks.pop();
+          this.recipes = [...newRecipes, ...this.recipes];
+          this.cd.markForCheck();
+        }),
+      );
+    else return of(null);
+  }
+
+  private getCurrentUserFollowedRecipes() {
+    if (this.currentUserId)
+      return this.recipeService.getSomeUserFollowedRecipes(8, 0).pipe(
+        tap((response) => {
+          const recipes: IRecipe[] = response.recipes;
+          const newRecipes: IRecipe[] = recipes.filter((recipe) => {
+            return !this.recipes.some(
+              (existingRecipe) => existingRecipe.id === recipe.id,
+            );
+          });
+          const recipesIds = recipes.map((recipe) => recipe.id);
+          const group: RecipeGroup = {
+            name: 'Обновления любимых кулинаров',
+            link: '/recipes/updates',
+            recipes: recipesIds,
+            auth: true,
+          };
+          this.recipesGroups.push(group);
+          this.blocks.pop();
+          this.loadRecipesImages(newRecipes);
+          this.recipes = [...newRecipes, ...this.recipes];
+          this.cd.markForCheck();
+        }),
+      );
+    else return of(null);
+  }
+  private getCurrentUserRecipes(): Observable<any> {
+    if (this.currentUserId) {
+      return this.recipeService.getSomeRecipesByUser(8, 0).pipe(
+        tap((response) => {
+          const recipes: IRecipe[] = response.recipes;
+          const newRecipes: IRecipe[] = recipes.filter((recipe) => {
+            return !this.recipes.some(
+              (existingRecipe) => existingRecipe.id === recipe.id,
+            );
+          });
+
+          this.blocks.pop();
+
+          const recipesIds = recipes.map((recipe) => recipe.id);
+          const group: RecipeGroup = {
+            name: 'Ваши рецепты',
+            link: '/recipes/yours',
+            recipes: recipesIds,
+            auth: true,
+          };
+          this.recipesGroups.push(group);
+          this.loadRecipesImages(newRecipes);
+          this.recipes = [...newRecipes, ...this.recipes];
+          this.cd.markForCheck();
+        }),
+      );
+    } else {
+      return of(null);
+    }
+  }
+
+  private getFavoriteRecipesOfCurrentUser() {
+    if (this.currentUserId)
+      return this.recipeService.getSomeUserFavoriteRecipes(8, 0).pipe(
+        tap((response) => {
+          const recipes: IRecipe[] = response.recipes;
+          const newRecipes: IRecipe[] = recipes.filter((recipe) => {
+            return !this.recipes.some(
+              (existingRecipe) => existingRecipe.id === recipe.id,
+            );
+          });
+          const recipesIds = recipes.map((recipe) => recipe.id);
+          const group: RecipeGroup = {
+            name: 'Ваши закладки',
+            link: '/recipes/favorite',
+            recipes: recipesIds,
+            auth: true,
+          };
+          this.recipesGroups.push(group);
+          this.blocks.pop();
+          this.loadRecipesImages(newRecipes);
+          this.recipes = [...newRecipes, ...this.recipes];
+          this.cd.markForCheck();
+        }),
+      );
+    else return of(null);
+  }
+
+  private getLikedRecipesOfCurrentUser() {
+    if (this.currentUserId)
+      return this.recipeService.getSomeUserLikedRecipes(8, 0).pipe(
+        tap((response) => {
+          const recipes: IRecipe[] = response.recipes;
+          const newRecipes: IRecipe[] = recipes.filter((recipe) => {
+            return !this.recipes.some(
+              (existingRecipe) => existingRecipe.id === recipe.id,
+            );
+          });
+
+          const recipesIds = recipes.map((recipe) => recipe.id);
+          const group: RecipeGroup = {
+            name: 'Вам понравились эти рецепты',
+            link: '/recipes/liked',
+            recipes: recipesIds,
+            auth: true,
+          };
+          this.recipesGroups.push(group);
+          this.blocks.pop();
+          this.loadRecipesImages(newRecipes);
+
+          this.recipes = [...newRecipes, ...this.recipes];
+          this.cd.markForCheck();
+        }),
+      );
+    else return of(null);
+  }
+
+  private getCommentedRecipesOfCurrentUser() {
+    if (this.currentUserId)
+      return this.recipeService.getSomeUserCommentedRecipes(8, 0).pipe(
+        tap((response) => {
+          const recipes: IRecipe[] = response.recipes;
+          const newRecipes: IRecipe[] = recipes.filter((recipe) => {
+            return !this.recipes.some(
+              (existingRecipe) => existingRecipe.id === recipe.id,
+            );
+          });
+          const recipesIds = recipes.map((recipe) => recipe.id);
+          const group: RecipeGroup = {
+            name: 'Вы прокомментировали эти рецепты',
+            link: '/recipes/commented',
+            recipes: recipesIds,
+            auth: true,
+          };
+          this.recipesGroups.push(group);
+          this.blocks.pop();
+          this.loadRecipesImages(newRecipes);
+          this.recipes = [...newRecipes, ...this.recipes];
+          this.cd.markForCheck();
+        }),
+      );
+    else return of(null);
+  }
+
+  private getCookedRecipesOfCurrentUser() {
+    if (this.currentUserId)
+      return this.recipeService.getSomeUserCookedRecipes(8, 0).pipe(
+        tap((response) => {
+          const recipes: IRecipe[] = response.recipes;
+          const newRecipes: IRecipe[] = recipes.filter((recipe) => {
+            return !this.recipes.some(
+              (existingRecipe) => existingRecipe.id === recipe.id,
+            );
+          });
+
+          const recipesIds = recipes.map((recipe) => recipe.id);
+          const group: RecipeGroup = {
+            name: 'Вы приготовили эти рецепты',
+            link: '/recipes/cooked',
+            recipes: recipesIds,
+            auth: true,
+          };
+          this.recipesGroups.push(group);
+          this.blocks.pop();
+          this.loadRecipesImages(newRecipes);
+
+          this.recipes = [...newRecipes, ...this.recipes];
+          this.cd.markForCheck();
+        }),
+      );
+    else return of(null);
+  }
+
+  private getMostRecentRecipes() {
+    return this.recipeService.getSomeMostRecentRecipes(8, 0).pipe(
+      tap((response) => {
+        const recipes: IRecipe[] = response.recipes;
+
+        const newRecipes: IRecipe[] = recipes.filter((recipe) => {
+          return !this.recipes.some(
+            (existingRecipe) => existingRecipe.id === recipe.id,
+          );
+        });
+
+        const recipesIds = recipes.map((recipe) => recipe.id);
+        const group: RecipeGroup = {
+          name: 'Самые свежие рецепты',
+          link: '/recipes/recent',
+          recipes: recipesIds,
+          auth: false,
+        };
+        this.recipesGroups.push(group);
+        this.blocks.pop();
+        this.loadRecipesImages(newRecipes);
+        this.recipes = [...newRecipes, ...this.recipes];
+        this.cd.markForCheck();
+      }),
+    );
+  }
+  private getPopularRecipes() {
+    return this.recipeService.getSomePopularRecipes(8, 0).pipe(
+      tap((response) => {
+        const recipes: IRecipe[] = response.recipes;
+        const recipesIds = recipes.map((recipe) => recipe.id);
+        const group: RecipeGroup = {
+          name: 'Популярные рецепты',
+          link: '/recipes/best',
+          recipes: recipesIds,
+          auth: false,
+        };
+        this.recipesGroups.push(group);
+
+        const newRecipes: IRecipe[] = recipes.filter((recipe) => {
+          return !this.recipes.some(
+            (existingRecipe) => existingRecipe.id === recipe.id,
+          );
+        });
+        this.blocks.pop();
+        this.loadRecipesImages(newRecipes);
+
+        this.recipes = [...newRecipes, ...this.recipes];
+        this.cd.markForCheck();
+      }),
+    );
+  }
+
+  getRecipesByGroup(name: string) {
+    const group = this.recipesGroups.find((g) => g.name === name);
+    if (group) {
+      return group.recipes
+        .map((recipeId) => this.recipes.find((r) => r.id === recipeId))
+        .filter((recipe) => !!recipe) as IRecipe[]; // Фильтруем undefined и приводим к типу Irecipe
+    } else return [];
+  }
+
+  private getMostCommentedRecipes() {
+    return this.recipeService.getMostCommentedRecipes(8, 0).pipe(
+      tap((response) => {
+        const recipes: IRecipe[] = response.recipes;
+        const newRecipes: IRecipe[] = recipes.filter((recipe) => {
+          return !this.recipes.some(
+            (existingRecipe) => existingRecipe.id === recipe.id,
+          );
+        });
+
+        const recipesIds = recipes.map((recipe) => recipe.id);
+        const group: RecipeGroup = {
+          name: 'Комментируют чаще всего',
+          link: '/recipes/most-discussed',
+          recipes: recipesIds,
+          auth: false,
+        };
+        this.recipesGroups.push(group);
+        this.loadRecipesImages(newRecipes);
+
+        this.recipes = [...newRecipes, ...this.recipes];
+        this.blocks.pop();
+        this.cd.markForCheck();
+      }),
+    );
+  }
+  private getMostCookedRecipes() {
+    return this.recipeService.getSomeMostCookedRecipes(8, 0).pipe(
+      tap((response) => {
+        const recipes: IRecipe[] = response.recipes;
+        const newRecipes: IRecipe[] = recipes.filter((recipe) => {
+          return !this.recipes.some(
+            (existingRecipe) => existingRecipe.id === recipe.id,
+          );
+        });
+        const recipesIds = recipes.map((recipe) => recipe.id);
+        const group: RecipeGroup = {
+          name: 'Готовят чаще всего',
+          link: '/recipes/most-cooked',
+          recipes: recipesIds,
+          auth: false,
+        };
+        this.recipesGroups.push(group);
+        this.loadRecipesImages(newRecipes);
+
+        this.recipes = [...newRecipes, ...this.recipes];
+        this.blocks.pop();
+        this.cd.markForCheck();
+      }),
+    );
+  }
+
+  private getMostFavoriteRecipes() {
+    return this.recipeService.getSomeMostFavoriteRecipes(8, 0).pipe(
+      tap((response) => {
+        const recipes: IRecipe[] = response.recipes;
+        const newRecipes: IRecipe[] = recipes.filter((recipe) => {
+          return !this.recipes.some(
+            (existingRecipe) => existingRecipe.id === recipe.id,
+          );
+        });
+        const recipesIds = recipes.map((recipe) => recipe.id);
+        const group: RecipeGroup = {
+          name: 'Сохраняют чаще всего',
+          link: '/recipes/most-favorite',
+          recipes: recipesIds,
+          auth: false,
+        };
+        this.recipesGroups.push(group);
+        this.loadRecipesImages(recipes);
+        this.blocks.pop();
+
+        this.recipes = [...newRecipes, ...this.recipes];
+        this.cd.markForCheck();
+      }),
+    );
+  }
+
+  loaded: boolean = false;
+  RECIPES_PER_STEP = 8;
+  everythingLoaded: boolean = false;
+  currentStep = 0;
+
+  loadMoreRecipes() {
+    if (this.loaded || !this.recipes.length) {
+      this.loaded = false;
+      let context: Observable<any> = EMPTY;
+
+      switch (this.recipeType) {
+        case RecipeType.Planning:
+          context = this.recipeService.getSomeUserPlannedRecipes(
+            this.RECIPES_PER_STEP,
+            this.currentStep,
+          );
+          break;
+        case RecipeType.ByIngredient:
+          context = this.recipeService.getSomeRecipesByIngredient(
+            this.RECIPES_PER_STEP,
+            this.currentStep,
+            this.ingredient.id,
+          );
+          break;
+        case RecipeType.Category:
+          context = this.recipeService.getSomeRecipesByCategory(
+            this.RECIPES_PER_STEP,
+            this.currentStep,
+            this.category.id,
+          );
+          break;
+        case RecipeType.Match:
+          break;
+        case RecipeType.Discussed:
+          context = this.recipeService.getMostCommentedRecipes(
+            this.RECIPES_PER_STEP,
+            this.currentStep,
+          );
+          break;
+        case RecipeType.MostCooked:
+          context = this.recipeService.getSomeMostCookedRecipes(
+            this.RECIPES_PER_STEP,
+            this.currentStep,
+          );
+          break;
+        case RecipeType.MostFavorite:
+          context = this.recipeService.getSomeMostFavoriteRecipes(
+            this.RECIPES_PER_STEP,
+            this.currentStep,
+          );
+          break;
+        case RecipeType.Popular:
+          context = this.recipeService.getSomePopularRecipes(
+            this.RECIPES_PER_STEP,
+            this.currentStep,
+          );
+          break;
+        case RecipeType.Updates:
+          context = this.recipeService.getSomeUserFollowedRecipes(
+            this.RECIPES_PER_STEP,
+            this.currentStep,
+          );
+          break;
+        case RecipeType.Recent:
+          context = this.recipeService.getSomeMostRecentRecipes(
+            this.RECIPES_PER_STEP,
+            this.currentStep,
+          );
+          break;
+        case RecipeType.My:
+          context = this.recipeService.getSomeRecipesByUser(
+            this.RECIPES_PER_STEP,
+            this.currentStep,
+          );
+          break;
+        case RecipeType.Favorite:
+          context = this.recipeService.getSomeUserFavoriteRecipes(
+            this.RECIPES_PER_STEP,
+            this.currentStep,
+          );
+          break;
+        case RecipeType.Commented:
+          context = this.recipeService.getSomeUserCommentedRecipes(
+            this.RECIPES_PER_STEP,
+            this.currentStep,
+          );
+          break;
+        case RecipeType.Liked:
+          context = this.recipeService.getSomeUserLikedRecipes(
+            this.RECIPES_PER_STEP,
+            this.currentStep,
+          );
+          break;
+        case RecipeType.Cooked:
+          context = this.recipeService.getSomeUserCookedRecipes(
+            this.RECIPES_PER_STEP,
+            this.currentStep,
+          );
+          break;
+      }
+      this.subscriptions.add(
+        context
+          .pipe(
+            takeUntil(this.destroyed$),
+            tap((response: any) => {
+              const length: number = response.count;
+              const receivedRecipes: IRecipe[] = response.recipes;
+              const newRecipes: IRecipe[] = receivedRecipes.filter((recipe) => {
+                return !this.recipes.some(
+                  (existingRecipe) => existingRecipe.id === recipe.id,
+                );
+              });
+
+              this.currentStep++;
+
+              this.recipes = [...this.recipes, ...newRecipes];
+              this.loaded = true;
+              if (length <= this.recipes.length) {
+                this.everythingLoaded = true;
+              }
+              this.loadRecipesImages(newRecipes);
+              this.cd.markForCheck();
+            }),
+          )
+          .subscribe());
+    }
   }
 
   private recipeSourceInit(
     categoryFromData: ICategory,
     ingredientFromData: IIngredient,
   ): void {
-    this.recipeService.recipes$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((receivedRecipes: IRecipe[]) => {
-        if (this.recipeType === RecipeType.Category) {
-          this.categoryInit(categoryFromData, receivedRecipes);
-          return;
-        }
-        if (this.recipeType === RecipeType.ByIngredient) {
-          this.ingredient = ingredientFromData;
-          this.allRecipes = this.recipeService.getRecipesByIngredient(
-            this.recipeService.getPublicAndAllMyRecipes(
-              receivedRecipes,
-              this.currentUser.id,
-            ),
-            ingredientFromData,
-          );
-          this.recipesToShow = this.allRecipes.slice(0, 8);
-        } else {
-          this.currentUserPlanInit();
-          this.getRecipesOfAllTypes(receivedRecipes);
-          this.setRecipesByType();
-          if (this.recipeType === RecipeType.All) {
-            this.sliceAllRecipes();
-          } else {
-            this.recipesToShow = this.allRecipes.slice(0, 8);
-          }
-        }
-      });
+    if (this.recipeType === RecipeType.Category) {
+      this.category = categoryFromData;
+      this.subscriptions.add(
+        this.categoryService
+          .getCategory(this.category.id)
+          .pipe(
+            takeUntil(this.destroyed$),
+            tap((categories: any) => {
+              const category = categories[0];
+              this.category = category;
+              this.title.setTitle(category.name);
+
+              this.startRecipesInit();
+            }),
+          )
+          .subscribe());
+      return;
+    }
+
+    if (this.recipeType === RecipeType.ByIngredient) {
+      this.ingredient = ingredientFromData;
+    }
+
+    this.getRecipesOfAllTypes();
 
     this.title.setTitle(this.getTitleByRecipeType(this.recipeType));
   }
 
-  private usersInit(): void {
-    this.userService.users$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((data) => {
-        this.allUsers = data;
-      });
-  }
-
-  private currentUserInit(
-    categoryFromData: ICategory,
-    ingredientFromData: IIngredient,
-  ): void {
-    this.authService.currentUser$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((user: IUser) => {
-        this.currentUser = user;
-        this.recipeSourceInit(categoryFromData, ingredientFromData);
-      });
+  private currentUserInit(): void {
+    this.subscriptions.add(
+      this.authService.currentUser$
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe((user: IUser) => {
+          this.currentUser = user;
+        }));
   }
 
   protected getTitleByRecipeType(recipeType: RecipeType): string {
@@ -415,7 +915,7 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
   }
   protected getNoRecipesTextByRecipetype(recipeType: RecipeType): string {
     if (recipeType === RecipeType.ByIngredient) {
-      return `Ни один кулинар пока что не создал рецепт с ингредиентом «${this.ingredient.name}». Можете создать рецепт сами или перейти ко всем ингредиентам`;
+      return `Ни один кулинар пока что не создал рецепт с ингредиентом «${this.ingredient.name}». Можете перейти ко всем ингредиентам и поискать рецепт с чем-нибудь другим`;
     }
     return recipeNoRecipesText[recipeType] || '';
   }
@@ -432,76 +932,9 @@ export class SomeRecipesPageComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl(link);
   }
 
-  protected loadMoreRecipes() {
-    const currentLength = this.recipesToShow.length;
-    const nextRecipes = this.allRecipes.slice(currentLength, currentLength + 4);
-    this.recipesToShow = [...this.recipesToShow, ...nextRecipes];
-  }
-
-  private getFollowingRecipes(recipes: IRecipe[]): IRecipe[] {
-    const currentUserFollowings: IUser[] = this.userService.getFollowing(
-      this.allUsers,
-      this.currentUser.id,
-    );
-    let followingRecipes: IRecipe[] = [];
-
-    currentUserFollowings.forEach((following) => {
-      let foundRecipes = this.recipeService.getRecipesByUser(
-        recipes,
-        following.id,
-      );
-      foundRecipes = this.recipeService.getRecentRecipes(foundRecipes);
-      followingRecipes = [...followingRecipes, ...foundRecipes];
-    });
-
-    followingRecipes = followingRecipes.sort((a, b) =>
-      baseComparator(b.publicationDate, a.publicationDate),
-    );
-
-    return followingRecipes;
-  }
-
-  protected getUser(userId: number): IUser {
-    const finded = this.allUsers.find((user) => user.id === userId);
-    if (finded) return finded;
-    return { ...nullUser };
-  }
-
-  protected focus(): void {
-    if (this.searchQuery !== '') {
-      this.autocompleteShow = true;
-    }
-  }
-  protected blur(): void {
-    this.autocompleteShow = false;
-  }
-  protected search(): void {
-    this.autocompleteShow = true;
-    const recipeAuthors: IUser[] = [];
-    this.allRecipes.forEach((element) => {
-      recipeAuthors.push(this.getUser(element.authorId));
-    });
-    if (this.searchQuery && this.searchQuery !== '') {
-      this.autocomplete = [];
-
-      const search = this.searchQuery.toLowerCase().replace(/\s/g, '');
-
-      const filterRecipes: IRecipe[] = this.allRecipes.filter(
-        (recipe: IRecipe) =>
-          recipe.name.toLowerCase().replace(/\s/g, '').includes(search),
-      );
-
-      filterRecipes.forEach((element) => {
-        this.autocomplete.push(element);
-      });
-      this.autocomplete = this.autocomplete.sort((a, b) =>
-        baseComparator(a.name, b.name),
-      );
-    } else this.autocompleteShow = false;
-  }
-
   public ngOnDestroy(): void {
     this.destroyed$.next();
     this.destroyed$.complete();
+    this.subscriptions.unsubscribe();
   }
 }

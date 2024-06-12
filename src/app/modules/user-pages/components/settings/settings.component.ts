@@ -10,329 +10,424 @@ import {
   Output,
   Renderer2,
 } from '@angular/core';
-import { IPermission, PermissionContext } from '../../models/users';
-import { modal } from 'src/tools/animations';
+import { heightAnim, modal } from 'src/tools/animations';
 import { IUser, nullUser } from '../../models/users';
 import { AuthService } from 'src/app/modules/authentication/services/auth.service';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
-import { RecipeService } from 'src/app/modules/recipes/services/recipe.service';
-import { PlanService } from 'src/app/modules/planning/services/plan-service';
-import { IPlan } from 'src/app/modules/planning/models/plan';
-import { IRecipe } from 'src/app/modules/recipes/models/recipes';
 import {
-  condifencialitySettings,
+  Permission,
   managersPreferences,
   sections,
   social,
   steps,
   stepsIcons,
 } from './conts';
-import { Subject, takeUntil } from 'rxjs';
+import {
+  EMPTY,
+  Observable,
+  Subject,
+  Subscription,
+  catchError,
+  finalize,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import { addModalStyle, removeModalStyle } from 'src/tools/common';
+import { ThemeService } from 'src/app/modules/common-pages/services/theme.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { passMask } from 'src/tools/regex';
+import { customPatternValidator } from 'src/tools/validators';
+import { AchievementService } from 'src/app/modules/authentication/components/control-dashboard/achievements/services/achievement.service';
+import { IAchievement, loadingAchievement } from 'src/app/modules/authentication/components/control-dashboard/achievements/models/achievement';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss'],
-  animations: [trigger('modal', modal())],
+  animations: [trigger('modal', modal()), trigger('height', heightAnim())],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsComponent implements OnInit, OnDestroy {
   @Output() closeEmitter: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Input() user: IUser = { ...nullUser };
-
   permissionNotificationSections = sections;
   managersPreferences = managersPreferences;
-  condifencialitySettings = condifencialitySettings;
   stepsIcons = stepsIcons;
 
-  protected permanentIngredient: string = '';
-  protected permanentIngredientTouched = false;
-  protected excludedIngredient: string = '';
-  protected excludedIngredientTouched = false;
-
-  MANAGERS_SETTINGS_BLOCK_NUM = 4;
-
   protected exitModalShow: boolean = false;
-  protected deleteModalShow: boolean = false;
-  protected permanentIngredients: string[] = [];
-  protected excludingIngredients: string[] = [];
 
   protected location: string = '';
 
-  private users: IUser[] = [];
-  private plans: IPlan[] = [];
-  private recipes: IRecipe[] = [];
-  private permissions: IPermission[] = [];
-
-  protected socials: social[] = ['pinterest', 'vk', 'twitter', 'facebook'];
+  protected socials: social[] = ['email', 'telegram', 'vk', 'viber','twitter', 'facebook'];
 
   protected steps = steps;
   protected step: number = 0;
 
   private destroyed$: Subject<void> = new Subject<void>();
+  subscriptions = new Subscription();
 
-  get permanentIngredientExist(): boolean {
-    const formattedIngredients = this.permanentIngredients.map((ingredient) =>
-      ingredient.trim().toLowerCase(),
-    );
-    const formattedIngredient = this.permanentIngredient.trim().toLowerCase();
-    const isIngredientAlreadyAdded =
-      formattedIngredients.includes(formattedIngredient);
-    return isIngredientAlreadyAdded;
-  }
-  get excludedIngredientExist(): boolean {
-    const formattedIngredients = this.excludingIngredients.map((ingredient) =>
-      ingredient.trim().toLowerCase(),
-    );
-    const formattedIngredient = this.excludedIngredient.trim().toLowerCase();
-    const isIngredientAlreadyAdded =
-    formattedIngredients.includes(formattedIngredient);
-    return isIngredientAlreadyAdded;
-  }
+  form: FormGroup;
+  currentUser: IUser = nullUser;
+  errorModal = false;
+  errorText = '';
 
-  get email() {
-    return this.authService.session?.user.email
+  loading = false;
+
+  
+
+  get passwordNotValidError() {
+    return this.form.get('password')?.invalid &&
+      (this.form.get('password')?.dirty || this.form.get('password')?.touched)
+      ? 'Пароль должен содержать от 8 до 20 символов, среди которых как минимум: одна цифра, одна заглавная и строчная буква английского алфавита'
+      : '';
   }
 
   constructor(
     private authService: AuthService,
     private router: Router,
-    private recipeService: RecipeService,
     private renderer: Renderer2,
-    private cd:ChangeDetectorRef,
+    private cd: ChangeDetectorRef,
+    private fb: FormBuilder,
+    private notifyService: NotificationService,
+    private themeService: ThemeService,
     private userService: UserService,
-    private planService: PlanService,
+    private achievementService: AchievementService,
   ) {
     this.location = 'https://' + window.location.host;
+
+    this.form = this.fb.group({
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.maxLength(20),
+          customPatternValidator(passMask),
+        ],
+      ],
+    });
   }
 
   public ngOnInit(): void {
+    this.subscriptions.add(
+      this.authService.currentUser$
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe((user) => {
+          if (user.id !== this.currentUser.id && user.id) {
+            this.subscriptions.add(
+              this.userService
+                .getLimitations()
+                .pipe(
+                  takeUntil(this.destroyed$),
+                  tap((limitations) => {
+                    this.currentUser.limitations = limitations;
+                    this.authService.setCurrentUser(this.currentUser);
+                  }),
+                )
+                .subscribe());
+          }
+          this.currentUser = user;
+        }));
+
     addModalStyle(this.renderer);
-    this.getRecipes();
-    this.getUsers();
-    this.getPlans();
+
   }
 
-  deleteIngredient(context: 'permanent' | 'excluding', ingredient: string) {
-    if (context === 'permanent') {
-      this.permanentIngredients = this.permanentIngredients.filter(
-        (i) => i !== ingredient,
-      );
-      this.user.permanent = this.permanentIngredients;
-    } else {
-      this.excludingIngredients = this.excludingIngredients.filter(
-        (i) => i !== ingredient,
-      );
-      this.user.exclusions = this.excludingIngredients;
+  achievements: IAchievement[] = [];
+  clickNextStep(i: number) {
+    const lastValue = this.step;
+    this.step = i;
+    if (i === 3 && lastValue !== i) {
+      this.achievements = [];
+      this.loadAchievements = true;
+
+      this.loadFirstAchievements();
+
+      //this.getAchievements()
     }
-    this.updateUser(this.user)
   }
 
+  getAchievementSource(achievement: IAchievement): Observable<any> | undefined {
+    
+    return this.achievementService.getAchievementByKind(
+          achievement.kind,
+          achievement.points,
+        );
+
+  }
+
+  getAchievement(achievement: IAchievement) {
+    if (achievement.isAchieved) return;
+    achievement.loading = true;
+    this.achievementService
+      .achieve(achievement.id)
+      .pipe(
+        tap(() => {
+          achievement.isAchieved = true;
+          if (
+            this.userService.getPermission(
+              this.currentUser.limitations || [],
+              Permission.NewAchievement,
+            )
+          ) {
+                      const notify = this.notifyService.buildNotification(
+                        'Новое достижение',
+                        `Вы получили новое достижение «${achievement.title}»`,
+                        'success',
+                        'star',
+                        '',
+                      );
+              this.notifyService
+                .sendNotification(notify, this.currentUser.id, true)
+                .subscribe();
+          }
+
+          achievement.loading = false;
+        
+          this.cd.markForCheck();
+        }),
+        catchError(() => {
+          return EMPTY;
+        }),
+      )
+      .subscribe();
+  }
+  loadAchievements = true;
+
+  totalAchievements = 0;
+
+  loadFirstAchievements() {
+    this.loadAchievements = true;
+    this.pushPreloaders(10);
+    this.subscriptions.add(
+      this.achievementService
+        .getSomeUserAchievements(0, 10)
+        .pipe(takeUntil(this.destroyed$))
+        .subscribe((data) => {
+          this.achievements = data.achievements;
+          this.loadAchievementsInfo(this.achievements);
+          this.totalAchievements = data.total;
+          this.loadAchievements = false;
+          this.filterPreloader();
+          this.cd.markForCheck();
+        }));
+  }
+
+  filterPreloader() {
+    this.achievements = this.achievements.filter((n) => n.id);
+    this.cd.markForCheck();
+  }
+
+  pushPreloaders(n: number) {
+
+     for (let index = 0; index < n; index++) {
+       this.achievements.push(loadingAchievement);
+     }
+     this.cd.markForCheck();
+  }
+
+  onScroll(event: any) {
+    const element = event.target;
+    const atBottom =
+      element.scrollHeight - element.scrollTop - 2 <= element.clientHeight;
+
+    if (
+      atBottom &&
+      !this.loading &&
+      this.achievements.length < this.totalAchievements
+    ) {
+      this.loadAchievements = true;
+      const offset = this.achievements.length;
+      const limit = 10;
+
+      const waitingForLoading =
+        this.totalAchievements - this.achievements.length;
+      this.pushPreloaders(waitingForLoading < 10 ? waitingForLoading : 10);
+      setTimeout(() => {
+        this.subscriptions.add(
+          this.achievementService
+            .getSomeUserAchievements(offset, limit)
+            .pipe(takeUntil(this.destroyed$))
+            .subscribe((data) => {
+              this.achievements = this.achievements.concat(data.achievements);
+              this.loadAchievementsInfo(data.achievements);
+
+              this.loadAchievements = false;
+              this.filterPreloader();
+              this.cd.markForCheck();
+            }),
+        );
+      }, 300);
+
+      // Прокрутка достигла нижнего края, загружаем дополнительные уведомления
+    }
+  }
+  offset = 0;
+  limit = 6;
+
+
+  loadIcon(achievement: IAchievement) {
+    if (achievement.iconPath) {
+
+      this.subscriptions.add(
+        this.achievementService
+          .downloadImage(achievement.iconPath)
+          .pipe(
+            takeUntil(this.destroyed$),
+            tap((blob) => {
+              if (blob) {
+                achievement.iconUrl = URL.createObjectURL(blob);
+              }
+            }),
+            catchError(() => {
+              return EMPTY;
+            }),
+          )
+          .subscribe());
+    }
+  }
+  loadAchievementsInfo(achievements: IAchievement[]) {
+    achievements.forEach((achievement) => {
+            achievement.loading = true;
+
+        this.loadIcon(achievement)
+      
+      const source = this.getAchievementSource(achievement);
+      if (source && !achievement.isAchieved) {
+        this.subscriptions.add(
+          source.pipe(takeUntil(this.destroyed$)).subscribe((response) => {
+            achievement.loading = false;
+            achievement.progress = response.progress;
+            achievement.completionPercentage = response.completionPercentage;
+            achievement.isScoreExceeded = response.isScoreExceeded;
+            this.cd.markForCheck();
+          }));
+      }
+      else {
+        achievement.loading = false;
+      }
+    });
+  }
+
+  getAchievements() {
+    this.subscriptions.add(
+    this.achievementService
+        .getUserAchievements()
+        .pipe(takeUntil(this.destroyed$))
+      .subscribe((achievements: IAchievement[]) => {
+        achievements.map((a: IAchievement) => (a.loading = true));
+        this.loadAchievements = false;
+
+        this.achievements = achievements;
+        this.cd.markForCheck();
+
+        achievements.forEach((achievement: IAchievement) => {
+          
+          this.loadIcon(achievement);
+          const source = this.getAchievementSource(achievement);
+          if (source && !achievement.isAchieved) {
+            this.subscriptions.add(source
+              .pipe(takeUntil(this.destroyed$))
+              .subscribe((response) => {
+              achievement.loading = false;
+              achievement.progress = response.progress;
+              achievement.completionPercentage = response.completionPercentage;
+              achievement.isScoreExceeded = response.isScoreExceeded;
+              this.cd.markForCheck();
+            }));
+          }
+        });
+      }))
+  }
+
+  titleForPercents(achievement: IAchievement) {
+    if (achievement.isAchieved || achievement.isScoreExceeded) return '';
+
+    return `${achievement.progress}/${achievement.points}`;
+  }
   showBlock(i: number) {
-    if (this.user.role === 'user' && i === this.MANAGERS_SETTINGS_BLOCK_NUM)
-      return false;
+    if (this.user.role === 'user' && i === 4) return false;
     return true;
   }
 
-  protected addPermanentIngredient(): void {
-    if (!this.user.permanent) this.user.permanent = [];
-    this.user.permanent.push(this.permanentIngredient);
-    this.updateUser(this.user)
-    this.permanentIngredientTouched = false;
-    this.permanentIngredient = '';
-  }
 
-  protected addExcludedIngredient(): void {
-    if (!this.user.exclusions) this.user.exclusions = [];
-    this.user.exclusions.push(this.excludedIngredient);
-    this.updateUser(this.user)
-    this.excludedIngredientTouched = false;
-    this.excludedIngredient = '';
-  }
-
-  private getPlans(): void {
-    this.planService.plans$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((receivedPlans: IPlan[]) => (this.plans = receivedPlans));
-  }
-
-  private getRecipes(): void {
-    this.recipeService.recipes$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe(
-        (receivedRecipes: IRecipe[]) => (this.recipes = receivedRecipes),
-      );
-  }
-
-  private getUsers(): void {
-    this.userService.users$
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((receivedUsers: IUser[]) => {
-        this.users = receivedUsers;
-        if (this.user.id > 0) {
-          const updatedCurrentUser = this.users.find(
-            (u) => u.id === this.user.id,
-          );
-          this.user = updatedCurrentUser ? updatedCurrentUser : this.user;
-          this.permissions = this.user.permissions ? this.user.permissions : [];
-          this.permanentIngredients = this.user.permanent
-            ? this.user.permanent
-            : [];
-          this.excludingIngredients = this.user.exclusions
-            ? this.user.exclusions
-            : [];
-        }
-      });
-  }
-
-  protected nightModeEmit(nightModeDisabled: boolean) {
-    if (!nightModeDisabled) {
-      document.body.classList.add('dark-mode');
-      localStorage.setItem('theme', 'dark');
-            const favicon = document.querySelector('#favicon');
-            favicon?.setAttribute('href', '/assets/images/chef-day.png');
-    } else {
-      document.body.classList.remove('dark-mode');
-      localStorage.setItem('theme', 'light');
-            const favicon = document.querySelector('#favicon');
-            favicon?.setAttribute('href', '/assets/images/chef-night.png');
-
-    }
+  protected nightModeEmit() {
+    this.themeService.changeTheme();
   } //переключ темной темы
 
-  protected userPermissionEnabled(context: PermissionContext): boolean {
+  protected userPermissionEnabled(context: Permission): boolean {
     //разрешены ли конкретные уведомления
     //если уведов нет или оно не установлено то считаю что можно
-    if (this.permissions) {
-      const findedPermisstion = this.permissions.find(
-        (p) => p.context === context,
+    if (this.currentUser.limitations) {
+      const findedLimitation = this.currentUser.limitations?.find(
+        (p) => p === context,
       );
-      if (findedPermisstion) return findedPermisstion.enabled;
+      if (findedLimitation) return false;
     }
+
     return true;
   }
 
   protected tooglePermission(
     //изменение значения разрешения на уведомления
-    context: PermissionContext,
-    enabled: boolean,
+    context: Permission,
   ): void {
-    if (!this.user.permissions) this.user.permissions = [];
-    const permissionExist = this.permissions.find((p) => p.context === context);
-    if (permissionExist) permissionExist.enabled = enabled;
-    else {
-      const permission: IPermission = { context: context, enabled: enabled };
-      this.permissions.push(permission);
+    const limitation = this.currentUser.limitations?.find((p) => p === context);
+    if (limitation) {
+      this.loading = true;
+      this.userService
+        .deleteLimitation(context)
+        .pipe(
+          tap(() => {
+            this.currentUser.limitations = this.currentUser.limitations?.filter(
+              (l) => l !== limitation,
+            );
+          }),
+          finalize(() => {
+            this.loading = false;
+            this.addModalStyle();
+            this.cd.markForCheck();
+          }),
+        )
+        .subscribe();
+    } else {
+      this.userService
+        .postLimitation(context)
+        .pipe(
+          tap(() => {
+            this.currentUser.limitations?.push(context);
+          }),
+          finalize(() => {
+            this.loading = false;
+            this.addModalStyle();
+            this.cd.markForCheck();
+          }),
+        )
+        .subscribe();
     }
-    this.user.permissions = this.permissions;
-    this.updateUser(this.user)
   }
 
   async handleExitModal(event: boolean) {
     this.exitModalShow = false;
     if (event) {
       this.loading = true;
-      await this.authService.logout();
-      await this.authService.setOffline(this.user)
-      this.authService.logoutUser();
-      this.loading = false;
-      this.router.navigateByUrl('/');
-    } else {
-      setTimeout(() => {
-        addModalStyle(this.renderer);
-      });
-    }
-  }
-
-  async deleteRecipe(recipe: IRecipe) {
-    await this.recipeService.removeRecipeFunction(recipe.id);
-  }
-
-  async handleDeleteModal(event: boolean) {
-    this.deleteModalShow = false;
-
-    if (event) {    this.loading = true;
-
-      this.authService.logoutUser();
-      await this.authService.logout()
-
-      if (this.user.id !== 0 && this.users.find((u) => u.id === this.user.id)) {
-        //находим рецепты с лайками комментами приготовлениями  и тп от удаляемого пользователя
-        const editedRecipes =
-          this.recipeService.getRecipesWhithIsEditedWhenUserDeleting(
-            this.recipes,
-            this.user,
-          );
-        //обновляем эти рецепты очищая упоминания о пользователе
-        editedRecipes.forEach((recipe) => {
-          this.updateRecipe(recipe);
-        });
-        //находим все не публичные рецепты пользователя(публичные останутся с authorId -1 )
-        const deletingRecipes =
-          this.recipeService.getRecipesThatWillBeDeletedAfterUserDeleting(
-            this.recipes,
-            this.user,
-          );
-        //удаляем все такие рецепты и обновляем планы пользователей в связи с этим
-        deletingRecipes.forEach((recipe) => {
-          this.planService.updatePlansAfterDeletingRecipe(
-            this.plans,
-            this.users,
-            recipe,
-          );
-
-          this.deleteRecipe(recipe);
-        });
-        //удаляем полностью план удаляемого пользователя
-        const deletingUserPlan = this.plans.find(
-          (p) => p.user === this.user.id,
-        );
-        if (deletingUserPlan)
-          await this.planService.deletePlanFromSupabase(deletingUserPlan.id);
-
-        const usersForUpdate =
-          this.userService.getUsersWhichWillBeUpdatedWhenUserDeleting(
-            this.users,
-            this.user,
-          );
-        usersForUpdate.forEach((u) => this.updateUser(u));
-
-        //удаляем наконец пользователя
-        await this.userService.deleteUserFromSupabase(this.user.id);
-        await this.authService.deleteUserFromSupabase();
-            this.loading = false;
-
+      this.authService.logout().subscribe(() => {
+        this.authService.setCurrentUser(nullUser);
+        this.loading = false;
         this.router.navigateByUrl('/');
-
-
-      }
-    } else {
-      setTimeout(() => {
-        addModalStyle(this.renderer);
       });
+    } else {
+      addModalStyle(this.renderer);
     }
   }
 
-  loading = false;
-
-  async deleteUser() {
-    this.loading = true;
-    await this.authService.deleteUserFromSupabase();
-    this.loading = false;
-  }
-  async updateUser(user: IUser) {
-    this.loading = true;
-    this.cd.markForCheck()
-    await this.userService.updateUserInSupabase(user);
-    this.loading = false;    this.cd.markForCheck();
-
+  addModalStyle() {
+    addModalStyle(this.renderer);
   }
 
-  async updateRecipe(recipe: IRecipe) {
-    await this.recipeService.updateRecipeFunction(recipe);
-  }
+
   protected clickBackgroundNotContent(elem: Event): void {
     //обработка нажатия на фон настроек, но не на блок с настройками
     if (elem.target !== elem.currentTarget) return;
@@ -341,11 +436,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   //cкрытие/добавление прокрутки к основному содержимому
 
-
-
   public ngOnDestroy(): void {
     removeModalStyle(this.renderer);
     this.destroyed$.next();
     this.destroyed$.complete();
+    this.subscriptions.unsubscribe();
   }
 }

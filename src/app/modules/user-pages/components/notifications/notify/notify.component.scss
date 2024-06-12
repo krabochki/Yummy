@@ -2,12 +2,85 @@
 .info{
     --main: #59aef3;
 }
+.link{
+    text-decoration: underline;
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    column-gap: 0.5em;
+    margin-top: 0.5em;
+    color: var(--color-foreground-unactive);
+}
+.link-svg{
+    fill: var(--color-foreground-unactive);
+    width: 1em;
+    height: 1em;
+    min-width: 1em;
+}
+
+.preloader {
+    .body{
+        pointer-events: none;
+    }
+    cursor: wait;
+    --main: var(--color-foreground-unactive);
+
+    h1,p{
+        animation: loading 0.75s infinite linear;
+        background-color: var(--loading);
+        line-height: 1 !important;
+        padding: 0;
+        overflow: hidden;
+        width: max-content;
+        color: transparent;border-radius: 0.75em;
+
+        
+    }
+
+    .svg-notify{animation: loading 0.75s infinite linear;
+        background-color: var(--loading);
+        border-radius: 100%;
+    }
+    .time-cont{
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-end;
+        width: 100%;
+    }
+
+    .time{
+        font-size: 0.7em;
+        margin-top: 0.5em;
+    }
+
+    p:first-of-type{
+    margin-bottom: 0.2em;
+    }
+}
+
+@keyframes loading {
+    0% {
+        background-position: var(--loading);
+    }
+
+    50% {
+        background-color: var(--loading-accent);
+    }
+
+    100% {
+        background-position: var(--loading);
+    }
+}
 
 .warning{
     --main:#e0d900; 
 }
 .calendar-recipe{
     --main: #da71fa; 
+}
+
+.night-mode {
+    --main: #7173fa;
 }
 
 
@@ -33,7 +106,8 @@
     --main:var(--color-primary); 
 }
 .not-readed .body{
-background-color: var(--not-read)
+background-color: var(--not-read);
+border-bottom: 1px solid color-mix(in srgb, var(--color-background-deeper) 60%, var(--not-read));
 }
 .popup .body{
     background-color: var(--not-read);
@@ -59,10 +133,13 @@ background-color: var(--not-read)
     line-height: 1;
 }
 .delete-button{
-    width: 0.5em;
+    width: 0.75em;
     top:0.5em;right:1em;
     opacity: 0.5;
-    height: 0.5em;
+    height: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: absolute;
     transition: 0.2s;
 
@@ -72,6 +149,11 @@ background-color: var(--not-read)
 }
 
 .delete{
+    width: 1em;
+    height: 1em;
+    display: flex;
+    align-self: center;
+    justify-content: center;
     fill: var(--color-foreground-unactive);
 }
 
@@ -81,7 +163,10 @@ a.body{
     padding: 0.5em 1em;
 }
 
+
 .title{
+        overflow: hidden;
+            text-overflow: ellipsis;
     font-weight: 600;
     line-height: 1;
     color: var(--main);
@@ -89,6 +174,12 @@ a.body{
 .text{
     line-height: 1;
     font-size: 0.8em;
+}
+.preloader .text{
+    padding: 0;white-space: nowrap;
+    margin: 0;
+    max-width: 75%;
+margin-top: 0.35em;
 }
 
 
@@ -117,8 +208,11 @@ a.body{
 @media(max-width:480px){
     .popup
 {
-    opacity: 0.75;
     width: 100%;
 
+}
+
+.delete-button{
+    zoom:1.05
 }
 }

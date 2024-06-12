@@ -1,9 +1,10 @@
 import { Inject, Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { AuthService } from '../../authentication/services/auth.service';
-import { IUser, nullUser } from '../../user-pages/models/users';
+import { IUser } from '../../user-pages/models/users';
 import { IngredientService } from '../services/ingredient.service';
 import { IIngredient } from '../models/ingredients';
+import { switchMap, map, catchError, EMPTY } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -15,28 +16,31 @@ export class IngredientAccessGuard implements CanActivate {
     @Inject(IngredientService) private ingredientService: IngredientService,
   ) {}
 
-  canActivate(route: ActivatedRouteSnapshot): boolean {
-    const recipeId = route.params?.['id'];
+  canActivate(route: ActivatedRouteSnapshot) {
+     const id = route.params?.['id'];
 
-    let user: IUser = { ...nullUser };
-    this.auth.currentUser$.subscribe((data) => (user = data));
-    let ingredients: IIngredient[] = [];
-
-    ingredients = this.ingredientService.ingredientSubject.getValue();
-    const ingredient: IIngredient | undefined = ingredients.find(
-      (ingredient) => ingredient.id == recipeId,
-    );
-
-    if (ingredient) {
-      if (this.auth.checkIngredientValidity(ingredient, user)) {
-        return true;
-      } else {
-        this.router.navigate(['/ingredients']);
-        return false;
-      }
-    } else {
-      this.router.navigate(['/ingredients']);
-      return false;
-    }
+     if (id <= 0) {
+       this.router.navigate(['/ingredients']);
+       return EMPTY;
+     }
+     return this.auth.getTokenUser().pipe(
+       switchMap((user: IUser) => {
+         return this.ingredientService.getIngredient(id).pipe(
+           map((response:any) => {
+             const ingredient:IIngredient = response[0];
+             if (ingredient && this.auth.checkIngredientValidity(ingredient, user)) {
+               return true;
+             } else {
+               this.router.navigate(['/ingredients']);
+               return false;
+             }
+           }),
+           catchError(() => {
+             this.router.navigate(['/ingredients']);
+             return EMPTY;
+           }),
+         );
+       }),
+     );
   }
 }

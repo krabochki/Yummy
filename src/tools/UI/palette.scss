@@ -3,9 +3,6 @@ body {
     --color-primary-focus: #ee0000;
   --color-secondary: #ffab2c;
   --color-secondary-focus: #ff9900;
-
-  
-
   --color-foreground: #212121;
   --color-background: #fff;
   --color-background-deeper: rgb(235, 235, 235);
@@ -14,10 +11,12 @@ body {
   --color-primary-lighter-focus: #ffb5b5;
   --color-secondary-lighter: #ffe6c1;
   --color-secondary-lighter-focus: #ffc876;
-
   --color-background-deeper-unactive: #f4f4f4;
   --color-foreground-unactive: #808080;
   --color-foreground-unactive-lighter: #a1a1a1;
+
+  --sun: #ffab2c;
+  --moon:#212121;
 
   --scroll-thumb: #cccccc;
   --scroll-body: #e1e0e0;
@@ -49,6 +48,8 @@ body {
       --twitter: #1da1f2;
   --facebook:  #1877f2;
   --vk:#4a76a8 ;
+    --sun: #e3e3e3;
+      --moon: #ffb446;
   --pinterest: #bd081c;
 
 

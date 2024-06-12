@@ -1,4 +1,11 @@
-import { Component, EventEmitter, HostListener, Input, OnChanges } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnChanges,
+  OnInit,
+} from '@angular/core';
 import { nullIngredient } from '../../../models/ingredients';
 
 @Component({
@@ -6,13 +13,41 @@ import { nullIngredient } from '../../../models/ingredients';
   templateUrl: './ingredients-vertical-list.component.html',
   styleUrls: ['./ingredients-vertical-list.component.scss'],
 })
-export class IngredientsVerticalListComponent implements OnChanges {
+export class IngredientsVerticalListComponent implements OnChanges, OnInit {
   @Input() ingredients: any[] = [];
   @Input() context: 'ingredient' | 'group' = 'ingredient';
   @Input() editEmitter = new EventEmitter();
+  @Input() preloader: boolean = false;
 
+  ngOnInit() {
+    if (this.preloader) {
+      const width = window.innerWidth;
+      let blocks = 0;
+      switch (true) {
+        case  width <= 740:
+          blocks = 2;
+          break;
+        case width > 740 && width <= 960:
+          blocks = 3;
+          break;
+        case width > 960 && width <= 1400:
+          blocks = 4;
+          break;
+        case width > 1400:
+          blocks = 5;
+          break;
+      }
+      blocks *= 2;
+      const loadingCategory = { ...nullIngredient, id: -1 };
+      for (let index = 0; index < blocks; index++) {
+        this.ingredients.push(loadingCategory);
+      }
+    }
+  }
   ngOnChanges() {
-    this.onResize();
+    if (!this.preloader) {
+      this.onResize();
+    }
   }
 
   filterNullBlocks() {
@@ -32,13 +67,7 @@ export class IngredientsVerticalListComponent implements OnChanges {
   onResize() {
     const event = window.innerWidth;
     switch (true) {
-      case event < 480:
-        this.filterNullBlocks();
-        if (this.ingredients.length <= 2)
-          while (this.ingredients.length !== 3)
-            this.ingredients.push(nullIngredient);
-        break;
-      case event > 480 && event <= 610:
+      case event <= 740:
         this.blockScheme(2);
         break;
       case event > 610 && event <= 960:

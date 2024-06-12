@@ -47,7 +47,7 @@ h2{
   &.horizontal::after {
     margin: 0 calc(14.4vw + 0 * (100vw - 768px) / 760);
 
-    height: calc(100% - 0.5em);
+    height: calc(100% - 0.8em);
     width: 15%;
     background: linear-gradient(to right, transparent 0%,var(--color-background));
 
@@ -70,14 +70,35 @@ h2{
   }
 }
 
-@media (max-width: 480px) {
-.head{
-  margin-left: 6%;
-  margin-right: 6%;
+@media (max-width:480px){
+  .recipes {
+      padding: 0 0 0 6%
+  }
+
+  .head{
+          margin: 0 6%;margin-bottom: 1.75em;
+  }
 }
 
-  .recipes  {
-    padding-left: 6%;
-    padding-right: 0;
+
+h2.loading {
+  border-radius: 0.75em;
+  width: max-content;
+      animation: loading 0.75s infinite linear;
+        background-color: var(--loading);
+  color: transparent;
+}
+
+@keyframes loading {
+  0% {
+    background-position: var(--loading);
+  }
+
+  50% {
+    background-color: var(--loading-accent);
+  }
+
+  100% {
+    background-position: var(--loading);
   }
 }

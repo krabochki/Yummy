@@ -2,22 +2,51 @@
   <div class="content">
     <h1 class="label">Регистрация</h1>
     <p class="tagline">
-      Введите вашу почту, а также придумайте имя пользователя и пароль. Если вы
-      забудете пароль, вы всегда сможете восстановить его.
+      {{ codeMode ? 'Введите код из письма, которое вы получили на электронную почту.': 'Введите электронную почту, а также придумайте имя пользователя и пароль. На указанную вами почту будет выслано письмо с кодом для регистрации.'}}
     </p>
 
-    <form [formGroup]="form">
+    <form [formGroup]="codeForm" class="formed" *ngIf="codeMode">
       <div>
         <div class="control">
-          <app-usual-input [pad]="true" [inputRequired]="true" type="text" [max]="64" formControlName="email"
-            [placeholder]="'Электронная почта'" required [error]="emailNotValidError">
-          
-            
+          <app-usual-input
+            [pad]="true"
+            [inputRequired]="true"
+            type="text"
+            [max]="6"
+            formControlName="code"
+            [placeholder]="'Шестизначный код'"
+            required
+          >
           </app-usual-input>
-          <svg-icon [src]="'/assets/images/svg/email.svg'" class="icon" [applyClass]="true"></svg-icon>
+          <svg-icon
+            [src]="'/assets/images/svg/key.svg'"
+            class="icon"
+            [applyClass]="true"
+          ></svg-icon>
         </div>
-        <div class="error" *ngIf="form.get('email')?.hasError('emailExists')">
-          Пользователь с такой электронной почтой уже существует
+      </div>
+    </form>
+
+
+    <form [formGroup]="form" *ngIf="!codeMode">
+      <div>
+        <div class="control">
+          <app-usual-input
+            [pad]="true"
+            [inputRequired]="true"
+            type="text"
+            [max]="64"
+            formControlName="email"
+            [placeholder]="'Электронная почта'"
+            required
+            [error]="emailNotValidError"
+          >
+          </app-usual-input>
+          <svg-icon
+            [src]="'/assets/images/svg/email.svg'"
+            class="icon"
+            [applyClass]="true"
+          ></svg-icon>
         </div>
       </div>
       <div>
@@ -30,17 +59,14 @@
             required
             [error]="usernameNotValidError"
           ></app-usual-input>
-                    <svg-icon [src]="'/assets/images/svg/badge.svg'" class="icon" [applyClass]="true"></svg-icon>
-
-        </div>
-        <div
-          class="error"
-          *ngIf="form.get('username')?.hasError('usernameExists')"
-        >
-          Это имя пользователя уже занято
+          <svg-icon
+            [src]="'/assets/images/svg/badge.svg'"
+            class="icon"
+            [applyClass]="true"
+          ></svg-icon>
         </div>
       </div>
-      
+
       <app-usual-input
         [inputType]="'password'"
         [inputRequired]="true"
@@ -50,27 +76,49 @@
         required
         [error]="passwordNotValidError"
       ></app-usual-input>
-      <div class="user-policy" >
-        <button class="checkbox" (click)="this.form.get('policy')?.setValue(!this.form.get('policy')?.value)">
-            <svg-icon *ngIf="this.form.get('policy')?.value===true" class="checkbox-icon" [applyClass]="true"
-              [src]="'/assets/images/svg/checkbox.svg'"></svg-icon>
+      <div class="user-policy">
+        <button
+          class="checkbox"
+          (click)="
+            this.form.get('policy')?.setValue(!this.form.get('policy')?.value)
+          "
+        >
+          <svg-icon
+            *ngIf="this.form.get('policy')?.value === true"
+            class="checkbox-icon"
+            [applyClass]="true"
+            [src]="'/assets/images/svg/checkbox.svg'"
+          ></svg-icon>
         </button>
         <p>
-          Я согласен с правилами
+          Я согласен(-на) с правилами
           <a routerLink="/user-policy">пользовательского соглашения</a>
         </p>
       </div>
     </form>
 
     <hr />
+    <a class="good" *ngIf="!codeMode" [routerLink]="'/registration-benefits'"
+      >Преимущества регистрации</a
+    >
 
+  
     <div class="buttons">
       <app-button
+        *ngIf="!codeMode"
         (click)="form.valid ? (confirmModal = true) : false"
         [disabled]="form.valid"
         [rounded]="true"
-        [color]="'prim'"
+        [color]="'sec'"
         [text]="'Регистрация'"
+      ></app-button>
+      <app-button
+        *ngIf="codeMode"
+        (click)="codeForm.valid ? confirmCode() : false"
+        [disabled]="codeForm.valid"
+        [rounded]="true"
+        [color]="'sec'"
+        [text]="'Подтвердить'"
       ></app-button>
     </div>
   </div>
@@ -85,20 +133,25 @@
   (resultEmit)="handleConfirmModal($event)"
   [buttonsText]="['Да', 'Нет']"
   [description]="
-    'Вы уверены, что хотите зарегистрироваться с введенными данными?'
+    'Вы уверены, что хотите зарегистрироваться с введенными данными и получить письмо c кодом на электронную почту?'
   "
 ></app-modal>
+
+<app-modal [style]="'sec'" @modal [title]="'Успешное подтверждение!'" [type]="'Ok'" *ngIf="noFormModal"
+  (resultEmit)="handleNoFormModal()" [buttonsText]="['Вход']" [description]="
+    'Вы успешно подтвердили аккаунт. Войдите с новыми данными на странице входа!'
+  "></app-modal>
 
 <app-modal
   [style]="'sec'"
   @modal
-  *ngIf="successModal"
   [title]="'Успешная регистрация!'"
   [type]="'Ok'"
+  *ngIf="successModal"
   (resultEmit)="handleSuccessModal()"
-  [buttonsText]="['На главную']"
+  [buttonsText]="['Хорошо']"
   [description]="
-    'Регистрация прошла успешно. Подтвердите электронную почту и после этого ваш аккаунт будет активирован!'
+    'Письмо для подтверждения регистрации успешно отправлено на вашу электронную почту! Подтверждение по этому письму будет доступно в течении получаса.'
   "
 ></app-modal>
 
@@ -115,11 +168,4 @@
   "
 ></app-modal>
 
-<app-modal
-  [noButtons]="true"
-  [style]="'await'"
-  *ngIf="loadingModal"
-  [title]="'Подождите...'"
-  @modal
-  [description]="'Проверяем данные, которые вы ввели... Подождите немного...'"
-/>
+<app-modal [style]="'await'" *ngIf="loadingModal" @modal />

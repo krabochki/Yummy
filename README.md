@@ -1,9 +1,4 @@
 
-
-
-
-
-
 <a name="readme-top"></a>
 
 <!-- PROJECT LOGO -->
@@ -23,7 +18,7 @@
     ·
     <a href="https://github.com/krabochki/Yummy/issues">Баги</a>
     ·
-    <a href="https://www.linkedin.com/in/polina-kuzmenok-550449291">LinkedIn автора</a>
+    <a href="https://www.linkedin.com/in/polina-kuzmenok-550449291">Мой LinkedIn</a>
   </p>
 </div>
 
@@ -105,8 +100,6 @@
 
 <p align="right">(<a href="#readme-top">наверх</a>)</p>
 
-
-
 <a name="libs"></a>
 
 ## Библиотеки 📚
@@ -118,7 +111,6 @@
 - angular-material;
 - angular-calendar;
 - ngx-emoji-mart;
-- ng-disable-scroll;
 - ng-time-past-pipe;
 - ngx-drag-scroll;
 - ngx-sharebuttons;

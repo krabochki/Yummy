@@ -1,3 +1,6 @@
+import { AbstractControl, FormGroup } from "@angular/forms";
+import { ExternalLink, IIngredient, nullIngredient } from "../../../models/ingredients";
+
 export const steps: Step[] = [
   {
     title: 'Основная информация',
@@ -31,7 +34,7 @@ export const steps: Step[] = [
     shortTitle: 'Нутриенты',
 
     description:
-      'Перечислите приблизительные характеристики нутриентов ингредиента.',
+      'Перечислите приблизительные характеристики нутриентов ингредиента.<br><br>Поставьте в начало названия нутриента три восклицательных знака !!!, чтобы обозначить начало новой группы нутриентов и её название. Например, !!!КБЖУ (далее калории, белки, жиры, углеводы), !!!Витамины (далее список витаминов).',
   },
   {
     title: 'Дополнительные источники',
@@ -73,7 +76,7 @@ export function getInputPlaceholderOfControlGroup(controlGroup: string): string 
       case 'storageMethods':
         return 'Описание способа хранения';
       case 'variations':
-        return 'Название варианта написания';
+        return 'Вариант написания названия';
     }
     return '';
 }
@@ -99,7 +102,64 @@ export function getNameOfControlGroup(controlGroup: string): string {
     case 'storageMethods':
       return 'Способы хранения';
     case 'variations':
-      return 'Варианты написания';
+      return 'Варианты написания названия';
   }
   return '';
+}
+
+export const stepControlGroups = [
+  ['advantages', 'disadvantages', 'recommendations', 'contraindicates'],
+  ['cookingMethods', 'compatibleDishes', 'precautions'],
+  ['tips', 'storageMethods'],
+];
+
+export function getIngredientByForm(form: FormGroup, controls:AbstractControl[]) {
+  const externalLinks: ExternalLink[] = [];
+  
+  controls.forEach((control) => {
+  const externalLink: ExternalLink = {
+    link: control.get('link')?.value,
+    name: control.get('name')?.value,
+  };
+  externalLinks.push(externalLink);
+});
+  const ingredient: IIngredient = {
+    ...nullIngredient,
+    name: form.value.ingredientName,
+    history: form.value.history,
+    description: form.value.description,
+    variations: form.value.variations.map(
+      (item: { content: string }) => item.content,
+    ),
+    advantages: form.value.advantages.map(
+      (item: { content: string }) => item.content,
+    ),
+    disadvantages: form.value.disadvantages.map(
+      (item: { content: string }) => item.content,
+    ),
+    recommendedTo:form.value.recommendations.map(
+      (item: { content: string }) => item.content,
+    ),
+    contraindicatedTo: form.value.contraindicates.map(
+      (item: { content: string }) => item.content,
+    ),
+    origin: form.value.origin,
+    precautions: form.value.precautions.map(
+      (item: { content: string }) => item.content,
+    ),
+    compatibleDishes: form.value.compatibleDishes.map(
+      (item: { content: string }) => item.content,
+    ),
+    cookingMethods: form.value.cookingMethods.map(
+      (item: { content: string }) => item.content,
+    ),
+    tips: form.value.tips.map((item: { content: string }) => item.content),
+    nutritions:form.value.nutritions,
+    storageMethods: form.value.storageMethods.map(
+      (item: { content: string }) => item.content,
+    ),
+    externalLinks: externalLinks,
+  };
+
+  return ingredient;
 }

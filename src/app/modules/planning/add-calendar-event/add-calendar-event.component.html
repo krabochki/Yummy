@@ -2,10 +2,7 @@
 <!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
 <div class="background" (click)="clickBackgroundNotContent($event)">
   <div class="main-cont">
-    <div
-      class="close-button"
-      (click)="close()"
-    >
+    <div class="close-button" (click)="close()">
       <svg-icon
         class="close-svg"
         [applyClass]="true"
@@ -49,55 +46,19 @@
             </div>
 
             <div class="section">
-              <h2 class="noselect">Связанный рецепт Yummy</h2>
+              <h2 class="noselect" >Связанный рецепт Yummy</h2>
 
-              <div class="search-block">
-                <div class="search">
-                  <app-usual-input
-                    [inputDisabled]="disableRecipeChoosing()"
-                    (focus)="focus()"
-                    [error]="
-                      searchQuery && focused && selectedRecipe.id === 0
-                        ? ' '
-                        : ''
-                    "
-                    [(ngModel)]="searchQuery"
-                    [value]="searchQuery"
-                    (ngModelChange)="recipeSearching()"
-                    type="text"
-                    (focusEmitter)="focus()"
-                    (blurEmitter)="blur()"
-                    placeholder="Введите название и выберите рецепт из результатов поиска"
-                  />
-                </div>
-
-                <div class="autocomplete-list" #autocomplete>
-                  <ul @auto-complete *ngIf="autocompleteShow">
-                    <div *ngIf="autocompleteRecipes.length === 0">
-                      <div class="no-found-recipes">
-                        <p class="noselect">
-                          По вашему запросу нет никаких рецептов. Попробуйте
-                          изменить параметры поиска или подобрать рецепт в
-                          специальном разделе!
-                        </p>
-                        <app-button
-                          [text]="'Подбор рецептов'"
-                          (mousedown)="navigateTo('/recipes/match')"
-                          [style]="'filled'"
-                          [color]="'prim'"
-                          [rounded]="true"
-                        ></app-button>
-                      </div>
-                    </div>
-                    <li
-                      *ngFor="let item of autocompleteRecipes"
-                      (mousedown)="chooseRecipe(item)"
-                    >
-                      {{ item.name }}
-                    </li>
-                  </ul>
-                </div>
-              </div>
+              <app-autocomplete
+              style="zoom:0.9"
+              (blurEmitter)="blur()"
+                [disabled]="this.event.recipe>0"
+                [placeholder]="'Начните вводить название связанного рецепта'"
+                [(ngModel)]="searchQuery"
+                [startOnTyping]="true"
+                (recipeEmitter)="selectRecipe($event)"
+                [context]="'recipes'"
+                [currentUserId]="currentUser.id"
+              ></app-autocomplete>
             </div>
 
             <div class="section">
@@ -112,7 +73,7 @@
                       i === selectedColorIndex && colorSource === 'palette'
                   }"
                   [ngStyle]="{ 'background-color': color }"
-                > </button>
+                ></button>
               </div>
               <div class="custom-color">
                 <p class="noselect" style="zoom: 0.9">
@@ -181,9 +142,7 @@
           <svg-icon
             class="icon"
             [applyClass]="true"
-            [src]="
-              '/assets/images/svg/planning/cook-and-ingredients.svg'
-            "
+            [src]="'/assets/images/svg/planning/cook-and-ingredients.svg'"
           ></svg-icon>
         </div>
       </div>
@@ -194,11 +153,7 @@
         [disabled]="valid"
         [rounded]="true"
         [text]="editMode ? 'Обновить рецепт в плане' : 'Добавить рецепт в план'"
-        (click)="
-          valid
-            ? modalSaveShow = true
-            : null
-        "
+        (click)="valid ? (modalSaveShow = true) : null"
       >
       </app-button>
     </div>
@@ -240,5 +195,8 @@
   [description]="getModalDescription('success')"
 >
 </app-modal>
-  <app-modal [noButtons]="true" [style]="'await'" *ngIf="loading" [title]="'Подождите...'" @modal
-    [description]=" 'Вносим изменения... Подождите немного...'" />
+<app-modal
+  [style]="'await'"
+  *ngIf="loading"
+  @modal
+/>

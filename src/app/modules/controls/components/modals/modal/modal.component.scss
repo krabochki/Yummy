@@ -1,0 +1,249 @@
+
+.modal-dialog {
+  zoom: 1 !important;
+  scale: 1 !important;
+
+  --color-sky: var(--color-foreground);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: default;
+
+
+  backdrop-filter: blur(1px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100%;
+  background: var(--modal-black);
+  z-index: 9999;
+}
+
+.square {
+  width: calc(var(--size) * 8);
+  height: calc(var(--size) * 8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  position: absolute;
+  margin-top: 1em;
+
+  .image {
+    width: 3em;
+    zoom:1.2;
+    height: 3em;
+  }
+
+}
+
+.interview {
+  margin-top: 1em;
+  height: 10em;
+  fill: var(--color-foreground);
+}
+
+
+.lds-ring {
+  --size: 0.75em;
+  display: inline-block;
+  position: relative;
+  margin-top: 1em;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--size) * 8);
+  height: calc(var(--size) * 8);
+}
+
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: calc(var(--size) * 8);
+  height: calc(var(--size) * 8);
+  border: 7px solid var(--color-foreground);
+  margin-top: 1em;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: var(--color-foreground) transparent transparent transparent;
+}
+
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
+* {
+  white-space: wrap;
+}
+
+hr {
+  height: 1px;
+  background-color: var(--modal);
+  opacity: 0.2;
+}
+
+
+.vote
+{
+  .modal-content{
+    display: flex;
+    max-width: 44em;
+    justify-content: center;
+    column-gap:2em;padding: var(--space-xxl) var(--space-xxl);
+    align-items: center;
+  }
+  .icon{
+    display: flex;
+    align-items: center;
+    height: 10em;
+    justify-content: center;
+  }
+  .vote-icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    scale: 1.05;
+    height: 19em;
+    fill: var(--color-foreground);
+
+    &.cook{
+          height: 20em;
+    }
+    
+  }
+}
+
+
+.modal-content {
+  background: var(--color-background);
+  max-width: 30em;
+
+  border-radius: var(--space-l);
+  box-shadow: 0 3px 8px var(--modal-black);
+  text-align: center;
+
+  padding: var(--space-xxl) var(--space-xxl);
+
+  h4 {
+    font-size: var(--font-l);
+    line-height: 1;
+
+    font-family: var(--font-family-accent);
+  }
+}
+
+.modal-container{
+    display: flex;
+      flex-direction: column;
+      row-gap: var(--space-m);
+}
+
+.modal-body {
+  line-height: 1;
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  column-gap: var(--space-m);
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    max-width: 30em;
+  }
+}
+
+.hat2{
+  width: 20em;
+  height: 20em;
+}
+
+.hat {
+  background-image: url('/assets/images/hat-night.svg');
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-position: center;
+  background-color: transparent;
+  box-shadow: none;
+  padding-top: calc(2em + var(--space-xxl));
+}
+
+@media(max-width:800px){
+
+   .vote .modal-content {
+
+        .icon {
+            display: none;
+          }
+
+      max-width: 30em;
+
+  
+      padding: var(--space-xxl) var(--space-xxl);
+
+    }
+}
+
+@media (max-width: 480px) {
+
+  .hat {
+    background-image: none;
+    background-color: var(--color-background);
+    box-shadow: 0 3px 8px var(--modal-black);
+    padding-top: var(--space-xxl);
+  }
+
+  .interview {
+    display: none
+  }
+
+  .modal-footer {
+    zoom: 0.89;
+    column-gap: var(--space-s);
+  }
+
+  .modal-dialog {
+
+    top: unset;
+    left: 0;
+    align-items: end;
+    bottom: 0;
+  }
+
+  .modal-content,.vote .modal-content {
+    max-width: 100%;
+    width: 100%;
+
+    h4 {
+      font-size: 1.35em;
+    }
+
+    padding:var(--space-xl) 2em;
+    padding-top: var(--space-xxl);
+
+    border-radius: 4em 4em 0 0;
+  }
+}

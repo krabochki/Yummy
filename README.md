@@ -169,7 +169,7 @@
 
 Все кулинары:
 <div align="center">
-    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/cooks.png"  width="760">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/сooks.png"  width="760">
 </div>
 
 Пример страницы рецепта:
@@ -223,7 +223,7 @@
     <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/calendar.png"  width="760">
 </div>
 <div align="center">
-    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/add-event.png"  width="760">
+    <img src="https://raw.githubusercontent.com/krabochki/Yummy/main/readme/add_event.png"  width="760">
 </div>
 Список покупок:
 <div align="center">
